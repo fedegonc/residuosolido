@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -40,7 +42,12 @@ public class UserController {
     @PostMapping
     public String saveUser(@ModelAttribute User user, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
-            // Si es un usuario nuevo, establecer la contraseña
+            // Validación: evitar duplicados de username o email
+            if (userService.existsByUsername(user.getUsername()) || userService.existsByEmail(user.getEmail())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "El nombre de usuario o el email ya existen.");
+                return "redirect:/users/create";
+            }
+    
             if (user.getId() == null) {
                 String newPassword = request.getParameter("newPassword");
                 if (newPassword != null && !newPassword.trim().isEmpty()) {
@@ -49,13 +56,13 @@ public class UserController {
                     redirectAttributes.addFlashAttribute("errorMessage", "La contraseña es requerida para usuarios nuevos");
                     return "redirect:/users/create";
                 }
-                // Establecer valores predeterminados para usuarios nuevos
                 user.setActive(true);
+                user.setCreatedAt(LocalDateTime.now());
                 if (user.getPreferredLanguage() == null) {
                     user.setPreferredLanguage("es");
                 }
             }
-            
+    
             userService.save(user);
             redirectAttributes.addFlashAttribute("successMessage", "Usuario guardado exitosamente");
         } catch (Exception e) {
@@ -63,6 +70,7 @@ public class UserController {
         }
         return "redirect:/users";
     }
+    
     
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
@@ -106,4 +114,6 @@ public class UserController {
         }
         return "redirect:/users";
     }
+
+
 }

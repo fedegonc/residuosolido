@@ -53,4 +53,5 @@ public class AuthController {
 
         return "redirect:/entrar?success=Registro exitoso";
     }
+    
 }
