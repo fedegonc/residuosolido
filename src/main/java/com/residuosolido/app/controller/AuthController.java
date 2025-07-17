@@ -53,5 +53,8 @@ public class AuthController {
 
         return "redirect:/entrar?success=Registro exitoso";
     }
-    
+    @GetMapping("/login")
+public String showLoginForm() {
+    return "auth/login"; // Si tu vista está en templates/auth/login.html
+}
 }

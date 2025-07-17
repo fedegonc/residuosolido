@@ -76,7 +76,7 @@
                         </div>
                     </div>
                     <div class="ml-3 relative" sec:authorize="!isAuthenticated()">
-                        <a href="/" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-dark">
+                        <a href="/login" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-dark">
                             Iniciar Sesión
                         </a>
                     </div>
@@ -152,9 +152,6 @@
         }
     </script>
     
-    <!-- Scripts adicionales específicos de la página -->
-    <th:block th:fragment="page_scripts">
-        <!-- Scripts específicos serán insertados aquí -->
-    </th:block>
+   
 </body>
 </html>
