@@ -45,6 +45,9 @@ public class AuthController {
         // Establecer el rol por defecto
         user.setRole(Role.USER);
         
+        // Establecer idioma predeterminado
+        user.setPreferredLanguage("es");
+        
         // Guardar el usuario
         userRepository.save(user);
 

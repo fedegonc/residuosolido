@@ -38,7 +38,11 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.role}]]</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}]]</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <a th:href="@{/users/{id}(id=${user.id})}" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-xs font-medium">Ver</a>
+                                <a th:href="@{/users/view/{id}(id=${user.id})}" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium mr-1">Ver</a>
+                                <a th:href="@{/users/edit/{id}(id=${user.id})}" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs font-medium mr-1">Editar</a>
+                                <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" class="inline-block" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este usuario?')">
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs font-medium">Eliminar</button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gestión de Usuarios')}"></head>
+<body th:replace="~{fragments/layout :: layout(~{::content})}">
+    <div th:fragment="content" class="container mx-auto px-4 py-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
+                    <a th:href="@{/users/create}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium">
+                        Nuevo Usuario
+                    </a>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div th:if="${successMessage}" class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700" th:text="${successMessage}">Success message</p>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${errorMessage}" class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700" th:text="${errorMessage}">Error message</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div th:replace="~{fragments/userlist :: userlist}"></div>
+        </div>
+    </div>
+</body>
+</html>

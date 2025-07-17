@@ -26,18 +26,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // CONFIGURACIÓN TEMPORAL PARA DEPURACIÓN - NO USAR EN PRODUCCIÓN
         http
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/entrar", "/auth/**", "/register").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/org/**").hasRole("ORG")
-                .requestMatchers("/dashboard/**").hasRole("USER")
-                .anyRequest().authenticated()
+                // Permitimos todas las solicitudes sin autenticación temporalmente
+                .anyRequest().permitAll()
             )
             .formLogin(form -> form
                 .loginPage("/entrar")
                 .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
                 .successHandler(successHandler)
                 .permitAll()
             )
@@ -45,6 +44,10 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .permitAll()
+            )
+            // Desactivamos la protección de sesión para depuración
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.ALWAYS)
             );
         
         return http.build();
