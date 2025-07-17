@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="(${title} ?: 'Inicio') + ' - Sistema de Gestión de Residuos Sólidos'">Inicio - Sistema de Gestión de Residuos Sólidos</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            light: '#48bb78',
+                            DEFAULT: '#38a169',
+                            dark: '#2f855a'
+                        },
+                        secondary: {
+                            light: '#4299e1',
+                            DEFAULT: '#3182ce',
+                            dark: '#2b6cb0'
+                        },
+                        danger: {
+                            light: '#f56565',
+                            DEFAULT: '#e53e3e',
+                            dark: '#c53030'
+                        },
+                        success: {
+                            light: '#68d391',
+                            DEFAULT: '#48bb78', 
+                            dark: '#38a169'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Estilos adicionales específicos de la página -->
+    <th:block th:fragment="css">
+        <!-- CSS específicos serán insertados aquí -->
+    </th:block>
+</head>
+
+<body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Barra de navegación -->
+    <nav th:fragment="navbar" class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-xl font-bold text-primary">ReciclaApp</a>
+                    </div>
+                    
+                    <!-- Links de navegación -->
+                    <div class="hidden md:ml-6 md:flex md:space-x-8" sec:authorize="isAuthenticated()">
+                        <th:block th:replace="~{::navLinks(true)}"></th:block>
+                    </div>
+                </div>
+                
+                <!-- Menú de usuario -->
+                <div class="hidden md:flex md:items-center md:ml-6">
+                    <div class="ml-3 relative" sec:authorize="isAuthenticated()">
+                        <div class="flex items-center">
+                            <span class="text-gray-700 mr-2" th:text="${#authentication.name}">Usuario</span>
+                            <form th:action="@{/logout}" method="POST">
+                                <button type="submit" class="text-gray-500 hover:text-primary">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ml-3 relative" sec:authorize="!isAuthenticated()">
+                        <a href="/" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-dark">
+                            Iniciar Sesión
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú móvil -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Menú móvil, oculto por defecto -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="pt-2 pb-3 space-y-1" sec:authorize="isAuthenticated()">
+                <th:block th:replace="~{::navLinks(false)}"></th:block>
+            </div>
+            
+            <div class="pt-4 pb-3 border-t border-gray-200" sec:authorize="isAuthenticated()">
+                <div class="flex items-center px-4">
+                    <div class="flex-shrink-0">
+                        <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                            <span th:text="${#authentication.name}" class="text-sm">U</span>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800" th:text="${#authentication.name}">Usuario</div>
+                    </div>
+                </div>
+                <div class="mt-3 space-y-1">
+                    <form th:action="@{/logout}" method="POST">
+                        <button type="submit" class="block w-full text-left px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-primary">
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Fragmento para enlaces de navegación -->
+    <th:block th:fragment="navLinks(isDesktop)">
+        <a href="/dashboard" th:class="${isDesktop ? 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:border-primary hover:text-primary' : 'block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary'}">
+            Dashboard
+        </a>
+        <a href="/solicitudes" sec:authorize="hasAnyAuthority('USUARIO','ADMIN')" th:class="${isDesktop ? 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:border-primary hover:text-primary' : 'block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary'}" 
+            th:classappend="${#authorization.expression('hasAuthority(''USUARIO'')')} ? 'hover:border-primary hover:text-primary' : (${#authorization.expression('hasAuthority(''ADMIN'')')} ? 'hover:border-danger hover:text-danger' : '')">
+            Solicitudes
+        </a>
+        <a href="/materiales" th:class="${isDesktop ? 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:border-primary hover:text-primary' : 'block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary'}" 
+            th:classappend="${#authorization.expression('hasAuthority(''ORGANIZACION'')')} ? 'hover:border-secondary hover:text-secondary' : ''">
+            Materiales
+        </a>
+        <a href="/organizaciones" sec:authorize="hasAuthority('ADMIN')" th:class="${isDesktop ? 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:border-danger hover:text-danger' : 'block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-danger hover:text-danger'}">
+            Organizaciones
+        </a>
+    </th:block>
+    
+    <!-- Contenido principal -->
+    <main class="flex-grow container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Contenido dinámico -->
+        <th:block th:replace="${content}"></th:block>
+    </main>
+    
+    <!-- Footer -->
+    <footer th:fragment="footer" class="bg-white shadow-inner py-4">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-gray-500 text-sm">
+                &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Sistema de Gestión de Residuos Sólidos. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript común -->
+    <script th:fragment="scripts">
+        // Función para mostrar/ocultar el menú móvil
+        document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Manejo de notificaciones/mensajes
+        function showNotification(message, type = 'success') {
+            // Implementar lógica para mostrar notificaciones
+            console.log(`${type}: ${message}`);
+        }
+    </script>
+    
+    <!-- Scripts adicionales específicos de la página -->
+    <th:block th:fragment="page_scripts">
+        <!-- Scripts específicos serán insertados aquí -->
+    </th:block>
+</body>
+</html>

@@ -1,0 +1,275 @@
+# ========================================
+# GITIGNORE ROBUSTO PARA SPRING BOOT
+# ========================================
+
+# ========================================
+# MAVEN
+# ========================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ========================================
+# JAVA
+# ========================================
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# ========================================
+# SPRING BOOT
+# ========================================
+.springBeans
+.sts4-cache/
+.factorypath
+.apt_generated
+.apt_generated_test
+
+# ========================================
+# INTELLIJ IDEA
+# ========================================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# ========================================
+# VS CODE
+# ========================================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# ========================================
+# ECLIPSE
+# ========================================
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.project
+.externalToolBuilders/
+*.launch
+.pydevproject
+.cproject
+.autotools
+.factorypath
+.buildpath
+.target
+.tern-project
+.texlipse
+.springBeans
+.recommenders/
+
+# ========================================
+# NETBEANS
+# ========================================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ========================================
+# GRADLE
+# ========================================
+.gradle
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
+
+# ========================================
+# LOGS
+# ========================================
+*.log
+logs/
+spring.log
+application.log
+
+# ========================================
+# DATABASES
+# ========================================
+*.db
+*.sqlite
+*.sqlite3
+/database/
+/data/
+*.h2.db
+*.trace.db
+*.lock.db
+
+# ========================================
+# CONFIGURACIONES SENSIBLES
+# ========================================
+application-local.properties
+application-dev.properties
+application-prod.properties
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ========================================
+# ARCHIVOS TEMPORALES
+# ========================================
+*.tmp
+*.temp
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ========================================
+# WINDOWS
+# ========================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# ========================================
+# MACOS
+# ========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# ========================================
+# LINUX
+# ========================================
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ========================================
+# BACKUP FILES
+# ========================================
+*.bak
+*.backup
+*.old
+*.orig
+*.save
+
+# ========================================
+# DOCUMENTACIÓN GENERADA
+# ========================================
+/docs/build/
+/javadoc/
+
+# ========================================
+# HERRAMIENTAS DE DESARROLLO
+# ========================================
+.vscode/
+.history/
+*.code-workspace
+
+# ========================================
+# ARCHIVOS DE CONFIGURACIÓN ESPECÍFICOS
+# ========================================
+/src/main/resources/static/uploads/
+/uploads/
+/files/
+
+# ========================================
+# DEPENDENCIAS Y CACHE
+# ========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+.stylelintcache
+
+# ========================================
+# REPORTES Y COVERAGE
+# ========================================
+/coverage/
+/.nyc_output
+/test-results/
+/reports/
+
+# ========================================
+# CERTIFICADOS Y LLAVES
+# ========================================
+*.key
+*.pem
+*.p12
+*.crt
+*.cer
+*.jks
+*.keystore
+*.truststore
+
+# ========================================
+# ARCHIVOS DEL SISTEMA
+# ========================================
+.cache/
+.tmp/
+.sass-cache/
+
+# ========================================
+# ESPECÍFICO DEL PROYECTO
+# ========================================
+# Agrega aquí archivos específicos de tu proyecto
+# Ejemplo:
+# /custom-config/
+# /private-data/

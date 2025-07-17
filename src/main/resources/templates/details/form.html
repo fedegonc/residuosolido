@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${material.id} ? 'Editar Material' : 'Nuevo Material')}"></head>
+<body>
+    <div th:replace="~{fragments/layout :: layout(~{::div.content})}">
+        <div class="content">
+            <div class="container mx-auto px-4 py-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-gray-800" th:text="${material.id} ? 'Editar Material' : 'Nuevo Material'"></h1>
+                    <a th:href="@{/materials}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        Cancelar
+                    </a>
+                </div>
+
+                <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <form th:action="@{/materials/save}" method="post" th:object="${material}">
+                        <input type="hidden" th:field="*{id}" />
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                                Nombre
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                                   id="name" type="text" th:field="*{name}" required>
+                            <p class="text-red-500 text-xs italic" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                                Descripción
+                            </label>
+                            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                                      id="description" th:field="*{description}" rows="3"></textarea>
+                            <p class="text-red-500 text-xs italic" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="category">
+                                Categoría
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                                   id="category" type="text" th:field="*{category}">
+                            <p class="text-red-500 text-xs italic" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-primary" th:field="*{active}">
+                                <span class="ml-2 text-gray-700">Activo</span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <button class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                                    type="submit">
+                                Guardar
+                            </button>
+                            <a th:if="${material.id}" th:href="@{/materials/{id}(id=${material.id})}" class="inline-block align-baseline font-bold text-sm text-secondary hover:text-secondary-dark">
+                                Ver Detalle
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
