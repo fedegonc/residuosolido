@@ -35,7 +35,14 @@
                         <tr th:each="user : ${users}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.username}]]</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.email}]]</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.role}]]</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                      th:classappend="${user.role != null and user.role.name() == 'ADMIN'} ? 'bg-red-100 text-red-800' : (${user.role != null and user.role.name() == 'ORGANIZATION'} ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800')">
+                                    <span th:if="${user.role != null and user.role.name() == 'ADMIN'}">⚙️ Admin</span>
+                                    <span th:if="${user.role != null and user.role.name() == 'ORGANIZATION'}">🏢 Org</span>
+                                    <span th:if="${user.role != null and user.role.name() == 'USER'}">👤 Usuario</span>
+                                </span>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}]]</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <a th:href="@{/users/view/{id}(id=${user.id})}" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium mr-1">Ver</a>
