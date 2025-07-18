@@ -1,8 +1,15 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.CustomAuthenticationSuccessHandler;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,10 +20,27 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, CustomAuthenticationSuccessHandler successHandler) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.successHandler = successHandler;
+    }
+
+   
+
+    @GetMapping({"/", "/index", "/login", "/register"})
+    public String index(
+            @AuthenticationPrincipal UserDetails userDetails,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        if (userDetails != null) {
+            successHandler.redirectByRole(request, response, userDetails);
+            return null;
+        }
+        return "index";
     }
 
     @GetMapping("/auth/register")

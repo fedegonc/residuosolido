@@ -38,44 +38,31 @@ public class UserController {
     @PostMapping
     public String saveUser(@ModelAttribute UserForm userForm, RedirectAttributes redirectAttributes) {
         try {
-            // Convertir DTO a entidad
-            User user = new User();
-            BeanUtils.copyProperties(userForm, user);
-            
-            if (user.getId() == null) {
-                // Usuario nuevo
-                if (userForm.getNewPassword() == null || userForm.getNewPassword().trim().isEmpty()) {
-                    redirectAttributes.addFlashAttribute("errorMessage", "La contraseña es requerida para usuarios nuevos");
-                    return "redirect:/users/create";
-                }
-                userService.createUser(user, userForm.getNewPassword());
-            } else {
-                // Usuario existente
-                userService.updateUser(user, userForm.getNewPassword());
-            }
-            
+            userService.saveUser(userForm);
             redirectAttributes.addFlashAttribute("successMessage", "Usuario guardado exitosamente");
+            return "redirect:/users";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            String redirectUrl = user.getId() == null ? "redirect:/users/create" : "redirect:/users/edit/" + user.getId();
+            String redirectUrl = userForm.getId() == null ? "redirect:/users/create" : "redirect:/users/edit/" + userForm.getId();
             return redirectUrl;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el usuario: " + e.getMessage());
             logger.error("Error al guardar usuario: ", e);
+            return "redirect:/users";
         }
-        return "redirect:/users";
     }
     
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
-        Optional<User> user = userService.findById(id);
-        if (user.isPresent()) {
+        try {
+            User user = userService.getUserOrThrow(id);
             UserForm userForm = new UserForm();
-            BeanUtils.copyProperties(user.get(), userForm);
+            BeanUtils.copyProperties(user, userForm);
             model.addAttribute("userForm", userForm);
             return "users/form";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/users";
         }
-        return "redirect:/users";
     }
     
     @GetMapping("/view/{id}")
@@ -83,15 +70,11 @@ public class UserController {
         logger.info("Accediendo a viewUser con id: {}", id);
         
         try {
-            Optional<User> user = userService.findById(id);
-            logger.info("¿Usuario encontrado?: {}", user.isPresent());
-            
-            if (user.isPresent()) {
-                model.addAttribute("user", user.get());
-                logger.info("Retornando vista users/view para usuario: {}", user.get().getUsername());
-                return "users/view";
-            }
-            
+            User user = userService.getUserOrThrow(id);
+            model.addAttribute("user", user);
+            logger.info("Retornando vista users/view para usuario: {}", user.getUsername());
+            return "users/view";
+        } catch (IllegalArgumentException e) {
             logger.warn("Usuario no encontrado para id: {}", id);
             return "redirect:/users";
         } catch (Exception e) {
@@ -103,8 +86,10 @@ public class UserController {
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            userService.deleteById(id);
+            userService.deleteUser(id);
             redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado exitosamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el usuario: " + e.getMessage());
         }

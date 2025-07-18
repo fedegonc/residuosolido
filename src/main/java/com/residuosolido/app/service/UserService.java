@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +14,20 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Servicio para operaciones con la entidad User
+ * Servicio para operaciones CRUD y de negocio con la entidad User
  */
 @Service
 public class UserService extends GenericEntityService<User, Long> {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserValidationService validationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserValidationService validationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.validationService = validationService;
     }
 
     @Override
@@ -68,33 +71,7 @@ public class UserService extends GenericEntityService<User, Long> {
         return userRepository.findByUsername(username).isPresent();
     }
     
-    /**
-     * Valida que el username y email sean únicos para un usuario
-     * @param user Usuario a validar
-     * @throws IllegalArgumentException si hay duplicados
-     */
-    public void validateUserUniqueness(User user) {
-        if (user.getId() == null) {
-            // Usuario nuevo - validar duplicados
-            if (existsByUsername(user.getUsername())) {
-                throw new IllegalArgumentException("El nombre de usuario ya existe");
-            }
-            if (existsByEmail(user.getEmail())) {
-                throw new IllegalArgumentException("El email ya existe");
-            }
-        } else {
-            // Usuario existente - validar duplicados excluyendo el usuario actual
-            Optional<User> existingUserByUsername = findByUsername(user.getUsername());
-            if (existingUserByUsername.isPresent() && !existingUserByUsername.get().getId().equals(user.getId())) {
-                throw new IllegalArgumentException("El nombre de usuario ya existe");
-            }
-            
-            Optional<User> existingUserByEmail = findByEmail(user.getEmail());
-            if (existingUserByEmail.isPresent() && !existingUserByEmail.get().getId().equals(user.getId())) {
-                throw new IllegalArgumentException("El email ya existe");
-            }
-        }
-    }
+
     
     /**
      * Crea un nuevo usuario con contraseña encriptada
@@ -103,7 +80,7 @@ public class UserService extends GenericEntityService<User, Long> {
      * @return Usuario creado
      */
     public User createUser(User user, String password) {
-        validateUserUniqueness(user);
+        validationService.validateUserUniqueness(user);
         
         user.setPassword(passwordEncoder.encode(password));
         user.setActive(true);
@@ -122,7 +99,7 @@ public class UserService extends GenericEntityService<User, Long> {
      * @return Usuario actualizado
      */
     public User updateUser(User user, String newPassword) {
-        validateUserUniqueness(user);
+        validationService.validateUserUniqueness(user);
         
         Optional<User> existingUserOpt = findById(user.getId());
         if (existingUserOpt.isEmpty()) {
@@ -136,9 +113,57 @@ public class UserService extends GenericEntityService<User, Long> {
         
         // Actualizar contraseña solo si se proporciona
         if (newPassword != null && !newPassword.trim().isEmpty()) {
+            validationService.validatePassword(newPassword);
             existingUser.setPassword(passwordEncoder.encode(newPassword));
         }
         
         return save(existingUser);
+    }
+    
+    /**
+     * Guarda un usuario a partir de un DTO UserForm
+     * Maneja tanto la creación como la actualización
+     * @param userForm DTO con los datos del formulario
+     * @return Usuario guardado
+     * @throws IllegalArgumentException si hay errores de validación
+     */
+    public User saveUser(UserForm userForm) {
+        // Validar datos del formulario
+        validationService.validateUserForm(userForm);
+        
+        User user = new User();
+        BeanUtils.copyProperties(userForm, user);
+        
+        if (user.getId() == null) {
+            // Usuario nuevo
+            return createUser(user, userForm.getNewPassword());
+        } else {
+            // Usuario existente
+            return updateUser(user, userForm.getNewPassword());
+        }
+    }
+    
+    /**
+     * Obtiene un usuario por su ID o lanza una excepción si no existe
+     * @param id ID del usuario
+     * @return Usuario encontrado
+     * @throws IllegalArgumentException si el usuario no existe
+     */
+    public User getUserOrThrow(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
+    }
+    
+    
+    /**
+     * Elimina un usuario por su ID
+     * @param id ID del usuario a eliminar
+     * @throws IllegalArgumentException si el usuario no existe
+     */
+    public void deleteUser(Long id) {
+        if (!existsById(id)) {
+            throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
+        }
+        deleteById(id);
     }
 }

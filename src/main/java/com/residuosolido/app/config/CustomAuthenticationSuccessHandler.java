@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,28 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             Authentication authentication) throws IOException, ServletException {
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
+
+        for (String role : roles) {
+            String targetUrl = ROLE_TARGET_URL_MAP.get(role);
+            if (targetUrl != null) {
+                response.sendRedirect(targetUrl);
+                return;
+            }
+        }
+
+        // Si no encuentra ningún rol, lo mando a home.
+        response.sendRedirect("/");
+    }
+
+    /**
+     * Método público para redireccionar usuarios según su rol
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param userDetails UserDetails del usuario autenticado
+     * @throws IOException si hay error en la redirección
+     */
+    public void redirectByRole(HttpServletRequest request, HttpServletResponse response, UserDetails userDetails) throws IOException {
+        Set<String> roles = AuthorityUtils.authorityListToSet(userDetails.getAuthorities());
 
         for (String role : roles) {
             String targetUrl = ROLE_TARGET_URL_MAP.get(role);

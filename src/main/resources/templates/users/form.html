@@ -96,9 +96,9 @@
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                     required>
                                 <option value="">Selecciona un rol</option>
-                                <option value="USER" th:selected="${user.role != null and user.role.name() == 'USER'}">👤 Usuario - Puede solicitar recolecciones</option>
-                                <option value="ORGANIZATION" th:selected="${user.role != null and user.role.name() == 'ORGANIZATION'}">🏢 Organización - Puede gestionar materiales y recolecciones</option>
-                                <option value="ADMIN" th:selected="${user.role != null and user.role.name() == 'ADMIN'}">⚙️ Administrador - Acceso completo al sistema</option>
+                                <option value="USER" th:selected="${userForm.role != null and userForm.role.name() == 'USER'}">👤 Usuario - Puede solicitar recolecciones</option>
+                                <option value="ORGANIZATION" th:selected="${userForm.role != null and userForm.role.name() == 'ORGANIZATION'}">🏢 Organización - Puede gestionar materiales y recolecciones</option>
+                                <option value="ADMIN" th:selected="${userForm.role != null and userForm.role.name() == 'ADMIN'}">⚙️ Administrador - Acceso completo al sistema</option>
                             </select>
                             <p class="mt-1 text-sm text-gray-500">Selecciona el rol que determinará los permisos del usuario</p>
                         </div>
