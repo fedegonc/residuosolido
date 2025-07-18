@@ -56,6 +56,11 @@ public class AuthController {
     public String showLoginForm() {
         return "auth/login"; 
     }
-
-
+    
+    @GetMapping("/auth/logout")
+    public String showLogoutPage() {
+        return "index";
+    }
+    
+    
 }

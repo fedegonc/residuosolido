@@ -42,7 +42,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/auth/login?logout")
+                .logoutSuccessUrl("/auth/logout")
                 .permitAll()
             )
             // Desactivamos la protección de sesión para depuración
