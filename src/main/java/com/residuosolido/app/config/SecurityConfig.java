@@ -26,12 +26,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // CONFIGURACIÓN TEMPORAL PARA DEPURACIÓN - NO USAR EN PRODUCCIÓN
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                // Permitimos todas las solicitudes sin autenticación temporalmente
-                .anyRequest().permitAll()
+                // Rutas públicas
+                .requestMatchers("/auth/**", "/","/","/index", "/css/**", "/js/**", "/images/**").permitAll()
+                // Rutas de administrador
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Rutas de organización
+                .requestMatchers("/org/**").hasRole("ORGANIZATION")
+                // Rutas de usuario
+                .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN", "ORGANIZATION")
+                // Otras rutas requieren autenticación
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")

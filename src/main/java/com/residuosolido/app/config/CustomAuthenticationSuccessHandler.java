@@ -9,33 +9,38 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * Manejador personalizado para redireccionar usuarios según su rol después del login
+ * Manejador personalizado para redireccionar usuarios según su rol después del login.
  */
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    private static final Map<String, String> ROLE_TARGET_URL_MAP = Map.of(
+            "ROLE_ADMIN", "/admin/dashboard",
+            "ROLE_ORG", "/org/dashboard",
+            "ROLE_USER", "/users/dashboard"
+    );
 
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        
-        // Obtener roles del usuario autenticado
+
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-        
-        // Redireccionar según el rol
-        if (roles.contains("ROLE_ADMIN")) {
-            response.sendRedirect("/admin/dashboard");
-        } else if (roles.contains("ROLE_ORG")) {
-            response.sendRedirect("/org/dashboard");
-        } else if (roles.contains("ROLE_USER")) {
-            response.sendRedirect("/dashboard");
-        } else {
-            // Si no tiene un rol específico, redirigir a la página principal
-            response.sendRedirect("/");
+
+        for (String role : roles) {
+            String targetUrl = ROLE_TARGET_URL_MAP.get(role);
+            if (targetUrl != null) {
+                response.sendRedirect(targetUrl);
+                return;
+            }
         }
+
+        // Si no encuentra ningún rol, lo mando a home.
+        response.sendRedirect("/");
     }
 }

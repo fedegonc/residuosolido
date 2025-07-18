@@ -1,19 +1,18 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/users")
@@ -24,9 +23,6 @@ public class UserController {
     @Autowired
     private UserService userService;
     
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.findAll());
@@ -35,48 +31,48 @@ public class UserController {
     
     @GetMapping("/create")
     public String createUserForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("userForm", new UserForm());
         return "users/form";
     }
     
     @PostMapping
-    public String saveUser(@ModelAttribute User user, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String saveUser(@ModelAttribute UserForm userForm, RedirectAttributes redirectAttributes) {
         try {
-            // Validación: evitar duplicados de username o email
-            if (userService.existsByUsername(user.getUsername()) || userService.existsByEmail(user.getEmail())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "El nombre de usuario o el email ya existen.");
-                return "redirect:/users/create";
-            }
-    
+            // Convertir DTO a entidad
+            User user = new User();
+            BeanUtils.copyProperties(userForm, user);
+            
             if (user.getId() == null) {
-                String newPassword = request.getParameter("newPassword");
-                if (newPassword != null && !newPassword.trim().isEmpty()) {
-                    user.setPassword(passwordEncoder.encode(newPassword));
-                } else {
+                // Usuario nuevo
+                if (userForm.getNewPassword() == null || userForm.getNewPassword().trim().isEmpty()) {
                     redirectAttributes.addFlashAttribute("errorMessage", "La contraseña es requerida para usuarios nuevos");
                     return "redirect:/users/create";
                 }
-                user.setActive(true);
-                user.setCreatedAt(LocalDateTime.now());
-                if (user.getPreferredLanguage() == null) {
-                    user.setPreferredLanguage("es");
-                }
+                userService.createUser(user, userForm.getNewPassword());
+            } else {
+                // Usuario existente
+                userService.updateUser(user, userForm.getNewPassword());
             }
-    
-            userService.save(user);
+            
             redirectAttributes.addFlashAttribute("successMessage", "Usuario guardado exitosamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            String redirectUrl = user.getId() == null ? "redirect:/users/create" : "redirect:/users/edit/" + user.getId();
+            return redirectUrl;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el usuario: " + e.getMessage());
+            logger.error("Error al guardar usuario: ", e);
         }
         return "redirect:/users";
     }
-    
     
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         Optional<User> user = userService.findById(id);
         if (user.isPresent()) {
-            model.addAttribute("user", user.get());
+            UserForm userForm = new UserForm();
+            BeanUtils.copyProperties(user.get(), userForm);
+            model.addAttribute("userForm", userForm);
             return "users/form";
         }
         return "redirect:/users";
@@ -113,6 +109,11 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el usuario: " + e.getMessage());
         }
         return "redirect:/users";
+    }
+
+    @GetMapping("/dashboard")
+    public String userDashboard() {
+        return "users/dashboard"; 
     }
 
 
