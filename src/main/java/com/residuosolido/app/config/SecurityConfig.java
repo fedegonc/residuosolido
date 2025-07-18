@@ -34,15 +34,15 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
-                .loginPage("/entrar")
-                .loginProcessingUrl("/login")
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/auth/login")
                 .defaultSuccessUrl("/", true)
                 .successHandler(successHandler)
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/auth/login?logout")
                 .permitAll()
             )
             // Desactivamos la protección de sesión para depuración

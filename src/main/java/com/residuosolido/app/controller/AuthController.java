@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/auth")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -20,13 +19,13 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/register")
+    @GetMapping("/auth/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
         return "auth/register";
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public String registerUser(@ModelAttribute User user) {
         
         // Verificar si el usuario ya existe
@@ -51,10 +50,12 @@ public class AuthController {
         // Guardar el usuario
         userRepository.save(user);
 
-        return "redirect:/entrar?success=Registro exitoso";
+        return "redirect:/auth/login?success=Registro exitoso";
     }
-    @GetMapping("/login")
-public String showLoginForm() {
-    return "auth/login"; // Si tu vista está en templates/auth/login.html
-}
+    @GetMapping("/auth/login")
+    public String showLoginForm() {
+        return "auth/login"; 
+    }
+
+
 }

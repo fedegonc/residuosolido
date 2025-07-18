@@ -58,9 +58,7 @@
                     </div>
                     
                     <!-- Links de navegación -->
-                    <div class="hidden md:ml-6 md:flex md:space-x-8" sec:authorize="isAuthenticated()">
-                        <th:block th:replace="~{::navLinks(true)}"></th:block>
-                    </div>
+                    
                 </div>
                 
                 <!-- Menú de usuario -->
@@ -76,7 +74,7 @@
                         </div>
                     </div>
                     <div class="ml-3 relative" sec:authorize="!isAuthenticated()">
-                        <a href="/login" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-dark">
+                        <a href="/auth/login" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-dark">
                             Iniciar Sesión
                         </a>
                     </div>
@@ -95,9 +93,7 @@
         
         <!-- Menú móvil, oculto por defecto -->
         <div id="mobile-menu" class="md:hidden hidden">
-            <div class="pt-2 pb-3 space-y-1" sec:authorize="isAuthenticated()">
-                <th:block th:replace="~{::navLinks(false)}"></th:block>
-            </div>
+            
             
             <div class="pt-4 pb-3 border-t border-gray-200" sec:authorize="isAuthenticated()">
                 <div class="flex items-center px-4">
