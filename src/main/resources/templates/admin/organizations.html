@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gestión de Organizaciones')}"></head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6">Gestión de Organizaciones</h1>
+            
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left">Usuario</th>
+                                    <th class="px-4 py-2 text-left">Nombre</th>
+                                    <th class="px-4 py-2 text-left">Email</th>
+                                    <th class="px-4 py-2 text-left">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user : ${users}" class="border-b">
+                                    <td class="px-4 py-2" th:text="${user.username}">usuario</td>
+                                    <td class="px-4 py-2" th:text="${user.firstName + ' ' + user.lastName}">Nombre</td>
+                                    <td class="px-4 py-2" th:text="${user.email}">email@example.com</td>
+                                    <td class="px-4 py-2">
+                                        <a th:href="@{/admin/users/{id}/edit-organization(id=${user.id})}" 
+                                           class="text-blue-600 hover:text-blue-800 mr-2">
+                                            Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <a href="/admin/dashboard" class="text-gray-600 hover:text-gray-800">← Volver al Dashboard</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

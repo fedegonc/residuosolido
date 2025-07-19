@@ -24,11 +24,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     
-    @GetMapping
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAll());
-        return "users/list";
-    }
+    
     
     @GetMapping("/create")
     public String createUserForm(Model model) {

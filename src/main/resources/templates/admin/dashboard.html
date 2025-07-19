@@ -5,7 +5,7 @@
     <div th:fragment="content">
         <!-- Encabezado del Dashboard -->
         <div class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto py-4 px-4">
                 <h1 class="text-3xl font-bold text-gray-900">
                     Panel de Administración
                     <span class="inline-flex items-center justify-center px-2 py-1 ml-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded">ADMIN</span>
@@ -21,8 +21,8 @@
             <!-- Tarjetas de estadísticas -->
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Tarjeta de usuarios -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="px-4 py-5 sm:p-6">
+                <div class="bg-white shadow rounded-lg">
+                    <div class="p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +43,7 @@
                     </div>
                     <div class="bg-gray-50 px-4 py-4 sm:px-6">
                         <div class="text-sm">
-                            <a href="/users" class="font-medium text-green-600 hover:text-green-500">
+                            <a href="/admin/users" class="font-medium text-green-600 hover:text-green-500">
                                 Ver todos los usuarios <span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
@@ -51,8 +51,8 @@
                 </div>
 
                 <!-- Tarjeta de organizaciones -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="px-4 py-5 sm:p-6">
+                <div class="bg-white shadow rounded-lg">
+                    <div class="p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,18 +74,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-4 sm:px-6">
-                        <div class="text-sm">
-                            <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                                Ver todas las organizaciones <span aria-hidden="true">&rarr;</span>
-                            </a>
-                        </div>
+                    <div class="bg-gray-50 px-3 py-2">
+                        <a href="/admin/users" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+                            Gestionar usuarios →
+                        </a>
                     </div>
                 </div>
 
                 <!-- Tarjeta de posts y categorías -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="px-4 py-5 sm:p-6">
+                <div class="bg-white shadow rounded-lg">
+                    <div class="p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-purple-500 rounded-md p-3">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,8 +114,8 @@
                 </div>
                 
                 <!-- Tarjeta de materiales reciclables -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="px-4 py-5 sm:p-6">
+                <div class="bg-white shadow rounded-lg">
+                    <div class="p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

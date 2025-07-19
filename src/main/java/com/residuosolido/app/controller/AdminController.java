@@ -51,6 +51,12 @@ public class AdminController {
         posts.add(new Post(nextPostId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
     }
     
+    @GetMapping("/users")
+    public String listUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "users/list";
+    }
+
     @GetMapping("/dashboard")
     public String showAdminDashboard(Model model) {
         // Obtener estadísticas para el dashboard
@@ -163,6 +169,41 @@ public class AdminController {
         }
         
         return "redirect:/admin/posts";
+    }
+    
+    @GetMapping("/users/{id}/edit-organization")
+    public String editOrganizationForm(@PathVariable Long id, Model model) {
+        Optional<com.residuosolido.app.model.User> userOpt = userRepository.findById(id);
+        
+        if (userOpt.isPresent() && userOpt.get().getRole() == com.residuosolido.app.model.Role.ORGANIZATION) {
+            model.addAttribute("user", userOpt.get());
+            return "admin/edit-organization";
+        }
+        
+        return "redirect:/users";
+    }
+    
+    @PostMapping("/users/{id}/update-organization")
+    public String updateOrganization(@PathVariable Long id, @RequestParam String email, 
+                                   @RequestParam String firstName, @RequestParam String lastName) {
+        Optional<com.residuosolido.app.model.User> userOpt = userRepository.findById(id);
+        
+        if (userOpt.isPresent() && userOpt.get().getRole() == com.residuosolido.app.model.Role.ORGANIZATION) {
+            com.residuosolido.app.model.User user = userOpt.get();
+            user.setEmail(email);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            userRepository.save(user);
+        }
+        
+        return "redirect:/users";
+    }
+    
+    @GetMapping("/organizations")
+    public String listOrganizations(Model model) {
+        List<com.residuosolido.app.model.User> organizations = userRepository.findByRole(com.residuosolido.app.model.Role.ORGANIZATION);
+        model.addAttribute("users", organizations);
+        return "admin/organizations";
     }
     
     // Método público para obtener posts (usado por otros controladores)
