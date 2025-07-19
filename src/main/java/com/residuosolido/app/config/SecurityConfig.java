@@ -30,7 +30,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 // Rutas públicas
-                .requestMatchers("/auth/**", "/","/","/index", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/auth/**", "/","/**","/index", "/css/**", "/js/**", "/images/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de organización

@@ -1,36 +1,100 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <th:block th:replace="~{fragments/layout :: head('Sistema de Gestión de Residuos')}"/>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Inicio')}">
+    <title>Inicio - Sistema de Gestión de Residuos Sólidos</title>
 </head>
-<body>
-    <th:block th:replace="~{fragments/layout :: navbar}"/>
 
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8 text-primary-600">Sistema de Gestión de Residuos Sólidos</h1>
-        
-        <!-- Usuarios -->
-        <div th:replace="~{fragments/userlist :: userlist}"/>
-        
-        <!-- Materiales -->
-        <div th:replace="~{fragments/materiallist :: materiallist}"/>
-        
-        <!-- Organizaciones -->
-        <div th:replace="~{fragments/organizationlist :: organizationlist}"/>
-        
-        <!-- Solicitudes -->
-        <div th:replace="~{fragments/requestlist :: requestlist}"/>
-        
-        <!-- Notificaciones -->
-        <div th:replace="~{fragments/notificationlist :: notificationlist}"/>
-        
-        <!-- Lista de Feedbacks -->
-        <div th:replace="~{fragments/feedbacklist :: feedbacklist}"/>
-        
-        <!-- Textos del Sistema -->
-        <div th:replace="~{fragments/systemtextlist :: systemtextlist}"/>
-    </div>
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-r from-green-600 to-green-800 text-white py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Sistema de Gestión de Residuos Sólidos</h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">
+                    Construyendo un futuro más limpio y sostenible para nuestra comunidad
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/auth/register" 
+                       class="bg-white text-green-600 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
+                        Únete Ahora
+                    </a>
+                    <a href="/posts" 
+                       class="border-2 border-white text-white hover:bg-white hover:text-green-600 font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
+                        Ver Noticias
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Section -->
+        <div th:if="${post}" class="py-12 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Últimas Noticias</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Mantente informado sobre las últimas iniciativas de reciclaje y gestión de residuos sólidos en tu comunidad.
+                    </p>
+                </div>
+                
+                <div class="max-w-md mx-auto">
+                    <div th:replace="~{fragments/post :: minimalPostCard(${post})}"></div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <a href="/posts" 
+                       class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                       Ver todas las noticias
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">¿Cómo Funciona?</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Nuestro sistema facilita la gestión integral de residuos sólidos en tu comunidad
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Solicita Recolección</h3>
+                        <p class="text-gray-600">Programa la recolección de tus residuos de manera fácil y rápida</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Seguimiento</h3>
+                        <p class="text-gray-600">Monitorea el estado de tus solicitudes en tiempo real</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Reportes</h3>
+                        <p class="text-gray-600">Accede a estadísticas y reportes de impacto ambiental</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <th:block th:replace="~{fragments/layout :: footer}"/>
+    <th:block th:replace="~{fragments/layout :: scripts}"/>
 </body>
 </html>

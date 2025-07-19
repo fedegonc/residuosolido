@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Posts')}"></head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6">Administrar Posts</h1>
+            
+            <!-- Lista de Posts -->
+            <div class="bg-white rounded-lg shadow mb-8">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold mb-4">Posts Existentes</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left">ID</th>
+                                    <th class="px-4 py-2 text-left">Título</th>
+                                    <th class="px-4 py-2 text-left">Categoría</th>
+                                    <th class="px-4 py-2 text-left">Contenido</th>
+                                    <th class="px-4 py-2 text-left">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="post : ${posts}" class="border-b">
+                                    <td class="px-4 py-2" th:text="${post.id}">1</td>
+                                    <td class="px-4 py-2" th:text="${post.title}">Título</td>
+                                    <td class="px-4 py-2">
+                                        <span th:each="cat : ${categories}" 
+                                              th:if="${cat.id == post.categoryId}" 
+                                              th:text="${cat.name}">Categoría</span>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span th:text="${#strings.abbreviate(post.content, 50)}">Contenido...</span>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <div class="flex space-x-2">
+                                            <a th:href="@{/admin/posts/{id}/edit(id=${post.id})}" 
+                                               class="text-blue-600 hover:text-blue-800">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                            <form th:action="@{/admin/posts/{id}/delete(id=${post.id})}" method="post" class="inline"
+                                                  onsubmit="return confirm('¿Estás seguro de eliminar este post?');">
+                                                <button type="submit" class="text-red-600 hover:text-red-800">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formularios -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Crear Post -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold mb-4">Crear Nuevo Post</h2>
+                        <form th:action="@{/admin/posts}" method="post" class="space-y-4">
+                            <input type="text" name="title" placeholder="Título" required 
+                                   class="w-full px-3 py-2 border rounded-lg">
+                            <textarea name="content" placeholder="Contenido" required 
+                                      class="w-full px-3 py-2 border rounded-lg h-24"></textarea>
+                            <input type="url" name="imageUrl" placeholder="URL de imagen" 
+                                   class="w-full px-3 py-2 border rounded-lg">
+                            <select name="categoryId" required class="w-full px-3 py-2 border rounded-lg">
+                                <option value="">Seleccionar categoría</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.name}">Categoría</option>
+                            </select>
+                            <button type="submit" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg">
+                                Crear Post
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Crear Categoría -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold mb-4">Crear Nueva Categoría</h2>
+                        <form th:action="@{/admin/categories}" method="post" class="space-y-4">
+                            <input type="text" name="name" placeholder="Nombre de categoría" required 
+                                   class="w-full px-3 py-2 border rounded-lg">
+                            <button type="submit" 
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">
+                                Crear Categoría
+                            </button>
+                        </form>
+                        
+                        <div class="mt-4">
+                            <h3 class="font-medium mb-2">Categorías Existentes:</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <div th:each="cat : ${categories}" class="flex items-center">
+                                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-l-full text-sm"
+                                          th:text="${cat.name}">Categoría</span>
+                                    <div class="flex">
+                                        <a th:href="@{/admin/categories/{id}/edit(id=${cat.id})}" 
+                                           class="px-2 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                        <form th:action="@{/admin/categories/{id}/delete(id=${cat.id})}" method="post" class="inline"
+                                              onsubmit="return confirm('¿Estás seguro de eliminar esta categoría? No se podrá eliminar si hay posts asociados.');">
+                                            <button type="submit" class="px-2 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-r-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enlace al Dashboard -->
+            <div class="mt-8 text-center">
+                <a href="/admin/dashboard" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Ir al Dashboard
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

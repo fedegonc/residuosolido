@@ -1,9 +1,11 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.CustomAuthenticationSuccessHandler;
+import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.controller.AdminController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class AuthController {
@@ -34,12 +38,22 @@ public class AuthController {
     public String index(
             @AuthenticationPrincipal UserDetails userDetails,
             HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response,
+            Model model) throws Exception {
 
         if (userDetails != null) {
             successHandler.redirectByRole(request, response, userDetails);
             return null;
         }
+        
+        // Obtener todos los posts del AdminController
+        List<Post> allPosts = AdminController.getAllPosts();
+        if (!allPosts.isEmpty()) {
+            // Mostrar el primer post (o todos si quieres)
+            model.addAttribute("post", allPosts.get(0));
+            model.addAttribute("posts", allPosts);
+        }
+        
         return "index";
     }
 

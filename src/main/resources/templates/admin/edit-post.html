@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Editar Post')}"></head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6">Editar Post</h1>
+            
+            <!-- Formulario de edición -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <form th:action="@{/admin/posts/{id}/update(id=${post.id})}" method="post" class="space-y-4">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
+                            <input type="text" name="title" id="title" th:value="${post.title}" required 
+                                   class="mt-1 w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        
+                        <div>
+                            <label for="content" class="block text-sm font-medium text-gray-700">Contenido</label>
+                            <textarea name="content" id="content" required 
+                                      class="mt-1 w-full px-3 py-2 border rounded-lg h-32" th:text="${post.content}"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="imageUrl" class="block text-sm font-medium text-gray-700">URL de imagen</label>
+                            <input type="url" name="imageUrl" id="imageUrl" th:value="${post.imageUrl}" 
+                                   class="mt-1 w-full px-3 py-2 border rounded-lg">
+                            <p class="mt-1 text-sm text-gray-500">Deja en blanco para no mostrar imagen</p>
+                        </div>
+                        
+                        <div>
+                            <label for="categoryId" class="block text-sm font-medium text-gray-700">Categoría</label>
+                            <select name="categoryId" id="categoryId" required class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                <option value="">Seleccionar categoría</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.name}"
+                                        th:selected="${cat.id == post.categoryId}">Categoría</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex justify-between pt-4">
+                            <a th:href="@{/admin/posts}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Cancelar
+                            </a>
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

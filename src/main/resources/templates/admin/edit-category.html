@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Editar Categoría')}"></head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6">Editar Categoría</h1>
+            
+            <!-- Formulario de edición -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <form th:action="@{/admin/categories/{id}/update(id=${category.id})}" method="post" class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Nombre de la Categoría</label>
+                            <input type="text" name="name" id="name" th:value="${category.name}" required 
+                                   class="mt-1 w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        
+                        <div class="flex justify-between pt-4">
+                            <a th:href="@{/admin/posts}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Cancelar
+                            </a>
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

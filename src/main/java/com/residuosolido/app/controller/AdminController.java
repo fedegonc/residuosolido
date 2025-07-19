@@ -1,35 +1,51 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Category;
+import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;  // Añadir esta línea
+import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- * Controlador para la sección de administración
- * Maneja las rutas y vistas específicas para usuarios con rol ADMIN
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Controller
-@RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/admin")
 public class AdminController {
-
+    
+    // Datos en memoria
+    private static List<Category> categories = new ArrayList<>();
+    private static List<Post> posts = new ArrayList<>();
+    private static Long nextCategoryId = 1L;
+    private static Long nextPostId = 1L;
+    
     private final UserRepository userRepository;
-
+    
     @Autowired
     public AdminController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    /**
-     * Muestra el dashboard principal de administración
-     * @param model Modelo para pasar datos a la vista
-     * @return Vista del dashboard de administración
-     */
+    
+    static {
+        // Categorías predefinidas
+        categories.add(new Category(nextCategoryId++, "Reciclaje"));
+        categories.add(new Category(nextCategoryId++, "Compostaje"));
+        categories.add(new Category(nextCategoryId++, "Educación"));
+        
+        // Posts de ejemplo
+        posts.add(new Post(nextPostId++, "Campaña de Reciclaje 2025", "Únete a nuestra campaña de reciclaje", "https://via.placeholder.com/400x200", 1L));
+        posts.add(new Post(nextPostId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
+    }
+    
     @GetMapping("/dashboard")
     public String showAdminDashboard(Model model) {
         // Obtener estadísticas para el dashboard
@@ -37,8 +53,126 @@ public class AdminController {
         
         // Agregar datos al modelo
         model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalPosts", posts.size());
+        model.addAttribute("totalCategories", categories.size());
         model.addAttribute("pageTitle", "Panel de Administración");
         
         return "admin/dashboard";
+    }
+    
+    @GetMapping("/posts")
+    public String adminPosts(Model model) {
+        model.addAttribute("posts", posts);
+        model.addAttribute("categories", categories);
+        return "admin/posts";
+    }
+    
+    @PostMapping("/posts")
+    public String createPost(@RequestParam String title, @RequestParam String content, 
+                           @RequestParam String imageUrl, @RequestParam Long categoryId) {
+        posts.add(new Post(nextPostId++, title, content, imageUrl, categoryId));
+        return "redirect:/admin/posts";
+    }
+    
+    @GetMapping("/posts/{id}/edit")
+    public String editPostForm(@PathVariable Long id, Model model) {
+        Optional<Post> postOpt = posts.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst();
+        
+        if (postOpt.isPresent()) {
+            model.addAttribute("post", postOpt.get());
+            model.addAttribute("categories", categories);
+            return "admin/edit-post";
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/posts/{id}/update")
+    public String updatePost(@PathVariable Long id, 
+                           @RequestParam String title, 
+                           @RequestParam String content,
+                           @RequestParam String imageUrl, 
+                           @RequestParam Long categoryId) {
+        
+        Optional<Post> postOpt = posts.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst();
+        
+        if (postOpt.isPresent()) {
+            Post post = postOpt.get();
+            post.setTitle(title);
+            post.setContent(content);
+            post.setImageUrl(imageUrl);
+            post.setCategoryId(categoryId);
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost(@PathVariable Long id) {
+        posts.removeIf(p -> p.getId().equals(id));
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/categories")
+    public String createCategory(@RequestParam String name) {
+        categories.add(new Category(nextCategoryId++, name));
+        return "redirect:/admin/posts";
+    }
+    
+    @GetMapping("/categories/{id}/edit")
+    public String editCategoryForm(@PathVariable Long id, Model model) {
+        Optional<Category> categoryOpt = categories.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst();
+        
+        if (categoryOpt.isPresent()) {
+            model.addAttribute("category", categoryOpt.get());
+            return "admin/edit-category";
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/categories/{id}/update")
+    public String updateCategory(@PathVariable Long id, @RequestParam String name) {
+        Optional<Category> categoryOpt = categories.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst();
+        
+        if (categoryOpt.isPresent()) {
+            Category category = categoryOpt.get();
+            category.setName(name);
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/categories/{id}/delete")
+    public String deleteCategory(@PathVariable Long id) {
+        // Verificar si hay posts usando esta categoría
+        boolean inUse = posts.stream().anyMatch(p -> p.getCategoryId().equals(id));
+        
+        if (!inUse) {
+            categories.removeIf(c -> c.getId().equals(id));
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    // Método público para obtener posts (usado por otros controladores)
+    public static List<Post> getAllPosts() {
+        return new ArrayList<>(posts);
+    }
+    
+    public static String getCategoryName(Long categoryId) {
+        return categories.stream()
+                .filter(c -> c.getId().equals(categoryId))
+                .map(Category::getName)
+                .findFirst()
+                .orElse("Sin categoría");
     }
 }
