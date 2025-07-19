@@ -36,7 +36,7 @@ public class SecurityConfig {
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")
                 // Rutas de usuario
-                .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN", "ORGANIZATION")
+                .requestMatchers("/users/**").hasAnyRole("USER")
                 // Otras rutas requieren autenticación
                 .anyRequest().authenticated()
             )
