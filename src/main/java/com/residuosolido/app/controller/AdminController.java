@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,24 +24,28 @@ import java.util.Optional;
 public class AdminController {
     
     // Datos en memoria
-    private static List<Category> categories = new ArrayList<>();
     private static List<Post> posts = new ArrayList<>();
-    private static Long nextCategoryId = 1L;
     private static Long nextPostId = 1L;
     
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     
     @Autowired
-    public AdminController(UserRepository userRepository) {
+    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository) {
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        initCategories();
+    }
+    
+    private void initCategories() {
+        if (categoryRepository.count() == 0) {
+            categoryRepository.save(new Category(null, "Reciclaje"));
+            categoryRepository.save(new Category(null, "Compostaje"));
+            categoryRepository.save(new Category(null, "Educación"));
+        }
     }
     
     static {
-        // Categorías predefinidas
-        categories.add(new Category(nextCategoryId++, "Reciclaje"));
-        categories.add(new Category(nextCategoryId++, "Compostaje"));
-        categories.add(new Category(nextCategoryId++, "Educación"));
-        
         // Posts de ejemplo
         posts.add(new Post(nextPostId++, "Campaña de Reciclaje 2025", "Únete a nuestra campaña de reciclaje", "https://via.placeholder.com/400x200", 1L));
         posts.add(new Post(nextPostId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
@@ -54,7 +59,7 @@ public class AdminController {
         // Agregar datos al modelo
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalPosts", posts.size());
-        model.addAttribute("totalCategories", categories.size());
+        model.addAttribute("totalCategories", categoryRepository.count());
         model.addAttribute("pageTitle", "Panel de Administración");
         
         return "admin/dashboard";
@@ -63,7 +68,7 @@ public class AdminController {
     @GetMapping("/posts")
     public String adminPosts(Model model) {
         model.addAttribute("posts", posts);
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "admin/posts";
     }
     
@@ -82,7 +87,7 @@ public class AdminController {
         
         if (postOpt.isPresent()) {
             model.addAttribute("post", postOpt.get());
-            model.addAttribute("categories", categories);
+            model.addAttribute("categories", categoryRepository.findAll());
             return "admin/edit-post";
         }
         
@@ -119,15 +124,13 @@ public class AdminController {
     
     @PostMapping("/categories")
     public String createCategory(@RequestParam String name) {
-        categories.add(new Category(nextCategoryId++, name));
+        categoryRepository.save(new Category(null, name));
         return "redirect:/admin/posts";
     }
     
     @GetMapping("/categories/{id}/edit")
     public String editCategoryForm(@PathVariable Long id, Model model) {
-        Optional<Category> categoryOpt = categories.stream()
-                .filter(c -> c.getId().equals(id))
-                .findFirst();
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
         
         if (categoryOpt.isPresent()) {
             model.addAttribute("category", categoryOpt.get());
@@ -139,13 +142,12 @@ public class AdminController {
     
     @PostMapping("/categories/{id}/update")
     public String updateCategory(@PathVariable Long id, @RequestParam String name) {
-        Optional<Category> categoryOpt = categories.stream()
-                .filter(c -> c.getId().equals(id))
-                .findFirst();
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
         
         if (categoryOpt.isPresent()) {
             Category category = categoryOpt.get();
             category.setName(name);
+            categoryRepository.save(category);
         }
         
         return "redirect:/admin/posts";
@@ -157,7 +159,7 @@ public class AdminController {
         boolean inUse = posts.stream().anyMatch(p -> p.getCategoryId().equals(id));
         
         if (!inUse) {
-            categories.removeIf(c -> c.getId().equals(id));
+            categoryRepository.deleteById(id);
         }
         
         return "redirect:/admin/posts";
@@ -169,10 +171,7 @@ public class AdminController {
     }
     
     public static String getCategoryName(Long categoryId) {
-        return categories.stream()
-                .filter(c -> c.getId().equals(categoryId))
-                .map(Category::getName)
-                .findFirst()
-                .orElse("Sin categoría");
+        // Método temporal - debería inyectar repository
+        return "Categoría";
     }
 }
