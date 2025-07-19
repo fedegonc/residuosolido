@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nueva Solicitud')}"></head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6">Solicitar Recolección de Reciclaje</h1>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <form th:action="@{/requests}" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Seleccionar Organización</label>
+                        <select name="organizationId" required class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">Elegir organización...</option>
+                            <option th:each="org : ${organizations}" 
+                                    th:value="${org.id}" 
+                                    th:text="${org.firstName + ' ' + org.lastName}">Organización</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Dirección de Recolección</label>
+                        <textarea name="address" required placeholder="Ingrese su dirección completa"
+                                  class="w-full px-3 py-2 border rounded-lg h-20"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Descripción de Materiales</label>
+                        <textarea name="description" required placeholder="Describa qué materiales desea reciclar"
+                                  class="w-full px-3 py-2 border rounded-lg h-24"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-between pt-4">
+                        <a href="/" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md">
+                            Enviar Solicitud
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

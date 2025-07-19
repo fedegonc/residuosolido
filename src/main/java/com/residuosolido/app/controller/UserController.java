@@ -2,6 +2,8 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.RequestRepository;
+import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,5 +109,31 @@ public class UserController {
         return "users/profile";
     }
 
+    @Autowired
+    private RequestRepository requestRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @GetMapping("/new")
+    public String newRequestForm(Model model) {
+        model.addAttribute("organizations", userRepository.findByRole(com.residuosolido.app.model.Role.ORGANIZATION));
+        return "requests/form";
+    }
+    
+    @PostMapping
+    public String createRequest(@RequestParam Long organizationId, 
+                              @RequestParam String address,
+                              @RequestParam String description) {
+        // Crear solicitud básica - implementación mínima
+        com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
+        com.residuosolido.app.model.Organization org = new com.residuosolido.app.model.Organization();
+        org.setId(organizationId);
+        request.setOrganization(org);
+        request.setCollectionAddress(address);
+        request.setNotes(description);
+        requestRepository.save(request);
+        return "redirect:/";
+    }
 
 }
