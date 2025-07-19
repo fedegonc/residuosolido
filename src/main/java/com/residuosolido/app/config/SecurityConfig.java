@@ -33,9 +33,11 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**", "/", "/index", "/css/**", "/js/**", "/images/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                
-                .requestMatchers("/users/**", "/requests/**").hasRole("USER")
-                
+                // Rutas de usuarios (accesibles por ADMIN y USER)
+                .requestMatchers("/users/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/requests/**").hasRole("USER")
+                // Feedback requiere autenticación
+                .requestMatchers("/feedback/**").authenticated()
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")
                 // Otras rutas requieren autenticación

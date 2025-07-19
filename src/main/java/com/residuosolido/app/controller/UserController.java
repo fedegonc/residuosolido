@@ -26,7 +26,23 @@ public class UserController {
     @Autowired
     private UserService userService;
     
+    @Autowired
+    private UserRepository userRepository;
     
+    @GetMapping
+    public String listUsers(@RequestParam(required = false) String role, Model model) {
+        if (role != null && !role.isEmpty()) {
+            try {
+                com.residuosolido.app.model.Role roleEnum = com.residuosolido.app.model.Role.valueOf(role);
+                model.addAttribute("users", userRepository.findByRole(roleEnum));
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("users", userRepository.findAll());
+            }
+        } else {
+            model.addAttribute("users", userRepository.findAll());
+        }
+        return "users/list";
+    }
     
     @GetMapping("/create")
     public String createUserForm(Model model) {
@@ -34,7 +50,7 @@ public class UserController {
         return "users/form";
     }
     
-    @PostMapping
+    @PostMapping("/save")
     public String saveUser(@ModelAttribute UserForm userForm, RedirectAttributes redirectAttributes) {
         try {
             userService.saveUser(userForm);
@@ -112,16 +128,13 @@ public class UserController {
     @Autowired
     private RequestRepository requestRepository;
     
-    @Autowired
-    private UserRepository userRepository;
-    
     @GetMapping("/new")
     public String newRequestForm(Model model) {
         model.addAttribute("organizations", userRepository.findByRole(com.residuosolido.app.model.Role.ORGANIZATION));
         return "requests/form";
     }
     
-    @PostMapping
+    @PostMapping("/requests")
     public String createRequest(@RequestParam Long organizationId, 
                               @RequestParam String address,
                               @RequestParam String description) {

@@ -2,11 +2,12 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Feedback;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.FeedbackRepository;
 import com.residuosolido.app.repository.UserRepository;
-import com.residuosolido.app.service.FeedbackService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,50 +17,34 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/feedback")
 public class FeedbackController {
 
-    private final FeedbackService feedbackService;
-    private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
     
     @Autowired
-    public FeedbackController(FeedbackService feedbackService, UserRepository userRepository) {
-        this.feedbackService = feedbackService;
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
     
     @GetMapping
-    public String listAll(Model model) {
-        model.addAttribute("feedbacks", feedbackService.findAll());
-        return "feedback/list";
-    }
-    
-    @GetMapping("/new")
     public String showFeedbackForm(Model model) {
         model.addAttribute("feedback", new Feedback());
         return "feedback/form";
     }
     
-    @PostMapping("/save")
-    public String saveFeedback(@ModelAttribute Feedback feedback, 
-                               @AuthenticationPrincipal UserDetails userDetails,
-                               RedirectAttributes redirectAttributes) {
-        
-        if (userDetails != null) {
-            User user = userRepository.findByUsername(userDetails.getUsername())
+    @PostMapping
+    public String saveFeedback(@ModelAttribute Feedback feedback, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            logger.info("Intentando guardar feedback para usuario: {}", authentication.getName());
+            User user = userRepository.findByUsername(authentication.getName())
                     .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
             feedback.setUser(user);
-            feedbackService.save(feedback);
+            feedbackRepository.save(feedback);
+            logger.info("Feedback guardado exitosamente");
             redirectAttributes.addFlashAttribute("successMessage", "¡Gracias por tu feedback!");
-            return "redirect:/";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Debes iniciar sesión para enviar feedback");
-            return "redirect:/login";
+        } catch (Exception e) {
+            logger.error("Error al guardar feedback: ", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al enviar feedback: " + e.getMessage());
         }
-    }
-    
-    @GetMapping("/{id}")
-    public String viewFeedback(@PathVariable("id") Long id, Model model) {
-        Feedback feedback = feedbackService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Feedback no encontrado"));
-        model.addAttribute("feedback", feedback);
-        return "feedback/detail";
+        return "redirect:/feedback";
     }
 }

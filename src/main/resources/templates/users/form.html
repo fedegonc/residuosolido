@@ -30,7 +30,7 @@
 
             <!-- Form -->
             <div class="bg-white shadow rounded-lg p-6">
-                <form th:action="@{/users}" th:object="${userForm}" method="post">
+                <form th:action="@{/users/save}" th:object="${userForm}" method="post">
                     <input type="hidden" th:field="*{id}" />
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

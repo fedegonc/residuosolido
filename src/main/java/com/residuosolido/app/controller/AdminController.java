@@ -4,6 +4,7 @@ import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.repository.CategoryRepository;
+import com.residuosolido.app.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,11 +30,13 @@ public class AdminController {
     
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final FeedbackRepository feedbackRepository;
     
     @Autowired
-    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository) {
+    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository, FeedbackRepository feedbackRepository) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.feedbackRepository = feedbackRepository;
         initCategories();
     }
     
@@ -51,10 +54,10 @@ public class AdminController {
         posts.add(new Post(nextPostId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
     }
     
-    @GetMapping("/users")
-    public String listUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
-        return "users/list";
+    @GetMapping("/feedback")
+    public String listFeedbacks(Model model) {
+        model.addAttribute("feedbacks", feedbackRepository.findAllByOrderByCreatedAtDesc());
+        return "admin/feedback";
     }
 
     @GetMapping("/dashboard")

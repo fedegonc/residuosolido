@@ -20,7 +20,7 @@ public class Feedback {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment", nullable = false, length = 1000)
     private String comment;
     
     @Column(name = "created_at", nullable = false)
