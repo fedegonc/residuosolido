@@ -47,8 +47,8 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <p class="text-sm font-medium text-gray-900" th:text="${feedback.user.username}">Usuario</p>
-                                        <p class="text-sm text-gray-500" th:text="${feedback.user.email}">email@example.com</p>
+                                        <p class="text-sm font-medium text-gray-900" th:text="${feedback.name}">Nombre</p>
+                                        <p class="text-sm text-gray-500" th:text="'@' + ${feedback.user?.username ?: 'Usuario'} + ' - ' + ${feedback.email}">@usuario - email@example.com</p>
                                     </div>
                                     <div class="text-sm text-gray-500" th:text="${#temporals.format(feedback.createdAt, 'dd/MM/yyyy HH:mm')}">
                                         Fecha

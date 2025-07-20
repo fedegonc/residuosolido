@@ -64,11 +64,13 @@ public class AdminController {
     public String showAdminDashboard(Model model) {
         // Obtener estadísticas para el dashboard
         long totalUsers = userRepository.count();
+        long totalFeedbacks = feedbackRepository.count();
         
         // Agregar datos al modelo
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalPosts", posts.size());
         model.addAttribute("totalCategories", categoryRepository.count());
+        model.addAttribute("totalFeedbacks", totalFeedbacks);
         model.addAttribute("pageTitle", "Panel de Administración");
         
         return "admin/dashboard";

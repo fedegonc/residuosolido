@@ -124,15 +124,6 @@
         <th:block th:replace="${content}"></th:block>
     </main>
     
-    <!-- Footer -->
-    <footer th:fragment="footer" class="bg-white shadow-inner py-4">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center text-gray-500 text-sm">
-                &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Sistema de Gestión de Residuos Sólidos. Todos los derechos reservados.
-            </div>
-        </div>
-    </footer>
-    
     <!-- JavaScript común -->
     <script th:fragment="scripts">
         // Función para mostrar/ocultar el menú móvil

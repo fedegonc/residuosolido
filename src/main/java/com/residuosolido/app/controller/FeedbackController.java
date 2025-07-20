@@ -37,7 +37,19 @@ public class FeedbackController {
             logger.info("Intentando guardar feedback para usuario: {}", authentication.getName());
             User user = userRepository.findByUsername(authentication.getName())
                     .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            
+            // Llenar automáticamente los datos del usuario
             feedback.setUser(user);
+            
+            // Construir nombre completo manejando valores nulos
+            String firstName = user.getFirstName() != null ? user.getFirstName() : "";
+            String lastName = user.getLastName() != null ? user.getLastName() : "";
+            String fullName = (firstName + " " + lastName).trim();
+            feedback.setName(fullName.isEmpty() ? user.getUsername() : fullName);
+            
+            // Manejar email nulo
+            feedback.setEmail(user.getEmail() != null ? user.getEmail() : "");
+            
             feedbackRepository.save(feedback);
             logger.info("Feedback guardado exitosamente");
             redirectAttributes.addFlashAttribute("successMessage", "¡Gracias por tu feedback!");
