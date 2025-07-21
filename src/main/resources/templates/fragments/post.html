@@ -3,11 +3,11 @@
 <body>
     <div th:fragment="minimalPostCard(post)">
         <div class="bg-white shadow rounded-lg overflow-hidden">
-            <img th:if="${post.imageUrl}" th:src="${post.imageUrl}" alt="Imagen del Post" class="w-full h-48 object-cover">
+            <img th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}" th:src="${post.imageUrl}" alt="Imagen del Post" class="w-full h-48 object-cover">
             
             <div class="p-4">
                 <h3 class="text-lg font-semibold text-gray-800">
-                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="hover:text-blue-600">Título del Post</a>
+                    <a th:if="${post != null}" th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="hover:text-blue-600">Título del Post</a>
                 </h3>
             </div>
         </div>

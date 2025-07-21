@@ -20,30 +20,30 @@
                     </a>
                     <a href="/posts" 
                        class="border-2 border-white text-white hover:bg-white hover:text-green-600 font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
-                        Ver Noticias
+                        Ver Categorías
                     </a>
                 </div>
             </div>
         </div>
 
         <!-- Posts Section -->
-        <div th:if="${post}" class="py-12 bg-gray-50">
+        <div th:if="${posts}" class="py-12 bg-gray-50">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Últimas Noticias</h2>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Categorías</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto">
                         Mantente informado sobre las últimas iniciativas de reciclaje y gestión de residuos sólidos en tu comunidad.
                     </p>
                 </div>
                 
-                <div class="max-w-md mx-auto">
-                    <div th:replace="~{fragments/post :: minimalPostCard(${post})}"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <div th:each="post : ${posts}" th:replace="~{fragments/post :: minimalPostCard(${post})}"></div>
                 </div>
                 
                 <div class="text-center mt-8">
                     <a href="/posts" 
                        class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                       Ver todas las noticias
+                       Ver todas las categorías
                     </a>
                 </div>
             </div>

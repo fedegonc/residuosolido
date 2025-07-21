@@ -29,24 +29,24 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                // Rutas públicas
-                .requestMatchers("/auth/**", "/", "/index", "/css/**", "/js/**", "/images/**").permitAll()
+                // Rutas públicas (PRIMERO)
+                .requestMatchers("/auth/**", "/", "/index", "/invitados", "/posts/**", "/css/**", "/js/**", "/images/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de usuarios (accesibles por ADMIN y USER)
                 .requestMatchers("/users/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/requests/**").hasRole("USER")
-                // Feedback requiere autenticación
-                .requestMatchers("/feedback/**").authenticated()
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")
-                // Otras rutas requieren autenticación
+                // Feedback requiere autenticación
+                .requestMatchers("/feedback/**").authenticated()
+                // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/init", true)
                 .successHandler(successHandler)
                 .permitAll()
             )

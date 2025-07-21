@@ -87,7 +87,7 @@ public class AdminController {
     public String createPost(@RequestParam String title, @RequestParam String content, 
                            @RequestParam String imageUrl, @RequestParam Long categoryId) {
         posts.add(new Post(nextPostId++, title, content, imageUrl, categoryId));
-        return "redirect:/admin/posts";
+        return "redirect:/invitados";
     }
     
     @GetMapping("/posts/{id}/edit")

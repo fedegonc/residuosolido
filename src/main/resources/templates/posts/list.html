@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Categorías')}">
+    <title>Categorías - Sistema de Gestión de Residuos Sólidos</title>
+</head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="container mx-auto px-4 py-8">
+            <h1 class="text-3xl font-bold mb-6">Categorías</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div th:each="post : ${posts}" th:replace="~{fragments/post :: minimalPostCard(${post})}"></div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

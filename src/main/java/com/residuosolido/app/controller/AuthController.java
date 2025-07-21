@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -48,11 +49,10 @@ public class AuthController {
         
         // Obtener todos los posts del AdminController
         List<Post> allPosts = AdminController.getAllPosts();
-        if (!allPosts.isEmpty()) {
-            // Mostrar el primer post (o todos si quieres)
-            model.addAttribute("post", allPosts.get(0));
-            model.addAttribute("posts", allPosts);
+        if (allPosts == null) {
+            allPosts = new ArrayList<>();
         }
+        model.addAttribute("posts", allPosts);
         
         return "index";
     }
