@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.CategoryRepository;
+import com.residuosolido.app.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class PostController {
     
     private final CategoryRepository categoryRepository;
+    private final PostService postService;
     
     @Autowired
-    public PostController(CategoryRepository categoryRepository) {
+    public PostController(CategoryRepository categoryRepository, PostService postService) {
         this.categoryRepository = categoryRepository;
+        this.postService = postService;
     }
     
     // El método index se eliminó para evitar ambigüedad con AuthController
@@ -27,7 +30,7 @@ public class PostController {
     @GetMapping("/posts")
     public String listPosts(Model model) {
         // Obtener todos los posts del AdminController
-        List<Post> posts = com.residuosolido.app.controller.AdminController.getAllPosts();
+        List<Post> posts = postService.getAllPosts();
         model.addAttribute("posts", posts);
         model.addAttribute("categories", categoryRepository.findAll());
         return "posts/list";
@@ -35,16 +38,12 @@ public class PostController {
     
     @GetMapping("/posts/{id}")
     public String viewPost(@PathVariable Long id, Model model) {
-        // Buscar el post por ID
-        Optional<Post> postOpt = com.residuosolido.app.controller.AdminController.getAllPosts().stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
+        Optional<Post> postOpt = postService.getPostById(id);
         
         if (postOpt.isPresent()) {
             Post post = postOpt.get();
             model.addAttribute("post", post);
             
-            // Obtener el nombre de la categoría
             Optional<Category> categoryOpt = categoryRepository.findById(post.getCategoryId());
             String categoryName = categoryOpt.map(Category::getName).orElse("Sin categoría");
             model.addAttribute("categoryName", categoryName);

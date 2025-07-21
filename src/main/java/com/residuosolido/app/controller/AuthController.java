@@ -5,11 +5,11 @@ import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
-import com.residuosolido.app.controller.AdminController;
-
+import com.residuosolido.app.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,27 +35,27 @@ public class AuthController {
 
    
 
+    @Autowired
+    private PostService postService;
+
     @GetMapping({"/", "/index", "/login", "/register"})
     public String index(
-            @AuthenticationPrincipal UserDetails userDetails,
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Model model) throws Exception {
+        @AuthenticationPrincipal UserDetails userDetails,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Model model) throws Exception {
 
-        if (userDetails != null) {
-            successHandler.redirectByRole(request, response, userDetails);
-            return null;
-        }
-        
-        // Obtener todos los posts del AdminController
-        List<Post> allPosts = AdminController.getAllPosts();
-        if (allPosts == null) {
-            allPosts = new ArrayList<>();
-        }
-        model.addAttribute("posts", allPosts);
-        
-        return "index";
+    if (userDetails != null) {
+        successHandler.redirectByRole(request, response, userDetails);
+        return null;
     }
+
+    List<Post> allPosts = postService.getAllPosts();
+    model.addAttribute("posts", allPosts);
+
+    return "index";
+}
+
 
     @GetMapping("/auth/register")
     public String showRegistrationForm(Model model) {

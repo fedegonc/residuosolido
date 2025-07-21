@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,15 +56,15 @@ public class UserController {
         try {
             userService.saveUser(userForm);
             redirectAttributes.addFlashAttribute("successMessage", "Usuario guardado exitosamente");
-            return "redirect:/users";
+            return "redirect:/admin/users";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            String redirectUrl = userForm.getId() == null ? "redirect:/users/create" : "redirect:/users/edit/" + userForm.getId();
+            String redirectUrl = userForm.getId() == null ? "redirect:/admin/users/create" : "redirect:/admin/users/edit/" + userForm.getId();
             return redirectUrl;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el usuario: " + e.getMessage());
             logger.error("Error al guardar usuario: ", e);
-            return "redirect:/users";
+            return "redirect:/admin/users";
         }
     }
     
@@ -76,7 +77,7 @@ public class UserController {
             model.addAttribute("userForm", userForm);
             return "users/form";
         } catch (IllegalArgumentException e) {
-            return "redirect:/users";
+            return "redirect:/admin/users";
         }
     }
     
@@ -91,10 +92,10 @@ public class UserController {
             return "users/view";
         } catch (IllegalArgumentException e) {
             logger.warn("Usuario no encontrado para id: {}", id);
-            return "redirect:/users";
+            return "redirect:/admin/users";
         } catch (Exception e) {
             logger.error("Error al visualizar el usuario: {}", e.getMessage(), e);
-            return "redirect:/users";
+            return "redirect:/admin/users";
         }
     }
     

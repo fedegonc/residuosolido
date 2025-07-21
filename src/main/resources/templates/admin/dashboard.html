@@ -66,8 +66,7 @@
                                     </dt>
                                     <dd>
                                         <div class="text-lg font-medium text-gray-900">
-                                            <!-- Aquí iría el número de organizaciones -->
-                                            <span>--</span>
+                                            <span th:text="${totalOrganizations}">0</span>
                                         </div>
                                     </dd>
                                 </dl>
@@ -286,16 +285,17 @@
             <div class="mt-8">
                 <h2 class="text-lg leading-6 font-medium text-gray-900">Actividad Reciente</h2>
                 <div class="mt-2 bg-white shadow overflow-hidden sm:rounded-md">
-                    <ul class="divide-y divide-gray-200">
-                        <li>
+                    <ul id="activityList" class="divide-y divide-gray-200">
+                        <li th:each="user, iterStat : ${recentUsers}" class="activity-item" th:data-page="${iterStat.index / 3 + 1}">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium text-green-600 truncate">
                                         Nuevo usuario registrado
                                     </p>
                                     <div class="ml-2 flex-shrink-0 flex">
-                                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Hace 2 horas
+                                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                                           th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}">
+                                            Fecha
                                         </p>
                                     </div>
                                 </div>
@@ -305,40 +305,150 @@
                                             <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                                             </svg>
-                                            Juan Pérez
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="px-4 py-4 sm:px-6">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-blue-600 truncate">
-                                        Nueva solicitud de recolección
-                                    </p>
-                                    <div class="ml-2 flex-shrink-0 flex">
-                                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            Hace 5 horas
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="mt-2 sm:flex sm:justify-between">
-                                    <div class="sm:flex">
-                                        <p class="flex items-center text-sm text-gray-500">
-                                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            María González
+                                            <span th:text="${user.firstName + ' ' + user.lastName}">Usuario</span>
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </li>
                     </ul>
+                    
+                    <!-- Paginación -->
+                    <div id="pagination" class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                        <div class="flex-1 flex justify-between sm:hidden">
+                            <button id="prevMobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Anterior
+                            </button>
+                            <button id="nextMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Siguiente
+                            </button>
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-gray-700">
+                                    Mostrando <span id="currentRange">1-3</span> de <span id="totalItems">0</span> registros
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                                    <button id="prevBtn" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        ‹
+                                    </button>
+                                    <div id="pageNumbers" class="flex"></div>
+                                    <button id="nextBtn" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        ›
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemsPerPage = 3;
+            let currentPage = 1;
+            const items = document.querySelectorAll('.activity-item');
+            const totalItems = items.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            function showPage(page) {
+                items.forEach((item, index) => {
+                    const itemPage = Math.floor(index / itemsPerPage) + 1;
+                    item.style.display = itemPage === page ? 'block' : 'none';
+                });
+                
+                updatePaginationInfo(page);
+                updateButtons(page);
+            }
+            
+            function updatePaginationInfo(page) {
+                const start = (page - 1) * itemsPerPage + 1;
+                const end = Math.min(page * itemsPerPage, totalItems);
+                document.getElementById('currentRange').textContent = `${start}-${end}`;
+                document.getElementById('totalItems').textContent = totalItems;
+            }
+            
+            function updateButtons(page) {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                const prevMobile = document.getElementById('prevMobile');
+                const nextMobile = document.getElementById('nextMobile');
+                
+                prevBtn.disabled = page === 1;
+                nextBtn.disabled = page === totalPages;
+                prevMobile.disabled = page === 1;
+                nextMobile.disabled = page === totalPages;
+                
+                prevBtn.className = page === 1 ? 
+                    'relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed' :
+                    'relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 cursor-pointer';
+                    
+                nextBtn.className = page === totalPages ? 
+                    'relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed' :
+                    'relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 cursor-pointer';
+                
+                updatePageNumbers(page);
+            }
+            
+            function updatePageNumbers(page) {
+                const pageNumbers = document.getElementById('pageNumbers');
+                pageNumbers.innerHTML = '';
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    const button = document.createElement('button');
+                    button.textContent = i;
+                    button.className = i === page ? 
+                        'relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600' :
+                        'relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50';
+                    button.onclick = () => {
+                        currentPage = i;
+                        showPage(currentPage);
+                    };
+                    pageNumbers.appendChild(button);
+                }
+            }
+            
+            // Event listeners
+            document.getElementById('prevBtn').onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            };
+            
+            document.getElementById('nextBtn').onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            };
+            
+            document.getElementById('prevMobile').onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            };
+            
+            document.getElementById('nextMobile').onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            };
+            
+            // Ocultar paginación si hay pocos elementos
+            if (totalPages <= 1) {
+                document.getElementById('pagination').style.display = 'none';
+            }
+            
+            // Inicializar
+            showPage(1);
+        });
+    </script>
 </body>
 </html>

@@ -1,17 +1,24 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.model.Post;
+import com.residuosolido.app.service.DashboardService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Controller
 public class InitController {
+
+    private final DashboardService dashboardService;
+
+    @Autowired
+    public InitController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
     
     @GetMapping("/init")
     public String init(@AuthenticationPrincipal UserDetails userDetails) {
@@ -27,9 +34,8 @@ public class InitController {
     
     @GetMapping("/invitados")
     public String invitados(Model model) {
-        List<Post> posts = AdminController.getAllPosts();
-        if (posts == null) posts = new ArrayList<>();
-        model.addAttribute("posts", posts);
+        java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
+        model.addAllAttributes(pageData);
         return "index";
     }
 }
