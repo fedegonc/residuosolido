@@ -54,6 +54,16 @@ public class AdminController {
         posts.add(new Post(nextPostId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
     }
     
+    @GetMapping("/user")
+    public String redirectToUsers() {
+        return "redirect:/users";
+    }
+    
+    @GetMapping("/users")
+    public String adminUsers() {
+        return "redirect:/users";
+    }
+    
     @GetMapping("/feedback")
     public String listFeedbacks(Model model) {
         model.addAttribute("feedbacks", feedbackRepository.findAllByOrderByCreatedAtDesc());
