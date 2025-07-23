@@ -32,10 +32,9 @@ public class PostController {
     
     @GetMapping("/posts")
     public String listPosts(Model model) {
-        // Obtener todos los posts del AdminController
         List<Post> posts = postService.getAllPosts();
         model.addAttribute("posts", posts);
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
         return "posts/list";
     }
     
@@ -46,12 +45,9 @@ public class PostController {
         if (postOpt.isPresent()) {
             Post post = postOpt.get();
             model.addAttribute("post", post);
-            
-            Optional<Category> categoryOpt = categoryRepository.findById(post.getCategoryId());
-            String categoryName = categoryOpt.map(Category::getName).orElse("Sin categoría");
-            model.addAttribute("categoryName", categoryName);
-            
-            return "posts/view";
+            model.addAttribute("categoryName", categoryService.getCategoryNameById(post.getCategoryId()));
+            model.addAttribute("relatedPosts", postService.getRelatedPostsById(post.getId(), post.getCategoryId(), 3));
+            return "posts/detail";
         }
         
         return "redirect:/posts";
@@ -63,13 +59,9 @@ public class PostController {
             
         if (categoryOpt.isPresent()) {
             Category category = categoryOpt.get();
-            List<Post> posts = postService.getAllPosts().stream()
-                .filter(post -> post.getCategoryId().equals(category.getId()))
-                .collect(java.util.stream.Collectors.toList());
-                
-            model.addAttribute("posts", posts);
+            model.addAttribute("posts", postService.getPostsByCategoryId(category.getId()));
             model.addAttribute("category", category);
-            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
             return "posts/category";
         }
         

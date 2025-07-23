@@ -4,13 +4,13 @@
 <body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content">
         <!-- Encabezado del Dashboard -->
-        <div class="bg-white shadow">
-            <div class="max-w-6xl mx-auto py-4 px-4">
-                <h1 class="text-3xl font-bold text-gray-900">
+        <div class="bg-green-600 text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">
                     Panel de Administración
                     <span class="inline-flex items-center justify-center px-2 py-1 ml-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded">ADMIN</span>
                 </h1>
-                <p class="mt-1 text-sm text-gray-500">
+                <p class="text-xl opacity-90">
                     Bienvenido al panel de administración del Sistema de Gestión de Residuos Sólidos
                 </p>
             </div>

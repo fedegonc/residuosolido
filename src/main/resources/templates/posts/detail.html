@@ -29,6 +29,19 @@
             </div>
         </div>
 
+        <!-- Breadcrumb -->
+        <div class="py-3 bg-gray-100 border-b">
+            <div class="container mx-auto px-4">
+                <nav class="text-sm">
+                    <a href="/" class="text-green-600 hover:text-green-800">Inicio</a>
+                    <span class="mx-2 text-gray-500">›</span>
+                    <a href="/posts" class="text-green-600 hover:text-green-800">Publicaciones</a>
+                    <span class="mx-2 text-gray-500">›</span>
+                    <span class="text-gray-700" th:text="${post.title}">Post</span>
+                </nav>
+            </div>
+        </div>
+
         <!-- Post Content -->
         <article class="py-12">
             <div class="container mx-auto px-4 max-w-4xl">

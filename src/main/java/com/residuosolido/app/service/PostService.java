@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -29,6 +30,21 @@ public class PostService {
 
     public boolean hasMoreThan5Posts() {
         return posts.size() > 5;
+    }
+
+    // Reescrito para resolver el problema de método duplicado
+    public List<Post> getPostsByCategoryId(Long categoryId) {
+        return posts.stream()
+                .filter(post -> post.getCategoryId().equals(categoryId))
+                .collect(Collectors.toList());
+    }
+
+    // Reescrito para resolver el problema de método duplicado
+    public List<Post> getRelatedPostsById(Long postId, Long categoryId, int limit) {
+        return posts.stream()
+                .filter(p -> p.getCategoryId().equals(categoryId) && !p.getId().equals(postId))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
     public void createPost(String title, String content, String imageUrl, Long categoryId) {

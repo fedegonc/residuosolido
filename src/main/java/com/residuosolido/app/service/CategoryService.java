@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -44,10 +45,12 @@ public class CategoryService {
             .collect(java.util.stream.Collectors.toList());
     }
     
-    public java.util.Optional<Category> findBySlug(String slug) {
-        return categoryRepository.findAll().stream()
-            .filter(cat -> generateSlug(cat.getName()).equals(slug))
-            .findFirst();
+    public Optional<Category> findBySlug(String slug) {
+        return getAllCategories().stream().filter(cat -> generateSlug(cat.getName()).equals(slug)).findFirst();
+    }
+
+    public String getCategoryNameById(Long categoryId) {
+        return getAllCategories().stream().filter(cat -> cat.getId().equals(categoryId)).findFirst().map(Category::getName).orElse("Sin categoría");
     }
     
     public String generateSlug(String text) {

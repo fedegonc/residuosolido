@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Registro')}"></head>
-<body th:replace="~{fragments/layout :: layout(~{::content})}">
-    <div th:fragment="content" class="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
-        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-md w-full space-y-8">
-                <div>
-                    <div class="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                        </svg>
-                    </div>
-                    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Crear Cuenta
-                    </h2>
-                    <p class="mt-2 text-center text-sm text-gray-600">
-                        Únete a ResidúoSólido
-                    </p>
-                </div>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro')}">
+    <title>Registro - Sistema de Gestión de Residuos Sólidos</title>
+</head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <!-- Header -->
+        <div class="bg-green-600 text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Crear Cuenta</h1>
+                <p class="text-xl opacity-90">Únete a nuestro sistema</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="py-12">
+            <div class="container mx-auto px-4">
+                <div class="max-w-md mx-auto">
                 
                 <!-- Mensajes de éxito -->
                 <div th:if="${param.success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -107,7 +107,7 @@
 
                 <div>
                     <button type="submit" 
-                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                            class="group relative w-full flex justify-center py-3 px-5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out shadow-md">
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-green-500 group-hover:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
@@ -120,12 +120,14 @@
                 <div class="text-center">
                     <p class="text-sm text-gray-600">
                         ¿Ya tienes cuenta? 
-                        <a th:href="@{/entrar}" class="font-medium text-green-600 hover:text-green-500">
+                        <a th:href="@{/auth/login}" class="font-medium text-green-600 hover:text-green-500">
                             Inicia sesión aquí
                         </a>
                     </p>
                 </div>
             </form>
+            </div>
+                </div>
             </div>
         </div>
         
@@ -142,6 +144,6 @@
                 }
             });
         </script>
-    </div>
+    </main>
 </body>
 </html>

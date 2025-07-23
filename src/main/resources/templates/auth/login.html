@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Iniciar Sesión')}"></head>
-<body th:replace="~{fragments/layout :: layout(~{::content})}">
-    <div th:fragment="content" class="min-h-screen bg-gradient-to-br from-green-100 to-green-200">
-        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-md w-full space-y-8">
-                <div>
-                    <div class="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                    </div>
-                    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Iniciar Sesión
-                    </h2>
-                    <p class="mt-2 text-center text-sm text-gray-600">
-                        Accede a tu cuenta de ReciclaApp
-                    </p>
-                </div>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Iniciar Sesión')}">
+    <title>Iniciar Sesión - Sistema de Gestión de Residuos Sólidos</title>
+</head>
+
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <!-- Header -->
+        <div class="bg-green-600 text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Iniciar Sesión</h1>
+                <p class="text-xl opacity-90">Accede a tu cuenta</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="py-12">
+            <div class="container mx-auto px-4">
+                <div class="max-w-md mx-auto">
                 
                 <!-- Mensajes de éxito -->
                 <div th:if="${param.success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -97,6 +97,9 @@
             </form>
             </div>
         </div>
-    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
