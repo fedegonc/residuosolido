@@ -7,6 +7,7 @@ import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.PostService;
+import com.residuosolido.app.service.PasswordResetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -28,14 +29,16 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final DashboardService dashboardService;
+    private final PasswordResetService passwordResetService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
                          CustomAuthenticationSuccessHandler successHandler,
-                         DashboardService dashboardService) {
+                         DashboardService dashboardService, PasswordResetService passwordResetService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.dashboardService = dashboardService;
+        this.passwordResetService = passwordResetService;
     }
 
    
@@ -115,6 +118,18 @@ public String init(@AuthenticationPrincipal UserDetails userDetails,
     @GetMapping("/auth/login")
     public String showLoginForm() {
         return "auth/login"; 
+    }
+    
+    @GetMapping("/auth/forgot-password")
+    public String showForgotPasswordForm() {
+        return "auth/forgot-password";
+    }
+    
+    @PostMapping("/auth/forgot-password")
+    public String processForgotPassword(@RequestParam String maskedEmail, 
+                                       @RequestParam String lastKnownPassword) {
+        passwordResetService.createResetRequest(maskedEmail, lastKnownPassword);
+        return "redirect:/auth/login?info=Solicitud enviada al administrador";
     }
     
     @GetMapping("/auth/logout")

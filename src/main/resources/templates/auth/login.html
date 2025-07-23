@@ -1,105 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Iniciar Sesión')}">
-    <title>Iniciar Sesión - Sistema de Gestión de Residuos Sólidos</title>
-</head>
+<head th:replace="fragments/layout :: head('Iniciar Sesión')"></head>
+<body th:replace="fragments/layout :: layout(~{::main})">
+<main>
+  <!-- Encabezado -->
+  <div class="bg-green-600 text-white py-12 text-center">
+    <h1 class="text-4xl font-bold mb-2">Iniciar Sesión</h1>
+    <p class="text-xl opacity-90">Accede a tu cuenta</p>
+  </div>
 
-<body th:replace="~{fragments/layout :: layout(~{::main})}">
-    <main>
-        <!-- Header -->
-        <div class="bg-green-600 text-white py-12">
-            <div class="container mx-auto px-4 text-center">
-                <h1 class="text-3xl md:text-4xl font-bold mb-4">Iniciar Sesión</h1>
-                <p class="text-xl opacity-90">Accede a tu cuenta</p>
-            </div>
-        </div>
+  <!-- Contenedor -->
+  <div class="py-12 px-4 max-w-md mx-auto">
+    
+    <!-- Mensajes -->
+    <div th:if="${param.success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" th:text="${param.success}"></div>
+    <div th:if="${param.logout}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">Has cerrado sesión correctamente</div>
+    <div th:if="${param.error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">Usuario o contraseña incorrectos</div>
 
-        <!-- Form -->
-        <div class="py-12">
-            <div class="container mx-auto px-4">
-                <div class="max-w-md mx-auto">
-                
-                <!-- Mensajes de éxito -->
-                <div th:if="${param.success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    <span th:text="${param.success}"></span>
-                </div>
-                
-                <!-- Mensaje de cierre de sesión -->
-                <div th:if="${param.logout}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    <span>Has cerrado sesión correctamente</span>
-                </div>
-                
-                <!-- Mensajes de error -->
-                <div th:if="${param.error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <span>Usuario o contraseña incorrectos</span>
-                </div>
-            
-            <form class="mt-8 space-y-6" th:action="@{/auth/login}" method="post">
-                <div class="rounded-md shadow-md -space-y-px">
-                    <div>
-                        <label for="username" class="sr-only">Usuario</label>
-                        <input id="username" 
-                               name="username" 
-                               type="text" 
-                               required 
-                               class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Nombre de usuario">
-                    </div>
-                    <div>
-                        <label for="password" class="sr-only">Contraseña</label>
-                        <input id="password" 
-                               name="password" 
-                               type="password" 
-                               required 
-                               class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Contraseña">
-                    </div>
-                </div>
+    <!-- Formulario -->
+    <form th:action="@{/auth/login}" method="post" class="space-y-6 mt-8">
+      <div class="-space-y-px shadow-md">
+        <input id="username" name="username" type="text" required placeholder="Nombre de usuario"
+               class="appearance-none rounded-t-md w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" />
+        <input id="password" name="password" type="password" required placeholder="Contraseña"
+               class="appearance-none rounded-b-md w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" />
+      </div>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember_me" 
-                               name="remember-me" 
-                               type="checkbox" 
-                               class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                        <label for="remember_me" class="ml-2 block text-sm text-gray-900">
-                            Recordarme
-                        </label>
-                    </div>
+      <div class="flex items-center justify-between">
+        <label class="flex items-center text-sm text-gray-900">
+          <input id="remember_me" name="remember-me" type="checkbox"
+                 class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mr-2">
+          Recordarme
+        </label>
+        <a th:href="@{/auth/forgot-password}" class="text-sm text-green-600 hover:text-green-500">¿Olvidaste tu contraseña?</a>
+      </div>
 
-                    <div class="text-sm">
-                        <a href="#" class="font-medium text-green-600 hover:text-green-500">
-                            ¿Olvidaste tu contraseña?
-                        </a>
-                    </div>
-                </div>
+      <button type="submit"
+              class="w-full py-3 px-5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 relative flex justify-center group">
+        <svg class="absolute left-0 h-5 w-5 text-green-500 group-hover:text-green-400 pl-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2..."/>
+        </svg>
+        Iniciar Sesión
+      </button>
 
-                <div>
-                    <button type="submit" 
-                            class="group relative w-full flex justify-center py-3 px-5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out shadow-md">
-                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <svg class="h-5 w-5 text-green-500 group-hover:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </span>
-                        Iniciar Sesión
-                    </button>
-                </div>
-
-                <div class="text-center">
-                    <p class="text-sm text-gray-600">
-                        ¿No tienes cuenta? 
-                        <a th:href="@{/auth/register}" class="font-medium text-green-600 hover:text-green-500">
-                            Regístrate aquí
-                        </a>
-                    </p>
-                </div>
-            </form>
-            </div>
-        </div>
-                </div>
-            </div>
-        </div>
-    </main>
+      <p class="text-center text-sm text-gray-600">
+        ¿No tienes cuenta?
+        <a th:href="@{/auth/register}" class="font-medium text-green-600 hover:text-green-500">Regístrate aquí</a>
+      </p>
+    </form>
+  </div>
+</main>
 </body>
 </html>
