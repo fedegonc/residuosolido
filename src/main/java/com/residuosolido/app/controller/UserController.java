@@ -41,6 +41,7 @@ public class UserController {
     
     // Perfil de usuario
     @GetMapping("/users/profile")
+   
     @PreAuthorize("hasRole('USER')")
     public String userProfile(Model model, Authentication authentication) {
         String username = authentication.getName();
