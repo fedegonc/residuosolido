@@ -34,6 +34,54 @@ public class UserController {
         return "users/dashboard";
     }
     
+    // Perfil de usuario
+    @GetMapping("/users/profile")
+    @PreAuthorize("hasRole('USER')")
+    public String userProfile(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        User currentUser = userService.findAuthenticatedUserByUsername(username);
+        model.addAttribute("user", currentUser);
+        model.addAttribute("username", username);
+        return "users/profile";
+    }
+    
+    // Editar perfil de usuario
+    @GetMapping("/users/edit")
+    @PreAuthorize("hasRole('USER')")
+    public String editUserProfile(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        User currentUser = userService.findAuthenticatedUserByUsername(username);
+        UserForm userForm = new UserForm();
+        userForm.setId(currentUser.getId());
+        userForm.setUsername(currentUser.getUsername());
+        userForm.setEmail(currentUser.getEmail());
+        userForm.setFirstName(currentUser.getFirstName());
+        userForm.setLastName(currentUser.getLastName());
+        userForm.setRole(currentUser.getRole());
+        model.addAttribute("userForm", userForm);
+        model.addAttribute("isProfile", true);
+        return "users/edit";
+    }
+    
+    // Guardar cambios del perfil
+    @PostMapping("/users/save-profile")
+    @PreAuthorize("hasRole('USER')")
+    public String saveUserProfile(@ModelAttribute UserForm userForm, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            // Solo permitir editar ciertos campos
+            userForm.setId(currentUser.getId());
+            userForm.setRole(currentUser.getRole()); // Mantener rol actual
+            userService.saveUser(userForm);
+            redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado exitosamente");
+            return "redirect:/users/profile";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar perfil: " + e.getMessage());
+            return "redirect:/users/edit";
+        }
+    }
+    
     // Rutas de administración
     @GetMapping("/admin/users")
     @PreAuthorize("hasRole('ADMIN')")
@@ -113,14 +161,6 @@ public class UserController {
     @GetMapping("/dashboard")
     public String userDashboard() {
         return "users/dashboard"; 
-    }
-
-    @GetMapping("/perfil")
-    public String userProfile(Model model, Authentication authentication) {
-        String username = authentication.getName();
-        User currentUser = userService.findAuthenticatedUserByUsername(username);
-        model.addAttribute("user", currentUser);
-        return "users/profile";
     }
 
     @Autowired
