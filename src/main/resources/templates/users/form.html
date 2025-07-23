@@ -135,7 +135,13 @@
                     
                     <!-- Contraseña -->
                     <div class="mt-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4" th:text="${userForm.id == null ? 'Contraseña' : 'Cambiar Contraseña (opcional)'}">Contraseña</h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-900" th:text="${userForm.id == null ? 'Contraseña' : 'Cambiar Contraseña'}">Contraseña</h3>
+                            <div th:if="${userForm.id != null}" class="flex items-center">
+                                <input type="checkbox" id="forcePasswordChange" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="forcePasswordChange" class="ml-2 text-sm text-red-600 font-medium">Forzar cambio de contraseña</label>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">
@@ -185,16 +191,35 @@
         document.addEventListener('DOMContentLoaded', function() {
             const newPasswordField = document.getElementById('newPassword');
             const confirmPasswordField = document.getElementById('confirmPassword');
+            const forcePasswordCheckbox = document.getElementById('forcePasswordChange');
             const form = document.querySelector('form');
             const isNewUser = !document.querySelector('input[name="id"]').value;
+            
+            // Manejar checkbox de forzar cambio
+            if (forcePasswordCheckbox) {
+                forcePasswordCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        newPasswordField.required = true;
+                        confirmPasswordField.required = true;
+                        newPasswordField.placeholder = 'Nueva contraseña (obligatoria)';
+                        confirmPasswordField.placeholder = 'Confirmar nueva contraseña (obligatoria)';
+                    } else {
+                        newPasswordField.required = false;
+                        confirmPasswordField.required = false;
+                        newPasswordField.placeholder = 'Dejar vacío para mantener la actual';
+                        confirmPasswordField.placeholder = 'Confirma la nueva contraseña';
+                    }
+                });
+            }
             
             if (newPasswordField && confirmPasswordField) {
                 function validatePasswords() {
                     const password = newPasswordField.value;
                     const confirmPassword = confirmPasswordField.value;
+                    const isForced = forcePasswordCheckbox && forcePasswordCheckbox.checked;
                     
-                    // Solo validar si se ha ingresado alguna contraseña
-                    if (password || confirmPassword) {
+                    // Validar si se ha ingresado alguna contraseña o si es forzado
+                    if (password || confirmPassword || isForced) {
                         if (password !== confirmPassword) {
                             confirmPasswordField.setCustomValidity('Las contraseñas no coinciden');
                         } else {
@@ -213,12 +238,13 @@
                 form.addEventListener('submit', function(e) {
                     const password = newPasswordField.value;
                     const confirmPassword = confirmPasswordField.value;
+                    const isForced = forcePasswordCheckbox && forcePasswordCheckbox.checked;
                     
-                    // Para usuarios nuevos, la contraseña es obligatoria
-                    if (isNewUser && !password) {
+                    // Para usuarios nuevos o forzar cambio, la contraseña es obligatoria
+                    if ((isNewUser || isForced) && !password) {
                         e.preventDefault();
                         newPasswordField.focus();
-                        alert('La contraseña es requerida para usuarios nuevos');
+                        alert(isForced ? 'Debe ingresar una nueva contraseña' : 'La contraseña es requerida para usuarios nuevos');
                         return false;
                     }
                     

@@ -112,7 +112,7 @@ public class UserController {
         return "users/form";
     }
     
-    @PostMapping("/save")
+    @PostMapping("/admin/users/save")
     public String saveUser(@ModelAttribute UserForm userForm, RedirectAttributes redirectAttributes) {
         try {
             userService.saveUser(userForm);
@@ -129,7 +129,7 @@ public class UserController {
         }
     }
     
-    @GetMapping("/edit/{id}")
+    @GetMapping("/admin/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         try {
             User user = userService.getUserOrThrow(id);

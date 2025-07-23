@@ -245,6 +245,21 @@
                     alert('Por favor, corrige los errores en el formulario');
                 }
             });
+            
+            // Script para mostrar/ocultar campos de contraseña
+            const toggleButton = document.getElementById('toggle-password-fields');
+            const passwordFields = document.getElementById('password-fields');
+            const chevronIcon = document.getElementById('chevron-icon');
+            
+            toggleButton.addEventListener('click', function() {
+                if (passwordFields.classList.contains('hidden')) {
+                    passwordFields.classList.remove('hidden');
+                    chevronIcon.classList.add('transform', 'rotate-180');
+                } else {
+                    passwordFields.classList.add('hidden');
+                    chevronIcon.classList.remove('transform', 'rotate-180');
+                }
+            });
         });
     </script>
 </body>
