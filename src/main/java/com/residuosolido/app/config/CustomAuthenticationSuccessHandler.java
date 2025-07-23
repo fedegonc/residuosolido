@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.model.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,31 +13,22 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Manejador personalizado para redireccionar usuarios según su rol después del login.
- * Implementa jerarquía de roles donde ADMIN tiene mayor precedencia que ORG y USER.
+ * Sistema flexible que utiliza el enum Role con prioridades para determinar la redirección.
  */
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
     
-    // Roles ordenados por precedencia (mayor a menor)
-    private static final List<String> ROLE_HIERARCHY = List.of(
-            "ROLE_ADMIN",
-            "ROLE_ORGANIZATION", 
-            "ROLE_USER"
-    );
-    
-    private static final Map<String, String> ROLE_TARGET_URL_MAP = Map.of(
-            "ROLE_ADMIN", "/admin/dashboard",
-            "ROLE_ORGANIZATION", "/org/dashboard",
-            "ROLE_USER", "/users/dashboard"
-    );
+    // Prefijo estándar para roles en Spring Security
+    private static final String ROLE_PREFIX = "ROLE_";
     
     private static final String DEFAULT_TARGET_URL = "/";
 
@@ -89,21 +81,27 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     /**
-     * Determina la URL de destino basada en la jerarquía de roles.
-     * El rol con mayor precedencia determina el destino.
+     * Determina la URL de destino basada en la prioridad de roles.
+     * El rol con mayor prioridad determina el destino.
      * 
      * @param userRoles Set de roles del usuario
      * @return URL de destino
      */
     private String determineTargetUrl(Set<String> userRoles) {
-        return ROLE_HIERARCHY.stream()
-                .filter(userRoles::contains)
-                .map(ROLE_TARGET_URL_MAP::get)
-                .findFirst()
-                .orElseGet(() -> {
-                    logger.warn("Usuario sin roles reconocidos: {}. Redirigiendo a página por defecto.", userRoles);
-                    return DEFAULT_TARGET_URL;
-                });
+        // Obtener el rol con mayor prioridad que tenga el usuario
+        Optional<Role> highestPriorityRole = Arrays.stream(Role.values())
+                .filter(role -> userRoles.contains(ROLE_PREFIX + role.name()))
+                .max(Comparator.comparing(Role::getPriority));
+                
+        if (highestPriorityRole.isPresent()) {
+            String targetUrl = highestPriorityRole.get().getDashboardUrl();
+            logger.info("Rol con mayor prioridad: {}, redirigiendo a: {}", 
+                    highestPriorityRole.get(), targetUrl);
+            return targetUrl;
+        } else {
+            logger.warn("Usuario sin roles reconocidos: {}. Redirigiendo a página por defecto.", userRoles);
+            return DEFAULT_TARGET_URL;
+        }
     }
     
 

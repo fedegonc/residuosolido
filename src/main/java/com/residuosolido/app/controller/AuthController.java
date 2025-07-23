@@ -5,6 +5,7 @@ import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,19 +27,22 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthenticationSuccessHandler successHandler;
+    private final DashboardService dashboardService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, CustomAuthenticationSuccessHandler successHandler) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
+                         CustomAuthenticationSuccessHandler successHandler,
+                         DashboardService dashboardService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
+        this.dashboardService = dashboardService;
     }
 
    
 
-    @Autowired
-    private PostService postService;
+    // Ya no se necesita PostService, se usa dashboardService
 
-    @GetMapping({"/", "/index", "/login", "/register"})
+    @GetMapping({"/", "/index"})
     public String index(
         @AuthenticationPrincipal UserDetails userDetails,
         HttpServletRequest request,
@@ -50,10 +54,28 @@ public class AuthController {
         return null;
     }
 
-    List<Post> allPosts = postService.getAllPosts();
-    model.addAttribute("posts", allPosts);
+    java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
+    model.addAllAttributes(pageData);
 
-    return "index";
+    return "guest/index";
+}
+
+@GetMapping("/invitados")
+public String invitados(Model model) {
+    java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
+    model.addAllAttributes(pageData);
+    return "guest/index";
+}
+
+@GetMapping("/init")
+public String init(@AuthenticationPrincipal UserDetails userDetails,
+                  HttpServletRequest request,
+                  HttpServletResponse response) throws Exception {
+    if (userDetails == null) return "redirect:/invitados";
+    
+    // Usar el mismo handler que maneja el login exitoso
+    successHandler.redirectByRole(request, response, userDetails);
+    return null; // La redirección ya fue manejada por el handler
 }
 
 

@@ -14,13 +14,21 @@ public class PostService {
     private Long nextId = 1L;
 
     public PostService() {
-        // Datos de prueba iniciales
-        posts.add(new Post(nextId++, "Campaña de Reciclaje 2025", "Únete a nuestra campaña de reciclaje", "https://via.placeholder.com/400x200", 1L));
-        posts.add(new Post(nextId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
+        // No cargar posts de ejemplo para mostrar mensaje vacío
+        // posts.add(new Post(nextId++, "Campaña de Reciclaje 2025", "Únete a nuestra campaña de reciclaje", "https://via.placeholder.com/400x200", 1L));
+        // posts.add(new Post(nextId++, "Taller de Compostaje", "Aprende a compostar en casa", "https://via.placeholder.com/400x200", 2L));
     }
 
     public List<Post> getAllPosts() {
         return new ArrayList<>(posts);
+    }
+
+    public List<Post> getFirst5Posts() {
+        return posts.stream().limit(5).collect(java.util.stream.Collectors.toList());
+    }
+
+    public boolean hasMoreThan5Posts() {
+        return posts.size() > 5;
     }
 
     public void createPost(String title, String content, String imageUrl, Long categoryId) {

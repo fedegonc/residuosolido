@@ -2,8 +2,8 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Feedback;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.repository.FeedbackRepository;
-import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.service.FeedbackService;
+import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ public class FeedbackController {
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
     @Autowired
-    private FeedbackRepository feedbackRepository;
+    private FeedbackService feedbackService;
     
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     
     @GetMapping
     public String showFeedbackForm(Model model) {
@@ -35,8 +35,7 @@ public class FeedbackController {
     public String saveFeedback(@ModelAttribute Feedback feedback, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
             logger.info("Intentando guardar feedback para usuario: {}", authentication.getName());
-            User user = userRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            User user = userService.findAuthenticatedUserByUsername(authentication.getName());
             
             // Llenar automáticamente los datos del usuario
             feedback.setUser(user);
@@ -50,7 +49,7 @@ public class FeedbackController {
             // Manejar email nulo
             feedback.setEmail(user.getEmail() != null ? user.getEmail() : "");
             
-            feedbackRepository.save(feedback);
+            feedbackService.save(feedback);
             logger.info("Feedback guardado exitosamente");
             redirectAttributes.addFlashAttribute("successMessage", "¡Gracias por tu feedback!");
         } catch (Exception e) {

@@ -29,8 +29,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                // Rutas públicas (PRIMERO)
-                .requestMatchers("/auth/**", "/", "/index", "/invitados", "/posts/**", "/css/**", "/js/**", "/images/**").permitAll()
+                // Rutas públicas (PRIMERO) - Acceso sin autenticación
+                .requestMatchers("/", "/index", "/invitados", "/guest/**").permitAll()
+                .requestMatchers("/auth/**", "/login", "/register").permitAll()
+                .requestMatchers("/posts/**", "/categories/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/requests/**").hasRole("USER")

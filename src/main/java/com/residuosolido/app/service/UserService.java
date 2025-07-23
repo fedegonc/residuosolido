@@ -71,7 +71,44 @@ public class UserService extends GenericEntityService<User, Long> {
         return userRepository.findByUsername(username).isPresent();
     }
     
-
+    /**
+     * Busca usuarios por rol
+     * @param role Rol para filtrar
+     * @return Lista de usuarios con el rol especificado
+     */
+    public List<User> findByRole(com.residuosolido.app.model.Role role) {
+        return userRepository.findByRole(role);
+    }
+    
+    /**
+     * Obtiene todos los usuarios, opcionalmente filtrados por rol
+     * @param role Rol para filtrar (opcional)
+     * @return Lista de usuarios
+     */
+    public List<User> getAllUsers(String roleName) {
+        if (roleName != null && !roleName.isEmpty()) {
+            try {
+                com.residuosolido.app.model.Role roleEnum = com.residuosolido.app.model.Role.valueOf(roleName);
+                return userRepository.findByRole(roleEnum);
+            } catch (IllegalArgumentException e) {
+                return userRepository.findAll();
+            }
+        } else {
+            return userRepository.findAll();
+        }
+    }
+    
+    /**
+     * Busca un usuario por su nombre de usuario autenticado
+     * @param username Nombre de usuario
+     * @return Usuario encontrado
+     * @throws IllegalArgumentException si el usuario no existe
+     */
+    public User findAuthenticatedUserByUsername(String username) {
+        return findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
+    }
+    
     
     /**
      * Crea un nuevo usuario con contraseña encriptada

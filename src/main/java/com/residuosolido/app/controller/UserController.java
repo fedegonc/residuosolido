@@ -4,6 +4,7 @@ import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/admin/users")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
     
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -27,21 +29,9 @@ public class UserController {
     @Autowired
     private UserService userService;
     
-    @Autowired
-    private UserRepository userRepository;
-    
     @GetMapping
     public String listUsers(@RequestParam(required = false) String role, Model model) {
-        if (role != null && !role.isEmpty()) {
-            try {
-                com.residuosolido.app.model.Role roleEnum = com.residuosolido.app.model.Role.valueOf(role);
-                model.addAttribute("users", userRepository.findByRole(roleEnum));
-            } catch (IllegalArgumentException e) {
-                model.addAttribute("users", userRepository.findAll());
-            }
-        } else {
-            model.addAttribute("users", userRepository.findAll());
-        }
+        model.addAttribute("users", userService.getAllUsers(role));
         return "users/list";
     }
     
@@ -120,33 +110,25 @@ public class UserController {
     @GetMapping("/perfil")
     public String userProfile(Model model, Authentication authentication) {
         String username = authentication.getName();
-        User currentUser = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
+        User currentUser = userService.findAuthenticatedUserByUsername(username);
         model.addAttribute("user", currentUser);
         return "users/profile";
     }
 
     @Autowired
-    private RequestRepository requestRepository;
+    private RequestService requestService;
     
     @GetMapping("/new")
     public String newRequestForm(Model model) {
-        model.addAttribute("organizations", userRepository.findByRole(com.residuosolido.app.model.Role.ORGANIZATION));
+        model.addAttribute("organizations", requestService.getOrganizations());
         return "requests/form";
     }
     
     @PostMapping("/requests")
     public String createRequest(@RequestParam Long organizationId, 
-                              @RequestParam String address,
-                              @RequestParam String description) {
-        // Crear solicitud básica - implementación mínima
-        com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
-        com.residuosolido.app.model.Organization org = new com.residuosolido.app.model.Organization();
-        org.setId(organizationId);
-        request.setOrganization(org);
-        request.setCollectionAddress(address);
-        request.setNotes(description);
-        requestRepository.save(request);
+                               @RequestParam String address,
+                               @RequestParam String description) {
+        requestService.createRequest(organizationId, address, description);
         return "redirect:/";
     }
 

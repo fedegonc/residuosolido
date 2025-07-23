@@ -65,7 +65,8 @@ public class DashboardService {
 
     public Map<String, Object> getPublicPageData() {
         Map<String, Object> data = new HashMap<>();
-        data.put("posts", postService.getAllPosts());
+        data.put("posts", postService.getFirst5Posts());
+        data.put("hasMorePosts", postService.hasMoreThan5Posts());
         data.put("organizationCount", userRepository.countByRole(Role.ORGANIZATION));
         return data;
     }
