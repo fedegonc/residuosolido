@@ -17,8 +17,10 @@ public class UserForm {
     private Role role;
     private String preferredLanguage;
     private boolean active;
+    private String profileImage;
     
     // Campos específicos del formulario
+    private String password;
     private String newPassword;
     private String confirmPassword;
 }

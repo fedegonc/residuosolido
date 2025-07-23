@@ -36,6 +36,8 @@ public class User {
     private String firstName;
     private String lastName;
 
+    private String profileImage; // URL imagen de perfil Cloudinary
+
     @ManyToMany
     @JoinTable(
         name = "user_phones",

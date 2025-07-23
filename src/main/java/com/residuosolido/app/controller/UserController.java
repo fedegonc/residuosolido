@@ -4,6 +4,7 @@ import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.service.CloudinaryService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
@@ -26,6 +28,9 @@ public class UserController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private CloudinaryService cloudinaryService;
     
     // Dashboard para usuarios normales
     @GetMapping("/users/dashboard")
@@ -66,13 +71,19 @@ public class UserController {
     // Guardar cambios del perfil
     @PostMapping("/users/save-profile")
     @PreAuthorize("hasRole('USER')")
-    public String saveUserProfile(@ModelAttribute UserForm userForm, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String saveUserProfile(@ModelAttribute UserForm userForm, @RequestParam(value = "imageFile", required = false) MultipartFile imageFile, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
-            // Solo permitir editar ciertos campos
             userForm.setId(currentUser.getId());
-            userForm.setRole(currentUser.getRole()); // Mantener rol actual
+            userForm.setRole(currentUser.getRole());
+            // Subida de imagen si hay archivo
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String url = cloudinaryService.uploadFile(imageFile);
+                userForm.setProfileImage(url);
+            } else {
+                userForm.setProfileImage(currentUser.getProfileImage());
+            }
             userService.saveUser(userForm);
             redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado exitosamente");
             return "redirect:/users/profile";

@@ -135,6 +135,33 @@
                         </div>
                     </div>
 
+                    <!-- Foto de perfil -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Foto de Perfil</h3>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-24 h-24 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
+                                <img th:if="${userForm.profileImage}" th:src="${userForm.profileImage}" alt="Foto de perfil" class="w-full h-full object-cover">
+                                <svg th:unless="${userForm.profileImage}" class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="hidden" onchange="showPreview(this)">
+                                <input type="hidden" th:field="*{profileImage}">
+                                <button type="button" onclick="document.getElementById('imageFile').click()" class="mb-2 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Seleccionar Imagen
+                                </button>
+                                <p class="text-sm text-gray-500">Formatos permitidos: JPG, PNG. Tamaño máximo: 5MB</p>
+                                <div id="preview-container" class="mt-2" style="display: none;">
+                                    <p class="text-sm text-green-600">Nueva imagen seleccionada</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Botones de acción responsive -->
                     <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t">
                         <button type="submit" 
@@ -154,6 +181,15 @@
                         </a>
                     </div>
                 </form>
+                
+                <script>
+                    function showPreview(input) {
+                        const container = document.getElementById('preview-container');
+                        if (input.files && input.files[0]) {
+                            container.style.display = 'block';
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
