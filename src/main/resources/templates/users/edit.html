@@ -185,8 +185,31 @@
                 <script>
                     function showPreview(input) {
                         const container = document.getElementById('preview-container');
+                        const profileImg = document.querySelector('.w-24.h-24 img');
+                        const profileSvg = document.querySelector('.w-24.h-24 svg');
+                        
                         if (input.files && input.files[0]) {
+                            const file = input.files[0];
+                            const reader = new FileReader();
+                            
+                            reader.onload = function(e) {
+                                // Crear nueva imagen o actualizar existente
+                                if (profileImg) {
+                                    profileImg.src = e.target.result;
+                                } else {
+                                    // Ocultar SVG y crear imagen
+                                    if (profileSvg) profileSvg.style.display = 'none';
+                                    const newImg = document.createElement('img');
+                                    newImg.src = e.target.result;
+                                    newImg.alt = 'Vista previa';
+                                    newImg.className = 'w-full h-full object-cover';
+                                    document.querySelector('.w-24.h-24').appendChild(newImg);
+                                }
+                            };
+                            
+                            reader.readAsDataURL(file);
                             container.style.display = 'block';
+                            container.innerHTML = '<p class="text-sm text-green-600">✓ Imagen cargada - Lista para guardar</p>';
                         }
                     }
                 </script>

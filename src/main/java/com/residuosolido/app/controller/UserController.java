@@ -63,6 +63,8 @@ public class UserController {
         userForm.setFirstName(currentUser.getFirstName());
         userForm.setLastName(currentUser.getLastName());
         userForm.setRole(currentUser.getRole());
+        userForm.setPreferredLanguage(currentUser.getPreferredLanguage() != null ? currentUser.getPreferredLanguage() : "es");
+        userForm.setProfileImage(currentUser.getProfileImage());
         model.addAttribute("userForm", userForm);
         model.addAttribute("isProfile", true);
         return "users/edit";
@@ -77,6 +79,7 @@ public class UserController {
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             userForm.setId(currentUser.getId());
             userForm.setRole(currentUser.getRole());
+            userForm.setPreferredLanguage(currentUser.getPreferredLanguage() != null ? currentUser.getPreferredLanguage() : "es");
             // Subida de imagen si hay archivo
             if (imageFile != null && !imageFile.isEmpty()) {
                 String url = cloudinaryService.uploadFile(imageFile);
