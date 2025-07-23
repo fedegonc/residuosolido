@@ -40,7 +40,7 @@
                     <h2 class="text-xl font-semibold text-white">Información Personal</h2>
                 </div>
                 
-                <form th:action="@{/users/save-profile}" method="post" th:object="${userForm}" class="p-6 space-y-6">
+                <form th:action="@{/users/save-profile}" method="post" th:object="${userForm}" enctype="multipart/form-data" class="p-6 space-y-6">
                     <!-- Campo oculto para ID -->
                     <input type="hidden" th:field="*{id}">
                     
