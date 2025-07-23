@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Admin - Posts')}"></head>
-
-<body th:replace="~{fragments/layout :: layout(~{::main})}">
-    <main>
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold">Administrar Posts</h1>
-                <a href="/admin/posts/config" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                    ⚙️ Configurar Sitio
-                </a>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Posts')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Encabezado simple -->
+        <div class="bg-gray-50 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Gestión de Posts</h1>
+                    <a href="/admin/posts/config" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        ⚙️ Configurar Sitio
+                    </a>
+                </div>
             </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             
             <!-- Lista de Posts -->
             <div class="bg-white rounded-lg shadow mb-8">
@@ -143,6 +149,6 @@
                 </a>
             </div>
         </div>
-    </main>
+    </div>
 </body>
 </html>

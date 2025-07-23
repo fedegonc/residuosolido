@@ -36,7 +36,9 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                // Rutas de usuario
+                // Rutas de gestión de usuarios para admin
+                .requestMatchers("/admin/users/**").hasRole("ADMIN")
+                // Rutas de usuario (solo usuarios)
                 .requestMatchers("/users/**").hasRole("USER")
                 .requestMatchers("/requests/**").hasRole("USER")
                 // Rutas de organización

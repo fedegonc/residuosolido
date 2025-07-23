@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Material')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center mb-6">
+                <a th:href="@{/admin/materials}" class="text-gray-600 hover:text-gray-900 mr-2">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-2xl font-bold text-gray-800" th:text="${material.id == null ? 'Nuevo Material' : 'Editar Material'}"></h1>
+            </div>
+            
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <form th:action="@{/admin/materials/save}" method="post" th:object="${material}">
+                    <input type="hidden" th:field="*{id}" />
+                    
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
+                        <input type="text" th:field="*{name}" id="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
+                        <textarea th:field="*{description}" id="description" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Categoría:</label>
+                        <select th:field="*{category}" id="category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="">Seleccione una categoría</option>
+                            <option value="Plástico">Plástico</option>
+                            <option value="Papel">Papel</option>
+                            <option value="Vidrio">Vidrio</option>
+                            <option value="Metal">Metal</option>
+                            <option value="Orgánico">Orgánico</option>
+                            <option value="Electrónico">Electrónico</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" th:field="*{active}" class="form-checkbox h-5 w-5 text-green-600" />
+                            <span class="ml-2 text-gray-700">Activo</span>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            Guardar
+                        </button>
+                        <a th:href="@{/admin/materials}" class="inline-block align-baseline font-bold text-sm text-gray-600 hover:text-gray-800">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

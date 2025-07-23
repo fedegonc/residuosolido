@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Editar Organización')}"></head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Editar Organización')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Encabezado simple -->
+        <div class="bg-gray-50 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Editar Organización</h1>
+                </div>
+            </div>
+        </div>
 
-<body th:replace="~{fragments/layout :: layout(~{::main})}">
-    <main>
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-3xl font-bold mb-6">Editar Organización</h1>
+        <!-- Contenido principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             
             <div class="bg-white rounded-lg shadow">
                 <div class="p-6">
@@ -45,6 +53,6 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 </body>
 </html>

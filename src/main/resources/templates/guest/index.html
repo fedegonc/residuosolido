@@ -1,21 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Inicio')}">
-    <title>Inicio - Sistema de Gestión de Residuos Sólidos</title>
-</head>
-
+<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
 <body th:replace="~{fragments/layout :: layout(~{::main})}">
     <main>
-        <!-- Hero Section -->
         <div th:replace="~{fragments/hero :: hero(${heroImage})}"></div>
-
-        <!-- Categories Section -->
         <div th:if="${categories != null and !categories.isEmpty()}" th:replace="~{fragments/categories :: categories(${categories})}"></div>
-
-        <!-- Posts Section -->
         <div th:replace="~{fragments/posts :: posts(${posts}, ${hasMorePosts})}"></div>
-
-       
     </main>
 </body>
 </html>

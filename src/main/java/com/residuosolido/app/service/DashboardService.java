@@ -3,6 +3,8 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.CategoryRepository;
+import com.residuosolido.app.repository.FeedbackRepository;
+import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,13 +22,17 @@ public class DashboardService {
     private final PostService postService;
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
+    private final FeedbackRepository feedbackRepository;
+    private final RequestRepository requestRepository;
 
     @Autowired
-    public DashboardService(UserRepository userRepository, PostService postService, CategoryRepository categoryRepository, CategoryService categoryService) {
+    public DashboardService(UserRepository userRepository, PostService postService, CategoryRepository categoryRepository, CategoryService categoryService, FeedbackRepository feedbackRepository, RequestRepository requestRepository) {
         this.userRepository = userRepository;
         this.postService = postService;
         this.categoryRepository = categoryRepository;
         this.categoryService = categoryService;
+        this.feedbackRepository = feedbackRepository;
+        this.requestRepository = requestRepository;
     }
 
     public Map<String, Object> getGeneralStats() {
@@ -35,8 +41,8 @@ public class DashboardService {
         stats.put("totalPosts", postService.getAllPosts().size());
         stats.put("totalCategories", categoryRepository.count());
         stats.put("totalOrganizations", userRepository.countByRole(Role.ORGANIZATION));
-        stats.put("totalRequests", 0L);
-        stats.put("totalFeedbacks", 0L);
+        stats.put("totalRequests", requestRepository.count());
+        stats.put("totalFeedbacks", feedbackRepository.count());
         return stats;
     }
 
@@ -53,7 +59,7 @@ public class DashboardService {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalOrganizations", userRepository.countByRole(Role.ORGANIZATION));
         stats.put("totalUsers", userRepository.countByRole(Role.USER));
-        stats.put("totalRequests", 0L);
+        stats.put("totalRequests", requestRepository.count());
         return stats;
     }
 

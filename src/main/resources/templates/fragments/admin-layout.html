@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="(${title} ?: 'Panel Admin') + ' - Sistema de Gestión de Residuos Sólidos'">Panel Admin - Sistema de Gestión de Residuos Sólidos</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        admin: {
+                            light: '#3b82f6',
+                            DEFAULT: '#1e40af',
+                            dark: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body th:fragment="layout(content)" class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Top Bar Simple -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Title -->
+                <div class="flex items-center">
+                    <h1 class="text-lg font-medium text-green-600">Residuos Sólidos - Rivera Sant'ana</h1>
+                </div>
+                
+                <!-- User Info -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center text-sm text-gray-700">
+                        <i class="fas fa-user-circle mr-1"></i>
+                        <span sec:authentication="name">Mi Perfil</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-900">Admin</span>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        <div th:replace="${content}"></div>
+    </main>
+
+    <!-- Footer Admin Dedicado -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Información del Sistema -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
+                        <i class="fas fa-cogs mr-2"></i>Panel de Administración
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        Sistema de Gestión de Residuos Sólidos<br>
+                        Rivera - Sant'ana do Livramento
+                    </p>
+                </div>
+                
+                <!-- Enlaces Rápidos -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
+                        <i class="fas fa-link mr-2"></i>Acceso Rápido
+                    </h3>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li><a href="/admin/dashboard" class="hover:text-white transition-colors">Dashboard</a></li>
+                        <li><a href="/admin/users" class="hover:text-white transition-colors">Usuarios</a></li>
+                        <li><a href="/admin/requests" class="hover:text-white transition-colors">Solicitudes</a></li>
+                        <li><a href="/admin/feedback" class="hover:text-white transition-colors">Feedback</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Información de Sesión -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
+                        <i class="fas fa-user-shield mr-2"></i>Sesión Actual
+                    </h3>
+                    <div class="text-sm text-gray-400 space-y-1">
+                        <p><strong>Usuario:</strong> <span sec:authentication="name">Admin</span></p>
+                        <p><strong>Rol:</strong> Administrador</p>
+                        <p><strong>Acceso:</strong> <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">Hoy</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Línea divisoria -->
+            <div class="border-t border-gray-700 mt-6 pt-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-sm text-gray-400">
+                        <i class="fas fa-shield-alt mr-1"></i>
+                        © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Sistema de Gestión de Residuos Sólidos. Todos los derechos reservados.
+                    </div>
+                    <div class="text-sm text-gray-400 mt-2 md:mt-0">
+                        <span class="inline-flex items-center px-2 py-1 bg-red-600 text-white text-xs rounded-full">
+                            <i class="fas fa-lock mr-1"></i>ZONA ADMINISTRATIVA
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Notificaciones simples
+        function showNotification(message, type = 'success') {
+            console.log(`${type}: ${message}`);
+        }
+    </script>
+</body>
+</html>
