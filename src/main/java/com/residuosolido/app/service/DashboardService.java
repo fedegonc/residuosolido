@@ -69,8 +69,8 @@ public class DashboardService {
         Map<String, Object> data = new HashMap<>();
         data.put("posts", postService.getFirst5Posts());
         data.put("hasMorePosts", postService.hasMoreThan5Posts());
-        
         data.put("categories", categoryService.getCategoriesWithSlugs());
+        data.put("heroImage", "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80");
         data.put("organizationCount", userRepository.countByRole(Role.ORGANIZATION));
         return data;
     }
