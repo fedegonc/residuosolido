@@ -44,7 +44,7 @@
         </div>
 
         <!-- Posts Section -->
-        <div class="py-12 bg-white">
+        <div class="py-6 bg-white">
             <div class="container mx-auto px-4">
                 <!-- Posts Grid -->
                 <div th:if="${posts != null and !posts.isEmpty()}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -52,7 +52,7 @@
                 </div>
                 
                 <!-- Ver más link -->
-                <div th:if="${hasMorePosts}" class="text-center mt-8">
+                <div th:if="${hasMorePosts}" class="text-center mt-6">
                     <a href="/posts" 
                        class="inline-block text-green-600 hover:text-green-800 font-medium hover:underline transition-colors duration-200">
                        Ver más publicaciones →
@@ -60,14 +60,14 @@
                 </div>
                 
                 <!-- No Posts Message -->
-                <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-16">
-                    <div class="mb-6">
-                        <svg class="mx-auto h-20 w-20 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-8">
+                    <div class="mb-4">
+                        <svg class="mx-auto h-16 w-16 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">¡Próximamente contenido increíble!</h3>
-                    <p class="text-gray-600 mb-6 max-w-md mx-auto">Estamos preparando artículos y guías sobre reciclaje y gestión de residuos para ayudarte a cuidar el medio ambiente.</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">¡Próximamente contenido increíble!</h3>
+                    <p class="text-gray-600 mb-4 max-w-md mx-auto">Estamos preparando artículos y guías sobre reciclaje y gestión de residuos para ayudarte a cuidar el medio ambiente.</p>
                     <div class="flex flex-col sm:flex-row gap-3 justify-center">
                         <a href="/auth/register" 
                            class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
