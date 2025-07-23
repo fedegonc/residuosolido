@@ -4,6 +4,7 @@ import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.CategoryRepository;
 import com.residuosolido.app.service.PostService;
+import com.residuosolido.app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +19,13 @@ public class PostController {
     
     private final CategoryRepository categoryRepository;
     private final PostService postService;
+    private final CategoryService categoryService;
     
     @Autowired
-    public PostController(CategoryRepository categoryRepository, PostService postService) {
+    public PostController(CategoryRepository categoryRepository, PostService postService, CategoryService categoryService) {
         this.categoryRepository = categoryRepository;
         this.postService = postService;
+        this.categoryService = categoryService;
     }
     
     // El método index se eliminó para evitar ambigüedad con AuthController
@@ -53,4 +56,24 @@ public class PostController {
         
         return "redirect:/posts";
     }
+    
+    @GetMapping("/posts/category/{categorySlug}")
+    public String viewPostsByCategory(@PathVariable String categorySlug, Model model) {
+        Optional<Category> categoryOpt = categoryService.findBySlug(categorySlug);
+            
+        if (categoryOpt.isPresent()) {
+            Category category = categoryOpt.get();
+            List<Post> posts = postService.getAllPosts().stream()
+                .filter(post -> post.getCategoryId().equals(category.getId()))
+                .collect(java.util.stream.Collectors.toList());
+                
+            model.addAttribute("posts", posts);
+            model.addAttribute("category", category);
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "posts/category";
+        }
+        
+        return "redirect:/posts";
+    }
+
 }

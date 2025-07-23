@@ -19,12 +19,14 @@ public class DashboardService {
     private final UserRepository userRepository;
     private final PostService postService;
     private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Autowired
-    public DashboardService(UserRepository userRepository, PostService postService, CategoryRepository categoryRepository) {
+    public DashboardService(UserRepository userRepository, PostService postService, CategoryRepository categoryRepository, CategoryService categoryService) {
         this.userRepository = userRepository;
         this.postService = postService;
         this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     public Map<String, Object> getGeneralStats() {
@@ -67,7 +69,10 @@ public class DashboardService {
         Map<String, Object> data = new HashMap<>();
         data.put("posts", postService.getFirst5Posts());
         data.put("hasMorePosts", postService.hasMoreThan5Posts());
+        
+        data.put("categories", categoryService.getCategoriesWithSlugs());
         data.put("organizationCount", userRepository.countByRole(Role.ORGANIZATION));
         return data;
     }
+
 }
