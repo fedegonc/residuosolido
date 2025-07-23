@@ -20,8 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/admin/users")
-@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
     
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -29,13 +27,23 @@ public class UserController {
     @Autowired
     private UserService userService;
     
-    @GetMapping
+    // Dashboard para usuarios normales
+    @GetMapping("/users/dashboard")
+    @PreAuthorize("hasRole('USER')")
+    public String userDashboard(Model model) {
+        return "users/dashboard";
+    }
+    
+    // Rutas de administración
+    @GetMapping("/admin/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public String listUsers(@RequestParam(required = false) String role, Model model) {
         model.addAttribute("users", userService.getAllUsers(role));
         return "users/list";
     }
     
-    @GetMapping("/create")
+    @GetMapping("/admin/users/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public String createUserForm(Model model) {
         model.addAttribute("userForm", new UserForm());
         return "users/form";
