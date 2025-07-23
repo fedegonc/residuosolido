@@ -119,7 +119,7 @@ public String init(@AuthenticationPrincipal UserDetails userDetails,
     
     @GetMapping("/auth/logout")
     public String showLogoutPage() {
-        return "index";
+        return "guest/index";
     }
     
     
