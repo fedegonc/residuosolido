@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Materiales')}"></head>
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-900 mb-6">Guía de Materiales</h1>
+
+                <!-- Filtros -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <select class="px-3 py-2 border border-gray-300 rounded-md">
+                            <option>Todos los materiales</option>
+                            <option>Reciclables</option>
+                            <option>No reciclables</option>
+                            <option>Orgánicos</option>
+                        </select>
+                        <input type="text" placeholder="Buscar material..." class="px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+
+                <!-- Grid de Materiales -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Plásticos -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Plásticos</h3>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Reciclable</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Botellas, envases, bolsas plásticas</p>
+                        <div class="text-sm text-gray-500">
+                            <p><strong>Preparación:</strong> Limpiar y separar por tipo</p>
+                            <p><strong>Organizaciones:</strong> EcoRivera, GreenSant'ana</p>
+                        </div>
+                    </div>
+
+                    <!-- Cartón -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Cartón</h3>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Reciclable</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Cajas, empaques, papel cartón</p>
+                        <div class="text-sm text-gray-500">
+                            <p><strong>Preparación:</strong> Aplanar y mantener seco</p>
+                            <p><strong>Organizaciones:</strong> EcoRivera</p>
+                        </div>
+                    </div>
+
+                    <!-- Vidrio -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Vidrio</h3>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Reciclable</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Botellas, frascos, envases de vidrio</p>
+                        <div class="text-sm text-gray-500">
+                            <p><strong>Preparación:</strong> Limpiar y separar por color</p>
+                            <p><strong>Organizaciones:</strong> EcoRivera</p>
+                        </div>
+                    </div>
+
+                    <!-- Metal -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Metal</h3>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Reciclable</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Latas, envases metálicos, aluminio</p>
+                        <div class="text-sm text-gray-500">
+                            <p><strong>Preparación:</strong> Limpiar y aplastar</p>
+                            <p><strong>Organizaciones:</strong> ReciclaFrontera</p>
+                        </div>
+                    </div>
+
+                    <!-- Orgánicos -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Orgánicos</h3>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Compostable</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Restos de comida, hojas, residuos de jardín</p>
+                        <div class="text-sm text-gray-500">
+                            <p><strong>Preparación:</strong> Separar de otros residuos</p>
+                            <p><strong>Organizaciones:</strong> GreenSant'ana</p>
+                        </div>
+                    </div>
+
+                    <!-- Electrónicos -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Electrónicos</h3>
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Especial</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Celulares, computadoras, baterías</p>
+                        <div class="text-sm text-gray-500">
+                            <p><strong>Preparación:</strong> Borrar datos personales</p>
+                            <p><strong>Organizaciones:</strong> ReciclaFrontera</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

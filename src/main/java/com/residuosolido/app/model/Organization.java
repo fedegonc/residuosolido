@@ -20,6 +20,7 @@ public class Organization {
     private String name;
     private String description;
     private String address;
+    private String city;
     private String phoneNumber;
     private String email;
     private String website;

@@ -39,6 +39,42 @@ public class UserController {
         return "users/dashboard";
     }
     
+    // Solicitudes del usuario
+    @GetMapping("/user/requests")
+    @PreAuthorize("hasRole('USER')")
+    public String userRequests(Model model) {
+        // TODO: Implementar lógica para obtener solicitudes del usuario
+        return "users/requests";
+    }
+    
+    // Crear nueva solicitud
+    @GetMapping("/user/requests/create")
+    @PreAuthorize("hasRole('USER')")
+    public String createRequest(Model model) {
+        return "users/request-form";
+    }
+    
+    // Materiales para usuario
+    @GetMapping("/user/materials")
+    @PreAuthorize("hasRole('USER')")
+    public String userMaterials(Model model) {
+        return "users/materials";
+    }
+    
+    // Notificaciones del usuario
+    @GetMapping("/user/notifications")
+    @PreAuthorize("hasRole('USER')")
+    public String userNotifications(Model model) {
+        return "users/notifications";
+    }
+    
+    // Estadísticas del usuario
+    @GetMapping("/user/stats")
+    @PreAuthorize("hasRole('USER')")
+    public String userStats(Model model) {
+        return "users/stats";
+    }
+    
     // Perfil de usuario
     @GetMapping("/users/profile")
    
