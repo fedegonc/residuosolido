@@ -109,57 +109,7 @@
         </div>
     </div>
     
-    <script>
-    const categoryPosts = {
-        'reciclable': [
-            {id: 1, title: 'Guía de Reciclaje de Plásticos', content: 'Los plásticos son uno de los materiales más comunes...', sourceUrl: 'https://www.greenpeace.org/usa/research/plastic-recycling/', sourceName: 'Greenpeace'},
-            {id: 2, title: 'Reciclaje de Papel y Cartón', content: 'El papel y cartón representan una gran parte...', sourceUrl: 'https://www.epa.gov/recycle/how-do-i-recycle-common-recyclables', sourceName: 'EPA'}
-        ],
-        'no-reciclable': [
-            {id: 3, title: 'Manejo de Residuos Peligrosos', content: 'Los residuos peligrosos como baterías...', sourceUrl: 'https://www.epa.gov/hw/household-hazardous-waste-hhw', sourceName: 'EPA'}
-        ],
-        'informaciones': [
-            {id: 4, title: 'Educación Ambiental en el Hogar', content: 'La educación ambiental comienza en casa...', sourceUrl: 'https://www.unep.org/explore-topics/education-environment', sourceName: 'UNEP'},
-            {id: 5, title: 'Impacto Ambiental de los Residuos', content: 'Comprende el verdadero impacto que nuestros residuos...', sourceUrl: 'https://www.worldbank.org/en/topic/urbandevelopment/brief/solid-waste-management', sourceName: 'World Bank'}
-        ]
-    };
-    
-    function toggleCategory(categorySlug) {
-        const content = document.getElementById(`content-${categorySlug}`);
-        const arrow = document.getElementById(`arrow-${categorySlug}`);
-        const postsContainer = document.getElementById(`posts-${categorySlug}`);
-        
-        if (content.classList.contains('hidden')) {
-            content.classList.remove('hidden');
-            arrow.classList.add('rotate-180');
-            loadPosts(categorySlug, postsContainer);
-        } else {
-            content.classList.add('hidden');
-            arrow.classList.remove('rotate-180');
-        }
-    }
-    
-    function loadPosts(categorySlug, container) {
-        const posts = categoryPosts[categorySlug] || [];
-        container.innerHTML = '';
-        
-        posts.forEach(post => {
-            const postElement = document.createElement('div');
-            postElement.className = 'bg-white p-4 rounded-lg shadow-sm border-l-4 border-gray-300';
-            postElement.innerHTML = `
-                <h5 class="font-semibold text-gray-800 mb-2">
-                    <a href="/posts/${post.id}" class="hover:text-green-600 transition-colors">${post.title}</a>
-                </h5>
-                <p class="text-gray-600 text-sm mb-3">${post.content.substring(0, 100)}...</p>
-                <div class="flex items-center justify-between">
-                    <a href="/posts/${post.id}" class="text-green-600 hover:text-green-800 text-sm font-medium">Leer más</a>
-                    <a href="${post.sourceUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 text-xs">${post.sourceName}</a>
-                </div>
-            `;
-            container.appendChild(postElement);
-        });
-    }
-    </script>
+
 </div>
 </body>
 </html>
