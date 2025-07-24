@@ -78,7 +78,7 @@ public class RequestService extends GenericEntityService<Request, Long> {
         request.setUser(currentUser);
         request.setCollectionAddress(address);
         request.setNotes(description);
-        request.setStatus(com.residuosolido.app.model.RequestStatus.PENDING);
+        request.setStatus(Request.RequestStatus.PENDING);
         
         return save(request);
     }

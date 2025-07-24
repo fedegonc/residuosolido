@@ -98,13 +98,6 @@ public class UserController {
     }
     
     // Rutas de administración
-    @GetMapping("/admin/users")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String listUsers(@RequestParam(required = false) String role, Model model) {
-        model.addAttribute("users", userService.getAllUsers(role));
-        return "users/list";
-    }
-    
     @GetMapping("/admin/users/create")
     @PreAuthorize("hasRole('ADMIN')")
     public String createUserForm(Model model) {

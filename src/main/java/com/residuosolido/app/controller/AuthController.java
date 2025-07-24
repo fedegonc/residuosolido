@@ -132,10 +132,5 @@ public String init(@AuthenticationPrincipal UserDetails userDetails,
         return "redirect:/auth/login?info=Solicitud enviada al administrador";
     }
     
-    @GetMapping("/auth/logout")
-    public String showLogoutPage() {
-        return "guest/index";
-    }
-    
     
 }

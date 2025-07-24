@@ -3,10 +3,12 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.Feedback;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.PasswordResetRequest;
+import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.FeedbackRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.PasswordResetService;
+import com.residuosolido.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -32,14 +34,17 @@ public class AdminController {
     private final FeedbackRepository feedbackRepository;
     private final RequestRepository requestRepository;
     private final PasswordResetService passwordResetService;
+    private final UserService userService;
 
     @Autowired
     public AdminController(DashboardService dashboardService, FeedbackRepository feedbackRepository, 
-                          RequestRepository requestRepository, PasswordResetService passwordResetService) {
+                          RequestRepository requestRepository, PasswordResetService passwordResetService,
+                          UserService userService) {
         this.dashboardService = dashboardService;
         this.feedbackRepository = feedbackRepository;
         this.requestRepository = requestRepository;
         this.passwordResetService = passwordResetService;
+        this.userService = userService;
     }
 
     @GetMapping("/dashboard")
@@ -115,5 +120,13 @@ public class AdminController {
         model.addAttribute("requests", requests);
         model.addAttribute("pageTitle", "Gestión de Solicitudes");
         return "admin/requests";
+    }
+    
+    @GetMapping("/users")
+    public String listUsers(Model model) {
+        List<User> users = userService.findAll();
+        model.addAttribute("users", users);
+        model.addAttribute("pageTitle", "Gestión de Usuarios");
+        return "admin/users";
     }
 }

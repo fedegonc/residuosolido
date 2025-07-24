@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Usuarios')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="bg-gray-50 py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="sm:flex sm:items-center">
+                            <div class="sm:flex-auto">
+                                <h1 class="text-xl font-semibold text-gray-900">Gestión de Usuarios</h1>
+                                <p class="mt-2 text-sm text-gray-700">Lista de todos los usuarios registrados en el sistema.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 flow-root">
+                            <div th:if="${users != null and !users.empty}" class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                                    <table class="min-w-full divide-y divide-gray-300">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registro</th>
+                                                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Acciones</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            <tr th:each="user : ${users}">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.id}">1</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            <img class="h-10 w-10 rounded-full object-cover bg-gray-200" 
+                                                                 th:src="${user.profileImage != null ? user.profileImage : 'https://via.placeholder.com/40x40?text=U'}" 
+                                                                 th:alt="${user.firstName + ' ' + user.lastName}">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900" th:text="${user.firstName + ' ' + user.lastName}">Nombre Usuario</div>
+                                                            <div class="text-sm text-gray-500" th:text="${user.username}">@usuario</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.email}">usuario@email.com</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span th:class="${user.role.name() == 'ADMIN'} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800' : 
+                                                                   (${user.role.name() == 'ORGANIZATION'} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800' : 
+                                                                   'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800')"
+                                                          th:text="${user.role.getDisplayName()}">Usuario</span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span th:class="${user.active} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800' : 
+                                                                                     'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800'"
+                                                          th:text="${user.active} ? 'Activo' : 'Inactivo'">Activo</span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" 
+                                                    th:text="${user.registrationDate != null ? #temporals.format(user.registrationDate, 'dd/MM/yyyy') : 'No disponible'}">01/01/2024</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a th:href="@{/admin/users/view/{id}(id=${user.id})}" 
+                                                       class="text-indigo-600 hover:text-indigo-900 mr-3">Ver</a>
+                                                    <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" 
+                                                       class="text-green-600 hover:text-green-900 mr-3">Editar</a>
+                                                    <a th:if="${user.role.name() != 'ADMIN'}" 
+                                                       th:href="@{/admin/users/delete/{id}(id=${user.id})}" 
+                                                       class="text-red-600 hover:text-red-900"
+                                                       onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?')">Eliminar</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Estado vacío -->
+                            <div th:if="${users == null or users.empty}" class="text-center py-12">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No hay usuarios registrados</h3>
+                                <p class="mt-1 text-sm text-gray-500">No se han registrado usuarios en el sistema todavía.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Información adicional -->
+                        <div th:if="${users != null and !users.empty}" class="mt-6 border-t border-gray-200 pt-6">
+                            <div class="text-sm text-gray-500">
+                                <p>Total de usuarios: <span class="font-medium text-gray-900" th:text="${users.size()}">0</span></p>
+                                <p class="mt-1">Usuarios activos: <span class="font-medium text-green-600" th:text="${#lists.size(#lists.toList(users.![active]))}">0</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botón de regreso -->
+                <div class="mt-6">
+                    <a href="/admin/dashboard" class="text-gray-600 hover:text-gray-800">← Volver al Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
