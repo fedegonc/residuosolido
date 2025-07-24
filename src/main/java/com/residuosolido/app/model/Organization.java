@@ -25,6 +25,12 @@ public class Organization {
     private String website;
     private Integer dailyCapacity;
     private Boolean active;
+    
+    // Campos para ubicación en mapa
+    private Double latitude;
+    private Double longitude;
+    private String mapAddress;
+    private String directions;
 
     @ManyToMany
     @JoinTable(

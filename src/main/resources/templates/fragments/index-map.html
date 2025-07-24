@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- INDEX MAP COMPONENT -->
+<div th:fragment="indexMap">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            ¿Dónde Reciclar?
+        </h2>
+        
+        <!-- Mapa Container -->
+        <div id="indexMap" class="w-full h-80 rounded-lg border border-gray-300 mb-4"></div>
+        
+        <!-- Organizaciones Destacadas -->
+        <div class="space-y-3">
+            <h3 class="text-md font-semibold text-gray-800 mb-3">Organizaciones Cercanas</h3>
+            
+            <!-- Organización 1: Renacer -->
+            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer" 
+                 onclick="focusIndexOrganization(-30.9037, -55.5312, 'renacer')">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 text-sm">Organización Renacer</h4>
+                            <p class="text-xs text-gray-600">Av. Brasil 1234, Rivera</p>
+                            <p class="text-xs text-gray-500 mt-1">Plásticos y papel</p>
+                        </div>
+                    </div>
+                    <button onclick="showDirections('renacer')" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                        Cómo llegar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Organización 2: EcoVerde -->
+            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer" 
+                 onclick="focusIndexOrganization(-30.9100, -55.5400, 'ecoverde')">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 text-sm">EcoVerde Rivera</h4>
+                            <p class="text-xs text-gray-600">Calle Artigas 567, Rivera</p>
+                            <p class="text-xs text-gray-500 mt-1">Residuos orgánicos</p>
+                        </div>
+                    </div>
+                    <button onclick="showDirections('ecoverde')" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                        Cómo llegar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Ver todas -->
+            <div class="text-center pt-3">
+                <a href="/organizations/map" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                    Ver todas las organizaciones →
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para direcciones -->
+    <div id="directionsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Cómo llegar</h3>
+                    <button onclick="closeDirections()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="directionsContent" class="space-y-4">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <script>
+        // Datos hardcodeados de organizaciones (luego vendrán del servidor)
+        const indexOrganizations = [
+            {
+                id: 'renacer',
+                name: 'Organización Renacer',
+                lat: -30.9037,
+                lng: -55.5312,
+                address: 'Av. Brasil 1234, Rivera',
+                type: 'Plásticos y papel',
+                directions: 'Desde el centro de Rivera, tomar Av. Brasil hacia el este. La organización está ubicada en el edificio azul con cartel de reciclaje, a 3 cuadras del semáforo principal.',
+                phone: '+598 4622 1234',
+                hours: 'Lun-Vie: 8:00-17:00'
+            },
+            {
+                id: 'ecoverde',
+                name: 'EcoVerde Rivera',
+                lat: -30.9100,
+                lng: -55.5400,
+                address: 'Calle Artigas 567, Rivera',
+                type: 'Residuos orgánicos',
+                directions: 'Desde la plaza principal, caminar por Artigas hacia el sur. EcoVerde está en el local verde con jardín vertical, frente a la farmacia.',
+                phone: '+598 4622 5678',
+                hours: 'Lun-Sab: 7:00-18:00'
+            }
+        ];
+        
+        let indexMap;
+        let indexMarkers = {};
+        
+        // Inicializar mapa del index
+        function initIndexMap() {
+            indexMap = L.map('indexMap').setView([-30.9037, -55.5312], 13);
+            
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(indexMap);
+            
+            // Agregar marcadores
+            indexOrganizations.forEach(org => {
+                const marker = L.marker([org.lat, org.lng]).addTo(indexMap);
+                
+                const popupContent = `
+                    <div class="p-2">
+                        <h4 class="font-bold text-gray-900 mb-1">${org.name}</h4>
+                        <p class="text-sm text-gray-600 mb-1">${org.address}</p>
+                        <p class="text-xs text-gray-500 mb-2">${org.type}</p>
+                        <button onclick="showDirections('${org.id}')" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                            Ver cómo llegar
+                        </button>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+                indexMarkers[org.id] = marker;
+            });
+        }
+        
+        // Enfocar organización específica
+        function focusIndexOrganization(lat, lng, orgId) {
+            indexMap.setView([lat, lng], 16);
+            if (indexMarkers[orgId]) {
+                indexMarkers[orgId].openPopup();
+            }
+        }
+        
+        // Mostrar direcciones
+        function showDirections(orgId) {
+            const org = indexOrganizations.find(o => o.id === orgId);
+            if (!org) return;
+            
+            const content = `
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">${org.name}</h4>
+                        <p class="text-sm text-gray-600 mb-1">${org.address}</p>
+                        <p class="text-xs text-gray-500">${org.type}</p>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-medium text-gray-800 mb-2">Instrucciones:</h5>
+                        <p class="text-sm text-gray-600">${org.directions}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <span class="font-medium text-gray-700">Teléfono:</span><br>
+                            <span class="text-gray-600">${org.phone}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Horarios:</span><br>
+                            <span class="text-gray-600">${org.hours}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button onclick="openGoogleMaps(${org.lat}, ${org.lng})" 
+                                class="flex-1 bg-green-600 text-white py-2 px-3 rounded text-sm hover:bg-green-700">
+                            Abrir en Google Maps
+                        </button>
+                        <button onclick="focusIndexOrganization(${org.lat}, ${org.lng}, '${org.id}'); closeDirections();" 
+                                class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+                            Ver en Mapa
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('directionsContent').innerHTML = content;
+            document.getElementById('directionsModal').classList.remove('hidden');
+        }
+        
+        // Cerrar modal de direcciones
+        function closeDirections() {
+            document.getElementById('directionsModal').classList.add('hidden');
+        }
+        
+        // Abrir en Google Maps
+        function openGoogleMaps(lat, lng) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            window.open(url, '_blank');
+        }
+        
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si el mapa ya existe para evitar duplicados
+            if (!document.getElementById('indexMap')._leaflet_id) {
+                initIndexMap();
+            }
+        });
+        
+        // Hacer funciones globales
+        window.focusIndexOrganization = focusIndexOrganization;
+        window.showDirections = showDirections;
+        window.closeDirections = closeDirections;
+        window.openGoogleMaps = openGoogleMaps;
+    </script>
+</div>
+</body>
+</html>

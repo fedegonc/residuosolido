@@ -1,6 +1,7 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.dto.UserForm;
+import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,5 +211,23 @@ public class UserService extends GenericEntityService<User, Long> {
             throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
         }
         deleteById(id);
+    }
+    
+    /**
+     * Busca un usuario por su ID y lo devuelve directamente
+     * @param id ID del usuario
+     * @return Usuario encontrado o null si no existe
+     */
+    public User findUserById(Long id) {
+        return super.findById(id).orElse(null);
+    }
+    
+    /**
+     * Cuenta la cantidad de usuarios por rol
+     * @param role Rol a contar
+     * @return Cantidad de usuarios con ese rol
+     */
+    public long countByRole(Role role) {
+        return userRepository.countByRole(role);
     }
 }

@@ -34,4 +34,18 @@ public class OrganizationController {
         
         return "org/dashboard";
     }
+    
+    @GetMapping("/organizations/map")
+    public String organizationMap(Model model) {
+        model.addAttribute("pageTitle", "Mapa de Organizaciones");
+        return "organizations/map";
+    }
+    
+    @GetMapping("/org/profile")
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    public String organizationProfile(Model model) {
+        // Por ahora datos hardcodeados, luego obtener de usuario logueado
+        model.addAttribute("pageTitle", "Perfil de Organización");
+        return "org/profile";
+    }
 }

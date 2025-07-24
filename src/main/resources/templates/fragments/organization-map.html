@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- ORGANIZATION MAP COMPONENT -->
+<div th:fragment="organizationMap">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Organizaciones Cercanas
+        </h2>
+        
+        <!-- Mapa Container -->
+        <div id="organizationMap" class="w-full h-96 rounded-lg border border-gray-300 mb-4"></div>
+        
+        <!-- Lista de Organizaciones -->
+        <div class="space-y-3">
+            <h3 class="text-md font-semibold text-gray-800 mb-3">Organizaciones Registradas</h3>
+            
+            <!-- Organización 1: Renacer -->
+            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer" 
+                 onclick="focusOrganization(-30.9037, -55.5312, 'renacer')">
+                <div class="flex items-start space-x-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-900">Organización Renacer</h4>
+                        <p class="text-sm text-gray-600">Rivera, Uruguay</p>
+                        <p class="text-xs text-gray-500 mt-1">Especializada en reciclaje de plásticos y papel</p>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Activa
+                            </span>
+                            <span class="text-xs text-gray-500">📍 Av. Brasil 1234</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Organización 2: EcoVerde -->
+            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer" 
+                 onclick="focusOrganization(-30.9100, -55.5400, 'ecoverde')">
+                <div class="flex items-start space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-900">EcoVerde Rivera</h4>
+                        <p class="text-sm text-gray-600">Rivera, Uruguay</p>
+                        <p class="text-xs text-gray-500 mt-1">Gestión integral de residuos orgánicos</p>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                Activa
+                            </span>
+                            <span class="text-xs text-gray-500">📍 Calle Artigas 567</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Organización 3: Sant'ana Limpia -->
+            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer" 
+                 onclick="focusOrganization(-30.8900, -55.5200, 'santana')">
+                <div class="flex items-start space-x-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-900">Sant'ana Limpia</h4>
+                        <p class="text-sm text-gray-600">Sant'ana do Livramento, Brasil</p>
+                        <p class="text-xs text-gray-500 mt-1">Recolección y tratamiento de residuos electrónicos</p>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                Activa
+                            </span>
+                            <span class="text-xs text-gray-500">📍 Rua das Flores 890</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estadísticas rápidas -->
+        <div class="mt-6 grid grid-cols-3 gap-4">
+            <div class="text-center p-3 bg-green-50 rounded-lg">
+                <div class="text-2xl font-bold text-green-600">3</div>
+                <div class="text-xs text-green-700">Organizaciones</div>
+            </div>
+            <div class="text-center p-3 bg-blue-50 rounded-lg">
+                <div class="text-2xl font-bold text-blue-600">2</div>
+                <div class="text-xs text-blue-700">Ciudades</div>
+            </div>
+            <div class="text-center p-3 bg-purple-50 rounded-lg">
+                <div class="text-2xl font-bold text-purple-600">5km</div>
+                <div class="text-xs text-purple-700">Radio Promedio</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <script>
+        // Inicializar el mapa centrado en Rivera
+        let map = L.map('organizationMap').setView([-30.9037, -55.5312], 13);
+        
+        // Agregar tiles de OpenStreetMap (gratuito)
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Datos hardcodeados de organizaciones
+        const organizations = [
+            {
+                id: 'renacer',
+                name: 'Organización Renacer',
+                lat: -30.9037,
+                lng: -55.5312,
+                address: 'Av. Brasil 1234, Rivera',
+                type: 'Reciclaje de plásticos y papel',
+                status: 'Activa',
+                color: 'green'
+            },
+            {
+                id: 'ecoverde',
+                name: 'EcoVerde Rivera',
+                lat: -30.9100,
+                lng: -55.5400,
+                address: 'Calle Artigas 567, Rivera',
+                type: 'Residuos orgánicos',
+                status: 'Activa',
+                color: 'blue'
+            },
+            {
+                id: 'santana',
+                name: 'Sant\'ana Limpia',
+                lat: -30.8900,
+                lng: -55.5200,
+                address: 'Rua das Flores 890, Sant\'ana do Livramento',
+                type: 'Residuos electrónicos',
+                status: 'Activa',
+                color: 'purple'
+            }
+        ];
+        
+        // Agregar marcadores al mapa
+        const markers = {};
+        organizations.forEach(org => {
+            const marker = L.marker([org.lat, org.lng]).addTo(map);
+            
+            // Popup personalizado
+            const popupContent = `
+                <div class="p-2">
+                    <h3 class="font-bold text-gray-900 mb-1">${org.name}</h3>
+                    <p class="text-sm text-gray-600 mb-1">${org.address}</p>
+                    <p class="text-xs text-gray-500 mb-2">${org.type}</p>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-${org.color}-100 text-${org.color}-800">
+                        ${org.status}
+                    </span>
+                </div>
+            `;
+            
+            marker.bindPopup(popupContent);
+            markers[org.id] = marker;
+        });
+        
+        // Función para enfocar una organización específica
+        function focusOrganization(lat, lng, orgId) {
+            map.setView([lat, lng], 16);
+            if (markers[orgId]) {
+                markers[orgId].openPopup();
+            }
+        }
+        
+        // Hacer la función global para que funcione desde el HTML
+        window.focusOrganization = focusOrganization;
+    </script>
+</div>
+</body>
+</html>

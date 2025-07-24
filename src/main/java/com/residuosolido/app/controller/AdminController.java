@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -128,5 +129,33 @@ public class AdminController {
         model.addAttribute("users", users);
         model.addAttribute("pageTitle", "Gestión de Usuarios");
         return "admin/users";
+    }
+    
+    @PostMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.findUserById(id);
+            if (user == null) {
+                redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+                return "redirect:/admin/users";
+            }
+            
+            // Verificar que no sea el último administrador
+            if (user.getRole().name().equals("ADMIN")) {
+                long adminCount = userService.countByRole(com.residuosolido.app.model.Role.ADMIN);
+                if (adminCount <= 1) {
+                    redirectAttributes.addFlashAttribute("error", "No se puede eliminar el último administrador del sistema.");
+                    return "redirect:/admin/users";
+                }
+            }
+            
+            userService.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Usuario eliminado exitosamente.");
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar el usuario: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/users";
     }
 }

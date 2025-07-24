@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Perfil de Organización')}"></head>
+<body th:replace="~{fragments/layout :: layout(~{::main})}">
+    <main>
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Perfil de Organización</h1>
+                <p class="text-gray-600">Configura la información de tu organización y ubicación en el mapa</p>
+            </div>
+            
+            <!-- Formulario -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Información Básica -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Información Básica</h2>
+                    
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Organización</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   value="Organización Renacer" placeholder="Nombre de la organización">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                      rows="3" placeholder="Descripción de la organización">Especializada en reciclaje de plásticos y papel</textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                            <input type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   value="+598 4622 1234" placeholder="Número de teléfono">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   value="contacto@renacer.org.uy" placeholder="Email de contacto">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sitio Web</label>
+                            <input type="url" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   value="https://renacer.org.uy" placeholder="https://ejemplo.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Capacidad Diaria (kg)</label>
+                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   value="500" placeholder="Capacidad en kilogramos">
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Ubicación y Mapa -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Ubicación en el Mapa</h2>
+                    
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dirección Completa</label>
+                            <input type="text" id="mapAddress" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   value="Av. Brasil 1234, Rivera, Uruguay" placeholder="Dirección completa">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Latitud</label>
+                                <input type="number" id="latitude" step="any" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                       value="-30.9037" placeholder="-30.9037">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Longitud</label>
+                                <input type="number" id="longitude" step="any" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                       value="-55.5312" placeholder="-55.5312">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Instrucciones para llegar</label>
+                            <textarea id="directions" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                      rows="4" placeholder="Describe cómo llegar a tu organización">Desde el centro de Rivera, tomar Av. Brasil hacia el este. La organización está ubicada en el edificio azul con cartel de reciclaje, a 3 cuadras del semáforo principal.</textarea>
+                        </div>
+                        
+                        <button type="button" onclick="getCurrentLocation()" 
+                                class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Obtener Mi Ubicación
+                        </button>
+                    </form>
+                    
+                    <!-- Mapa de vista previa -->
+                    <div class="mt-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Vista Previa</h3>
+                        <div id="previewMap" class="w-full h-64 rounded-lg border border-gray-300"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="mt-8 flex justify-end space-x-4">
+                <button type="button" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+        
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+              integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+              crossorigin=""/>
+        
+        <!-- Leaflet JavaScript -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+                crossorigin=""></script>
+        
+        <script>
+            let previewMap;
+            let marker;
+            
+            // Inicializar mapa de vista previa
+            function initPreviewMap() {
+                const lat = parseFloat(document.getElementById('latitude').value) || -30.9037;
+                const lng = parseFloat(document.getElementById('longitude').value) || -55.5312;
+                
+                previewMap = L.map('previewMap').setView([lat, lng], 15);
+                
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(previewMap);
+                
+                marker = L.marker([lat, lng]).addTo(previewMap);
+                
+                // Evento click en el mapa para actualizar coordenadas
+                previewMap.on('click', function(e) {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    
+                    document.getElementById('latitude').value = lat.toFixed(6);
+                    document.getElementById('longitude').value = lng.toFixed(6);
+                    
+                    marker.setLatLng([lat, lng]);
+                });
+            }
+            
+            // Actualizar mapa cuando cambien las coordenadas
+            function updateMapFromCoordinates() {
+                const lat = parseFloat(document.getElementById('latitude').value);
+                const lng = parseFloat(document.getElementById('longitude').value);
+                
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    previewMap.setView([lat, lng], 15);
+                    marker.setLatLng([lat, lng]);
+                }
+            }
+            
+            // Obtener ubicación actual del usuario
+            function getCurrentLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        document.getElementById('latitude').value = lat.toFixed(6);
+                        document.getElementById('longitude').value = lng.toFixed(6);
+                        
+                        updateMapFromCoordinates();
+                    }, function(error) {
+                        alert('Error obteniendo ubicación: ' + error.message);
+                    });
+                } else {
+                    alert('Geolocalización no soportada por este navegador.');
+                }
+            }
+            
+            // Inicializar cuando se carga la página
+            document.addEventListener('DOMContentLoaded', function() {
+                initPreviewMap();
+                
+                // Listeners para actualizar mapa cuando cambien coordenadas
+                document.getElementById('latitude').addEventListener('input', updateMapFromCoordinates);
+                document.getElementById('longitude').addEventListener('input', updateMapFromCoordinates);
+            });
+        </script>
+    </main>
+</body>
+</html>
