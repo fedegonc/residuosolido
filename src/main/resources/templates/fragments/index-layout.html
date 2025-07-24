@@ -47,13 +47,13 @@
     </th:block>
     
     <!-- CSS del componente guest-dropdown -->
-    <th:block th:replace="fragments/guest-dropdown :: guest-dropdown-css"></th:block>
+    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-css}"></th:block>
 </head>
 
 <body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Guest Dropdown Component -->
     <div class="fixed top-4 right-4 z-50">
-        <div th:replace="fragments/guest-dropdown :: guest-dropdown"></div>
+        <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
     </div>
 
     
@@ -63,7 +63,7 @@
     </main>
 
     <!-- JavaScript del componente guest-dropdown -->
-    <th:block th:replace="fragments/guest-dropdown :: guest-dropdown-js"></th:block>
+    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
     
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-auto">

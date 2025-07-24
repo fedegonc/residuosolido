@@ -30,6 +30,10 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private UserType userType;
+
     @Column(nullable = false)
     private String preferredLanguage; // 'es' o 'pt'
 
@@ -46,6 +50,17 @@ public class User {
     )
     private List<Phone> phones = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> feedbacks = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_materials",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "material_id")
+    )
+    private List<Material> materials = new ArrayList<>();
+
     private LocalDateTime createdAt;
     private LocalDateTime lastAccessAt;
     private boolean active;
@@ -54,6 +69,9 @@ public class User {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.active = true;
+        if (this.userType == null) {
+            this.userType = UserType.COMUN;
+        }
     }
 
     /**

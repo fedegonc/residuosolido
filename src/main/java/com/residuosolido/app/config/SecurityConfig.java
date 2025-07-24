@@ -73,11 +73,11 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByUsername(username)
-            .map(user -> org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername()) // Asumimos que @Data genera getters
-                .password(user.getPassword()) // Asumimos que @Data genera getters
-                .roles(user.getRole().name()) // Asumimos que @Data genera getters
-                .build())
+            .map(user -> new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+            ))
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
     

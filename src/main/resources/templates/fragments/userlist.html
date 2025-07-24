@@ -26,26 +26,55 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre de Usuario</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Registro</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registro</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr th:each="user : ${users}">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.username}]]</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.email}]]</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            <td class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">[[${user.id}]]</td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <div class="flex items-center">
+                                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
+                                        <span class="text-xs font-medium text-gray-600" th:text="${user.firstName != null ? user.firstName.substring(0,1).toUpperCase() : user.username.substring(0,1).toUpperCase()}">U</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900" th:text="${user.firstName != null and user.lastName != null ? user.firstName + ' ' + user.lastName : (user.firstName != null ? user.firstName : 'Sin nombre')}">Nombre</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">[[${user.username}]]</td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">[[${user.email}]]</td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
                                       th:classappend="${user.role != null and user.role.name() == 'ADMIN'} ? 'bg-red-100 text-red-800' : (${user.role != null and user.role.name() == 'ORGANIZATION'} ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800')">
                                     <span th:if="${user.role != null and user.role.name() == 'ADMIN'}">⚙️ Admin</span>
                                     <span th:if="${user.role != null and user.role.name() == 'ORGANIZATION'}">🏢 Org</span>
                                     <span th:if="${user.role != null and user.role.name() == 'USER'}">👤 Usuario</span>
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">[[${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}]]</td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                      th:classappend="${user.userType != null and user.userType.name() == 'EMPRESA'} ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'">
+                                    <span th:if="${user.userType != null and user.userType.name() == 'EMPRESA'}">🏢 Empresa</span>
+                                    <span th:if="${user.userType == null or user.userType.name() == 'COMUN'}">👤 Común</span>
+                                </span>
+                            </td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                      th:classappend="${user.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                                    <span th:if="${user.active}">✅ Activo</span>
+                                    <span th:if="${!user.active}">❌ Inactivo</span>
+                                </span>
+                            </td>
+                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">[[${#temporals.format(user.createdAt, 'dd/MM/yyyy')}]]</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <a th:href="@{/admin/users/view/{id}(id=${user.id})}" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium mr-1">Ver</a>
                                 <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs font-medium mr-1">Editar</a>

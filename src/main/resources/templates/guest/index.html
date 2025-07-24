@@ -3,23 +3,33 @@
 <head th:replace="~{fragments/index-layout :: head('Inicio')}"></head>
 <body th:replace="~{fragments/index-layout :: layout(~{::main})}">
     <main>
-        <!-- Grid Layout Principal -->
+        <!-- Layout Principal Mejorado -->
         <div class="min-h-screen bg-gray-50">
-            <!-- Hero Section - Full Width -->
-            <section class="hero-section">
-                <div th:replace="~{fragments/hero :: hero(${heroImage})}"></div>
+            <!-- Hero Section Compacto -->
+            <section class="hero-section bg-gradient-to-r from-green-600 to-green-700 text-white py-12">
+                <div class="container mx-auto px-4 text-center">
+                    <h1 class="text-4xl font-bold mb-4">Gestión de Residuos Sólidos</h1>
+                    <p class="text-xl opacity-90 mb-6">Rivera - Sant'ana do Livramento</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="/auth/register" class="bg-white text-green-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                            Registrarse
+                        </a>
+                        <a href="/auth/login" class="border border-white text-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-green-600 transition">
+                            Iniciar Sesión
+                        </a>
+                    </div>
+                </div>
             </section>
 
-            <!-- Main Content Grid -->
+            <!-- Grid Principal 3 Columnas -->
             <div class="container mx-auto px-4 py-8">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
                     
-                    <!-- Left Sidebar - Categories -->
-                    <aside class="lg:col-span-4 xl:col-span-3">
-                        <div class="sticky top-8 space-y-6">
-                            <!-- Tarjetas de categorías -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <!-- Columna 1: Categorías -->
+                    <aside class="lg:col-span-3">
+                        <div class="sticky top-4 space-y-4">
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
                                     <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                                     </svg>
@@ -27,15 +37,11 @@
                                 </h2>
                                 <div th:replace="~{fragments/category-cards :: categoryCards}"></div>
                             </div>
-                            
-                            <!-- Mapa de organizaciones -->
-                            <div th:replace="~{fragments/index-map :: indexMap}"></div>
-
                         </div>
                     </aside>
 
-                    <!-- Main Content Area - Posts -->
-                    <main class="lg:col-span-8 xl:col-span-9">
+                    <!-- Columna 2: Contenido Principal -->
+                    <main class="lg:col-span-6">
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <!-- Posts Header -->
                             <div class="border-b border-gray-200 p-6">
@@ -61,6 +67,68 @@
                             </div>
                         </div>
                     </main>
+                    
+                    <!-- Columna 3: Organizaciones -->
+                    <aside class="lg:col-span-3">
+                        <div class="sticky top-4 space-y-4">
+                            <!-- Organizaciones Cercanas -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
+                                    </svg>
+                                    Organizaciones
+                                </h2>
+                                <div class="space-y-3">
+                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
+                                        <h3 class="font-medium text-gray-900 text-sm">EcoRivera</h3>
+                                        <p class="text-xs text-gray-600 mt-1">Reciclaje de plásticos y vidrios</p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-500">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            2.3 km
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
+                                        <h3 class="font-medium text-gray-900 text-sm">GreenSant'ana</h3>
+                                        <p class="text-xs text-gray-600 mt-1">Compostaje y orgánicos</p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-500">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            3.1 km
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
+                                        <h3 class="font-medium text-gray-900 text-sm">ReciclaFrontera</h3>
+                                        <p class="text-xs text-gray-600 mt-1">Electrónicos y baterías</p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-500">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            4.7 km
+                                        </div>
+                                    </div>
+                                    <a href="/organizaciones" class="block text-center text-sm text-green-600 hover:text-green-700 font-medium mt-3 py-2 border border-green-200 rounded-lg hover:bg-green-50 transition">
+                                        Ver todas
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Mapa Compacto -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <h3 class="text-sm font-medium text-gray-900 mb-3">Ubicaciones</h3>
+                                <div class="bg-gray-100 rounded-lg h-32 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2 text-center">Mapa interactivo próximamente</p>
+                            </div>
+                        </div>
+                    </aside>
                     
                 </div>
             </div>
