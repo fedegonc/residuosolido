@@ -17,7 +17,7 @@
         <!-- Form -->
         <div class="py-12">
             <div class="container mx-auto px-4">
-                <div class="max-w-md mx-auto">
+                <div class="max-w-2xl mx-auto">
                 
                 <!-- Mensajes de éxito -->
                 <div th:if="${param.success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -30,78 +30,79 @@
                 </div>
             
             <form class="mt-8 space-y-6" th:action="@{/auth/register}" method="post" th:object="${user}">
-                <div class="space-y-4">
-                    <!-- Username -->
-                    <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
-                        <input id="username" 
-                               name="username" 
-                               type="text" 
-                               th:field="*{username}"
-                               required 
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Ingresa tu nombre de usuario">
+                <div class="space-y-6">
+                    <!-- Fila 1: Username y Email -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
+                            <input id="username" 
+                                   name="username" 
+                                   type="text" 
+                                   th:field="*{username}"
+                                   required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                                   placeholder="Ingresa tu nombre de usuario">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                            <input id="email" 
+                                   name="email" 
+                                   type="email" 
+                                   th:field="*{email}"
+                                   required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                                   placeholder="Ingresa tu correo electrónico">
+                        </div>
                     </div>
                     
-                    <!-- Email -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                        <input id="email" 
-                               name="email" 
-                               type="email" 
-                               th:field="*{email}"
-                               required 
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Ingresa tu correo electrónico">
+                    <!-- Fila 2: Nombre y Apellido -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium text-gray-700">Nombre</label>
+                            <input id="firstName" 
+                                   name="firstName" 
+                                   type="text" 
+                                   th:field="*{firstName}"
+                                   required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                                   placeholder="Ingresa tu nombre">
+                        </div>
+                        
+                        <div>
+                            <label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
+                            <input id="lastName" 
+                                   name="lastName" 
+                                   type="text" 
+                                   th:field="*{lastName}"
+                                   required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                                   placeholder="Ingresa tu apellido">
+                        </div>
                     </div>
                     
-                    <!-- First Name -->
-                    <div>
-                        <label for="firstName" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input id="firstName" 
-                               name="firstName" 
-                               type="text" 
-                               th:field="*{firstName}"
-                               required 
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Ingresa tu nombre">
-                    </div>
-                    
-                    <!-- Last Name -->
-                    <div>
-                        <label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
-                        <input id="lastName" 
-                               name="lastName" 
-                               type="text" 
-                               th:field="*{lastName}"
-                               required 
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Ingresa tu apellido">
-                    </div>
-                    
-                    <!-- Password -->
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                        <input id="password" 
-                               name="password" 
-                               type="password" 
-                               th:field="*{password}"
-                               required 
-                               minlength="6"
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Ingresa tu contraseña">
-                    </div>
-                    
-                    <!-- Confirm Password -->
-                    <div>
-                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
-                        <input id="confirmPassword" 
-                               name="confirmPassword" 
-                               type="password" 
-                               required 
-                               minlength="6"
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
-                               placeholder="Confirma tu contraseña">
+                    <!-- Fila 3: Contraseñas -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                            <input id="password" 
+                                   name="password" 
+                                   type="password" 
+                                   th:field="*{password}"
+                                   required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                                   placeholder="Ingresa tu contraseña">
+                        </div>
+                        
+                        <div>
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
+                            <input id="confirmPassword" 
+                                   name="confirmPassword" 
+                                   type="password" 
+                                   required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                                   placeholder="Confirma tu contraseña">
+                        </div>
                     </div>
                 </div>
 

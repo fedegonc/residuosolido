@@ -35,8 +35,8 @@
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
                                                         <div class="flex-shrink-0 h-10 w-10">
-                                                            <img class="h-10 w-10 rounded-full object-cover bg-gray-200" 
-                                                                 th:src="${user.profileImage != null ? user.profileImage : 'https://via.placeholder.com/40x40?text=U'}" 
+                                                             <img class="h-10 w-10 rounded-full object-cover bg-gray-200" 
+                                                                 th:src="${user.profileImage != null ? user.profileImage : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=10b981&color=ffffff&size=40'}" 
                                                                  th:alt="${user.firstName + ' ' + user.lastName}">
                                                         </div>
                                                         <div class="ml-4">
@@ -47,10 +47,10 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.email}">usuario@email.com</td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span th:class="${user.role.name() == 'ADMIN'} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800' : 
-                                                                   (${user.role.name() == 'ORGANIZATION'} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800' : 
+                                                    <span th:class="${user.role == T(com.residuosolido.app.model.Role).ADMIN} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800' : 
+                                                                   (${user.role == T(com.residuosolido.app.model.Role).ORGANIZATION} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800' : 
                                                                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800')"
-                                                          th:text="${user.role.getDisplayName()}">Usuario</span>
+                                                          th:text="${user.role}">Usuario</span>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <span th:class="${user.active} ? 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800' : 
@@ -58,13 +58,13 @@
                                                           th:text="${user.active} ? 'Activo' : 'Inactivo'">Activo</span>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" 
-                                                    th:text="${user.registrationDate != null ? #temporals.format(user.registrationDate, 'dd/MM/yyyy') : 'No disponible'}">01/01/2024</td>
+                                                    th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy') : 'No disponible'}">01/01/2024</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <a th:href="@{/admin/users/view/{id}(id=${user.id})}" 
                                                        class="text-indigo-600 hover:text-indigo-900 mr-3">Ver</a>
                                                     <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" 
                                                        class="text-green-600 hover:text-green-900 mr-3">Editar</a>
-                                                    <a th:if="${user.role.name() != 'ADMIN'}" 
+                                                    <a th:if="${user.role != T(com.residuosolido.app.model.Role).ADMIN}" 
                                                        th:href="@{/admin/users/delete/{id}(id=${user.id})}" 
                                                        class="text-red-600 hover:text-red-900"
                                                        onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?')">Eliminar</a>

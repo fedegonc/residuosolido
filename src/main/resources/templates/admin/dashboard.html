@@ -3,14 +3,7 @@
 <head th:replace="~{fragments/admin-layout :: head('Panel de Administración')}"></head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <!-- Encabezado simple -->
-        <div class="bg-gray-50 py-8">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-bold text-gray-900">Panel de Administración</h1>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Contenido principal -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -37,7 +30,7 @@
                                 </div>
                             </div>
                             <div class="mt-5">
-                                <a href="{/admin/users}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <a href="/admin/users" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     Ir a Usuarios
                                 </a>
                             </div>
