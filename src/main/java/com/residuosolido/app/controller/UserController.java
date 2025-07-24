@@ -181,6 +181,12 @@ public class UserController {
     @Autowired
     private RequestService requestService;
     
+    @GetMapping("/requests/create")
+    public String createRequestForm(Model model) {
+        model.addAttribute("organizations", requestService.getOrganizations());
+        return "requests/form";
+    }
+    
     @GetMapping("/new")
     public String newRequestForm(Model model) {
         model.addAttribute("organizations", requestService.getOrganizations());
@@ -190,9 +196,21 @@ public class UserController {
     @PostMapping("/requests")
     public String createRequest(@RequestParam Long organizationId, 
                                @RequestParam String address,
-                               @RequestParam String description) {
-        requestService.createRequest(organizationId, address, description);
-        return "redirect:/";
+                               @RequestParam String description,
+                               Authentication authentication,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            
+            requestService.createRequest(organizationId, address, description, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Solicitud de recolección enviada exitosamente!");
+        } catch (Exception e) {
+            logger.error("Error al crear solicitud de recolección: ", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al procesar la solicitud. Inténtalo de nuevo.");
+        }
+        
+        return "redirect:/users/dashboard";
     }
 
 }

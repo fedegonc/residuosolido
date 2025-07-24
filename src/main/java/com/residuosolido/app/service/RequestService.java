@@ -55,18 +55,31 @@ public class RequestService extends GenericEntityService<Request, Long> {
     
     /**
      * Crea una nueva solicitud
-     * @param organizationId ID de la organización
+     * @param organizationId ID de la organización (usuario con rol ORGANIZATION)
      * @param address Dirección de recolección
      * @param description Descripción/notas
+     * @param currentUser Usuario que hace la solicitud
      * @return Solicitud creada
      */
-    public Request createRequest(Long organizationId, String address, String description) {
+    public Request createRequest(Long organizationId, String address, String description, User currentUser) {
         Request request = new Request();
-        Organization org = new Organization();
-        org.setId(organizationId);
-        request.setOrganization(org);
+        
+        // Buscar la organización (usuario con rol ORGANIZATION)
+        User organizationUser = userRepository.findById(organizationId).orElse(null);
+        if (organizationUser != null && organizationUser.getRole() == com.residuosolido.app.model.Role.ORGANIZATION) {
+            // Crear una organización temporal para la solicitud
+            Organization org = new Organization();
+            org.setId(organizationId);
+            org.setName(organizationUser.getFirstName() + " " + organizationUser.getLastName());
+            org.setEmail(organizationUser.getEmail());
+            request.setOrganization(org);
+        }
+        
+        request.setUser(currentUser);
         request.setCollectionAddress(address);
         request.setNotes(description);
+        request.setStatus(com.residuosolido.app.model.RequestStatus.PENDING);
+        
         return save(request);
     }
 }
