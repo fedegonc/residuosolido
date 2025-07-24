@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- ESTADO VACÍO GENERAL -->
+<div th:fragment="general(title, description, buttonText, buttonUrl, icon)">
+    <div class="max-w-md mx-auto text-center py-16">
+        <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 border border-green-100 shadow-sm">
+            <!-- Icono dinámico -->
+            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                <div th:switch="${icon}">
+                    <!-- Icono de posts/contenido -->
+                    <svg th:case="'posts'" class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13M12 6.253C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13"></path>
+                    </svg>
+                    <!-- Icono de desarrollo/construcción -->
+                    <svg th:case="'development'" class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <!-- Icono de búsqueda -->
+                    <svg th:case="'search'" class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <!-- Icono por defecto -->
+                    <svg th:case="*" class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Título y descripción -->
+            <h3 class="text-xl font-bold text-gray-800 mb-3" th:text="${title}">
+                Título por defecto
+            </h3>
+            <p class="text-gray-600 mb-6 leading-relaxed" th:text="${description}">
+                Descripción por defecto
+            </p>
+            
+            <!-- Botón de acción -->
+            <div th:if="${buttonText != null and buttonUrl != null}">
+                <a th:href="${buttonUrl}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                    <span th:text="${buttonText}">Botón</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ESTADO VACÍO PARA POSTS -->
+<div th:fragment="posts">
+    <div class="max-w-lg mx-auto text-center py-12">
+        <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 border border-green-100 shadow-sm">
+            <!-- Icono principal -->
+            <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13M12 6.253C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13"></path>
+                </svg>
+            </div>
+            
+            <!-- Título y descripción -->
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">
+                ¡Próximamente contenido increíble!
+            </h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Estamos preparando artículos y guías valiosas sobre reciclaje, 
+                gestión de residuos y sostenibilidad ambiental.
+            </p>
+            
+            <!-- Botones de acción -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+                <a href="/auth/register" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                    Únete a la comunidad
+                </a>
+                <a href="/auth/login" class="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-md">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                    Iniciar sesión
+                </a>
+            </div>
+            
+            <!-- Características esperadas -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                <div class="flex flex-col items-center p-3 bg-white rounded-lg">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium text-gray-700">Guías de Reciclaje</span>
+                </div>
+                <div class="flex flex-col items-center p-3 bg-white rounded-lg">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium text-gray-700">Tips Ambientales</span>
+                </div>
+                <div class="flex flex-col items-center p-3 bg-white rounded-lg">
+                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mb-2">
+                        <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium text-gray-700">Comunidad</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ESTADO VACÍO PARA CATEGORÍAS -->
+<div th:fragment="category(categoryName)">
+    <div class="max-w-md mx-auto text-center py-16">
+        <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 border border-green-100 shadow-sm">
+            <!-- Icono amigable -->
+            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+            </div>
+            
+            <!-- Título y descripción -->
+            <h3 class="text-xl font-bold text-gray-800 mb-3">
+                ¡Próximamente contenido sobre <span th:text="${categoryName}" class="text-green-600">esta categoría</span>!
+            </h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Estamos trabajando para traerte información valiosa y práctica sobre 
+                <span th:text="${categoryName}" class="font-medium text-gray-700">esta categoría</span>. 
+                Mientras tanto, explora otros temas interesantes.
+            </p>
+            
+            <!-- Botones de acción -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/posts" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    Ver todas las publicaciones
+                </a>
+                <a href="/" class="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-md">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Volver al inicio
+                </a>
+            </div>
+            
+            <!-- Mensaje adicional -->
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="text-sm text-blue-800">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <strong>¿Tienes sugerencias?</strong> 
+                    Tu opinión nos ayuda a crear contenido relevante.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
