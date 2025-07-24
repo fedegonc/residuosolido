@@ -172,19 +172,6 @@ public class UserController {
         return "redirect:/users";
     }
     
-    @PostMapping("/admin/users/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String deleteUserAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado exitosamente");
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el usuario: " + e.getMessage());
-        }
-        return "redirect:/admin/users";
-    }
 
     @GetMapping("/dashboard")
     public String userDashboard() {
