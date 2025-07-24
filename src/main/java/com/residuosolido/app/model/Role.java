@@ -30,4 +30,17 @@ public enum Role {
     public int getPriority() {
         return priority;
     }
+    
+    public String getDisplayName() {
+        switch (this) {
+            case ADMIN:
+                return "Administrador";
+            case ORGANIZATION:
+                return "Organización";
+            case USER:
+                return "Usuario";
+            default:
+                return this.name();
+        }
+    }
 }

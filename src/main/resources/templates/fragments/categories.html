@@ -10,158 +10,138 @@
                 <p class="text-gray-600">Encuentra información organizada sobre gestión de residuos</p>
             </div>
             
-            <!-- Primera Jerarquía: 2 columnas principales -->
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <!-- Reciclable -->
-                <div class="bg-green-100 rounded-lg shadow-sm transition-shadow">
-                    <button onclick="toggleCategory('reciclable')" class="w-full p-6 text-left hover:bg-green-200 transition-colors rounded-lg">
+            <!-- Categoría Principal: Reciclable (con mayor énfasis) -->
+            <div class="mb-12">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded shadow-lg transform hover:scale-105 transition-all duration-300">
+                    <button onclick="toggleCategory('reciclable')" class="w-full p-8 text-left hover:from-green-600 hover:to-green-700 transition-all rounded">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-bold text-green-800">Reciclable</h3>
-                                    <p class="text-green-600">Materiales que pueden ser reutilizados</p>
+                                    <h3 class="text-3xl font-bold text-white mb-2">♻️ Reciclable</h3>
+                                    <p class="text-green-100 text-lg">La acción principal para un futuro sostenible</p>
+                                    <p class="text-green-200 text-sm mt-1">Descubre qué materiales pueden tener una segunda vida</p>
                                 </div>
                             </div>
-                            <svg id="arrow-reciclable" class="w-5 h-5 text-green-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg id="arrow-reciclable" class="w-6 h-6 text-white transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </div>
                     </button>
-                    <div id="content-reciclable" class="hidden px-6 pb-6">
-                        <div class="grid gap-4 mt-4" id="posts-reciclable">
-                            <!-- Posts se cargan aquí -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- No Reciclable -->
-                <div class="bg-orange-100 rounded-lg shadow-sm transition-shadow">
-                    <button onclick="toggleCategory('no-reciclable')" class="w-full p-6 text-left hover:bg-orange-200 transition-colors rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-bold text-orange-800">No Reciclable</h3>
-                                    <p class="text-orange-600">Residuos especiales</p>
-                                </div>
+                    <div id="content-reciclable" class="hidden px-8 pb-8">
+                        <div class="bg-white bg-opacity-10 rounded p-4 backdrop-blur-sm">
+                            <div class="grid gap-4 mt-4" id="posts-reciclable">
+                                <!-- Posts se cargan aquí -->
                             </div>
-                            <svg id="arrow-no-reciclable" class="w-5 h-5 text-orange-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </button>
-                    <div id="content-no-reciclable" class="hidden px-6 pb-6">
-                        <div class="grid gap-4 mt-4" id="posts-no-reciclable">
-                            <!-- Posts se cargan aquí -->
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Segunda Jerarquía: 3 columnas secundarias -->
-            <div class="grid md:grid-cols-3 gap-6 mb-6">
-                <!-- Informaciones -->
-                <div class="bg-blue-100 rounded-lg shadow-sm transition-shadow">
-                    <button onclick="toggleCategory('informaciones')" class="w-full p-6 text-left hover:bg-blue-200 transition-colors rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-blue-800">Informaciones</h4>
-                                    <p class="text-blue-600 text-sm">Guías y educación</p>
-                                </div>
+            <!-- Información Adicional y Recursos -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-6 text-center">Recursos Adicionales</h3>
+            </div>
+            
+            <!-- Categorías Secundarias: 5 columnas -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <!-- No Reciclable (ahora como categoría secundaria) -->
+                <div class="bg-orange-50 rounded shadow-sm transition-shadow hover:shadow-md">
+                    <button onclick="toggleCategory('no-reciclable')" class="w-full p-4 text-left hover:bg-orange-100 transition-colors rounded">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
                             </div>
-                            <svg id="arrow-informaciones" class="w-4 h-4 text-blue-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                            <h4 class="text-sm font-semibold text-orange-800 mb-1">No Reciclable</h4>
+                            <p class="text-xs text-orange-600">Residuos especiales</p>
                         </div>
                     </button>
-                    <div id="content-informaciones" class="hidden px-6 pb-6">
-                        <div class="space-y-3 mt-4" id="posts-informaciones">
+                    <div id="content-no-reciclable" class="hidden px-4 pb-4">
+                        <div class="grid gap-2 mt-2" id="posts-no-reciclable">
+                            <!-- Posts se cargan aquí -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Informaciones -->
+                <div class="bg-blue-50 rounded shadow-sm transition-shadow hover:shadow-md">
+                    <button onclick="toggleCategory('informaciones')" class="w-full p-4 text-left hover:bg-blue-100 transition-colors rounded">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-semibold text-blue-800 mb-1">Informaciones</h4>
+                            <p class="text-xs text-blue-600">Guías y recursos</p>
+                        </div>
+                    </button>
+                    <div id="content-informaciones" class="hidden px-4 pb-4">
+                        <div class="grid gap-2 mt-2" id="posts-informaciones">
                             <!-- Posts se cargan aquí -->
                         </div>
                     </div>
                 </div>
                 
                 <!-- Compostaje -->
-                <div class="bg-green-100 rounded-lg shadow-sm transition-shadow">
-                    <button onclick="toggleCategory('compostaje')" class="w-full p-6 text-left hover:bg-green-200 transition-colors rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-green-800">Compostaje</h4>
-                                    <p class="text-green-600 text-sm">Residuos orgánicos</p>
-                                </div>
+                <div class="bg-yellow-50 rounded shadow-sm transition-shadow hover:shadow-md">
+                    <button onclick="toggleCategory('compostaje')" class="w-full p-4 text-left hover:bg-yellow-100 transition-colors rounded">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"></path>
+                                </svg>
                             </div>
-                            <svg id="arrow-compostaje" class="w-4 h-4 text-green-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                            <h4 class="text-sm font-semibold text-yellow-800 mb-1">Compostaje</h4>
+                            <p class="text-xs text-yellow-600">Residuos orgánicos</p>
                         </div>
                     </button>
-                    <div id="content-compostaje" class="hidden px-6 pb-6">
-                        <div class="space-y-3 mt-4" id="posts-compostaje">
+                    <div id="content-compostaje" class="hidden px-4 pb-4">
+                        <div class="grid gap-2 mt-2" id="posts-compostaje">
                             <!-- Posts se cargan aquí -->
                         </div>
                     </div>
                 </div>
                 
                 <!-- Educación Ambiental -->
-                <div class="bg-purple-100 rounded-lg shadow-sm transition-shadow">
-                    <button onclick="toggleCategory('educacion-ambiental')" class="w-full p-6 text-left hover:bg-purple-200 transition-colors rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-purple-800">Educación</h4>
-                                    <p class="text-purple-600 text-sm">Aprendizaje ambiental</p>
-                                </div>
+                <div class="bg-purple-50 rounded shadow-sm transition-shadow hover:shadow-md">
+                    <button onclick="toggleCategory('educacion-ambiental')" class="w-full p-4 text-left hover:bg-purple-100 transition-colors rounded">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
                             </div>
-                            <svg id="arrow-educacion-ambiental" class="w-4 h-4 text-purple-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                            <h4 class="text-sm font-semibold text-purple-800 mb-1">Educación Ambiental</h4>
+                            <p class="text-xs text-purple-600">Aprende y enseña</p>
                         </div>
                     </button>
-                    <div id="content-educacion-ambiental" class="hidden px-6 pb-6">
-                        <div class="space-y-3 mt-4" id="posts-educacion-ambiental">
+                    <div id="content-educacion-ambiental" class="hidden px-4 pb-4">
+                        <div class="grid gap-2 mt-2" id="posts-educacion-ambiental">
                             <!-- Posts se cargan aquí -->
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Tercera Jerarquía: Otros -->
-            <div class="text-left">
-                <a href="/categories" class="inline-flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                    <span>Ver todas las categorías</span>
-                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </a>
+                
+                <!-- Ver todas las categorías -->
+                <div class="bg-gray-50 rounded shadow-sm transition-shadow hover:shadow-md">
+                    <a href="/categories" class="w-full p-4 text-left hover:bg-gray-100 transition-colors rounded block">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-semibold text-gray-800 mb-1">Ver Todas</h4>
+                            <p class="text-xs text-gray-600">Todas las categorías</p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

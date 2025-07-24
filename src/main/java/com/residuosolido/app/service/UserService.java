@@ -81,6 +81,14 @@ public class UserService extends GenericEntityService<User, Long> {
     }
     
     /**
+     * Obtiene todos los usuarios
+     * @return Lista de todos los usuarios
+     */
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+    
+    /**
      * Obtiene todos los usuarios, opcionalmente filtrados por rol
      * @param role Rol para filtrar (opcional)
      * @return Lista de usuarios

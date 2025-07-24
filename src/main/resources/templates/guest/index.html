@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
-<body th:replace="~{fragments/layout :: layout(~{::main})}">
+<head th:replace="~{fragments/index-layout :: head('Inicio')}"></head>
+<body th:replace="~{fragments/index-layout :: layout(~{::main})}">
     <main>
-        <div th:if="${categories != null and !categories.isEmpty()}" th:replace="~{fragments/categories :: categories(${categories})}"></div>
+        <!-- Primero va el hero, con el mensaje principal -->
         <div th:replace="~{fragments/hero :: hero(${heroImage})}"></div>
+
+        <!-- Luego las categorías -->
+        <div th:if="${categories != null and !categories.isEmpty()}" th:replace="~{fragments/categories :: categories(${categories})}"></div>
+
+        <!-- Por último los posts -->
         <div th:replace="~{fragments/posts :: posts(${posts}, ${hasMorePosts})}"></div>
     </main>
+
     <!-- JavaScript Files -->
     <script src="/js/common.js"></script>
     <script src="/js/categories.js"></script>
