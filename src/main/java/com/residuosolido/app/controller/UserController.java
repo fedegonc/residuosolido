@@ -153,6 +153,12 @@ public class UserController {
         }
     }
     
+    @GetMapping("/admin/users/view/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String viewUserAdmin(@PathVariable Long id, Model model) {
+        return viewUser(id, model);
+    }
+    
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -164,6 +170,20 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el usuario: " + e.getMessage());
         }
         return "redirect:/users";
+    }
+    
+    @PostMapping("/admin/users/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String deleteUserAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado exitosamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el usuario: " + e.getMessage());
+        }
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/dashboard")
