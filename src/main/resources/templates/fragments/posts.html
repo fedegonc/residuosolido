@@ -15,15 +15,67 @@
                 </a>
             </div>
 
-            <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-8">
-                <svg class="mx-auto h-16 w-16 text-green-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13M12 6.253C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13" />
-                </svg>
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">¡Próximamente contenido increíble!</h3>
-                <p class="text-gray-600 mb-4 max-w-md mx-auto">Estamos preparando artículos y guías sobre reciclaje y gestión de residuos.</p>
-                <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="/auth/register" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">Únete a la comunidad</a>
-                    <a href="/auth/login" class="border border-green-600 text-green-600 hover:bg-green-50 font-medium py-2 px-6 rounded-lg transition-colors duration-200">Iniciar sesión</a>
+            <div th:if="${posts == null or posts.isEmpty()}" class="max-w-lg mx-auto text-center py-12">
+                <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 border border-green-100 shadow-sm">
+                    <!-- Icono principal -->
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13M12 6.253C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Título y descripción -->
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">
+                        ¡Próximamente contenido increíble!
+                    </h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Estamos preparando artículos y guías valiosas sobre reciclaje, 
+                        gestión de residuos y sostenibilidad ambiental.
+                    </p>
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+                        <a href="/auth/register" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            Únete a la comunidad
+                        </a>
+                        <a href="/auth/login" class="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-md">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                            </svg>
+                            Iniciar sesión
+                        </a>
+                    </div>
+                    
+                    <!-- Características esperadas -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                        <div class="flex flex-col items-center p-3 bg-white rounded-lg">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-gray-700">Guías de Reciclaje</span>
+                        </div>
+                        <div class="flex flex-col items-center p-3 bg-white rounded-lg">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-gray-700">Tips Ambientales</span>
+                        </div>
+                        <div class="flex flex-col items-center p-3 bg-white rounded-lg">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mb-2">
+                                <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-gray-700">Comunidad</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
