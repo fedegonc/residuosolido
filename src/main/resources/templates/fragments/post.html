@@ -2,13 +2,46 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <div th:fragment="minimalPostCard(post)">
-        <div class="bg-white shadow rounded-lg overflow-hidden">
-            <img th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}" th:src="${post.imageUrl}" alt="Imagen del Post" class="w-full h-48 object-cover">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <img th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}" 
+                 th:src="${post.imageUrl}" 
+                 alt="Imagen del Post" 
+                 class="w-full h-48 object-cover">
             
-            <div class="p-4">
-                <h3 class="text-lg font-semibold text-gray-800">
-                    <a th:if="${post != null}" th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="hover:text-blue-600">Título del Post</a>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-3">
+                    <a th:if="${post != null}" 
+                       th:href="@{/posts/{id}(id=${post.id})}" 
+                       th:text="${post.title}" 
+                       class="hover:text-green-600 transition-colors duration-200">Título del Post</a>
                 </h3>
+                
+                <p th:if="${post != null and post.content != null and !post.content.isEmpty()}" 
+                   class="text-gray-600 mb-4 line-clamp-3"
+                   th:text="${#strings.abbreviate(post.content, 120)}">Contenido del post...</p>
+                
+                <div class="flex items-center justify-between">
+                    <a th:if="${post != null}" 
+                       th:href="@{/posts/{id}(id=${post.id})}" 
+                       class="inline-flex items-center text-green-600 hover:text-green-800 font-medium transition-colors duration-200">
+                        <span>Leer más</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                    
+                    <div th:if="${post != null and post.sourceUrl != null and !post.sourceUrl.isEmpty()}" class="text-right">
+                        <a th:href="${post.sourceUrl}" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            <span th:text="${post.sourceName != null and !post.sourceName.isEmpty() ? post.sourceName : 'Fuente'}">Fuente</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

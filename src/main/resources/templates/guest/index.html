@@ -3,8 +3,8 @@
 <head th:replace="~{fragments/layout :: head('Inicio')}"></head>
 <body th:replace="~{fragments/layout :: layout(~{::main})}">
     <main>
-        <div th:replace="~{fragments/hero :: hero(${heroImage})}"></div>
         <div th:if="${categories != null and !categories.isEmpty()}" th:replace="~{fragments/categories :: categories(${categories})}"></div>
+        <div th:replace="~{fragments/hero :: hero(${heroImage})}"></div>
         <div th:replace="~{fragments/posts :: posts(${posts}, ${hasMorePosts})}"></div>
     </main>
 </body>

@@ -67,5 +67,11 @@ public class PostController {
         
         return "redirect:/posts";
     }
+    
+    @GetMapping("/categories")
+    public String viewAllCategories(Model model) {
+        model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
+        return "categories/list";
+    }
 
 }

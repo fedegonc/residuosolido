@@ -1,21 +1,165 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<!-- CATEGORIES -->
+<!-- HIERARCHICAL CATEGORIES WITH DROPDOWNS -->
 <div th:fragment="categories(categories)">
-    <div class="py-8 bg-gray-50">
+    <div class="py-12 bg-gradient-to-b from-green-50 to-white">
         <div class="container mx-auto px-4">
-            <div class="text-left mb-4">
-                <h3 class="text-lg font-semibold text-gray-700 mb-3">Categorías:</h3>
-                <div class="flex flex-wrap gap-4">
-                    <a th:each="category : ${categories}"
-                       th:href="@{/posts/category/} + ${category.slug}"
-                       th:text="${category.name}"
-                       class="text-green-600 hover:text-green-800 hover:underline transition-colors duration-200"></a>
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Explora por Categorías</h2>
+                <p class="text-gray-600">Encuentra información organizada sobre gestión de residuos</p>
+            </div>
+            
+            <!-- Primera Jerarquía: Reciclable -->
+            <div class="mb-8">
+                <div class="bg-green-100 rounded-lg shadow-sm transition-shadow">
+                    <button onclick="toggleCategory('reciclable')" class="w-full p-6 text-left hover:bg-green-200 transition-colors rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-green-800">Reciclable</h3>
+                                    <p class="text-green-600">Materiales que pueden ser reutilizados</p>
+                                </div>
+                            </div>
+                            <svg id="arrow-reciclable" class="w-5 h-5 text-green-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <div id="content-reciclable" class="hidden px-6 pb-6">
+                        <div class="grid md:grid-cols-2 gap-4 mt-4" id="posts-reciclable">
+                            <!-- Posts se cargan aquí -->
+                        </div>
+                    </div>
                 </div>
+            </div>
+            
+            <!-- Segunda Jerarquía: No Reciclable e Informaciones -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-orange-100 rounded-lg shadow-sm transition-shadow">
+                    <button onclick="toggleCategory('no-reciclable')" class="w-full p-6 text-left hover:bg-orange-200 transition-colors rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-orange-800">No Reciclable</h4>
+                                    <p class="text-orange-600 text-sm">Residuos especiales</p>
+                                </div>
+                            </div>
+                            <svg id="arrow-no-reciclable" class="w-4 h-4 text-orange-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <div id="content-no-reciclable" class="hidden px-6 pb-6">
+                        <div class="space-y-3 mt-4" id="posts-no-reciclable">
+                            <!-- Posts se cargan aquí -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-100 rounded-lg shadow-sm transition-shadow">
+                    <button onclick="toggleCategory('informaciones')" class="w-full p-6 text-left hover:bg-blue-200 transition-colors rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-blue-800">Informaciones</h4>
+                                    <p class="text-blue-600 text-sm">Guías y educación</p>
+                                </div>
+                            </div>
+                            <svg id="arrow-informaciones" class="w-4 h-4 text-blue-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <div id="content-informaciones" class="hidden px-6 pb-6">
+                        <div class="space-y-3 mt-4" id="posts-informaciones">
+                            <!-- Posts se cargan aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tercera Jerarquía: Otros -->
+            <div class="text-left">
+                <a href="/categories" class="inline-flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <span>Ver todas las categorías</span>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
             </div>
         </div>
     </div>
+    
+    <script>
+    const categoryPosts = {
+        'reciclable': [
+            {id: 1, title: 'Guía de Reciclaje de Plásticos', content: 'Los plásticos son uno de los materiales más comunes...', sourceUrl: 'https://www.greenpeace.org/usa/research/plastic-recycling/', sourceName: 'Greenpeace'},
+            {id: 2, title: 'Reciclaje de Papel y Cartón', content: 'El papel y cartón representan una gran parte...', sourceUrl: 'https://www.epa.gov/recycle/how-do-i-recycle-common-recyclables', sourceName: 'EPA'}
+        ],
+        'no-reciclable': [
+            {id: 3, title: 'Manejo de Residuos Peligrosos', content: 'Los residuos peligrosos como baterías...', sourceUrl: 'https://www.epa.gov/hw/household-hazardous-waste-hhw', sourceName: 'EPA'}
+        ],
+        'informaciones': [
+            {id: 4, title: 'Educación Ambiental en el Hogar', content: 'La educación ambiental comienza en casa...', sourceUrl: 'https://www.unep.org/explore-topics/education-environment', sourceName: 'UNEP'},
+            {id: 5, title: 'Impacto Ambiental de los Residuos', content: 'Comprende el verdadero impacto que nuestros residuos...', sourceUrl: 'https://www.worldbank.org/en/topic/urbandevelopment/brief/solid-waste-management', sourceName: 'World Bank'}
+        ]
+    };
+    
+    function toggleCategory(categorySlug) {
+        const content = document.getElementById(`content-${categorySlug}`);
+        const arrow = document.getElementById(`arrow-${categorySlug}`);
+        const postsContainer = document.getElementById(`posts-${categorySlug}`);
+        
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            arrow.classList.add('rotate-180');
+            loadPosts(categorySlug, postsContainer);
+        } else {
+            content.classList.add('hidden');
+            arrow.classList.remove('rotate-180');
+        }
+    }
+    
+    function loadPosts(categorySlug, container) {
+        const posts = categoryPosts[categorySlug] || [];
+        container.innerHTML = '';
+        
+        posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.className = 'bg-white p-4 rounded-lg shadow-sm border-l-4 border-gray-300';
+            postElement.innerHTML = `
+                <h5 class="font-semibold text-gray-800 mb-2">
+                    <a href="/posts/${post.id}" class="hover:text-green-600 transition-colors">${post.title}</a>
+                </h5>
+                <p class="text-gray-600 text-sm mb-3">${post.content.substring(0, 100)}...</p>
+                <div class="flex items-center justify-between">
+                    <a href="/posts/${post.id}" class="text-green-600 hover:text-green-800 text-sm font-medium">Leer más</a>
+                    <a href="${post.sourceUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 text-xs">${post.sourceName}</a>
+                </div>
+            `;
+            container.appendChild(postElement);
+        });
+    }
+    </script>
 </div>
 </body>
 </html>

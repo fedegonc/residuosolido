@@ -6,6 +6,8 @@ public class Post {
     private String content;
     private String imageUrl;
     private Long categoryId;
+    private String sourceUrl;
+    private String sourceName;
     
     // Constructores
     public Post() {}
@@ -16,6 +18,16 @@ public class Post {
         this.content = content;
         this.imageUrl = imageUrl;
         this.categoryId = categoryId;
+    }
+    
+    public Post(Long id, String title, String content, String imageUrl, Long categoryId, String sourceUrl, String sourceName) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.categoryId = categoryId;
+        this.sourceUrl = sourceUrl;
+        this.sourceName = sourceName;
     }
     
     // Getters y Setters
@@ -33,4 +45,10 @@ public class Post {
     
     public Long getCategoryId() { return categoryId; }
     public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+    
+    public String getSourceUrl() { return sourceUrl; }
+    public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }
+    
+    public String getSourceName() { return sourceName; }
+    public void setSourceName(String sourceName) { this.sourceName = sourceName; }
 }

@@ -22,10 +22,17 @@ public class CategoryService {
     @PostConstruct
     public void initializeCategories() {
         if (categoryRepository.count() == 0) {
-            categoryRepository.save(new Category(null, "Reciclaje"));
+            // Categorías jerárquicas principales
+            categoryRepository.save(new Category(null, "Reciclable"));
+            categoryRepository.save(new Category(null, "No Reciclable"));
+            categoryRepository.save(new Category(null, "Informaciones"));
+            
+            // Categorías adicionales
             categoryRepository.save(new Category(null, "Compostaje"));
             categoryRepository.save(new Category(null, "Reducción de Residuos"));
             categoryRepository.save(new Category(null, "Educación Ambiental"));
+            categoryRepository.save(new Category(null, "Normativas"));
+            categoryRepository.save(new Category(null, "Tecnología Verde"));
         }
     }
 
