@@ -60,6 +60,33 @@ public class CategoryService {
         return getAllCategories().stream().filter(cat -> cat.getId().equals(categoryId)).findFirst().map(Category::getName).orElse("Sin categoría");
     }
     
+    public Category createCategory(String name) {
+        Category category = new Category(null, name);
+        return categoryRepository.save(category);
+    }
+    
+    public Optional<Category> getCategoryById(Long id) {
+        return categoryRepository.findById(id);
+    }
+    
+    public Category updateCategory(Long id, String name) {
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        if (categoryOpt.isPresent()) {
+            Category category = categoryOpt.get();
+            category.setName(name);
+            return categoryRepository.save(category);
+        }
+        return null;
+    }
+    
+    public boolean deleteCategory(Long id) {
+        if (categoryRepository.existsById(id)) {
+            categoryRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+    
     public String generateSlug(String text) {
         if (text == null) return "";
         
