@@ -7,8 +7,7 @@ import com.residuosolido.app.repository.FeedbackRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -47,12 +46,7 @@ public class DashboardService {
     }
 
     public Map<String, Object> getAdminStats() {
-        Map<String, Object> stats = getGeneralStats();
-        List<User> recentUsers = userRepository.findAll(
-            PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"))
-        ).getContent();
-        stats.put("recentUsers", recentUsers);
-        return stats;
+        return getGeneralStats();
     }
 
     public Map<String, Object> getOrganizationStats() {
