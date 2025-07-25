@@ -6,6 +6,7 @@ public class Post {
     private String content;
     private String imageUrl;
     private Long categoryId;
+    private String categoryName;
     private String sourceUrl;
     private String sourceName;
     
@@ -45,6 +46,9 @@ public class Post {
     
     public Long getCategoryId() { return categoryId; }
     public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+    
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     
     public String getSourceUrl() { return sourceUrl; }
     public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }

@@ -1,6 +1,8 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.model.Post;
+import com.residuosolido.app.model.Category;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,13 +15,26 @@ public class PostService {
 
     private final List<Post> posts = new ArrayList<>();
     private Long nextId = 1L;
+    
+    @Autowired
+    private CategoryService categoryService;
 
     public PostService() {
         // Constructor vacío - los posts se crearán manualmente desde el admin
     }
 
     public List<Post> getAllPosts() {
-        return new ArrayList<>(posts);
+        List<Post> result = new ArrayList<>(posts);
+        // Agregar nombre de categoría a cada post
+        for (Post post : result) {
+            if (post.getCategoryId() != null) {
+                Category category = categoryService.getCategoryById(post.getCategoryId());
+                if (category != null) {
+                    post.setCategoryName(category.getName());
+                }
+            }
+        }
+        return result;
     }
 
     public List<Post> getFirst5Posts() {
