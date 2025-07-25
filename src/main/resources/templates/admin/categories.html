@@ -1,32 +1,17 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Categorías - Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Categorías')}">
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-white shadow-sm">
-            <div class="p-6">
-                <h1 class="text-xl font-bold text-gray-900">Admin Panel</h1>
-            </div>
-            <nav class="mt-6">
-                <a href="/admin/posts" class="block px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">Posts</a>
-                <a href="/admin/categories" class="block px-6 py-3 bg-green-50 text-green-700 border-r-2 border-green-500">Categorías</a>
-                <a href="/admin/posts/config" class="block px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">Configuración</a>
-                <a href="/" class="block px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">Ver Sitio</a>
-            </nav>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Encabezado -->
+        <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+            <h1 class="text-2xl font-bold text-gray-900">Gestión de Categorías</h1>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-8">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900">Gestión de Categorías</h2>
-                </div>
+        <!-- Contenido principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
 
                 <!-- Mensajes de estado -->
                 <div th:if="${param.success}" class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-sm">
@@ -45,7 +30,7 @@
                 <!-- Formulario para crear nueva categoría -->
                 <div class="bg-white rounded-sm shadow-sm p-6 mb-8">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Crear Nueva Categoría</h3>
-                    <form action="/admin/categories/create" method="post" class="flex gap-4">
+                    <form th:action="@{/admin/categories/create}" method="post" class="flex gap-4">
                         <input type="text" name="name" placeholder="Nombre de la categoría" required
                                class="flex-1 px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-green-500 focus:border-transparent">
                         <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700 focus:ring-2 focus:ring-green-500">
@@ -74,7 +59,7 @@
                                     Editar
                                 </button>
                                 <!-- Botón eliminar -->
-                                <form th:action="'/admin/categories/delete/' + ${category.id}" method="post" class="inline">
+                                <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post" class="inline">
                                     <button type="submit" onclick="return confirm('¿Estás seguro de eliminar esta categoría?')"
                                             class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-sm hover:bg-red-200">
                                         Eliminar
@@ -86,49 +71,49 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para editar categoría -->
-    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
-        <div class="bg-white rounded-sm p-6 w-96">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Editar Categoría</h3>
-            <form id="editForm" method="post">
-                <input type="text" id="editName" name="name" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
-                <div class="flex gap-4">
-                    <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700">
-                        Actualizar
-                    </button>
-                    <button type="button" onclick="closeEditModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
+        <!-- Modal para editar categoría -->
+        <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+            <div class="bg-white rounded-sm p-6 w-96">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Editar Categoría</h3>
+                <form id="editForm" method="post">
+                    <input type="text" id="editName" name="name" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
+                    <div class="flex gap-4">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700">
+                            Actualizar
+                        </button>
+                        <button type="button" onclick="closeEditModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <script>
-        function editCategory(button) {
-            const id = button.dataset.id;
-            const name = button.dataset.name;
-            
-            document.getElementById('editName').value = name;
-            document.getElementById('editForm').action = '/admin/categories/update/' + id;
-            document.getElementById('editModal').classList.remove('hidden');
-            document.getElementById('editModal').classList.add('flex');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden');
-            document.getElementById('editModal').classList.remove('flex');
-        }
-
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('editModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeEditModal();
+        <script>
+            function editCategory(button) {
+                const id = button.dataset.id;
+                const name = button.dataset.name;
+                
+                document.getElementById('editName').value = name;
+                document.getElementById('editForm').action = '[[@{/admin/categories/update/}]]' + id;
+                document.getElementById('editModal').classList.remove('hidden');
+                document.getElementById('editModal').classList.add('flex');
             }
-        });
-    </script>
+
+            function closeEditModal() {
+                document.getElementById('editModal').classList.add('hidden');
+                document.getElementById('editModal').classList.remove('flex');
+            }
+
+            // Cerrar modal al hacer clic fuera
+            document.getElementById('editModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditModal();
+                }
+            });
+        </script>
+    </div>
 </body>
 </html>
