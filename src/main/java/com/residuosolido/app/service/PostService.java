@@ -84,10 +84,10 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
-        posts.removeIf(p -> p.getId().equals(id));
+        postRepository.deleteById(id);
     }
 
     public boolean isCategoryInUse(Long categoryId) {
-        return posts.stream().anyMatch(p -> p.getCategoryId().equals(categoryId));
+        return postRepository.existsByCategoryId(categoryId);
     }
 }
