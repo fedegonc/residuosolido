@@ -1,11 +1,21 @@
 package com.residuosolido.app.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "posts")
 public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String imageUrl;
+    @Column(name = "category_id")
     private Long categoryId;
+    @Transient
     private String categoryName;
     private String sourceUrl;
     private String sourceName;

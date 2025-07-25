@@ -2,82 +2,84 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.Category;
+import com.residuosolido.app.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
-
-    private final List<Post> posts = new ArrayList<>();
-    private Long nextId = 1L;
+    
+    @Autowired
+    private PostRepository postRepository;
     
     @Autowired
     private CategoryService categoryService;
 
-    public PostService() {
-        // Constructor vacío - los posts se crearán manualmente desde el admin
-    }
-
     public List<Post> getAllPosts() {
-        List<Post> result = new ArrayList<>(posts);
+        List<Post> posts = postRepository.findAll();
         // Agregar nombre de categoría a cada post
-        for (Post post : result) {
+        for (Post post : posts) {
             if (post.getCategoryId() != null) {
-                Category category = categoryService.getCategoryById(post.getCategoryId());
-                if (category != null) {
-                    post.setCategoryName(category.getName());
-                }
+                categoryService.getCategoryById(post.getCategoryId())
+                    .ifPresent(category -> post.setCategoryName(category.getName()));
             }
         }
-        return result;
+        return posts;
     }
 
     public List<Post> getFirst5Posts() {
-        return posts.stream().limit(5).collect(java.util.stream.Collectors.toList());
+        return postRepository.findTop5ByOrderByIdDesc();
     }
 
     public boolean hasMoreThan5Posts() {
-        return posts.size() > 5;
+        return postRepository.count() > 5;
     }
 
-    // Reescrito para resolver el problema de método duplicado
     public List<Post> getPostsByCategoryId(Long categoryId) {
-        return posts.stream()
-                .filter(post -> post.getCategoryId().equals(categoryId))
-                .collect(Collectors.toList());
+        return postRepository.findByCategoryId(categoryId);
     }
 
-    // Reescrito para resolver el problema de método duplicado
     public List<Post> getRelatedPostsById(Long postId, Long categoryId, int limit) {
-        return posts.stream()
-                .filter(p -> p.getCategoryId().equals(categoryId) && !p.getId().equals(postId))
+        return postRepository.findByCategoryId(categoryId).stream()
+                .filter(p -> !p.getId().equals(postId))
                 .limit(limit)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void createPost(String title, String content, String imageUrl, Long categoryId) {
-        posts.add(new Post(nextId++, title, content, imageUrl, categoryId));
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setImageUrl(imageUrl);
+        post.setCategoryId(categoryId);
+        postRepository.save(post);
     }
     
     public void createPost(String title, String content, String imageUrl, Long categoryId, String sourceUrl, String sourceName) {
-        posts.add(new Post(nextId++, title, content, imageUrl, categoryId, sourceUrl, sourceName));
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setImageUrl(imageUrl);
+        post.setCategoryId(categoryId);
+        post.setSourceUrl(sourceUrl);
+        post.setSourceName(sourceName);
+        postRepository.save(post);
     }
 
     public Optional<Post> getPostById(Long id) {
-        return posts.stream().filter(p -> p.getId().equals(id)).findFirst();
+        return postRepository.findById(id);
     }
 
     public void updatePost(Long id, String title, String content, String imageUrl, Long categoryId) {
-        getPostById(id).ifPresent(post -> {
+        postRepository.findById(id).ifPresent(post -> {
             post.setTitle(title);
             post.setContent(content);
             post.setImageUrl(imageUrl);
             post.setCategoryId(categoryId);
+            postRepository.save(post);
         });
     }
 
