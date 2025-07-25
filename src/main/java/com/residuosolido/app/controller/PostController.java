@@ -33,6 +33,10 @@ public class PostController {
     @GetMapping("/posts")
     public String listPosts(Model model) {
         List<Post> posts = postService.getAllPosts();
+        System.out.println("DEBUG PostController: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
+        if (posts != null && !posts.isEmpty()) {
+            System.out.println("DEBUG PostController: Primer post: " + posts.get(0).getTitle());
+        }
         model.addAttribute("posts", posts);
         model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
         return "posts/list";

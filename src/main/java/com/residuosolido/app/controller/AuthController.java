@@ -30,15 +30,18 @@ public class AuthController {
     private final CustomAuthenticationSuccessHandler successHandler;
     private final DashboardService dashboardService;
     private final PasswordResetService passwordResetService;
+    private final PostService postService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
                          CustomAuthenticationSuccessHandler successHandler,
-                         DashboardService dashboardService, PasswordResetService passwordResetService) {
+                         DashboardService dashboardService, PasswordResetService passwordResetService,
+                         PostService postService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.dashboardService = dashboardService;
         this.passwordResetService = passwordResetService;
+        this.postService = postService;
     }
 
    
@@ -59,6 +62,19 @@ public class AuthController {
 
     java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
     model.addAllAttributes(pageData);
+    
+    // Agregar posts para mostrar en el index
+    List<Post> posts = postService.getAllPosts();
+    System.out.println("DEBUG: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
+    if (posts != null && !posts.isEmpty()) {
+        System.out.println("DEBUG: Primer post: " + posts.get(0).getTitle());
+    }
+    model.addAttribute("posts", posts);
+    
+    // Agregar organizaciones (usuarios con rol ORGANIZATION)
+    List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
+    System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
+    model.addAttribute("organizations", organizations);
 
     return "guest/index";
 }
@@ -67,6 +83,20 @@ public class AuthController {
 public String invitados(Model model) {
     java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
     model.addAllAttributes(pageData);
+    
+    // Agregar posts para mostrar en el index
+    List<Post> posts = postService.getAllPosts();
+    System.out.println("DEBUG: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
+    if (posts != null && !posts.isEmpty()) {
+        System.out.println("DEBUG: Primer post: " + posts.get(0).getTitle());
+    }
+    model.addAttribute("posts", posts);
+    
+    // Agregar organizaciones (usuarios con rol ORGANIZATION)
+    List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
+    System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
+    model.addAttribute("organizations", organizations);
+    
     return "guest/index";
 }
 

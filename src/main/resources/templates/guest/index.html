@@ -63,7 +63,31 @@
                             
                             <!-- Posts Content -->
                             <div class="p-6">
-                                <div th:replace="~{fragments/posts :: posts(${posts}, ${hasMorePosts})}"></div>
+                                <!-- Debug info -->
+                                <div th:if="${posts != null}" class="text-sm text-gray-500 mb-4">
+                                    Posts encontrados: <span th:text="${posts.size()}">0</span>
+                                </div>
+                                <div th:unless="${posts != null}" class="text-sm text-red-500 mb-4">
+                                    ⚠️ Variable posts es null
+                                </div>
+                                
+                                <!-- Posts grid -->
+                                <div th:if="${posts != null and !posts.isEmpty()}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div th:each="post : ${posts}" class="bg-gray-50 rounded-sm border p-4 hover:shadow-md transition-shadow cursor-pointer">
+                                        <h3 class="font-bold text-lg mb-2 text-gray-900 hover:text-green-600 transition-colors">
+                                            <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="hover:underline">Título</a>
+                                        </h3>
+                                        <p class="text-gray-600 text-sm mb-2" th:text="${#strings.abbreviate(post.content, 100)}">Contenido...</p>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-sm" th:text="'Categoría ' + ${post.categoryId}">Categoría</span>
+                                            <a th:href="@{/posts/{id}(id=${post.id})}" class="text-xs text-green-600 hover:text-green-800 font-medium">Ver →</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-8 text-gray-500">
+                                    <p>No hay posts disponibles</p>
+                                </div>
                             </div>
                         </div>
                     </main>
@@ -79,38 +103,28 @@
                                     </svg>
                                     Organizaciones
                                 </h2>
+
                                 <div class="space-y-3">
-                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
-                                        <h3 class="font-medium text-gray-900 text-sm">EcoRivera</h3>
-                                        <p class="text-xs text-gray-600 mt-1">Reciclaje de plásticos y vidrios</p>
-                                        <div class="flex items-center mt-2 text-xs text-gray-500">
-                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            2.3 km
+                                    <!-- Organizaciones dinámicas -->
+                                    <div th:if="${organizations != null and !organizations.isEmpty()}">
+                                        <div th:each="org : ${organizations}" class="border border-gray-200 rounded-sm p-3 hover:bg-gray-50 transition">
+                                            <h3 class="font-medium text-gray-900 text-sm" th:text="${org.firstName + ' ' + org.lastName}">Nombre Organización</h3>
+                                            <p class="text-xs text-gray-600 mt-1" th:text="${org.email}">Descripción de la organización</p>
+                                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span>Rivera - Sant'ana do Livramento</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
-                                        <h3 class="font-medium text-gray-900 text-sm">GreenSant'ana</h3>
-                                        <p class="text-xs text-gray-600 mt-1">Compostaje y orgánicos</p>
-                                        <div class="flex items-center mt-2 text-xs text-gray-500">
-                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            3.1 km
-                                        </div>
+                                    
+                                    <!-- Mensaje si no hay organizaciones -->
+                                    <div th:if="${organizations == null or organizations.isEmpty()}" class="text-center py-4 text-gray-500 text-sm">
+                                        No hay organizaciones registradas
                                     </div>
-                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
-                                        <h3 class="font-medium text-gray-900 text-sm">ReciclaFrontera</h3>
-                                        <p class="text-xs text-gray-600 mt-1">Electrónicos y baterías</p>
-                                        <div class="flex items-center mt-2 text-xs text-gray-500">
-                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            4.7 km
-                                        </div>
-                                    </div>
-                                    <a href="/organizaciones" class="block text-center text-sm text-green-600 hover:text-green-700 font-medium mt-3 py-2 border border-green-200 rounded-lg hover:bg-green-50 transition">
+                                    
+                                    <a href="/organizaciones" class="block text-center text-sm text-green-600 hover:text-green-700 font-medium mt-3 py-2 border border-green-200 rounded-sm hover:bg-green-50 transition">
                                         Ver todas
                                     </a>
                                 </div>
