@@ -4,11 +4,15 @@ import com.residuosolido.app.model.Feedback;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.PasswordResetRequest;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.FeedbackRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.UserService;
+import com.residuosolido.app.service.CloudinaryService;
+import com.residuosolido.app.service.PostService;
+import com.residuosolido.app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -17,13 +21,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -36,16 +44,23 @@ public class AdminController {
     private final RequestRepository requestRepository;
     private final PasswordResetService passwordResetService;
     private final UserService userService;
+    private final CloudinaryService cloudinaryService;
+    private final PostService postService;
+    private final CategoryService categoryService;
 
     @Autowired
     public AdminController(DashboardService dashboardService, FeedbackRepository feedbackRepository, 
                           RequestRepository requestRepository, PasswordResetService passwordResetService,
-                          UserService userService) {
+                          UserService userService, CloudinaryService cloudinaryService,
+                          PostService postService, CategoryService categoryService) {
         this.dashboardService = dashboardService;
         this.feedbackRepository = feedbackRepository;
         this.requestRepository = requestRepository;
         this.passwordResetService = passwordResetService;
         this.userService = userService;
+        this.cloudinaryService = cloudinaryService;
+        this.postService = postService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/dashboard")
@@ -157,5 +172,92 @@ public class AdminController {
         }
         
         return "redirect:/admin/users";
+    }
+    
+    @PostMapping("/upload-image")
+    @ResponseBody
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body("No se seleccionó archivo");
+            }
+            
+            String imageUrl = cloudinaryService.uploadFile(file);
+            return ResponseEntity.ok(imageUrl);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al subir imagen: " + e.getMessage());
+        }
+    }
+    
+    @GetMapping("/posts")
+    public String showPosts(Model model) {
+        model.addAttribute("posts", postService.getAllPosts());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "admin/posts";
+    }
+    
+    @PostMapping("/posts/create")
+    public String createPost(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("imageUrl") String imageUrl,
+            @RequestParam("categoryId") Long categoryId,
+            RedirectAttributes redirectAttributes) {
+        
+        try {
+            postService.createPost(title, content, imageUrl, categoryId);
+            redirectAttributes.addFlashAttribute("success", "Post creado exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al crear post: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    @GetMapping("/posts/{id}/edit")
+    public String editPostForm(@PathVariable Long id, Model model) {
+        try {
+            Optional<Post> postOpt = postService.getPostById(id);
+            if (postOpt.isPresent()) {
+                model.addAttribute("post", postOpt.get());
+                model.addAttribute("categories", categoryService.getAllCategories());
+                return "admin/edit-post";
+            }
+        } catch (Exception e) {
+            // Post no encontrado
+        }
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/posts/{id}/edit")
+    public String updatePost(
+            @PathVariable Long id,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("imageUrl") String imageUrl,
+            @RequestParam("categoryId") Long categoryId,
+            RedirectAttributes redirectAttributes) {
+        
+        try {
+            postService.updatePost(id, title, content, imageUrl, categoryId);
+            redirectAttributes.addFlashAttribute("success", "Post actualizado exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar post: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/posts";
+    }
+    
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            postService.deletePost(id);
+            redirectAttributes.addFlashAttribute("success", "Post eliminado exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar post: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/posts";
     }
 }

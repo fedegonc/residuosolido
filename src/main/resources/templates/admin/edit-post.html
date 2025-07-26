@@ -18,7 +18,7 @@
             <!-- Formulario de edición -->
             <div class="bg-white rounded-lg shadow">
                 <div class="p-6">
-                    <form th:action="@{/admin/posts/{id}/update(id=${post.id})}" method="post" class="space-y-4">
+                    <form th:action="@{/admin/posts/{id}/edit(id=${post.id})}" method="post" class="space-y-4" id="editPostForm">
                         <div>
                             <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
                             <input type="text" name="title" id="title" th:value="${post.title}" required 
@@ -32,10 +32,27 @@
                         </div>
                         
                         <div>
-                            <label for="imageUrl" class="block text-sm font-medium text-gray-700">URL de imagen</label>
-                            <input type="url" name="imageUrl" id="imageUrl" th:value="${post.imageUrl}" 
-                                   class="mt-1 w-full px-3 py-2 border rounded-lg">
-                            <p class="mt-1 text-sm text-gray-500">Deja en blanco para no mostrar imagen</p>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen Actual</label>
+                            <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" class="mb-4">
+                                <img th:src="${post.imageUrl}" alt="Imagen actual" class="w-48 h-32 object-cover rounded-lg border">
+                                <p class="text-sm text-gray-500 mt-1">Imagen actual del post</p>
+                            </div>
+                            <div th:if="${post.imageUrl == null or post.imageUrl.isEmpty()}" class="mb-4">
+                                <div class="w-48 h-32 bg-gray-100 rounded-lg border flex items-center justify-center">
+                                    <span class="text-gray-400 text-sm">Sin imagen</span>
+                                </div>
+                            </div>
+                            
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cambiar Imagen</label>
+                            <input type="file" id="editImageFile" accept="image/*" 
+                                   class="w-full px-3 py-2 border rounded-lg">
+                            <input type="hidden" name="imageUrl" id="editImageUrlHidden" th:value="${post.imageUrl != null ? post.imageUrl : ''}">
+                            <div id="editImagePreview" class="mt-2 hidden">
+                                <img id="editPreviewImg" class="w-48 h-32 object-cover rounded-lg border">
+                                <p class="text-sm text-gray-500 mt-1">Nueva imagen seleccionada</p>
+                            </div>
+                            <div id="editUploadStatus" class="mt-2 text-sm"></div>
+                            <p class="mt-1 text-sm text-gray-500">Selecciona una nueva imagen para cambiar la actual</p>
                         </div>
                         
                         <div>
@@ -62,5 +79,84 @@
                 </div>
             </div>
     </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('editImageFile');
+        const imagePreview = document.getElementById('editImagePreview');
+        const previewImg = document.getElementById('editPreviewImg');
+        const uploadStatus = document.getElementById('editUploadStatus');
+        const imageUrlHidden = document.getElementById('editImageUrlHidden');
+        const form = document.getElementById('editPostForm');
+        
+        // Preview de imagen
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.classList.add('hidden');
+            }
+        });
+        
+        // Manejar envío del formulario
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const imageFile = imageInput.files[0];
+            
+            try {
+                // Subir imagen a Cloudinary si se seleccionó una nueva
+                if (imageFile) {
+                    uploadStatus.textContent = 'Subiendo nueva imagen...';
+                    uploadStatus.className = 'mt-2 text-sm text-blue-600';
+                    
+                    const imageFormData = new FormData();
+                    imageFormData.append('image', imageFile);
+                    
+                    const imageResponse = await fetch('/admin/upload-image', {
+                        method: 'POST',
+                        body: imageFormData
+                    });
+                    
+                    if (imageResponse.ok) {
+                        const imageUrl = await imageResponse.text();
+                        imageUrlHidden.value = imageUrl;
+                        uploadStatus.textContent = 'Nueva imagen subida exitosamente';
+                        uploadStatus.className = 'mt-2 text-sm text-green-600';
+                    } else {
+                        const errorText = await imageResponse.text();
+                        uploadStatus.textContent = 'Error: ' + errorText;
+                        uploadStatus.className = 'mt-2 text-sm text-red-600';
+                        return;
+                    }
+                } else {
+                    // Si no hay nueva imagen, mantener la actual o vacío
+                    uploadStatus.textContent = 'Manteniendo imagen actual...';
+                    uploadStatus.className = 'mt-2 text-sm text-gray-600';
+                }
+                
+                // Enviar formulario
+                uploadStatus.textContent = 'Actualizando post...';
+                uploadStatus.className = 'mt-2 text-sm text-blue-600';
+                
+                // Pequeña pausa para mostrar el mensaje
+                setTimeout(() => {
+                    form.submit();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                uploadStatus.textContent = 'Error al procesar la solicitud';
+                uploadStatus.className = 'mt-2 text-sm text-red-600';
+            }
+        });
+    });
+    </script>
 </body>
 </html>

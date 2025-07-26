@@ -10,6 +10,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,6 +87,57 @@ public class PostController {
     public String viewAllCategories(Model model) {
         model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
         return "categories/list";
+    }
+    
+    @PostMapping("/api/upload-image")
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body("No se seleccionó archivo");
+            }
+            
+            // Validar tipo de archivo
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest().body("Solo se permiten imágenes");
+            }
+            
+            // Crear directorio si no existe
+            Path uploadDir = Paths.get("src/main/resources/static/uploads");
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+            
+            // Generar nombre único
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String filename = UUID.randomUUID().toString() + extension;
+            
+            // Guardar archivo
+            Path filePath = uploadDir.resolve(filename);
+            Files.copy(file.getInputStream(), filePath);
+            
+            // Retornar URL relativa
+            return ResponseEntity.ok("/uploads/" + filename);
+            
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Error al subir imagen");
+        }
+    }
+    
+    @PostMapping("/api/create-post")
+    public ResponseEntity<String> createPost(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("imageUrl") String imageUrl,
+            @RequestParam("categoryId") Long categoryId) {
+        
+        try {
+            postService.createPost(title, content, imageUrl, categoryId);
+            return ResponseEntity.ok("Post creado exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al crear post");
+        }
     }
 
 }
