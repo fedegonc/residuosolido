@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/admin/posts-legacy")
+@RequestMapping("/admin/posts")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminPostController {
 

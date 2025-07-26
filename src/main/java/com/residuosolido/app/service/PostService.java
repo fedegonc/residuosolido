@@ -83,23 +83,11 @@ public class PostService {
         });
     }
 
-    public void updatePost(Long id, String title, String content, String imageUrl, Long categoryId) {
-        Optional<Post> postOpt = postRepository.findById(id);
-        if (postOpt.isPresent()) {
-            Post post = postOpt.get();
-            post.setTitle(title);
-            post.setContent(content);
-            post.setImageUrl(imageUrl);
-            post.setCategoryId(categoryId);
-            postRepository.save(post);
-        }
-    }
-
     public void deletePost(Long id) {
-        postRepository.deleteById(id);
+        posts.removeIf(p -> p.getId().equals(id));
     }
 
     public boolean isCategoryInUse(Long categoryId) {
-        return postRepository.existsByCategoryId(categoryId);
+        return posts.stream().anyMatch(p -> p.getCategoryId().equals(categoryId));
     }
 }

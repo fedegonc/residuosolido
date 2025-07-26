@@ -10,5 +10,4 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByCategoryId(Long categoryId);
     List<Post> findTop5ByOrderByIdDesc();
-    boolean existsByCategoryId(Long categoryId);
 }
