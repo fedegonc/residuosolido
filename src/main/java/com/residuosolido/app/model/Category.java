@@ -9,11 +9,20 @@ public class Category {
     private Long id;
     private String name;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "waste_section_id")
+    private WasteSection wasteSection;
+    
     public Category() {}
     
     public Category(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+    
+    public Category(String name, WasteSection wasteSection) {
+        this.name = name;
+        this.wasteSection = wasteSection;
     }
     
     // Getters y Setters
@@ -22,4 +31,7 @@ public class Category {
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    
+    public WasteSection getWasteSection() { return wasteSection; }
+    public void setWasteSection(WasteSection wasteSection) { this.wasteSection = wasteSection; }
 }
