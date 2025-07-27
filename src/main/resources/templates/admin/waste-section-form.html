@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Formulario de Sección de Residuos')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Contenido principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold text-gray-900" th:text="${wasteSection.id == null ? 'Nueva Sección de Residuos' : 'Editar Sección de Residuos'}">Formulario de Sección</h1>
+                <a th:href="@{/admin/waste-sections}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Volver a la lista
+                </a>
+            </div>
+
+            <!-- Alerta de error -->
+            <div th:if="${errorMessage}" class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700" th:text="${errorMessage}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <form th:action="@{/admin/waste-sections/save}" method="post" th:object="${wasteSection}">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                <div class="sm:col-span-3">
+                                    <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
+                                    <div class="mt-1">
+                                        <input type="text" th:field="*{title}" id="title" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-3">
+                                    <label for="icon" class="block text-sm font-medium text-gray-700">Icono</label>
+                                    <div class="mt-1">
+                                        <input type="text" th:field="*{icon}" id="icon" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="🌱">
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-6">
+                                    <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
+                                    <div class="mt-1">
+                                        <textarea th:field="*{description}" id="description" rows="3" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    <label for="displayOrder" class="block text-sm font-medium text-gray-700">Orden de visualización</label>
+                                    <div class="mt-1">
+                                        <input type="number" th:field="*{displayOrder}" id="displayOrder" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" min="1" value="1">
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    <label for="actionText" class="block text-sm font-medium text-gray-700">Texto de acción</label>
+                                    <div class="mt-1">
+                                        <input type="text" th:field="*{actionText}" id="actionText" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Ver puntos cercanos">
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    <label for="actionIcon" class="block text-sm font-medium text-gray-700">Icono de acción</label>
+                                    <div class="mt-1">
+                                        <input type="text" th:field="*{actionIcon}" id="actionIcon" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="📍">
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-6">
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input type="checkbox" th:field="*{active}" id="active" class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                        </div>
+                                        <div class="ml-3 text-sm">
+                                            <label for="active" class="font-medium text-gray-700">Activo</label>
+                                            <p class="text-gray-500">Las secciones inactivas no se mostrarán en el sitio público.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-5">
+                            <div class="flex justify-end">
+                                <a th:href="@{/admin/waste-sections}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                                    Cancelar
+                                </a>
+                                <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

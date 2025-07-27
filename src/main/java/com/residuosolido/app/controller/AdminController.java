@@ -9,7 +9,7 @@ import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.UserService;
-import com.residuosolido.app.service.WasteSectionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -37,18 +37,17 @@ public class AdminController {
     private final RequestRepository requestRepository;
     private final PasswordResetService passwordResetService;
     private final UserService userService;
-    private final WasteSectionService wasteSectionService;
+
 
     @Autowired
     public AdminController(DashboardService dashboardService, FeedbackRepository feedbackRepository, 
                           RequestRepository requestRepository, PasswordResetService passwordResetService,
-                          UserService userService, WasteSectionService wasteSectionService) {
+                          UserService userService) {
         this.dashboardService = dashboardService;
         this.feedbackRepository = feedbackRepository;
         this.requestRepository = requestRepository;
         this.passwordResetService = passwordResetService;
         this.userService = userService;
-        this.wasteSectionService = wasteSectionService;
     }
 
     @GetMapping("/dashboard")
@@ -162,10 +161,5 @@ public class AdminController {
         return "redirect:/admin/users";
     }
     
-    // Waste Sections Management
-    @GetMapping("/waste-sections")
-    public String wasteSections(Model model) {
-        model.addAttribute("wasteSections", wasteSectionService.findAll());
-        return "admin/waste-sections";
-    }
+    // Waste Sections Management se ha movido a AdminWasteSectionController
 }

@@ -3,6 +3,39 @@
 <head th:replace="~{fragments/index-layout :: head('Inicio')}"></head>
 <body th:replace="~{fragments/index-layout :: layout(~{::main})}">
     <main>
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-br from-green-700 via-green-600 to-green-500 py-16">
+            <div class="container mx-auto px-6">
+                <div class="text-left max-w-4xl">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                        Residuos Sólidos - <span class="text-green-100">Frontera de la Paz</span>
+                    </h1>
+                    <p class="text-lg text-green-100 mb-8">
+                        Rivera - Sant'Ana do Livramento
+                    </p>
+                    <p class="text-xl text-white mb-8 leading-relaxed max-w-2xl">
+                        Conectamos comunidades, organizaciones y autoridades para un manejo eficiente 
+                        y sostenible de residuos en la región fronteriza.
+                    </p>
+                    <div class="flex flex-col gap-4 max-w-lg">
+                        <a href="/about" class="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-lg shadow-md transition-all hover:shadow-lg border border-green-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-bold mb-1">Más Informaciones</h3>
+                                    <p class="text-sm text-gray-600">Conoce nuestros objetivos, motivaciones y cómo funcionamos</p>
+                                </div>
+                                <div class="bg-green-100 rounded-full p-2 group-hover:bg-green-200 transition-colors">
+                                    <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Layout Principal Mejorado -->
         <div class="min-h-screen bg-gray-25" style="background-color: #fafafa;">
             <!-- Grid Principal Mejorado -->
@@ -21,41 +54,89 @@
                                     Categorías
                                 </h2>
                                 <div class="space-y-3">
-                                    <a href="/posts/reciclables" class="flex items-center p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors group">
-                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200">
-                                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    <!-- Reciclables -->
+                                    <div class="bg-green-50 rounded-lg">
+                                        <button onclick="toggleCategory('reciclables')" class="w-full flex items-center justify-between p-3 hover:bg-green-100 transition-colors group">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200">
+                                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-medium text-gray-900 text-sm">Reciclables</h3>
+                                                    <p class="text-xs text-gray-600">Plástico, papel, vidrio</p>
+                                                </div>
+                                            </div>
+                                            <svg id="arrow-reciclables" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
+                                        </button>
+                                        <div id="categories-reciclables" class="hidden px-3 pb-3">
+                                            <div class="ml-13 space-y-2">
+                                                <a href="/posts/plasticos" class="block text-sm text-gray-600 hover:text-green-600 py-1">• Plásticos</a>
+                                                <a href="/posts/papel" class="block text-sm text-gray-600 hover:text-green-600 py-1">• Papel y Cartón</a>
+                                                <a href="/posts/vidrio" class="block text-sm text-gray-600 hover:text-green-600 py-1">• Vidrio</a>
+                                                <a href="/posts/metales" class="block text-sm text-gray-600 hover:text-green-600 py-1">• Metales</a>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 class="font-medium text-gray-900 text-sm">Reciclables</h3>
-                                            <p class="text-xs text-gray-600">Plástico, papel, vidrio</p>
-                                        </div>
-                                    </a>
+                                    </div>
                                     
-                                    <a href="/posts/no-reciclables" class="flex items-center p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors group">
-                                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-200">
-                                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                    <!-- No Reciclables -->
+                                    <div class="bg-orange-50 rounded-lg">
+                                        <button onclick="toggleCategory('no-reciclables')" class="w-full flex items-center justify-between p-3 hover:bg-orange-100 transition-colors group">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-200">
+                                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-medium text-gray-900 text-sm">No Reciclables</h3>
+                                                    <p class="text-xs text-gray-600">Escombros, orgánicos</p>
+                                                </div>
+                                            </div>
+                                            <svg id="arrow-no-reciclables" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
+                                        </button>
+                                        <div id="categories-no-reciclables" class="hidden px-3 pb-3">
+                                            <div class="ml-13 space-y-2">
+                                                <a href="/posts/escombros" class="block text-sm text-gray-600 hover:text-orange-600 py-1">• Escombros</a>
+                                                <a href="/posts/organicos" class="block text-sm text-gray-600 hover:text-orange-600 py-1">• Residuos Orgánicos</a>
+                                                <a href="/posts/peligrosos" class="block text-sm text-gray-600 hover:text-orange-600 py-1">• Residuos Peligrosos</a>
+                                                <a href="/posts/electronicos" class="block text-sm text-gray-600 hover:text-orange-600 py-1">• Electrónicos</a>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 class="font-medium text-gray-900 text-sm">No Reciclables</h3>
-                                            <p class="text-xs text-gray-600">Escombros, orgánicos</p>
-                                        </div>
-                                    </a>
+                                    </div>
                                     
-                                    <a href="/posts/informaciones" class="flex items-center p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors group">
-                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200">
-                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    <!-- Información -->
+                                    <div class="bg-blue-50 rounded-lg">
+                                        <button onclick="toggleCategory('informacion')" class="w-full flex items-center justify-between p-3 hover:bg-blue-100 transition-colors group">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200">
+                                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-medium text-gray-900 text-sm">Información</h3>
+                                                    <p class="text-xs text-gray-600">Guías y consejos</p>
+                                                </div>
+                                            </div>
+                                            <svg id="arrow-informacion" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
+                                        </button>
+                                        <div id="categories-informacion" class="hidden px-3 pb-3">
+                                            <div class="ml-13 space-y-2">
+                                                <a href="/posts/guias" class="block text-sm text-gray-600 hover:text-blue-600 py-1">• Guías de Reciclaje</a>
+                                                <a href="/posts/consejos" class="block text-sm text-gray-600 hover:text-blue-600 py-1">• Consejos Ambientales</a>
+                                                <a href="/posts/normativas" class="block text-sm text-gray-600 hover:text-blue-600 py-1">• Normativas</a>
+                                                <a href="/posts/eventos" class="block text-sm text-gray-600 hover:text-blue-600 py-1">• Eventos y Campañas</a>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 class="font-medium text-gray-900 text-sm">Información</h3>
-                                            <p class="text-xs text-gray-600">Guías y consejos</p>
-                                        </div>
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -270,6 +351,46 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
         </svg>
     </button>
+
+    <!-- JavaScript para desplegables de categorías -->
+    <script>
+        function toggleCategory(categoryId) {
+            console.log('toggleCategory called with:', categoryId);
+            
+            const categoriesDiv = document.getElementById(`categories-${categoryId}`);
+            const arrow = document.getElementById(`arrow-${categoryId}`);
+            
+            console.log('categoriesDiv:', categoriesDiv);
+            console.log('arrow:', arrow);
+            
+            if (!categoriesDiv || !arrow) {
+                console.error('Elements not found for categoryId:', categoryId);
+                return;
+            }
+            
+            if (categoriesDiv.classList.contains('hidden')) {
+                // Mostrar categorías
+                console.log('Showing categories');
+                categoriesDiv.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                // Ocultar categorías
+                console.log('Hiding categories');
+                categoriesDiv.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // Verificar que los elementos existen al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking elements...');
+            ['reciclables', 'no-reciclables', 'informacion'].forEach(id => {
+                const categoriesDiv = document.getElementById(`categories-${id}`);
+                const arrow = document.getElementById(`arrow-${id}`);
+                console.log(`${id} - categoriesDiv:`, categoriesDiv, 'arrow:', arrow);
+            });
+        });
+    </script>
 
     <!-- JavaScript Files -->
     <script src="/js/common.js"></script>

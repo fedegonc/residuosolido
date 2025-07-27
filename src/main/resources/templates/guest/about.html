@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <header th:replace="~{fragments/layout :: header}"></header>
+    
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-b from-green-700 to-green-800 text-white py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl">
+                    <h1 class="text-4xl sm:text-5xl font-bold mb-4">Sobre Residuo Sólido</h1>
+                    <p class="text-xl opacity-90 mb-6">
+                        Conoce nuestra misión, visión y cómo estamos transformando la gestión de residuos
+                        en la región fronteriza.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Main Content -->
+        <section class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                <!-- Nuestra Misión -->
+                <div class="p-8 border-b border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Nuestra Misión</h2>
+                    </div>
+                    <p class="text-gray-700 mb-4">
+                        Residuo Sólido nace con la misión de transformar la gestión de residuos en la región fronteriza, 
+                        conectando comunidades, organizaciones y autoridades para implementar soluciones sostenibles y 
+                        eficientes que mejoren la calidad de vida de los habitantes y protejan el medio ambiente.
+                    </p>
+                    <p class="text-gray-700">
+                        Buscamos educar, concientizar y facilitar la participación ciudadana en prácticas responsables 
+                        de manejo de residuos, promoviendo la economía circular y la reducción del impacto ambiental.
+                    </p>
+                </div>
+                
+                <!-- Objetivos -->
+                <div class="p-8 border-b border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Nuestros Objetivos</h2>
+                    </div>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Crear una plataforma digital accesible que centralice información sobre gestión de residuos.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Facilitar la colaboración entre ciudadanos, organizaciones y autoridades locales.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Educar sobre prácticas sostenibles de manejo de residuos y reciclaje.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Promover la economía circular y la reducción de residuos en origen.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Monitorear y mejorar continuamente la gestión de residuos en la región.</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Cómo Funcionamos -->
+                <div class="p-8 border-b border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Cómo Funcionamos</h2>
+                    </div>
+                    <div class="space-y-6 text-gray-700">
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800 mb-2">Plataforma Digital</h3>
+                            <p>
+                                Nuestra plataforma web ofrece información actualizada sobre puntos de recolección, 
+                                materiales reciclables, programas comunitarios y educación ambiental.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800 mb-2">Colaboración Comunitaria</h3>
+                            <p>
+                                Facilitamos la conexión entre ciudadanos, organizaciones y autoridades para 
+                                implementar soluciones locales efectivas y adaptadas a las necesidades específicas.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800 mb-2">Educación y Concientización</h3>
+                            <p>
+                                Desarrollamos contenido educativo, talleres y campañas para promover prácticas 
+                                sostenibles y fomentar la participación ciudadana en la gestión de residuos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Impacto -->
+                <div class="p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-full mr-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Nuestro Impacto</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2">+500</div>
+                            <p class="text-gray-700">Usuarios registrados</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2">15</div>
+                            <p class="text-gray-700">Organizaciones asociadas</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2">3</div>
+                            <p class="text-gray-700">Municipios participantes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="max-w-4xl mx-auto mt-12 text-center">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">¿Quieres formar parte del cambio?</h3>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/auth/register" class="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                        Únete a la Comunidad
+                    </a>
+                    <a href="/posts/reciclables" class="bg-white hover:bg-gray-50 text-green-700 border border-green-200 px-8 py-3 rounded-lg font-semibold transition-colors">
+                        Ver Materiales Reciclables
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

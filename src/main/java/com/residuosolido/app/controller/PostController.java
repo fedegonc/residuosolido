@@ -77,5 +77,10 @@ public class PostController {
         model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
         return "categories/list";
     }
+    
+    @GetMapping("/about")
+    public String about() {
+        return "guest/about";
+    }
 
 }

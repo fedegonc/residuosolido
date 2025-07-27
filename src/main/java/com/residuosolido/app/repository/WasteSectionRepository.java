@@ -10,4 +10,5 @@ import java.util.List;
 public interface WasteSectionRepository extends JpaRepository<WasteSection, Long> {
     
     List<WasteSection> findByActiveOrderByDisplayOrderAsc(Boolean active);
+    List<WasteSection> findAllByOrderByDisplayOrderAsc();
 }
