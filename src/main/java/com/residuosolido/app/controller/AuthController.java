@@ -8,6 +8,7 @@ import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.PasswordResetService;
+import com.residuosolido.app.service.ConfigService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -31,17 +32,19 @@ public class AuthController {
     private final DashboardService dashboardService;
     private final PasswordResetService passwordResetService;
     private final PostService postService;
+    private final ConfigService configService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
                          CustomAuthenticationSuccessHandler successHandler,
                          DashboardService dashboardService, PasswordResetService passwordResetService,
-                         PostService postService) {
+                         PostService postService, ConfigService configService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.dashboardService = dashboardService;
         this.passwordResetService = passwordResetService;
         this.postService = postService;
+        this.configService = configService;
     }
 
    
@@ -75,6 +78,9 @@ public class AuthController {
     List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
     System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
     model.addAttribute("organizations", organizations);
+    
+    // Agregar imagen del hero
+    model.addAttribute("heroImage", configService.getHeroImageUrl());
 
     return "guest/index";
 }

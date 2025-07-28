@@ -4,16 +4,19 @@
 <body th:replace="~{fragments/index-layout :: layout(~{::main})}">
     <main>
         <!-- Hero Section -->
-        <section class="bg-gradient-to-br from-green-700 via-green-600 to-green-500 py-16">
-            <div class="container mx-auto px-6">
+        <section class="relative py-16" 
+                 th:classappend="${heroImage != null ? 'bg-cover bg-center' : 'bg-gradient-to-br from-green-700 via-green-600 to-green-500'}"
+                 th:style="${heroImage != null ? 'background-image: url(' + heroImage + ')' : ''}">
+            <div th:if="${heroImage != null}" class="absolute inset-0 bg-gradient-to-br from-green-700/80 via-green-600/70 to-green-500/60"></div>
+            <div class="container mx-auto px-6 relative z-10">
                 <div class="text-left max-w-4xl">
-                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg font-sans">
                         Residuos Sólidos - <span class="text-green-100">Frontera de la Paz</span>
                     </h1>
-                    <p class="text-lg text-green-100 mb-8">
+                    <p class="text-lg text-green-100 mb-8 drop-shadow-md font-sans">
                         Rivera - Sant'Ana do Livramento
                     </p>
-                    <p class="text-xl text-white mb-8 leading-relaxed max-w-2xl">
+                    <p class="text-xl text-white mb-8 leading-relaxed max-w-2xl drop-shadow-md font-sans">
                         Conectamos comunidades, organizaciones y autoridades para un manejo eficiente 
                         y sostenible de residuos en la región fronteriza.
                     </p>
@@ -21,8 +24,8 @@
                         <a href="/about" class="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-lg shadow-md transition-all hover:shadow-lg border border-green-100">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-xl font-bold mb-1">Más Informaciones</h3>
-                                    <p class="text-sm text-gray-600">Conoce nuestros objetivos, motivaciones y cómo funcionamos</p>
+                                    <h3 class="text-xl font-bold mb-1 font-sans">Más Informaciones</h3>
+                                    <p class="text-sm text-gray-600 font-sans">Conoce nuestros objetivos, motivaciones y cómo funcionamos</p>
                                 </div>
                                 <div class="bg-green-100 rounded-full p-2 group-hover:bg-green-200 transition-colors">
                                     <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
