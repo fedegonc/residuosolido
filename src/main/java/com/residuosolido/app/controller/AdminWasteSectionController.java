@@ -30,11 +30,17 @@ public class AdminWasteSectionController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editWasteSection(@PathVariable Long id, Model model) {
-        WasteSection wasteSection = wasteSectionRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("WasteSection not found"));
-        model.addAttribute("wasteSection", wasteSection);
-        return "admin/waste-section-form";
+    public String editWasteSection(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            WasteSection wasteSection = wasteSectionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sección no encontrada"));
+            model.addAttribute("wasteSection", wasteSection);
+            model.addAttribute("isEdit", true);
+            return "admin/waste-section-form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cargar la sección: " + e.getMessage());
+            return "redirect:/admin/waste-sections";
+        }
     }
 
     @PostMapping("/save")
@@ -58,7 +64,7 @@ public class AdminWasteSectionController {
         }
         return "redirect:/admin/waste-sections";
     }
-    
+
     @PostMapping("/toggle-status/{id}")
     public String toggleWasteSectionStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
