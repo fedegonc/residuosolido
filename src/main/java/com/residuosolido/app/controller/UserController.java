@@ -164,6 +164,10 @@ public class UserController {
             User user = userService.getUserOrThrow(id);
             UserForm userForm = new UserForm();
             BeanUtils.copyProperties(user, userForm);
+            // Copiar campos de ubicación manualmente si es necesario
+            userForm.setLatitude(user.getLatitude());
+            userForm.setLongitude(user.getLongitude());
+            userForm.setAddress(user.getAddress());
             model.addAttribute("userForm", userForm);
             return "users/form";
         } catch (IllegalArgumentException e) {

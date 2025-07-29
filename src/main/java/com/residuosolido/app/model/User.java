@@ -41,6 +41,11 @@ public class User {
     private String lastName;
 
     private String profileImage; // URL imagen de perfil Cloudinary
+    
+    // Campos de ubicación
+    private Double latitude;  // Latitud
+    private Double longitude; // Longitud
+    private String address;   // Dirección completa
 
     @ManyToMany
     @JoinTable(

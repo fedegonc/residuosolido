@@ -26,6 +26,11 @@ public class UserForm {
     private List<Material> materials = new ArrayList<>();
     private List<Long> materialIds = new ArrayList<>();
     
+    // Campos de ubicación
+    private Double latitude;
+    private Double longitude;
+    private String address;
+    
     // Campos específicos del formulario
     private String password;
     private String newPassword;

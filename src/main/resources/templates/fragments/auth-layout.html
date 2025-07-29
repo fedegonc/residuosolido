@@ -8,7 +8,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 
-<body th:fragment="layout(content)" class="bg-gray-50 min-h-screen">
+<body th:fragment="layout(content)" class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header simplificado para auth -->
     <header class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,24 +34,26 @@
     </header>
 
     <!-- Contenido principal -->
-    <main th:replace="${content}">
+    <main class="flex-1" th:replace="${content}">
         <!-- El contenido se insertará aquí -->
     </main>
 
-    <!-- Footer simplificado -->
-    <footer class="bg-gray-800 text-white py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <div class="flex items-center justify-center space-x-2 mb-4">
-                    <div class="w-6 h-6 bg-green-600 rounded flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                    </div>
-                    <span class="text-lg font-semibold">Residuos Sólidos</span>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-lg font-semibold">Residuos Sólidos - Frontera de la Paz</h3>
+                    <p class="text-gray-400">Construyendo un futuro más limpio y sostenible</p>
                 </div>
-                <p class="text-gray-400 text-sm mb-2">Sistema de Gestión de Residuos Sólidos</p>
-                <p class="text-gray-500 text-xs">Rivera - Sant'Ana do Livramento</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Acerca de</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Contacto</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Ayuda</a>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2024 Residuos Sólidos - Frontera de la Paz. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>

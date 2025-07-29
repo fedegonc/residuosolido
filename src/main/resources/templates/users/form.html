@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Formulario de Usuario')}"></head>
+<head th:replace="~{fragments/layout :: head('Formulario de Usuario')}">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Location Selector CSS -->
+    <th:block th:replace="~{fragments/location-selector :: location-selector-css}"></th:block>
+</head>
 <body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content" class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
@@ -164,6 +169,9 @@
                         </div>
                     </div>
                     
+                    <!-- Selector de Ubicación -->
+                    <div th:replace="~{fragments/location-selector :: location-selector(${userForm.latitude}, ${userForm.longitude}, ${userForm.address})}"></div>
+                    
                     <!-- Contraseña -->
                     <div class="mt-6">
                         <div class="flex items-center justify-between mb-4">
@@ -312,5 +320,10 @@
             }
         });
     </script>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Location Selector JavaScript -->
+    <th:block th:replace="~{fragments/location-selector :: location-selector-js}"></th:block>
 </body>
 </html>
