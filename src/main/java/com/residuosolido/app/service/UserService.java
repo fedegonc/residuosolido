@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servicio para operaciones CRUD y de negocio con la entidad User
@@ -20,6 +22,8 @@ import java.util.Optional;
 @Service
 public class UserService extends GenericEntityService<User, Long> {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserValidationService validationService;
@@ -198,6 +202,14 @@ public class UserService extends GenericEntityService<User, Long> {
      * @param user Entidad destino
      */
     private void copyLocationFields(UserForm userForm, User user) {
+        logger.info("Copiando campos de ubicación:");
+        logger.info("Dirección: {}", userForm.getDireccion());
+        logger.info("Latitud: {}", userForm.getLatitud());
+        logger.info("Longitud: {}", userForm.getLongitud());
+        logger.info("Referencias: {}", userForm.getReferencias());
+        logger.info("Legacy - Latitude: {}", userForm.getLatitude());
+        logger.info("Legacy - Longitude: {}", userForm.getLongitude());
+        
         user.setDireccion(userForm.getDireccion());
         user.setLatitud(userForm.getLatitud());
         user.setLongitud(userForm.getLongitud());
@@ -213,6 +225,12 @@ public class UserService extends GenericEntityService<User, Long> {
         if (userForm.getDireccion() != null) {
             user.setAddress(userForm.getDireccion());
         }
+        
+        logger.info("Campos copiados a la entidad User:");
+        logger.info("User - Latitud: {}", user.getLatitud());
+        logger.info("User - Longitud: {}", user.getLongitud());
+        logger.info("User - Legacy Latitude: {}", user.getLatitude());
+        logger.info("User - Legacy Longitude: {}", user.getLongitude());
     }
     
     /**

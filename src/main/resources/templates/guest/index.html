@@ -54,143 +54,32 @@
                                     <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"></path>
                                     </svg>
-                                    Categorías
+                                    Secciones
                                 </h2>
                                 <div class="space-y-3">
-                                    <!-- Reciclables -->
-                                    <div class="bg-green-50 rounded-lg">
-                                        <button onclick="toggleCategory('1')" class="w-full flex items-center justify-between p-3 hover:bg-green-100 transition-colors group">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200">
-                                                    <span class="text-xl">🌱</span>
-                                                </div>
-                                                <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm">Reciclables</h3>
-                                                    <p class="text-xs text-gray-600">título</p>
-                                                </div>
-                                            </div>
-                                            <svg id="arrow-1" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </button>
-                                        <div id="categories-1" class="hidden px-3 pb-3">
-                                            <div class="ml-13 space-y-2">
-                                                <a href="/posts/category/reciclables" class="block text-sm text-gray-600 hover:text-green-600 py-1">• Ver posts</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- No Reciclables -->
-                                    <div class="bg-orange-50 rounded-lg">
-                                        <button onclick="toggleCategory('2')" class="w-full flex items-center justify-between p-3 hover:bg-orange-100 transition-colors group">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-200">
-                                                    <span class="text-xl">🚫</span>
-                                                </div>
-                                                <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm">No Reciclables</h3>
-                                                    <p class="text-xs text-gray-600">Desechos que no pueden reutilizarse</p>
-                                                </div>
-                                            </div>
-                                            <svg id="arrow-2" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </button>
-                                        <div id="categories-2" class="hidden px-3 pb-3">
-                                            <div class="ml-13 space-y-2">
-                                                <a href="/posts/category/no-reciclables" class="block text-sm text-gray-600 hover:text-orange-600 py-1">• Ver posts</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Educación -->
-                                    <div class="bg-blue-50 rounded-lg">
-                                        <button onclick="toggleCategory('3')" class="w-full flex items-center justify-between p-3 hover:bg-blue-100 transition-colors group">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200">
-                                                    <span class="text-xl">📚</span>
-                                                </div>
-                                                <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm">Educación</h3>
-                                                    <p class="text-xs text-gray-600">Contenidos para informar, educar y guiar al ciudadano.</p>
-                                                </div>
-                                            </div>
-                                            <svg id="arrow-3" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </button>
-                                        <div id="categories-3" class="hidden px-3 pb-3">
-                                            <div class="ml-13 space-y-2">
-                                                <a href="/posts/category/educacion" class="block text-sm text-gray-600 hover:text-blue-600 py-1">• Ver posts</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Institucional -->
-                                    <div class="bg-purple-50 rounded-lg">
-                                        <button onclick="toggleCategory('4')" class="w-full flex items-center justify-between p-3 hover:bg-purple-100 transition-colors group">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-200">
-                                                    <span class="text-xl">🏢</span>
-                                                </div>
-                                                <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm">Institucional</h3>
-                                                    <p class="text-xs text-gray-600">Cosas del sistema en sí, internas o generales.</p>
-                                                </div>
-                                            </div>
-                                            <svg id="arrow-4" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </button>
-                                        <div id="categories-4" class="hidden px-3 pb-3">
-                                            <div class="ml-13 space-y-2">
-                                                <a href="/posts/category/institucional" class="block text-sm text-gray-600 hover:text-purple-600 py-1">• Ver posts</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Complementarios -->
-                                    <div class="bg-teal-50 rounded-lg">
-                                        <button onclick="toggleCategory('5')" class="w-full flex items-center justify-between p-3 hover:bg-teal-100 transition-colors group">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-teal-200">
-                                                    <span class="text-xl">➕</span>
-                                                </div>
-                                                <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm">Complementarios</h3>
-                                                    <p class="text-xs text-gray-600">Contenidos adicionales o especiales que no forman parte de las categorías principales.</p>
-                                                </div>
-                                            </div>
-                                            <svg id="arrow-5" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </button>
-                                        <div id="categories-5" class="hidden px-3 pb-3">
-                                            <div class="ml-13 space-y-2">
-                                                <a href="/posts/category/complementarios" class="block text-sm text-gray-600 hover:text-teal-600 py-1">• Ver posts</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Varios -->
-                                    <div class="bg-gray-50 rounded-lg">
-                                        <button onclick="toggleCategory('6')" class="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition-colors group">
+                                    <!-- Secciones dinámicas desde waste_sections -->
+                                    <div th:each="section : ${wasteSections}" class="bg-gray-50 rounded-lg">
+                                        <button th:onclick="'toggleCategory(' + ${section.id} + ')'" 
+                                                class="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition-colors group">
                                             <div class="flex items-center">
                                                 <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200">
-                                                    <span class="text-xl">📋</span>
+                                                    <span class="text-xl" th:text="${section.icon}">📋</span>
                                                 </div>
                                                 <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm">Varios</h3>
-                                                    <p class="text-xs text-gray-600">Incluye temas o contenidos que no encajan directamente en las demás categorías.</p>
+                                                    <h3 class="font-medium text-gray-900 text-sm" th:text="${section.title}">Título</h3>
+                                                    <p class="text-xs text-gray-600" th:text="${section.description}">Descripción</p>
                                                 </div>
                                             </div>
-                                            <svg id="arrow-6" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg th:id="'arrow-' + ${section.id}" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
                                         </button>
-                                        <div id="categories-6" class="hidden px-3 pb-3">
+                                        <div th:id="'categories-' + ${section.id}" class="hidden px-3 pb-3">
                                             <div class="ml-13 space-y-2">
-                                                <a href="/posts/category/varios" class="block text-sm text-gray-600 hover:text-gray-600 py-1">• Ver posts</a>
+                                                <a th:href="'/posts/section/' + ${section.id}" 
+                                                   class="block text-sm text-gray-600 hover:text-gray-800 py-1">
+                                                    • <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

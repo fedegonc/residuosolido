@@ -161,12 +161,32 @@
         <!-- Leaflet JS -->
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('Iniciando mapa...');
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('Inicializando mapa...');
                 
                 // Coordenadas por defecto (Uruguay)
                 var lat = -30.9054;
                 var lng = -55.5511;
+                
+                // Obtener coordenadas existentes si están disponibles
+                var latField = document.getElementById('latitude');
+                var lngField = document.getElementById('longitude');
+                var latLegacyField = document.getElementById('lat');
+                var lngLegacyField = document.getElementById('lng');
+                
+                console.log('Valores iniciales:');
+                console.log('latitude field:', latField ? latField.value : 'null');
+                console.log('longitude field:', lngField ? lngField.value : 'null');
+                console.log('lat legacy field:', latLegacyField ? latLegacyField.value : 'null');
+                console.log('lng legacy field:', lngLegacyField ? lngLegacyField.value : 'null');
+                
+                if (latField && latField.value && lngField && lngField.value) {
+                    lat = parseFloat(latField.value);
+                    lng = parseFloat(lngField.value);
+                    console.log('Coordenadas existentes encontradas:', lat, lng);
+                } else {
+                    console.log('Usando coordenadas por defecto:', lat, lng);
+                }
                 
                 // Inicializar el mapa
                 var map = L.map('map').setView([lat, lng], 13);

@@ -3,12 +3,14 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.CustomAuthenticationSuccessHandler;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.WasteSection;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.DashboardService;
-import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.PasswordResetService;
+import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.ConfigService;
+import com.residuosolido.app.service.WasteSectionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -33,11 +35,12 @@ public class AuthController {
     private final PasswordResetService passwordResetService;
     private final PostService postService;
     private final ConfigService configService;
+    private final WasteSectionService wasteSectionService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
                          CustomAuthenticationSuccessHandler successHandler,
                          DashboardService dashboardService, PasswordResetService passwordResetService,
-                         PostService postService, ConfigService configService) {
+                         PostService postService, ConfigService configService, WasteSectionService wasteSectionService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
@@ -45,6 +48,7 @@ public class AuthController {
         this.passwordResetService = passwordResetService;
         this.postService = postService;
         this.configService = configService;
+        this.wasteSectionService = wasteSectionService;
     }
 
    
@@ -78,6 +82,10 @@ public class AuthController {
     List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
     System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
     model.addAttribute("organizations", organizations);
+    
+    // Agregar waste sections dinámicamente
+    List<WasteSection> wasteSections = wasteSectionService.getActiveSections();
+    model.addAttribute("wasteSections", wasteSections);
     
     // Agregar imagen del hero
     model.addAttribute("heroImage", configService.getHeroImageUrl());
