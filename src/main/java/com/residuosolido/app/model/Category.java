@@ -9,9 +9,8 @@ public class Category {
     private Long id;
     private String name;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "waste_section_id")
-    private WasteSection wasteSection;
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER)
+    private java.util.List<WasteSection> wasteSections = new java.util.ArrayList<>();
     
     public Category() {}
     
@@ -20,9 +19,8 @@ public class Category {
         this.name = name;
     }
     
-    public Category(String name, WasteSection wasteSection) {
+    public Category(String name) {
         this.name = name;
-        this.wasteSection = wasteSection;
     }
     
     // Getters y Setters
@@ -32,6 +30,6 @@ public class Category {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     
-    public WasteSection getWasteSection() { return wasteSection; }
-    public void setWasteSection(WasteSection wasteSection) { this.wasteSection = wasteSection; }
+    public java.util.List<WasteSection> getWasteSections() { return wasteSections; }
+    public void setWasteSections(java.util.List<WasteSection> wasteSections) { this.wasteSections = wasteSections; }
 }

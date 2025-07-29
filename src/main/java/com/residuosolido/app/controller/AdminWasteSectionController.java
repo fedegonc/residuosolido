@@ -1,8 +1,12 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.WasteSection;
+import com.residuosolido.app.model.Category;
 import com.residuosolido.app.repository.WasteSectionRepository;
+import com.residuosolido.app.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.ArrayList;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +20,9 @@ public class AdminWasteSectionController {
 
     @Autowired
     private WasteSectionRepository wasteSectionRepository;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping
     public String listWasteSections(Model model) {
@@ -26,7 +33,21 @@ public class AdminWasteSectionController {
     @GetMapping("/new")
     public String newWasteSection(Model model) {
         model.addAttribute("wasteSection", new WasteSection());
+        model.addAttribute("categories", categoryRepository.findAll());
         return "admin/waste-section-form";
+    }
+
+    @GetMapping("/view/{id}")
+    public String viewWasteSection(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            WasteSection wasteSection = wasteSectionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sección no encontrada"));
+            model.addAttribute("wasteSection", wasteSection);
+            return "admin/waste-section-view";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cargar la sección: " + e.getMessage());
+            return "redirect:/admin/waste-sections";
+        }
     }
 
     @GetMapping("/edit/{id}")
@@ -35,7 +56,7 @@ public class AdminWasteSectionController {
             WasteSection wasteSection = wasteSectionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sección no encontrada"));
             model.addAttribute("wasteSection", wasteSection);
-            model.addAttribute("isEdit", true);
+            model.addAttribute("categories", categoryRepository.findAll());
             return "admin/waste-section-form";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al cargar la sección: " + e.getMessage());
@@ -44,8 +65,21 @@ public class AdminWasteSectionController {
     }
 
     @PostMapping("/save")
-    public String saveWasteSection(@ModelAttribute WasteSection wasteSection, RedirectAttributes redirectAttributes) {
+    public String saveWasteSection(@ModelAttribute WasteSection wasteSection, 
+                                   @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds,
+                                   RedirectAttributes redirectAttributes) {
         try {
+            // Manejar las categorías seleccionadas
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                List<Category> selectedCategories = new ArrayList<>();
+                for (Long categoryId : categoryIds) {
+                    categoryRepository.findById(categoryId).ifPresent(selectedCategories::add);
+                }
+                wasteSection.setCategories(selectedCategories);
+            } else {
+                wasteSection.setCategories(new ArrayList<>());
+            }
+            
             wasteSectionRepository.save(wasteSection);
             redirectAttributes.addFlashAttribute("success", "Sección guardada exitosamente");
         } catch (Exception e) {

@@ -7,8 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    
-    List<Category> findByWasteSection(WasteSection wasteSection);
-    
-    List<Category> findByWasteSectionId(Long wasteSectionId);
+    // Con la relación ManyToMany, las consultas se manejan desde WasteSection
 }

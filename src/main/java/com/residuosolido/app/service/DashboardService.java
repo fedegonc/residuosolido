@@ -6,6 +6,7 @@ import com.residuosolido.app.repository.CategoryRepository;
 import com.residuosolido.app.repository.FeedbackRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.repository.WasteSectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -23,15 +24,17 @@ public class DashboardService {
     private final CategoryService categoryService;
     private final FeedbackRepository feedbackRepository;
     private final RequestRepository requestRepository;
+    private final WasteSectionRepository wasteSectionRepository;
 
     @Autowired
-    public DashboardService(UserRepository userRepository, PostService postService, CategoryRepository categoryRepository, CategoryService categoryService, FeedbackRepository feedbackRepository, RequestRepository requestRepository) {
+    public DashboardService(UserRepository userRepository, PostService postService, CategoryRepository categoryRepository, CategoryService categoryService, FeedbackRepository feedbackRepository, RequestRepository requestRepository, WasteSectionRepository wasteSectionRepository) {
         this.userRepository = userRepository;
         this.postService = postService;
         this.categoryRepository = categoryRepository;
         this.categoryService = categoryService;
         this.feedbackRepository = feedbackRepository;
         this.requestRepository = requestRepository;
+        this.wasteSectionRepository = wasteSectionRepository;
     }
 
     public Map<String, Object> getGeneralStats() {
@@ -70,6 +73,7 @@ public class DashboardService {
         data.put("posts", postService.getFirst5Posts());
         data.put("hasMorePosts", postService.hasMoreThan5Posts());
         data.put("categories", categoryService.getCategoriesWithSlugs());
+        data.put("wasteSections", wasteSectionRepository.findByActiveOrderByDisplayOrderAsc(true));
         data.put("heroImage", "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80");
         data.put("organizationCount", userRepository.countByRole(Role.ORGANIZATION));
         return data;

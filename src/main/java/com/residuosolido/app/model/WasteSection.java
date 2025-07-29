@@ -31,7 +31,12 @@ public class WasteSection {
     @Column(nullable = false)
     private Boolean active = true;
     
-    @OneToMany(mappedBy = "wasteSection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "waste_section_categories",
+        joinColumns = @JoinColumn(name = "waste_section_id"),
+        inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
     private java.util.List<Category> categories = new java.util.ArrayList<>();
     
     // Constructors

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Ver Sección de Residuos')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Contenido principal -->
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="mb-6">
+                <a th:href="@{/admin/waste-sections}" class="text-gray-600 hover:text-gray-800">← Volver a Secciones</a>
+            </div>
+
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Detalles de la Sección</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Información completa de la sección de residuos.</p>
+                </div>
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">ID</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" th:text="${wasteSection.id}">1</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Título</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" th:text="${wasteSection.title}">Título</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Descripción</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" th:text="${wasteSection.description}">Descripción</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Icono</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span class="text-2xl" th:text="${wasteSection.icon}">🌱</span>
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Texto de Acción</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" th:text="${wasteSection.actionText ?: 'No definido'}">Ver puntos cercanos</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Icono de Acción</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span class="text-lg" th:text="${wasteSection.actionIcon ?: 'No definido'}">📍</span>
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Orden de Visualización</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" th:text="${wasteSection.displayOrder}">1</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Estado</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span th:if="${wasteSection.active}" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Activo
+                                </span>
+                                <span th:unless="${wasteSection.active}" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    Inactivo
+                                </span>
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Categorías Asociadas</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <div th:if="${wasteSection.categories != null and !wasteSection.categories.empty}">
+                                    <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
+                                        <li th:each="category : ${wasteSection.categories}" class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                            <div class="w-0 flex-1 flex items-center">
+                                                <span class="ml-2 flex-1 w-0 truncate" th:text="${category.name}">Categoría</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <span th:if="${wasteSection.categories == null or wasteSection.categories.empty}" class="text-gray-500">
+                                    No hay categorías asociadas
+                                </span>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="mt-6 flex justify-end space-x-3">
+                <a th:href="@{/admin/waste-sections/edit/{id}(id=${wasteSection.id})}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Editar
+                </a>
+                <a th:href="@{/admin/waste-sections}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
