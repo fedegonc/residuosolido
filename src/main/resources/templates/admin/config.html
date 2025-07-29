@@ -27,49 +27,71 @@
             </div>
 
             <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Imagen de Fondo del Hero</h2>
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Gestión de Imágenes del Hero</h2>
                 
-                <!-- Vista previa actual -->
+                <!-- Imagen activa actual -->
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Vista Previa Actual:</label>
-                    <div class="w-full h-32 rounded-lg border" 
-                         th:if="${heroImage != null}"
-                         th:style="'background-image: url(' + ${heroImage} + ')'"
-                         th:class="'bg-cover bg-center'">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Imagen Activa Actual:</label>
+                    <div th:if="${activeImage != null and !activeImage.isEmpty()}" 
+                         class="w-full h-32 rounded-lg border bg-cover bg-center" 
+                         th:style="'background-image: url(' + ${activeImage} + ')'">
                     </div>
-                    <div class="w-full h-32 rounded-lg border bg-gradient-to-br from-green-700 via-green-600 to-green-500 flex items-center justify-center" 
-                         th:if="${heroImage == null}">
+                    <div th:if="${activeImage == null or activeImage.isEmpty()}" 
+                         class="w-full h-32 rounded-lg border bg-gradient-to-br from-green-700 via-green-600 to-green-500 flex items-center justify-center">
                         <span class="text-white font-medium">Sin imagen personalizada (usando gradiente por defecto)</span>
                     </div>
                 </div>
 
-                <form th:action="@{/admin/config/hero-image}" method="post" enctype="multipart/form-data">
+                <!-- Subir nueva imagen -->
+                <form th:action="@{/admin/posts/config}" method="post" enctype="multipart/form-data" class="mb-6">
                     <div class="mb-4">
                         <label for="heroImageFile" class="block text-sm font-medium text-gray-700 mb-2">
                             Subir Nueva Imagen
                         </label>
-                        <input type="file" 
-                               id="heroImageFile" 
-                               name="heroImageFile" 
-                               accept="image/*"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                               required>
-                        <p class="text-sm text-gray-500 mt-1">
-                            Formatos soportados: JPG, PNG, GIF. Tamaño recomendado: 1920x600px
-                        </p>
+                        <input type="file" id="heroImageFile" name="heroImage" accept="image/*" 
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                        <p class="mt-1 text-sm text-gray-500">Formatos soportados: JPG, PNG, GIF. Tamaño recomendado: 1920x600px</p>
                     </div>
                     
-                    <div class="flex gap-4">
-                        <button type="submit" 
-                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded">
-                            Actualizar Imagen
-                        </button>
-                        <a href="/admin/dashboard" 
-                           class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded">
-                            Cancelar
-                        </a>
-                    </div>
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        Subir Imagen
+                    </button>
                 </form>
+
+                <!-- Galería de imágenes -->
+                <div th:if="${heroImages != null and !heroImages.isEmpty()}">
+                    <h3 class="text-md font-semibold text-gray-900 mb-3">Galería de Imágenes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div th:each="image : ${heroImages}" class="relative border rounded-lg overflow-hidden">
+                            <div class="h-24 bg-cover bg-center" th:style="'background-image: url(' + ${image.imageUrl} + ')'">
+                                <div th:if="${image.active}" class="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 text-xs rounded">
+                                    ACTIVA
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <p class="text-xs text-gray-500 mb-2" th:text="${#temporals.format(image.uploadDate, 'dd/MM/yyyy HH:mm')}"></p>
+                                <div class="flex gap-2">
+                                    <form th:if="${!image.active}" th:action="@{/admin/posts/config/activate/{id}(id=${image.id})}" method="post" class="inline">
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 text-xs rounded">
+                                            Activar
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/admin/posts/config/delete/{id}(id=${image.id})}" method="post" class="inline" onsubmit="return confirm('¿Eliminar imagen?')">
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 text-xs rounded">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="/admin/posts" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                        ← Volver a Posts
+                    </a>
+                </div>
             </div>
         </div>
     </div>

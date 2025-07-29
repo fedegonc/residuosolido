@@ -5,11 +5,15 @@ import com.residuosolido.app.model.Post;
 import com.residuosolido.app.repository.CategoryRepository;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.CategoryService;
+import com.residuosolido.app.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +24,14 @@ public class PostController {
     private final CategoryRepository categoryRepository;
     private final PostService postService;
     private final CategoryService categoryService;
+    private final CloudinaryService cloudinaryService;
     
     @Autowired
-    public PostController(CategoryRepository categoryRepository, PostService postService, CategoryService categoryService) {
+    public PostController(CategoryRepository categoryRepository, PostService postService, CategoryService categoryService, CloudinaryService cloudinaryService) {
         this.categoryRepository = categoryRepository;
         this.postService = postService;
         this.categoryService = categoryService;
+        this.cloudinaryService = cloudinaryService;
     }
     
     // El método index se eliminó para evitar ambigüedad con AuthController
@@ -81,6 +87,23 @@ public class PostController {
     @GetMapping("/about")
     public String about() {
         return "guest/about";
+    }
+    
+    @PostMapping("/posts/create")
+    public String createPost(@RequestParam String title,
+                           @RequestParam String content,
+                           @RequestParam Long categoryId,
+                           @RequestParam("image") MultipartFile imageFile) {
+        try {
+            String imageUrl = "";
+            if (!imageFile.isEmpty()) {
+                imageUrl = cloudinaryService.uploadFile(imageFile);
+            }
+            postService.createPost(title, content, imageUrl, categoryId);
+            return "redirect:/?success=Post creado exitosamente";
+        } catch (Exception e) {
+            return "redirect:/?error=Error al crear post: " + e.getMessage();
+        }
     }
 
 }
