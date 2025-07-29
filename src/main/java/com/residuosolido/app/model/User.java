@@ -42,10 +42,26 @@ public class User {
 
     private String profileImage; // URL imagen de perfil Cloudinary
     
-    // Campos de ubicación
-    private Double latitude;  // Latitud
-    private Double longitude; // Longitud
-    private String address;   // Dirección completa
+    // Campos de ubicación geográfica
+    @Column(name = "direccion", length = 500)
+    private String direccion; // Dirección completa en texto
+    
+    @Column(name = "latitud", precision = 10, scale = 8)
+    private java.math.BigDecimal latitud; // Coordenada latitud con precisión 10,8
+    
+    @Column(name = "longitud", precision = 11, scale = 8)
+    private java.math.BigDecimal longitud; // Coordenada longitud con precisión 11,8
+    
+    @Column(name = "referencias", length = 300)
+    private String referencias; // Referencias adicionales de ubicación
+    
+    // Campos legacy para compatibilidad (deprecated)
+    @Deprecated
+    private Double latitude;  // Mantener para compatibilidad
+    @Deprecated
+    private Double longitude; // Mantener para compatibilidad
+    @Deprecated
+    private String address;   // Mantener para compatibilidad
 
     @ManyToMany
     @JoinTable(

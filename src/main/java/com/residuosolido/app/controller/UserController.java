@@ -18,7 +18,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -142,6 +146,7 @@ public class UserController {
     }
     
     @PostMapping("/admin/users/save")
+    @PreAuthorize("hasRole('ADMIN')")
     public String saveUser(@ModelAttribute UserForm userForm, RedirectAttributes redirectAttributes) {
         try {
             userService.saveUser(userForm);
@@ -158,16 +163,59 @@ public class UserController {
         }
     }
     
+    /**
+     * Endpoint específico para actualizar solo la ubicación de un usuario
+     */
+    @PostMapping("/admin/users/{id}/location")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateUserLocation(
+            @PathVariable Long id,
+            @RequestParam String direccion,
+            @RequestParam BigDecimal latitud,
+            @RequestParam BigDecimal longitud,
+            @RequestParam(required = false) String referencias) {
+        
+        try {
+            User updatedUser = userService.updateUserLocation(id, direccion, latitud, longitud, referencias);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Ubicación actualizada exitosamente");
+            response.put("user", Map.of(
+                "id", updatedUser.getId(),
+                "direccion", updatedUser.getDireccion(),
+                "latitud", updatedUser.getLatitud(),
+                "longitud", updatedUser.getLongitud(),
+                "referencias", updatedUser.getReferencias()
+            ));
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+            
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+    
     @GetMapping("/admin/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         try {
             User user = userService.getUserOrThrow(id);
             UserForm userForm = new UserForm();
             BeanUtils.copyProperties(user, userForm);
-            // Copiar campos de ubicación manualmente si es necesario
-            userForm.setLatitude(user.getLatitude());
-            userForm.setLongitude(user.getLongitude());
-            userForm.setAddress(user.getAddress());
+            
+            // Copiar campos de ubicación usando el servicio
+            userService.copyLocationToForm(user, userForm);
+            
             model.addAttribute("userForm", userForm);
             return "users/form";
         } catch (IllegalArgumentException e) {

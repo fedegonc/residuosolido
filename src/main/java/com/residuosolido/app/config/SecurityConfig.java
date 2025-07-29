@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de gestión de usuarios para admin
                 .requestMatchers("/admin/users/**").hasRole("ADMIN")
+                // Rutas de mapa para admin
+                .requestMatchers("/mapa/**").hasRole("ADMIN")
                 // Rutas de usuario (solo usuarios)
                 .requestMatchers("/users/**").hasRole("USER")
                 .requestMatchers("/requests/**").hasRole("USER")

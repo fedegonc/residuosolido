@@ -114,85 +114,9 @@
             </div>
         </div>
         
-        <!-- Leaflet CSS -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-              integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-              crossorigin=""/>
+
         
-        <!-- Leaflet JavaScript -->
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-                crossorigin=""></script>
-        
-        <script>
-            let previewMap;
-            let marker;
-            
-            // Inicializar mapa de vista previa
-            function initPreviewMap() {
-                const lat = parseFloat(document.getElementById('latitude').value) || -30.9037;
-                const lng = parseFloat(document.getElementById('longitude').value) || -55.5312;
-                
-                previewMap = L.map('previewMap').setView([lat, lng], 15);
-                
-                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(previewMap);
-                
-                marker = L.marker([lat, lng]).addTo(previewMap);
-                
-                // Evento click en el mapa para actualizar coordenadas
-                previewMap.on('click', function(e) {
-                    const lat = e.latlng.lat;
-                    const lng = e.latlng.lng;
-                    
-                    document.getElementById('latitude').value = lat.toFixed(6);
-                    document.getElementById('longitude').value = lng.toFixed(6);
-                    
-                    marker.setLatLng([lat, lng]);
-                });
-            }
-            
-            // Actualizar mapa cuando cambien las coordenadas
-            function updateMapFromCoordinates() {
-                const lat = parseFloat(document.getElementById('latitude').value);
-                const lng = parseFloat(document.getElementById('longitude').value);
-                
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    previewMap.setView([lat, lng], 15);
-                    marker.setLatLng([lat, lng]);
-                }
-            }
-            
-            // Obtener ubicación actual del usuario
-            function getCurrentLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        document.getElementById('latitude').value = lat.toFixed(6);
-                        document.getElementById('longitude').value = lng.toFixed(6);
-                        
-                        updateMapFromCoordinates();
-                    }, function(error) {
-                        alert('Error obteniendo ubicación: ' + error.message);
-                    });
-                } else {
-                    alert('Geolocalización no soportada por este navegador.');
-                }
-            }
-            
-            // Inicializar cuando se carga la página
-            document.addEventListener('DOMContentLoaded', function() {
-                initPreviewMap();
-                
-                // Listeners para actualizar mapa cuando cambien coordenadas
-                document.getElementById('latitude').addEventListener('input', updateMapFromCoordinates);
-                document.getElementById('longitude').addEventListener('input', updateMapFromCoordinates);
-            });
-        </script>
+
     </main>
 </body>
 </html>

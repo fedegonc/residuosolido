@@ -1,329 +1,224 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Formulario de Usuario')}">
+<head>
+    <th:block th:replace="~{fragments/layout :: head('Formulario de Usuario')}"></th:block>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Location Selector CSS -->
-    <th:block th:replace="~{fragments/location-selector :: location-selector-css}"></th:block>
 </head>
 <body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content" class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
-            <!-- Header -->
-            <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold text-gray-900" th:text="${userForm.id != null ? 'Editar Usuario' : 'Crear Usuario'}">Formulario de Usuario</h1>
-                    <a th:href="@{/admin/users}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-medium">
-                        Volver
-                    </a>
-                </div>
-            </div>
-
-            <!-- Messages -->
-            <div th:if="${errorMessage}" class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-red-700" th:text="${errorMessage}">Error message</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form -->
-            <div class="bg-white shadow rounded-lg p-6">
+            <div class="bg-white shadow rounded-lg p-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-8" th:text="${userForm.id != null ? 'Editar Usuario' : 'Crear Usuario'}">Formulario de Usuario</h1>
+                
                 <form th:action="@{/admin/users/save}" th:object="${userForm}" method="post">
                     <input type="hidden" th:field="*{id}" />
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nombre de Usuario <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   th:field="*{username}"
-                                   id="username"
-                                   name="username"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                   placeholder="Ingresa el nombre de usuario"
-                                   required>
-                        </div>
-                        
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email <span class="text-red-500">*</span>
-                            </label>
-                            <input type="email" 
-                                   th:field="*{email}"
-                                   id="email"
-                                   name="email"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                   placeholder="Ingresa el email"
-                                   required>
-                        </div>
-                        
-                        <div>
-                            <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nombre <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   th:field="*{firstName}"
-                                   id="firstName"
-                                   name="firstName"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                   placeholder="Ingresa el nombre"
-                                   required>
-                        </div>
-                        
-                        <div>
-                            <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">
-                                Apellido <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   th:field="*{lastName}"
-                                   id="lastName"
-                                   name="lastName"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                   placeholder="Ingresa el apellido"
-                                   required>
-                        </div>
-                        
-                        <div>
-                            <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
-                                Rol <span class="text-red-500">*</span>
-                            </label>
-                            <select th:field="*{role}"
-                                    id="role"
-                                    name="role"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                    required>
-                                <option value="">Selecciona un rol</option>
-                                <option value="USER" th:selected="${userForm.role != null and userForm.role.name() == 'USER'}">👤 Usuario - Puede solicitar recolecciones</option>
-                                <option value="ORGANIZATION" th:selected="${userForm.role != null and userForm.role.name() == 'ORGANIZATION'}">🏢 Organización - Puede gestionar materiales y recolecciones</option>
-                                <option value="ADMIN" th:selected="${userForm.role != null and userForm.role.name() == 'ADMIN'}">⚙️ Administrador - Acceso completo al sistema</option>
-                            </select>
-                            <p class="mt-1 text-sm text-gray-500">Selecciona el rol que determinará los permisos del usuario</p>
-                        </div>
-                        
-                        <div id="userTypeContainer" style="display: none;">
-                            <label for="userType" class="block text-sm font-medium text-gray-700 mb-2">
-                                Tipo de Usuario <span class="text-red-500">*</span>
-                            </label>
-                            <select th:field="*{userType}"
-                                    id="userType"
-                                    name="userType"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                <option value="COMUN" th:selected="${userForm.userType != null and userForm.userType.name() == 'COMUN'}">👤 Común - Usuario regular</option>
-                                <option value="EMPRESA" th:selected="${userForm.userType != null and userForm.userType.name() == 'EMPRESA'}">🏢 Empresa - Organización empresarial</option>
-                            </select>
-                            <p class="mt-1 text-sm text-gray-500">Solo disponible para organizaciones</p>
-                        </div>
-                        
-                        <div id="materialsContainer" style="display: none;">
-                            <label for="materialIds" class="block text-sm font-medium text-gray-700 mb-2">
-                                Materiales que Recibe
-                            </label>
-                            <select th:field="*{materialIds}"
-                                    id="materialIds"
-                                    name="materialIds"
-                                    multiple
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-32">
-                                <option th:each="material : ${materials}" 
-                                        th:value="${material.id}" 
-                                        th:text="${material.name}"
-                                        th:selected="${userForm.materialIds != null and #lists.contains(userForm.materialIds, material.id)}">Material</option>
-                            </select>
-                            <p class="mt-1 text-sm text-gray-500">Mantén presionado Ctrl para seleccionar múltiples materiales</p>
-                        </div>
-                        
-                        <div>
-                            <label for="preferredLanguage" class="block text-sm font-medium text-gray-700 mb-2">
-                                Idioma Preferido
-                            </label>
-                            <select th:field="*{preferredLanguage}"
-                                    id="preferredLanguage"
-                                    name="preferredLanguage"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                <option value="es">Español</option>
-                                <option value="en">English</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label for="active" class="block text-sm font-medium text-gray-700 mb-2">
-                                Estado
-                            </label>
-                            <div class="flex items-center">
-                                <input type="checkbox" 
-                                       th:field="*{active}"
-                                       id="active"
-                                       name="active"
-                                       class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                                <label for="active" class="ml-2 block text-sm text-gray-700">
-                                    Usuario activo
-                                </label>
+                    <!-- Sección: Información Básica -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">👤 Información Básica</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Usuario *</label>
+                                <input type="text" th:field="*{username}" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" th:field="*{email}" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                                <input type="text" th:field="*{firstName}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
+                                <input type="text" th:field="*{lastName}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Selector de Ubicación -->
-                    <div th:replace="~{fragments/location-selector :: location-selector(${userForm.latitude}, ${userForm.longitude}, ${userForm.address})}"></div>
-                    
-                    <!-- Contraseña -->
-                    <div class="mt-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900" th:text="${userForm.id == null ? 'Contraseña' : 'Cambiar Contraseña'}">Contraseña</h3>
-                            <div th:if="${userForm.id != null}" class="flex items-center">
-                                <input type="checkbox" id="forcePasswordChange" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
-                                <label for="forcePasswordChange" class="ml-2 text-sm text-red-600 font-medium">Forzar cambio de contraseña</label>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Sección: Configuración de Cuenta -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">⚙️ Configuración de Cuenta</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <span th:text="${userForm.id == null ? 'Contraseña' : 'Nueva Contraseña'}">Contraseña</span>
-                                    <span th:if="${userForm.id == null}" class="text-red-500">*</span>
-                                </label>
-                                <input type="password" 
-                                       th:field="*{newPassword}"
-                                       id="newPassword"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                       th:placeholder="${userForm.id == null ? 'Ingresa la contraseña' : 'Dejar vacío para mantener la actual'}"
-                                       th:required="${userForm.id == null}">
-                                <p th:if="${userForm.id != null}" class="mt-1 text-sm text-gray-500">Dejar vacío para mantener la contraseña actual</p>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
+                                <select th:field="*{role}" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="USER">👤 Usuario</option>
+                                    <option value="ORGANIZATION">🏢 Organización</option>
+                                    <option value="ADMIN">⚙️ Administrador</option>
+                                </select>
                             </div>
-                            
                             <div>
-                                <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Confirmar Contraseña
-                                    <span th:if="${userForm.id == null}" class="text-red-500">*</span>
-                                </label>
-                                <input type="password" 
-                                       th:field="*{confirmPassword}"
-                                       id="confirmPassword"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                       th:placeholder="${userForm.id == null ? 'Confirma la contraseña' : 'Confirma la nueva contraseña'}"
-                                       th:required="${userForm.id == null}">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
+                                <select th:field="*{preferredLanguage}"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="es">🇪🇸 Español</option>
+                                    <option value="pt">🇵🇹 Portugués</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                                <select th:field="*{active}"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="true">✅ Activo</option>
+                                    <option value="false">❌ Inactivo</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Buttons -->
-                    <div class="flex justify-end space-x-4 mt-6">
-                        <a th:href="@{/users}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-medium">
-                            Cancelar
-                        </a>
-                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium">
-                            <span th:text="${userForm.id != null ? 'Actualizar' : 'Crear'} + ' Usuario'">Guardar Usuario</span>
-                        </button>
+                    <!-- Sección: Contraseña -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6" th:if="${userForm.id == null}">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🔒 Contraseña</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                                <input type="password" th:field="*{password}" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña *</label>
+                                <input type="password" th:field="*{confirmPassword}" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Cambiar Contraseña (solo edición) -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6" th:if="${userForm.id != null}">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🔒 Cambiar Contraseña (Opcional)</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña</label>
+                                <input type="password" th:field="*{newPassword}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
+                                <input type="password" th:field="*{confirmPassword}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Ubicación -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">📍 Ubicación</h2>
+                        
+                        <!-- Dirección y Referencias -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                                <input type="text" th:field="*{direccion}" placeholder="Ej: Av. Brasil 1234, Rivera"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Referencias</label>
+                                <input type="text" th:field="*{referencias}" placeholder="Ej: Cerca del supermercado"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-4">Haz clic en el mapa para seleccionar la ubicación exacta o arrastra el marcador.</p>
+                        
+                        <!-- Mapa -->
+                        <div id="map" class="w-full rounded-lg border border-gray-300 mb-4" style="height:384px; min-height:384px;"></div>
+                        
+                        <!-- Coordenadas -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Latitud</label>
+                                <input type="number" id="latitude" th:field="*{latitude}" step="any" readonly
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Longitud</label>
+                                <input type="number" id="longitude" th:field="*{longitude}" step="any" readonly
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
+                            </div>
+                        </div>
+                        
+                        <!-- Campos legacy ocultos -->
+                        <input type="hidden" id="lat" th:field="*{latitud}">
+                        <input type="hidden" id="lng" th:field="*{longitud}">
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="flex justify-end space-x-4">
+                        <a th:href="@{/admin/users}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-md transition-colors">Cancelar</a>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md transition-colors">Guardar</button>
                     </div>
                 </form>
             </div>
         </div>
+        
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Iniciando mapa...');
+                
+                // Coordenadas por defecto (Uruguay)
+                var lat = -30.9054;
+                var lng = -55.5511;
+                
+                // Inicializar el mapa
+                var map = L.map('map').setView([lat, lng], 13);
+                console.log('Mapa creado');
+                
+                // Agregar capa de OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '\u00a9 OpenStreetMap contributors'
+                }).addTo(map);
+                console.log('Tiles agregados');
+                
+                // Crear marcador draggable
+                var marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+                console.log('Marcador creado');
+                
+                // Función para actualizar coordenadas
+                function updateCoordinates(lat, lng) {
+                    var latField = document.getElementById('latitude');
+                    var lngField = document.getElementById('longitude');
+                    var latLegacy = document.getElementById('lat');
+                    var lngLegacy = document.getElementById('lng');
+                    
+                    if (latField) latField.value = lat.toFixed(8);
+                    if (lngField) lngField.value = lng.toFixed(8);
+                    if (latLegacy) latLegacy.value = lat.toFixed(8);
+                    if (lngLegacy) lngLegacy.value = lng.toFixed(8);
+                    
+                    console.log('Coordenadas actualizadas:', lat.toFixed(8), lng.toFixed(8));
+                }
+                
+                // Inicializar coordenadas
+                updateCoordinates(lat, lng);
+                
+                // Evento al hacer clic en el mapa
+                map.on('click', function (e) {
+                    marker.setLatLng(e.latlng);
+                    updateCoordinates(e.latlng.lat, e.latlng.lng);
+                });
+                
+                // Evento al arrastrar el marcador
+                marker.on('dragend', function (e) {
+                    var pos = e.target.getLatLng();
+                    updateCoordinates(pos.lat, pos.lng);
+                });
+                
+                // Fix: forzar que Leaflet recalcule tama\u00f1o
+                setTimeout(function () {
+                    map.invalidateSize();
+                    console.log('Mapa redimensionado');
+                }, 500);
+            });
+        </script>
     </div>
-    
-    <script>
-        // Validación de contraseñas
-        document.addEventListener('DOMContentLoaded', function() {
-            const newPasswordField = document.getElementById('newPassword');
-            const confirmPasswordField = document.getElementById('confirmPassword');
-            const forcePasswordCheckbox = document.getElementById('forcePasswordChange');
-            const form = document.querySelector('form');
-            const isNewUser = !document.querySelector('input[name="id"]').value;
-            const roleSelect = document.getElementById('role');
-            const userTypeContainer = document.getElementById('userTypeContainer');
-            const userTypeSelect = document.getElementById('userType');
-            const materialsContainer = document.getElementById('materialsContainer');
-            
-            // Mostrar/ocultar campos según rol
-            function toggleUserType() {
-                if (roleSelect.value === 'ORGANIZATION') {
-                    userTypeContainer.style.display = 'block';
-                    userTypeSelect.required = true;
-                    materialsContainer.style.display = 'block';
-                } else {
-                    userTypeContainer.style.display = 'none';
-                    userTypeSelect.required = false;
-                    userTypeSelect.value = 'COMUN';
-                    materialsContainer.style.display = 'none';
-                }
-            }
-            
-            // Inicializar y escuchar cambios
-            toggleUserType();
-            roleSelect.addEventListener('change', toggleUserType);
-            
-            // Manejar checkbox de forzar cambio
-            if (forcePasswordCheckbox) {
-                forcePasswordCheckbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        newPasswordField.required = true;
-                        confirmPasswordField.required = true;
-                        newPasswordField.placeholder = 'Nueva contraseña (obligatoria)';
-                        confirmPasswordField.placeholder = 'Confirmar nueva contraseña (obligatoria)';
-                    } else {
-                        newPasswordField.required = false;
-                        confirmPasswordField.required = false;
-                        newPasswordField.placeholder = 'Dejar vacío para mantener la actual';
-                        confirmPasswordField.placeholder = 'Confirma la nueva contraseña';
-                    }
-                });
-            }
-            
-            if (newPasswordField && confirmPasswordField) {
-                function validatePasswords() {
-                    const password = newPasswordField.value;
-                    const confirmPassword = confirmPasswordField.value;
-                    const isForced = forcePasswordCheckbox && forcePasswordCheckbox.checked;
-                    
-                    // Validar si se ha ingresado alguna contraseña o si es forzado
-                    if (password || confirmPassword || isForced) {
-                        if (password !== confirmPassword) {
-                            confirmPasswordField.setCustomValidity('Las contraseñas no coinciden');
-                        } else {
-                            confirmPasswordField.setCustomValidity('');
-                        }
-                    } else {
-                        confirmPasswordField.setCustomValidity('');
-                    }
-                }
-                
-                // Validación en tiempo real
-                newPasswordField.addEventListener('input', validatePasswords);
-                confirmPasswordField.addEventListener('input', validatePasswords);
-                
-                // Validación al enviar el formulario
-                form.addEventListener('submit', function(e) {
-                    const password = newPasswordField.value;
-                    const confirmPassword = confirmPasswordField.value;
-                    const isForced = forcePasswordCheckbox && forcePasswordCheckbox.checked;
-                    
-                    // Para usuarios nuevos o forzar cambio, la contraseña es obligatoria
-                    if ((isNewUser || isForced) && !password) {
-                        e.preventDefault();
-                        newPasswordField.focus();
-                        alert(isForced ? 'Debe ingresar una nueva contraseña' : 'La contraseña es requerida para usuarios nuevos');
-                        return false;
-                    }
-                    
-                    // Si se ingresó una contraseña, debe coincidir con la confirmación
-                    if (password && password !== confirmPassword) {
-                        e.preventDefault();
-                        confirmPasswordField.focus();
-                        alert('Las contraseñas no coinciden');
-                        return false;
-                    }
-                });
-            }
-        });
-    </script>
-    
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Location Selector JavaScript -->
-    <th:block th:replace="~{fragments/location-selector :: location-selector-js}"></th:block>
 </body>
 </html>

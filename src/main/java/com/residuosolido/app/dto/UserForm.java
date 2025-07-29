@@ -26,9 +26,18 @@ public class UserForm {
     private List<Material> materials = new ArrayList<>();
     private List<Long> materialIds = new ArrayList<>();
     
-    // Campos de ubicación
+    // Campos de ubicación geográfica
+    private String direccion; // Dirección completa en texto
+    private java.math.BigDecimal latitud; // Coordenada latitud con precisión 10,8
+    private java.math.BigDecimal longitud; // Coordenada longitud con precisión 11,8
+    private String referencias; // Referencias adicionales de ubicación
+    
+    // Campos legacy para compatibilidad (deprecated)
+    @Deprecated
     private Double latitude;
+    @Deprecated
     private Double longitude;
+    @Deprecated
     private String address;
     
     // Campos específicos del formulario
