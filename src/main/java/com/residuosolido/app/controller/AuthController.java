@@ -11,6 +11,7 @@ import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.ConfigService;
 import com.residuosolido.app.service.WasteSectionService;
+import com.residuosolido.app.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class AuthController {
@@ -36,11 +38,13 @@ public class AuthController {
     private final PostService postService;
     private final ConfigService configService;
     private final WasteSectionService wasteSectionService;
+    private final AuthService authService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
                          CustomAuthenticationSuccessHandler successHandler,
                          DashboardService dashboardService, PasswordResetService passwordResetService,
-                         PostService postService, ConfigService configService, WasteSectionService wasteSectionService) {
+                         PostService postService, ConfigService configService, WasteSectionService wasteSectionService,
+                         AuthService authService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
@@ -49,6 +53,7 @@ public class AuthController {
         this.postService = postService;
         this.configService = configService;
         this.wasteSectionService = wasteSectionService;
+        this.authService = authService;
     }
 
    
@@ -67,51 +72,19 @@ public class AuthController {
         return null;
     }
 
-    java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
-    model.addAllAttributes(pageData);
-    
-    // Agregar posts para mostrar en el index
-    List<Post> posts = postService.getAllPosts();
-    System.out.println("DEBUG: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
-    if (posts != null && !posts.isEmpty()) {
-        System.out.println("DEBUG: Primer post: " + posts.get(0).getTitle());
-    }
-    model.addAttribute("posts", posts);
-    
-    // Agregar organizaciones (usuarios con rol ORGANIZATION)
-    List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
-    System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
-    model.addAttribute("organizations", organizations);
-    
-    // Agregar waste sections dinámicamente
-    List<WasteSection> wasteSections = wasteSectionService.getActiveSections();
-    model.addAttribute("wasteSections", wasteSections);
-    
-    // Agregar imagen del hero
-    model.addAttribute("heroImage", configService.getHeroImageUrl());
+    // Cargar datos del index usando el servicio
+    Map<String, Object> indexData = authService.getIndexData();
+    model.addAllAttributes(indexData);
 
     return "guest/index";
 }
 
 @GetMapping("/invitados")
 public String invitados(Model model) {
-    java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
-    model.addAllAttributes(pageData);
+    Map<String, Object> invitadosData = authService.getInvitadosData();
+    model.addAllAttributes(invitadosData);
     
-    // Agregar posts para mostrar en el index
-    List<Post> posts = postService.getAllPosts();
-    System.out.println("DEBUG: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
-    if (posts != null && !posts.isEmpty()) {
-        System.out.println("DEBUG: Primer post: " + posts.get(0).getTitle());
-    }
-    model.addAttribute("posts", posts);
-    
-    // Agregar organizaciones (usuarios con rol ORGANIZATION)
-    List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
-    System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
-    model.addAttribute("organizations", organizations);
-    
-    return "guest/index";
+    return "guest/invitados";
 }
 
 @GetMapping("/init")
@@ -133,23 +106,17 @@ public String init(@AuthenticationPrincipal UserDetails userDetails,
     }
 
     @PostMapping("/auth/register")
-    public String registerUser(@ModelAttribute User user) {
+    public String registerUser(@ModelAttribute User user, Model model) {
         
-        // Verificar si el usuario ya existe
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return "redirect:/auth/register?error=El nombre de usuario ya está en uso";
+        // Validar usuario usando el servicio
+        String validationError = authService.validateUserRegistration(user);
+        if (validationError != null) {
+            model.addAttribute("error", validationError);
+            return "auth/register";
         }
-
-        // Verificar si el email ya existe
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return "redirect:/auth/register?error=El email ya está registrado";
-        }
-
-        // Encriptar la contraseña
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         
-        // Establecer el rol por defecto
-        user.setRole(Role.USER);
+        // Registrar usuario usando el servicio
+        authService.registerUser(user);
         
         // Establecer idioma predeterminado
         user.setPreferredLanguage("es");

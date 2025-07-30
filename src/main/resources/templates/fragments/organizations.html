@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- Fragmento: Lista de Organizaciones -->
+    <div th:fragment="organizationsList" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
+            </svg>
+            Organizaciones
+        </h2>
+
+        <div class="space-y-4">
+            <!-- Organizaciones dinámicas -->
+            <div th:if="${organizations != null and !organizations.isEmpty()}">
+                <div th:each="org : ${organizations}" class="border border-gray-200 rounded-lg p-6 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200">
+                    <!-- Nombre -->
+                    <h3 class="font-semibold text-gray-900 text-lg mb-2" th:text="${org.firstName + ' ' + org.lastName}">Nombre Organización</h3>
+                    
+                    <!-- Dirección -->
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 flex items-center">
+                            <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span th:text="${org.direccion != null ? org.direccion : 'Dirección no especificada'}">Dirección</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Mapa -->
+                    <div th:if="${org.latitud != null and org.longitud != null}" 
+                         th:id="'orgMap-' + ${org.id}" 
+                         class="w-full rounded-lg border border-gray-300" 
+                         style="height:200px; min-height:200px;"
+                         th:data-lat="${org.latitud}"
+                         th:data-lng="${org.longitud}"
+                         th:data-name="${org.firstName + ' ' + org.lastName}">
+                    </div>
+                    <div th:if="${org.latitud == null or org.longitud == null}" class="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <p class="text-sm text-gray-500">Ubicación no disponible</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mensaje si no hay organizaciones -->
+            <div th:if="${organizations == null or organizations.isEmpty()}" class="text-center py-8 text-gray-500">
+                <svg class="w-8 h-8 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
+                </svg>
+                <p class="text-sm mb-2">No hay organizaciones</p>
+                <p class="text-xs">Registradas aún</p>
+            </div>
+            
+            <a href="/organizaciones" class="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-4 py-3 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors">
+                Ver todas las organizaciones
+            </a>
+        </div>
+    </div>
+</body>
+</html>
