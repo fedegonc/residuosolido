@@ -37,45 +37,33 @@
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                                 <div class="sm:col-span-3">
-                                    <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
-                                    <div class="mt-1">
-                                        <input type="text" th:field="*{title}" id="title" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
-                                    </div>
+                                    <label for="title" class="block text-base font-semibold text-gray-900 mb-2">Título</label>
+                                    <input type="text" th:field="*{title}" id="title" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" required>
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <label for="icon" class="block text-sm font-medium text-gray-700">Icono</label>
-                                    <div class="mt-1">
-                                        <input type="text" th:field="*{icon}" id="icon" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="🌱">
-                                    </div>
+                                    <label for="icon" class="block text-base font-semibold text-gray-900 mb-2">Icono</label>
+                                    <input type="text" th:field="*{icon}" id="icon" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" placeholder="🌱">
                                 </div>
 
                                 <div class="sm:col-span-6">
-                                    <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
-                                    <div class="mt-1">
-                                        <textarea th:field="*{description}" id="description" rows="3" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
-                                    </div>
+                                    <label for="description" class="block text-base font-semibold text-gray-900 mb-2">Descripción</label>
+                                    <textarea th:field="*{description}" id="description" rows="4" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors resize-vertical"></textarea>
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <label for="displayOrder" class="block text-sm font-medium text-gray-700">Orden de visualización</label>
-                                    <div class="mt-1">
-                                        <input type="number" th:field="*{displayOrder}" id="displayOrder" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" min="1" value="1">
-                                    </div>
+                                    <label for="displayOrder" class="block text-base font-semibold text-gray-900 mb-2">Orden de visualización</label>
+                                    <input type="number" th:field="*{displayOrder}" id="displayOrder" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" min="1" value="1">
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <label for="actionText" class="block text-sm font-medium text-gray-700">Texto de acción</label>
-                                    <div class="mt-1">
-                                        <input type="text" th:field="*{actionText}" id="actionText" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Ver puntos cercanos">
-                                    </div>
+                                    <label for="actionText" class="block text-base font-semibold text-gray-900 mb-2">Texto de acción</label>
+                                    <input type="text" th:field="*{actionText}" id="actionText" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" placeholder="Ver puntos cercanos">
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <label for="actionIcon" class="block text-sm font-medium text-gray-700">Icono de acción</label>
-                                    <div class="mt-1">
-                                        <input type="text" th:field="*{actionIcon}" id="actionIcon" class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="📍">
-                                    </div>
+                                    <label for="actionIcon" class="block text-base font-semibold text-gray-900 mb-2">Icono de acción</label>
+                                    <input type="text" th:field="*{actionIcon}" id="actionIcon" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" placeholder="📍">
                                 </div>
 
                                 <div class="sm:col-span-6">
