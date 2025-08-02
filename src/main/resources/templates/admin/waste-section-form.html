@@ -32,7 +32,7 @@
             <!-- Formulario -->
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
-                    <form th:action="@{/admin/waste-sections/save}" method="post" th:object="${wasteSection}">
+                    <form th:action="@{/admin/waste-sections/new}" method="post" th:object="${wasteSection}">
                         <input type="hidden" th:field="*{id}">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">

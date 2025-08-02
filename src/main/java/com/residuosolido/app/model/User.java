@@ -1,16 +1,15 @@
 package com.residuosolido.app.model;
 
+import lombok.Data;
 import jakarta.persistence.*;
-import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
 
     @Id
@@ -112,4 +111,6 @@ public class User {
         this.phones.remove(phone);
         phone.getUsers().remove(this);
     }
+
+    // @Data genera automáticamente todos los getters/setters
 }

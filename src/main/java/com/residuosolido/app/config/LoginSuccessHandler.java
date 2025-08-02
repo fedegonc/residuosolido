@@ -23,9 +23,9 @@ import java.util.Set;
  * Sistema flexible que utiliza el enum Role con prioridades para determinar la redirección.
  */
 @Component
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
     
     // Prefijo estándar para roles en Spring Security
     private static final String ROLE_PREFIX = "ROLE_";

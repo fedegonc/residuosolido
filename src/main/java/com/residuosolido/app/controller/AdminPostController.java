@@ -1,7 +1,7 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Post;
-import com.residuosolido.app.repository.CategoryRepository;
+import com.residuosolido.app.service.CategoryService;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +19,20 @@ import java.util.Optional;
 public class AdminPostController {
 
     private final PostService postService;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
     private final ConfigService configService;
 
     @Autowired
-    public AdminPostController(PostService postService, CategoryRepository categoryRepository, ConfigService configService) {
+    public AdminPostController(PostService postService, CategoryService categoryService, ConfigService configService) {
         this.postService = postService;
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
         this.configService = configService;
     }
 
     @GetMapping
     public String listPosts(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("posts", postService.getAllPostsWithCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "admin/posts";
     }
 
@@ -48,7 +48,7 @@ public class AdminPostController {
         Optional<Post> post = postService.getPostById(id);
         if (post.isPresent()) {
             model.addAttribute("post", post.get());
-            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("categories", categoryService.getAllCategories());
             return "admin/edit-post";
         }
         return "redirect:/admin/posts";

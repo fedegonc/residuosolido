@@ -6,7 +6,7 @@ import com.residuosolido.app.model.PasswordResetRequest;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.FeedbackRepository;
 import com.residuosolido.app.repository.RequestRepository;
-import com.residuosolido.app.service.DashboardService;
+
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.UserService;
 
@@ -32,28 +32,24 @@ import java.time.format.DateTimeFormatter;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final DashboardService dashboardService;
     private final FeedbackRepository feedbackRepository;
     private final RequestRepository requestRepository;
     private final PasswordResetService passwordResetService;
     private final UserService userService;
 
-
     @Autowired
-    public AdminController(DashboardService dashboardService, FeedbackRepository feedbackRepository, 
+    public AdminController(FeedbackRepository feedbackRepository, 
                           RequestRepository requestRepository, PasswordResetService passwordResetService,
                           UserService userService) {
-        this.dashboardService = dashboardService;
         this.feedbackRepository = feedbackRepository;
         this.requestRepository = requestRepository;
         this.passwordResetService = passwordResetService;
         this.userService = userService;
     }
 
+    
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        Map<String, Object> stats = dashboardService.getAdminStats();
-        model.addAllAttributes(stats);
         return "admin/dashboard";
     }
     
@@ -88,6 +84,7 @@ public class AdminController {
         List<Map<String, String>> notifications = new ArrayList<>();
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        
         
         for (PasswordResetRequest request : pendingRequests) {
             Map<String, String> notification = new HashMap<>();

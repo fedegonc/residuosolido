@@ -9,11 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "requests")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(exclude = {"chatMessages"})
-@EqualsAndHashCode(exclude = {"chatMessages"})
 public class Request {
 
     @Id
@@ -22,9 +17,8 @@ public class Request {
 
     @ManyToOne
     private User user;
-
-    @ManyToOne
-    private Organization organization;
+    
+    private String description;
 
     @ManyToMany
     @JoinTable(
@@ -66,6 +60,25 @@ public class Request {
     public void removeMaterial(Material material) {
         this.materials.remove(material);
     }
+
+    // Getters and Setters básicos
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public List<Material> getMaterials() { return materials; }
+    public void setMaterials(String materials) { /* Simplificado para String */ }
+
+    public RequestStatus getStatus() { return status; }
+    public void setStatus(RequestStatus status) { this.status = status; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public enum RequestStatus {
         PENDING, ACCEPTED, REJECTED, COMPLETED

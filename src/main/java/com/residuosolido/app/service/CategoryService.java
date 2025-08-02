@@ -13,6 +13,7 @@ import java.util.Optional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private List<Category> cachedCategories = null;
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository) {
@@ -37,7 +38,10 @@ public class CategoryService {
     }
 
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        if (cachedCategories == null) {
+            cachedCategories = categoryRepository.findAll();
+        }
+        return cachedCategories;
     }
     
     public List<java.util.Map<String, Object>> getCategoriesWithSlugs() {
@@ -62,6 +66,7 @@ public class CategoryService {
     
     public Category createCategory(String name) {
         Category category = new Category(null, name);
+        cachedCategories = null; // Invalidar cache
         return categoryRepository.save(category);
     }
     
@@ -72,9 +77,12 @@ public class CategoryService {
     public Category updateCategory(Long id, String name) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
         if (categoryOpt.isPresent()) {
-            Category category = categoryOpt.get();
-            category.setName(name);
-            return categoryRepository.save(category);
+            categoryRepository.findById(id).ifPresent(category -> {
+                category.setName(name);
+                categoryRepository.save(category);
+                cachedCategories = null; // Invalidar cache
+            });
+            return categoryOpt.get();
         }
         return null;
     }
@@ -82,6 +90,7 @@ public class CategoryService {
     public boolean deleteCategory(Long id) {
         if (categoryRepository.existsById(id)) {
             categoryRepository.deleteById(id);
+            cachedCategories = null; // Invalidar cache
             return true;
         }
         return false;

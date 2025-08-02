@@ -21,11 +21,11 @@
                         y sostenible de residuos en la región fronteriza.
                     </p>
                     <div class="flex flex-col gap-4 max-w-lg">
-                        <a href="/about" class="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-lg shadow-md transition-all hover:shadow-lg border border-green-100">
+                        <a href="/posts/section/1" class="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-lg shadow-md transition-all hover:shadow-lg border border-green-100">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-xl font-bold mb-1 font-sans">Más Informaciones</h3>
-                                    <p class="text-sm text-gray-600 font-sans">Conoce nuestros objetivos, motivaciones y cómo funcionamos</p>
+                                    <h3 class="text-xl font-bold mb-1 font-sans">Reciclables</h3>
+                                    <p class="text-sm text-gray-600 font-sans">Plásticos, metales, papel, cartón y vidrio</p>
                                 </div>
                                 <div class="bg-green-100 rounded-full p-2 group-hover:bg-green-200 transition-colors">
                                     <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,7 +48,8 @@
                     <!-- Columna 1: Navegación Rápida -->
                     <aside class="lg:col-span-1">
                         <div class="sticky top-6 space-y-6">
-                            <!-- Categorías Principales -->
+                            <!-- Waste Sections eliminadas para mejorar rendimiento -->
+                            <!--
                             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                                 <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +58,6 @@
                                     Secciones
                                 </h2>
                                 <div class="space-y-3">
-                                    <!-- Secciones dinámicas desde waste_sections -->
                                     <div th:each="section : ${wasteSections}" class="bg-gray-50 rounded-lg">
                                         <button th:onclick="'toggleCategory(' + ${section.id} + ')'" 
                                                 class="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition-colors group">
@@ -85,6 +85,7 @@
                                     </div>
                                 </div>
                             </div>
+                            -->
                             
 
                         </div>
@@ -207,14 +208,13 @@
                 </div>
             </div>
         </div>
-    <!-- JavaScript para categorías -->
+    <!-- JavaScript para waste sections eliminado -->
+    <!--
     <script>
         function toggleCategory(categoryId) {
-            // Obtener elementos
             const content = document.getElementById('categories-' + categoryId);
             const arrow = document.getElementById('arrow-' + categoryId);
             
-            // Alternar visibilidad
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
                 arrow.classList.add('rotate-90');
@@ -224,6 +224,7 @@
             }
         }
     </script>
+    -->
     </main>
 
     <!-- Modal Crear Post -->

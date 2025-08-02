@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -19,14 +21,24 @@ public class PostService {
     private CategoryService categoryService;
 
     public List<Post> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        // Agregar nombre de categoría a cada post
-        for (Post post : posts) {
+        return postRepository.findAll();
+    }
+    
+    public List<Post> getAllPostsWithCategories() {
+        List<Post> posts = postRepository.findAllOrderedByIdDesc();
+        
+        // Cargar todas las categorías de una vez
+        List<Category> allCategories = categoryService.getAllCategories();
+        Map<Long, String> categoryMap = allCategories.stream()
+            .collect(Collectors.toMap(Category::getId, Category::getName));
+        
+        // Asignar nombres de categoría
+        posts.forEach(post -> {
             if (post.getCategoryId() != null) {
-                categoryService.getCategoryById(post.getCategoryId())
-                    .ifPresent(category -> post.setCategoryName(category.getName()));
+                post.setCategoryName(categoryMap.get(post.getCategoryId()));
             }
-        }
+        });
+        
         return posts;
     }
 

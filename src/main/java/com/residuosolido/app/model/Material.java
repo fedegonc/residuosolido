@@ -26,8 +26,7 @@ public class Material {
 
     private Boolean active;
 
-    @ManyToMany(mappedBy = "acceptedMaterials")
-    private List<Organization> organizations = new ArrayList<>();
+
 
     @PrePersist
     public void prePersist() {

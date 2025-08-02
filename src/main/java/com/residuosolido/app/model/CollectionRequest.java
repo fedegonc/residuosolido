@@ -20,9 +20,7 @@ public class CollectionRequest {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "organization_id", nullable = false)
-    private Organization organization;
+   
 
     @ManyToOne
     @JoinColumn(name = "material_id", nullable = false)
@@ -39,19 +37,15 @@ public class CollectionRequest {
     private String imageUrl; // URL de imagen en Cloudinary
 
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    private Request.RequestStatus status;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public enum RequestStatus {
-        PENDING, APPROVED, IN_PROGRESS, COMPLETED, CANCELLED
-    }
-
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.status = RequestStatus.PENDING;
+        this.status = Request.RequestStatus.PENDING;
     }
 
     @PreUpdate

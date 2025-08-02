@@ -271,13 +271,11 @@ public class UserController {
     
     @GetMapping("/requests/create")
     public String createRequestForm(Model model) {
-        model.addAttribute("organizations", requestService.getOrganizations());
         return "requests/form";
     }
     
     @GetMapping("/new")
     public String newRequestForm(Model model) {
-        model.addAttribute("organizations", requestService.getOrganizations());
         return "requests/form";
     }
     
@@ -291,7 +289,7 @@ public class UserController {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             
-            requestService.createRequest(organizationId, address, description, currentUser);
+            requestService.createRequest(currentUser, description, address);
             redirectAttributes.addFlashAttribute("successMessage", "¡Solicitud de recolección enviada exitosamente!");
         } catch (Exception e) {
             logger.error("Error al crear solicitud de recolección: ", e);

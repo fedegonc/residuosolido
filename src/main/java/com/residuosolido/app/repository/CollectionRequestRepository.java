@@ -8,6 +8,4 @@ import java.util.List;
 
 @Repository
 public interface CollectionRequestRepository extends JpaRepository<CollectionRequest, Long> {
-    List<CollectionRequest> findByUserOrderByCreatedAtDesc(User user);
-    List<CollectionRequest> findByOrganization_CityOrderByCreatedAtDesc(String city);
-}
+   }

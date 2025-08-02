@@ -1,85 +1,55 @@
 package com.residuosolido.app.service;
 
-import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
-import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Servicio para operaciones con la entidad Request (Solicitud)
- */
 @Service
-public class RequestService extends GenericEntityService<Request, Long> {
-
-    private final RequestRepository requestRepository;
-    private final UserRepository userRepository;
+public class RequestService {
 
     @Autowired
-    public RequestService(RequestRepository requestRepository, UserRepository userRepository) {
-        this.requestRepository = requestRepository;
-        this.userRepository = userRepository;
+    private RequestRepository requestRepository;
+
+    public Request createRequest(User user, String description, String materials) {
+        Request request = new Request();
+        // Setters básicos sin Lombok
+        request.setUser(user);
+        request.setDescription(description);
+        request.setMaterials(materials);
+        request.setStatus(Request.RequestStatus.PENDING);
+        request.setCreatedAt(LocalDateTime.now());
+        
+        return requestRepository.save(request);
     }
 
-    @Override
-    protected JpaRepository<Request, Long> getRepository() {
-        return requestRepository;
+    public List<Request> getRequestsByUser(User user) {
+        return requestRepository.findByUser(user);
     }
-    
-    /**
-     * Encuentra todas las solicitudes de un usuario específico
-     */
-    public List<Request> findByUser(User user) {
-        return requestRepository.findByUserId(user.getId());
+
+    public List<Request> getPendingRequests() {
+        return requestRepository.findByStatus(Request.RequestStatus.PENDING);
     }
-    
-    /**
-     * Encuentra todas las solicitudes asignadas a una organización específica
-     */
-    public List<Request> findByOrganizationId(Long organizationId) {
-        return requestRepository.findByOrganizationId(organizationId);
-    }
-    
-    /**
-     * Obtiene todas las organizaciones disponibles para solicitudes
-     * @return Lista de organizaciones
-     */
-    public List<User> getOrganizations() {
-        return userRepository.findByRole(com.residuosolido.app.model.Role.ORGANIZATION);
-    }
-    
-    /**
-     * Crea una nueva solicitud
-     * @param organizationId ID de la organización (usuario con rol ORGANIZATION)
-     * @param address Dirección de recolección
-     * @param description Descripción/notas
-     * @param currentUser Usuario que hace la solicitud
-     * @return Solicitud creada
-     */
-    public Request createRequest(Long organizationId, String address, String description, User currentUser) {
-        Request request = new Request();
-        
-        // Buscar la organización (usuario con rol ORGANIZATION)
-        User organizationUser = userRepository.findById(organizationId).orElse(null);
-        if (organizationUser != null && organizationUser.getRole() == com.residuosolido.app.model.Role.ORGANIZATION) {
-            // Crear una organización temporal para la solicitud
-            Organization org = new Organization();
-            org.setId(organizationId);
-            org.setName(organizationUser.getFirstName() + " " + organizationUser.getLastName());
-            org.setEmail(organizationUser.getEmail());
-            request.setOrganization(org);
+
+    public Request approveRequest(Long requestId) {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request != null) {
+            request.setStatus(Request.RequestStatus.ACCEPTED);
+            return requestRepository.save(request);
         }
-        
-        request.setUser(currentUser);
-        request.setCollectionAddress(address);
-        request.setNotes(description);
-        request.setStatus(Request.RequestStatus.PENDING);
-        
-        return save(request);
+        return null;
+    }
+
+    public Request rejectRequest(Long requestId) {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request != null) {
+            request.setStatus(Request.RequestStatus.REJECTED);
+            return requestRepository.save(request);
+        }
+        return null;
     }
 }

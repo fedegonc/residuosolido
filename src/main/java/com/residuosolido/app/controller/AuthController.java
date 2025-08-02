@@ -1,16 +1,14 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.config.CustomAuthenticationSuccessHandler;
+import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.WasteSection;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
-import com.residuosolido.app.service.DashboardService;
+
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.ConfigService;
-import com.residuosolido.app.service.WasteSectionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -18,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,27 +28,24 @@ import java.util.List;
 @Controller
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CustomAuthenticationSuccessHandler successHandler;
-    private final DashboardService dashboardService;
+    private final LoginSuccessHandler successHandler;
     private final PasswordResetService passwordResetService;
     private final PostService postService;
     private final ConfigService configService;
-    private final WasteSectionService wasteSectionService;
-
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
-                         CustomAuthenticationSuccessHandler successHandler,
-                         DashboardService dashboardService, PasswordResetService passwordResetService,
-                         PostService postService, ConfigService configService, WasteSectionService wasteSectionService) {
+                         LoginSuccessHandler successHandler,
+                         PasswordResetService passwordResetService,
+                         PostService postService, ConfigService configService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
-        this.dashboardService = dashboardService;
         this.passwordResetService = passwordResetService;
         this.postService = postService;
         this.configService = configService;
-        this.wasteSectionService = wasteSectionService;
     }
 
    
@@ -65,52 +62,9 @@ public class AuthController {
     if (userDetails != null) {
         successHandler.redirectByRole(request, response, userDetails);
         return null;
+
     }
 
-    java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
-    model.addAllAttributes(pageData);
-    
-    // Agregar posts para mostrar en el index
-    List<Post> posts = postService.getAllPosts();
-    System.out.println("DEBUG: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
-    if (posts != null && !posts.isEmpty()) {
-        System.out.println("DEBUG: Primer post: " + posts.get(0).getTitle());
-    }
-    model.addAttribute("posts", posts);
-    
-    // Agregar organizaciones (usuarios con rol ORGANIZATION)
-    List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
-    System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
-    model.addAttribute("organizations", organizations);
-    
-    // Agregar waste sections dinámicamente
-    List<WasteSection> wasteSections = wasteSectionService.getActiveSections();
-    model.addAttribute("wasteSections", wasteSections);
-    
-    // Agregar imagen del hero
-    model.addAttribute("heroImage", configService.getHeroImageUrl());
-
-    return "guest/index";
-}
-
-@GetMapping("/invitados")
-public String invitados(Model model) {
-    java.util.Map<String, Object> pageData = dashboardService.getPublicPageData();
-    model.addAllAttributes(pageData);
-    
-    // Agregar posts para mostrar en el index
-    List<Post> posts = postService.getAllPosts();
-    System.out.println("DEBUG: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
-    if (posts != null && !posts.isEmpty()) {
-        System.out.println("DEBUG: Primer post: " + posts.get(0).getTitle());
-    }
-    model.addAttribute("posts", posts);
-    
-    // Agregar organizaciones (usuarios con rol ORGANIZATION)
-    List<User> organizations = userRepository.findByRole(Role.ORGANIZATION);
-    System.out.println("DEBUG: Organizaciones encontradas: " + (organizations != null ? organizations.size() : "null"));
-    model.addAttribute("organizations", organizations);
-    
     return "guest/index";
 }
 
@@ -118,7 +72,7 @@ public String invitados(Model model) {
 public String init(@AuthenticationPrincipal UserDetails userDetails,
                   HttpServletRequest request,
                   HttpServletResponse response) throws Exception {
-    if (userDetails == null) return "redirect:/invitados";
+    if (userDetails == null) return "redirect:/";
     
     // Usar el mismo handler que maneja el login exitoso
     successHandler.redirectByRole(request, response, userDetails);
