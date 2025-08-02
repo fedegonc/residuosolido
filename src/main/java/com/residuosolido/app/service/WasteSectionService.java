@@ -54,4 +54,8 @@ public class WasteSectionService {
                 .max()
                 .orElse(0) + 1;
     }
+    
+    public List<WasteSection> getActiveSectionsWithCategories() {
+        return wasteSectionRepository.findByActiveWithCategoriesOrderByDisplayOrderAsc(true);
+    }
 }

@@ -72,32 +72,9 @@ public class AdminPostController {
     
     @GetMapping("/config")
     public String siteConfig(Model model) {
-        model.addAttribute("heroImages", configService.getAllHeroImages());
         model.addAttribute("activeImage", configService.getHeroImageUrl());
         return "admin/config";
     }
-    
-    @PostMapping("/config")
-    public String updateSiteConfig(@RequestParam("heroImage") MultipartFile heroImageFile) {
-        try {
-            if (!heroImageFile.isEmpty()) {
-                configService.saveHeroImage(heroImageFile);
-            }
-            return "redirect:/admin/posts/config?success=Imagen subida";
-        } catch (Exception e) {
-            return "redirect:/admin/posts/config?error=Error al subir imagen";
-        }
-    }
-    
-    @PostMapping("/config/activate/{id}")
-    public String activateImage(@PathVariable Long id) {
-        configService.setActiveImage(id);
-        return "redirect:/admin/posts/config?success=Imagen activada";
-    }
-    
-    @PostMapping("/config/delete/{id}")
-    public String deleteImage(@PathVariable Long id) {
-        configService.deleteHeroImage(id);
-        return "redirect:/admin/posts/config?success=Imagen eliminada";
-    }
+
+
 }

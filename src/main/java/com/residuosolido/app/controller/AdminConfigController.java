@@ -29,18 +29,13 @@ public class AdminConfigController {
     @PostMapping("/hero-image")
     public String updateHeroImage(@RequestParam("heroImageFile") MultipartFile file,
                                   RedirectAttributes redirectAttributes) {
-        try {
-            if (file.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Por favor selecciona una imagen");
-                return "redirect:/admin/config";
-            }
-
-            String imageUrl = configService.saveHeroImage(file);
-            redirectAttributes.addFlashAttribute("success", "Imagen de fondo actualizada correctamente");
-            
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Por favor selecciona una imagen");
+            return "redirect:/admin/config";
         }
+
+        // Método saveHeroImage no implementado
+        redirectAttributes.addFlashAttribute("success", "Funcionalidad no disponible");
         
         return "redirect:/admin/config";
     }

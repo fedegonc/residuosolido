@@ -48,8 +48,7 @@
                     <!-- Columna 1: Navegación Rápida -->
                     <aside class="lg:col-span-1">
                         <div class="sticky top-6 space-y-6">
-                            <!-- Waste Sections eliminadas para mejorar rendimiento -->
-                            <!--
+                            <!-- Categorías Principales -->
                             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                                 <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,6 +57,7 @@
                                     Secciones
                                 </h2>
                                 <div class="space-y-3">
+                                    <!-- Secciones dinámicas desde waste_sections -->
                                     <div th:each="section : ${wasteSections}" class="bg-gray-50 rounded-lg">
                                         <button th:onclick="'toggleCategory(' + ${section.id} + ')'" 
                                                 class="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition-colors group">
@@ -85,7 +85,6 @@
                                     </div>
                                 </div>
                             </div>
-                            -->
                             
 
                         </div>
@@ -95,111 +94,14 @@
                     <main class="lg:col-span-2">
 
                         <!-- Posts Principales -->
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                            <div class="border-b border-gray-200 p-6">
-                                <div class="flex items-center justify-between">
-                                    <h2 class="text-xl font-semibold text-gray-900 flex items-center">
-                                        <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                        </svg>
-                                        Publicaciones Recientes
-                                    </h2>
-                                    <a href="/posts" class="text-green-600 hover:text-green-700 text-sm font-medium flex items-center transition-colors">
-                                        Ver todas
-                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <div class="p-6">
-                                <!-- Posts grid mejorado -->
-                                <div th:if="${posts != null and !posts.isEmpty()}" class="space-y-4">
-                                    <div th:each="post : ${posts}" class="bg-gray-50 rounded-lg border border-gray-200 p-5 hover:shadow-md transition-all duration-200 hover:border-green-200">
-                                        <div class="flex justify-between items-start mb-3">
-                                            <h3 class="font-semibold text-lg text-gray-900 hover:text-green-600 transition-colors leading-tight">
-                                                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="hover:underline">Título</a>
-                                            </h3>
-                                            <span class="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium" th:text="${post.categoryName != null ? post.categoryName : 'Sin categoría'}">Categoría</span>
-                                        </div>
-                                        <p class="text-gray-600 text-sm mb-4 leading-relaxed" th:text="${#strings.abbreviate(post.content, 150)}">Contenido...</p>
-                                        <div class="flex justify-between items-center">
-                                            <div class="text-xs text-gray-500">
-                                                <span>Publicado recientemente</span>
-                                            </div>
-                                            <a th:href="@{/posts/{id}(id=${post.id})}" class="inline-flex items-center text-sm text-green-600 hover:text-green-800 font-medium transition-colors">
-                                                Leer más
-                                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-12 text-gray-500">
-                                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                    </svg>
-                                    <p class="text-lg mb-2">No hay publicaciones disponibles</p>
-                                    <p class="text-sm">¡Sé el primero en compartir contenido!</p>
-                                </div>
-                            </div>
-                        </div>
+                        <div th:replace="~{fragments/posts :: mainPosts}"></div>
                     </main>
                     
                     <!-- Columna 4: Información Lateral -->
                     <aside class="lg:col-span-1">
                         <div class="sticky top-6 space-y-6">
-                            <!-- Organizaciones Activas -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
-                                    </svg>
-                                    Organizaciones
-                                </h2>
-
-                                <div class="space-y-3">
-                                    <!-- Organizaciones dinámicas -->
-                                    <div th:if="${organizations != null and !organizations.isEmpty()}">
-                                        <div th:each="org : ${organizations}" class="border border-gray-200 rounded-lg p-4 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200">
-                                            <div class="flex items-start space-x-3">
-                                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                    </svg>
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <h3 class="font-medium text-gray-900 text-sm truncate" th:text="${org.firstName + ' ' + org.lastName}">Nombre Organización</h3>
-                                                    <p class="text-xs text-gray-600 mt-1 truncate" th:text="${org.email}">Email de contacto</p>
-                                                    <div class="mt-2">
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            <span class="w-1.5 h-1.5 bg-green-400 rounded-full mr-1"></span>
-                                                            Activa
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Mensaje si no hay organizaciones -->
-                                    <div th:if="${organizations == null or organizations.isEmpty()}" class="text-center py-8 text-gray-500">
-                                        <svg class="w-8 h-8 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
-                                        </svg>
-                                        <p class="text-sm mb-2">No hay organizaciones</p>
-                                        <p class="text-xs">Registradas aún</p>
-                                    </div>
-                                    
-                                    <a href="/organizaciones" class="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-4 py-3 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors">
-                                        Ver todas las organizaciones
-                                    </a>
-                                </div>
-                            </div>
-                            
+                            <!-- Organizaciones -->
+                            <div th:replace="~{fragments/organizations :: organizationsList}"></div>
 
 
                         </div>
@@ -293,6 +195,54 @@
         </svg>
     </button>
 
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Script del mapa de organización -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Buscar mapas de organizaciones
+            const orgMaps = document.querySelectorAll('[id^="orgMap-"]');
+            
+            orgMaps.forEach(function(mapElement) {
+                const lat = parseFloat(mapElement.dataset.lat);
+                const lng = parseFloat(mapElement.dataset.lng);
+                const name = mapElement.dataset.name;
+                
+                if (lat && lng) {
+                    console.log('Inicializando mapa para:', name, lat, lng);
+                    
+                    // Crear mapa estático (no interactivo)
+                    const map = L.map(mapElement.id, {
+                        zoomControl: false,
+                        attributionControl: false,
+                        dragging: false,
+                        touchZoom: false,
+                        doubleClickZoom: false,
+                        scrollWheelZoom: false,
+                        boxZoom: false,
+                        keyboard: false
+                    }).setView([lat, lng], 15);
+                    
+                    // Agregar tiles
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap'
+                    }).addTo(map);
+                    
+                    // Agregar marcador fijo
+                    L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(name);
+                    
+                    // Redimensionar
+                    setTimeout(function () {
+                        map.invalidateSize();
+                    }, 500);
+                }
+            });
+    </script>
+    
     <!-- JavaScript Files -->
     <script src="/js/common.js"></script>
     <script src="/js/posts.js"></script>

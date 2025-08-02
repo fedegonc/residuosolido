@@ -29,9 +29,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private UserType userType;
+
 
     @Column(nullable = false)
     private String preferredLanguage; // 'es' o 'pt'
@@ -89,9 +87,7 @@ public class User {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.active = true;
-        if (this.userType == null) {
-            this.userType = UserType.COMUN;
-        }
+
     }
 
     /**

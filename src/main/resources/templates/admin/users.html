@@ -33,7 +33,6 @@
                                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
                                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-                                                <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registro</th>
                                                 <th scope="col" class="relative px-2 py-3"><span class="sr-only">Acciones</span></th>
@@ -62,13 +61,6 @@
                                                         <span th:if="${user.role != null and user.role.name() == 'ADMIN'}">⚙️ Admin</span>
                                                         <span th:if="${user.role != null and user.role.name() == 'ORGANIZATION'}">🏢 Org</span>
                                                         <span th:if="${user.role != null and user.role.name() == 'USER'}">👤 Usuario</span>
-                                                    </span>
-                                                </td>
-                                                <td class="px-2 py-4 whitespace-nowrap">
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                                                          th:classappend="${user.userType != null and user.userType.name() == 'EMPRESA'} ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'">
-                                                        <span th:if="${user.userType != null and user.userType.name() == 'EMPRESA'}">🏢 Empresa</span>
-                                                        <span th:if="${user.userType == null or user.userType.name() == 'COMUN'}">👤 Común</span>
                                                     </span>
                                                 </td>
                                                 <td class="px-2 py-4 whitespace-nowrap">

@@ -1,7 +1,6 @@
 package com.residuosolido.app.dto;
 
 import com.residuosolido.app.model.Role;
-import com.residuosolido.app.model.UserType;
 import com.residuosolido.app.model.Material;
 import lombok.Data;
 import java.util.List;
@@ -19,7 +18,6 @@ public class UserForm {
     private String firstName;
     private String lastName;
     private Role role;
-    private UserType userType;
     private String preferredLanguage;
     private boolean active;
     private String profileImage;
