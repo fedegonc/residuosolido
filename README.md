@@ -1,7 +1,7 @@
 # Sistema de Gestión de Residuos Sólidos
 **Rivera - Sant'ana do Livramento**
 
-Plataforma web integral para la gestión de residuos sólidos urbanos que conecta ciudadanos, organizaciones y administradores en un ecosistema colaborativo de reciclaje y manejo responsable de residuos.
+Plataforma web integral para la gestión de residuos sólidos urbanos que conecta ciudadanos y organizaciones en un ecosistema colaborativo de reciclaje y manejo responsable de residuos.
 
 ## 🚀 Características Principales
 
