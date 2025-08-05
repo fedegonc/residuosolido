@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <!-- Fragmento: Hero Section del Index -->
-    <section th:fragment="hero" class="relative py-20" 
+    <section th:fragment="hero" class="relative py-8" 
              th:classappend="${heroImage != null ? 'bg-cover bg-center' : 'bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-900'}"
              th:style="${heroImage != null ? 'background-image: url(' + heroImage + ')' : ''}">
         <div th:if="${heroImage != null}" class="absolute inset-0 bg-gradient-to-br from-emerald-800/85 via-emerald-700/80 to-emerald-900/75"></div>
@@ -20,15 +20,15 @@
                 </p>
                 <div class="grid grid-cols-1 gap-6 max-w-4xl mt-8">
                     <!-- Botón: Reciclables -->
-                    <a href="/posts/category/reciclables" class="bg-white/95 backdrop-blur-sm hover:bg-white transition-all duration-300 rounded-xl p-6 shadow-lg hover:shadow-xl group text-center max-w-md ml-0 w-full">
-                        <div class="flex justify-center mb-4">
-                            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
-                                <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="/posts/category/reciclables" class="bg-white/95 backdrop-blur-sm hover:bg-white transition-all duration-300 rounded-xl p-2 shadow-lg hover:shadow-xl group text-center max-w-md ml-0 w-full">
+                        <div class="flex justify-center mb-2">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
                             </div>
                         </div>
-                        <h3 class="text-xl font-bold text-emerald-800 mb-2">Reciclables</h3>
+                        <h3 class="text-lg font-bold text-emerald-800 mb-1">Reciclables</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">Aprende cómo desechar correctamente plásticos, papel, vidrio y otros materiales reciclables</p>
                     </a>
                 </div>
