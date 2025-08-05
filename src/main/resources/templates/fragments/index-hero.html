@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <!-- Fragmento: Hero Section del Index -->
-    <section th:fragment="hero" class="relative py-8" 
-             th:classappend="${heroImage != null ? 'bg-cover bg-center' : 'bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-900'}"
+    <section th:fragment="hero" class="relative py-8 bg-white/80" 
+             th:classappend="${heroImage != null ? 'bg-cover bg-center' : ''}"
              th:style="${heroImage != null ? 'background-image: url(' + heroImage + ')' : ''}">
-        <div th:if="${heroImage != null}" class="absolute inset-0 bg-gradient-to-br from-emerald-800/85 via-emerald-700/80 to-emerald-900/75"></div>
+        <div th:if="${heroImage != null}" class="absolute inset-0 bg-gradient-to-br from-emerald-800/60 via-emerald-700/40 to-emerald-900/20"></div>
         <div class="container mx-auto px-6 relative z-10">
             <div class="text-left max-w-4xl">
                 <h1 class="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg font-sans">
