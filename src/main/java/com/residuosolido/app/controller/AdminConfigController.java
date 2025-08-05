@@ -9,8 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.residuosolido.app.service.ConfigService;
-
-import java.io.IOException;
+import com.residuosolido.app.service.CloudinaryService;
 
 @Controller
 @RequestMapping("/admin/config")
@@ -19,6 +18,9 @@ public class AdminConfigController {
 
     @Autowired
     private ConfigService configService;
+    
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @GetMapping
     public String showConfig(Model model) {
@@ -34,8 +36,13 @@ public class AdminConfigController {
             return "redirect:/admin/config";
         }
 
-        // Método saveHeroImage no implementado
-        redirectAttributes.addFlashAttribute("success", "Funcionalidad no disponible");
+        try {
+            String imageUrl = cloudinaryService.uploadFile(file);
+            configService.saveHeroImageUrl(imageUrl);
+            redirectAttributes.addFlashAttribute("success", "Imagen subida exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al subir imagen: " + e.getMessage());
+        }
         
         return "redirect:/admin/config";
     }

@@ -69,6 +69,7 @@ public class AuthController {
             return "auth/register";
         }
         
+        
         authService.registerUser(user);
         return "redirect:/auth/login?success=Registro exitoso";
     }

@@ -3,41 +3,8 @@
 <head th:replace="~{fragments/index-layout :: head('Inicio')}"></head>
 <body th:replace="~{fragments/index-layout :: layout(~{::main})}">
     <main>
-        <!-- Hero Section -->
-        <section class="relative py-16" 
-                 th:classappend="${heroImage != null ? 'bg-cover bg-center' : 'bg-gradient-to-br from-green-700 via-green-600 to-green-500'}"
-                 th:style="${heroImage != null ? 'background-image: url(' + heroImage + ')' : ''}">
-            <div th:if="${heroImage != null}" class="absolute inset-0 bg-gradient-to-br from-green-700/80 via-green-600/70 to-green-500/60"></div>
-            <div class="container mx-auto px-6 relative z-10">
-                <div class="text-left max-w-4xl">
-                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg font-sans">
-                        Residuos Sólidos - <span class="text-green-100">Frontera de la Paz</span>
-                    </h1>
-                    <p class="text-lg text-green-100 mb-8 drop-shadow-md font-sans">
-                        Rivera - Sant'Ana do Livramento
-                    </p>
-                    <p class="text-xl text-white mb-8 leading-relaxed max-w-2xl drop-shadow-md font-sans">
-                        Conectamos comunidades, organizaciones y autoridades para un manejo eficiente 
-                        y sostenible de residuos en la región fronteriza.
-                    </p>
-                    <div class="flex flex-col gap-4 max-w-lg">
-                        <a href="/posts/section/1" class="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-lg shadow-md transition-all hover:shadow-lg border border-green-100">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold mb-1 font-sans">Reciclables</h3>
-                                    <p class="text-sm text-gray-600 font-sans">Plásticos, metales, papel, cartón y vidrio</p>
-                                </div>
-                                <div class="bg-green-100 rounded-full p-2 group-hover:bg-green-200 transition-colors">
-                                    <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Hero Section Modular -->
+        <div th:insert="~{fragments/index-hero :: hero}"></div>
 
         <!-- Layout Principal Mejorado -->
         <div class="min-h-screen bg-gray-25" style="background-color: #fafafa;">
@@ -45,49 +12,9 @@
             <div id="contenido" class="container mx-auto px-6 py-12">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
                     
-                    <!-- Columna 1: Navegación Rápida -->
+                    <!-- Sidebar/Secciones Modular -->
                     <aside class="lg:col-span-1">
-                        <div class="sticky top-6 space-y-6">
-                            <!-- Categorías Principales -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"></path>
-                                    </svg>
-                                    Secciones
-                                </h2>
-                                <div class="space-y-3">
-                                    <!-- Secciones dinámicas desde waste_sections -->
-                                    <div th:each="section : ${wasteSections}" class="bg-gray-50 rounded-lg">
-                                        <button th:onclick="'toggleCategory(' + ${section.id} + ')'" 
-                                                class="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition-colors group">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200">
-                                                    <span class="text-xl" th:text="${section.icon}">📋</span>
-                                                </div>
-                                                <div>
-                                                    <h3 class="font-medium text-gray-900 text-sm" th:text="${section.title}">Título</h3>
-                                                    <p class="text-xs text-gray-600" th:text="${section.description}">Descripción</p>
-                                                </div>
-                                            </div>
-                                            <svg th:id="'arrow-' + ${section.id}" class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </button>
-                                        <div th:id="'categories-' + ${section.id}" class="hidden px-3 pb-3">
-                                            <div class="ml-13 space-y-2">
-                                                <a th:href="'/posts/section/' + ${section.id}" 
-                                                   class="block text-sm text-gray-600 hover:text-gray-800 py-1">
-                                                    • <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-
-                        </div>
+                        <div th:replace="~{fragments/sections-sidebar :: sidebar}"></div>
                     </aside>
 
                     <!-- Columna 2-3: Contenido Principal -->
@@ -110,141 +37,7 @@
                 </div>
             </div>
         </div>
-    <!-- JavaScript para waste sections eliminado -->
-    <!--
-    <script>
-        function toggleCategory(categoryId) {
-            const content = document.getElementById('categories-' + categoryId);
-            const arrow = document.getElementById('arrow-' + categoryId);
-            
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                arrow.classList.add('rotate-90');
-            } else {
-                content.classList.add('hidden');
-                arrow.classList.remove('rotate-90');
-            }
-        }
-    </script>
-    -->
-    </main>
+   
 
-    <!-- Modal Crear Post -->
-    <div id="createPostModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg max-w-md w-full p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Crear Nuevo Post</h3>
-                    <button onclick="closeCreatePostModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                
-                <form id="createPostForm" action="/posts/create" method="post" enctype="multipart/form-data">
-                    <div class="space-y-4">
-                        <div>
-                            <input type="text" name="title" id="postTitle" placeholder="Título" required 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        
-                        <div>
-                            <textarea name="content" id="postContent" placeholder="Contenido" rows="3" required
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen</label>
-                            <input type="file" name="image" id="postImage" accept="image/*" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                            <div id="imagePreview" class="mt-2 hidden">
-                                <img id="previewImg" class="w-full h-32 object-cover rounded-md">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <select name="categoryId" id="postCategory" required 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                                <option value="">Seleccionar categoría</option>
-                                <option value="1">Reciclable</option>
-                                <option value="2">No Reciclable</option>
-                                <option value="3">Informaciones</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" 
-                                class="w-full text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400 font-medium transition" 
-                                style="background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%); border-radius: 6px;">
-                            Crear Post
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Botón flotante para crear post -->
-    <button onclick="openCreatePostModal()" 
-            class="fixed bottom-6 right-6 text-white p-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-400 z-40" 
-            style="background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%); transition: all 0.2s ease;"
-            onmouseover="this.style.transform='scale(1.05)'"
-            onmouseout="this.style.transform='scale(1)'">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-    </button>
-
-    <!-- Leaflet CSS y JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- Script del mapa de organización -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Buscar mapas de organizaciones
-            const orgMaps = document.querySelectorAll('[id^="orgMap-"]');
-            
-            orgMaps.forEach(function(mapElement) {
-                const lat = parseFloat(mapElement.dataset.lat);
-                const lng = parseFloat(mapElement.dataset.lng);
-                const name = mapElement.dataset.name;
-                
-                if (lat && lng) {
-                    console.log('Inicializando mapa para:', name, lat, lng);
-                    
-                    // Crear mapa estático (no interactivo)
-                    const map = L.map(mapElement.id, {
-                        zoomControl: false,
-                        attributionControl: false,
-                        dragging: false,
-                        touchZoom: false,
-                        doubleClickZoom: false,
-                        scrollWheelZoom: false,
-                        boxZoom: false,
-                        keyboard: false
-                    }).setView([lat, lng], 15);
-                    
-                    // Agregar tiles
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap'
-                    }).addTo(map);
-                    
-                    // Agregar marcador fijo
-                    L.marker([lat, lng])
-                        .addTo(map)
-                        .bindPopup(name);
-                    
-                    // Redimensionar
-                    setTimeout(function () {
-                        map.invalidateSize();
-                    }, 500);
-                }
-            });
-    </script>
-    
-    <!-- JavaScript Files -->
-    <script src="/js/common.js"></script>
-    <script src="/js/posts.js"></script>
 </body>
 </html>
