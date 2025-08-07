@@ -102,7 +102,7 @@ public class WasteSectionService {
         existingSection.setDescription(wasteSection.getDescription());
         existingSection.setIcon(wasteSection.getIcon());
         existingSection.setActionText(wasteSection.getActionText());
-        existingSection.setActionUrl(wasteSection.getActionUrl());
+        existingSection.setActionUrl(wasteSection.getActionUrl())
         existingSection.setDisplayOrder(wasteSection.getDisplayOrder());
         existingSection.setActive(wasteSection.getActive());
         
