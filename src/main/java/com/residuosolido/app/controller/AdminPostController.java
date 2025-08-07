@@ -46,19 +46,8 @@ public class AdminPostController {
                               @RequestParam(required = false) String sourceName,
                               @RequestParam(required = false) String sourceUrl,
                               @RequestParam Long categoryId) {
-        String finalImageUrl = imageUrl;
-        
-        // Si se subió un archivo, usar Cloudinary
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                finalImageUrl = cloudinaryService.uploadFile(imageFile);
-            } catch (Exception e) {
-                // Si falla Cloudinary, usar URL manual si está disponible
-                System.err.println("Error subiendo a Cloudinary: " + e.getMessage());
-            }
-        }
-        
-        postService.createPost(title, content, finalImageUrl, categoryId, sourceName, sourceUrl);
+        // Usar el servicio para manejar la lógica de negocio
+        postService.createPostWithImage(title, content, imageUrl, imageFile, categoryId, sourceUrl, sourceName);
         return "redirect:/admin/posts";
     }
 
@@ -80,19 +69,8 @@ public class AdminPostController {
                              @RequestParam(required = false) String imageUrl,
                              @RequestParam(required = false) MultipartFile imageFile,
                              @RequestParam Long categoryId) {
-        String finalImageUrl = imageUrl;
-        
-        // Si se sube un archivo, usar Cloudinary
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                finalImageUrl = cloudinaryService.uploadFile(imageFile);
-            } catch (Exception e) {
-                // Si falla la subida, mantener la URL original
-                System.err.println("Error subiendo imagen: " + e.getMessage());
-            }
-        }
-        
-        postService.updatePost(id, title, content, finalImageUrl, categoryId);
+        // Usar el servicio para manejar la lógica de negocio
+        postService.updatePostWithImage(id, title, content, imageUrl, imageFile, categoryId);
         return "redirect:/admin/posts";
     }
 
