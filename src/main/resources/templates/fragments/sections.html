@@ -19,7 +19,7 @@
                         class="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition-colors group">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200">
-                            <span class="text-xl" th:text="${section.icon}">📋</span>
+                            <img th:src="${section.imageUrl != null ? section.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}" class="w-10 h-10 object-cover rounded-lg" alt="Imagen sección" />
                         </div>
                         <div>
                             <h3 class="font-medium text-gray-900 text-sm" th:text="${section.title}">Título</h3>

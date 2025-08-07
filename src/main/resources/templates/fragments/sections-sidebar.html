@@ -16,7 +16,7 @@ Apartados
                         class="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors group rounded-lg">
                     <div class="flex items-center flex-1">
                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center mr-3 group-hover:from-emerald-100 group-hover:to-emerald-200 transition-all duration-200">
-                            <span class="text-2xl" th:text="${section.icon}">📋</span>
+                            <img th:src="${section.imageUrl != null ? section.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}" class="w-8 h-8 object-cover rounded-xl" alt="Imagen sección" />
                         </div>
                         <div class="text-left flex-1">
                             <h3 class="font-semibold text-gray-900 text-base mb-1" th:text="${section.title}">Título</h3>
