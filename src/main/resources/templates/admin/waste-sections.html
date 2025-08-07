@@ -124,11 +124,9 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a th:href="@{/admin/waste-sections/view/{id}(id=${section.id})}" 
-                                       class="text-indigo-600 hover:text-indigo-900 mr-3">Ver</a>
-                                    <a th:href="@{/admin/waste-sections/edit/{id}(id=${section.id})}" 
+                                    <a th:href="@{/admin/waste-sections/{id}/edit(id=${section.id})}" 
                                        class="text-green-600 hover:text-green-900 mr-3">Editar</a>
-                                    <form th:action="@{/admin/waste-sections/delete/{id}(id=${section.id})}" 
+                                    <form th:action="@{/admin/waste-sections/{id}/delete(id=${section.id})}" 
                                           method="post" 
                                           style="display: inline;"
                                           onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta sección?')">

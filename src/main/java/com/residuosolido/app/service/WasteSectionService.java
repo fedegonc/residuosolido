@@ -87,4 +87,49 @@ public class WasteSectionService {
     public List<WasteSection> getAllOrderedByDisplayOrder() {
         return wasteSectionRepository.findAllWithCategoriesOrderByDisplayOrderAsc();
     }
+    
+    public WasteSection getWasteSectionById(Long id) {
+        return wasteSectionRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Sección de residuos no encontrada con ID: " + id));
+    }
+    
+    @Transactional
+    public WasteSection updateWasteSection(Long id, WasteSection wasteSection, Long[] categoryIds) {
+        WasteSection existingSection = getWasteSectionById(id);
+        
+        // Actualizar propiedades
+        existingSection.setTitle(wasteSection.getTitle());
+        existingSection.setDescription(wasteSection.getDescription());
+        existingSection.setIcon(wasteSection.getIcon());
+        existingSection.setActionText(wasteSection.getActionText());
+        existingSection.setActionUrl(wasteSection.getActionUrl());
+        existingSection.setDisplayOrder(wasteSection.getDisplayOrder());
+        existingSection.setActive(wasteSection.getActive());
+        
+        // Limpiar categorías existentes
+        existingSection.getCategories().clear();
+        
+        // Asociar nuevas categorías si se proporcionaron
+        if (categoryIds != null && categoryIds.length > 0) {
+            for (Long categoryId : categoryIds) {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    existingSection.getCategories().add(category);
+                });
+            }
+        }
+        
+        return wasteSectionRepository.save(existingSection);
+    }
+    
+    @Transactional
+    public void deleteWasteSection(Long id) {
+        WasteSection section = getWasteSectionById(id);
+        
+        // Limpiar relaciones con categorías para evitar problemas de FK
+        section.getCategories().clear();
+        wasteSectionRepository.save(section);
+        
+        // Eliminar la sección
+        wasteSectionRepository.delete(section);
+    }
 }

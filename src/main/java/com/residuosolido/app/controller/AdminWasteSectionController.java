@@ -69,7 +69,42 @@ public class AdminWasteSectionController {
         return "redirect:/admin/waste-sections";
     }
     
+    @GetMapping("/{id}/edit")
+    public String showEditWasteSectionForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            WasteSection wasteSection = wasteSectionService.getWasteSectionById(id);
+            model.addAttribute("wasteSection", wasteSection);
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("selectedCategories", wasteSection.getCategories());
+            return "admin/waste-section-form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cargar la sección: " + e.getMessage());
+            return "redirect:/admin/waste-sections";
+        }
+    }
     
+    @PostMapping("/{id}/edit")
+    public String updateWasteSection(@PathVariable Long id, 
+                                   @ModelAttribute WasteSection wasteSection,
+                                   @RequestParam(value = "categoryIds", required = false) Long[] categoryIds,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            wasteSectionService.updateWasteSection(id, wasteSection, categoryIds);
+            redirectAttributes.addFlashAttribute("success", "Sección actualizada exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar sección: " + e.getMessage());
+        }
+        return "redirect:/admin/waste-sections";
+    }
     
-
+    @PostMapping("/{id}/delete")
+    public String deleteWasteSection(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            wasteSectionService.deleteWasteSection(id);
+            redirectAttributes.addFlashAttribute("success", "Sección eliminada exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar sección: " + e.getMessage());
+        }
+        return "redirect:/admin/waste-sections";
+    }
 }
