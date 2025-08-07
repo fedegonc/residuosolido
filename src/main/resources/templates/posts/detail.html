@@ -1,126 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Detalle - ' + ${post.title})}">
+<head th:replace="~{fragments/auth-layout :: head('Detalle - ' + ${post.title})}">
     <title>Detalle - Sistema de Gestión de Residuos Sólidos</title>
 </head>
 
-<body th:replace="~{fragments/layout :: layout(~{::main})}">
+<body th:replace="~{fragments/auth-layout :: layout(~{::main})}">
     <main>
-        <!-- Post Header -->
-        <div class="bg-gray-50 py-8">
-            <div class="container mx-auto px-4">
-                <nav class="text-sm text-gray-600 mb-4">
-                    <a href="/" class="hover:text-green-600">Inicio</a>
-                    <span class="mx-2">›</span>
-                    <a href="/posts" class="hover:text-green-600">Publicaciones</a>
-                    <span class="mx-2">›</span>
-                    <span th:text="${post.title}">Título del Post</span>
-                </nav>
-                
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4" th:text="${post.title}">
-                    Título del Post
-                </h1>
-                
-                <div class="flex items-center text-gray-600 text-sm">
-                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-sm text-xs font-medium mr-4" 
-                          th:text="${categoryName}">Categoría</span>
-                    <time class="text-gray-500">Publicado recientemente</time>
-                </div>
-            </div>
-        </div>
-
-        <!-- Breadcrumb -->
-        <div class="py-3 bg-gray-100 border-b">
-            <div class="container mx-auto px-4">
-                <nav class="text-sm">
-                    <a href="/" class="text-green-600 hover:text-green-800">Inicio</a>
-                    <span class="mx-2 text-gray-500">›</span>
-                    <a href="/posts" class="text-green-600 hover:text-green-800">Publicaciones</a>
-                    <span class="mx-2 text-gray-500">›</span>
-                    <span class="text-gray-700" th:text="${post.title}">Post</span>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Post Content -->
-        <article class="py-12">
-            <div class="container mx-auto px-4 max-w-4xl">
-                <!-- Featured Image -->
-                <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" class="mb-8">
-                    <img th:src="${post.imageUrl}" 
-                         th:alt="${post.title}"
-                         class="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg">
+        <!-- Post Content (minimal) -->
+        <article class="py-10">
+            <div class="container mx-auto px-4 max-w-3xl">
+                <!-- Título -->
+                <h1 class="text-3xl font-bold text-gray-900 mb-3" th:text="${post.title}">Título</h1>
+                <div class="flex items-center gap-3 text-sm text-gray-600 mb-6">
+                    <span class="inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full" th:text="${categoryName}">Categoría</span>
                 </div>
 
-                <!-- Post Content -->
-                <div class="prose prose-lg max-w-none">
-                    <div th:if="${post.content != null and !post.content.isEmpty()}" 
-                         class="text-gray-700 leading-relaxed text-lg">
-                        <p th:text="${post.content}">Contenido del post...</p>
-                    </div>
-                    
-                    <div th:if="${post.content == null or post.content.isEmpty()}" 
-                         class="text-gray-500 italic text-center py-8">
-                        <p>Este artículo está en desarrollo. Pronto tendremos más información sobre este tema.</p>
-                    </div>
-                </div>
-                
-                <!-- Source Information -->
-                <div th:if="${post.sourceUrl != null and !post.sourceUrl.isEmpty()}" class="mt-8 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-                    <div class="flex items-start space-x-3">
-                        <svg class="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                        </svg>
-                        <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-blue-800 mb-2">Fuente de Información</h4>
-                            <p class="text-blue-700 mb-3">Este artículo está basado en información confiable de fuentes especializadas.</p>
-                            <a th:href="${post.sourceUrl}" 
-                               target="_blank" 
-                               rel="noopener noreferrer"
-                               class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-                                <span th:text="${post.sourceName != null and !post.sourceName.isEmpty() ? 'Ver en ' + post.sourceName : 'Ver fuente original'}">Ver fuente original</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
+                <!-- Imagen -->
+                <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" class="mb-8 border border-gray-200 rounded-lg overflow-hidden">
+                    <img th:src="${post.imageUrl}" th:alt="${post.title}" class="w-full h-64 md:h-80 object-cover" />
                 </div>
 
-                <!-- Call to Action -->
-                <div class="mt-12 bg-green-50 rounded-lg p-8 text-left">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
-                        ¿Te interesa participar en nuestras iniciativas?
-                    </h3>
-                    <p class="text-gray-600 mb-6">
-                        Únete a nuestra comunidad y contribuye a un futuro más sostenible.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-start">
-                        <a href="/auth/register" 
-                           class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
-                            Crear Cuenta
-                        </a>
-                        <a href="/auth/login" 
-                           class="border border-green-600 text-green-600 hover:bg-green-50 font-medium py-3 px-6 rounded-lg transition-colors duration-200">
-                            Iniciar Sesión
-                        </a>
+                <!-- Contenido -->
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Descripción</h2>
+                    <!-- Si el contenido trae HTML, lo renderizamos. Si es texto plano, preservamos saltos de línea. -->
+                    <div th:if="${post.content != null and !post.content.isEmpty()}" class="text-gray-800 text-base leading-relaxed">
+                        <div th:utext="${post.content}"></div>
+                        <pre th:if="${#strings.containsIgnoreCase(post.content, '<') == false}" th:text="${post.content}" class="whitespace-pre-line font-sans text-gray-800 text-base leading-relaxed"></pre>
                     </div>
+                    <p th:if="${post.content == null or post.content.isEmpty()}" class="text-gray-500 italic">Contenido en preparación.</p>
+                </div>
+
+                <!-- Fuente -->
+                <div th:if="${post.sourceUrl != null and !post.sourceUrl.isEmpty()}" class="mt-8 border border-green-200 rounded-lg p-5">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Fuente</h3>
+                    <a th:href="${post.sourceUrl}" target="_blank" rel="noopener" class="inline-flex items-center text-green-700 hover:text-green-900 font-medium break-all">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        <span th:text="${post.sourceName != null and !post.sourceName.isEmpty() ? post.sourceName : post.sourceUrl}">Ver fuente</span>
+                    </a>
+                </div>
+                <div th:if="${post.sourceUrl == null or post.sourceUrl.isEmpty()}" class="mt-8 border border-yellow-200 rounded-lg p-5 bg-yellow-50">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Fuente</h3>
+                    <p class="text-yellow-800 font-medium">Fuente: pendiente</p>
                 </div>
             </div>
         </article>
 
-        <!-- Related Posts -->
-        <div th:if="${relatedPosts != null and !relatedPosts.isEmpty()}" class="py-12 bg-gray-50">
+        <!-- Relacionados (reutiliza fragmento estándar) -->
+        <div th:if="${relatedPosts != null and !relatedPosts.isEmpty()}" class="py-10">
+            <div class="max-w-6xl mx-auto border-t border-gray-200 mb-8"></div>
             <div class="container mx-auto px-4">
-                <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">
-                    Artículos Relacionados
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    <div th:each="relatedPost : ${relatedPosts}" 
-                         th:replace="~{fragments/post :: minimalPostCard(${relatedPost})}">
-                    </div>
-                </div>
+                <h2 class="text-2xl font-semibold text-gray-900 mb-6">También puede interesarte</h2>
+                <div th:replace="~{fragments/posts :: posts(${relatedPosts}, false)}"></div>
             </div>
         </div>
     </main>
