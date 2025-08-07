@@ -77,9 +77,22 @@ public class AdminPostController {
     public String updatePost(@PathVariable Long id,
                              @RequestParam String title,
                              @RequestParam String content,
-                             @RequestParam String imageUrl,
+                             @RequestParam(required = false) String imageUrl,
+                             @RequestParam(required = false) MultipartFile imageFile,
                              @RequestParam Long categoryId) {
-        postService.updatePost(id, title, content, imageUrl, categoryId);
+        String finalImageUrl = imageUrl;
+        
+        // Si se sube un archivo, usar Cloudinary
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                finalImageUrl = cloudinaryService.uploadFile(imageFile);
+            } catch (Exception e) {
+                // Si falla la subida, mantener la URL original
+                System.err.println("Error subiendo imagen: " + e.getMessage());
+            }
+        }
+        
+        postService.updatePost(id, title, content, finalImageUrl, categoryId);
         return "redirect:/admin/posts";
     }
 
