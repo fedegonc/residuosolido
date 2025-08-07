@@ -81,6 +81,11 @@ public class WasteSectionService {
         existingSection.setDisplayOrder(wasteSection.getDisplayOrder());
         existingSection.setActive(wasteSection.getActive());
         
+        // Actualizar URL de imagen solo si se proporciona una nueva
+        if (wasteSection.getImageUrl() != null) {
+            existingSection.setImageUrl(wasteSection.getImageUrl());
+        }
+        
         // Limpiar categorías existentes
         existingSection.getCategories().clear();
         

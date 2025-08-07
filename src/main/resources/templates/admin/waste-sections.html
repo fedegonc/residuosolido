@@ -8,14 +8,7 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-semibold text-gray-900">Gestión de Secciones de Residuos</h1>
                 <div class="flex space-x-3">
-                    <form th:action="@{/admin/waste-sections/cleanup}" method="post" class="inline">
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md shadow-sm text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            Limpiar FK
-                        </button>
-                    </form>
+                    
                     <a th:href="@{/admin/waste-sections/new}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                         <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -62,7 +55,7 @@
                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TÍtulo</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                                <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icono</th>
+                                <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
                                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orden</th>
                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categorías</th>
@@ -84,22 +77,16 @@
                                 <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${section.id}">1</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10">
-                                            <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                                <span class="text-lg" th:text="${section.icon}">🌱</span>
-                                            </div>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900" th:text="${section.title}">Título</div>
-                                        </div>
+                                        <div class="text-sm font-medium text-gray-900" th:text="${section.title}">Título</div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
                                     <div class="max-w-xs truncate" th:text="${section.description}" th:title="${section.description}">Descripción</div>
                                 </td>
                                 <td class="px-2 py-4 whitespace-nowrap text-center">
-                                    <span class="text-2xl" th:text="${section.icon}">🌱</span>
-                                </td>
+    <img th:src="${section.imageUrl != null ? section.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}"
+         class="w-10 h-10 object-cover rounded" alt="Imagen sección" />
+</td>
                                 <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500 text-center" th:text="${section.displayOrder}">1</td>
                                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="max-w-xs truncate" th:if="${section.actionText != null}">

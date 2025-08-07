@@ -1,6 +1,7 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.WasteSection;
+import com.residuosolido.app.service.CloudinaryService;
 import com.residuosolido.app.service.DataCleanupService;
 import com.residuosolido.app.service.WasteSectionService;
 import com.residuosolido.app.service.CategoryService;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class AdminWasteSectionController {
     
     @Autowired
     private CategoryService categoryService;
+    
+    @Autowired
+    private CloudinaryService cloudinaryService;
     
     @GetMapping
     public String showWasteSections(Model model) {
@@ -54,8 +59,29 @@ public class AdminWasteSectionController {
     @PostMapping("/new")
     public String createWasteSection(@ModelAttribute WasteSection wasteSection,
                                    @RequestParam(value = "categoryIds", required = false) Long[] categoryIds,
+                                   @RequestParam(value = "image", required = false) MultipartFile image,
                                    RedirectAttributes redirectAttributes) {
         try {
+            // Asignar valores por defecto para campos requeridos
+            if (wasteSection.getIcon() == null || wasteSection.getIcon().trim().isEmpty()) {
+                wasteSection.setIcon("fas fa-recycle"); // Icono por defecto
+            }
+            if (wasteSection.getActionText() == null || wasteSection.getActionText().trim().isEmpty()) {
+                wasteSection.setActionText("Ver más"); // Texto de acción por defecto
+            }
+            if (wasteSection.getDisplayOrder() == null) {
+                wasteSection.setDisplayOrder(1); // Orden por defecto
+            }
+            
+            // Procesar imagen si se proporciona
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadFile(image);
+                wasteSection.setImageUrl(imageUrl);
+            } else {
+                // Imagen por defecto si no se proporciona
+                wasteSection.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+            }
+            
             wasteSectionService.createWasteSection(wasteSection, categoryIds);
             redirectAttributes.addFlashAttribute("success", "Sección creada exitosamente.");
         } catch (Exception e) {
@@ -82,8 +108,15 @@ public class AdminWasteSectionController {
     public String updateWasteSection(@PathVariable Long id, 
                                    @ModelAttribute WasteSection wasteSection,
                                    @RequestParam(value = "categoryIds", required = false) Long[] categoryIds,
+                                   @RequestParam(value = "image", required = false) MultipartFile image,
                                    RedirectAttributes redirectAttributes) {
         try {
+            // Procesar imagen si se proporciona
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadFile(image);
+                wasteSection.setImageUrl(imageUrl);
+            }
+            
             wasteSectionService.updateWasteSection(id, wasteSection, categoryIds);
             redirectAttributes.addFlashAttribute("success", "Sección actualizada exitosamente.");
         } catch (Exception e) {

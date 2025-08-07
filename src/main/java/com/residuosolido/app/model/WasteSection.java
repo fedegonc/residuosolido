@@ -18,8 +18,10 @@ public class WasteSection {
     private String title;
 
     private String description;
+    @Column(nullable = true)
     private String icon;
     private String actionText;
+    private String imageUrl;
 
     // === Control de visualización ===
     private Integer displayOrder;
@@ -55,6 +57,9 @@ public class WasteSection {
 
     public String getActionText() { return actionText; }
     public void setActionText(String actionText) { this.actionText = actionText; }
+    
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public Integer getDisplayOrder() { return displayOrder; }
     public void setDisplayOrder(Integer displayOrder) { this.displayOrder = displayOrder; }
