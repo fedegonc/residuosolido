@@ -4,6 +4,9 @@ import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -368,4 +371,21 @@ public class UserService extends GenericEntityService<User, Long> {
     public long countByRole(Role role) {
         return userRepository.countByRole(role);
     }
+
+    @PostConstruct
+public void ensureDefaultAdmin() {
+    if (userRepository.count() == 0) {
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setEmail("admin@admin.com");
+        admin.setFirstName("Admin");
+        admin.setLastName("Principal");
+        admin.setRole(Role.ADMIN);
+        admin.setActive(true);
+        admin.setPreferredLanguage("es");
+        admin.setPassword(passwordEncoder.encode("12345"));
+        userRepository.save(admin);
+    }
+}
+
 }
