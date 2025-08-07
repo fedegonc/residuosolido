@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/waste-sections")
@@ -26,7 +27,14 @@ public class AdminWasteSectionController {
     private CategoryService categoryService;
     
     @GetMapping
-    public String showWasteSections() {
+    public String showWasteSections(Model model) {
+        System.out.println("=== LISTANDO WASTE SECTIONS ===");
+        List<WasteSection> sections = wasteSectionService.getAllOrderedByDisplayOrder();
+        System.out.println("Secciones encontradas: " + sections.size());
+        for (WasteSection section : sections) {
+            System.out.println("- ID: " + section.getId() + ", Title: " + section.getTitle() + ", Active: " + section.getActive());
+        }
+        model.addAttribute("wasteSections", sections);
         return "admin/waste-sections";
     }
     
