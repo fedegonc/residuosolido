@@ -19,7 +19,6 @@ public class WasteSection {
 
     private String description;
     @Column(nullable = true)
-    private String icon;
     private String actionText;
     private String imageUrl;
 
@@ -52,8 +51,7 @@ public class WasteSection {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getIcon() { return icon; }
-    public void setIcon(String icon) { this.icon = icon; }
+   
 
     public String getActionText() { return actionText; }
     public void setActionText(String actionText) { this.actionText = actionText; }
