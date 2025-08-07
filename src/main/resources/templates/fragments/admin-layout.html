@@ -137,56 +137,12 @@
     <!-- Footer Admin Dedicado -->
     <footer class="bg-gray-800 text-white mt-auto">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Información del Sistema -->
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
-                        <i class="fas fa-cogs mr-2"></i>Panel de Administración
-                    </h3>
-                    <p class="text-sm text-gray-400">
-                        Sistema de Gestión de Residuos Sólidos<br>
-                        Rivera - Sant'Ana do Livramento
-                    </p>
+            <div class="text-center">
+                <div class="text-sm text-gray-400">
+                    Residuos Sólidos - Rivera Sant'Ana | Panel Admin
                 </div>
-                
-                <!-- Enlaces Rápidos -->
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
-                        <i class="fas fa-link mr-2"></i>Acceso Rápido
-                    </h3>
-                    <ul class="text-sm text-gray-400 space-y-1">
-                        <li><a href="/admin/dashboard" class="hover:text-white transition-colors">Dashboard</a></li>
-                        <li><a href="/admin/users" class="hover:text-white transition-colors">Usuarios</a></li>
-                        <li><a href="/admin/requests" class="hover:text-white transition-colors">Solicitudes</a></li>
-                        <li><a href="/admin/feedback" class="hover:text-white transition-colors">Feedback</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Información de Sesión -->
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
-                        <i class="fas fa-user-shield mr-2"></i>Sesión Actual
-                    </h3>
-                    <div class="text-sm text-gray-400 space-y-1">
-                        <p><strong>Usuario:</strong> <span sec:authentication="name">Admin</span></p>
-                        <p><strong>Rol:</strong> Administrador</p>
-                        <p><strong>Acceso:</strong> <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">Hoy</span></p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Línea divisoria -->
-            <div class="border-t border-gray-700 mt-6 pt-4">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-sm text-gray-400">
-                        <i class="fas fa-shield-alt mr-1"></i>
-                        © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Sistema de Gestión de Residuos Sólidos. Todos los derechos reservados.
-                    </div>
-                    <div class="text-sm text-gray-400 mt-2 md:mt-0">
-                        <span class="inline-flex items-center px-2 py-1 bg-red-600 text-white text-xs rounded-full">
-                            <i class="fas fa-lock mr-1"></i>ZONA ADMINISTRATIVA
-                        </span>
-                    </div>
+                <div class="text-xs text-gray-500 mt-1">
+                    <span sec:authentication="name">Usuario</span> | © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span>
                 </div>
             </div>
         </div>

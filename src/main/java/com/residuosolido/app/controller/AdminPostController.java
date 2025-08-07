@@ -43,6 +43,8 @@ public class AdminPostController {
     public String createPost(@RequestParam String title, @RequestParam String content,
                               @RequestParam(required = false) String imageUrl, 
                               @RequestParam(required = false) MultipartFile imageFile,
+                              @RequestParam(required = false) String sourceName,
+                              @RequestParam(required = false) String sourceUrl,
                               @RequestParam Long categoryId) {
         String finalImageUrl = imageUrl;
         
@@ -56,7 +58,7 @@ public class AdminPostController {
             }
         }
         
-        postService.createPost(title, content, finalImageUrl, categoryId);
+        postService.createPost(title, content, finalImageUrl, categoryId, sourceName, sourceUrl);
         return "redirect:/admin/posts";
     }
 
