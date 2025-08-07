@@ -41,7 +41,11 @@
                                     <input type="text" th:field="*{title}" id="title" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" required>
                                 </div>
 
-
+                                <!-- Campo de orden -->
+                                <div class="sm:col-span-3">
+                                    <label for="displayOrder" class="block text-base font-semibold text-gray-900 mb-2">Orden de visualización</label>
+                                    <input type="number" min="1" max="100" th:field="*{displayOrder}" id="displayOrder" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" required placeholder="Ej: 1 para primero">
+                                </div>
 
                                 <div class="sm:col-span-6">
                                     <label for="description" class="block text-base font-semibold text-gray-900 mb-2">Descripción</label>

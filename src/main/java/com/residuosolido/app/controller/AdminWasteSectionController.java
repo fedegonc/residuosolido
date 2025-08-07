@@ -133,4 +133,6 @@ public class AdminWasteSectionController {
         }
         return "redirect:/admin/waste-sections";
     }
+    
+
 }
