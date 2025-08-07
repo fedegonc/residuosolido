@@ -107,4 +107,5 @@ public class WasteSectionService {
         // Eliminar la sección
         wasteSectionRepository.delete(section);
     }
+    
 }
