@@ -63,9 +63,7 @@ public class AdminWasteSectionController {
                                    RedirectAttributes redirectAttributes) {
         try {
             // Asignar valores por defecto para campos requeridos
-            if (wasteSection.getIcon() == null || wasteSection.getIcon().trim().isEmpty()) {
-                wasteSection.setIcon("fas fa-recycle"); // Icono por defecto
-            }
+            
             if (wasteSection.getActionText() == null || wasteSection.getActionText().trim().isEmpty()) {
                 wasteSection.setActionText("Ver más"); // Texto de acción por defecto
             }

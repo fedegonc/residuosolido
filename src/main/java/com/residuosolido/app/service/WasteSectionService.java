@@ -76,7 +76,7 @@ public class WasteSectionService {
         // Actualizar propiedades
         existingSection.setTitle(wasteSection.getTitle());
         existingSection.setDescription(wasteSection.getDescription());
-        existingSection.setIcon(wasteSection.getIcon());
+        
         existingSection.setActionText(wasteSection.getActionText());
         existingSection.setDisplayOrder(wasteSection.getDisplayOrder());
         existingSection.setActive(wasteSection.getActive());
