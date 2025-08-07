@@ -28,12 +28,7 @@ public class AdminWasteSectionController {
     
     @GetMapping
     public String showWasteSections(Model model) {
-        System.out.println("=== LISTANDO WASTE SECTIONS ===");
         List<WasteSection> sections = wasteSectionService.getAllOrderedByDisplayOrder();
-        System.out.println("Secciones encontradas: " + sections.size());
-        for (WasteSection section : sections) {
-            System.out.println("- ID: " + section.getId() + ", Title: " + section.getTitle() + ", Active: " + section.getActive());
-        }
         model.addAttribute("wasteSections", sections);
         return "admin/waste-sections";
     }

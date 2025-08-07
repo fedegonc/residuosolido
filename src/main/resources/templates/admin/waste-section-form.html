@@ -41,25 +41,14 @@
                                     <input type="text" th:field="*{title}" id="title" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" required>
                                 </div>
 
-                                <div class="sm:col-span-3">
-                                    <label for="icon" class="block text-base font-semibold text-gray-900 mb-2">Icono</label>
-                                    <input type="text" th:field="*{icon}" id="icon" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" placeholder="🌱">
-                                </div>
+
 
                                 <div class="sm:col-span-6">
                                     <label for="description" class="block text-base font-semibold text-gray-900 mb-2">Descripción</label>
                                     <textarea th:field="*{description}" id="description" rows="4" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors resize-vertical"></textarea>
                                 </div>
 
-                                <div class="sm:col-span-2">
-                                    <label for="displayOrder" class="block text-base font-semibold text-gray-900 mb-2">Orden de visualización</label>
-                                    <input type="number" th:field="*{displayOrder}" id="displayOrder" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" min="1" value="1">
-                                </div>
 
-                                <div class="sm:col-span-2">
-                                    <label for="actionText" class="block text-base font-semibold text-gray-900 mb-2">Texto de acción</label>
-                                    <input type="text" th:field="*{actionText}" id="actionText" class="mt-1 block w-full px-4 py-3 text-base text-gray-900 bg-white border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:border-gray-400 transition-colors" placeholder="Ver puntos cercanos">
-                                </div>
 
                                 <div class="sm:col-span-6">
                                     <label class="block text-sm font-medium text-gray-700 mb-3">Categorías Asociadas</label>
@@ -82,17 +71,7 @@
                                     <p class="mt-2 text-xs text-gray-500">Selecciona las categorías que pertenecen a esta sección.</p>
                                 </div>
 
-                                <div class="sm:col-span-6">
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input type="checkbox" th:field="*{active}" id="active" class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
-                                        </div>
-                                        <div class="ml-3 text-sm">
-                                            <label for="active" class="font-medium text-gray-700">Activo</label>
-                                            <p class="text-gray-500">Las secciones inactivas no se mostrarán en el sitio público.</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <input type="hidden" th:field="*{active}" id="active" value="true">
                             </div>
                         </div>
 
