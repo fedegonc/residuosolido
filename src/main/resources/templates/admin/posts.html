@@ -74,13 +74,21 @@
                 <div class="bg-white rounded-lg shadow">
                     <div class="p-6">
                         <h2 class="text-xl font-semibold mb-4">Crear Nuevo Post</h2>
-                        <form th:action="@{/admin/posts}" method="post" class="space-y-4">
+                        <form th:action="@{/admin/posts}" method="post" enctype="multipart/form-data" class="space-y-4">
                             <input type="text" name="title" placeholder="Título" required 
                                    class="w-full px-3 py-2 border rounded-lg">
                             <textarea name="content" placeholder="Contenido" required 
                                       class="w-full px-3 py-2 border rounded-lg h-24"></textarea>
-                            <input type="url" name="imageUrl" placeholder="URL de imagen" 
-                                   class="w-full px-3 py-2 border rounded-lg">
+                            
+                            <!-- Subida de imagen -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">Imagen del Post</label>
+                                <input type="file" name="imageFile" accept="image/*" 
+                                       class="w-full px-3 py-2 border rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                                <p class="text-xs text-gray-500">O ingresa una URL de imagen:</p>
+                                <input type="url" name="imageUrl" placeholder="URL de imagen" 
+                                       class="w-full px-3 py-2 border rounded-lg">
+                            </div>
                             <select name="categoryId" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="">Seleccionar categoría</option>
                                 <option th:each="cat : ${categories}" 

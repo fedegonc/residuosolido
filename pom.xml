@@ -55,6 +55,13 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- Cloudinary para subida de imágenes -->
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http44</artifactId>
+      <version>1.34.0</version>
+    </dependency>
+
    
 
     <!-- Thymeleaf -->

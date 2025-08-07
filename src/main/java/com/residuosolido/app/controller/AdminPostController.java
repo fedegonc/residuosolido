@@ -4,6 +4,7 @@ import com.residuosolido.app.model.Post;
 import com.residuosolido.app.service.CategoryService;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.ConfigService;
+import com.residuosolido.app.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -21,12 +22,14 @@ public class AdminPostController {
     private final PostService postService;
     private final CategoryService categoryService;
     private final ConfigService configService;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public AdminPostController(PostService postService, CategoryService categoryService, ConfigService configService) {
+    public AdminPostController(PostService postService, CategoryService categoryService, ConfigService configService, CloudinaryService cloudinaryService) {
         this.postService = postService;
         this.categoryService = categoryService;
         this.configService = configService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @GetMapping
@@ -38,8 +41,22 @@ public class AdminPostController {
 
     @PostMapping
     public String createPost(@RequestParam String title, @RequestParam String content,
-                              @RequestParam String imageUrl, @RequestParam Long categoryId) {
-        postService.createPost(title, content, imageUrl, categoryId);
+                              @RequestParam(required = false) String imageUrl, 
+                              @RequestParam(required = false) MultipartFile imageFile,
+                              @RequestParam Long categoryId) {
+        String finalImageUrl = imageUrl;
+        
+        // Si se subió un archivo, usar Cloudinary
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                finalImageUrl = cloudinaryService.uploadFile(imageFile);
+            } catch (Exception e) {
+                // Si falla Cloudinary, usar URL manual si está disponible
+                System.err.println("Error subiendo a Cloudinary: " + e.getMessage());
+            }
+        }
+        
+        postService.createPost(title, content, finalImageUrl, categoryId);
         return "redirect:/admin/posts";
     }
 
