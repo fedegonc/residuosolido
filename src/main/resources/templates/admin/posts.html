@@ -25,6 +25,7 @@
                             <thead>
                                 <tr class="bg-gray-50">
                                     <th class="px-4 py-2 text-left">ID</th>
+                                    <th class="px-4 py-2 text-left">Imagen</th>
                                     <th class="px-4 py-2 text-left">Título</th>
                                     <th class="px-4 py-2 text-left">Categoría</th>
                                     <th class="px-4 py-2 text-left">Contenido</th>
@@ -34,6 +35,18 @@
                             <tbody>
                                 <tr th:each="post : ${posts}" class="border-b">
                                     <td class="px-4 py-2" th:text="${post.id}">1</td>
+                                    <td class="px-4 py-2">
+                                        <div th:if="${post.imageUrl != null and !#strings.isEmpty(post.imageUrl)}">
+                                            <img th:src="${post.imageUrl}" alt="Imagen del post" 
+                                                 class="w-16 h-16 object-cover rounded-lg shadow-sm">
+                                        </div>
+                                        <div th:unless="${post.imageUrl != null and !#strings.isEmpty(post.imageUrl)}" 
+                                             class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-2" th:text="${post.title}">Título</td>
                                     <td class="px-4 py-2">
                                         <span th:each="cat : ${categories}" 
