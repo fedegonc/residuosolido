@@ -26,11 +26,11 @@ public class PostService {
     private CloudinaryService cloudinaryService;
 
     public List<Post> getAllPosts() {
-        return postRepository.findAll();
+        return postRepository.findAllOrderedByIdAsc();
     }
     
     public List<Post> getAllPostsWithCategories() {
-        List<Post> posts = postRepository.findAllOrderedByIdDesc();
+        List<Post> posts = postRepository.findAllOrderedByIdAsc();
         
         // Cargar todas las categorías de una vez
         List<Category> allCategories = categoryService.getAllCategories();
@@ -48,7 +48,17 @@ public class PostService {
     }
 
     public List<Post> getFirst5Posts() {
-        return postRepository.findTop5ByOrderByIdDesc();
+        List<Post> posts = postRepository.findTop5ByOrderByIdAsc();
+        // Enriquecer con nombres de categoría para UI
+        List<Category> allCategories = categoryService.getAllCategories();
+        Map<Long, String> categoryMap = allCategories.stream()
+            .collect(Collectors.toMap(Category::getId, Category::getName));
+        posts.forEach(post -> {
+            if (post.getCategoryId() != null) {
+                post.setCategoryName(categoryMap.get(post.getCategoryId()));
+            }
+        });
+        return posts;
     }
 
     public boolean hasMoreThan5Posts() {
@@ -56,7 +66,7 @@ public class PostService {
     }
 
     public List<Post> getPostsByCategoryId(Long categoryId) {
-        return postRepository.findByCategoryId(categoryId);
+        return postRepository.findByCategoryIdOrderByIdAsc(categoryId);
     }
 
     public List<Post> getRelatedPostsById(Long postId, Long categoryId, int limit) {
