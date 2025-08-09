@@ -3,8 +3,8 @@
 <head th:replace="~{fragments/admin-layout :: head('Editar Post')}"></head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <!-- Encabezado mejorado -->
-        <div class="bg-gradient-to-r from-teal-50 to-green-50 py-12">
+        <!-- Encabezado (hereda fondo del admin-layout) -->
+        <div class="py-12">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center space-x-4">
                     <div class="bg-teal-100 p-3 rounded-full">
@@ -29,7 +29,7 @@
                     <form th:action="@{/admin/posts/{id}/update(id=${post.id})}" method="post" enctype="multipart/form-data" class="space-y-8">
                         
                         <!-- Información básica -->
-                        <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                 <svg class="w-5 h-5 text-teal-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -37,21 +37,13 @@
                                 Información Básica
                             </h3>
                             
-                            <div class="grid grid-cols-1 gap-6">
-                                <div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="md:col-span-1">
                                     <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">Título del Post</label>
                                     <input type="text" name="title" id="title" th:value="${post.title}" required 
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors">
                                 </div>
-                                
-                                <div>
-                                    <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">Contenido</label>
-                                    <textarea name="content" id="content" required rows="6"
-                                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-vertical" 
-                                              th:text="${post.content}"></textarea>
-                                </div>
-                                
-                                <div>
+                                <div class="md:col-span-1">
                                     <label for="categoryId" class="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
                                     <select name="categoryId" id="categoryId" required 
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors">
@@ -62,11 +54,21 @@
                                                 th:selected="${cat.id == post.categoryId}">Categoría</option>
                                     </select>
                                 </div>
+
+                                <div class="md:col-span-2">
+                                    <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">Contenido</label>
+                                    <textarea name="content" id="content" required rows="6"
+                                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-vertical" 
+                                              th:text="${post.content}"></textarea>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Secciones responsivas: Imagen (2/3) + Fuente (1/3) en desktop -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
                         <!-- Gestión de imagen -->
-                        <div class="bg-blue-50 p-6 rounded-lg">
+                        <div class="bg-white p-6 rounded-lg h-full md:col-span-2 border border-gray-200 shadow-sm">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                 <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -127,6 +129,41 @@
                             </div>
                         </div>
                         
+                        <!-- Fuente del Post -->
+                        <div class="mt-0 bg-white p-6 rounded-lg border border-gray-200 h-full md:col-span-1 shadow-sm">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Fuente del Post
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="sourceName" class="block text-sm font-semibold text-gray-700 mb-2">Nombre de la fuente</label>
+                                    <input type="text" name="sourceName" id="sourceName" th:value="${post.sourceName}"
+                                           placeholder="Ej: Ministerio de Ambiente"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
+                                    <p class="mt-1 text-xs text-gray-500">Texto visible. Si queda vacío, se mostrará la URL.</p>
+                                </div>
+                                <div>
+                                    <label for="sourceUrl" class="block text-sm font-semibold text-gray-700 mb-2">URL de la fuente</label>
+                                    <div class="flex">
+                                        <input type="url" name="sourceUrl" id="sourceUrl" th:value="${post.sourceUrl}"
+                                               placeholder="https://sitio-oficial.gob.uy/articulo"
+                                               pattern="https?://.*"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Debe comenzar con http:// o https://</p>
+                                </div>
+                                <div class="border-t pt-4 text-sm">
+                                    <span class="text-gray-500">Se verá como:</span>
+                                    <div class="mt-1">
+                                        <a id="sourcePreview" href="#" target="_blank" class="text-green-700 hover:underline break-all">Sin fuente</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Botones de acción mejorados -->
                         <div class="flex justify-between items-center pt-8 border-t border-gray-200">
                             <a th:href="@{/admin/posts}" 
@@ -265,6 +302,26 @@
             submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Guardando...';
             submitBtn.disabled = true;
         });
+
+        // Preview dinámico de fuente
+        (function() {
+            const nameInput = document.getElementById('sourceName');
+            const urlInput = document.getElementById('sourceUrl');
+            const preview = document.getElementById('sourcePreview');
+            function updatePreview() {
+                const name = (nameInput?.value || '').trim();
+                const url = (urlInput?.value || '').trim();
+                const label = name || (url ? url : 'Sin fuente');
+                preview.textContent = label;
+                preview.href = url || '#';
+                preview.classList.toggle('pointer-events-none', !url);
+            }
+            if (nameInput && urlInput && preview) {
+                nameInput.addEventListener('input', updatePreview);
+                urlInput.addEventListener('input', updatePreview);
+                updatePreview();
+            }
+        })();
     </script>
 </body>
 </html>

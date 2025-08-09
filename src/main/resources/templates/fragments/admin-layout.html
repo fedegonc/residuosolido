@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body th:fragment="layout(content)" class="bg-gray-50 min-h-screen flex flex-col">
+<body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Top Bar Simple -->
     <div class="bg-white border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,19 +129,26 @@
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="flex-1">
-        <div th:replace="${content}"></div>
+    <!-- Contenido principal (mismo container que layout público) -->
+    <main class="flex-grow container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <th:block th:replace="${content}"></th:block>
     </main>
 
-    <!-- Footer Admin Dedicado -->
+    <!-- Footer (igual al público) -->
     <footer class="bg-gray-800 text-white mt-auto">
-    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-        <div class="text-center text-sm text-gray-400">
-            Residuos Sólidos - Rivera Sant'Ana | Panel Admin | <span sec:authentication="name">Admin</span> | © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span>
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-sm text-gray-300">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Sistema de Gestión de Residuos Sólidos. Todos los derechos reservados.</p>
+                </div>
+                <div class="flex space-x-4" sec:authorize="isAuthenticated()">
+                    <a href="/feedback" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        💬 Enviar Feedback
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
     <!-- Scripts -->
     <script>

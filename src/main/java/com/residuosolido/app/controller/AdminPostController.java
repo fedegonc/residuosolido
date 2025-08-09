@@ -68,9 +68,11 @@ public class AdminPostController {
                              @RequestParam String content,
                              @RequestParam(required = false) String imageUrl,
                              @RequestParam(required = false) MultipartFile imageFile,
-                             @RequestParam Long categoryId) {
+                             @RequestParam Long categoryId,
+                             @RequestParam(required = false) String sourceName,
+                             @RequestParam(required = false) String sourceUrl) {
         // Usar el servicio para manejar la lógica de negocio
-        postService.updatePostWithImage(id, title, content, imageUrl, imageFile, categoryId);
+        postService.updatePostWithImage(id, title, content, imageUrl, imageFile, categoryId, sourceUrl, sourceName);
         return "redirect:/admin/posts";
     }
 

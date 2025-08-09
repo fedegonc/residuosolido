@@ -97,21 +97,25 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public void updatePost(Long id, String title, String content, String imageUrl, Long categoryId) {
+    public void updatePost(Long id, String title, String content, String imageUrl, Long categoryId,
+                           String sourceUrl, String sourceName) {
         postRepository.findById(id).ifPresent(post -> {
             post.setTitle(title);
             post.setContent(content);
             post.setImageUrl(imageUrl);
             post.setCategoryId(categoryId);
+            post.setSourceUrl(sourceUrl);
+            post.setSourceName(sourceName);
             postRepository.save(post);
         });
     }
     
     // Método con lógica de subida de imagen para actualización
     public void updatePostWithImage(Long id, String title, String content, String imageUrl, 
-                                   MultipartFile imageFile, Long categoryId) {
+                                   MultipartFile imageFile, Long categoryId,
+                                   String sourceUrl, String sourceName) {
         String finalImageUrl = processImageUpload(imageUrl, imageFile);
-        updatePost(id, title, content, finalImageUrl, categoryId);
+        updatePost(id, title, content, finalImageUrl, categoryId, sourceUrl, sourceName);
     }
     
     // Método para procesar la subida de imágenes

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Fragmento: Bloque CTA simple -->
+<div th:fragment="ctaBlock"
+     class="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900">¿Te interesa participar?</h3>
+      <p class="text-gray-600 mt-1">Entra al aplicativo para interactuar o conoce más sobre el proyecto.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a th:href="@{/auth/login}"
+         class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+        Entrar al aplicativo
+      </a>
+      <a th:href="@{/about}"
+         class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+        Saber más
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
