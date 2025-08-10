@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <!-- Fragmento: Lista de Organizaciones -->
-    <div th:fragment="organizationsList" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+<!-- Fragmento: Lista de Organizaciones -->
+<div th:fragment="organizationsList" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
@@ -32,15 +26,15 @@
                     </div>
                     
                     <!-- Mapa -->
-                    <div th:if="${org.latitud != null and org.longitud != null}" 
-                         th:id="'orgMap-' + ${org.id}" 
-                         class="w-full rounded-lg border border-gray-300" 
+                    <div th:if="${(org.latitude != null or org.latitud != null) and (org.longitude != null or org.longitud != null)}"
+                         th:id="'orgMap-' + ${org.id}"
+                         class="w-full rounded-lg border border-gray-300"
                          style="height:200px; min-height:200px;"
-                         th:data-lat="${org.latitud}"
-                         th:data-lng="${org.longitud}"
+                         th:data-lat="${org.latitude != null ? org.latitude : org.latitud}"
+                         th:data-lng="${org.longitude != null ? org.longitude : org.longitud}"
                          th:data-name="${org.firstName + ' ' + org.lastName}">
                     </div>
-                    <div th:if="${org.latitud == null or org.longitud == null}" class="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div th:if="${(org.latitude == null and org.latitud == null) or (org.longitude == null and org.longitud == null)}" class="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
                         <p class="text-sm text-gray-500">Ubicación no disponible</p>
                     </div>
                 </div>
@@ -54,11 +48,40 @@
                 <p class="text-sm mb-2">No hay organizaciones</p>
                 <p class="text-xs">Registradas aún</p>
             </div>
-            
-            <a href="/organizaciones" class="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-4 py-3 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors">
-                Ver todas las organizaciones
-            </a>
         </div>
+        <!-- Assets y script para mapas (auto-contenido del fragmento) -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+        (function(){
+            function initOrgMaps(){
+                var nodes = document.querySelectorAll('[id^="orgMap-"]');
+                nodes.forEach(function(node){
+                    var latAttr = node.getAttribute('data-lat');
+                    var lngAttr = node.getAttribute('data-lng');
+                    var lat = parseFloat(latAttr);
+                    var lng = parseFloat(lngAttr);
+                    var name = node.getAttribute('data-name') || 'Organización';
+                    if (isNaN(lat) || isNaN(lng)) {
+                        return;
+                    }
+                    var map = L.map(node, { zoomControl: false, attributionControl: false }).setView([lat, lng], 12);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+                    L.marker([lat, lng]).addTo(map).bindPopup(name);
+                    // Arreglar tamaño si el contenedor estaba oculto
+                    setTimeout(function(){ 
+                        map.invalidateSize(); 
+                    }, 100);
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function(){
+                    initOrgMaps();
+                });
+            } else {
+                initOrgMaps();
+            }
+        })();
+        </script>
     </div>
-</body>
-</html>
+<!-- Fin fragmento -->
