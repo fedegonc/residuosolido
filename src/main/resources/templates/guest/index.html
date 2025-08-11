@@ -1,43 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/index-layout :: head('Inicio')}"></head>
-<body th:replace="~{fragments/index-layout :: layout(~{::main})}">
-    <main>
-        <!-- Hero Section Modular -->
-        <div th:insert="~{fragments/index-hero :: hero}"></div>
+<head th:replace="~{fragments/master-layout :: head('Inicio - Residuos Sólidos - Frontera de la Paz')}"></head>
+<body class="bg-white min-h-screen flex flex-col font-sans">
+    <!-- Guest Dropdown Component (botón y panel) -->
+    <div class="fixed top-4 right-2 z-50">
+        <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
+    </div>
+    <main class="flex-grow">
+      <div th:replace="~{fragments/index-hero :: hero}"></div>
 
-        <!-- Layout Principal Mejorado -->
-        <div class="min-h-screen" style="background-color: #fff;">
-            <!-- Grid Principal Mejorado -->
-            <div id="contenido" class="container mx-auto px-8 pt-32 pb-12">
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-                    
-                    <!-- Sidebar/Secciones Modular -->
-                    <aside class="lg:col-span-1">
-                        <div th:replace="~{fragments/sections-sidebar :: sidebar}"></div>
-                    </aside>
+        <!-- Contenido simple: una sola columna -->
+        <div class="min-h-screen bg-white">
+            <div id="contenido" class="max-w-5xl mx-auto px-6 sm:px-8 pt-20 pb-16 space-y-12">
+                <!-- Posts principales -->
+                <section>
+                    <div th:replace="~{fragments/posts :: mainPosts}"></div>
+                </section>
 
-                    <!-- Columna 2-3: Contenido Principal -->
-                    <main class="lg:col-span-2">
-
-                        <!-- Posts Principales -->
-                        <div th:replace="~{fragments/posts :: mainPosts}"></div>
-                    </main>
-                    
-                    <!-- Columna 4: Información Lateral -->
-                    <aside class="lg:col-span-1">
-                        <div class="sticky top-6 space-y-6">
-                            <!-- Organizaciones -->
-                            <div th:replace="~{fragments/organizations :: organizationsList}"></div>
-
-
-                        </div>
-                    </aside>
-                    
-                </div>
+                <!-- Organizaciones -->
+                <section>
+                    <div th:replace="~{fragments/organizations :: organizationsList}"></div>
+                </section>
             </div>
         </div>
-   
-
+    </main>
+    <!-- JS del componente guest-dropdown -->
+    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
 </body>
 </html>

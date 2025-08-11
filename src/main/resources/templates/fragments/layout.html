@@ -1,53 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head(title)">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="(${title} ?: 'Inicio') + ' - Sistema de Gestión de Residuos Sólidos'">Inicio - Sistema de Gestión de Residuos Sólidos</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            light: '#48bb78',
-                            DEFAULT: '#38a169',
-                            dark: '#2f855a'
-                        },
-                        secondary: {
-                            light: '#4299e1',
-                            DEFAULT: '#3182ce',
-                            dark: '#2b6cb0'
-                        },
-                        danger: {
-                            light: '#f56565',
-                            DEFAULT: '#e53e3e',
-                            dark: '#c53030'
-                        },
-                        success: {
-                            light: '#68d391',
-                            DEFAULT: '#48bb78', 
-                            dark: '#38a169'
-                        }
-                    }
-                }
-            }
-        };
-    </script>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    
-    <!-- Estilos adicionales específicos de la página -->
-    <th:block th:fragment="css">
-        <!-- CSS específicos serán insertados aquí -->
-    </th:block>
-</head>
+<head th:fragment="head(title)" th:replace="~{fragments/master-layout :: head(${title})}"></head>
+
+<!-- Slot CSS: estilos del guest-dropdown disponibles en páginas públicas -->
+<th:block th:fragment="css">
+    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-css}"></th:block>
+  </th:block>
 
 <body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Guest Dropdown (atajo para volver a secciones/inicio) -->
+    <div class="fixed top-4 right-2 z-50">
+        <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
+    </div>
     <!-- Barra de navegación -->
     <nav th:fragment="navbar" class="bg-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -196,6 +160,12 @@
         }
     </script>
     
+    <!-- Login/Register Modal global -->
+    <div th:replace="~{fragments/login-modal :: modal}"></div>
+
+    <!-- JavaScript del componente guest-dropdown -->
+    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
+
     <!-- Footer compartido -->
     <div th:replace="~{fragments/footer :: site-footer}"></div>
     

@@ -1,31 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head(title)">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="(${title} ?: 'Panel Admin') + ' - Sistema de Gestión de Residuos Sólidos'">Panel Admin - Sistema de Gestión de Residuos Sólidos</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        admin: {
-                            light: '#3b82f6',
-                            DEFAULT: '#1e40af',
-                            dark: '#1e3a8a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<head th:fragment="head(title)" th:replace="~{fragments/master-layout :: head(${title})}"></head>
 
 <body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Top Bar Simple -->
@@ -134,6 +109,9 @@
         <th:block th:replace="${content}"></th:block>
     </main>
     
+    <!-- Login/Register Modal global -->
+    <div th:replace="~{fragments/login-modal :: modal}"></div>
+
     <!-- Footer compartido -->
     <div th:replace="~{fragments/footer :: site-footer}"></div>
 

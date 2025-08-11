@@ -1,0 +1,86 @@
+<!-- Login/Register Modal Fragment -->
+<div th:fragment="modal">
+  <!-- Backdrop -->
+  <div id="loginModalBackdrop" class="fixed inset-0 bg-black/40 z-50 hidden"></div>
+
+  <!-- Modal -->
+  <div id="loginModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-lg bg-white shadow-lg border border-gray-200">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Inicia sesión para continuar</h3>
+          <button type="button" class="p-2 text-gray-500 hover:text-gray-700" onclick="closeLoginModal()" aria-label="Cerrar">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Body -->
+        <div class="px-4 py-5 space-y-3 text-sm text-gray-700">
+          <p>Para realizar esta acción necesitas estar autenticado.</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Inicia sesión si ya tienes cuenta.</li>
+            <li>O crea una cuenta nueva en unos segundos.</li>
+          </ul>
+        </div>
+        
+        <!-- Footer -->
+        <div class="px-4 py-4 border-t border-gray-200 flex items-center justify-end gap-3">
+          <button type="button" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50" onclick="closeLoginModal()">Cancelar</button>
+          <a href="/auth/register" class="px-4 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-900">Crear cuenta</a>
+          <a href="/auth/login" class="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700">Iniciar sesión</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    // Determinar si el usuario está autenticado (expuesto por el layout)
+    if (typeof window.isAuthenticated === 'undefined') {
+      /*[[
+        window.isAuthenticated = ${#authorization.expression('isAuthenticated()')};
+      ]]*/
+      // Fallback si no se procesó Thymeleaf
+      window.isAuthenticated = window.isAuthenticated || false;
+    }
+
+    window.openLoginModal = function() {
+      const m = document.getElementById('loginModal');
+      const b = document.getElementById('loginModalBackdrop');
+      if (m && b) { m.classList.remove('hidden'); b.classList.remove('hidden'); }
+    }
+    window.closeLoginModal = function() {
+      const m = document.getElementById('loginModal');
+      const b = document.getElementById('loginModalBackdrop');
+      if (m && b) { m.classList.add('hidden'); b.classList.add('hidden'); }
+    }
+
+    // Cerrar con ESC o click en fondo
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLoginModal(); });
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('loginModal');
+      const backdrop = document.getElementById('loginModalBackdrop');
+      if (!modal || !backdrop) return;
+      if (!modal.classList.contains('hidden')) {
+        // si clickea fuera del contenido, cerrar
+        const panel = modal.querySelector('.bg-white');
+        if (panel && !panel.contains(e.target) && !e.target.closest('[data-requires-auth]')) {
+          closeLoginModal();
+        }
+      }
+    });
+
+    // Interceptar clicks en elementos que requieren auth
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-requires-auth="true"]');
+      if (!trigger) return;
+      if (!window.isAuthenticated) {
+        e.preventDefault();
+        e.stopPropagation();
+        openLoginModal();
+      }
+    });
+  </script>
+</div>

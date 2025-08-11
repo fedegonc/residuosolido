@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="(${title} ?: 'Residuos Sólidos - Frontera de la Paz')">Residuos Sólidos - Frontera de la Paz</title>
+
+    <!-- Tailwind config (must be BEFORE CDN) -->
+    <script>
+        tailwind = typeof tailwind !== 'undefined' ? tailwind : {};
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    sans: ['Nunito', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'Apple Color Emoji', 'Segoe UI Emoji']
+                },
+                extend: {
+                    colors: {
+                        primary: { light: '#48bb78', DEFAULT: '#38a169', dark: '#2f855a' },
+                        secondary: { light: '#4299e1', DEFAULT: '#3182ce', dark: '#2b6cb0' },
+                        danger: { light: '#f56565', DEFAULT: '#e53e3e', dark: '#c53030' },
+                        success: { light: '#68d391', DEFAULT: '#48bb78', dark: '#38a169' },
+                        admin: { light: '#3b82f6', DEFAULT: '#1e40af', dark: '#1e3a8a' }
+                    }
+                }
+            }
+        };
+    </script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Nunito font (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+
+    <!-- Set Nunito as the default font site-wide -->
+    <style>
+      html, body { font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji" !important; }
+      h1, h2, h3, h4, h5, h6 { font-family: inherit !important; }
+      /* Optional smoothing for nicer rendering */
+      html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    </style>
+
+    
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Font Awesome (global) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Slot CSS removido para simplificar y evitar errores de resolución de fragmentos -->
+</head>
+</html>

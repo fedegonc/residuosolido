@@ -7,7 +7,7 @@
     <!-- Barra desplegable para usuarios guest -->
     <div class="relative inline-block text-left">
         <!-- Botón principal de la barra desplegable -->
-        <button id="guest-dropdown-button" 
+        <button id="guest-dropdown-button" type="button" aria-haspopup="true" aria-expanded="false"
                 class="inline-flex justify-center items-center w-full px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
             <span>Menú</span>
             <svg id="guest-dropdown-arrow" class="w-5 h-5 ml-2 -mr-1 transition-transform duration-200" 
@@ -136,12 +136,13 @@
 <script th:fragment="guest-dropdown-js">
     // Variables globales para el dropdown
     let guestDropdownOpen = false;
-
+  
     // Función para abrir el dropdown
     function openGuestDropdown() {
         const panel = document.getElementById('guest-dropdown-panel');
         const overlay = document.getElementById('guest-dropdown-overlay');
         const arrow = document.getElementById('guest-dropdown-arrow');
+        const button = document.getElementById('guest-dropdown-button');
         
         if (panel && overlay && arrow) {
             panel.classList.remove('hidden', 'opacity-0', 'scale-95');
@@ -149,14 +150,18 @@
             overlay.classList.remove('hidden');
             arrow.classList.add('rotate-180');
             guestDropdownOpen = true;
+            if (button) { button.setAttribute('aria-expanded', 'true'); }
+        } else {
+            // missing elements; no-op
         }
     }
-
+  
     // Función para cerrar el dropdown
     function closeGuestDropdown() {
         const panel = document.getElementById('guest-dropdown-panel');
         const overlay = document.getElementById('guest-dropdown-overlay');
         const arrow = document.getElementById('guest-dropdown-arrow');
+        const button = document.getElementById('guest-dropdown-button');
         
         if (panel && overlay && arrow) {
             panel.classList.remove('opacity-100', 'scale-100');
@@ -169,9 +174,12 @@
             overlay.classList.add('hidden');
             arrow.classList.remove('rotate-180');
             guestDropdownOpen = false;
+            if (button) { button.setAttribute('aria-expanded', 'false'); }
+        } else {
+            // missing elements; no-op
         }
     }
-
+  
     // Función para alternar el dropdown
     function toggleGuestDropdown() {
         if (guestDropdownOpen) {
@@ -180,7 +188,11 @@
             openGuestDropdown();
         }
     }
-
+    // Exponer funciones para pruebas manuales en consola
+    window.openGuestDropdown = openGuestDropdown;
+    window.closeGuestDropdown = closeGuestDropdown;
+    window.toggleGuestDropdown = toggleGuestDropdown;
+  
     // Función para hacer scroll a una sección específica
     function scrollToSection(sectionId) {
         const element = document.getElementById('content-' + sectionId);
@@ -192,7 +204,7 @@
             closeGuestDropdown();
         }
     }
-
+  
     // Inicialización del componente
     document.addEventListener('DOMContentLoaded', function() {
         const dropdownButton = document.getElementById('guest-dropdown-button');
@@ -205,22 +217,23 @@
                 toggleGuestDropdown();
             });
         }
-
+  
         // Cerrar dropdown con tecla Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && guestDropdownOpen) {
                 closeGuestDropdown();
             }
         });
-
+  
         // Prevenir que el dropdown se cierre al hacer click dentro del panel
         const panel = document.getElementById('guest-dropdown-panel');
         if (panel) {
             panel.addEventListener('click', function(e) {
+                // Clic dentro del panel
                 e.stopPropagation();
             });
         }
-
+  
         // Cerrar dropdown al hacer click fuera
         document.addEventListener('click', function(e) {
             const dropdown = e.target.closest('#guest-dropdown-button, #guest-dropdown-panel');

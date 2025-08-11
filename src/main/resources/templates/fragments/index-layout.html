@@ -1,74 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head(title)">
-    <!-- Google Fonts: Nunito -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="(${title} ?: 'Inicio') + ' - Residuos Sólidos - Frontera de la Paz'">Inicio - Residuos Sólidos - Frontera de la Paz</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-<style>
-  html, body, .font-sans {
-    font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
-  }
-</style>
-    <script>
-        tailwind.config = {
-    theme: {
-      fontFamily: {
-        'sans': ['Nunito', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif']
-      },
-    },
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            light: '#48bb78',
-                            DEFAULT: '#38a169',
-                            dark: '#2f855a'
-                        },
-                        secondary: {
-                            light: '#4299e1',
-                            DEFAULT: '#3182ce',
-                            dark: '#2b6cb0'
-                        },
-                        danger: {
-                            light: '#f56565',
-                            DEFAULT: '#e53e3e',
-                            dark: '#c53030'
-                        },
-                        success: {
-                            light: '#68d391',
-                            DEFAULT: '#48bb78', 
-                            dark: '#38a169'
-                        }
-                    }
-                }
-            }
-        };
-    </script>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    
-    <!-- Estilos adicionales específicos de la página -->
-    <th:block th:fragment="css">
-        <!-- CSS específicos serán insertados aquí -->
-    </th:block>
-    
-    <!-- CSS del componente guest-dropdown -->
-    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-css}"></th:block>
-</head>
-
-<body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
+<head th:fragment="head(title)" th:replace="~{fragments/master-layout :: head(${title})}"></head>
+ 
+  
+  <body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Guest Dropdown Component -->
     <div class="fixed top-4 right-2 z-50">
         <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
     </div>
 
-    
     <!-- Contenido principal -->
     <main class="flex-grow">
         <th:block th:replace="${content}"/>
@@ -76,7 +16,42 @@
 
     <!-- JavaScript del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
-    
+    <!-- Fallback por si no carga el fragmento JS: evita ReferenceError en onclick -->
+    <script>
+      (function(){
+        if (typeof window.toggleGuestDropdown !== 'function') {
+          console.warn('[guest-dropdown] fallback script active: defining toggleGuestDropdown');
+          window.toggleGuestDropdown = function(){
+            try {
+              var panel = document.getElementById('guest-dropdown-panel');
+              var overlay = document.getElementById('guest-dropdown-overlay');
+              var arrow = document.getElementById('guest-dropdown-arrow');
+              var btn = document.getElementById('guest-dropdown-button');
+              if (!panel || !overlay || !arrow) { console.warn('[guest-dropdown] fallback: missing elements'); return; }
+              var open = !panel.classList.contains('hidden');
+              if (open) {
+                panel.classList.remove('opacity-100','scale-100');
+                panel.classList.add('opacity-0','scale-95');
+                setTimeout(function(){ panel.classList.add('hidden'); }, 200);
+                overlay.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+                if (btn) btn.setAttribute('aria-expanded','false');
+              } else {
+                panel.classList.remove('hidden','opacity-0','scale-95');
+                panel.classList.add('opacity-100','scale-100');
+                overlay.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+                if (btn) btn.setAttribute('aria-expanded','true');
+              }
+            } catch(e) { console.error('[guest-dropdown] fallback error', e); }
+          };
+        }
+      })();
+    </script>
+
+    <!-- Login/Register Modal global -->
+    <div th:replace="~{fragments/login-modal :: modal}"></div>
+
     <!-- Footer compartido -->
     <div th:replace="~{fragments/footer :: site-footer}"></div>
 </body>
