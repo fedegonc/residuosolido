@@ -9,10 +9,24 @@
     <div th:fragment="content" class="bg-gray-50 min-h-screen py-4">
         <div class="max-w-6xl mx-auto px-4">
             <!-- Header compacto -->
-            <div class="text-center mb-6">
+            <div class="text-center mb-2">
                 <h1 class="text-2xl font-bold text-gray-900 mb-1" th:text="${userForm.id != null ? 'Editar Usuario' : 'Crear Nuevo Usuario'}">Formulario de Usuario</h1>
                 <p class="text-gray-600 text-sm">Complete la información del usuario</p>
             </div>
+            <!-- Breadcrumbs -->
+            <nav class="mb-6" aria-label="Breadcrumb">
+                <ol class="flex items-center justify-center text-sm text-gray-500">
+                    <li>
+                        <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                    </li>
+                    <li class="px-2">/</li>
+                    <li>
+                        <a href="/admin/users" class="hover:text-gray-700">Usuarios</a>
+                    </li>
+                    <li class="px-2">/</li>
+                    <li class="text-gray-700 font-medium" aria-current="page">Formulario</li>
+                </ol>
+            </nav>
             
             <div class="bg-white shadow-lg rounded-xl p-6">
                 

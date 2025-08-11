@@ -5,9 +5,20 @@
     <div th:fragment="content">
         <!-- Contenido principal -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="mb-6">
-                <a th:href="@{/admin/waste-sections}" class="text-gray-600 hover:text-gray-800">← Volver a Secciones</a>
-            </div>
+            <!-- Breadcrumbs -->
+            <nav class="mb-6" aria-label="Breadcrumb">
+                <ol class="flex items-center text-sm text-gray-500">
+                    <li>
+                        <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                    </li>
+                    <li class="px-2">/</li>
+                    <li>
+                        <a href="/admin/waste-sections" class="hover:text-gray-700">Secciones de Residuos</a>
+                    </li>
+                    <li class="px-2">/</li>
+                    <li class="text-gray-700 font-medium" aria-current="page">Ver Sección</li>
+                </ol>
+            </nav>
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
@@ -85,10 +96,6 @@
                 <a th:href="@{/admin/waste-sections/edit/{id}(id=${wasteSection.id})}" 
                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                     Editar
-                </a>
-                <a th:href="@{/admin/waste-sections}" 
-                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Volver
                 </a>
             </div>
         </div>

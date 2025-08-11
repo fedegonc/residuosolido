@@ -4,12 +4,22 @@
 <body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
     <div th:fragment="content">
         <div class="container mx-auto px-4 py-6">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-2">
                 <h1 class="text-2xl font-bold text-gray-800">Gestión de Materiales</h1>
                 <a th:href="@{/admin/materials/new}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
                     <i class="fas fa-plus mr-2"></i>Nuevo Material
                 </a>
             </div>
+            <!-- Breadcrumbs -->
+            <nav class="mb-6" aria-label="Breadcrumb">
+                <ol class="flex items-center text-sm text-gray-500">
+                    <li>
+                        <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                    </li>
+                    <li class="px-2">/</li>
+                    <li class="text-gray-700 font-medium" aria-current="page">Materiales</li>
+                </ol>
+            </nav>
             
             <div th:if="${success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 <span th:text="${success}"></span>

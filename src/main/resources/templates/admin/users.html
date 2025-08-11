@@ -5,6 +5,16 @@
     <div th:fragment="content">
         <div class="bg-gray-50 py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Breadcrumbs -->
+                <nav class="mb-3" aria-label="Breadcrumb">
+                    <ol class="flex items-center text-sm text-gray-500">
+                        <li>
+                            <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                        </li>
+                        <li class="px-2">/</li>
+                        <li class="text-gray-700 font-medium" aria-current="page">Usuarios</li>
+                    </ol>
+                </nav>
                 <div class="bg-white shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <div class="sm:flex sm:items-center">
@@ -197,10 +207,6 @@
                     </div>
                 </div>
                 
-                <!-- Botón de regreso -->
-                <div class="mt-6">
-                    <a href="/admin/dashboard" class="text-gray-600 hover:text-gray-800">← Volver al Dashboard</a>
-                </div>
             </div>
         </div>
     </div>
