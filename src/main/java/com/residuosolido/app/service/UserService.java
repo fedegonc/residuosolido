@@ -10,6 +10,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -95,6 +97,22 @@ public class UserService extends GenericEntityService<User, Long> {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    /**
+     * Obtiene usuarios paginados
+     * @param pageable información de paginación
+     * @return página de usuarios
+     */
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    /**
+     * Busca usuarios por texto (username, email, firstName, lastName) de forma paginada
+     */
+    public Page<User> search(String q, Pageable pageable) {
+        return userRepository.search(q, pageable);
+    }
     
     /**
      * Obtiene todos los usuarios, opcionalmente filtrados por rol
@@ -133,8 +151,6 @@ public class UserService extends GenericEntityService<User, Long> {
      * @return Usuario creado
      */
     public User createUser(User user, String password) {
-        validationService.validateUserUniqueness(user);
-        
         user.setPassword(passwordEncoder.encode(password));
         user.setActive(true);
         user.setCreatedAt(LocalDateTime.now());
@@ -152,8 +168,7 @@ public class UserService extends GenericEntityService<User, Long> {
      * @return Usuario actualizado
      */
     public User updateUser(User user, String newPassword) {
-        validationService.validateUserUniqueness(user);
-        
+        logger.info("[UserService] updateUser() called | id={}", user.getId());
         Optional<User> existingUserOpt = findById(user.getId());
         if (existingUserOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado");
@@ -162,15 +177,22 @@ public class UserService extends GenericEntityService<User, Long> {
         User existingUser = existingUserOpt.get();
         
         // Copiar propiedades preservando campos críticos
+        logger.debug("[UserService] Before copy | username={}, email={}, firstName={}, lastName={}, role={}, active={}, lang={}",
+                existingUser.getUsername(), existingUser.getEmail(), existingUser.getFirstName(), existingUser.getLastName(), existingUser.getRole(), existingUser.isActive(), existingUser.getPreferredLanguage());
         BeanUtils.copyProperties(user, existingUser, "id", "password", "createdAt", "lastAccessAt");
+        logger.debug("[UserService] After copy  | username={}, email={}, firstName={}, lastName={}, role={}, active={}, lang={}",
+                existingUser.getUsername(), existingUser.getEmail(), existingUser.getFirstName(), existingUser.getLastName(), existingUser.getRole(), existingUser.isActive(), existingUser.getPreferredLanguage());
         
         // Actualizar contraseña solo si se proporciona
         if (newPassword != null && !newPassword.trim().isEmpty()) {
             validationService.validatePassword(newPassword);
             existingUser.setPassword(passwordEncoder.encode(newPassword));
+            logger.info("[UserService] Password updated for user id={}", existingUser.getId());
         }
         
-        return save(existingUser);
+        User saved = save(existingUser);
+        logger.info("[UserService] User updated and saved | id={}", saved.getId());
+        return saved;
     }
     
     /**
@@ -184,6 +206,9 @@ public class UserService extends GenericEntityService<User, Long> {
         // Validar datos del formulario
         validationService.validateUserForm(userForm);
         
+        logger.info("[UserService] saveUser() | id={} | action={} | username={} | email={}",
+                userForm.getId(), (userForm.getId() == null ? "CREATE" : "UPDATE"), userForm.getUsername(), userForm.getEmail());
+
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         
@@ -192,9 +217,11 @@ public class UserService extends GenericEntityService<User, Long> {
         
         if (user.getId() == null) {
             // Usuario nuevo
-            return createUser(user, userForm.getNewPassword());
+            logger.info("[UserService] Branch CREATE - encoding initial password and saving user");
+            return createUser(user, userForm.getPassword());
         } else {
             // Usuario existente
+            logger.info("[UserService] Branch UPDATE - applying field changes{}", (userForm.getNewPassword()!=null && !userForm.getNewPassword().trim().isEmpty())? " with password change":"");
             return updateUser(user, userForm.getNewPassword());
         }
     }

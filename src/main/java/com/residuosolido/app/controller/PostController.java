@@ -8,6 +8,7 @@ import com.residuosolido.app.service.CategoryService;
 import com.residuosolido.app.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,20 +35,13 @@ public class PostController {
         this.cloudinaryService = cloudinaryService;
     }
     
-    // El método index se eliminó para evitar ambigüedad con AuthController
-    
     @GetMapping("/posts")
     public String listPosts(Model model) {
-        List<Post> posts = postService.getAllPosts();
-        System.out.println("DEBUG PostController: Posts obtenidos: " + (posts != null ? posts.size() : "null"));
-        if (posts != null && !posts.isEmpty()) {
-            System.out.println("DEBUG PostController: Primer post: " + posts.get(0).getTitle());
-        }
-        model.addAttribute("posts", posts);
-        model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
-        return "posts/list";
+        model.addAttribute("posts", postService.getAllPostsWithCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "guest/posts";
     }
-    
+
     @GetMapping("/posts/{id}")
     public String viewPost(@PathVariable Long id, Model model) {
         Optional<Post> postOpt = postService.getPostById(id);

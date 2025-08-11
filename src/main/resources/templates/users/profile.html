@@ -22,10 +22,14 @@
                     <div class="flex flex-col sm:flex-row sm:items-center mb-6">
                         <div class="relative w-20 h-20 sm:w-24 sm:h-24 mb-4 sm:mb-0 sm:mr-6">
                             <div class="w-full h-full bg-green-100 rounded-full flex items-center justify-center overflow-hidden">
-                                <img th:if="${user.profileImage}" th:src="${user.profileImage}" alt="Foto de perfil" class="w-full h-full object-cover">
-                                <svg th:unless="${user.profileImage}" class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
+                                <img class="w-full h-full object-cover"
+                                     th:src="${(user.profileImage != null and !#strings.isEmpty(user.profileImage))
+                                         ? user.profileImage
+                                         : 'https://ui-avatars.com/api/?name=' +
+                                           (#strings.isEmpty(user.firstName) ? user.username : user.firstName) +
+                                           '&background=10b981&color=ffffff&size=96'}"
+                                     th:alt="${!#strings.isEmpty(user.firstName) && !#strings.isEmpty(user.lastName) ? user.firstName + ' ' + user.lastName : user.username}"
+                                     th:attr="onerror=|this.onerror=null;this.src='https://ui-avatars.com/api/?name=${#strings.isEmpty(user.firstName) ? user.username : user.firstName}&background=10b981&color=ffffff&size=96'|">
                             </div>
                             <button onclick="document.getElementById('imageUpload').click()" class="absolute bottom-0 right-0 bg-green-600 hover:bg-green-700 text-white rounded-full p-1.5 shadow-lg transition-colors">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

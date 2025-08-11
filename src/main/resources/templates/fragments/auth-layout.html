@@ -38,26 +38,7 @@
         <!-- El contenido se insertará aquí -->
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-auto">
-        <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between text-xs whitespace-nowrap">
-                <!-- Izquierda: título + tagline en una línea -->
-                <div class="flex items-center space-x-2 overflow-hidden">
-                    <span class="font-semibold truncate">Residuos Sólidos - Frontera de la Paz</span>
-                    <span class="text-gray-400">•</span>
-                    <span class="text-gray-400 truncate">Construyendo un futuro más limpio y sostenible</span>
-                </div>
-
-                <!-- Derecha: enlaces + copyright -->
-                <div class="flex items-center space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Acerca de</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Contacto</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Ayuda</a>
-                    <span class="text-gray-400">© 2024 Residuos Sólidos</span>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer compartido -->
+    <div th:replace="~{fragments/footer :: site-footer}"></div>
 </body>
 </html>

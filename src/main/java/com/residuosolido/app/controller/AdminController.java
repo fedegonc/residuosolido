@@ -123,9 +123,29 @@ public class AdminController {
     }
     
     @GetMapping("/users")
-    public String listUsers(Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
+    public String listUsers(
+            Model model,
+            @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @org.springframework.web.bind.annotation.RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @org.springframework.web.bind.annotation.RequestParam(name = "q", required = false) String q) {
+        // Asegurar límites sanos
+        page = Math.max(page, 1);
+        size = Math.min(Math.max(size, 5), 50);
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page - 1,
+                size,
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
+
+        org.springframework.data.domain.Page<User> usersPage = (q != null && !q.trim().isEmpty())
+                ? userService.search(q.trim(), pageable)
+                : userService.findAll(pageable);
+
+        model.addAttribute("usersPage", usersPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", usersPage.getTotalPages());
+        model.addAttribute("size", size);
+        model.addAttribute("q", q);
         model.addAttribute("pageTitle", "Gestión de Usuarios");
         return "admin/users";
     }

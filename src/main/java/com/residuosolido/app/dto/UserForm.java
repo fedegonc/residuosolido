@@ -42,4 +42,6 @@ public class UserForm {
     private String password;
     private String newPassword;
     private String confirmPassword;
+    // Admin: forzar cambio de contraseña (hace obligatoria la nueva contraseña)
+    private boolean forcePasswordChange;
 }

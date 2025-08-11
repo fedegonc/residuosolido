@@ -68,7 +68,10 @@ public class User {
     )
     private List<Phone> phones = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    // --- Feedback relation temporarily disabled to avoid orphanRemoval issues during User updates ---
+    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<Feedback> feedbacks = new ArrayList<>();
+    @Transient
     private List<Feedback> feedbacks = new ArrayList<>();
 
     @ManyToMany

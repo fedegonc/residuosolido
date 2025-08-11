@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="~{fragments/layout :: head('Formulario de Usuario')}"></th:block>
+    <th:block th:replace="~{fragments/admin-layout :: head('Formulario de Usuario')}"></th:block>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body th:replace="~{fragments/layout :: layout(~{::content})}">
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
     <div th:fragment="content" class="bg-gray-50 min-h-screen py-4">
         <div class="max-w-6xl mx-auto px-4">
             <!-- Header compacto -->
@@ -99,6 +99,73 @@
                         </div>
                     </div>
                     
+                    <!-- Sección: Organizaciones y Ubicación / Ubicación -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4"
+                            th:text="${userForm.role} == 'ORGANIZATION' ? '🏢 Organizaciones y Ubicación' : '📍 Ubicación'">
+                            📍 Ubicación
+                        </h2>
+
+                        <!-- Organizaciones (solo para rol ORGANIZATION) -->
+                        <div class="mb-6" th:if="${userForm.role} == 'ORGANIZATION'">
+                            <h3 class="text-md font-medium text-gray-800 mb-3">Organizaciones</h3>
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-blue-600 text-sm">👤</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Renacer Del Norte</h4>
+                                        <p class="text-sm text-gray-500">coopernacer@example.com</p>
+                                    </div>
+                                    <span class="ml-auto px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">✓ Activa</span>
+                                </div>
+                                <button type="button" class="w-full text-center text-blue-600 hover:text-blue-800 text-sm py-2 border-t border-gray-100">
+                                    Ver todas las organizaciones
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Ubicación -->
+                        
+                        <!-- Dirección y Referencias -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                                <input type="text" th:field="*{direccion}" placeholder="Ej: Av. Brasil 1234, Rivera"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Referencias</label>
+                                <input type="text" th:field="*{referencias}" placeholder="Ej: Cerca del supermercado"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 mb-4">Haz clic en el mapa para seleccionar la ubicación exacta o arrastra el marcador.</p>
+
+                        <!-- Mapa -->
+                        <div id="map" class="w-full rounded-lg border border-gray-300 mb-4" style="height:384px; min-height:384px;"></div>
+
+                        <!-- Coordenadas -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Latitud</label>
+                                <input type="number" id="latitude" th:field="*{latitude}" step="any" readonly
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Longitud</label>
+                                <input type="number" id="longitude" th:field="*{longitude}" step="any" readonly
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
+                            </div>
+                        </div>
+
+                        <!-- Campos legacy ocultos -->
+                        <input type="hidden" id="lat" th:field="*{latitud}">
+                        <input type="hidden" id="lng" th:field="*{longitud}">
+                    </div>
+
                     <!-- Sección: Contraseña -->
                     <div class="border-l-4 border-orange-500 bg-gradient-to-r from-orange-50 to-white rounded-lg p-6 mb-6 shadow-sm" th:if="${userForm.id == null}">
                         <div class="flex items-center mb-6">
@@ -126,18 +193,15 @@
                         </div>
                     </div>
                     
-                    <!-- Sección: Cambiar Contraseña (solo edición) -->
+                    <!-- Sección: Cambiar Contraseña (solo edición, admin) -->
                     <div class="bg-gray-50 rounded-lg p-6 mb-6" th:if="${userForm.id != null}">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🔒 Cambiar Contraseña (Opcional)</h2>
+                        <h2 class="text-lg font-semibold text-gray-900 mb-3">🔒 Cambiar Contraseña (Admin)</h2>
+                        <p class="text-xs text-gray-500 mb-4">Ingrese una nueva contraseña para el usuario. No se requiere la contraseña actual ni confirmación.</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña</label>
-                                <input type="password" th:field="*{newPassword}"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
-                                <input type="password" th:field="*{confirmPassword}"
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña (admin)</label>
+                                <input id="newPassword" type="password" th:field="*{newPassword}"
+                                       placeholder="Escriba la nueva contraseña"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             </div>
                         </div>
@@ -158,10 +222,16 @@
                         </div>
                         
                         <!-- Imagen actual -->
-                        <div class="mb-4" th:if="${userForm.profileImage != null and !userForm.profileImage.isEmpty()}">
+                        <div class="mb-4">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Imagen Actual:</label>
-                            <img th:src="${userForm.profileImage}" alt="Imagen de perfil" 
-                                 class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg">
+                            <img class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg"
+                                 th:src="${(userForm.profileImage != null and !#strings.isEmpty(userForm.profileImage))
+                                     ? userForm.profileImage
+                                     : 'https://ui-avatars.com/api/?name=' +
+                                       (#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName) +
+                                       '&background=10b981&color=ffffff&size=96'}"
+                                 th:alt="${!#strings.isEmpty(userForm.firstName) && !#strings.isEmpty(userForm.lastName) ? userForm.firstName + ' ' + userForm.lastName : userForm.username}"
+                                 th:attr="onerror=|this.onerror=null;this.src='https://ui-avatars.com/api/?name=${#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName}&background=10b981&color=ffffff&size=96'|">
                         </div>
                         
                         <!-- Subir nueva imagen -->
@@ -176,8 +246,9 @@
                             <!-- Vista previa -->
                             <div id="profileImagePreview" class="space-y-2 hidden">
                                 <label class="block text-sm font-semibold text-gray-700">Vista Previa:</label>
-                                <img id="profilePreviewImg" src="" alt="Vista previa" 
-                                     class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg">
+                                <img id="profilePreviewImg" src="" alt="Vista previa"
+                                     class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg"
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=U&background=10b981&color=ffffff&size=96'">
                             </div>
                         </div>
                         
@@ -185,69 +256,7 @@
                         <input type="hidden" th:field="*{profileImage}" />
                     </div>
                     
-                    <!-- Sección: Organizaciones y Ubicación -->
-                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🏢 Organizaciones y Ubicación</h2>
-                        
-                        <!-- Organizaciones -->
-                        <div class="mb-6">
-                            <h3 class="text-md font-medium text-gray-800 mb-3">Organizaciones</h3>
-                            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <span class="text-blue-600 text-sm">👤</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium text-gray-900">Renacer Del Norte</h4>
-                                        <p class="text-sm text-gray-500">coopernacer@example.com</p>
-                                    </div>
-                                    <span class="ml-auto px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">✓ Activa</span>
-                                </div>
-                                <button type="button" class="w-full text-center text-blue-600 hover:text-blue-800 text-sm py-2 border-t border-gray-100">
-                                    Ver todas las organizaciones
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Ubicación -->
-                        
-                        <!-- Dirección y Referencias -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
-                                <input type="text" th:field="*{direccion}" placeholder="Ej: Av. Brasil 1234, Rivera"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Referencias</label>
-                                <input type="text" th:field="*{referencias}" placeholder="Ej: Cerca del supermercado"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            </div>
-                        </div>
-                        
-                        <p class="text-gray-600 mb-4">Haz clic en el mapa para seleccionar la ubicación exacta o arrastra el marcador.</p>
-                        
-                        <!-- Mapa -->
-                        <div id="map" class="w-full rounded-lg border border-gray-300 mb-4" style="height:384px; min-height:384px;"></div>
-                        
-                        <!-- Coordenadas -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Latitud</label>
-                                <input type="number" id="latitude" th:field="*{latitude}" step="any" readonly
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Longitud</label>
-                                <input type="number" id="longitude" th:field="*{longitude}" step="any" readonly
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
-                            </div>
-                        </div>
-                        
-                        <!-- Campos legacy ocultos -->
-                        <input type="hidden" id="lat" th:field="*{latitud}">
-                        <input type="hidden" id="lng" th:field="*{longitud}">
-                    </div>
+                    
                     
                     <!-- Botones -->
                     <div class="flex justify-end space-x-4">

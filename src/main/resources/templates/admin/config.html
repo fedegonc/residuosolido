@@ -6,12 +6,19 @@
         <!-- Encabezado simple -->
         <div class="bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center">
+                <div class="flex items-center justify-between">
                     <h1 class="text-2xl font-bold text-gray-900">Configuración del Sitio</h1>
-                    <a href="/admin/posts" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
-                        ← Volver a Posts
-                    </a>
                 </div>
+                <!-- Breadcrumbs -->
+                <nav class="mt-2" aria-label="Breadcrumb">
+                    <ol class="flex items-center text-sm text-gray-500">
+                        <li>
+                            <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                        </li>
+                        <li class="px-2">/</li>
+                        <li class="text-gray-700 font-medium" aria-current="page">Configuración</li>
+                    </ol>
+                </nav>
             </div>
         </div>
 
@@ -161,11 +168,7 @@
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <a href="/admin/posts" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                        ← Volver a Posts
-                    </a>
-                </div>
+                
             </div>
         </div>
     </div>

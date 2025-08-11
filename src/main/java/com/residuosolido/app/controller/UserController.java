@@ -2,8 +2,6 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.repository.RequestRepository;
-import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.CloudinaryService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
@@ -18,14 +16,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
+ 
 @Controller
+@RequestMapping("/users")
+@PreAuthorize("hasRole('USER')")
 public class UserController {
     
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -37,52 +32,39 @@ public class UserController {
     private CloudinaryService cloudinaryService;
     
     // Dashboard para usuarios normales
-    @GetMapping("/users/dashboard")
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/dashboard")
+    
     public String userDashboard(Model model) {
         return "users/dashboard";
     }
     
     // Solicitudes del usuario
-    @GetMapping("/user/requests")
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/requests")
     public String userRequests(Model model) {
-        // TODO: Implementar lógica para obtener solicitudes del usuario
         return "users/requests";
     }
     
     // Crear nueva solicitud
-    @GetMapping("/user/requests/create")
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/requests/create")
     public String createRequest(Model model) {
         return "users/request-form";
     }
     
-    // Materiales para usuario
-    @GetMapping("/user/materials")
-    @PreAuthorize("hasRole('USER')")
-    public String userMaterials(Model model) {
-        return "users/materials";
-    }
     
     // Notificaciones del usuario
-    @GetMapping("/user/notifications")
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/notifications")
     public String userNotifications(Model model) {
         return "users/notifications";
     }
     
     // Estadísticas del usuario
-    @GetMapping("/user/stats")
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/stats")
     public String userStats(Model model) {
         return "users/stats";
     }
     
     // Perfil de usuario
-    @GetMapping("/users/profile")
-   
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/profile")
     public String userProfile(Model model, Authentication authentication) {
         String username = authentication.getName();
         User currentUser = userService.findAuthenticatedUserByUsername(username);
@@ -92,8 +74,7 @@ public class UserController {
     }
     
     // Editar perfil de usuario
-    @GetMapping("/users/edit")
-    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/edit")
     public String editUserProfile(Model model, Authentication authentication) {
         String username = authentication.getName();
         User currentUser = userService.findAuthenticatedUserByUsername(username);
@@ -112,8 +93,7 @@ public class UserController {
     }
     
     // Guardar cambios del perfil
-    @PostMapping("/users/save-profile")
-    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/save-profile")
     public String saveUserProfile(@ModelAttribute UserForm userForm, @RequestParam(value = "imageFile", required = false) MultipartFile imageFile, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
             String username = authentication.getName();
@@ -137,91 +117,7 @@ public class UserController {
         }
     }
     
-    // Rutas de administración
-    @GetMapping("/admin/users/create")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String createUserForm(Model model) {
-        model.addAttribute("userForm", new UserForm());
-        return "users/form";
-    }
-    
-    @PostMapping("/admin/users/save")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String saveUser(@ModelAttribute UserForm userForm, RedirectAttributes redirectAttributes) {
-        try {
-            userService.saveUser(userForm);
-            redirectAttributes.addFlashAttribute("successMessage", "Usuario guardado exitosamente");
-            return "redirect:/admin/users";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            String redirectUrl = userForm.getId() == null ? "redirect:/admin/users/create" : "redirect:/admin/users/edit/" + userForm.getId();
-            return redirectUrl;
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el usuario: " + e.getMessage());
-            logger.error("Error al guardar usuario: ", e);
-            return "redirect:/admin/users";
-        }
-    }
-    
-    /**
-     * Endpoint específico para actualizar solo la ubicación de un usuario
-     */
-    @PostMapping("/admin/users/{id}/location")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> updateUserLocation(
-            @PathVariable Long id,
-            @RequestParam String direccion,
-            @RequestParam BigDecimal latitud,
-            @RequestParam BigDecimal longitud,
-            @RequestParam(required = false) String referencias) {
-        
-        try {
-            User updatedUser = userService.updateUserLocation(id, direccion, latitud, longitud, referencias);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Ubicación actualizada exitosamente");
-            response.put("user", Map.of(
-                "id", updatedUser.getId(),
-                "direccion", updatedUser.getDireccion(),
-                "latitud", updatedUser.getLatitud(),
-                "longitud", updatedUser.getLongitud(),
-                "referencias", updatedUser.getReferencias()
-            ));
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (IllegalArgumentException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
-            
-        } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Error interno del servidor: " + e.getMessage());
-            return ResponseEntity.status(500).body(errorResponse);
-        }
-    }
-    
-    @GetMapping("/admin/users/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model) {
-        try {
-            User user = userService.getUserOrThrow(id);
-            UserForm userForm = new UserForm();
-            BeanUtils.copyProperties(user, userForm);
-            
-            // Copiar campos de ubicación usando el servicio
-            userService.copyLocationToForm(user, userForm);
-            
-            model.addAttribute("userForm", userForm);
-            return "users/form";
-        } catch (IllegalArgumentException e) {
-            return "redirect:/admin/users";
-        }
-    }
+    // (Rutas de administración movidas a com.residuosolido.app.controller.admin.AdminUserController)
     
     @GetMapping("/view/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
@@ -241,11 +137,7 @@ public class UserController {
         }
     }
     
-    @GetMapping("/admin/users/view/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String viewUserAdmin(@PathVariable Long id, Model model) {
-        return viewUser(id, model);
-    }
+    
     
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
@@ -261,18 +153,12 @@ public class UserController {
     }
     
 
-    @GetMapping("/dashboard")
-    public String userDashboard() {
-        return "users/dashboard"; 
-    }
+    
 
     @Autowired
     private RequestService requestService;
     
-    @GetMapping("/requests/create")
-    public String createRequestForm(Model model) {
-        return "requests/form";
-    }
+    
     
     @GetMapping("/new")
     public String newRequestForm(Model model) {

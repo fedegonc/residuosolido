@@ -140,10 +140,14 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Foto de Perfil</h3>
                         <div class="flex items-start space-x-4">
                             <div class="w-24 h-24 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
-                                <img th:if="${userForm.profileImage}" th:src="${userForm.profileImage}" alt="Foto de perfil" class="w-full h-full object-cover">
-                                <svg th:unless="${userForm.profileImage}" class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
+                                <img class="w-full h-full object-cover"
+                                     th:src="${(userForm.profileImage != null and !#strings.isEmpty(userForm.profileImage))
+                                         ? userForm.profileImage
+                                         : 'https://ui-avatars.com/api/?name=' +
+                                           (#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName) +
+                                           '&background=10b981&color=ffffff&size=96'}"
+                                     th:alt="${!#strings.isEmpty(userForm.firstName) && !#strings.isEmpty(userForm.lastName) ? userForm.firstName + ' ' + userForm.lastName : userForm.username}"
+                                     th:attr="onerror=|this.onerror=null;this.src='https://ui-avatars.com/api/?name=${#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName}&background=10b981&color=ffffff&size=96'|">
                             </div>
                             <div class="flex-1">
                                 <input type="file" name="imageFile" id="imageFile" accept="image/*" class="hidden" onchange="showPreview(this)">

@@ -133,22 +133,9 @@
     <main class="flex-grow container mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <th:block th:replace="${content}"></th:block>
     </main>
-
-    <!-- Footer (igual al público) -->
-    <footer class="bg-gray-800 text-white mt-auto">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-sm text-gray-300">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Sistema de Gestión de Residuos Sólidos. Todos los derechos reservados.</p>
-                </div>
-                <div class="flex space-x-4" sec:authorize="isAuthenticated()">
-                    <a href="/feedback" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        💬 Enviar Feedback
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    
+    <!-- Footer compartido -->
+    <div th:replace="~{fragments/footer :: site-footer}"></div>
 
     <!-- Scripts -->
     <script>
