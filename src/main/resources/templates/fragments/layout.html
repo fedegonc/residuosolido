@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head(title)" th:replace="~{fragments/master-layout :: head(${title})}"></head>
+<th:block xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="head(title)">
+    <th:block th:replace="~{fragments/master-layout :: head(${title})}"></th:block>
+</th:block>
 
 <!-- Slot CSS: estilos del guest-dropdown disponibles en páginas públicas -->
 <th:block th:fragment="css">
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-css}"></th:block>
   </th:block>
 
-<body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
+<th:block th:fragment="layout(content)">
+    <div class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Guest Dropdown (atajo para volver a secciones/inicio) -->
     <div class="fixed top-4 right-2 z-50">
         <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
@@ -171,6 +173,6 @@
     
     <!-- JavaScript para menú móvil (carga al final para asegurar DOM completo) -->
     <script src="/js/mobile-menu.js"></script>
-   
-</body>
-</html>
+    </div>
+</th:block>
+</th:block>

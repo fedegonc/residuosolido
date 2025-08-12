@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head th:replace="~{fragments/layout :: head('Panel del Usuario')}"></head>
 <body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content">
@@ -29,7 +29,7 @@
             
             <!-- Botón destacado Nueva Solicitud -->
             <div class="mb-8 text-center">
-                <a th:href="@{/requests/create}" class="inline-flex items-center px-8 py-4 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
+                <a th:href="@{/users/requests/create}" class="inline-flex items-center px-8 py-4 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
                     <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
@@ -60,7 +60,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Mis Solicitudes</h2>
                     </div>
                     <p class="text-gray-600 mb-4">Consulta el estado de tus solicitudes de recolección.</p>
-                    <a th:href="@{/user/requests}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200">
+                    <a th:href="@{/users/requests}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200">
                         Ver solicitudes
                     </a>
                 </div>
@@ -73,7 +73,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Nueva Solicitud</h2>
                     </div>
                     <p class="text-gray-600 mb-4">Solicita la recolección de residuos sólidos.</p>
-                    <a th:href="@{/user/requests/create}" class="inline-block bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors duration-200">
+                    <a th:href="@{/users/requests/create}" class="inline-block bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors duration-200">
                         Crear solicitud
                     </a>
                 </div>
@@ -86,7 +86,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Materiales</h2>
                     </div>
                     <p class="text-gray-600 mb-4">Consulta la información sobre tipos de materiales.</p>
-                    <a th:href="@{/user/materials}" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors duration-200">
+                    <a th:href="@{/users/materials}" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors duration-200">
                         Ver materiales
                     </a>
                 </div>
@@ -99,7 +99,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Notificaciones</h2>
                     </div>
                     <p class="text-gray-600 mb-4">Revisa notificaciones recientes del sistema.</p>
-                    <a th:href="@{/user/notifications}" class="inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors duration-200">
+                    <a th:href="@{/users/notifications}" class="inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors duration-200">
                         Ver notificaciones
                     </a>
                 </div>
@@ -112,7 +112,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Estadísticas</h2>
                     </div>
                     <p class="text-gray-600 mb-4">Consulta tus estadísticas de reciclaje.</p>
-                    <a th:href="@{/user/stats}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors duration-200">
+                    <a th:href="@{/users/stats}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors duration-200">
                         Ver estadísticas
                     </a>
                 </div>

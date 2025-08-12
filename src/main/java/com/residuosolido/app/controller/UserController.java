@@ -35,7 +35,12 @@ public class UserController {
     @GetMapping("/dashboard")
     
     public String userDashboard(Model model) {
-        return "users/dashboard";
+        logger.info("[UserController] Enter userDashboard - preparing to render users/dashboard");
+        // marcador para verificar si el controlador se ejecuta antes del error de Thymeleaf
+        model.addAttribute("_renderMarker", "users_dashboard_start");
+        String view = "users/dashboard";
+        logger.info("[UserController] Returning view: {}", view);
+        return view;
     }
     
     // Solicitudes del usuario

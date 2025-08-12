@@ -39,11 +39,8 @@
   <script th:inline="javascript">
     // Determinar si el usuario está autenticado (expuesto por el layout)
     if (typeof window.isAuthenticated === 'undefined') {
-      /*[[
-        window.isAuthenticated = ${#authorization.expression('isAuthenticated()')};
-      ]]*/
-      // Fallback si no se procesó Thymeleaf
-      window.isAuthenticated = window.isAuthenticated || false;
+      // Thymeleaf imprimirá true/false; 'false' a la derecha es fallback en modo estático
+      window.isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
     }
 
     window.openLoginModal = function() {
