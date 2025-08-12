@@ -33,7 +33,6 @@ Plataforma web integral para la gestión de residuos sólidos urbanos que conect
 - **Backend**: Java 17, Spring Boot 3.x, Spring Security, JPA/Hibernate
 - **Base de Datos**: PostgreSQL con HikariCP
 - **Frontend**: Thymeleaf, Tailwind CSS, JavaScript ES6+
-- **Mapas**: Leaflet.js para geolocalización interactiva
 - **Build**: Maven
 
 ## 📁 Arquitectura del Proyecto
@@ -152,7 +151,6 @@ mvn spring-boot:run
 - ✅ Registro y perfil personal
 - ✅ Solicitar recolecciones
 - ✅ Ver estado de solicitudes
-- ✅ Mapa interactivo para ubicación
 
 ### 🏢 Organización (ORGANIZATION)
 - ✅ Dashboard de gestión
@@ -174,10 +172,48 @@ mvn spring-boot:run
 - **Colores suaves** (verde menta, grises claros)
 - **Iconografía consistente** con SVG
 - **Navegación intuitiva** por roles
-- **Mapas interactivos** con Leaflet
 - **Formularios validados** en tiempo real
 - **Mensajes informativos** y confirmaciones
 - **Layout adaptativo** para móviles
+
+## ⚙️ Características No Funcionales
+
+- **Seguridad**: Spring Security con autorización por roles (`USER`, `ORGANIZATION`, `ADMIN`).
+- **Plantillas**: Thymeleaf 3.1 con fragmentos puros (`fragments/layout.html`, `fragments/master-layout.html`, `fragments/login-modal.html`, `fragments/guest-dropdown.html`, `fragments/footer.html`).
+- **Caché de plantillas**: deshabilitada en desarrollo (`spring.thymeleaf.cache=false`).
+- **Logging**: niveles reducidos a `WARN` para Thymeleaf y MVC; logs de acceso de Tomcat deshabilitados por defecto.
+- **Estilos**: Tailwind CSS vía CDN en desarrollo; fuente global Nunito.
+- **Sesiones**: política `ALWAYS` configurada para depuración.
+- **HTTP/2 y compresión**: deshabilitados actualmente para evitar respuestas truncadas durante diagnóstico.
+- **Recursos estáticos**: servidos desde `src/main/resources/static/` (incluye `favicon.svg`).
+
+## 🌐 Endpoints y Rutas
+
+### Públicas (sin autenticación)
+- `GET /` y `GET /index` — Página pública inicial.
+- `GET /invitados` y `GET /guest/**` — Secciones para visitantes/guest.
+- `GET /auth/login`, `GET /auth/register` — Autenticación.
+- `POST /auth/login` — Procesamiento de login.
+- `GET /posts/**` — Contenido público (posts).
+- `GET /categories/**` — Listado/categorías públicas.
+- Recursos estáticos: `/css/**`, `/js/**`, `/images/**`, `/static/**`.
+
+### Usuario (requiere rol USER)
+- `GET /users/dashboard` — Dashboard de usuario.
+- `GET /requests/**` — Gestión de solicitudes del usuario.
+
+### Organización (requiere rol ORGANIZATION)
+- `GET /org/dashboard` — Dashboard de organización.
+- `GET /org/settings` — Configuración de organización (en preparación).
+
+### Administración (requiere rol ADMIN)
+- `GET /admin/**` — Paneles y páginas de administración.
+- `GET /admin/users/**` — Gestión de usuarios.
+- `GET /mapa/**` — Rutas de mapa administrativas (si se habilitan).
+
+Notas:
+- La seguridad está configurada en `SecurityConfig.java` usando `requestMatchers` por patrón.
+- Tras autenticación, la app redirige según rol (handler de éxito de login).
 
 ## 🔧 Configuración de Desarrollo
 
