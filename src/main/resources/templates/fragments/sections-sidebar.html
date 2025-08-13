@@ -30,14 +30,26 @@ Apartados
                     </div>
                 </button>
                 <div th:id="'categories-' + ${section.id}" class="hidden border-t border-gray-100">
-                    <div class="p-4 bg-gray-50">
-                        <a th:href="'/posts/section/' + ${section.id}" 
-                           class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                            </svg>
-                            <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
-                        </a>
+                    <div class="p-4 bg-gray-50 space-y-1">
+                        <div th:if="${section.categories != null and !section.categories.empty}" class="space-y-1">
+                            <a th:each="cat : ${section.categories}"
+                               th:href="@{/posts/category/{slug}(slug=${cat.slug})}"
+                               class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                <span th:text="${cat.name}">Categoría</span>
+                            </a>
+                        </div>
+                        <div th:if="${section.categories == null or section.categories.empty}">
+                            <a th:href="'/posts/section/' + ${section.id}"
+                               class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

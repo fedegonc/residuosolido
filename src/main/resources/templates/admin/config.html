@@ -25,7 +25,7 @@
         <!-- Contenido principal -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        <script>
+        <script th:inline="none">
             function showHeroPreview(input) {
                 console.log('showHeroPreview llamada');
                 console.log('Input:', input);
@@ -103,7 +103,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Imagen Activa Actual:</label>
                     <div id="current-hero-image" 
                          th:class="${heroImage != null and !heroImage.isEmpty()} ? 'w-full h-32 rounded-lg border bg-cover bg-center' : 'w-full h-32 rounded-lg border bg-gradient-to-br from-green-700 via-green-600 to-green-500 flex items-center justify-center'" 
-                         th:style="${heroImage != null and !heroImage.isEmpty()} ? 'background-image: url(' + ${heroImage} + ')' : ''">
+                         th:style="${heroImage != null and !heroImage.isEmpty()} ? 'background-image: url(' + heroImage + ')' : ''">
                         <span th:if="${heroImage == null or heroImage.isEmpty()}" class="text-white font-medium">Sin imagen personalizada (usando gradiente por defecto)</span>
                     </div>
                 </div>

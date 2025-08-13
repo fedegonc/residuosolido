@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/auth-layout :: head('Iniciar Sesión')}"></head>
-<body th:replace="~{fragments/auth-layout :: layout(~{::main})}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - Residuos Sólidos - Frontera de la Paz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/favicon.ico">
+</head>
+<body class="bg-white min-h-screen flex flex-col">
 <main>
   <!-- Encabezado con gradiente similar al index -->
   <div class="bg-gradient-to-r from-green-600 to-green-500 text-white py-16 text-center">

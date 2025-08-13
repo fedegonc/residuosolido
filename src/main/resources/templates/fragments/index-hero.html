@@ -1,62 +1,49 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
     <!-- Fragmento: Hero Section del Index -->
-    <section th:fragment="hero" class="pt-24 pb-8 bg-white font-sans">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col lg:flex-row items-center gap-8">
-                
-                <!-- IZQUIERDA: Textos + Botón -->
-                <div class="lg:w-1/2">
-                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-3 font-sans" style="font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji' !important;">
-                        Residuos Sólidos - <span class="text-emerald-600">Frontera de la Paz</span>
-                    </h1>
-                    <p class="text-lg text-emerald-600 mb-6 font-sans">
-                        Rivera - Sant'Ana do Livramento
-                    </p>
-                    <p class="text-xl text-gray-700 mb-8 leading-relaxed font-sans">
-                        Conectamos comunidad, información y organizaciones para un manejo eficiente y sostenible de residuos en la región fronteriza.
-                    </p>
-                    
-                    <!-- Botón: Reciclables -->
-                    <a href="/posts/category/reciclables" class="inline-block bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-300 rounded-xl p-4 shadow-lg hover:shadow-xl group max-w-md">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
-                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-emerald-800 mb-1">Reciclables</h3>
-                                <p class="text-gray-600 text-sm leading-relaxed">Aprende cómo desechar correctamente plásticos, papel, vidrio y otros materiales reciclables</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- DERECHA: Imagen -->
-                <div class="lg:w-1/2">
-                    <a href="">
-                        <div th:if="${heroImage != null}" class="relative">
-                            <img th:src="${heroImage}" alt="Imagen principal" class="w-full h-80 object-cover rounded-xl shadow-lg">
-                        </div>
-                    </a>
-                    <a href="">
-                        <div th:unless="${heroImage != null}" class="w-full h-80 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl shadow-lg flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="w-16 h-16 bg-emerald-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-8 h-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <section th:fragment="hero" class="pt-24 pb-0 bg-white font-sans">
+        <div class="relative w-full h-[24rem] md:h-[30rem] lg:h-[34rem] overflow-hidden">
+            <!-- Imagen de fondo -->
+            <img th:if="${heroImage != null}"
+                 th:src="${heroImage}"
+                 alt="Imagen principal"
+                 class="absolute inset-0 w-full h-full object-cover" />
+            <!-- Fallback gradiente si no hay imagen -->
+            <div th:unless="${heroImage != null}"
+                 class="absolute inset-0 bg-gradient-to-br from-emerald-100 to-emerald-200"></div>
+            <!-- Overlay semitransparente para mejorar contraste -->
+            <div class="absolute inset-0 bg-black/30"></div>
+
+            <!-- Contenido sobre la imagen -->
+            <div class="relative z-10 h-full">
+                <div class="container mx-auto h-full px-6 flex items-center">
+                    <div class="max-w-2xl text-white">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-3 font-sans"
+                            style="font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji' !important;">
+                            Residuos Sólidos - <span class="text-emerald-200">Frontera de la Paz</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-emerald-100 mb-6 font-sans">
+                            Rivera - Sant'Ana do Livramento
+                        </p>
+                        <p class="text-lg md:text-xl text-gray-100 mb-8 leading-relaxed font-sans">
+                            Conectamos comunidad, información y organizaciones para un manejo eficiente y sostenible de residuos en la región fronteriza.
+                        </p>
+
+                        <!-- CTA: Reciclables -->
+                        <a href="/posts/category/reciclables"
+                           class="inline-block bg-white/95 text-emerald-800 border border-gray-200 hover:bg-white transition-all duration-300 rounded-xl p-4 shadow-lg hover:shadow-xl group max-w-md">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                     </svg>
                                 </div>
-                                <p class="text-emerald-700 font-medium">Gestión de Residuos</p>
+                                <div>
+                                    <h3 class="text-lg font-bold text-emerald-900 mb-1">Reciclables</h3>
+                                    <p class="text-gray-700 text-sm leading-relaxed">Aprende cómo desechar correctamente plásticos, papel, vidrio y otros materiales reciclables</p>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 </div>
-                
             </div>
         </div>
     </section>
-</body>
-</html>

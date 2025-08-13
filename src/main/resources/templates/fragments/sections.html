@@ -32,10 +32,19 @@
                 </button>
                 <div th:id="'categories-' + ${section.id}" class="hidden px-3 pb-3">
                     <div class="ml-13 space-y-2">
-                        <a th:href="'/posts/section/' + ${section.id}" 
-                           class="block text-sm text-gray-600 hover:text-gray-800 py-1">
-                            • <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
-                        </a>
+                        <div th:if="${section.categories != null and !section.categories.empty}" class="space-y-1">
+                            <a th:each="cat : ${section.categories}"
+                               th:href="@{/posts/category/{slug}(slug=${cat.slug})}"
+                               class="block text-sm text-gray-700 hover:text-gray-900 py-1">
+                                • <span th:text="${cat.name}">Categoría</span>
+                            </a>
+                        </div>
+                        <div th:if="${section.categories == null or section.categories.empty}">
+                            <a th:href="'/posts/section/' + ${section.id}"
+                               class="block text-sm text-gray-600 hover:text-gray-800 py-1">
+                                • <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

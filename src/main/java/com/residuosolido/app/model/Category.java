@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.text.Normalizer;
 
 @Entity
 @Table(name = "categories")
@@ -40,6 +41,18 @@ public class Category {
 
     public List<WasteSection> getWasteSections() { return wasteSections; }
     public void setWasteSections(List<WasteSection> wasteSections) { this.wasteSections = wasteSections; }
+
+    @Transient
+    public String getSlug() {
+        if (name == null) return "";
+        String normalized = Normalizer.normalize(name, Normalizer.Form.NFD)
+                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return normalized.toLowerCase()
+                .replaceAll("[^a-z0-9\\s]", "")
+                .replaceAll("\\s+", "-")
+                .replaceAll("-+", "-")
+                .replaceAll("^-|-$", "");
+    }
 
     // === equals & hashCode (clave para comparaciones, colecciones) ===
     @Override

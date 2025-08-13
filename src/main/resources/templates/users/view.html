@@ -21,6 +21,21 @@
 
             <!-- User Information -->
             <div class="bg-white shadow rounded-lg p-6">
+                <!-- Avatar + Identidad -->
+                <div class="flex items-center gap-4 mb-6" th:if="${user}">
+                    <img class="h-24 w-24 rounded-full object-cover border border-gray-200"
+                         th:src="${(user.profileImage != null and !#strings.isEmpty(user.profileImage))
+                                   ? user.profileImage
+                                   : 'https://ui-avatars.com/api/?name=' +
+                                     ((user.firstName != null ? user.firstName : user.username) + ' ' + (user.lastName != null ? user.lastName : '')) +
+                                     '&background=10b981&color=ffffff&size=96'}"
+                         th:attr="onerror=|this.onerror=null;this.src='https://ui-avatars.com/api/?name=${#strings.isEmpty(user.firstName) ? user.username : user.firstName + ' ' + (user.lastName == null ? '' : user.lastName)}&background=10b981&color=ffffff&size=96'|"
+                         alt="Avatar" />
+                    <div>
+                        <div class="text-lg font-semibold text-gray-900" th:text="${(user.firstName != null ? user.firstName : '') + ' ' + (user.lastName != null ? user.lastName : '')}">Nombre Apellido</div>
+                        <div class="text-sm text-gray-500" th:text="${'@' + user.username}">@usuario</div>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Usuario</label>
@@ -71,7 +86,7 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Último Acceso</label>
-                        <p class="text-gray-900 bg-gray-50 px-3 py-2 rounded" th:text="${user.lastAccessAt != null ? #temporals.format(user.lastAccessAt, 'dd/MM/yyyy HH:mm') : 'Nunca'}">Nunca</p>
+                        <p class="text-gray-900 bg-gray-50 px-3 py-2 rounded" th:text="${user.lastAccessAt != null ? #temporals.format(user.lastAccessAt, 'dd/MM/yyyy HH:mm') : 'Sin registros de acceso — registrado el ' + #temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">Sin registros de acceso</p>
                     </div>
                     
                     <div>

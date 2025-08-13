@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/master-layout :: head('Inicio - Residuos Sólidos - Frontera de la Paz')}"></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Residuos Sólidos - Frontera de la Paz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/favicon.ico">
+</head>
 <body class="bg-white min-h-screen flex flex-col font-sans">
     <!-- Guest Dropdown Component (botón y panel) -->
     <div class="fixed top-4 right-2 z-50">
@@ -9,22 +18,31 @@
     <main class="flex-grow">
       <div th:replace="~{fragments/index-hero :: hero}"></div>
 
-        <!-- Contenido simple: una sola columna -->
+        <!-- Contenido: layout en 3 columnas -->
         <div class="min-h-screen bg-white">
-            <div id="contenido" class="max-w-5xl mx-auto px-6 sm:px-8 pt-20 pb-16 space-y-12">
-                <!-- Posts principales -->
-                <section>
-                    <div th:replace="~{fragments/posts :: mainPosts}"></div>
-                </section>
+            <div id="contenido" class="max-w-7xl mx-auto px-6 sm:px-8 pt-20 pb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Columna izquierda: Sidebar Secciones -->
+                    <aside class="lg:col-span-3 space-y-6">
+                        <div th:replace="~{fragments/sections-sidebar :: sidebar}"></div>
+                    </aside>
 
-                <!-- Organizaciones -->
-                <section>
-                    <div th:replace="~{fragments/organizations :: organizationsList}"></div>
-                </section>
+                    <!-- Columna central: Posts -->
+                    <section class="lg:col-span-6 space-y-6">
+                        <div th:replace="~{fragments/posts :: mainPosts}"></div>
+                    </section>
+
+                    <!-- Columna derecha: Organizaciones -->
+                    <aside class="lg:col-span-3 space-y-6">
+                        <div th:replace="~{fragments/organizations :: organizationsList}"></div>
+                    </aside>
+                </div>
             </div>
         </div>
     </main>
     <!-- JS del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
+    <!-- JS de index (toggleCategory, etc.) -->
+    <script src="/js/index.js"></script>
 </body>
 </html>

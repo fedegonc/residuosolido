@@ -7,6 +7,8 @@ import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 @Controller
 public class AuthController {
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,12 +47,27 @@ public class AuthController {
         HttpServletResponse response,
         Model model) throws Exception {
 
+        log.info("[INDEX] GET / - userAuthenticated={} principal={} uri={}", userDetails != null, (userDetails != null ? userDetails.getUsername() : "anonymous"), request.getRequestURI());
         if (userDetails != null) {
+            log.info("[INDEX] Authenticated user, delegating to successHandler by role");
             successHandler.redirectByRole(request, response, userDetails);
             return null;
         }
 
         Map<String, Object> indexData = authService.getIndexData();
+        try {
+            Object ws = indexData.get("wasteSections");
+            Object posts = indexData.get("posts");
+            Object orgs = indexData.get("organizations");
+            Object hero = indexData.get("heroImage");
+            int wsCount = (ws instanceof java.util.Collection) ? ((java.util.Collection<?>) ws).size() : (ws == null ? 0 : 1);
+            int postsCount = (posts instanceof java.util.Collection) ? ((java.util.Collection<?>) posts).size() : (posts == null ? 0 : 1);
+            int orgsCount = (orgs instanceof java.util.Collection) ? ((java.util.Collection<?>) orgs).size() : (orgs == null ? 0 : 1);
+            boolean hasHero = (hero instanceof String) && !((String) hero).isEmpty();
+            log.info("[INDEX] Data loaded -> sections={}, posts={}, orgs={}, heroImage={}", wsCount, postsCount, orgsCount, hasHero ? "yes" : "no");
+        } catch (Exception e) {
+            log.warn("[INDEX] Error inspecting indexData: {}", e.toString());
+        }
         model.addAllAttributes(indexData);
 
         return "guest/index";

@@ -38,4 +38,8 @@ public class FeedbackService {
     public List<Feedback> findByUser(User user) {
         return feedbackRepository.findByUser(user);
     }
+    
+    public long countByUserId(Long userId) {
+        return feedbackRepository.countByUserId(userId);
+    }
 }

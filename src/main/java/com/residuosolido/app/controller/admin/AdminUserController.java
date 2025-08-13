@@ -4,6 +4,7 @@ import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
 import com.residuosolido.app.service.CloudinaryService;
+import com.residuosolido.app.service.FeedbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +32,9 @@ public class AdminUserController {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private FeedbackService feedbackService;
 
     @GetMapping("/create")
     public String createUserForm(Model model) {
@@ -133,7 +137,11 @@ public class AdminUserController {
         try {
             User user = userService.getUserOrThrow(id);
             model.addAttribute("user", user);
+            // Cantidad de feedbacks del usuario (por ID, sin cargar la lista)
+            long userFeedbackCount = feedbackService.countByUserId(user.getId());
+            model.addAttribute("userFeedbackCount", userFeedbackCount);
             return "admin/view";
+
         } catch (IllegalArgumentException e) {
             return "redirect:/admin/users";
         }
