@@ -54,32 +54,43 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
         (function(){
-            function initOrgMaps(){
-                var nodes = document.querySelectorAll('[id^="orgMap-"]');
-                nodes.forEach(function(node){
-                    var latAttr = node.getAttribute('data-lat');
-                    var lngAttr = node.getAttribute('data-lng');
-                    var lat = parseFloat(latAttr);
-                    var lng = parseFloat(lngAttr);
-                    var name = node.getAttribute('data-name') || 'Organización';
-                    if (isNaN(lat) || isNaN(lng)) {
-                        return;
-                    }
-                    var map = L.map(node, { zoomControl: false, attributionControl: false }).setView([lat, lng], 12);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-                    L.marker([lat, lng]).addTo(map).bindPopup(name);
-                    // Arreglar tamaño si el contenedor estaba oculto
-                    setTimeout(function(){ 
-                        map.invalidateSize(); 
-                    }, 100);
-                });
+            function initSingleMap(node){
+                if (!node || node.__mapInitialized) return;
+                var lat = parseFloat(node.getAttribute('data-lat'));
+                var lng = parseFloat(node.getAttribute('data-lng'));
+                var name = node.getAttribute('data-name') || 'Organización';
+                if (isNaN(lat) || isNaN(lng)) return;
+                // Crear mapa y marcador
+                var map = L.map(node, { zoomControl: false, attributionControl: false }).setView([lat, lng], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+                L.marker([lat, lng]).addTo(map).bindPopup(name);
+                // Ajuste de tamaño pos-render
+                setTimeout(function(){ map.invalidateSize(); }, 100);
+                node.__mapInitialized = true;
             }
+
+            function observeMaps(){
+                var nodes = document.querySelectorAll('[id^="orgMap-"]');
+                if (!('IntersectionObserver' in window)) {
+                    // Fallback: inicializar los visibles tras pequeño delay
+                    setTimeout(function(){ nodes.forEach(initSingleMap); }, 0);
+                    return;
+                }
+                var obs = new IntersectionObserver(function(entries){
+                    entries.forEach(function(entry){
+                        if (entry.isIntersecting) {
+                            initSingleMap(entry.target);
+                            obs.unobserve(entry.target);
+                        }
+                    });
+                }, { root: null, rootMargin: '0px 0px 200px 0px', threshold: 0.01 });
+                nodes.forEach(function(n){ obs.observe(n); });
+            }
+
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function(){
-                    initOrgMaps();
-                });
+                document.addEventListener('DOMContentLoaded', observeMaps);
             } else {
-                initOrgMaps();
+                observeMaps();
             }
         })();
         </script>

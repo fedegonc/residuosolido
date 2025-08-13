@@ -203,8 +203,12 @@
         }
     }
   
-    // Inicialización del componente
+    // Inicialización del componente (idempotente)
     document.addEventListener('DOMContentLoaded', function() {
+        if (window.__guestDropdownInitialized) {
+            return;
+        }
+        window.__guestDropdownInitialized = true;
         const dropdownButton = document.getElementById('guest-dropdown-button');
         
         if (dropdownButton) {
