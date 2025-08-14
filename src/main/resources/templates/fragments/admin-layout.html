@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head(title)" th:replace="~{fragments/master-layout :: head(${title})}"></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Residuos Sólidos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" href="/favicon.ico">
+ </head>
 
 <body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Recursos críticos dentro del fragmento para asegurar estilos aunque <head> no se procese -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Nunito', sans-serif; } </style>
+    <!-- Banner se muestra SOLO si Tailwind NO está activo (la clase hidden no surtirá efecto) -->
+    <div id="tw-fallback-banner" th:if="${param.debug != null}" class="hidden" style="background:#fee2e2;color:#991b1b;padding:8px 12px;font-weight:600;text-align:center;">
+        Advertencia: Tailwind CSS no se está aplicando en Admin. Revise la consola del navegador.
+    </div>
     <!-- Top Bar Simple -->
     <div class="bg-white border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,12 +135,31 @@
     <script>
         // Manejar dropdown de notificaciones y menú mobile
         document.addEventListener('DOMContentLoaded', function() {
+            const DEBUG = false; // Cambia a true para reactivar logs detallados
+            // Verificar si Tailwind aplica clases (clase 'hidden' debería ocultar el banner)
+            const banner = document.getElementById('tw-fallback-banner');
+            if (banner) {
+                const isHidden = window.getComputedStyle(banner).display === 'none';
+                if (DEBUG) console.log('[AdminLayout] Tailwind hidden check =>', isHidden);
+                if (!isHidden) {
+                    console.warn('[AdminLayout] Tailwind NO aplicado. Verifique carga del CDN o CSP.');
+                }
+            }
+
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const mobileMenu = document.getElementById('mobileMenu');
             const notificationBtn = document.getElementById('notificationBtn');
             const notificationDropdown = document.getElementById('notificationDropdown');
             const notificationBadge = document.getElementById('notificationBadge');
             const notificationList = document.getElementById('notificationList');
+            if (DEBUG) {
+                console.log('[AdminLayout] Elements:', {
+                    hasMobileMenuBtn: !!mobileMenuBtn,
+                    hasMobileMenu: !!mobileMenu,
+                    hasNotificationBtn: !!notificationBtn,
+                    hasDropdown: !!notificationDropdown
+                });
+            }
             
             // Toggle mobile menu
             if (mobileMenuBtn && mobileMenu) {
@@ -145,11 +180,13 @@
             }
             
             // Toggle dropdown
-            notificationBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                notificationDropdown.classList.toggle('hidden');
-                loadNotifications();
-            });
+            if (notificationBtn) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationDropdown.classList.toggle('hidden');
+                    loadNotifications();
+                });
+            }
             
             // Cerrar dropdown al hacer click fuera
             document.addEventListener('click', function() {
@@ -158,14 +195,19 @@
             
             // Cargar notificaciones
             function loadNotifications() {
+                if (DEBUG) console.log('[AdminLayout] Cargando notificaciones...');
                 fetch('/admin/api/notifications')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (DEBUG) console.log('[AdminLayout] Notif status:', response.status);
+                        return response.json();
+                    })
                     .then(data => {
-                        updateNotificationBadge(data.count);
-                        updateNotificationList(data.notifications);
+                        if (DEBUG) console.log('[AdminLayout] Notif payload:', data);
+                        updateNotificationBadge(data.count || 0);
+                        updateNotificationList(Array.isArray(data.notifications) ? data.notifications : []);
                     })
                     .catch(error => {
-                        console.error('Error loading notifications:', error);
+                        console.error('[AdminLayout] Error loading notifications:', error);
                     });
             }
             
@@ -214,9 +256,7 @@
         });
         
         // Notificaciones simples
-        function showNotification(message, type = 'success') {
-            console.log(`${type}: ${message}`);
-        }
+        // showNotification eliminado; no se utiliza actualmente
     </script>
 </body>
 </html>
