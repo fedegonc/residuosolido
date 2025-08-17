@@ -37,11 +37,13 @@ public class AuthService {
         List<Post> posts = postService.getFirst5Posts();
         List<User> organizations = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
         List<WasteSection> wasteSections = wasteSectionService.getActiveSectionsWithCategories();
+        List<User> users = userRepository.findAll();
         
         data.put("posts", posts);
         data.put("organizations", organizations);
         data.put("wasteSections", wasteSections);
         data.put("heroImage", configService.getHeroImageUrl());
+        data.put("users", users);
         
         return data;
     }
@@ -69,7 +71,9 @@ public class AuthService {
 
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.USER);
+        // Primer usuario registrado será ADMIN, el resto USER
+        long totalUsers = userRepository.count();
+        user.setRole(totalUsers == 0 ? Role.ADMIN : Role.USER);
         user.setActive(true);
         user.setPreferredLanguage("es");
         

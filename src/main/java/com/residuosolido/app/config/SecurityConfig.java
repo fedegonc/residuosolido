@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Rutas de utilidades de desarrollo deshabilitadas
                 // Rutas de gestión de usuarios para admin
                 .requestMatchers("/admin/users/**").hasRole("ADMIN")
                 // Rutas de mapa para admin

@@ -73,16 +73,10 @@ public class UserController {
     public String userProfile(Model model, Authentication authentication) {
         String username = authentication.getName();
         User currentUser = userService.findAuthenticatedUserByUsername(username);
+        // Datos para mini-preview
         model.addAttribute("user", currentUser);
         model.addAttribute("username", username);
-        return "users/profile";
-    }
-    
-    // Editar perfil de usuario
-    @GetMapping("/edit")
-    public String editUserProfile(Model model, Authentication authentication) {
-        String username = authentication.getName();
-        User currentUser = userService.findAuthenticatedUserByUsername(username);
+        // Form para edición inline
         UserForm userForm = new UserForm();
         userForm.setId(currentUser.getId());
         userForm.setUsername(currentUser.getUsername());
@@ -94,7 +88,14 @@ public class UserController {
         userForm.setProfileImage(currentUser.getProfileImage());
         model.addAttribute("userForm", userForm);
         model.addAttribute("isProfile", true);
-        return "users/edit";
+        return "users/profile";
+    }
+    
+    // Editar perfil de usuario
+    @GetMapping("/edit")
+    public String editUserProfile(Model model, Authentication authentication) {
+        // Unificado: redirigir al perfil que contiene edición inline
+        return "redirect:/users/profile";
     }
     
     // Guardar cambios del perfil
@@ -118,7 +119,7 @@ public class UserController {
             return "redirect:/users/profile";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar perfil: " + e.getMessage());
-            return "redirect:/users/edit";
+            return "redirect:/users/profile";
         }
     }
     

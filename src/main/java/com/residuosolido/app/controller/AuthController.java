@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.AuthService;
@@ -18,6 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class AuthController {
@@ -60,11 +63,14 @@ public class AuthController {
             Object posts = indexData.get("posts");
             Object orgs = indexData.get("organizations");
             Object hero = indexData.get("heroImage");
+            Object users = indexData.get("users");
             int wsCount = (ws instanceof java.util.Collection) ? ((java.util.Collection<?>) ws).size() : (ws == null ? 0 : 1);
             int postsCount = (posts instanceof java.util.Collection) ? ((java.util.Collection<?>) posts).size() : (posts == null ? 0 : 1);
             int orgsCount = (orgs instanceof java.util.Collection) ? ((java.util.Collection<?>) orgs).size() : (orgs == null ? 0 : 1);
+            int usersCount = (users instanceof java.util.Collection) ? ((java.util.Collection<?>) users).size() : (users == null ? 0 : 1);
             boolean hasHero = (hero instanceof String) && !((String) hero).isEmpty();
-            log.info("[INDEX] Data loaded -> sections={}, posts={}, orgs={}, heroImage={}", wsCount, postsCount, orgsCount, hasHero ? "yes" : "no");
+            log.info("[INDEX] Data loaded -> sections={}, posts={}, orgs={}, users={}, heroImage={}", wsCount, postsCount, orgsCount, usersCount, hasHero ? "yes" : "no");
+            log.info("[INDEX] Users loaded: {}", usersCount);
         } catch (Exception e) {
             log.warn("[INDEX] Error inspecting indexData: {}", e.toString());
         }
@@ -72,6 +78,8 @@ public class AuthController {
 
         return "guest/index";
     }
+
+    
 
     @GetMapping("/auth/register")
     public String showRegistrationForm(Model model) {

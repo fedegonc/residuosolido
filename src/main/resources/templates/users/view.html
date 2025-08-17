@@ -104,7 +104,7 @@
             <div class="bg-white shadow rounded-lg p-6 mt-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones</h3>
                 <div class="flex space-x-4">
-                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium">
+                    <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium">
                         Editar Usuario
                     </a>
                     <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" class="inline-block" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer.')">

@@ -17,8 +17,8 @@
 
 <th:block th:fragment="layout(content)">
     <div class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Guest Dropdown (atajo para volver a secciones/inicio) -->
-    <div class="fixed top-4 right-2 z-50">
+    <!-- Guest Dropdown (atajo para volver a secciones/inicio) solo para invitados -->
+    <div class="fixed top-4 right-2 z-50" sec:authorize="!isAuthenticated()">
         <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
     </div>
     <!-- Barra de navegación -->

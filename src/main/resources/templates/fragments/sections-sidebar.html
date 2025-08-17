@@ -5,14 +5,14 @@
     <div th:fragment="sidebar" class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
         <h2 class="text-base font-semibold text-gray-900 mb-2 flex items-center">
             <svg class="w-4 h-4 text-emerald-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
             </svg>
 Apartados
         </h2>
         <div class="space-y-2">
             <!-- Secciones dinámicas desde waste_sections -->
             <div th:each="section : ${wasteSections}" class="border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
-                <button th:onclick="'toggleCategory(' + ${section.id} + ')'" 
+                <button th:onclick="|toggleCategory(${section.id})|" 
                         class="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors group rounded-lg">
                     <div class="flex items-center flex-1">
                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center mr-3 group-hover:from-emerald-100 group-hover:to-emerald-200 transition-all duration-200">
@@ -31,7 +31,7 @@ Apartados
                 </button>
                 <div th:id="'categories-' + ${section.id}" class="hidden border-t border-gray-100">
                     <div class="p-4 bg-gray-50 space-y-1">
-                        <div th:if="${section.categories != null and !section.categories.empty}" class="space-y-1">
+                        <div th:if="${section.categories != null and !#lists.isEmpty(section.categories)}" class="space-y-1">
                             <a th:each="cat : ${section.categories}"
                                th:href="@{/posts/category/{slug}(slug=${cat.slug})}"
                                class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
@@ -41,7 +41,7 @@ Apartados
                                 <span th:text="${cat.name}">Categoría</span>
                             </a>
                         </div>
-                        <div th:if="${section.categories == null or section.categories.empty}">
+                        <div th:if="${section.categories == null or #lists.isEmpty(section.categories)}">
                             <a th:href="'/posts/section/' + ${section.id}"
                                class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
