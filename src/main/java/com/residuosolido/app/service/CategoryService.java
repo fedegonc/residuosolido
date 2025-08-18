@@ -50,7 +50,6 @@ public class CategoryService {
             createSimpleCategory("Reducción de Residuos", 5);
             createSimpleCategory("Educación Ambiental", 6);
             createSimpleCategory("Normativas", 7);
-            createSimpleCategory("Tecnología Verde", 8);
         }
     }
     
