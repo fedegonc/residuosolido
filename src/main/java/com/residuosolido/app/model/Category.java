@@ -17,8 +17,11 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
-    private List<WasteSection> wasteSections = new ArrayList<>();
+    // Campos adicionales para reemplazar WasteSection
+    private String description;
+    private String imageUrl;
+    private Integer displayOrder;
+    private Boolean active;
 
     // === Constructores ===
     public Category() {}
@@ -39,8 +42,18 @@ public class Category {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public List<WasteSection> getWasteSections() { return wasteSections; }
-    public void setWasteSections(List<WasteSection> wasteSections) { this.wasteSections = wasteSections; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public Integer getDisplayOrder() { return displayOrder; }
+    public void setDisplayOrder(Integer displayOrder) { this.displayOrder = displayOrder; }
+
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
+
 
     @Transient
     public String getSlug() {

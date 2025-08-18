@@ -23,18 +23,43 @@ public class CategoryService {
     @PostConstruct
     public void initializeCategories() {
         if (categoryRepository.count() == 0) {
-            // Categorías jerárquicas principales
-            categoryRepository.save(new Category(null, "Reciclable"));
-            categoryRepository.save(new Category(null, "No Reciclable"));
-            categoryRepository.save(new Category(null, "Informaciones"));
+            // Categorías principales con campos extendidos
+            Category reciclable = new Category(null, "Reciclable");
+            reciclable.setDescription("Materiales que pueden ser reciclados");
+            reciclable.setDisplayOrder(1);
+            reciclable.setActive(true);
+            reciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+            categoryRepository.save(reciclable);
+            
+            Category noReciclable = new Category(null, "No Reciclable");
+            noReciclable.setDescription("Residuos que requieren disposición especial");
+            noReciclable.setDisplayOrder(2);
+            noReciclable.setActive(true);
+            noReciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+            categoryRepository.save(noReciclable);
+            
+            Category informaciones = new Category(null, "Informaciones");
+            informaciones.setDescription("Guías y recursos educativos");
+            informaciones.setDisplayOrder(3);
+            informaciones.setActive(true);
+            informaciones.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+            categoryRepository.save(informaciones);
             
             // Categorías adicionales
-            categoryRepository.save(new Category(null, "Compostaje"));
-            categoryRepository.save(new Category(null, "Reducción de Residuos"));
-            categoryRepository.save(new Category(null, "Educación Ambiental"));
-            categoryRepository.save(new Category(null, "Normativas"));
-            categoryRepository.save(new Category(null, "Tecnología Verde"));
+            createSimpleCategory("Compostaje", 4);
+            createSimpleCategory("Reducción de Residuos", 5);
+            createSimpleCategory("Educación Ambiental", 6);
+            createSimpleCategory("Normativas", 7);
+            createSimpleCategory("Tecnología Verde", 8);
         }
+    }
+    
+    private void createSimpleCategory(String name, int order) {
+        Category category = new Category(null, name);
+        category.setDisplayOrder(order);
+        category.setActive(true);
+        category.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+        categoryRepository.save(category);
     }
 
     public List<Category> getAllCategories() {
@@ -42,6 +67,15 @@ public class CategoryService {
             cachedCategories = categoryRepository.findAll();
         }
         return cachedCategories;
+    }
+    
+    // Métodos que reemplazan WasteSectionService
+    public List<Category> getActiveCategoriesOrderedByDisplayOrder() {
+        return categoryRepository.findByActiveTrueOrderByDisplayOrderAsc();
+    }
+    
+    public List<Category> getAllCategoriesOrderedByDisplayOrder() {
+        return categoryRepository.findAllByOrderByDisplayOrderAsc();
     }
     
     public List<java.util.Map<String, Object>> getCategoriesWithSlugs() {

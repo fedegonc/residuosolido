@@ -10,44 +10,34 @@
 Apartados
         </h2>
         <div class="space-y-2">
-            <!-- Secciones dinámicas desde waste_sections -->
-            <div th:each="section : ${wasteSections}" class="border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
-                <button th:onclick="|toggleCategory(${section.id})|" 
+            <!-- Categorías dinámicas -->
+            <div th:each="category : ${categories}" class="border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
+                <button th:onclick="|toggleCategory(${category.id})|" 
                         class="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors group rounded-lg">
                     <div class="flex items-center flex-1">
                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center mr-3 group-hover:from-emerald-100 group-hover:to-emerald-200 transition-all duration-200">
-                            <img th:src="${section.imageUrl != null ? section.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}" class="w-8 h-8 object-cover rounded-xl" alt="Imagen sección" loading="lazy" decoding="async" width="32" height="32" />
+                            <img th:src="${category.imageUrl != null ? category.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}" class="w-8 h-8 object-cover rounded-xl" alt="Imagen categoría" loading="lazy" decoding="async" width="32" height="32" />
                         </div>
                         <div class="text-left flex-1">
-                            <h3 class="font-semibold text-gray-900 text-base mb-1" th:text="${section.title}">Título</h3>
-                            <p class="text-sm text-gray-600 leading-relaxed" th:text="${section.description}">Descripción</p>
+                            <h3 class="font-semibold text-gray-900 text-base mb-1" th:text="${category.name}">Título</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed" th:text="${category.description}">Descripción</p>
                         </div>
                     </div>
                     <div class="ml-3 flex-shrink-0">
-                        <svg th:id="'arrow-' + ${section.id}" class="w-5 h-5 text-gray-400 transform transition-transform duration-200 group-hover:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg th:id="'arrow-' + ${category.id}" class="w-5 h-5 text-gray-400 transform transition-transform duration-200 group-hover:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
                 </button>
-                <div th:id="'categories-' + ${section.id}" class="hidden border-t border-gray-100">
+                <div th:id="'categories-' + ${category.id}" class="hidden border-t border-gray-100">
                     <div class="p-4 bg-gray-50 space-y-1">
-                        <div th:if="${section.categories != null and !#lists.isEmpty(section.categories)}" class="space-y-1">
-                            <a th:each="cat : ${section.categories}"
-                               th:href="@{/posts/category/{slug}(slug=${cat.slug})}"
+                        <div class="space-y-1">
+                            <a th:href="@{/posts/category/{slug}(slug=${category.slug})}"
                                class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                                 </svg>
-                                <span th:text="${cat.name}">Categoría</span>
-                            </a>
-                        </div>
-                        <div th:if="${section.categories == null or #lists.isEmpty(section.categories)}">
-                            <a th:href="'/posts/section/' + ${section.id}"
-                               class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                </svg>
-                                <span th:text="${section.actionText != null ? section.actionText : 'Ver contenido'}">Ver contenido</span>
+                                <span th:text="'Ver ' + ${category.name}">Ver categoría</span>
                             </a>
                         </div>
                     </div>

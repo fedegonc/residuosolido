@@ -59,17 +59,17 @@ public class AuthController {
 
         Map<String, Object> indexData = authService.getIndexData();
         try {
-            Object ws = indexData.get("wasteSections");
+            Object categories = indexData.get("categories");
             Object posts = indexData.get("posts");
             Object orgs = indexData.get("organizations");
             Object hero = indexData.get("heroImage");
             Object users = indexData.get("users");
-            int wsCount = (ws instanceof java.util.Collection) ? ((java.util.Collection<?>) ws).size() : (ws == null ? 0 : 1);
+            int categoriesCount = (categories instanceof java.util.Collection) ? ((java.util.Collection<?>) categories).size() : (categories == null ? 0 : 1);
             int postsCount = (posts instanceof java.util.Collection) ? ((java.util.Collection<?>) posts).size() : (posts == null ? 0 : 1);
             int orgsCount = (orgs instanceof java.util.Collection) ? ((java.util.Collection<?>) orgs).size() : (orgs == null ? 0 : 1);
             int usersCount = (users instanceof java.util.Collection) ? ((java.util.Collection<?>) users).size() : (users == null ? 0 : 1);
             boolean hasHero = (hero instanceof String) && !((String) hero).isEmpty();
-            log.info("[INDEX] Data loaded -> sections={}, posts={}, orgs={}, users={}, heroImage={}", wsCount, postsCount, orgsCount, usersCount, hasHero ? "yes" : "no");
+            log.info("[INDEX] Data loaded -> categories={}, posts={}, orgs={}, users={}, heroImage={}", categoriesCount, postsCount, orgsCount, usersCount, hasHero ? "yes" : "no");
             log.info("[INDEX] Users loaded: {}", usersCount);
         } catch (Exception e) {
             log.warn("[INDEX] Error inspecting indexData: {}", e.toString());

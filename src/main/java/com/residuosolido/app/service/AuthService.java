@@ -2,7 +2,7 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.WasteSection;
+import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class AuthService {
     private PostService postService;
     
     @Autowired
-    private WasteSectionService wasteSectionService;
+    private CategoryService categoryService;
     
     @Autowired
     private ConfigService configService;
@@ -36,12 +36,12 @@ public class AuthService {
         
         List<Post> posts = postService.getFirst5Posts();
         List<User> organizations = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
-        List<WasteSection> wasteSections = wasteSectionService.getActiveSectionsWithCategories();
+        List<Category> categories = categoryService.getActiveCategoriesOrderedByDisplayOrder();
         List<User> users = userRepository.findAll();
         
         data.put("posts", posts);
         data.put("organizations", organizations);
-        data.put("wasteSections", wasteSections);
+        data.put("categories", categories);
         data.put("heroImage", configService.getHeroImageUrl());
         data.put("users", users);
         

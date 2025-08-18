@@ -6,9 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "requests")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Request {
 
     @Id
@@ -61,24 +65,22 @@ public class Request {
         this.materials.remove(material);
     }
 
-    // Getters and Setters básicos
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public List<Material> getMaterials() { return materials; }
-    public void setMaterials(String materials) { /* Simplificado para String */ }
-
-    public RequestStatus getStatus() { return status; }
-    public void setStatus(RequestStatus status) { this.status = status; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    // Campo legacy para compatibilidad con String
+    @Transient
+    public String getMaterialsAsString() {
+        if (materials == null || materials.isEmpty()) {
+            return "";
+        }
+        return materials.stream()
+                .map(Material::getName)
+                .collect(Collectors.joining(", "));
+    }
+    
+    // Método adicional para compatibilidad con String materials
+    public void setMaterials(String materialsString) {
+        // Este método existe para compatibilidad pero no hace nada
+        // Los materiales se manejan a través de la lista de Material
+    }
 
     public enum RequestStatus {
         PENDING, ACCEPTED, REJECTED, COMPLETED

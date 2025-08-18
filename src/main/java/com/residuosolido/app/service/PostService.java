@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -66,14 +67,19 @@ public class PostService {
     }
 
     public List<Post> getPostsByCategoryId(Long categoryId) {
-        return postRepository.findByCategoryIdOrderByIdAsc(categoryId);
+        return categoryService.getCategoryById(categoryId)
+            .map(postRepository::findByCategoryOrderByIdAsc)
+            .orElse(new ArrayList<>());
     }
 
     public List<Post> getRelatedPostsById(Long postId, Long categoryId, int limit) {
-        return postRepository.findByCategoryId(categoryId).stream()
-                .filter(p -> !p.getId().equals(postId))
-                .limit(limit)
-                .toList();
+        return categoryService.getCategoryById(categoryId)
+            .map(postRepository::findByCategory)
+            .orElse(new ArrayList<>())
+            .stream()
+            .filter(p -> !p.getId().equals(postId))
+            .limit(limit)
+            .toList();
     }
 
     public void createPost(String title, String content, String imageUrl, Long categoryId) {
@@ -81,7 +87,7 @@ public class PostService {
         post.setTitle(title);
         post.setContent(content);
         post.setImageUrl(imageUrl);
-        post.setCategoryId(categoryId);
+        categoryService.getCategoryById(categoryId).ifPresent(post::setCategory);
         postRepository.save(post);
     }
     
@@ -90,7 +96,7 @@ public class PostService {
         post.setTitle(title);
         post.setContent(content);
         post.setImageUrl(imageUrl);
-        post.setCategoryId(categoryId);
+        categoryService.getCategoryById(categoryId).ifPresent(post::setCategory);
         post.setSourceUrl(sourceUrl);
         post.setSourceName(sourceName);
         postRepository.save(post);
@@ -113,7 +119,7 @@ public class PostService {
             post.setTitle(title);
             post.setContent(content);
             post.setImageUrl(imageUrl);
-            post.setCategoryId(categoryId);
+            categoryService.getCategoryById(categoryId).ifPresent(post::setCategory);
             post.setSourceUrl(sourceUrl);
             post.setSourceName(sourceName);
             postRepository.save(post);
@@ -150,6 +156,8 @@ public class PostService {
     }
 
     public boolean isCategoryInUse(Long categoryId) {
-        return postRepository.existsByCategoryId(categoryId);
+        return categoryService.getCategoryById(categoryId)
+            .map(postRepository::existsByCategory)
+            .orElse(false);
     }
 }
