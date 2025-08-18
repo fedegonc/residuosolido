@@ -2,12 +2,12 @@
     <section th:fragment="hero" class="pt-0 pb-0 bg-white font-sans">
         <div class="relative w-full h-[24rem] md:h-[30rem] lg:h-[34rem] overflow-hidden">
             <!-- Imagen de fondo -->
-            <img th:if="${heroImage != null}"
+            <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
                  th:src="${heroImage}"
                  alt="Imagen principal"
                  class="absolute inset-0 w-full h-full object-cover" />
             <!-- Fallback gradiente si no hay imagen -->
-            <div th:unless="${heroImage != null}"
+            <div th:unless="${heroImage != null and !#strings.isEmpty(heroImage)}"
                  class="absolute inset-0 bg-gradient-to-br from-emerald-100 to-emerald-200"></div>
             <!-- Overlay semitransparente para mejorar contraste -->
             <div class="absolute inset-0 bg-black/30"></div>

@@ -7,50 +7,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            300: '#86efac',
-                            400: '#4ade80',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d'
-                        },
-                        secondary: {
-                            50: '#f8fafc',
-                            100: '#f1f5f9',
-                            200: '#e2e8f0',
-                            300: '#cbd5e1',
-                            400: '#94a3b8',
-                            500: '#64748b',
-                            600: '#475569',
-                            700: '#334155',
-                            800: '#1e293b',
-                            900: '#0f172a'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316a34a'%3E%3Cpath d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'/%3E%3C/svg%3E">
 </th:block>
 
-<!-- Slot CSS: estilos del guest-dropdown disponibles en páginas públicas -->
-<th:block th:fragment="css">
-    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-css}"></th:block>
-  </th:block>
 
 <th:block th:fragment="layout(content)">
     <div class="bg-gray-100 min-h-screen flex flex-col">
@@ -59,34 +18,34 @@
         <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
     </div>
     <!-- Barra de navegación -->
-    <nav th:fragment="navbar" class="bg-white shadow-lg border-b border-primary-100">
+    <nav th:fragment="navbar" class="bg-white shadow-lg border-b border-green-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center">
                         <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
                             </div>
                             <div>
-                                <span class="hidden sm:inline text-xl font-bold text-secondary-800">Residuos Sólidos</span>
-                                <span class="hidden sm:inline block text-sm text-secondary-600 font-medium">Frontera de la Paz</span>
-                                <span class="sm:hidden text-lg font-bold text-secondary-800">Residuos Sólidos</span>
+                                <span class="hidden sm:inline text-xl font-bold text-gray-800">Residuos Sólidos</span>
+                                <span class="hidden sm:inline block text-sm text-gray-600 font-medium">Frontera de la Paz</span>
+                                <span class="sm:hidden text-lg font-bold text-gray-800">Residuos Sólidos</span>
                             </div>
                         </a>
                     </div>
                     
                     <!-- Links de navegación principales -->
                     <div class="hidden md:flex md:ml-10 md:space-x-8">
-                        <a href="/#reciclables" class="text-secondary-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-primary-50">
+                        <a href="/posts/category/reciclables" class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-green-50">
                             Reciclables
                         </a>
-                        <a href="/#no-reciclables" class="text-secondary-600 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-orange-50">
+                        <a href="/posts/category/no-reciclables" class="text-gray-600 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-orange-50">
                             No Reciclables
                         </a>
-                        <a href="/#organizaciones" class="text-secondary-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-blue-50">
+                        <a href="/#organizaciones" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-blue-50">
                             Organizaciones
                         </a>
                     </div>
@@ -112,7 +71,7 @@
                         </div>
                     </div>
                     <div class="ml-3 relative" sec:authorize="!isAuthenticated()">
-                        <a href="/auth/login" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-dark">
+                        <a href="/auth/login" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700">
     Iniciar Sesión
 </a>
 <a href="/auth/register" class="ml-2 px-3 py-2 rounded-md text-sm font-medium text-green-600 bg-white border border-green-600 hover:bg-green-50">
@@ -183,8 +142,8 @@
             
             <div class="pt-4 pb-3 border-t border-gray-200" sec:authorize="isAuthenticated()">
                 <div class="flex items-center px-4">
-                    <div class="flex-shrink-0">
-                        <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                        <div class="flex-shrink-0">
+                        <div class="h-10 w-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
                             <span th:text="${#authentication.name}" class="text-sm">U</span>
                         </div>
                     </div>
@@ -224,9 +183,6 @@
         }
     </script>
     
-    <!-- Login/Register Modal global -->
-    <div th:replace="~{fragments/login-modal :: modal}"></div>
-
     <!-- JavaScript del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
 
