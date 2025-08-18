@@ -60,13 +60,6 @@ public class User {
     @Deprecated
     private String address;   // Mantener para compatibilidad
 
-    @ManyToMany
-    @JoinTable(
-        name = "user_phones",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "phone_id")
-    )
-    private List<Phone> phones = new ArrayList<>();
 
     // --- Feedback relation temporarily disabled to avoid orphanRemoval issues during User updates ---
     // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -93,23 +86,6 @@ public class User {
 
     }
 
-    /**
-     * Añade un teléfono a la lista de teléfonos del usuario
-     * @param phone Teléfono a añadir
-     */
-    public void addPhone(Phone phone) {
-        this.phones.add(phone);
-        phone.getUsers().add(this);
-    }
-
-    /**
-     * Elimina un teléfono de la lista de teléfonos del usuario
-     * @param phone Teléfono a eliminar
-     */
-    public void removePhone(Phone phone) {
-        this.phones.remove(phone);
-        phone.getUsers().remove(this);
-    }
 
     // @Data genera automáticamente todos los getters/setters
 }

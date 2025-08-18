@@ -32,8 +32,6 @@ public class Request {
     )
     private List<Material> materials = new ArrayList<>();
 
-    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatMessage> chatMessages = new ArrayList<>();
 
     private String collectionAddress;
     private LocalDate scheduledDate;

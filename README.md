@@ -1,7 +1,7 @@
-# Sistema de Gestión de Residuos Sólidos
+# 🌱 Sistema de Gestión de Residuos Sólidos
 **Rivera - Sant'ana do Livramento**
 
-Plataforma web integral para la gestión de residuos sólidos urbanos que conecta ciudadanos y organizaciones en un ecosistema colaborativo de reciclaje y manejo responsable de residuos.
+Aplicación web full-stack para gestión integral de residuos sólidos urbanos. Arquitectura Spring Boot + PostgreSQL + Thymeleaf con sistema multi-rol y deployment optimizado para producción.
 
 ## 🚀 Características Principales
 
@@ -30,30 +30,63 @@ Plataforma web integral para la gestión de residuos sólidos urbanos que conect
 
 ## 🛠️ Stack Tecnológico
 
-- **Backend**: Java 17, Spring Boot 3.x, Spring Security, JPA/Hibernate
-- **Base de Datos**: PostgreSQL con HikariCP
-- **Frontend**: Thymeleaf, Tailwind CSS, JavaScript ES6+
-- **Build**: Maven
+### Backend
+- **Runtime**: Java 17 + Spring Boot 3.2.0
+- **Security**: Spring Security 6 con autorización por roles
+- **Data**: JPA/Hibernate + PostgreSQL + HikariCP
+- **Architecture**: MVC en capas (Controller → Service → Repository)
+- **Build**: Maven 3.8+
 
-## 📁 Arquitectura del Proyecto
+### Frontend
+- **Templates**: Thymeleaf 3.1 con fragmentos reutilizables
+- **Styles**: Tailwind CSS (CDN) - NO Bootstrap
+- **JavaScript**: ES6+ vanilla para interactividad
+- **UI/UX**: Responsive design, colores suaves, iconografía SVG
 
+### DevOps & Deploy
+- **Database**: PostgreSQL 12+ (producción) / H2 (testing)
+- **Server**: Tomcat embebido (Spring Boot)
+- **Profiles**: dev, test, prod configurables
+- **Monitoring**: Logs estructurados + SQL debugging
+
+## 🏗️ Arquitectura del Sistema
+
+### Backend Architecture
 ```
-src/main/
-├── java/com/residuosolido/app/
-│   ├── controller/     # Controladores por dominio
-│   ├── service/        # Lógica de negocio
-│   ├── repository/     # Acceso a datos
-│   ├── model/          # Entidades JPA
-│   ├── dto/           # Objetos de transferencia
-│   └── config/        # Configuración y seguridad
-└── resources/
-    ├── templates/     # Vistas Thymeleaf
-    │   ├── admin/     # Páginas de administración
-    │   ├── auth/      # Login, registro
-    │   ├── guest/     # Página pública
-    │   ├── org/       # Dashboard organizaciones
-    │   └── users/     # Dashboard usuarios
-    └── static/        # CSS, JS, imágenes
+src/main/java/com/residuosolido/app/
+├── controller/
+│   ├── admin/          # AdminUserController
+│   ├── auth/           # AuthController (login/register)
+│   ├── guest/          # Controladores públicos
+│   ├── org/            # OrganizationController
+│   └── user/           # UserController
+├── service/            # Lógica de negocio
+│   ├── AuthService     # Autenticación + index data
+│   ├── UserService     # CRUD usuarios + validaciones
+│   ├── PostService     # Gestión contenido
+│   └── MaterialService # Gestión materiales
+├── repository/         # JPA Repositories
+├── model/              # Entidades JPA optimizadas
+├── dto/                # Data Transfer Objects
+└── config/             # Security + configuración
+```
+
+### Frontend Structure
+```
+src/main/resources/
+├── templates/
+│   ├── fragments/      # Componentes reutilizables
+│   │   ├── layout.html      # Layout principal
+│   │   ├── admin-layout.html # Layout admin
+│   │   └── auth-layout.html  # Layout autenticación
+│   ├── admin/          # Panel administración
+│   ├── auth/           # Login/registro
+│   ├── guest/          # Página pública
+│   ├── org/            # Dashboard organizaciones
+│   └── users/          # Dashboard usuarios
+└── static/
+    ├── js/             # JavaScript modular
+    └── images/         # Assets estáticos
 ```
 
 ## 🗃️ Modelo de Datos
@@ -107,43 +140,64 @@ Solicitudes de recolección de residuos.
 - `status`: Estado (PENDING, ACCEPTED, REJECTED, COMPLETED)
 - `notes`: Comentarios adicionales
 
-## 🚀 Inicio Rápido
+## 🚀 Quick Start
 
 ### Prerrequisitos
-- Java 17+
-- PostgreSQL 12+
-- Maven 3.8+
+- **Java 17+** (OpenJDK recomendado)
+- **PostgreSQL 12+** (producción) o H2 (desarrollo)
+- **Maven 3.8+**
+- **Git**
 
-### Instalación
+### Desarrollo Local
 
-1. **Clonar el repositorio**
+1. **Setup del proyecto**
 ```bash
 git clone [repository-url]
 cd residuosolido
+cp .env.example .env  # Configurar variables
 ```
 
-2. **Configurar base de datos**
+2. **Base de datos PostgreSQL**
 ```sql
 CREATE DATABASE residuosolido;
-CREATE USER residuo_user WITH PASSWORD 'your_password';
+CREATE USER residuo_user WITH PASSWORD 'dev_password';
 GRANT ALL PRIVILEGES ON DATABASE residuosolido TO residuo_user;
 ```
 
-3. **Configurar application.properties**
+3. **Variables de entorno (.env)**
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/residuosolido
-spring.datasource.username=residuo_user
-spring.datasource.password=your_password
+# Database
+DB_URL=jdbc:postgresql://localhost:5432/residuosolido
+DB_USERNAME=residuo_user
+DB_PASSWORD=dev_password
+DB_DRIVER=org.postgresql.Driver
+
+# Cloudinary (opcional)
+CLOUDINARY_CLOUD_NAME=your_cloud
+CLOUDINARY_API_KEY=your_key
+CLOUDINARY_API_SECRET=your_secret
 ```
 
-4. **Ejecutar la aplicación**
+4. **Ejecutar aplicación**
 ```bash
+# Desarrollo con PostgreSQL
 mvn spring-boot:run
+
+# Testing con H2 (en memoria)
+mvn spring-boot:run -Dspring.profiles.active=test
 ```
 
-5. **Acceder a la aplicación**
-- URL: http://localhost:8080
-- Admin por defecto: username=admin, password=admin123
+5. **Acceso inicial**
+- **URL**: http://localhost:8080
+- **Admin**: username=`admin`, password=`12345`
+- **Hot reload**: Templates se actualizan automáticamente
+
+### Testing Rápido
+```bash
+# H2 en memoria (sin PostgreSQL)
+mvn spring-boot:run -Dspring.profiles.active=test
+# Puerto: 8081, datos se resetean al reiniciar
+```
 
 ## 📋 Funcionalidades por Rol
 
@@ -215,33 +269,143 @@ Notas:
 - La seguridad está configurada en `SecurityConfig.java` usando `requestMatchers` por patrón.
 - Tras autenticación, la app redirige según rol (handler de éxito de login).
 
-## 🔧 Configuración de Desarrollo
+## 🔧 Configuración Avanzada
 
-### Variables de Entorno
+### Profiles de Aplicación
+
+#### Development (default)
 ```properties
-# Base de datos
-DB_URL=jdbc:postgresql://localhost:5432/residuosolido
-DB_USERNAME=residuo_user
-DB_PASSWORD=your_password
-
-# Logs SQL (desarrollo)
-spring.jpa.show-sql=true
-logging.level.org.hibernate.SQL=DEBUG
+# application.properties
+spring.profiles.active=dev
+spring.jpa.hibernate.ddl-auto=update
+spring.thymeleaf.cache=false
+spring.devtools.restart.enabled=true
 ```
 
-### Estructura de Seguridad
-- **Rutas públicas**: `/`, `/auth/**`, `/posts/**`
-- **Rutas de admin**: `/admin/**`
-- **Rutas de organización**: `/org/**`
-- **Rutas de usuario**: `/users/**`
+#### Testing
+```properties
+# application-test.properties
+spring.datasource.url=jdbc:h2:mem:testdb
+server.port=8081
+spring.jpa.hibernate.ddl-auto=create-drop
+```
+
+#### Production
+```properties
+# application-prod.properties
+spring.jpa.hibernate.ddl-auto=validate
+spring.thymeleaf.cache=true
+logging.level.org.hibernate.SQL=WARN
+```
+
+### Optimizaciones de Performance
+
+#### Database
+- **Connection Pool**: HikariCP optimizado
+- **N+1 Queries**: Resuelto con JOIN FETCH
+- **Lazy Loading**: FetchType.LAZY por defecto
+- **Índices**: En campos únicos (username, email)
+
+#### Frontend
+- **Hot Reload**: Templates sin restart completo
+- **Tailwind**: CDN en dev, build optimizado en prod
+- **Assets**: Servidos desde `/static/`
+
+### Security Configuration
+```java
+// Estructura de autorización
+@PreAuthorize("hasRole('ADMIN')")     // /admin/**
+@PreAuthorize("hasRole('ORGANIZATION')") // /org/**
+@PreAuthorize("hasRole('USER')")      // /users/**
+// Públicas: /, /auth/**, /posts/**
+```
+
+## 🚀 Deployment
+
+### Docker Deployment
+```dockerfile
+# Dockerfile incluido
+FROM openjdk:17-jdk-slim
+COPY target/app-*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+```
+
+```bash
+# Build & Deploy
+mvn clean package
+docker build -t residuosolido .
+docker run -p 8080:8080 --env-file .env residuosolido
+```
+
+### Production Checklist
+- [ ] **Database**: PostgreSQL configurado y migrado
+- [ ] **Environment**: Variables `.env` en servidor
+- [ ] **Security**: HTTPS configurado
+- [ ] **Monitoring**: Logs centralizados
+- [ ] **Backup**: Base de datos automatizado
+- [ ] **Performance**: Connection pool optimizado
+
+### Cloud Deploy (Heroku/Railway/etc)
+```bash
+# Heroku example
+heroku create residuosolido-app
+heroku addons:create heroku-postgresql:hobby-dev
+heroku config:set SPRING_PROFILES_ACTIVE=prod
+git push heroku main
+```
+
+## 📊 API Endpoints
+
+### Públicos
+- `GET /` - Página principal
+- `GET /auth/login` - Login
+- `POST /auth/register` - Registro
+- `GET /posts/**` - Contenido público
+
+### Autenticados
+- `GET /users/dashboard` - Dashboard usuario
+- `GET /org/dashboard` - Dashboard organización
+- `GET /admin/dashboard` - Panel admin
+
+### Admin APIs
+- `GET /admin/users` - Gestión usuarios
+- `POST /admin/posts` - Crear contenido
+- `PUT /admin/materials/{id}` - Actualizar materiales
+
+## 🔍 Monitoring & Debug
+
+### Logs SQL
+```properties
+spring.jpa.show-sql=true
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```
+
+### Health Checks
+- `GET /actuator/health` (si se habilita)
+- Database connection status
+- Application metrics
 
 ## 📈 Roadmap
 
-- [ ] Sistema de notificaciones en tiempo real
-- [ ] API REST para aplicaciones móviles
-- [ ] Reportes y estadísticas avanzadas
-- [ ] Integración con servicios de mapas externos
-- [ ] Sistema de gamificación para usuarios
+### Backend
+- [ ] API REST para móviles
+- [ ] Microservicios (separar auth/content)
+- [ ] Cache con Redis
+- [ ] Message queues (RabbitMQ)
+
+### Frontend
+- [ ] PWA capabilities
+- [ ] Real-time notifications
+- [ ] Advanced analytics dashboard
+- [ ] Mobile-first redesign
+
+### DevOps
+- [ ] CI/CD pipeline
+- [ ] Kubernetes deployment
+- [ ] Automated testing
+- [ ] Performance monitoring
 
 ---
 
