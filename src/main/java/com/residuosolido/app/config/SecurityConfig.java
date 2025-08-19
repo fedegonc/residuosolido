@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index", "/invitados", "/guest/**").permitAll()
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
+                .requestMatchers("/change-language").permitAll() // Cambio de idioma público
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")

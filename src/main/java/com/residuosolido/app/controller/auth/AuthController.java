@@ -17,9 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,16 +33,19 @@ public class AuthController {
     private final LoginSuccessHandler successHandler;
     private final PasswordResetService passwordResetService;
     private final AuthService authService;
+    private final LocaleResolver localeResolver;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
                          LoginSuccessHandler successHandler,
                          PasswordResetService passwordResetService,
-                         AuthService authService) {
+                         AuthService authService,
+                         LocaleResolver localeResolver) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.passwordResetService = passwordResetService;
         this.authService = authService;
+        this.localeResolver = localeResolver;
     }
 
     @GetMapping({"/", "/index"})
@@ -143,5 +148,65 @@ public class AuthController {
                                        @RequestParam String lastKnownPassword) {
         passwordResetService.createResetRequest(maskedEmail, lastKnownPassword);
         return "redirect:/auth/login?info=Solicitud enviada al administrador";
+    }
+
+    // Endpoint para cambio de idioma
+    @GetMapping("/change-language")
+    public String changeLanguage(
+            @RequestParam("lang") String language,
+            @RequestParam(value = "referer", required = false) String explicitReferer,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        
+        log.info("[LANGUAGE] Solicitud de cambio de idioma recibida: lang={}, referer={}", language, explicitReferer);
+        
+        Locale locale;
+        switch (language.toLowerCase()) {
+            case "es":
+                locale = new Locale("es");
+                log.info("[LANGUAGE] Cambiando a español");
+                break;
+            case "pt":
+            default:
+                locale = new Locale("pt");
+                log.info("[LANGUAGE] Cambiando a portugués");
+                break;
+        }
+        
+        // Obtener locale actual antes del cambio
+        Locale currentLocale = localeResolver.resolveLocale(request);
+        log.info("[LANGUAGE] Locale actual antes del cambio: {}", currentLocale);
+        
+        // Aplicar el cambio
+        localeResolver.setLocale(request, response, locale);
+        log.info("[LANGUAGE] Locale establecido a: {}", locale);
+        
+        // Verificar si el cambio se aplicó correctamente
+        Locale afterChangeLocale = localeResolver.resolveLocale(request);
+        log.info("[LANGUAGE] Locale después del cambio: {}", afterChangeLocale);
+        
+        // Determinar URL de redirección
+        String redirectUrl;
+        
+        // Primero intentar usar el referer explícito si existe
+        if (explicitReferer != null && !explicitReferer.isEmpty()) {
+            redirectUrl = explicitReferer;
+            log.info("[LANGUAGE] Usando referer explícito para redirección: {}", redirectUrl);
+        } else {
+            // Si no hay referer explícito, usar el header Referer
+            String refererHeader = request.getHeader("Referer");
+            log.info("[LANGUAGE] Header Referer: {}", refererHeader);
+            
+            if (refererHeader != null && !refererHeader.isEmpty()) {
+                redirectUrl = refererHeader;
+                log.info("[LANGUAGE] Usando header Referer para redirección: {}", redirectUrl);
+            } else {
+                // Si no hay ningún referer, redirigir a la página principal
+                redirectUrl = "/";
+                log.info("[LANGUAGE] No se encontró referer, redirigiendo a: {}", redirectUrl);
+            }
+        }
+        
+        return "redirect:" + redirectUrl;
     }
 }

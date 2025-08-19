@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Internacionalización</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Prueba de Internacionalización</h1>
+            <p class="mb-4">Locale actual: <span class="font-mono bg-gray-100 px-2 py-1 rounded" th:text="${currentLocale}">es</span></p>
+            
+            <div class="flex flex-wrap gap-2 mb-6">
+                <!-- Cambio directo usando parámetro lang de Spring -->
+                <a href="/i18n-test?lang=es" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                    Spring: Español
+                </a>
+                <a href="/i18n-test?lang=pt" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                    Spring: Português
+                </a>
+                
+                <!-- Usando endpoint /change-language con referer explícito -->
+                <a href="/change-language?lang=es&amp;referer=/i18n-test" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
+                    Endpoint: Español (referer explícito)
+                </a>
+                <a href="/change-language?lang=pt&amp;referer=/i18n-test" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
+                    Endpoint: Português (referer explícito)
+                </a>
+                
+                <!-- Usando endpoint /change-language sin referer explícito (usa header Referer) -->
+                <a href="/change-language?lang=es" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                    Endpoint: Español (header Referer)
+                </a>
+                <a href="/change-language?lang=pt" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                    Endpoint: Português (header Referer)
+                </a>
+            </div>
+        </div>
+
+        <!-- Tabla de mensajes -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clave</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:each="entry : ${messages}">
+                        <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900" th:text="${entry.key}">clave</td>
+                        <td class="px-6 py-4 whitespace-normal text-sm text-gray-500" th:text="${entry.value}">valor</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección de prueba directa de mensajes -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Prueba directa de mensajes</h2>
+            
+            <div class="space-y-4">
+                <div class="p-4 border border-gray-200 rounded-md">
+                    <h3 class="font-bold mb-2">Hero Section</h3>
+                    <p class="text-lg font-bold" th:text="#{index.hero.title}">Título</p>
+                    <p class="text-md" th:text="#{index.hero.subtitle}">Subtítulo</p>
+                    <p class="text-sm" th:text="#{index.hero.description}">Descripción</p>
+                </div>
+                
+                <div class="p-4 border border-gray-200 rounded-md">
+                    <h3 class="font-bold mb-2">Idiomas</h3>
+                    <p th:text="#{language.spanish}">Español</p>
+                    <p th:text="#{language.portuguese}">Português</p>
+                </div>
+                
+                <div class="p-4 border border-gray-200 rounded-md">
+                    <h3 class="font-bold mb-2">Navegación</h3>
+                    <p th:text="#{nav.categories}">Categorías</p>
+                    <p th:text="#{nav.posts}">Posts</p>
+                    <p th:text="#{nav.organizations}">Organizaciones</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

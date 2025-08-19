@@ -1,0 +1,140 @@
+<th:block th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+
+<div th:fragment="content">
+    <!-- Contenido principal -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="md:flex md:items-center md:justify-between mb-8">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                    Documentación del Sistema
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">
+                    Recursos y documentación para administradores y desarrolladores
+                </p>
+            </div>
+        </div>
+
+        <!-- Sección de documentación principal -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    <i class="fas fa-book mr-2 text-blue-600"></i>Documentación Principal
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                    Documentación completa del sistema Residuos Sólidos - Frontera de la Paz
+                </p>
+            </div>
+            <div class="border-t border-gray-200">
+                <dl>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">
+                            Manual del Sistema
+                        </dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0" 
+                               target="_blank" 
+                               class="text-blue-600 hover:text-blue-800 flex items-center">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Manual completo del sistema (Google Docs)
+                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    Actualizado
+                                </span>
+                            </a>
+                            <p class="mt-2 text-sm text-gray-500">
+                                Contiene información detallada sobre todas las funcionalidades, configuraciones y procedimientos del sistema.
+                            </p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Detalles importantes del sistema -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    <i class="fas fa-info-circle mr-2 text-green-600"></i>Detalles Importantes del Sistema
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                    Información técnica y operativa relevante
+                </p>
+            </div>
+            <div class="border-t border-gray-200">
+                <dl>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">
+                            Versión del Sistema
+                        </dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            1.0.0
+                        </dd>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">
+                            Tecnologías Principales
+                        </dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
+                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                    <div class="w-0 flex-1 flex items-center">
+                                        <i class="fas fa-code flex-shrink-0 h-5 w-5 text-gray-400"></i>
+                                        <span class="ml-2 flex-1 w-0 truncate">
+                                            Spring Boot 3.x
+                                        </span>
+                                    </div>
+                                </li>
+                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                    <div class="w-0 flex-1 flex items-center">
+                                        <i class="fas fa-database flex-shrink-0 h-5 w-5 text-gray-400"></i>
+                                        <span class="ml-2 flex-1 w-0 truncate">
+                                            PostgreSQL
+                                        </span>
+                                    </div>
+                                </li>
+                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                    <div class="w-0 flex-1 flex items-center">
+                                        <i class="fas fa-paint-brush flex-shrink-0 h-5 w-5 text-gray-400"></i>
+                                        <span class="ml-2 flex-1 w-0 truncate">
+                                            Tailwind CSS
+                                        </span>
+                                    </div>
+                                </li>
+                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                    <div class="w-0 flex-1 flex items-center">
+                                        <i class="fas fa-globe flex-shrink-0 h-5 w-5 text-gray-400"></i>
+                                        <span class="ml-2 flex-1 w-0 truncate">
+                                            Thymeleaf
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">
+                            Contacto Soporte
+                        </dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <a href="mailto:soporte@residuosolido.com" class="text-blue-600 hover:text-blue-800">
+                                soporte@residuosolido.com
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">
+                            Repositorio de Código
+                        </dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <a href="https://github.com/residuosolido/app" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
+                                <i class="fab fa-github mr-2"></i>
+                                GitHub: residuosolido/app
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+</th:block>

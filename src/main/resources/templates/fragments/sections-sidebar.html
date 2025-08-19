@@ -3,47 +3,42 @@
 <body>
     <!-- Fragmento: Sidebar de Secciones -->
     <div th:fragment="sidebar" class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-        <h2 class="text-base font-semibold text-gray-900 mb-2 flex items-center">
-            <svg class="w-4 h-4 text-emerald-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-            </svg>
-Categorías
-        </h2>
         <div class="space-y-2">
-            <!-- Categorías dinámicas -->
-            <div th:each="category : ${categories}" class="border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
-                <button th:onclick="|toggleCategory(${category.id})|" 
+            <!-- Secciones dinámicas -->
+            <div th:each="section : ${wasteSections}" class="border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
+                <button th:onclick="|toggleCategory(${section.id})|" 
                         class="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors group rounded-lg">
                     <div class="flex items-center flex-1">
                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center mr-3 group-hover:from-emerald-100 group-hover:to-emerald-200 transition-all duration-200">
-                            <img th:src="${category.imageUrl != null ? category.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}" class="w-8 h-8 object-cover rounded-xl" alt="Imagen categoría" loading="lazy" decoding="async" width="32" height="32" />
+                            <img th:src="${section.imageUrl != null ? section.imageUrl : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'}" class="w-8 h-8 object-cover rounded-xl" alt="Imagen sección" loading="lazy" decoding="async" width="32" height="32" />
                         </div>
                         <div class="text-left flex-1">
-                            <h3 class="font-semibold text-gray-900 text-base mb-1" th:text="${category.name}">Título</h3>
-                            <p class="text-sm text-gray-600 leading-relaxed" th:text="${category.description}">Descripción</p>
+                            <h3 class="font-semibold text-gray-900 text-base mb-1" th:text="${section.title}">Título</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed" th:text="${section.description}">Descripción</p>
                         </div>
                     </div>
                     <div class="ml-3 flex-shrink-0">
-                        <svg th:id="'arrow-' + ${category.id}" class="w-5 h-5 text-gray-400 transform transition-transform duration-200 group-hover:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg th:id="'arrow-' + ${section.id}" class="w-5 h-5 text-gray-400 transform transition-transform duration-200 group-hover:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
                 </button>
-                <div th:id="'categories-' + ${category.id}" class="hidden border-t border-gray-100">
+                <div th:id="'categories-' + ${section.id}" class="hidden border-t border-gray-100">
                     <div class="p-4 bg-gray-50 space-y-1">
-                        <div class="space-y-1">
+                        <div class="space-y-1" th:each="category : ${section.categories}">
                             <a th:href="@{/posts/category/{slug}(slug=${category.slug})}"
                                class="inline-flex items-center text-sm text-emerald-700 hover:text-emerald-800 font-medium hover:underline transition-colors">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                                 </svg>
-                                <span th:text="'Ver ' + ${category.name}">Ver categoría</span>
+                                <span th:text="${category.name}">Categoría</span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
     </div>
 </body>
 </html>
