@@ -82,7 +82,17 @@ public class AuthController {
     
 
     @GetMapping("/auth/register")
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm(@AuthenticationPrincipal UserDetails userDetails, 
+                                     HttpServletRequest request, 
+                                     HttpServletResponse response, 
+                                     Model model) throws Exception {
+        // Si ya está autenticado, redirigir a su dashboard
+        if (userDetails != null) {
+            log.info("[REGISTER] User already authenticated, redirecting to dashboard");
+            successHandler.redirectByRole(request, response, userDetails);
+            return null;
+        }
+        
         model.addAttribute("user", new User());
         return "auth/register";
     }
@@ -101,12 +111,30 @@ public class AuthController {
     }
     
     @GetMapping("/auth/login")
-    public String showLoginForm() {
+    public String showLoginForm(@AuthenticationPrincipal UserDetails userDetails, 
+                               HttpServletRequest request, 
+                               HttpServletResponse response) throws Exception {
+        // Si ya está autenticado, redirigir a su dashboard
+        if (userDetails != null) {
+            log.info("[LOGIN] User already authenticated, redirecting to dashboard");
+            successHandler.redirectByRole(request, response, userDetails);
+            return null;
+        }
+        
         return "auth/login"; 
     }
     
     @GetMapping("/auth/forgot-password")
-    public String showForgotPasswordForm() {
+    public String showForgotPasswordForm(@AuthenticationPrincipal UserDetails userDetails, 
+                                        HttpServletRequest request, 
+                                        HttpServletResponse response) throws Exception {
+        // Si ya está autenticado, redirigir a su dashboard
+        if (userDetails != null) {
+            log.info("[FORGOT-PASSWORD] User already authenticated, redirecting to dashboard");
+            successHandler.redirectByRole(request, response, userDetails);
+            return null;
+        }
+        
         return "auth/forgot-password";
     }
     

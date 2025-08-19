@@ -143,39 +143,62 @@
                             </div>
                         </div>
                         
-                        <!-- Fuente del Post -->
+                        <!-- Fuentes del Post (Múltiples) -->
                         <div class="mt-0 bg-white p-6 rounded-lg border border-gray-200 h-full md:col-span-1 shadow-sm">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Fuente del Post
-                            </h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="sourceName" class="block text-sm font-semibold text-gray-700 mb-2">Nombre de la fuente</label>
-                                    <input type="text" name="sourceName" id="sourceName" th:value="${post.sourceName}"
-                                           placeholder="Ej: Ministerio de Ambiente"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
-                                    <p class="mt-1 text-xs text-gray-500">Texto visible. Si queda vacío, se mostrará la URL.</p>
-                                </div>
-                                <div>
-                                    <label for="sourceUrl" class="block text-sm font-semibold text-gray-700 mb-2">URL de la fuente</label>
-                                    <div class="flex">
-                                        <input type="url" name="sourceUrl" id="sourceUrl" th:value="${post.sourceUrl}"
-                                               placeholder="https://sitio-oficial.gob.uy/articulo"
-                                               pattern="https?://.*"
-                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                                    <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Fuentes del Post
+                                </h3>
+                                <button type="button" onclick="addSource()" 
+                                        class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    Agregar
+                                </button>
+                            </div>
+                            
+                            <div id="sources-container" class="space-y-4">
+                                <!-- Fuente inicial (existente) -->
+                                <div class="source-item border border-gray-200 rounded-lg p-4 bg-gray-50">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-sm font-medium text-gray-700">Fuente 1</span>
+                                        <button type="button" onclick="removeSource(this)" 
+                                                class="text-red-500 hover:text-red-700 text-sm hidden">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <p class="mt-1 text-xs text-gray-500">Debe comenzar con http:// o https://</p>
-                                </div>
-                                <div class="border-t pt-4 text-sm">
-                                    <span class="text-gray-500">Se verá como:</span>
-                                    <div class="mt-1">
-                                        <a id="sourcePreview" href="#" target="_blank" class="text-green-700 hover:underline break-all">Sin fuente</a>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la fuente</label>
+                                            <input type="text" name="sourceName" th:value="${post.sourceName}"
+                                                   placeholder="Ej: Ministerio de Ambiente"
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">URL de la fuente</label>
+                                            <input type="url" name="sourceUrl" th:value="${post.sourceUrl}"
+                                                   placeholder="https://sitio-oficial.gob.uy/articulo"
+                                                   pattern="https?://.*"
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Preview de fuentes -->
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <span class="text-sm text-gray-500 block mb-2">Vista previa:</span>
+                                <div id="sources-preview" class="space-y-1 text-sm">
+                                    <a href="#" target="_blank" class="text-green-700 hover:underline block">Sin fuentes</a>
+                                </div>
+                            </div>
+                        </div>
                         </div>
 
                         <!-- Botones de acción mejorados -->
@@ -317,25 +340,119 @@
             submitBtn.disabled = true;
         });
 
-        // Preview dinámico de fuente
-        (function() {
-            const nameInput = document.getElementById('sourceName');
-            const urlInput = document.getElementById('sourceUrl');
-            const preview = document.getElementById('sourcePreview');
-            function updatePreview() {
+        // Gestión de múltiples fuentes
+        let sourceCounter = 1;
+        
+        function addSource() {
+            sourceCounter++;
+            const container = document.getElementById('sources-container');
+            
+            const sourceHtml = `
+                <div class="source-item border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-medium text-gray-700">Fuente ${sourceCounter}</span>
+                        <button type="button" onclick="removeSource(this)" 
+                                class="text-red-500 hover:text-red-700 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la fuente</label>
+                            <input type="text" name="sourceName" 
+                                   placeholder="Ej: Ministerio de Ambiente"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm"
+                                   onchange="updateSourcesPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">URL de la fuente</label>
+                            <input type="url" name="sourceUrl" 
+                                   placeholder="https://sitio-oficial.gob.uy/articulo"
+                                   pattern="https?://.*"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm"
+                                   onchange="updateSourcesPreview()">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', sourceHtml);
+            updateRemoveButtons();
+            updateSourcesPreview();
+        }
+        
+        function removeSource(button) {
+            const sourceItem = button.closest('.source-item');
+            sourceItem.remove();
+            updateSourceNumbers();
+            updateRemoveButtons();
+            updateSourcesPreview();
+        }
+        
+        function updateSourceNumbers() {
+            const sources = document.querySelectorAll('.source-item');
+            sources.forEach((source, index) => {
+                const label = source.querySelector('span');
+                label.textContent = `Fuente ${index + 1}`;
+            });
+            sourceCounter = sources.length;
+        }
+        
+        function updateRemoveButtons() {
+            const sources = document.querySelectorAll('.source-item');
+            const removeButtons = document.querySelectorAll('.source-item button[onclick*="removeSource"]');
+            
+            removeButtons.forEach(button => {
+                if (sources.length > 1) {
+                    button.classList.remove('hidden');
+                } else {
+                    button.classList.add('hidden');
+                }
+            });
+        }
+        
+        function updateSourcesPreview() {
+            const preview = document.getElementById('sources-preview');
+            const sources = document.querySelectorAll('.source-item');
+            
+            let previewHtml = '';
+            let hasValidSources = false;
+            
+            sources.forEach((source, index) => {
+                const nameInput = source.querySelector('input[name="sourceName"]');
+                const urlInput = source.querySelector('input[name="sourceUrl"]');
+                
                 const name = (nameInput?.value || '').trim();
                 const url = (urlInput?.value || '').trim();
-                const label = name || (url ? url : 'Sin fuente');
-                preview.textContent = label;
-                preview.href = url || '#';
-                preview.classList.toggle('pointer-events-none', !url);
+                
+                if (name || url) {
+                    hasValidSources = true;
+                    const label = name || url;
+                    const href = url || '#';
+                    previewHtml += `<a href="${href}" target="_blank" class="text-green-700 hover:underline block">${label}</a>`;
+                }
+            });
+            
+            if (!hasValidSources) {
+                previewHtml = '<span class="text-gray-500">Sin fuentes</span>';
             }
-            if (nameInput && urlInput && preview) {
-                nameInput.addEventListener('input', updatePreview);
-                urlInput.addEventListener('input', updatePreview);
-                updatePreview();
-            }
-        })();
+            
+            preview.innerHTML = previewHtml;
+        }
+        
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar listeners a campos existentes
+            const initialInputs = document.querySelectorAll('.source-item input');
+            initialInputs.forEach(input => {
+                input.addEventListener('input', updateSourcesPreview);
+            });
+            
+            updateRemoveButtons();
+            updateSourcesPreview();
+        });
     </script>
 </body>
 </html>
