@@ -1,4 +1,4 @@
-package com.residuosolido.app.controller;
+package com.residuosolido.app.controller.admin;
 
 import com.residuosolido.app.service.PostService;
 

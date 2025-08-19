@@ -1,4 +1,4 @@
-package com.residuosolido.app.controller;
+package com.residuosolido.app.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

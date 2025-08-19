@@ -1,4 +1,4 @@
-package com.residuosolido.app.controller;
+package com.residuosolido.app.controller.user;
 
 import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;

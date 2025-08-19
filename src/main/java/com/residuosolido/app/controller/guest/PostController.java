@@ -1,4 +1,4 @@
-package com.residuosolido.app.controller;
+package com.residuosolido.app.controller.guest;
 
 import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Post;
