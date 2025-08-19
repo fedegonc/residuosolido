@@ -1,6 +1,8 @@
 package com.residuosolido.app.controller.user;
 
 import com.residuosolido.app.dto.UserForm;
+import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CloudinaryService;
 import com.residuosolido.app.service.RequestService;
@@ -16,6 +18,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
  
 @Controller
@@ -33,11 +37,15 @@ public class UserController {
     
     // Dashboard para usuarios normales
     @GetMapping("/dashboard")
-    
     public String userDashboard(Model model) {
         logger.info("[UserController] Enter userDashboard - preparing to render users/dashboard");
         // marcador para verificar si el controlador se ejecuta antes del error de Thymeleaf
         model.addAttribute("_renderMarker", "users_dashboard_start");
+        
+        // Obtener organizaciones para el botón de solicitud de prueba
+        List<User> organizations = userService.findByRole(Role.ORGANIZATION);
+        model.addAttribute("organizations", organizations);
+        
         String view = "users/dashboard";
         logger.info("[UserController] Returning view: {}", view);
         return view;
@@ -186,6 +194,47 @@ public class UserController {
         } catch (Exception e) {
             logger.error("Error al crear solicitud de recolección: ", e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error al procesar la solicitud. Inténtalo de nuevo.");
+        }
+        
+        return "redirect:/users/dashboard";
+    }
+    
+    /**
+     * Endpoint para crear una solicitud de prueba a una organización específica
+     */
+    @PostMapping("/test-request")
+    public String createTestRequest(@RequestParam Long organizationId,
+                                  Authentication authentication,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            // Obtener usuario actual
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            
+            // Obtener la organización seleccionada
+            User organization = userService.findUserById(organizationId);
+            if (organization == null || organization.getRole() != Role.ORGANIZATION) {
+                throw new IllegalArgumentException("Organización no válida");
+            }
+            
+            // Crear una solicitud de prueba con datos predeterminados
+            String description = "Solicitud de prueba para " + organization.getUsername();
+            String address = currentUser.getDireccion() != null ? currentUser.getDireccion() : "Dirección de prueba";
+            String materials = "Plásticos, Cartón";
+            
+            // Crear la solicitud usando el servicio
+            Request request = requestService.createRequest(currentUser, description, materials);
+            
+            // Registrar la creación exitosa
+            logger.info("Solicitud de prueba creada exitosamente: ID={}, Usuario={}, Organización={}", 
+                request.getId(), currentUser.getUsername(), organization.getUsername());
+            
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "¡Solicitud de prueba enviada exitosamente a " + organization.getUsername() + "!");
+        } catch (Exception e) {
+            logger.error("Error al crear solicitud de prueba: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error al procesar la solicitud de prueba: " + e.getMessage());
         }
         
         return "redirect:/users/dashboard";
