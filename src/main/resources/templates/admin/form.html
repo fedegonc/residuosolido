@@ -9,13 +9,13 @@
     <div th:fragment="content" class="bg-gray-50 min-h-screen py-4">
         <div class="max-w-6xl mx-auto px-4">
             <!-- Header compacto -->
-            <div class="text-center mb-2">
+            <div class="mb-2">
                 <h1 class="text-2xl font-bold text-gray-900 mb-1" th:text="${userForm.id != null ? 'Editar Usuario' : 'Crear Nuevo Usuario'}">Formulario de Usuario</h1>
                 <p class="text-gray-600 text-sm">Complete la información del usuario</p>
             </div>
             <!-- Breadcrumbs -->
             <nav class="mb-6" aria-label="Breadcrumb">
-                <ol class="flex items-center justify-center text-sm text-gray-500">
+                <ol class="flex items-center text-sm text-gray-500">
                     <li>
                         <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
                     </li>
@@ -33,7 +33,7 @@
                 <form th:action="@{/admin/users/save}" th:object="${userForm}" method="post">
                     <input type="hidden" th:field="*{id}" />
                     
-                    <!-- Sección: Información Básica -->
+                    <!-- Sección: Información Básica + Imagen de Perfil -->
                     <div class="border-l-4 border-blue-500 bg-gradient-to-r from-blue-50 to-white rounded-lg p-6 mb-6 shadow-sm">
                         <div class="flex items-center mb-4">
                             <div class="bg-blue-100 p-3 rounded-full mr-4">
@@ -46,26 +46,69 @@
                                 <p class="text-gray-600 text-sm">Datos principales del usuario</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Nombre de Usuario *</label>
-                                <input type="text" th:field="*{username}" required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            <!-- Campos básicos (3/4) -->
+                            <div class="lg:col-span-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">👤 Nombre de Usuario *</label>
+                                        <input type="text" th:field="*{username}" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">📧 Email *</label>
+                                        <input type="email" th:field="*{email}" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Nombre</label>
+                                        <input type="text" th:field="*{firstName}"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Apellido</label>
+                                        <input type="text" th:field="*{lastName}"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Email *</label>
-                                <input type="email" th:field="*{email}" required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Nombre</label>
-                                <input type="text" th:field="*{firstName}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Apellido</label>
-                                <input type="text" th:field="*{lastName}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                            
+                            <!-- Imagen de Perfil (1/4) -->
+                            <div class="lg:col-span-1">
+                                <div class="text-center">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">📸 Foto de Perfil</label>
+                                    
+                                    <!-- Imagen actual -->
+                                    <div class="mb-4">
+                                        <img class="w-24 h-24 mx-auto object-cover rounded-full border-4 border-white shadow-lg"
+                                             th:src="${(userForm.profileImage != null and !#strings.isEmpty(userForm.profileImage))
+                                                 ? userForm.profileImage
+                                                 : 'https://ui-avatars.com/api/?name=' +
+                                                   (#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName) +
+                                                   '&background=3b82f6&color=ffffff&size=96'}"
+                                             th:alt="${!#strings.isEmpty(userForm.firstName) && !#strings.isEmpty(userForm.lastName) ? userForm.firstName + ' ' + userForm.lastName : userForm.username}"
+                                             th:attr="onerror=|this.onerror=null;this.src='https://ui-avatars.com/api/?name=${#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName}&background=3b82f6&color=ffffff&size=96'|">
+                                    </div>
+                                    
+                                    <!-- Subir nueva imagen -->
+                                    <div class="space-y-2">
+                                        <input type="file" name="profileImageFile" accept="image/*" 
+                                               class="w-full text-xs px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                        <p class="text-xs text-gray-500">JPG, PNG, GIF. Máx: 2MB</p>
+                                    </div>
+                                    
+                                    <!-- Vista previa -->
+                                    <div id="profileImagePreview" class="mt-3 hidden">
+                                        <p class="text-xs font-semibold text-gray-700 mb-2">Vista Previa:</p>
+                                        <img id="profilePreviewImg" src="" alt="Vista previa"
+                                             class="w-20 h-20 mx-auto object-cover rounded-full border-2 border-blue-200 shadow"
+                                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=U&background=3b82f6&color=ffffff&size=80'">
+                                    </div>
+                                    
+                                    <!-- Campo oculto para URL de imagen -->
+                                    <input type="hidden" th:field="*{profileImage}" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -180,102 +223,69 @@
                         <input type="hidden" id="lng" th:field="*{longitud}">
                     </div>
 
-                    <!-- Sección: Contraseña -->
-                    <div class="border-l-4 border-orange-500 bg-gradient-to-r from-orange-50 to-white rounded-lg p-6 mb-6 shadow-sm" th:if="${userForm.id == null}">
-                        <div class="flex items-center mb-6">
-                            <div class="bg-orange-100 p-3 rounded-full mr-4">
-                                <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    <!-- Sección: Contraseña (Accordion) -->
+                    <div class="border-l-4 border-orange-500 bg-gradient-to-r from-orange-50 to-white rounded-lg p-6 mb-6 shadow-sm">
+                        <div class="flex items-center justify-between cursor-pointer" onclick="togglePasswordSection()">
+                            <div class="flex items-center">
+                                <div class="bg-orange-100 p-3 rounded-full mr-4">
+                                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900">🔒 Contraseña</h2>
+                                    <p class="text-gray-600 text-sm" th:text="${userForm.id == null ? 'Establecer contraseña para el nuevo usuario' : 'Cambiar contraseña del usuario (opcional)'}">Configurar contraseña</p>
+                                </div>
+                            </div>
+                            <div class="text-orange-600">
+                                <svg id="passwordChevron" class="w-5 h-5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900">Contraseña</h2>
-                                <p class="text-gray-600 text-sm">Establecer contraseña para el nuevo usuario</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Contraseña *</label>
-                                <input type="password" th:field="*{password}" required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-gray-400">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Confirmar Contraseña *</label>
-                                <input type="password" th:field="*{confirmPassword}" required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-gray-400">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sección: Cambiar Contraseña (solo edición, admin) -->
-                    <div class="bg-gray-50 rounded-lg p-6 mb-6" th:if="${userForm.id != null}">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-3">🔒 Cambiar Contraseña (Admin)</h2>
-                        <p class="text-xs text-gray-500 mb-4">Ingrese una nueva contraseña para el usuario. No se requiere la contraseña actual ni confirmación.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña (admin)</label>
-                                <input id="newPassword" type="password" th:field="*{newPassword}"
-                                       placeholder="Escriba la nueva contraseña"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sección: Imagen de Perfil -->
-                    <div class="border-l-4 border-purple-500 bg-gradient-to-r from-purple-50 to-white rounded-lg p-6 mb-6 shadow-sm">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-purple-100 p-3 rounded-full mr-4">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900">Imagen de Perfil</h2>
-                                <p class="text-gray-600 text-sm">Subir foto de perfil del usuario</p>
                             </div>
                         </div>
                         
-                        <!-- Imagen actual -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Imagen Actual:</label>
-                            <img class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg"
-                                 th:src="${(userForm.profileImage != null and !#strings.isEmpty(userForm.profileImage))
-                                     ? userForm.profileImage
-                                     : 'https://ui-avatars.com/api/?name=' +
-                                       (#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName) +
-                                       '&background=10b981&color=ffffff&size=96'}"
-                                 th:alt="${!#strings.isEmpty(userForm.firstName) && !#strings.isEmpty(userForm.lastName) ? userForm.firstName + ' ' + userForm.lastName : userForm.username}"
-                                 th:attr="onerror=|this.onerror=null;this.src='https://ui-avatars.com/api/?name=${#strings.isEmpty(userForm.firstName) ? userForm.username : userForm.firstName}&background=10b981&color=ffffff&size=96'|">
-                        </div>
-                        
-                        <!-- Subir nueva imagen -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Subir Nueva Imagen</label>
-                                <input type="file" name="profileImageFile" accept="image/*" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
-                                <p class="text-xs text-gray-500">Formatos: JPG, PNG, GIF. Máx: 2MB</p>
+                        <div id="passwordContent" class="mt-6 hidden">
+                            <!-- Contraseña para nuevo usuario -->
+                            <div th:if="${userForm.id == null}">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Contraseña *</label>
+                                        <input type="password" th:field="*{password}" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Confirmar Contraseña *</label>
+                                        <input type="password" th:field="*{confirmPassword}" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                </div>
                             </div>
                             
-                            <!-- Vista previa -->
-                            <div id="profileImagePreview" class="space-y-2 hidden">
-                                <label class="block text-sm font-semibold text-gray-700">Vista Previa:</label>
-                                <img id="profilePreviewImg" src="" alt="Vista previa"
-                                     class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg"
-                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=U&background=10b981&color=ffffff&size=96'">
+                            <!-- Cambiar contraseña para usuario existente -->
+                            <div th:if="${userForm.id != null}">
+                                <p class="text-sm text-gray-600 mb-4">💡 Deje en blanco si no desea cambiar la contraseña actual.</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Nueva Contraseña</label>
+                                        <input type="password" th:field="*{newPassword}" placeholder="Escriba la nueva contraseña"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-gray-400">
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Campo oculto para URL de imagen -->
-                        <input type="hidden" th:field="*{profileImage}" />
                     </div>
                     
                     
                     
-                    <!-- Botones -->
-                    <div class="flex justify-end space-x-4">
-                        <a th:href="@{/admin/users}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-md transition-colors">Cancelar</a>
-                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md transition-colors">Guardar</button>
+                    
+                    <!-- Botones de Acción -->
+                    <div class="flex justify-center space-x-6 pt-6">
+                        <a th:href="@{/admin/users}" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+                            Guardar Usuario
+                        </button>
                     </div>
                 </form>
             </div>
@@ -361,6 +371,20 @@
                     console.log('Mapa redimensionado');
                 }, 500);
             });
+            
+            // Función para toggle del accordion de contraseña
+            function togglePasswordSection() {
+                const content = document.getElementById('passwordContent');
+                const chevron = document.getElementById('passwordChevron');
+                
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    chevron.classList.add('rotate-180');
+                } else {
+                    content.classList.add('hidden');
+                    chevron.classList.remove('rotate-180');
+                }
+            }
             
             // JavaScript para vista previa de imagen de perfil
             const profileImageInput = document.querySelector('input[name="profileImageFile"]');
