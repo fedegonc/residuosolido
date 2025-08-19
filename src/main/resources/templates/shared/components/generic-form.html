@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Formulario genérico reutilizable -->
+    <form th:fragment="form(entity, fields, action, cancelUrl)" 
+          th:action="${action}" 
+          method="post" 
+          class="space-y-6 bg-white rounded-lg shadow p-6">
+        
+        <!-- Campos dinámicos -->
+        <div th:each="field : ${fields}" class="space-y-2">
+            <!-- Campo de texto -->
+            <div th:if="${field.type == 'text'}" class="form-group">
+                <label th:for="${field.name}" 
+                       th:text="${field.label}" 
+                       class="block text-sm font-medium text-gray-700"></label>
+                <input th:id="${field.name}"
+                       th:name="${field.name}"
+                       th:field="*{__${field.name}__}"
+                       th:placeholder="${field.placeholder}"
+                       th:required="${field.required}"
+                       type="text"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+            </div>
+            
+            <!-- Campo de email -->
+            <div th:if="${field.type == 'email'}" class="form-group">
+                <label th:for="${field.name}" 
+                       th:text="${field.label}" 
+                       class="block text-sm font-medium text-gray-700"></label>
+                <input th:id="${field.name}"
+                       th:name="${field.name}"
+                       th:field="*{__${field.name}__}"
+                       th:placeholder="${field.placeholder}"
+                       th:required="${field.required}"
+                       type="email"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+            </div>
+            
+            <!-- Campo de contraseña -->
+            <div th:if="${field.type == 'password'}" class="form-group">
+                <label th:for="${field.name}" 
+                       th:text="${field.label}" 
+                       class="block text-sm font-medium text-gray-700"></label>
+                <input th:id="${field.name}"
+                       th:name="${field.name}"
+                       th:placeholder="${field.placeholder}"
+                       th:required="${field.required}"
+                       type="password"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+            </div>
+            
+            <!-- Campo de textarea -->
+            <div th:if="${field.type == 'textarea'}" class="form-group">
+                <label th:for="${field.name}" 
+                       th:text="${field.label}" 
+                       class="block text-sm font-medium text-gray-700"></label>
+                <textarea th:id="${field.name}"
+                          th:name="${field.name}"
+                          th:field="*{__${field.name}__}"
+                          th:placeholder="${field.placeholder}"
+                          th:required="${field.required}"
+                          th:rows="${field.rows ?: 3}"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"></textarea>
+            </div>
+            
+            <!-- Campo select -->
+            <div th:if="${field.type == 'select'}" class="form-group">
+                <label th:for="${field.name}" 
+                       th:text="${field.label}" 
+                       class="block text-sm font-medium text-gray-700"></label>
+                <select th:id="${field.name}"
+                        th:name="${field.name}"
+                        th:field="*{__${field.name}__}"
+                        th:required="${field.required}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+                    <option value="" th:text="${field.placeholder}">Seleccionar...</option>
+                    <option th:each="option : ${field.options}" 
+                            th:value="${option.value}" 
+                            th:text="${option.label}"></option>
+                </select>
+            </div>
+            
+            <!-- Campo checkbox -->
+            <div th:if="${field.type == 'checkbox'}" class="form-group">
+                <div class="flex items-center">
+                    <input th:id="${field.name}"
+                           th:name="${field.name}"
+                           th:field="*{__${field.name}__}"
+                           type="checkbox"
+                           class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                    <label th:for="${field.name}" 
+                           th:text="${field.label}" 
+                           class="ml-2 block text-sm text-gray-900"></label>
+                </div>
+            </div>
+            
+            <!-- Campo file -->
+            <div th:if="${field.type == 'file'}" class="form-group">
+                <label th:for="${field.name}" 
+                       th:text="${field.label}" 
+                       class="block text-sm font-medium text-gray-700"></label>
+                <input th:id="${field.name}"
+                       th:name="${field.name}"
+                       th:accept="${field.accept}"
+                       type="file"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+            </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="flex justify-between pt-6 border-t border-gray-200">
+            <a th:href="${cancelUrl}" 
+               class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                Cancelar
+            </a>
+            <button type="submit" 
+                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors">
+                Guardar
+            </button>
+        </div>
+    </form>
+</body>
+</html>

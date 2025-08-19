@@ -5,7 +5,9 @@
         <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
              th:src="${heroImage}"
              alt="Imagen principal"
-             class="absolute inset-0 w-full h-full object-cover" />
+             class="absolute inset-0 w-full h-full object-cover"
+             width="1920" height="768"
+             decoding="async" fetchpriority="high" />
         <!-- Fallback gradiente si no hay imagen -->
         <div th:unless="${heroImage != null and !#strings.isEmpty(heroImage)}"
              class="absolute inset-0 bg-gradient-to-br from-emerald-100 to-emerald-200"></div>

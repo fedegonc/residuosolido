@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Breadcrumbs genérico reutilizable -->
+    <nav th:fragment="breadcrumbs(items)" class="mb-6" aria-label="Breadcrumb">
+        <ol class="flex items-center text-sm text-gray-500">
+            <li th:each="item, iterStat : ${items}">
+                <!-- Enlace si no es el último elemento -->
+                <a th:if="${!iterStat.last}" 
+                   th:href="${item.url}" 
+                   th:text="${item.label}"
+                   class="hover:text-gray-700"></a>
+                
+                <!-- Texto plano si es el último elemento -->
+                <span th:if="${iterStat.last}" 
+                      th:text="${item.label}"
+                      class="text-gray-700 font-medium" 
+                      aria-current="page"></span>
+                
+                <!-- Separador (no mostrar después del último) -->
+                <span th:if="${!iterStat.last}" class="px-2">/</span>
+            </li>
+        </ol>
+    </nav>
+</body>
+</html>

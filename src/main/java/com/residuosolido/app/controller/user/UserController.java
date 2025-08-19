@@ -46,7 +46,7 @@ public class UserController {
         List<User> organizations = userService.findByRole(Role.ORGANIZATION);
         model.addAttribute("organizations", organizations);
         
-        String view = "users/dashboard";
+        String view = "shared/dashboard";
         logger.info("[UserController] Returning view: {}", view);
         return view;
     }

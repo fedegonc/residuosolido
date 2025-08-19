@@ -50,7 +50,7 @@ public class AdminController {
     
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        return "admin/dashboard";
+        return "shared/dashboard";
     }
     
     @GetMapping("/password-reset-requests")

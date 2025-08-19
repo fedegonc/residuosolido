@@ -4,6 +4,7 @@ import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.Category;
 import com.residuosolido.app.repository.PostRepository;
 import com.residuosolido.app.service.CloudinaryService;
+import com.residuosolido.app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,35 +32,13 @@ public class PostService {
     }
     
     public List<Post> getAllPostsWithCategories() {
-        List<Post> posts = postRepository.findAllOrderedByIdAsc();
-        
-        // Cargar todas las categorías de una vez
-        List<Category> allCategories = categoryService.getAllCategories();
-        Map<Long, String> categoryMap = allCategories.stream()
-            .collect(Collectors.toMap(Category::getId, Category::getName));
-        
-        // Asignar nombres de categoría
-        posts.forEach(post -> {
-            if (post.getCategoryId() != null) {
-                post.setCategoryName(categoryMap.get(post.getCategoryId()));
-            }
-        });
-        
-        return posts;
+        // Agregar JOIN FETCH para evitar N+1 queries
+        return postRepository.findAllWithCategories();
     }
 
     public List<Post> getFirst5Posts() {
-        List<Post> posts = postRepository.findTop5ByOrderByIdAsc();
-        // Enriquecer con nombres de categoría para UI
-        List<Category> allCategories = categoryService.getAllCategories();
-        Map<Long, String> categoryMap = allCategories.stream()
-            .collect(Collectors.toMap(Category::getId, Category::getName));
-        posts.forEach(post -> {
-            if (post.getCategoryId() != null) {
-                post.setCategoryName(categoryMap.get(post.getCategoryId()));
-            }
-        });
-        return posts;
+        // Usar JOIN FETCH para evitar N+1 queries
+        return postRepository.findFirst5WithCategories().stream().limit(5).collect(Collectors.toList());
     }
 
     public boolean hasMoreThan5Posts() {

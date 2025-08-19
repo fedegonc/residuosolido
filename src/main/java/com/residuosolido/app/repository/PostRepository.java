@@ -14,6 +14,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByCategoryOrderByIdAsc(Category category);
     List<Post> findTop5ByOrderByIdDesc();
     List<Post> findTop5ByOrderByIdAsc();
+    
+    // Método optimizado usando JOIN FETCH para evitar N+1 queries
+    @Query(value = "SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id ASC")
+    List<Post> findFirst5WithCategories();
+    
     boolean existsByCategory(Category category);
     
     @Query("SELECT p FROM Post p ORDER BY p.id DESC")
@@ -21,4 +26,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     
     @Query("SELECT p FROM Post p ORDER BY p.id ASC")
     List<Post> findAllOrderedByIdAsc();
+    
+    // Método optimizado para cargar todos los posts con sus categorías
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id ASC")
+    List<Post> findAllWithCategories();
 }

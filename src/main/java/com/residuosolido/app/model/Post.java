@@ -43,9 +43,5 @@ public class Post {
         return category != null ? category.getName() : null;
     }
     
-    // Método adicional para compatibilidad
-    public void setCategoryName(String categoryName) {
-        // Este método existe para compatibilidad pero no hace nada
-        // El nombre de categoría se obtiene a través de la relación
-    }
+    // El nombre de categoría se obtiene a través de la relación con Category
 }

@@ -106,10 +106,8 @@
                     
                     <!-- Imagen del post -->
                     <div class="relative overflow-hidden h-40">
-                        <img th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}" 
-                             th:src="${post.imageUrl}" 
-                             alt="Imagen del Post" 
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}"
+                             th:replace="~{fragments/lazy-image :: lazy-img(src=${post.imageUrl}, alt=${post.title}, cssClass='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300')}"></div>
                         
                         <!-- Placeholder si no hay imagen -->
                         <div th:unless="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}" 

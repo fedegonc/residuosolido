@@ -22,7 +22,7 @@ public class OrganizationController {
     public String orgDashboard(Model model) {
         // Datos mínimos para la vista (podemos ampliar luego)
         model.addAttribute("totalOrganizations", 0);
-        return "org/dashboard";
+        return "shared/dashboard";
     }
 
     @PreAuthorize("hasRole('ORGANIZATION')")

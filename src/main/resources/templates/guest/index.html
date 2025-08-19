@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Residuos Sólidos - Frontera de la Paz</title>
+    <!-- Precargar recursos críticos -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" as="style">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Cargar Tailwind (line-clamp incluido por defecto en v3.3+) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <!-- Meta tags para rendimiento -->
+    <meta http-equiv="Cache-Control" content="max-age=31536000">
+    <meta name="description" content="Gestión de residuos sólidos en la frontera de la paz">
+    <!-- Precargar JS crítico -->
+    <link rel="preload" href="/js/index.js" as="script">
 </head>
 <body class="bg-white min-h-screen flex flex-col font-sans">
     <!-- Guest Dropdown Component (botón y panel) -->
@@ -24,12 +32,10 @@
             <div id="contenido" class="max-w-7xl mx-auto px-6 sm:px-8 pt-16 sm:pt-12 pb-16">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Columna izquierda: Sidebar Secciones -->
-                    <aside class="lg:col-span-3 min-w-0 space-y-6">
-                        <div th:replace="~{fragments/sections-sidebar :: sidebar}"></div>
-                    </aside>
+                    
 
                     <!-- Columna central: Posts -->
-                    <section class="lg:col-span-6 min-w-0 space-y-6">
+                    <section class="lg:col-span-9 min-w-0 space-y-6">
                         <div th:replace="~{fragments/posts :: mainPosts}"></div>
                     </section>
 
@@ -43,7 +49,23 @@
     </main>
     <!-- JS del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
-    <!-- JS de index (toggleCategory, etc.) -->
-    <script src="/js/index.js"></script>
+    <!-- JS optimizado para rendimiento -->
+    <script src="/js/optimized.js"></script>
+    <!-- JS de index (toggleCategory, etc.) cargado de forma optimizada -->
+    <script src="/js/index.js" defer></script>
+    
+    <!-- Script de análisis de rendimiento -->
+    <script>
+    // Medir tiempo de carga
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            if (window.performance) {
+                const timing = window.performance.timing;
+                const pageLoadTime = timing.loadEventEnd - timing.navigationStart;
+                console.log('Tiempo de carga total: ' + pageLoadTime + 'ms');
+            }
+        }, 0);
+    });
+    </script>
 </body>
 </html>

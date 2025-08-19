@@ -34,16 +34,15 @@ public class AuthService {
     public Map<String, Object> getIndexData() {
         Map<String, Object> data = new HashMap<>();
         
+        // Solo datos necesarios para el index público
         List<Post> posts = postService.getFirst5Posts();
         List<User> organizations = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
         List<Category> categories = categoryService.getActiveCategoriesOrderedByDisplayOrder();
-        List<User> users = userRepository.findAll();
         
         data.put("posts", posts);
         data.put("organizations", organizations);
         data.put("categories", categories);
         data.put("heroImage", configService.getHeroImageUrl());
-        data.put("users", users);
         
         return data;
     }

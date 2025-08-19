@@ -68,14 +68,11 @@ public class AuthController {
             Object posts = indexData.get("posts");
             Object orgs = indexData.get("organizations");
             Object hero = indexData.get("heroImage");
-            Object users = indexData.get("users");
             int categoriesCount = (categories instanceof java.util.Collection) ? ((java.util.Collection<?>) categories).size() : (categories == null ? 0 : 1);
             int postsCount = (posts instanceof java.util.Collection) ? ((java.util.Collection<?>) posts).size() : (posts == null ? 0 : 1);
             int orgsCount = (orgs instanceof java.util.Collection) ? ((java.util.Collection<?>) orgs).size() : (orgs == null ? 0 : 1);
-            int usersCount = (users instanceof java.util.Collection) ? ((java.util.Collection<?>) users).size() : (users == null ? 0 : 1);
             boolean hasHero = (hero instanceof String) && !((String) hero).isEmpty();
-            log.info("[INDEX] Data loaded -> categories={}, posts={}, orgs={}, users={}, heroImage={}", categoriesCount, postsCount, orgsCount, usersCount, hasHero ? "yes" : "no");
-            log.info("[INDEX] Users loaded: {}", usersCount);
+            log.info("[INDEX] Data loaded -> categories={}, posts={}, orgs={}, heroImage={}", categoriesCount, postsCount, orgsCount, hasHero ? "yes" : "no");
         } catch (Exception e) {
             log.warn("[INDEX] Error inspecting indexData: {}", e.toString());
         }

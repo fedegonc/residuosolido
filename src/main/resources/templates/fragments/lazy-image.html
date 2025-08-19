@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Fragmento para imágenes con carga diferida -->
+    <img th:fragment="lazy-img(src, alt, cssClass)" 
+         th:data-src="${src}"
+         th:alt="${alt}"
+         th:class="${cssClass} + ' lazy'" 
+         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+         loading="lazy">
+</body>
+</html>

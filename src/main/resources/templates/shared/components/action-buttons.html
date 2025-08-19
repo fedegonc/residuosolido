@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Botones de acción genéricos -->
+    <div th:fragment="buttons(actions)" class="flex justify-between items-center">
+        <!-- Botones primarios (izquierda) -->
+        <div class="flex space-x-3">
+            <a th:each="action : ${actions}" 
+               th:if="${action.position == 'left' or action.position == null}"
+               th:href="${action.url}"
+               th:class="${'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md ' + 
+                        (action.type == 'primary' ? 'text-white bg-green-600 hover:bg-green-700' :
+                         action.type == 'secondary' ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50' :
+                         action.type == 'danger' ? 'text-white bg-red-600 hover:bg-red-700' :
+                         'text-white bg-blue-600 hover:bg-blue-700')}"
+               th:text="${action.label}">
+            </a>
+        </div>
+        
+        <!-- Botones secundarios (derecha) -->
+        <div class="flex space-x-3">
+            <a th:each="action : ${actions}" 
+               th:if="${action.position == 'right'}"
+               th:href="${action.url}"
+               th:class="${'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md ' + 
+                        (action.type == 'primary' ? 'text-white bg-green-600 hover:bg-green-700' :
+                         action.type == 'secondary' ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50' :
+                         action.type == 'danger' ? 'text-white bg-red-600 hover:bg-red-700' :
+                         'text-white bg-blue-600 hover:bg-blue-700')}"
+               th:text="${action.label}">
+            </a>
+        </div>
+    </div>
+    
+    <!-- Botones de formulario -->
+    <div th:fragment="form-buttons(cancelUrl, submitText)" class="flex justify-between pt-6 border-t border-gray-200">
+        <a th:href="${cancelUrl}" 
+           class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            Cancelar
+        </a>
+        <button type="submit" 
+                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors"
+                th:text="${submitText ?: 'Guardar'}">
+        </button>
+    </div>
+</body>
+</html>
