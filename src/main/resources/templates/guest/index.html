@@ -24,17 +24,17 @@
             <div id="contenido" class="max-w-7xl mx-auto px-6 sm:px-8 pt-16 sm:pt-12 pb-16">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Columna izquierda: Sidebar Secciones -->
-                    <aside class="lg:col-span-3 space-y-6">
+                    <aside class="lg:col-span-3 min-w-0 space-y-6">
                         <div th:replace="~{fragments/sections-sidebar :: sidebar}"></div>
                     </aside>
 
                     <!-- Columna central: Posts -->
-                    <section class="lg:col-span-6 space-y-6">
+                    <section class="lg:col-span-6 min-w-0 space-y-6">
                         <div th:replace="~{fragments/posts :: mainPosts}"></div>
                     </section>
 
                     <!-- Columna derecha: Organizaciones -->
-                    <aside class="lg:col-span-3 space-y-6">
+                    <aside class="lg:col-span-3 min-w-0 space-y-6">
                         <div th:replace="~{fragments/organizations :: organizationsList}"></div>
                     </aside>
                 </div>
