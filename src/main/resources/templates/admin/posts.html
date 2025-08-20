@@ -24,9 +24,65 @@
         </div>
 
         <!-- Contenido principal -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
             
-            <!-- Lista de Posts -->
+            <!-- 1. FORMULARIOS DE CREACIÓN (ARRIBA) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Crear Post -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold mb-4">Crear Nuevo Post</h2>
+                        <form th:action="@{/admin/posts}" method="post" enctype="multipart/form-data" class="space-y-4">
+                            <input type="text" name="title" placeholder="Título" required 
+                                   class="w-full px-3 py-2 border rounded-lg">
+                            <textarea name="content" placeholder="Contenido" required 
+                                      class="w-full px-3 py-2 border rounded-lg h-24"></textarea>
+                            <select name="categoryId" required class="w-full px-3 py-2 border rounded-lg">
+                                <option value="">Seleccionar categoría</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.name}">Categoría</option>
+                            </select>
+                            <button type="submit" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg">
+                                Crear Post
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Crear Categoría -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold mb-4">Crear Nueva Categoría</h2>
+                        <form th:action="@{/admin/categories/create}" method="post" class="space-y-4">
+                            <input type="text" name="name" placeholder="Nombre de categoría" required 
+                                   class="w-full px-3 py-2 border rounded-lg">
+                            <button type="submit" 
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">
+                                Crear Categoría
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. BUSCADOR -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold mb-4">Buscar Posts</h2>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="text" id="searchInput" placeholder="Buscar por título o contenido..." 
+                               class="flex-1 px-4 py-2 border rounded-lg" onkeyup="filterPosts()">
+                        <select id="categoryFilter" class="px-4 py-2 border rounded-lg" onchange="filterPosts()">
+                            <option value="">Todas las categorías</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.name}" th:text="${cat.name}">Categoría</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. LISTA DE POSTS -->
             <div class="bg-white rounded-lg shadow mb-8">
                 <div class="p-6">
                     <h2 class="text-xl font-semibold mb-4">Posts Existentes</h2>
@@ -105,100 +161,21 @@
                 </div>
             </div>
             
-            <!-- Formularios -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Crear Post -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6">
-                        <h2 class="text-xl font-semibold mb-4">Crear Nuevo Post</h2>
-                        <form th:action="@{/admin/posts}" method="post" enctype="multipart/form-data" class="space-y-4">
-                            <input type="text" name="title" placeholder="Título" required 
-                                   class="w-full px-3 py-2 border rounded-lg">
-                            <textarea name="content" placeholder="Contenido" required 
-                                      class="w-full px-3 py-2 border rounded-lg h-24"></textarea>
-                            
-                            <!-- Subida de imagen -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Imagen del Post</label>
-                                <input type="file" name="imageFile" id="imageFile" accept="image/*" 
-                                       class="w-full px-3 py-2 border rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                                       onchange="previewImage(this)">
-                                
-                                <!-- Vista previa de imagen -->
-                                <div id="imagePreview" class="hidden mt-2">
-                                    <p class="text-sm text-gray-600 mb-2">Vista previa:</p>
-                                    <img id="previewImg" src="" alt="Vista previa" 
-                                         class="w-32 h-32 object-cover rounded-lg border shadow-sm">
-                                    <button type="button" onclick="clearImagePreview()" 
-                                            class="mt-2 text-sm text-red-600 hover:text-red-800">Quitar imagen</button>
-                                </div>
-                                
-                                <p class="text-xs text-gray-500">O ingresa una URL de imagen:</p>
-                                <input type="url" name="imageUrl" id="imageUrl" placeholder="URL de imagen" 
-                                       class="w-full px-3 py-2 border rounded-lg" onchange="previewUrlImage(this)">
-                            </div>
-                            
-                            <!-- Fuentes -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">Fuentes (Opcional)</label>
-                                <input type="text" name="sourceName" placeholder="Nombre de la fuente" 
-                                       class="w-full px-3 py-2 border rounded-lg">
-                                <input type="url" name="sourceUrl" placeholder="URL de la fuente" 
-                                       class="w-full px-3 py-2 border rounded-lg">
-                                <p class="text-xs text-gray-500">Agregar fuentes hace el post más confiable</p>
-                            </div>
-                            
-                            <select name="categoryId" required class="w-full px-3 py-2 border rounded-lg">
-                                <option value="">Seleccionar categoría</option>
-                                <option th:each="cat : ${categories}" 
-                                        th:value="${cat.id}" 
-                                        th:text="${cat.name}">Categoría</option>
-                            </select>
-                            <button type="submit" 
-                                    class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg">
-                                Crear Post
+            <!-- 4. PAGINACIÓN -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            Mostrando <span id="showingFrom">1</span> a <span id="showingTo">10</span> de <span id="totalPosts" th:text="${#lists.size(posts)}">0</span> posts
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevPage" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50" disabled>
+                                Anterior
                             </button>
-                        </form>
-                    </div>
-                </div>
-                
-                <!-- Crear Categoría -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6">
-                        <h2 class="text-xl font-semibold mb-4">Crear Nueva Categoría</h2>
-                        <form th:action="@{/admin/categories/create}" method="post" class="space-y-4">
-                            <input type="text" name="name" placeholder="Nombre de categoría" required 
-                                   class="w-full px-3 py-2 border rounded-lg">
-                            <button type="submit" 
-                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">
-                                Crear Categoría
+                            <span id="pageInfo" class="px-4 py-2 text-sm text-gray-600">Página 1 de 1</span>
+                            <button id="nextPage" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50" disabled>
+                                Siguiente
                             </button>
-                        </form>
-                        
-                        <div class="mt-4">
-                            <h3 class="font-medium mb-2">Categorías Existentes:</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <div th:each="cat : ${categories}" class="flex items-center">
-                                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-l-full text-sm"
-                                          th:text="${cat.name}">Categoría</span>
-                                    <div class="flex">
-                                        <a th:href="@{/admin/categories/{id}/edit(id=${cat.id})}" 
-                                           class="px-2 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                        <form th:action="@{/admin/categories/{id}/delete(id=${cat.id})}" method="post" class="inline"
-                                              onsubmit="return confirm('¿Estás seguro de eliminar esta categoría? No se podrá eliminar si hay posts asociados.');">
-                                            <button type="submit" class="px-2 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-r-full">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -208,53 +185,95 @@
         </div>
     </div>
 
-    <!-- JavaScript para vista previa de imágenes -->
+    <!-- JavaScript para funcionalidad -->
     <script>
-        function previewImage(input) {
-            const file = input.files[0];
-            const preview = document.getElementById('imagePreview');
-            const previewImg = document.getElementById('previewImg');
-            const urlInput = document.getElementById('imageUrl');
+        // Variables para paginación
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredRows = [];
+        
+        // Función de filtrado
+        function filterPosts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+            const rows = document.querySelectorAll('.post-row');
             
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    preview.classList.remove('hidden');
-                    // Limpiar URL si se selecciona archivo
-                    urlInput.value = '';
-                };
-                reader.readAsDataURL(file);
-            }
+            filteredRows = Array.from(rows).filter(row => {
+                const title = row.querySelector('.post-title').textContent.toLowerCase();
+                const content = row.querySelector('.post-content').textContent.toLowerCase();
+                const category = row.querySelector('.post-category').textContent.toLowerCase();
+                
+                const matchesSearch = title.includes(searchTerm) || content.includes(searchTerm);
+                const matchesCategory = !categoryFilter || category.includes(categoryFilter);
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            currentPage = 1;
+            displayPage();
+            updatePagination();
         }
         
-        function previewUrlImage(input) {
-            const url = input.value;
-            const preview = document.getElementById('imagePreview');
-            const previewImg = document.getElementById('previewImg');
-            const fileInput = document.getElementById('imageFile');
+        // Mostrar página actual
+        function displayPage() {
+            const rows = document.querySelectorAll('.post-row');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
             
-            if (url) {
-                previewImg.src = url;
-                preview.classList.remove('hidden');
-                // Limpiar archivo si se ingresa URL
-                fileInput.value = '';
-            } else {
-                preview.classList.add('hidden');
-            }
+            // Ocultar todas las filas
+            rows.forEach(row => row.style.display = 'none');
+            
+            // Mostrar filas filtradas de la página actual
+            filteredRows.slice(startIndex, endIndex).forEach(row => {
+                row.style.display = 'table-row';
+            });
+            
+            // Actualizar contador
+            const totalFiltered = filteredRows.length;
+            const showingFrom = totalFiltered > 0 ? startIndex + 1 : 0;
+            const showingTo = Math.min(endIndex, totalFiltered);
+            
+            document.getElementById('showingFrom').textContent = showingFrom;
+            document.getElementById('showingTo').textContent = showingTo;
+            document.getElementById('totalPosts').textContent = totalFiltered;
         }
         
-        function clearImagePreview() {
-            const preview = document.getElementById('imagePreview');
-            const previewImg = document.getElementById('previewImg');
-            const fileInput = document.getElementById('imageFile');
-            const urlInput = document.getElementById('imageUrl');
+        // Actualizar controles de paginación
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
             
-            preview.classList.add('hidden');
-            previewImg.src = '';
-            fileInput.value = '';
-            urlInput.value = '';
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
         }
+        
+        // Navegación de páginas
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayPage();
+                updatePagination();
+            }
+        });
+        
+        document.getElementById('nextPage').addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayPage();
+                updatePagination();
+            }
+        });
+        
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            filteredRows = Array.from(document.querySelectorAll('.post-row'));
+            displayPage();
+            updatePagination();
+        });
     </script>
 </body>
 </html>

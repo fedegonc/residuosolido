@@ -1,58 +1,289 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/auth-layout :: head('Detalle - ' + ${post.title})}">
+<head th:replace="~{fragments/guest-layout :: head('Detalle - ' + ${post.title})}">
     <title>Detalle - Sistema de Gestión de Residuos Sólidos</title>
 </head>
 
-<body th:replace="~{fragments/auth-layout :: layout(~{::main})}">
-    <main>
-        <!-- Post Content (minimal) -->
-        <article class="py-10">
-            <div class="container mx-auto px-4 max-w-3xl">
-                <!-- Título -->
-                <h1 class="text-3xl font-bold text-gray-900 mb-3" th:text="${post.title}">Título</h1>
-                <div class="flex items-center gap-3 text-sm text-gray-600 mb-6">
-                    <span class="inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full" th:text="${categoryName}">Categoría</span>
-                </div>
-
-                <!-- Imagen -->
-                <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" class="mb-8 border border-gray-200 rounded-lg overflow-hidden">
-                    <img th:src="${post.imageUrl}" th:alt="${post.title}" class="w-full h-64 md:h-80 object-cover" />
-                </div>
-
-                <!-- Contenido -->
-                <div class="border border-gray-200 rounded-lg p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Descripción</h2>
-                    <!-- Si el contenido trae HTML, lo renderizamos. Si es texto plano, preservamos saltos de línea. -->
-                    <div th:if="${post.content != null and !post.content.isEmpty()}" class="text-gray-800 text-base leading-relaxed">
-                        <div th:utext="${post.content}"></div>
-                        <pre th:if="${#strings.containsIgnoreCase(post.content, '<') == false}" th:text="${post.content}" class="whitespace-pre-line font-sans text-gray-800 text-base leading-relaxed"></pre>
-                    </div>
-                    <p th:if="${post.content == null or post.content.isEmpty()}" class="text-gray-500 italic">Contenido en preparación.</p>
-                </div>
-                <!-- Fuente -->
-                <div th:if="${post.sourceUrl != null and !post.sourceUrl.isEmpty()}" class="mt-8 border border-green-200 rounded-lg p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Fuente</h3>
-                    <a th:href="${post.sourceUrl}" target="_blank" rel="noopener" class="inline-flex items-center text-green-700 hover:text-green-900 font-medium break-all">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                        <span th:text="${post.sourceName != null and !post.sourceName.isEmpty() ? post.sourceName : post.sourceUrl}">Ver fuente</span>
-                    </a>
-                </div>
-                <div th:if="${post.sourceUrl == null or post.sourceUrl.isEmpty()}" class="mt-8 border border-yellow-200 rounded-lg p-5 bg-yellow-50">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Fuente</h3>
-                    <p class="text-yellow-800 font-medium">Fuente: pendiente</p>
-                </div>
-            </div>
-        </article>
-
-        <!-- Relacionados (reutiliza fragmento estándar) -->
-        <div th:if="${relatedPosts != null and !relatedPosts.isEmpty()}" class="py-10">
-            <div class="max-w-6xl mx-auto border-t border-gray-200 mb-8"></div>
-            <div class="container mx-auto px-4">
-                <h2 class="text-2xl font-semibold text-gray-900 mb-6">También puede interesarte</h2>
-                <div th:replace="~{fragments/posts :: posts(${relatedPosts}, false)}"></div>
+<body th:replace="~{fragments/guest-layout :: layout(~{::main})}">
+    <main class="bg-gray-50 min-h-screen">
+        <!-- Breadcrumbs -->
+        <div class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a href="/" class="text-gray-500 hover:text-green-600 inline-flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-3a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                                </svg>
+                                Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <a href="/posts" class="ml-1 text-gray-500 hover:text-green-600 md:ml-2">Posts</a>
+                            </div>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="ml-1 text-gray-700 md:ml-2 font-medium" th:text="${post.title}">Post actual</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
             </div>
         </div>
+
+        <!-- Hero Section con imagen -->
+        <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" class="relative h-96 bg-gray-900">
+            <img th:src="${post.imageUrl}" th:alt="${post.title}" class="w-full h-full object-cover opacity-80" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-8">
+                <div class="max-w-7xl mx-auto">
+                    <span class="inline-flex items-center bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium mb-4" th:text="${categoryName}">Categoría</span>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" th:text="${post.title}">Título del Post</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero sin imagen -->
+        <div th:if="${post.imageUrl == null or post.imageUrl.isEmpty()}" class="bg-gradient-to-r from-green-600 to-teal-600 py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <span class="inline-flex items-center bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium mb-4" th:text="${categoryName}">Categoría</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-white" th:text="${post.title}">Título del Post</h1>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="lg:grid lg:grid-cols-3 lg:gap-12">
+                
+                <!-- Contenido principal -->
+                <div class="lg:col-span-2">
+                    <article class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Metadata -->
+                        <div class="px-8 py-6 border-b border-gray-200 bg-gray-50">
+                            <div class="flex items-center justify-between flex-wrap gap-4">
+                                <div class="flex items-center gap-6 text-sm text-gray-600">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m-6 0h6m-6 0V7a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V8a1 1 0 00-1-1h-2"></path>
+                                        </svg>
+                                        <span>Publicado hoy</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>5 min de lectura</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                                        </svg>
+                                        Compartir
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido del post -->
+                        <div class="px-8 py-8">
+                            <div th:if="${post.content != null and !post.content.isEmpty()}" class="prose prose-lg max-w-none">
+                                <div th:utext="${post.content}"></div>
+                                <pre th:if="${#strings.containsIgnoreCase(post.content, '<') == false}" th:text="${post.content}" class="whitespace-pre-line font-sans text-gray-800 text-lg leading-relaxed"></pre>
+                            </div>
+                            <div th:if="${post.content == null or post.content.isEmpty()}" class="text-center py-12">
+                                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p class="text-gray-500 text-lg">Contenido en preparación</p>
+                            </div>
+                        </div>
+
+                        <!-- Fuente -->
+                        <div class="px-8 py-6 border-t border-gray-200 bg-gray-50 text-center">
+                            <div th:if="${post.sourceUrl != null and !post.sourceUrl.isEmpty()}">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Fuente</h3>
+                                <div class="space-y-2">
+                                    <div th:if="${post.sourceName != null and !post.sourceName.isEmpty()}" class="text-gray-700 font-medium" th:text="${post.sourceName}">
+                                        Nombre de la fuente
+                                    </div>
+                                    <a th:href="${post.sourceUrl}" target="_blank" rel="noopener" class="inline-flex items-center justify-center text-green-700 hover:text-green-900 font-medium transition-colors bg-white px-4 py-2 rounded-lg border border-green-200 hover:border-green-300">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                        <span class="break-all text-sm" th:text="${post.sourceUrl}">URL de la fuente</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div th:if="${post.sourceUrl == null or post.sourceUrl.isEmpty()}">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Fuente</h3>
+                                <div class="inline-flex items-center gap-2 text-yellow-700 bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    <span class="font-medium">Fuente pendiente de verificación</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Call-to-Action discreto para usuarios guest -->
+                        <div class="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-100 p-6">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">¿Te gustó este contenido?</h3>
+                                <p class="text-gray-600 text-sm mb-4">Únete a nuestra comunidad y accede a más funciones</p>
+                                
+                                <div class="space-y-2 text-xs text-gray-500 mb-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Contenido exclusivo y más posts</span>
+                                    </div>
+                                    <div class="flex items-center justify-center gap-2">
+                                        <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Solicitudes de recolección de reciclaje</span>
+                                    </div>
+                                    <div class="flex items-center justify-center gap-2">
+                                        <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Conecta con organizaciones locales</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row gap-2 justify-center">
+                                    <a href="/auth/login" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                        </svg>
+                                        Iniciar Sesión
+                                    </a>
+                                    <a href="/auth/register" class="inline-flex items-center justify-center px-4 py-2 bg-white text-green-600 text-sm font-medium rounded-lg border border-green-200 hover:bg-green-50 transition-colors">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                        </svg>
+                                        Crear Cuenta
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="lg:col-span-1 mt-12 lg:mt-0">
+                    <div class="sticky top-8 space-y-8">
+                        
+                        <!-- Navegación rápida -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Navegación</h3>
+                            <div class="space-y-3">
+                                <a href="/posts" class="flex items-center gap-3 text-gray-600 hover:text-green-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                    Volver a Posts
+                                </a>
+                                <a th:href="@{'/posts/category/' + ${categoryName}}" class="flex items-center gap-3 text-gray-600 hover:text-green-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                    </svg>
+                                    <span>Ver más de </span><span th:text="${categoryName}">Categoría</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones</h3>
+                            <div class="space-y-3">
+                                <button class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    Guardar
+                                </button>
+                                <button class="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                    </svg>
+                                    Imprimir
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Posts relacionados en sidebar -->
+                        <div th:if="${relatedPosts != null and !relatedPosts.isEmpty()}" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">También te puede interesar</h3>
+                            <div class="space-y-4">
+                                <div th:each="relatedPost : ${relatedPosts}" class="group">
+                                    <a th:href="@{'/posts/' + ${relatedPost.id}}" class="block">
+                                        <div class="flex gap-3">
+                                            <div th:if="${relatedPost.imageUrl != null and !relatedPost.imageUrl.isEmpty()}" class="flex-shrink-0">
+                                                <img th:src="${relatedPost.imageUrl}" th:alt="${relatedPost.title}" class="w-16 h-16 object-cover rounded-lg" />
+                                            </div>
+                                            <div th:if="${relatedPost.imageUrl == null or relatedPost.imageUrl.isEmpty()}" class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="text-sm font-medium text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2" th:text="${relatedPost.title}">Título</h4>
+                                                <p class="text-xs text-gray-500 mt-1">Hace 2 días</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón volver arriba -->
+        <button id="scrollToTop" class="fixed bottom-8 right-8 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 opacity-0 invisible">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+            </svg>
+        </button>
+
+        <script>
+            // Botón volver arriba
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.remove('opacity-0', 'invisible');
+                } else {
+                    scrollToTopBtn.classList.add('opacity-0', 'invisible');
+                }
+            });
+            
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        </script>
     </main>
 </body>
 </html>
