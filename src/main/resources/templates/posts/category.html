@@ -7,10 +7,10 @@
 <body th:replace="~{fragments/layout :: layout(~{::main})}">
     <main>
         <!-- Header -->
-        <div class="bg-green-600 text-white py-12">
+        <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-12 shadow-sm">
             <div class="container mx-auto px-4 text-center">
                 <h1 class="text-3xl md:text-4xl font-bold mb-4" th:text="${category.name}">Categoría</h1>
-                <p class="text-xl opacity-90">Artículos relacionados con esta categoría</p>
+                <p class="text-xl opacity-90" th:text="#{category.header.subtitle}">Artículos relacionados con esta categoría</p>
             </div>
         </div>
 
@@ -18,9 +18,9 @@
         <div class="py-4 bg-gray-50">
             <div class="container mx-auto px-4">
                 <nav class="text-sm">
-                    <a href="/" class="text-green-600 hover:text-green-800">Inicio</a>
+                    <a th:href="@{/}" class="text-green-600 hover:text-green-800" th:text="#{breadcrumb.home}">Inicio</a>
                     <span class="mx-2 text-gray-500">›</span>
-                    <a href="/posts" class="text-green-600 hover:text-green-800">Publicaciones</a>
+                    <a th:href="@{/posts}" class="text-green-600 hover:text-green-800" th:text="#{breadcrumb.posts}">Publicaciones</a>
                     <span class="mx-2 text-gray-500">›</span>
                     <span class="text-gray-700" th:text="${category.name}">Categoría</span>
                 </nav>
@@ -30,14 +30,15 @@
         <!-- Categories Filter -->
         <div th:if="${categories != null and !categories.isEmpty()}" class="py-6 bg-gray-50">
             <div class="container mx-auto px-4">
-                <div class="flex flex-wrap gap-3 justify-center">
-                    <a href="/posts" class="bg-white hover:bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                <div class="flex flex-wrap gap-3 justify-center overflow-x-auto">
+                    <a th:href="@{/posts}" class="bg-white hover:bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200" th:text="#{category.filter.all}">
                         Todas
                     </a>
                     <a th:each="cat : ${categories}" 
                        th:href="@{/posts/category/} + ${cat.slug}"
                        th:text="${cat.name}"
-                       th:class="${cat.id == category.id} ? 'bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium' : 'bg-white hover:bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200'">
+                       th:attr="aria-current=${cat.id == category.id} ? 'page' : null"
+                       th:class="${cat.id == category.id} ? 'bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-sm' : 'bg-white hover:bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200'">
                     </a>
                 </div>
             </div>
@@ -60,28 +61,20 @@
                         </div>
                         
                         <!-- Título y descripción -->
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">
-                            ¡Próximamente contenido sobre <span th:text="${category.name}" class="text-green-600">esta categoría</span>!
-                        </h3>
-                        <p class="text-gray-600 mb-6 leading-relaxed">
-                            Estamos trabajando para traerte información valiosa y práctica sobre 
-                            <span th:text="${category.name}" class="font-medium text-gray-700">esta categoría</span>. 
-                            Mientras tanto, explora otros temas interesantes.
-                        </p>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3" th:text="#{category.empty.title(${category.name})}">¡Próximamente contenido sobre esta categoría!</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed" th:text="#{category.empty.description(${category.name})}">Estamos trabajando para traerte información...</p>
                         
                         <!-- Botones de acción -->
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                            <a href="/posts" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+                            <a th:href="@{/posts}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg" th:text="#{category.empty.cta.posts}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                                 </svg>
-                                Ver todas las publicaciones
                             </a>
-                            <a href="/" class="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-md">
+                            <a th:href="@{/}" class="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-md" th:text="#{category.empty.cta.home}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                 </svg>
-                                Volver al inicio
                             </a>
                         </div>
                         
@@ -91,8 +84,8 @@
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                <strong>¿Tienes sugerencias?</strong> 
-                                Tu opinión nos ayuda a crear contenido relevante.
+                                <strong th:text="#{category.empty.suggestion.title}">¿Tienes sugerencias?</strong> 
+                                <span th:text="#{category.empty.suggestion.text}">Tu opinión nos ayuda a crear contenido relevante.</span>
                             </p>
                         </div>
                     </div>
