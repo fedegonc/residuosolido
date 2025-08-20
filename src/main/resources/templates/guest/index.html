@@ -27,6 +27,11 @@
     <main class="flex-grow">
       <div th:replace="~{fragments/index-hero :: hero}"></div>
 
+
+        <!-- Sección Cómo Funciona -->
+        <div th:replace="~{fragments/how-it-works :: how-it-works}"></div>
+
+
         <!-- Contenido: layout en 3 columnas -->
         <div class="min-h-screen bg-white">
             <div id="contenido" class="max-w-7xl mx-auto px-6 sm:px-8 pt-16 sm:pt-12 pb-16">
@@ -91,6 +96,10 @@
     </footer>
     <!-- JS del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
+    
+    <!-- JS de las nuevas secciones -->
+    <th:block th:replace="~{fragments/organizations-map :: organizations-map-js}"></th:block>
+    
     <!-- JS optimizado para rendimiento -->
     <script src="/js/optimized.js"></script>
     <!-- JS de index (toggleCategory, etc.) cargado de forma optimizada -->

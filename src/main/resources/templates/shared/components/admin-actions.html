@@ -12,13 +12,13 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Gestión de Usuarios</h3>
-                        <p class="mt-1 text-sm text-gray-500">Administra usuarios, asigna roles y gestiona permisos</p>
+                        <h3 class="text-lg font-medium text-gray-900" th:text="#{admin.users.title}">Gestão de Usuários</h3>
+                        <p class="mt-1 text-sm text-gray-500" th:text="#{admin.users.description}">Administra usuários, atribui funções e gerencia permissões</p>
                     </div>
                 </div>
                 <div class="mt-5">
                     <a href="/admin/users" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
-                        Ir a Usuarios
+Ir para Usuários
                     </a>
                 </div>
             </div>
@@ -34,8 +34,8 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Solicitudes de Recolección</h3>
-                        <p class="mt-1 text-sm text-gray-500">Revisa y gestiona las solicitudes de recolección de residuos</p>
+                        <h3 class="text-lg font-medium text-gray-900" th:text="#{admin.requests.title}">Solicitações de Coleta</h3>
+                        <p class="mt-1 text-sm text-gray-500" th:text="#{admin.requests.description}">Revisa e gerencia as solicitações de coleta de resíduos</p>
                     </div>
                 </div>
                 <div class="mt-5">
@@ -56,13 +56,13 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Gestión de Publicaciones</h3>
-                        <p class="mt-1 text-sm text-gray-500">Crea, edita y gestiona publicaciones y categorías</p>
+                        <h3 class="text-lg font-medium text-gray-900" th:text="#{admin.posts.title}">Gestão de Publicações</h3>
+                        <p class="mt-1 text-sm text-gray-500" th:text="#{admin.posts.description}">Cria, edita e gerencia publicações e categorias</p>
                     </div>
                 </div>
                 <div class="mt-5">
                     <a href="/admin/posts" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700">
-                        Gestionar Posts
+Gerenciar Posts
                     </a>
                 </div>
             </div>
@@ -78,8 +78,8 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Recuperación de Contraseñas</h3>
-                        <p class="mt-1 text-sm text-gray-500">Gestiona solicitudes de recuperación de contraseña</p>
+                        <h3 class="text-lg font-medium text-gray-900" th:text="#{admin.passwords.title}">Recuperação de Senhas</h3>
+                        <p class="mt-1 text-sm text-gray-500" th:text="#{admin.passwords.description}">Gerencia solicitações de recuperação de senha</p>
                     </div>
                 </div>
                 <div class="mt-5">
@@ -100,16 +100,16 @@
                         </svg>
                     </div>
                     <div class="ml-5">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Mensajes de Feedback</h3>
-                        <p class="mt-2 max-w-xl text-sm text-gray-500">
-                            Revisa comentarios y sugerencias de los usuarios del sistema
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" th:text="#{admin.feedback.title}">Mensagens de Feedback</h3>
+                        <p class="mt-2 max-w-xl text-sm text-gray-500" th:text="#{admin.feedback.description}">
+                            Revisa comentários e sugestões dos usuários do sistema
                             <span class="font-semibold text-indigo-600" th:text="'(' + ${totalFeedbacks} + ' mensajes)'"></span>
                         </p>
                     </div>
                 </div>
                 <div class="mt-5">
                     <a href="/admin/feedback" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                        Ver Mensajes
+Ver Mensagens
                     </a>
                 </div>
             </div>
@@ -126,13 +126,13 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Configuración</h3>
-                        <p class="mt-1 text-sm text-gray-500">Configura parámetros del sistema y opciones generales</p>
+                        <h3 class="text-lg font-medium text-gray-900" th:text="#{admin.config.title}">Configuração</h3>
+                        <p class="mt-1 text-sm text-gray-500" th:text="#{admin.config.description}">Configura parâmetros do sistema e opções gerais</p>
                     </div>
                 </div>
                 <div class="mt-5">
                     <a href="/admin/config" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700">
-                        Configuración
+Configuração
                     </a>
                 </div>
             </div>

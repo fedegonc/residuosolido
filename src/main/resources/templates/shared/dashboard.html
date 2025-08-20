@@ -7,14 +7,14 @@
         <div class="bg-green-600 text-white py-12">
             <div class="container mx-auto px-4 text-center">
                 <h1 class="text-3xl md:text-4xl font-bold mb-4">
-                    <span sec:authorize="hasRole('ADMIN')">Panel de Administración</span>
-                    <span sec:authorize="hasRole('ORGANIZATION')">Panel de Organización</span>
-                    <span sec:authorize="hasRole('USER')">Bienvenido a tu Panel de Usuario</span>
+                    <span sec:authorize="hasRole('ADMIN')" th:text="#{dashboard.admin.title}">Painel de Administração</span>
+                    <span sec:authorize="hasRole('ORGANIZATION')" th:text="#{dashboard.org.title}">Painel de Organização</span>
+                    <span sec:authorize="hasRole('USER')" th:text="#{dashboard.user.title}">Bem-vindo ao seu Painel de Usuário</span>
                 </h1>
                 <p class="text-xl opacity-90">
-                    <span sec:authorize="hasRole('ADMIN')">Gestión completa del sistema</span>
-                    <span sec:authorize="hasRole('ORGANIZATION')">Gestión de recolección de residuos</span>
-                    <span sec:authorize="hasRole('USER')">Gestiona tus solicitudes y preferencias</span>
+                    <span sec:authorize="hasRole('ADMIN')" th:text="#{dashboard.admin.subtitle}">Gestão completa do sistema</span>
+                    <span sec:authorize="hasRole('ORGANIZATION')" th:text="#{dashboard.org.subtitle}">Gestão de coleta de resíduos</span>
+                    <span sec:authorize="hasRole('USER')" th:text="#{dashboard.user.subtitle}">Gerencie suas solicitações e preferências</span>
                 </p>
             </div>
         </div>

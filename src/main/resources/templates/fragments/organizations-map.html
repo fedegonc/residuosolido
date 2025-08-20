@@ -1,0 +1,241 @@
+<!-- Fragmento: Mapa Interactivo de Organizaciones -->
+<section th:fragment="organizations-map" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Organizaciones en tu Zona</h2>
+            <p class="text-lg text-gray-600">Encuentra centros de reciclaje y organizaciones cercanas</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <!-- Controles del mapa -->
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <button id="showAllOrgs" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Todas las Organizaciones
+                        </button>
+                        <button id="showNearby" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Cercanas a mí
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            <span>Activa</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                            <span>Centro de Reciclaje</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                            <span>Recolección</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mapa -->
+            <div id="organizationsMap" class="h-96 w-full"></div>
+            
+            <!-- Lista de organizaciones -->
+            <div class="p-6 bg-gray-50">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Organizaciones Destacadas</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Organización 1 -->
+                    <div class="bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h4 class="font-semibold text-gray-900">EcoVerde Rivera</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Activa
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Especializada en plásticos y papel. Recolección domiciliaria disponible.</p>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Rivera Centro - 1.2 km</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Organización 2 -->
+                    <div class="bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h4 class="font-semibold text-gray-900">Recicla Santana</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                Centro
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Centro de reciclaje. Acepta vidrio, metal y electrónicos.</p>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Sant'Ana Centro - 2.8 km</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Organización 3 -->
+                    <div class="bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h4 class="font-semibold text-gray-900">Cooperativa Verde</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                Recolección
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Recolección programada de materiales orgánicos y compostaje.</p>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Rivera Norte - 3.5 km</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript para el mapa -->
+<script th:fragment="organizations-map-js">
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si Leaflet está disponible
+    if (typeof L === 'undefined') {
+        console.log('Leaflet no está cargado, cargando dinámicamente...');
+        loadLeafletAndInitMap();
+        return;
+    }
+    
+    initOrganizationsMap();
+});
+
+function loadLeafletAndInitMap() {
+    // Cargar CSS de Leaflet
+    const leafletCSS = document.createElement('link');
+    leafletCSS.rel = 'stylesheet';
+    leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(leafletCSS);
+    
+    // Cargar JS de Leaflet
+    const leafletJS = document.createElement('script');
+    leafletJS.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    leafletJS.onload = function() {
+        initOrganizationsMap();
+    };
+    document.head.appendChild(leafletJS);
+}
+
+function initOrganizationsMap() {
+    const mapElement = document.getElementById('organizationsMap');
+    if (!mapElement) return;
+    
+    // Coordenadas de Rivera-Sant'Ana do Livramento
+    const centerCoords = [-30.9054, -55.5511];
+    
+    // Inicializar mapa
+    const map = L.map('organizationsMap').setView(centerCoords, 13);
+    
+    // Agregar tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Datos de organizaciones (simulados)
+    const organizations = [
+        {
+            name: 'EcoVerde Rivera',
+            coords: [-30.9054, -55.5511],
+            type: 'active',
+            description: 'Especializada en plásticos y papel',
+            materials: ['Plástico', 'Papel', 'Cartón']
+        },
+        {
+            name: 'Recicla Santana',
+            coords: [-30.8854, -55.5311],
+            type: 'center',
+            description: 'Centro de reciclaje completo',
+            materials: ['Vidrio', 'Metal', 'Electrónicos']
+        },
+        {
+            name: 'Cooperativa Verde',
+            coords: [-30.9254, -55.5711],
+            type: 'collection',
+            description: 'Recolección y compostaje',
+            materials: ['Orgánicos', 'Compost']
+        }
+    ];
+    
+    // Colores por tipo
+    const typeColors = {
+        active: '#10b981',
+        center: '#3b82f6',
+        collection: '#8b5cf6'
+    };
+    
+    // Agregar marcadores
+    organizations.forEach(org => {
+        const marker = L.circleMarker(org.coords, {
+            radius: 8,
+            fillColor: typeColors[org.type],
+            color: '#ffffff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(map);
+        
+        // Popup con información
+        const popupContent = `
+            <div class="p-2">
+                <h4 class="font-semibold text-gray-900 mb-2">${org.name}</h4>
+                <p class="text-sm text-gray-600 mb-2">${org.description}</p>
+                <div class="text-xs">
+                    <strong>Materiales:</strong> ${org.materials.join(', ')}
+                </div>
+            </div>
+        `;
+        marker.bindPopup(popupContent);
+    });
+    
+    // Event listeners para botones
+    document.getElementById('showAllOrgs')?.addEventListener('click', function() {
+        map.setView(centerCoords, 12);
+        this.classList.add('bg-green-600', 'text-white');
+        this.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+        
+        const nearbyBtn = document.getElementById('showNearby');
+        nearbyBtn.classList.remove('bg-green-600', 'text-white');
+        nearbyBtn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+    });
+    
+    document.getElementById('showNearby')?.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const userCoords = [position.coords.latitude, position.coords.longitude];
+                map.setView(userCoords, 15);
+                
+                // Agregar marcador del usuario
+                L.marker(userCoords).addTo(map)
+                    .bindPopup('Tu ubicación')
+                    .openPopup();
+            });
+        }
+        
+        this.classList.add('bg-green-600', 'text-white');
+        this.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+        
+        const allBtn = document.getElementById('showAllOrgs');
+        allBtn.classList.remove('bg-green-600', 'text-white');
+        allBtn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+    });
+    
+    // Redimensionar mapa cuando sea necesario
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
+}
+</script>
