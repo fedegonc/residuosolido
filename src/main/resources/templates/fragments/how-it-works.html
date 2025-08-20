@@ -1,36 +1,36 @@
 <!-- Fragmento: Sección Cómo Funciona -->
-<section th:fragment="how-it-works" class="py-8 bg-gray-50">
-    <div class="max-w-6xl mx-auto px-6">
-        <div class="text-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">¿Cómo Funciona?</h2>
+<section th:fragment="how-it-works" class="py-6 bg-green-800">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-6">
+            <h2 class="text-xl font-semibold text-white" th:text="#{howItWorks.title}">¿Cómo Funciona?</h2>
         </div>
         
-        <div class="grid md:grid-cols-3 gap-6">
+        <div class="grid md:grid-cols-3 gap-4">
             <!-- Paso 1 -->
-            <div class="text-center">
-                <div class="w-12 h-12 bg-green-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                    <span class="text-green-600 font-bold">1</span>
+            <div class="text-left p-4 bg-white rounded-lg border-2 border-green-600">
+                <div class="w-8 h-8 bg-white border-2 border-green-600 rounded-full mb-3 flex items-center justify-center">
+                    <span class="text-green-600 text-sm font-medium">1</span>
                 </div>
-                <h3 class="font-semibold text-gray-900 mb-2">Regístrate</h3>
-                <p class="text-sm text-gray-600">Crea tu cuenta gratuita</p>
+                <h3 class="font-medium text-gray-900 mb-2" th:text="#{howItWorks.step1.title}">Infórmate</h3>
+                <p class="text-xs text-gray-600" th:text="#{howItWorks.step1.description}">Encuentra información sobre cómo gestionar tus desechos correctamente</p>
             </div>
 
             <!-- Paso 2 -->
-            <div class="text-center">
-                <div class="w-12 h-12 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                    <span class="text-blue-600 font-bold">2</span>
+            <div class="text-left p-4 bg-white rounded-lg border-2 border-blue-600">
+                <div class="w-8 h-8 bg-white border-2 border-blue-600 rounded-full mb-3 flex items-center justify-center">
+                    <span class="text-blue-600 text-sm font-medium">2</span>
                 </div>
-                <h3 class="font-semibold text-gray-900 mb-2">Conecta</h3>
-                <p class="text-sm text-gray-600">Encuentra organizaciones cercanas</p>
+                <h3 class="font-medium text-gray-900 mb-2" th:text="#{howItWorks.step2.title}">Solicita</h3>
+                <p class="text-xs text-gray-600" th:text="#{howItWorks.step2.description}">Solicita una recolección de tus materiales reciclables</p>
             </div>
 
             <!-- Paso 3 -->
-            <div class="text-center">
-                <div class="w-12 h-12 bg-purple-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                    <span class="text-purple-600 font-bold">3</span>
+            <div class="text-left p-4 bg-white rounded-lg border-2 border-purple-600">
+                <div class="w-8 h-8 bg-white border-2 border-purple-600 rounded-full mb-3 flex items-center justify-center">
+                    <span class="text-purple-600 text-sm font-medium">3</span>
                 </div>
-                <h3 class="font-semibold text-gray-900 mb-2">Impacta</h3>
-                <p class="text-sm text-gray-600">Contribuye al medio ambiente</p>
+                <h3 class="font-medium text-gray-900 mb-2" th:text="#{howItWorks.step3.title}">Encuentra</h3>
+                <p class="text-xs text-gray-600" th:text="#{howItWorks.step3.description}">Localiza puntos de recolección y organizaciones cercanas</p>
             </div>
         </div>
     </div>
