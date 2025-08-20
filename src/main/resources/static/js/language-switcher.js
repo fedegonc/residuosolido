@@ -61,14 +61,29 @@ class LanguageSwitcher {
         // Enviar tracking al backend INMEDIATAMENTE
         event.preventDefault();
         
+        // Asegurar que se envía un referer relativo seguro al backend
+        let finalHref = href;
         try {
-            await this.sendTrackingData(lang, href);
+            const urlObj = new URL(href, window.location.origin);
+            if (!urlObj.searchParams.has('referer')) {
+                const safeReferer = window.location.pathname + window.location.search;
+                urlObj.searchParams.set('referer', safeReferer);
+                console.log('[LANG-SWITCHER] referer agregado:', safeReferer);
+            }
+            // Usar ruta relativa + query para navegación
+            finalHref = urlObj.pathname + (urlObj.search || '');
+        } catch (e) {
+            console.warn('[LANG-SWITCHER] No se pudo procesar URL, usando href original');
+        }
+        
+        try {
+            await this.sendTrackingData(lang, finalHref);
             console.log('[LANG-SWITCHER] Tracking enviado, navegando...');
         } catch (error) {
             console.error('[LANG-SWITCHER] Error en tracking:', error);
         } finally {
             // Navegar después del tracking
-            window.location.href = href;
+            window.location.href = finalHref;
         }
     }
 
@@ -109,3 +124,4 @@ class LanguageSwitcher {
 
 // Inicializar automáticamente
 new LanguageSwitcher();
+

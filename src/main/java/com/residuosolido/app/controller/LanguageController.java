@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.LocaleResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,10 +21,14 @@ public class LanguageController {
     @Autowired
     private LanguageTrackingService trackingService;
 
+    @Autowired
+    private LocaleResolver localeResolver;
+
     @GetMapping("/change-language")
-    public String changeLanguage(@RequestParam("lang") String language, 
-                               HttpServletRequest request, 
-                               HttpServletResponse response) {
+    public String changeLanguage(@RequestParam("lang") String language,
+                                 @RequestParam(value = "referer", required = false) String refererParam,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
         
         long startTime = System.currentTimeMillis();
         String userAgent = request.getHeader("User-Agent");
@@ -48,16 +53,26 @@ public class LanguageController {
         // Crear locale
         Locale locale = new Locale(language);
         
-        // Guardar en sesión
-        request.getSession().setAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE", locale);
+        // Aplicar locale usando el LocaleResolver (más robusto que manipular la sesión directamente)
+        localeResolver.setLocale(request, response, locale);
+        Locale applied = localeResolver.resolveLocale(request);
+        logger.info("🌐 LOCALE_APPLIED: {}", applied);
         
         // Obtener URL de referencia
         String referer = request.getHeader("Referer");
         String redirectUrl = "/";
         
-        if (referer != null && referer.contains(request.getServerName())) {
+        if (refererParam != null && !refererParam.isEmpty()) {
+            // Permitir solo rutas relativas por seguridad
+            if (refererParam.startsWith("/")) {
+                redirectUrl = refererParam;
+                logger.info("🔙 REDIRECT_TO_REFERER_PARAM: {}", refererParam);
+            } else {
+                logger.warn("⚠️ INVALID_REFERER_PARAM: {}", refererParam);
+            }
+        } else if (referer != null && referer.contains(request.getServerName())) {
             redirectUrl = referer;
-            logger.info("🔙 REDIRECT_TO_REFERER: {}", referer);
+            logger.info("🔙 REDIRECT_TO_REFERER_HEADER: {}", referer);
         } else {
             logger.info("🏠 REDIRECT_TO_INDEX: No valid referer");
         }
