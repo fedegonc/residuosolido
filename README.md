@@ -1,7 +1,7 @@
 # 🌱 Sistema de Gestión de Residuos Sólidos
 **Rivera - Sant'ana do Livramento**
 
-Aplicación web full-stack para gestión integral de residuos sólidos urbanos en la región fronteriza. Arquitectura Spring Boot + PostgreSQL + Thymeleaf con sistema multi-rol, fragmentos reutilizables y deployment optimizado para producción.
+Aplicación web full-stack para gestión integral de residuos sólidos urbanos en la región fronteriza. Arquitectura Spring Boot + PostgreSQL + Thymeleaf con sistema multi-rol, internacionalización (ES/PT), tracking de rendimiento y deployment optimizado para producción.
 
 ## 🚀 Características Principales
 
@@ -23,6 +23,8 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 - **Posts y Categorías**: Sistema CRUD completo para contenido educativo con múltiples fuentes
 - **Materiales**: Gestión de tipos de residuos reciclables
 - **Fragmentos Reutilizables**: Sistema modular de componentes Thymeleaf
+- **Internacionalización**: Soporte completo ES/PT con cambio dinámico de idioma
+- **Tracking de Performance**: Monitoreo de rendimiento frontend/backend con alertas
 
 ### 🔐 Seguridad y Autenticación
 - Registro y login con validación robusta
@@ -30,6 +32,8 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 - Autorización basada en roles con Spring Security 6
 - Redirección automática según perfil de usuario
 - Protección contra acceso a páginas de auth cuando ya está logueado
+- Logging de seguridad optimizado (nivel WARN para reducir ruido)
+- Tracking de cambios de idioma con estadísticas por sesión
 
 ## 🛠️ Stack Tecnológico
 
@@ -46,6 +50,9 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 - **JavaScript**: ES6+ vanilla con event listeners estándar
 - **UI/UX**: Responsive design, colores suaves, iconografía SVG
 - **Componentes**: Sistema de fragmentos para layouts, dropdowns, formularios
+- **I18n**: Mensajes localizados con ResourceBundle (messages_es.properties, messages_pt.properties)
+- **Maps**: Leaflet.js integrado para geolocalización interactiva
+- **Performance**: Tracking de tiempos de carga frontend con alertas automáticas
 
 ### DevOps & Deploy
 - **Database**: PostgreSQL 12+ (producción) / H2 (testing)
@@ -59,20 +66,26 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 ```
 src/main/java/com/residuosolido/app/
 ├── controller/
-│   ├── admin/          # AdminUserController
+│   ├── admin/          # AdminUserController, AdminPostController
 │   ├── auth/           # AuthController (login/register)
-│   ├── guest/          # Controladores públicos
+│   ├── guest/          # PostController, DashboardController
 │   ├── org/            # OrganizationController
-│   └── user/           # UserController
+│   ├── user/           # UserController
+│   ├── LanguageController # Cambio de idioma con LocaleResolver
+│   └── LogTrackingController # Performance tracking (logs deshabilitados)
 ├── service/            # Lógica de negocio
 │   ├── AuthService     # Autenticación + index data
 │   ├── UserService     # CRUD usuarios + validaciones
-│   ├── PostService     # Gestión contenido
-│   └── MaterialService # Gestión materiales
-├── repository/         # JPA Repositories
-├── model/              # Entidades JPA optimizadas
+│   ├── PostService     # Gestión contenido con optimizaciones N+1
+│   ├── MaterialService # Gestión materiales
+│   ├── CategoryService # Gestión categorías con slugs
+│   ├── WasteSectionService # Secciones optimizadas con JOIN FETCH
+│   ├── LanguageTrackingService # Estadísticas de cambio de idioma
+│   └── DashboardService # Datos públicos optimizados
+├── repository/         # JPA Repositories con queries optimizadas
+├── model/              # Entidades JPA optimizadas (FetchType.LAZY)
 ├── dto/                # Data Transfer Objects
-└── config/             # Security + configuración
+└── config/             # Security + PerformanceInterceptor + LocaleResolver
 ```
 
 ### Frontend Structure
@@ -284,27 +297,41 @@ mvn spring-boot:run -Dspring.profiles.active=test
 
 ## ⚙️ Características No Funcionales
 
-- **Seguridad**: Spring Security 6 con autorización por roles (`USER`, `ORGANIZATION`, `ADMIN`).
-- **Plantillas**: Thymeleaf 3.1 con 19 fragmentos modulares (`fragments/layout.html`, `fragments/admin-layout.html`, `fragments/auth-layout.html`, `fragments/guest-dropdown.html`, `fragments/posts.html`, `fragments/organizations.html`, etc.).
-- **Caché de plantillas**: deshabilitada en desarrollo (`spring.thymeleaf.cache=false`).
-- **Logging**: niveles reducidos a `WARN` para Thymeleaf y MVC; logs de acceso de Tomcat deshabilitados.
-- **Estilos**: Tailwind CSS exclusivamente vía CDN; fuente global Nunito.
-- **JavaScript**: Event listeners estándar, sin handlers inline para mejor debugging.
-- **Sesiones**: política `ALWAYS` configurada para depuración.
-- **Redirección inteligente**: Usuarios autenticados no pueden acceder a login/register.
-- **Recursos estáticos**: servidos desde `src/main/resources/static/` (incluye `favicon.svg`).
-- **Formularios dinámicos**: Sistema de múltiples fuentes con JavaScript vanilla.
+- **Seguridad**: Spring Security 6 con autorización por roles (`USER`, `ORGANIZATION`, `ADMIN`)
+- **Plantillas**: Thymeleaf 3.1 con 19+ fragmentos modulares y sistema de layouts
+- **Internacionalización**: ResourceBundle con `messages_es.properties` y `messages_pt.properties`
+- **Logging optimizado**: Nivel WARN global para `com.residuosolido.app` y Spring Web
+- **Performance**: 
+  - HikariCP connection pool optimizado (5-20 conexiones)
+  - Queries N+1 eliminadas con JOIN FETCH en WasteSection y Post
+  - FetchType.LAZY por defecto en relaciones @ManyToMany
+  - PerformanceInterceptor para tracking de tiempos de respuesta
+- **Frontend Performance**:
+  - Tracking de tiempos de carga con alertas automáticas (>2s)
+  - Event listeners estándar sin handlers inline
+  - Leaflet.js para mapas interactivos con auto-redimensionado
+- **Database**: PostgreSQL con índices en campos únicos (username, email)
+- **Caché**: Thymeleaf cache habilitado en producción, deshabilitado en desarrollo
+- **Recursos**: Compresión HTTP2, cache control optimizado (31536000s)
+- **Sesiones**: LocaleResolver con SessionLocaleResolver para persistencia de idioma
 
 ## 🌐 Endpoints y Rutas
 
 ### Públicas (sin autenticación)
-- `GET /` y `GET /index` — Página pública inicial con hero, posts y organizaciones.
-- `GET /invitados` y `GET /guest/**` — Secciones para visitantes/guest.
-- `GET /auth/login`, `GET /auth/register`, `GET /auth/forgot-password` — Autenticación (redirige si ya está logueado).
-- `POST /auth/login` — Procesamiento de login con redirección por rol.
-- `GET /posts/**` — Contenido público (posts con múltiples fuentes).
-- `GET /categories/**` — Listado/categorías públicas.
-- Recursos estáticos: `/css/**`, `/js/**`, `/images/**`, `/static/**`.
+- `GET /` y `GET /index` — Página pública inicial con hero, posts, organizaciones y mapa interactivo
+- `GET /invitados` y `GET /guest/**` — Secciones para visitantes/guest
+- `GET /auth/login`, `GET /auth/register`, `GET /auth/forgot-password` — Autenticación (redirige si ya está logueado)
+- `POST /auth/login` — Procesamiento de login con redirección por rol
+- `GET /posts/**` — Contenido público (posts con múltiples fuentes)
+- `GET /posts/category/{categorySlug}` — Posts filtrados por categoría con diseño mejorado
+- `GET /categories/**` — Listado/categorías públicas
+- `GET /change-language?lang={es|pt}&referer={url}` — Cambio de idioma con redirección segura
+- `GET /i18n-test` — Página de prueba para internacionalización
+- Recursos estáticos: `/css/**`, `/js/**`, `/images/**`, `/static/**`
+
+### APIs de Tracking (internas)
+- `POST /api/tracking/console-log` — Recepción de logs frontend (silenciado)
+- `POST /api/tracking/performance` — Métricas de rendimiento frontend
 
 ### Usuario (requiere rol USER)
 - `GET /users/dashboard` — Dashboard de usuario (pendiente unificación).
@@ -318,18 +345,18 @@ mvn spring-boot:run -Dspring.profiles.active=test
 - `GET /org/settings` — Configuración de organización (en preparación).
 
 ### Administración (requiere rol ADMIN)
-- `GET /admin/dashboard` — Panel principal con estadísticas.
-- `GET /admin/users` — Gestión completa de usuarios y roles.
-- `GET /admin/posts` — Gestión de contenido educativo.
-- `GET /admin/edit-post` — Editor avanzado con múltiples fuentes dinámicas.
-- `GET /admin/categories` — Gestión de categorías de contenido.
-- `GET /admin/materials` — Gestión de tipos de materiales reciclables.
-- `GET /admin/organizations` — Gestión de organizaciones registradas.
-- `GET /admin/waste-sections` — Configuración de secciones de residuos.
-- `GET /admin/requests` — Supervisión de solicitudes de recolección.
-- `GET /admin/password-reset-requests` — Gestión manual de recuperación de contraseñas.
-- `GET /admin/config` — Configuración general del sitio.
-- `GET /admin/feedback` — Gestión de comentarios y sugerencias.
+- `GET /admin/dashboard` — Panel principal con estadísticas
+- `GET /admin/users` — Gestión completa de usuarios y roles con badges coloridos
+- `GET /admin/posts` — Gestión de contenido educativo con optimizaciones N+1
+- `GET /admin/edit-post` — Editor avanzado con múltiples fuentes dinámicas
+- `GET /admin/categories` — Gestión de categorías de contenido con slugs
+- `GET /admin/materials` — Gestión de tipos de materiales reciclables
+- `GET /admin/organizations` — Gestión de organizaciones registradas
+- `GET /admin/waste-sections` — Configuración de secciones de residuos (optimizado con JOIN FETCH)
+- `GET /admin/requests` — Supervisión de solicitudes de recolección
+- `GET /admin/password-reset-requests` — Gestión manual de recuperación de contraseñas
+- `GET /admin/config` — Configuración general del sitio
+- `GET /admin/feedback` — Gestión de comentarios y sugerencias
 
 Notas:
 - La seguridad está configurada en `SecurityConfig.java` usando `requestMatchers` por patrón.
@@ -367,15 +394,22 @@ logging.level.org.hibernate.SQL=WARN
 ### Optimizaciones de Performance
 
 #### Database
-- **Connection Pool**: HikariCP optimizado
-- **N+1 Queries**: Resuelto con JOIN FETCH
-- **Lazy Loading**: FetchType.LAZY por defecto
+- **Connection Pool**: HikariCP optimizado (5 min, 20 max, 30s idle-timeout)
+- **N+1 Queries**: Eliminadas con JOIN FETCH en:
+  - `PostRepository.findAllWithCategories()`
+  - `WasteSectionRepository.findByActiveWithCategoriesOrderByDisplayOrderAsc()`
+  - `WasteSectionRepository.findAllWithCategoriesOrderByDisplayOrderAsc()`
+- **Lazy Loading**: FetchType.LAZY por defecto en @ManyToMany
 - **Índices**: En campos únicos (username, email)
+- **SQL Logging**: Reducido a WARN para evitar spam en logs
 
 #### Frontend
 - **Hot Reload**: Templates sin restart completo
-- **Tailwind**: CDN en dev, build optimizado en prod
-- **Assets**: Servidos desde `/static/`
+- **Performance Tracking**: Monitoreo automático de tiempos de carga frontend
+- **Alertas**: Warning automático para cargas >2 segundos
+- **Maps**: Leaflet con invalidateSize() para redimensionado correcto
+- **Assets**: Servidos desde `/static/` con cache control optimizado
+- **Compression**: HTTP2 + gzip habilitado para recursos estáticos
 
 ### Security Configuration
 ```java
@@ -510,21 +544,66 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 ## 🔧 Cambios Recientes
 
-### ✅ Implementado en Sesión Actual
-- **Menú Dropdown Mejorado**: Reemplazado `onclick` inline por event listeners estándar
-- **Corrección Template Parsing**: Eliminados errores de campos inexistentes (`zona`, `telefono`)
-- **Editor Posts Avanzado**: Sistema dinámico de múltiples fuentes con botones add/remove
-- **Seguridad de Navegación**: Usuarios autenticados no pueden acceder a login/register
-- **Fragmentos Optimizados**: Eliminadas referencias a fragmentos inexistentes
-- **JavaScript Estándar**: Debugging mejorado con console.logs detallados
+### ✅ Implementado Recientemente
+
+#### Internacionalización Completa (ES/PT)
+- **LanguageController**: Cambio de idioma con `LocaleResolver.setLocale()`
+- **Parámetro referer**: Redirección segura a página anterior
+- **Frontend**: `language-switcher.js` con parámetro referer relativo
+- **Bundle PT**: `messages_pt.properties` para portugués explícito
+- **Category Page**: Localización completa con gradientes y filtros responsivos
+
+#### Optimizaciones de Performance
+- **N+1 Queries**: Eliminadas en WasteSection-Categories y Post-Categories
+- **Repository Optimizations**: Métodos con JOIN FETCH para cargas eficientes
+- **Service Layer**: Delegación correcta desde controladores a servicios
+- **FetchType.LAZY**: Aplicado en relaciones @ManyToMany
+
+#### Logging y Monitoring
+- **LogTrackingController**: Logs de tracking deshabilitados (solo warnings críticos)
+- **PerformanceInterceptor**: Logs de rendimiento silenciados
+- **LanguageController**: Logs de cambio de idioma removidos
+- **Global Logging**: Nivel WARN para `com.residuosolido.app` y Spring Web
+- **Performance Alerts**: Mantenidas para cargas frontend >2 segundos
+
+#### UI/UX Improvements
+- **Category Page**: Diseño mejorado con header gradiente y filtros aria-current
+- **Footer**: Mapa del sitio localizado en index principal
+- **Interactive Map**: Leaflet.js integrado en sidebar del index
+- **Role Management**: Badges coloridos y descripciones claras para roles de usuario
 
 ### 🔄 Pendiente para Próxima Sesión
-- **Dashboard Unificado**: Consolidar 3 dashboards en uno con `sec:authorize`
-- **Backend Múltiples Fuentes**: Modelo y controlador para arrays de fuentes
-- **Refactoring Redirecciones**: LoginSuccessHandler para dashboard único
+- **Testing I18n**: Validar cambio de idioma en index y /i18n-test
+- **Externalización**: Textos hardcodeados restantes en templates
+- **Dashboard Unificado**: Consolidar dashboards con fragmentos condicionales
+
+## 📋 Estado Actual del Sistema
+
+### ✅ Funcionalidades Completadas
+- **Multi-rol completo**: USER, ORGANIZATION, ADMIN con permisos diferenciados
+- **Internacionalización**: ES/PT con cambio dinámico y persistencia de sesión
+- **Performance optimizada**: N+1 queries eliminadas, connection pool configurado
+- **UI moderna**: Tailwind CSS, mapas interactivos, fragmentos modulares
+- **Logging optimizado**: Nivel WARN global, tracking de performance crítico
+- **Seguridad robusta**: Spring Security 6, validaciones, redirecciones inteligentes
+
+### 🔧 Configuración de Producción
+- **Database**: PostgreSQL con HikariCP (5-20 conexiones)
+- **Logging**: WARN level para reducir ruido, mantiene alertas críticas
+- **Performance**: HTTP2, compresión, cache control optimizado
+- **I18n**: ResourceBundle con fallback a español
+- **Security**: Autorización por roles, protección de rutas
+
+### 📊 Métricas de Desarrollo
+- **Templates**: 50+ archivos Thymeleaf con fragmentos modulares
+- **Controllers**: 15+ controladores con arquitectura limpia
+- **Services**: 10+ servicios con lógica de negocio optimizada
+- **Repositories**: Queries optimizadas con JOIN FETCH
+- **JavaScript**: Event listeners estándar, tracking de performance
+- **CSS**: 100% Tailwind CSS, diseño responsivo
 
 ---
 
 **Developed with ❤️ for sustainable waste management in Rivera - Sant'ana do Livramento**
 
-*Última actualización: Agosto 2025 - Sesión de refactoring y optimización*
+*Última actualización: Agosto 2025 - Sistema optimizado con I18n, performance y logging*
