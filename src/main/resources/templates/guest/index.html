@@ -54,17 +54,65 @@
     <!-- JS de index (toggleCategory, etc.) cargado de forma optimizada -->
     <script src="/js/index.js" defer></script>
     
-    <!-- Script de análisis de rendimiento -->
+    <!-- Componente de cambio de idioma -->
+    <script src="/js/language-switcher.js"></script>
+    
+    <!-- Script de análisis de rendimiento con tracking optimizado -->
     <script>
-    // Medir tiempo de carga
+    // Interceptar console.log para enviar al backend
+    const originalLog = console.log;
+    const logBuffer = [];
+    let logTimer;
+
+    console.log = function(...args) {
+        originalLog.apply(console, args);
+        
+        // Agregar al buffer
+        logBuffer.push({
+            level: 'info',
+            message: args.join(' '),
+            timestamp: Date.now(),
+            url: window.location.href
+        });
+        
+        // Enviar batch cada 100ms
+        clearTimeout(logTimer);
+        logTimer = setTimeout(() => {
+            if (logBuffer.length > 0) {
+                fetch('/api/tracking/console-log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ logs: [...logBuffer] })
+                }).catch(() => {});
+                logBuffer.length = 0;
+            }
+        }, 100);
+    };
+
+    // Medir tiempo de carga (sin bloquear)
     window.addEventListener('load', function() {
-        setTimeout(function() {
+        requestAnimationFrame(() => {
             if (window.performance) {
                 const timing = window.performance.timing;
                 const pageLoadTime = timing.loadEventEnd - timing.navigationStart;
                 console.log('Tiempo de carga total: ' + pageLoadTime + 'ms');
+                
+                // Enviar métricas de rendimiento si es > 500ms
+                if (pageLoadTime > 500) {
+                    setTimeout(() => {
+                        fetch('/api/tracking/performance', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                loadTime: pageLoadTime,
+                                url: window.location.href,
+                                timestamp: Date.now()
+                            })
+                        }).catch(() => {});
+                    }, 500);
+                }
             }
-        }, 0);
+        });
     });
     </script>
 </body>
