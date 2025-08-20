@@ -18,8 +18,7 @@ public class LogTrackingController {
     public ResponseEntity<String> trackConsoleLog(@RequestBody Map<String, Object> logData, 
                                                  HttpServletRequest request) {
         
-        logger.info("🔥 BACKEND: Recibido request en /api/tracking/console-log");
-        logger.info("🔥 BACKEND: Datos recibidos: {}", logData);
+        // logs deshabilitados
         
         // Manejar batch de logs
         if (logData.containsKey("logs")) {
@@ -27,24 +26,16 @@ public class LogTrackingController {
             java.util.List<Map<String, Object>> logs = (java.util.List<Map<String, Object>>) logData.get("logs");
             String sessionId = request.getSession().getId();
             
-            logger.info("🔥 BACKEND: Procesando batch de {} logs", logs.size());
+            // logs deshabilitados
             
             for (Map<String, Object> log : logs) {
                 String level = (String) log.get("level");
                 String message = (String) log.get("message");
                 String url = (String) log.get("url");
-                
-                logger.info("🖥️ FRONTEND_LOG [{}]: {} | Session: {}", 
-                           level.toUpperCase(), message, sessionId);
-                
-                // Log especial para clicks de idioma
-                if (message != null && message.contains("LANG_BTN_CLICK")) {
-                    logger.info("🌍 LANGUAGE_CLICK_DETECTED: {} | Session: {} | IP: {}", 
-                               message, sessionId, request.getRemoteAddr());
-                }
+                // logs deshabilitados
+                // logs de clicks de idioma deshabilitados
             }
             
-            logger.info("🔥 BACKEND: Batch procesado exitosamente");
             return ResponseEntity.ok("batch_logged");
         }
         
@@ -54,15 +45,9 @@ public class LogTrackingController {
         String url = (String) logData.get("url");
         String sessionId = request.getSession().getId();
         
-        logger.info("🔥 BACKEND: Procesando log individual");
-        logger.info("🖥️ FRONTEND_LOG [{}]: {} | Session: {}", 
-                   level.toUpperCase(), message, sessionId);
+        // logs deshabilitados
         
-        // Log especial para clicks de idioma
-        if (message != null && message.contains("LANG_BTN_CLICK")) {
-            logger.info("🌍 LANGUAGE_CLICK_DETECTED: {} | Session: {} | IP: {}", 
-                       message, sessionId, request.getRemoteAddr());
-        }
+        // logs de clicks de idioma deshabilitados
         
         return ResponseEntity.ok("logged");
     }
@@ -75,7 +60,7 @@ public class LogTrackingController {
         String url = (String) perfData.get("url");
         String sessionId = request.getSession().getId();
         
-        logger.info("⚡ FRONTEND_PERF: {}ms | URL: {} | Session: {}", loadTime, url, sessionId);
+        // logs de performance deshabilitados (se mantiene warn en caso de lentitud)
         
         if (loadTime > 2000) {
             logger.warn("🐌 SLOW_FRONTEND: {}ms exceeds 2s threshold | URL: {}", loadTime, url);
