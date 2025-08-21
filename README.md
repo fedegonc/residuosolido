@@ -1,7 +1,7 @@
 # 🌱 Sistema de Gestión de Residuos Sólidos
 **Rivera - Sant'ana do Livramento**
 
-Aplicación web full-stack para gestión integral de residuos sólidos urbanos en la región fronteriza. Arquitectura Spring Boot + PostgreSQL + Thymeleaf con sistema multi-rol, internacionalización (ES/PT), tracking de rendimiento y deployment optimizado para producción.
+Aplicación web full-stack para gestión integral de residuos sólidos urbanos en la región fronteriza. Arquitectura Spring Boot + PostgreSQL + Thymeleaf con sistema multi-rol, internacionalización (ES/PT) y arquitectura limpia optimizada.
 
 ## 🚀 Características Principales
 
@@ -11,12 +11,10 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 - **ORGANIZATION**: Entidades que gestionan materiales y recolecciones
 - **ADMIN**: Administración completa del sistema
 
-### 📊 Dashboards Especializados
-- **Admin Dashboard**: Control total del sistema, gestión de usuarios y contenido
-- **Organization Dashboard**: Gestión de materiales, solicitudes y recolecciones
-- **User Dashboard**: Solicitud y seguimiento de recolecciones
-- **Página Pública**: Información educativa y recursos para visitantes
-- **🔄 Dashboard Unificado**: En desarrollo - vista única con condicionales por rol
+### 📊 Dashboard Unificado
+- **Dashboard Único**: Vista centralizada con fragmentos condicionales por rol (`/dashboard`)
+- **Autorización Granular**: Contenido específico según permisos (ADMIN/ORGANIZATION/USER)
+- **Arquitectura Limpia**: Eliminación de dashboards redundantes y código duplicado
 
 ### 🗂️ Gestión Dinámica de Contenido
 - **Secciones de Residuos**: Configurables desde panel admin (Reciclables, No Reciclables, etc.)
@@ -30,10 +28,9 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 - Registro y login con validación robusta
 - Recuperación de contraseña con flujo administrativo manual
 - Autorización basada en roles con Spring Security 6
-- Redirección automática según perfil de usuario
+- Redirección unificada a dashboard único según rol
 - Protección contra acceso a páginas de auth cuando ya está logueado
-- Logging de seguridad optimizado (nivel WARN para reducir ruido)
-- Tracking de cambios de idioma con estadísticas por sesión
+- Logging optimizado (nivel WARN para reducir ruido)
 
 ## 🛠️ Stack Tecnológico
 
@@ -41,7 +38,7 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 - **Runtime**: Java 17 + Spring Boot 3.2.0
 - **Security**: Spring Security 6 con autorización por roles
 - **Data**: JPA/Hibernate + PostgreSQL + HikariCP
-- **Architecture**: MVC en capas (Controller → Service → Repository)
+- **Architecture**: Arquitectura limpia (Controller → Service → Repository)
 - **Build**: Maven 3.8+
 
 ### Frontend
@@ -72,16 +69,17 @@ src/main/java/com/residuosolido/app/
 │   ├── org/            # OrganizationController
 │   ├── user/           # UserController
 │   ├── LanguageController # Cambio de idioma con LocaleResolver
-│   └── LogTrackingController # Performance tracking (logs deshabilitados)
+│   └── DashboardController # Dashboard unificado con fragmentos condicionales
 ├── service/            # Lógica de negocio
 │   ├── AuthService     # Autenticación + index data
-│   ├── UserService     # CRUD usuarios + validaciones
+│   ├── UserService     # CRUD usuarios + validaciones integradas
 │   ├── PostService     # Gestión contenido con optimizaciones N+1
 │   ├── MaterialService # Gestión materiales
 │   ├── CategoryService # Gestión categorías con slugs
 │   ├── WasteSectionService # Secciones optimizadas con JOIN FETCH
-│   ├── LanguageTrackingService # Estadísticas de cambio de idioma
-│   └── DashboardService # Datos públicos optimizados
+│   ├── FeedbackService # Gestión de feedback
+│   ├── RequestService  # Gestión de solicitudes
+│   └── PasswordResetService # Recuperación de contraseñas
 ├── repository/         # JPA Repositories con queries optimizadas
 ├── model/              # Entidades JPA optimizadas (FetchType.LAZY)
 ├── dto/                # Data Transfer Objects
@@ -333,19 +331,19 @@ mvn spring-boot:run -Dspring.profiles.active=test
 - `POST /api/tracking/console-log` — Recepción de logs frontend (silenciado)
 - `POST /api/tracking/performance` — Métricas de rendimiento frontend
 
+### Dashboard Unificado (requiere autenticación)
+- `GET /dashboard` — Dashboard único con contenido condicional por rol (USER/ORGANIZATION/ADMIN)
+
 ### Usuario (requiere rol USER)
-- `GET /users/dashboard` — Dashboard de usuario (pendiente unificación).
-- `GET /users/profile` — Perfil y edición de datos personales.
-- `GET /users/requests` — Mis solicitudes de recolección.
-- `GET /users/request-form` — Nueva solicitud de recolección.
-- `GET /users/stats` — Estadísticas personales.
+- `GET /users/profile` — Perfil y edición de datos personales
+- `GET /users/requests` — Mis solicitudes de recolección
+- `GET /users/request-form` — Nueva solicitud de recolección
 
 ### Organización (requiere rol ORGANIZATION)
-- `GET /org/dashboard` — Dashboard de organización con gestión de materiales y solicitudes.
-- `GET /org/settings` — Configuración de organización (en preparación).
+- `GET /org/materials` — Gestión de materiales
+- `GET /org/settings` — Configuración de organización
 
 ### Administración (requiere rol ADMIN)
-- `GET /admin/dashboard` — Panel principal con estadísticas
 - `GET /admin/users` — Gestión completa de usuarios y roles con badges coloridos
 - `GET /admin/posts` — Gestión de contenido educativo con optimizaciones N+1
 - `GET /admin/edit-post` — Editor avanzado con múltiples fuentes dinámicas
@@ -491,9 +489,7 @@ git push heroku main
 - `GET /posts/**` - Contenido público
 
 ### Autenticados
-- `GET /users/dashboard` - Dashboard usuario
-- `GET /org/dashboard` - Dashboard organización
-- `GET /admin/dashboard` - Panel admin
+- `GET /dashboard` - Dashboard unificado (contenido por rol)
 
 ### Admin APIs
 - `GET /admin/users` - Gestión usuarios
@@ -516,10 +512,10 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 ## 📈 Roadmap
 
-### En Desarrollo (Próximas Sesiones)
-- [ ] **Dashboard Unificado**: Vista única con fragmentos condicionales por rol
-- [ ] **Backend Múltiples Fuentes**: Soporte para arrays/JSON en posts
-- [ ] **Refactoring LoginSuccessHandler**: Redirección a dashboard único
+### ✅ Completado Recientemente (Agosto 2025)
+- [x] **Dashboard Unificado**: Vista única con fragmentos condicionales por rol
+- [x] **Arquitectura Limpia**: Eliminación de sobreingeniería y código duplicado
+- [x] **Servicios Consolidados**: Validaciones integradas, repositorios via servicios
 
 ### Backend
 - [ ] API REST para móviles
@@ -544,45 +540,35 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 ## 🔧 Cambios Recientes
 
-### ✅ Implementado Recientemente
+### ✅ Eliminación de Sobreingeniería (Agosto 2025)
 
-#### Mejoras en Páginas Guest y Consistencia UI (Agosto 2025)
-- **Sección "Cómo Funciona"**: Rediseñada con fondo verde oscuro, tarjetas blancas con bordes coloridos
-- **Contenido Relevante**: Pasos actualizados: "Infórmate", "Solicita", "Encuentra" con descripciones específicas del sistema
-- **Diseño Minimalista**: CSS simplificado, círculos con bordes en lugar de fondos sólidos, textos alineados a la izquierda
-- **Eliminación de Elementos**: Sección de estadísticas removida del index para mayor limpieza visual
+#### Dashboard Unificado
+- **3 dashboards → 1 dashboard**: Vista centralizada en `/dashboard`
+- **Fragmentos condicionales**: Contenido específico por rol usando `sec:authorize`
+- **URLs consolidadas**: Todas las redirecciones apuntan a `/dashboard`
+- **Código eliminado**: Métodos dashboard redundantes en controladores
 
-#### Internacionalización Completa (ES/PT)
-- **Locale por Defecto**: Cambiado de español a português como idioma principal
-- **Dashboard Admin**: Completamente internacionalizado con claves i18n
-- **Sección "Cómo Funciona"**: Traducciones completas en ambos idiomas
-- **Footer**: Internacionalizado con todas las claves necesarias
-- **LanguageController**: Cambio de idioma con `LocaleResolver.setLocale()`
-- **Bundle PT**: `messages_pt.properties` para portugués explícito
+#### Arquitectura Limpia Aplicada
+- **Controller → Service → Repository**: Eliminados repositorios directos en controladores
+- **AdminController refactorizado**: Usa `FeedbackService` y `RequestService`
+- **Servicios consolidados**: Lógica de negocio centralizada
 
-#### Optimizaciones de Performance
+#### Servicios Simplificados
+- **UserValidationService eliminado**: Validaciones integradas en `UserService`
+- **LocationService eliminado**: Funcionalidad innecesaria removida
+- **LanguageTrackingService eliminado**: Estadísticas de idioma innecesarias
+- **11 servicios (-21%)**: De 14 servicios a 11 servicios esenciales
+
+#### Mejoras de Performance
 - **N+1 Queries**: Eliminadas en WasteSection-Categories y Post-Categories
 - **Repository Optimizations**: Métodos con JOIN FETCH para cargas eficientes
-- **Service Layer**: Delegación correcta desde controladores a servicios
 - **FetchType.LAZY**: Aplicado en relaciones @ManyToMany
+- **Connection Pool**: HikariCP optimizado (5-20 conexiones)
 
-#### Logging y Monitoring
-- **LogTrackingController**: Logs de tracking deshabilitados (solo warnings críticos)
-- **PerformanceInterceptor**: Logs de rendimiento silenciados
-- **LanguageController**: Logs de cambio de idioma removidos
-- **Global Logging**: Nivel WARN para `com.residuosolido.app` y Spring Web
-- **Performance Alerts**: Mantenidas para cargas frontend >2 segundos
-
-#### UI/UX Improvements
-- **Category Page**: Diseño mejorado con header gradiente y filtros aria-current
-- **Interactive Map**: Leaflet.js integrado en sidebar del index
-- **Role Management**: Badges coloridos y descripciones claras para roles de usuario
-- **Fragmentos Modulares**: Sistema de componentes Thymeleaf reutilizables optimizado
-
-### 🔄 Pendiente para Próxima Sesión
-- **Testing I18n**: Validar cambio de idioma completo en todas las páginas
-- **Guest Layout Unificado**: Crear layout común para todas las páginas guest
-- **Dashboard Unificado**: Consolidar dashboards con fragmentos condicionales
+#### Logging Optimizado
+- **Nivel WARN global**: Para `com.residuosolido.app` y Spring Web
+- **Tracking eliminado**: Logs de cambio de idioma y performance innecesarios
+- **Alertas críticas**: Mantenidas para cargas frontend >2 segundos
 
 ## 📋 Estado Actual del Sistema
 
@@ -601,12 +587,13 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 - **I18n**: ResourceBundle con fallback a español
 - **Security**: Autorización por roles, protección de rutas
 
-### 📊 Métricas de Desarrollo
+### 📊 Métricas de Desarrollo (Post-Refactoring)
 - **Templates**: 50+ archivos Thymeleaf con fragmentos modulares
 - **Controllers**: 15+ controladores con arquitectura limpia
-- **Services**: 10+ servicios con lógica de negocio optimizada
+- **Services**: 11 servicios optimizados (-21% código duplicado)
 - **Repositories**: Queries optimizadas con JOIN FETCH
-- **JavaScript**: Event listeners estándar, tracking de performance
+- **Dashboard**: 1 vista unificada (-67% dashboards redundantes)
+- **JavaScript**: Event listeners estándar, sin tracking innecesario
 - **CSS**: 100% Tailwind CSS, diseño responsivo
 
 ---
@@ -622,7 +609,8 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 - **Backend Robusto**: Spring Boot 3.2 + PostgreSQL con optimizaciones de performance
 - **Seguridad Empresarial**: Spring Security 6 con autorización granular por roles
 - **Escalabilidad**: Connection pooling, lazy loading, queries optimizadas
-- **Mantenibilidad**: Arquitectura en capas clara (Controller → Service → Repository)
+- **Arquitectura Limpia**: Controller → Service → Repository sin sobreingeniería
+- **Dashboard Unificado**: Vista única con fragmentos condicionales por rol
 
 ### 🎨 Excelencia en Frontend
 - **Diseño Moderno**: 100% Tailwind CSS con componentes reutilizables
@@ -661,4 +649,4 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 ---
 
-*Última actualización: Agosto 2025 - Sistema optimizado con I18n, performance y guest pages mejoradas*
+*Última actualización: Agosto 2025 - Arquitectura limpia aplicada, sobreingeniería eliminada, dashboard unificado*

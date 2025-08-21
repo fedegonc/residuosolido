@@ -4,8 +4,8 @@ import com.residuosolido.app.model.Feedback;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.PasswordResetRequest;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.repository.FeedbackRepository;
-import com.residuosolido.app.repository.RequestRepository;
+import com.residuosolido.app.service.FeedbackService;
+import com.residuosolido.app.service.RequestService;
 
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.UserService;
@@ -32,26 +32,22 @@ import java.time.format.DateTimeFormatter;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final FeedbackRepository feedbackRepository;
-    private final RequestRepository requestRepository;
+    private final FeedbackService feedbackService;
+    private final RequestService requestService;
     private final PasswordResetService passwordResetService;
     private final UserService userService;
 
     @Autowired
-    public AdminController(FeedbackRepository feedbackRepository, 
-                          RequestRepository requestRepository, PasswordResetService passwordResetService,
+    public AdminController(FeedbackService feedbackService, 
+                          RequestService requestService, PasswordResetService passwordResetService,
                           UserService userService) {
-        this.feedbackRepository = feedbackRepository;
-        this.requestRepository = requestRepository;
+        this.feedbackService = feedbackService;
+        this.requestService = requestService;
         this.passwordResetService = passwordResetService;
         this.userService = userService;
     }
 
     
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        return "shared/dashboard";
-    }
     
     @GetMapping("/password-reset-requests")
     public String listPasswordResetRequests(Model model) {
@@ -102,21 +98,21 @@ public class AdminController {
     
     @GetMapping("/feedback")
     public String listFeedback(Model model) {
-        model.addAttribute("feedbacks", feedbackRepository.findAll());
+        model.addAttribute("feedbacks", feedbackService.findAll());
         model.addAttribute("pageTitle", "Gestión de Feedback");
         return "admin/feedback";
     }
     
     @GetMapping("/feedback/delete/{id}")
     public String deleteFeedback(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        feedbackRepository.deleteById(id);
+        feedbackService.deleteById(id);
         redirectAttributes.addFlashAttribute("success", "Feedback eliminado correctamente");
         return "redirect:/admin/feedback";
     }
     
     @GetMapping("/requests")
     public String listRequests(Model model) {
-        List<Request> requests = requestRepository.findAll();
+        List<Request> requests = requestService.findAll();
         model.addAttribute("requests", requests);
         model.addAttribute("pageTitle", "Gestión de Solicitudes");
         return "admin/requests";

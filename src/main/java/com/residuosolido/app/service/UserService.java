@@ -31,13 +31,10 @@ public class UserService extends GenericEntityService<User, Long> {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserValidationService validationService;
-
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserValidationService validationService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.validationService = validationService;
     }
 
     @Override
@@ -185,7 +182,9 @@ public class UserService extends GenericEntityService<User, Long> {
         
         // Actualizar contraseña solo si se proporciona
         if (newPassword != null && !newPassword.trim().isEmpty()) {
-            validationService.validatePassword(newPassword);
+            if (newPassword.length() < 6) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
+            }
             existingUser.setPassword(passwordEncoder.encode(newPassword));
             logger.info("[UserService] Password updated for user id={}", existingUser.getId());
         }
@@ -204,7 +203,7 @@ public class UserService extends GenericEntityService<User, Long> {
      */
     public User saveUser(UserForm userForm) {
         // Validar datos del formulario
-        validationService.validateUserForm(userForm);
+        validateUserForm(userForm);
         
         logger.info("[UserService] saveUser() | id={} | action={} | username={} | email={}",
                 userForm.getId(), (userForm.getId() == null ? "CREATE" : "UPDATE"), userForm.getUsername(), userForm.getEmail());
@@ -223,6 +222,54 @@ public class UserService extends GenericEntityService<User, Long> {
             // Usuario existente
             logger.info("[UserService] Branch UPDATE - applying field changes{}", (userForm.getNewPassword()!=null && !userForm.getNewPassword().trim().isEmpty())? " with password change":"");
             return updateUser(user, userForm.getNewPassword());
+        }
+    }
+    
+    private void validateUserForm(UserForm form) {
+        if (form == null) {
+            throw new IllegalArgumentException("Formulario de usuario inválido");
+        }
+
+        // Crear nuevo usuario: contraseña obligatoria
+        if (form.getId() == null) {
+            String pw = form.getPassword();
+            String confirm = form.getConfirmPassword();
+            if (pw == null || pw.trim().isEmpty()) {
+                throw new IllegalArgumentException("La contraseña es obligatoria");
+            }
+            if (confirm == null || confirm.trim().isEmpty()) {
+                throw new IllegalArgumentException("Debe confirmar la contraseña");
+            }
+            if (!pw.equals(confirm)) {
+                throw new IllegalArgumentException("Las contraseñas no coinciden");
+            }
+            if (pw.length() < 6) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
+            }
+        } else {
+            // Edición: contraseña opcional
+            String newPassword = form.getNewPassword();
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                if (newPassword.length() < 6) {
+                    throw new IllegalArgumentException("La nueva contraseña debe tener al menos 6 caracteres");
+                }
+            }
+        }
+
+        if (form.getUsername() == null || form.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de usuario es obligatorio");
+        }
+        if (form.getEmail() == null || form.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
+        if (form.getFirstName() == null || form.getFirstName().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (form.getLastName() == null || form.getLastName().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (form.getPreferredLanguage() == null || form.getPreferredLanguage().trim().isEmpty()) {
+            throw new IllegalArgumentException("El idioma preferido es obligatorio");
         }
     }
     

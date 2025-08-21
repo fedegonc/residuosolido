@@ -17,13 +17,6 @@ import java.util.List;
 @RequestMapping("/org")
 public class OrganizationController {
 
-    @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/dashboard")
-    public String orgDashboard(Model model) {
-        // Datos mínimos para la vista (podemos ampliar luego)
-        model.addAttribute("totalOrganizations", 0);
-        return "shared/dashboard";
-    }
 
     @PreAuthorize("hasRole('ORGANIZATION')")
     @GetMapping("/materials")

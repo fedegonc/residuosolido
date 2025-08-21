@@ -35,21 +35,6 @@ public class UserController {
     @Autowired
     private CloudinaryService cloudinaryService;
     
-    // Dashboard para usuarios normales
-    @GetMapping("/dashboard")
-    public String userDashboard(Model model) {
-        logger.info("[UserController] Enter userDashboard - preparing to render users/dashboard");
-        // marcador para verificar si el controlador se ejecuta antes del error de Thymeleaf
-        model.addAttribute("_renderMarker", "users_dashboard_start");
-        
-        // Obtener organizaciones para el botón de solicitud de prueba
-        List<User> organizations = userService.findByRole(Role.ORGANIZATION);
-        model.addAttribute("organizations", organizations);
-        
-        String view = "shared/dashboard";
-        logger.info("[UserController] Returning view: {}", view);
-        return view;
-    }
     
     // Solicitudes del usuario
     @GetMapping("/requests")

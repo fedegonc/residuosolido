@@ -4,9 +4,9 @@ package com.residuosolido.app.model;
  * Enum that defines the possible user roles in the system
  */
 public enum Role {
-    ADMIN("admin", "/admin/dashboard", 100),       // System administrator
-    ORGANIZATION("org", "/org/dashboard", 50), // Organization representative
-    USER("user", "/users/dashboard", 10);        // Normal user who can request collections
+    ADMIN("admin", "/dashboard", 100),       // System administrator
+    ORGANIZATION("org", "/dashboard", 50), // Organization representative
+    USER("user", "/dashboard", 10);        // Normal user who can request collections
     
     private final String urlPrefix;
     private final String dashboardUrl;

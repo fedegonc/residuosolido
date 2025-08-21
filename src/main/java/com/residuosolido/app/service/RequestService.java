@@ -31,6 +31,10 @@ public class RequestService {
         return requestRepository.findByUser(user);
     }
 
+    public List<Request> findAll() {
+        return requestRepository.findAll();
+    }
+    
     public List<Request> getPendingRequests() {
         return requestRepository.findByStatus(Request.RequestStatus.PENDING);
     }

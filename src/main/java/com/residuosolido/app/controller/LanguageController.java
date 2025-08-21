@@ -1,6 +1,5 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.service.LanguageTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +13,6 @@ import java.util.Locale;
 @Controller
 public class LanguageController {
     
-    @Autowired
-    private LanguageTrackingService trackingService;
 
     @Autowired
     private LocaleResolver localeResolver;
@@ -62,8 +59,6 @@ public class LanguageController {
             // no valid referer; fallback to index
         }
         
-        // Trackear el cambio en el servicio de estadísticas
-        trackingService.trackLanguageChange(currentLang, language, sessionId, clientIP);
         
         return "redirect:" + redirectUrl;
     }
