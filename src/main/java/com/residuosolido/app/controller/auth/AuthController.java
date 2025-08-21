@@ -106,7 +106,7 @@ public class AuthController {
         
         
         authService.registerUser(user);
-        return "redirect:/auth/login?success=Registro exitoso";
+        return "redirect:/auth/login?success=Registro exitoso. Inicia sesión con tus credenciales.";
     }
     
     @GetMapping("/auth/login")

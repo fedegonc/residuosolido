@@ -25,6 +25,11 @@
     </div>
     
     <main class="flex-grow">
+      <!-- Mensaje flash logout -->
+      <div th:if="${param.logout}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mx-4 mt-4 rounded-lg">
+        <span th:text="${param.logout}"></span>
+      </div>
+      
       <div th:replace="~{fragments/index-hero :: hero}"></div>
 
 

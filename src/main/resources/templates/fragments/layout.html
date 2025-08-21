@@ -186,8 +186,8 @@
     <!-- JavaScript del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
 
-    <!-- Footer compartido -->
-    <div th:replace="~{fragments/footer :: site-footer}"></div>
+    <!-- Footer simple para páginas internas -->
+    <div th:replace="~{fragments/simple-footer :: simple}"></div>
     
     <!-- JavaScript para menú móvil (carga al final para asegurar DOM completo) -->
     <script src="/js/mobile-menu.js"></script>
