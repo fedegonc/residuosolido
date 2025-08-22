@@ -21,9 +21,8 @@
   <link rel="stylesheet" href="/css/button.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/css/card.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/css/badge.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/dropdown.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/alert.css" media="print" onload="this.media='all'">
-
+  
+  
   <!-- Punto de extensión para CSS extra por página -->
   <th:block layout:fragment="head-extra"></th:block>
 </head>
@@ -38,9 +37,8 @@
   </main>
 
   <!-- Scripts globales (ligeros) -->
-  <script src="/js/optimized.js" defer></script>
   <!-- Cache-busting para asegurar última versión del language-switcher -->
-  <script th:src="@{/js/language-switcher.js(v=2)}" src="/js/language-switcher.js?v=2" defer></script>
+  <script th:src="@{/js/language-switcher.js(v=3)}" src="/js/language-switcher.js?v=3" defer></script>
 
   <!-- Punto de extensión para JS extra por página -->
   <th:block layout:fragment="body-scripts"></th:block>
