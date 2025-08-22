@@ -2,7 +2,6 @@ package com.residuosolido.app.controller.guest;
 
 import com.residuosolido.app.model.Category;
 import com.residuosolido.app.model.Post;
-import com.residuosolido.app.repository.CategoryRepository;
 import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.CategoryService;
 import com.residuosolido.app.service.CloudinaryService;
@@ -22,14 +21,12 @@ import java.util.Optional;
 @Controller
 public class PostController {
     
-    private final CategoryRepository categoryRepository;
     private final PostService postService;
     private final CategoryService categoryService;
     private final CloudinaryService cloudinaryService;
     
     @Autowired
-    public PostController(CategoryRepository categoryRepository, PostService postService, CategoryService categoryService, CloudinaryService cloudinaryService) {
-        this.categoryRepository = categoryRepository;
+    public PostController(PostService postService, CategoryService categoryService, CloudinaryService cloudinaryService) {
         this.postService = postService;
         this.categoryService = categoryService;
         this.cloudinaryService = cloudinaryService;

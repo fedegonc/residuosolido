@@ -61,7 +61,8 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/?logout=Sesión cerrada de forma segura. Para acceder nuevamente, inicia sesión.")
+                // Usar un flag simple para evitar problemas de codificación en la URL
+                .logoutSuccessUrl("/?logout=1")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()

@@ -3,7 +3,6 @@ package com.residuosolido.app.controller.auth;
 import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
-import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,17 +27,15 @@ import java.util.stream.Collectors;
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginSuccessHandler successHandler;
     private final PasswordResetService passwordResetService;
     private final AuthService authService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, 
+    public AuthController(PasswordEncoder passwordEncoder, 
                          LoginSuccessHandler successHandler,
                          PasswordResetService passwordResetService,
                          AuthService authService) {
-        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.passwordResetService = passwordResetService;

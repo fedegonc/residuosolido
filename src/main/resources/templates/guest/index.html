@@ -21,20 +21,135 @@
 <body class="bg-white min-h-screen flex flex-col font-sans">
     <!-- Guest Dropdown Component (botón y panel) -->
     <div class="fixed top-4 right-2 z-50">
-        <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
+        <div>
+            <div class="relative">
+                <button id="menu-toggle-btn" 
+                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                    Menú
+                </button>
+                
+                <div id="guest-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
+                    <a href="/posts/category/reciclables" class="block px-4 py-2 text-gray-700 hover:bg-green-50">Reciclables</a>
+                    <a href="/posts/category/no-reciclables" class="block px-4 py-2 text-gray-700 hover:bg-orange-50">No Reciclables</a>
+                    <a href="/posts/category/informaciones" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Informaciones</a>
+                    <div class="border-t border-gray-100"></div>
+                    <a href="/auth/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">Ingresar</a>
+                </div>
+            </div>
+        </div>
     </div>
     
     <main class="flex-grow">
-      <!-- Mensaje flash logout -->
-      <div th:if="${param.logout}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mx-4 mt-4 rounded-lg">
-        <span th:text="${param.logout}"></span>
+      <!-- Mensaje flash logout (persistente y en naranja suave) -->
+      <div id="logoutAlert" class="hidden bg-orange-50 border border-orange-300 text-orange-700 px-4 py-3 mx-4 mt-4 rounded-md flex items-start justify-between gap-4" role="alert">
+        <div class="text-sm" id="logoutAlertText"></div>
+        <button id="logoutAlertClose" class="text-orange-700/70 hover:text-orange-800 focus:outline-none" aria-label="Cerrar alerta">
+          &times;
+        </button>
       </div>
       
-      <div th:replace="~{fragments/index-hero :: hero}"></div>
+      <!-- Hero Section inline -->
+      <section class="pt-0 pb-0 bg-white font-sans">
+        <div class="relative w-full h-[28rem] md:h-[30rem] lg:h-[34rem] overflow-hidden">
+            <!-- Imagen de fondo -->
+            <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
+                 th:src="${heroImage}"
+                 alt="Imagen principal"
+                 class="absolute inset-0 w-full h-full object-cover"
+                 width="1920" height="768"
+                 decoding="async" fetchpriority="high" />
+            <!-- Fallback gradiente si no hay imagen -->
+            <div th:unless="${heroImage != null and !#strings.isEmpty(heroImage)}"
+                 class="absolute inset-0 bg-gradient-to-br from-emerald-100 to-emerald-200"></div>
+            <!-- Overlay semitransparente para mejorar contraste -->
+            <div class="absolute inset-0 bg-black/30"></div>
+
+            <!-- Contenido sobre la imagen -->
+            <div class="relative z-10 h-full">
+                <div class="container mx-auto h-full px-4 sm:px-6 flex items-center pt-8 sm:pt-4 md:pt-0">
+                    <div class="w-full max-w-2xl text-white space-y-4 sm:space-y-6">
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold font-sans"
+                            style="font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji' !important;"
+                            th:text="#{index.hero.title}">
+                            Residuos Sólidos - Frontera de la Paz
+                        </h1>
+                        <p class="text-base sm:text-lg md:text-xl text-emerald-100 font-sans" th:text="#{index.hero.subtitle}">
+                            Rivera - Sant'Ana do Livramento
+                        </p>
+                        <p class="text-base sm:text-lg md:text-xl text-gray-100 leading-relaxed font-sans" th:text="#{index.hero.description}">
+                            Conectamos comunidad, información y organizaciones para un manejo eficiente y sostenible de residuos en la región fronteriza.
+                        </p>
+
+                        <!-- CTA: Reciclables -->
+                        <a href="/posts/category/reciclables"
+                           class="inline-block bg-white/95 text-emerald-800 border border-gray-200 hover:bg-white transition-all duration-300 rounded-xl p-3 sm:p-4 shadow-lg hover:shadow-xl group max-w-md w-full">
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200 transition-colors flex-shrink-0">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-bold text-emerald-900 mb-0.5 sm:mb-1" th:text="#{index.hero.recyclables.title}">Reciclables</h3>
+                                    <p class="text-gray-700 text-xs sm:text-sm leading-relaxed" th:text="#{index.hero.recyclables.description}">Aprende cómo desechar correctamente plásticos, papel, vidrio y otros materiales reciclables</p>
+                                </div>
+                            </div>
+                        </a>
+                    
+                        <!-- Enlaces de idioma -->
+                        <div class="flex items-center space-x-4 mt-6">
+                            <a href="/change-language?lang=es" data-lang="es" id="lang-es-link" class="text-sm text-white/80 hover:text-white transition-colors flex items-center">
+                                <span>🇪🇸 Español</span>
+                            </a>
+                            <span class="text-white/60">|</span>
+                            <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link" class="text-sm text-white/80 hover:text-white transition-colors flex items-center">
+                                <span>🇧🇷 Português</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
 
 
-        <!-- Sección Cómo Funciona -->
-        <div th:replace="~{fragments/how-it-works :: how-it-works}"></div>
+        <!-- Sección Cómo Funciona inline -->
+        <section class="py-6 bg-green-800">
+            <div class="max-w-5xl mx-auto px-4">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-semibold text-white" th:text="#{howItWorks.title}">¿Cómo Funciona?</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <!-- Paso 1 -->
+                    <div class="text-left p-4 bg-white rounded-lg border-2 border-green-600">
+                        <div class="w-8 h-8 bg-white border-2 border-green-600 rounded-full mb-3 flex items-center justify-center">
+                            <span class="text-green-600 text-sm font-medium">1</span>
+                        </div>
+                        <h3 class="font-medium text-gray-900 mb-2" th:text="#{howItWorks.step1.title}">Infórmate</h3>
+                        <p class="text-xs text-gray-600" th:text="#{howItWorks.step1.description}">Encuentra información sobre cómo gestionar tus desechos correctamente</p>
+                    </div>
+
+                    <!-- Paso 2 -->
+                    <div class="text-left p-4 bg-white rounded-lg border-2 border-blue-600">
+                        <div class="w-8 h-8 bg-white border-2 border-blue-600 rounded-full mb-3 flex items-center justify-center">
+                            <span class="text-blue-600 text-sm font-medium">2</span>
+                        </div>
+                        <h3 class="font-medium text-gray-900 mb-2" th:text="#{howItWorks.step2.title}">Solicita</h3>
+                        <p class="text-xs text-gray-600" th:text="#{howItWorks.step2.description}">Solicita una recolección de tus materiales reciclables</p>
+                    </div>
+
+                    <!-- Paso 3 -->
+                    <div class="text-left p-4 bg-white rounded-lg border-2 border-purple-600">
+                        <div class="w-8 h-8 bg-white border-2 border-purple-600 rounded-full mb-3 flex items-center justify-center">
+                            <span class="text-purple-600 text-sm font-medium">3</span>
+                        </div>
+                        <h3 class="font-medium text-gray-900 mb-2" th:text="#{howItWorks.step3.title}">Encuentra</h3>
+                        <p class="text-xs text-gray-600" th:text="#{howItWorks.step3.description}">Localiza puntos de recolección y organizaciones cercanas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
         <!-- Contenido: layout en 3 columnas -->
@@ -46,12 +161,189 @@
 
                     <!-- Columna central: Posts -->
                     <section class="lg:col-span-9 min-w-0 space-y-6">
-                        <div th:replace="~{fragments/posts :: mainPosts}"></div>
+                        <!-- Posts Principales inline -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="border-b border-gray-200 p-6">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                                        <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                        </svg>
+                                        <span th:text="#{posts.title}">Notas Recientes</span>
+                                    </h2>
+                                    <a href="/posts" class="text-green-600 hover:text-green-700 text-sm font-medium flex items-center transition-colors">
+                                        <span th:text="#{button.view}">Ver todas</span>
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <!-- Posts con imágenes -->
+                                <div th:if="${posts != null and !posts.isEmpty()}" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div th:each="post : ${posts}" class="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden">
+                                        
+                                        <!-- Imagen del post -->
+                                        <div class="relative overflow-hidden h-40">
+                                            <img th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}"
+                                                 th:src="${post.imageUrl}"
+                                                 th:alt="${post.title}"
+                                                 loading="lazy"
+                                                 decoding="async"
+                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                            
+                                            <!-- Placeholder si no hay imagen -->
+                                            <div th:unless="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}" 
+                                                 class="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                                                <svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"></path>
+                                                </svg>
+                                            </div>
+                                            
+                                            <!-- Overlay con gradiente -->
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                            
+                                            <!-- Categoría sobre la imagen -->
+                                            <div class="absolute top-3 left-3">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/90 text-green-800 backdrop-blur-sm" 
+                                                      th:text="${post.categoryName != null ? post.categoryName : 'Sin categoría'}">Categoría</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Contenido del post -->
+                                        <div class="p-5">
+                                            <!-- Título -->
+                                            <h3 class="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors duration-200">
+                                                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="hover:underline">Título del Post</a>
+                                            </h3>
+                                            
+                                            <!-- Contenido/Descripción -->
+                                            <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3" 
+                                               th:text="${#strings.abbreviate(post.content, 120)}">Contenido del post...</p>
+                                            
+                                            <!-- Footer con fecha y botón -->
+                                            <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                                                <div class="text-xs text-gray-500">
+                                                    <span>Publicado recientemente</span>
+                                                </div>
+                                                <a th:href="@{/posts/{id}(id=${post.id})}" 
+                                                   class="inline-flex items-center text-sm text-green-600 hover:text-green-800 font-medium transition-colors">
+                                                    <span th:text="#{posts.read_more}">Leer más</span>
+                                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-12 text-gray-500">
+                                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                    </svg>
+                                    <p class="text-lg mb-2">No hay notas disponibles</p>
+                                    <p class="text-sm">¡Sé el primero en compartir contenido!</p>
+                                </div>
+                            </div>
+                        </div>
                     </section>
 
                     <!-- Columna derecha: Organizaciones -->
                     <aside class="lg:col-span-3 min-w-0 space-y-6">
-                        <div th:replace="~{fragments/organizations :: organizationsList}"></div>
+                        <!-- Organizations List inline -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
+                                </svg>
+                                <span th:text="#{organizations.title}">Organizaciones</span>
+                            </h2>
+
+                            <div class="space-y-4">
+                                <!-- Organizaciones dinámicas -->
+                                <div th:if="${organizations != null and !organizations.isEmpty()}">
+                                    <div th:each="org : ${organizations}" class="border border-gray-200 rounded-lg p-5 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200">
+                                        <!-- Nombre de la organización -->
+                                        <h3 class="font-semibold text-gray-900 text-lg mb-3" 
+                                            th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}">
+                                            Nombre Organización
+                                        </h3>
+                                        
+                                        <!-- Ubicación/Dirección -->
+                                        <div class="mb-3">
+                                            <p class="text-sm text-gray-600 flex items-center">
+                                                <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                <span th:text="${(org.direccion != null and !#strings.isEmpty(org.direccion)) ? org.direccion : (org.address != null and !#strings.isEmpty(org.address)) ? org.address : 'Barrio Centro (Rivera)'}">
+                                                    Barrio Centro (Rivera)
+                                                </span>
+                                            </p>
+                                        </div>
+
+                                        <!-- Email de contacto -->
+                                        <div class="mb-3">
+                                            <p class="text-sm text-gray-600 flex items-center">
+                                                <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <span th:text="${org.email != null and !#strings.isEmpty(org.email) ? org.email : 'contacto@organizacion.com'}">
+                                                    contacto@organizacion.com
+                                                </span>
+                                            </p>
+                                        </div>
+
+                                        <!-- Materiales que recibe -->
+                                        <div class="mb-4">
+                                            <p class="text-sm font-medium text-gray-700 mb-2">Materiales que recibe:</p>
+                                            <div class="flex flex-wrap gap-1.5">
+                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 border border-green-200">Plástico</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 border border-blue-200">Papel</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-800 border border-amber-200">Cartón</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Vidrio</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 border border-gray-200">Metales</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Mapa -->
+                                        <div th:if="${(org.latitude != null or org.latitud != null) and (org.longitude != null or org.longitud != null)}"
+                                             th:id="'orgMap-' + ${org.id}"
+                                             class="w-full rounded-lg border border-gray-300 bg-gray-50"
+                                             style="height:140px; min-height:140px;"
+                                             th:data-lat="${org.latitude != null ? org.latitude : org.latitud}"
+                                             th:data-lng="${org.longitude != null ? org.longitude : org.longitud}"
+                                             th:data-name="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}">
+                                        </div>
+                                        <div th:if="${(org.latitude == null and org.latitud == null) or (org.longitude == null and org.longitud == null)}" 
+                                             class="w-full h-20 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                                            <div class="text-center">
+                                                <svg class="w-6 h-6 mx-auto mb-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                <p class="text-xs text-gray-500">Ubicación no disponible</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mensaje si no hay organizaciones -->
+                                <div th:if="${organizations == null or organizations.isEmpty()}" class="text-center py-12 text-gray-500">
+                                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 8h3v8H7V8z"></path>
+                                    </svg>
+                                    <p class="text-base font-medium text-gray-600 mb-1">No hay organizaciones registradas</p>
+                                    <p class="text-sm text-gray-500">Las organizaciones aparecerán aquí cuando se registren</p>
+                                </div>
+                            </div>
+                            <!-- Assets Leaflet -->
+                            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                        </div>
                     </aside>
                 </div>
             </div>
@@ -99,11 +391,130 @@
             </div>
         </div>
     </footer>
-    <!-- JS del componente guest-dropdown -->
-    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
+    <!-- JS del componente guest-dropdown inline -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado, configurando guest dropdown');
+        
+        const toggleBtn = document.getElementById('menu-toggle-btn');
+        const menu = document.getElementById('guest-menu');
+        
+        console.log('Botón toggle:', toggleBtn);
+        console.log('Menu elemento:', menu);
+        
+        if (toggleBtn && menu) {
+            // Event listener para el botón
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Click en botón menú');
+                const isHidden = menu.classList.contains('hidden');
+                console.log('Menu está hidden:', isHidden);
+                
+                menu.classList.toggle('hidden');
+                
+                const newState = menu.classList.contains('hidden');
+                console.log('Nuevo estado hidden:', newState);
+            });
+            
+            // Event listener para cerrar al hacer click fuera
+            document.addEventListener('click', function(e) {
+                if (!toggleBtn.contains(e.target) && !menu.contains(e.target)) {
+                    if (!menu.classList.contains('hidden')) {
+                        console.log('Cerrando menu por click fuera');
+                        menu.classList.add('hidden');
+                    }
+                }
+            });
+            
+            console.log('Event listeners configurados correctamente');
+        } else {
+            console.error('No se encontraron los elementos necesarios');
+            console.error('toggleBtn:', toggleBtn);
+            console.error('menu:', menu);
+        }
+    });
+    </script>
     
-    <!-- JS de las nuevas secciones -->
-    <th:block th:replace="~{fragments/organizations-map :: organizations-map-js}"></th:block>
+    <!-- JS de mapa de organizaciones inline -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si Leaflet está disponible
+        if (typeof L === 'undefined') {
+            console.log('Leaflet no está cargado, cargando dinámicamente...');
+            loadLeafletAndInitMap();
+            return;
+        }
+        
+        initOrganizationsMap();
+    });
+    
+    function loadLeafletAndInitMap() {
+        // Cargar CSS de Leaflet
+        const leafletCSS = document.createElement('link');
+        leafletCSS.rel = 'stylesheet';
+        leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(leafletCSS);
+        
+        // Cargar JS de Leaflet
+        const leafletJS = document.createElement('script');
+        leafletJS.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        leafletJS.onload = function() {
+            initOrganizationsMap();
+        };
+        document.head.appendChild(leafletJS);
+    }
+    
+    function initOrganizationsMap() {
+        // Inicializar mapas individuales de organizaciones
+        const orgMaps = document.querySelectorAll('[id^="orgMap-"]');
+        
+        orgMaps.forEach(mapElement => {
+            const lat = parseFloat(mapElement.dataset.lat);
+            const lng = parseFloat(mapElement.dataset.lng);
+            const name = mapElement.dataset.name;
+            
+            if (!lat || !lng) return;
+            
+            // Inicializar mapa individual
+            const map = L.map(mapElement.id).setView([lat, lng], 15);
+            
+            // Agregar tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: ' OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Agregar marcador
+            const marker = L.marker([lat, lng]).addTo(map);
+            marker.bindPopup(`
+                <div class="p-2">
+                    <h3 class="font-bold text-green-700">${name}</h3>
+                    <p class="text-sm text-gray-600">Ubicación de la organización</p>
+                </div>
+            `);
+            
+            // Deshabilitar interacciones para mapas pequeños
+            map.dragging.disable();
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+            if (map.tap) map.tap.disable();
+        });
+    }
+
+    // Redimensionar mapa cuando sea necesario
+    setTimeout(() => {
+        const orgMaps = document.querySelectorAll('[id^="orgMap-"]');
+        orgMaps.forEach(mapElement => {
+            const map = L.map(mapElement.id);
+            map.invalidateSize();
+        });
+    }, 100);
+    }
+    </script>
     
     <!-- JS optimizado para rendimiento -->
     <script src="/js/optimized.js"></script>
@@ -115,6 +526,35 @@
     
     <!-- Script de análisis de rendimiento con tracking optimizado -->
     <script>
+    // --- Logout alert persistence ---
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const hasLogoutParam = params.has('logout') && params.get('logout') === '1';
+      const STORAGE_KEY = 'app.logoutShown';
+      const MESSAGE = 'Sesión cerrada de forma segura. Para acceder nuevamente, inicia sesión.';
+
+      // Si viene el flag en la URL, guarda en localStorage para persistir tras reloads
+      if (hasLogoutParam) {
+        try { localStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
+      }
+
+      const shouldShow = hasLogoutParam || (function() { try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch (_) { return false; } })();
+      const alertEl = document.getElementById('logoutAlert');
+      const alertText = document.getElementById('logoutAlertText');
+      const alertClose = document.getElementById('logoutAlertClose');
+
+      if (shouldShow && alertEl && alertText) {
+        alertText.textContent = MESSAGE;
+        alertEl.classList.remove('hidden');
+      }
+
+      if (alertClose) {
+        alertClose.addEventListener('click', function() {
+          alertEl.classList.add('hidden');
+          try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+        });
+      }
+    })();
     // Interceptar console.log para enviar al backend
     const originalLog = console.log;
     const logBuffer = [];
