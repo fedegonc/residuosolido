@@ -1,0 +1,22 @@
+  <section th:fragment="howItWorks" id="how-it-works" xmlns:th="http://www.thymeleaf.org">
+    <div class="container">
+      <h2 th:text="#{howItWorks.title}">¿Cómo Funciona?</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="step-number">1</div>
+          <h3 th:text="#{howItWorks.step1.title}">Infórmate</h3>
+          <p th:text="#{howItWorks.step1.description}">Encuentra información...</p>
+        </article>
+        <article class="step">
+          <div class="step-number">2</div>
+          <h3 th:text="#{howItWorks.step2.title}">Solicita</h3>
+          <p th:text="#{howItWorks.step2.description}">Solicita una recolección...</p>
+        </article>
+        <article class="step">
+          <div class="step-number">3</div>
+          <h3 th:text="#{howItWorks.step3.title}">Encuentra</h3>
+          <p th:text="#{howItWorks.step3.description}">Localiza puntos...</p>
+        </article>
+      </div>
+    </div>
+  </section>

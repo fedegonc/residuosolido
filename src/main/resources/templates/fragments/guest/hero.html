@@ -1,0 +1,40 @@
+  <section th:fragment="heroSection" class="hero" xmlns:th="http://www.thymeleaf.org">
+    <div class="hero-media">
+      <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
+           th:src="${heroImage}"
+           alt="Imagen principal"
+           width="1920" height="768"
+           decoding="sync" 
+           fetchpriority="high"
+           loading="eager"
+           style="max-width: 100%; height: auto; object-fit: cover; will-change: auto;" />
+      <div th:unless="${heroImage != null and !#strings.isEmpty(heroImage)}" 
+           class="hero-placeholder" 
+           style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); min-height: 400px;"></div>
+      <div class="overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-content-inner">
+        <h1 th:text="#{index.hero.title}">Residuos Sólidos - Frontera de la Paz</h1>
+        <p class="subtitle" th:text="#{index.hero.subtitle}">Rivera - Sant'Ana do Livramento</p>
+        <p th:text="#{index.hero.description}">Conectamos comunidad, información y organizaciones...</p>
+
+        <a href="/posts/category/reciclables" class="cta">
+          <span class="cta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><use href="#recycle"/></svg>
+          </span>
+          <span>
+            <strong th:text="#{index.hero.recyclables.title}">Reciclables</strong>
+            <small th:text="#{index.hero.recyclables.description}">Aprende cómo desechar correctamente...</small>
+          </span>
+        </a>
+
+        <div class="lang-switch">
+          <a href="/change-language?lang=es" data-lang="es" id="lang-es-link">🇪🇸 Español</a>
+          <span aria-hidden="true">|</span>
+          <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link">🇧🇷 Português</a>
+        </div>
+      </div>
+    </div>
+  </section>

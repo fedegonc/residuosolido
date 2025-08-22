@@ -5,6 +5,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.AuthService;
+import com.residuosolido.app.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -16,30 +17,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
- 
 
 import java.util.Map;
 import java.util.List;
- 
+
 import java.util.stream.Collectors;
 
 @Controller
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-    
+
     private final PasswordEncoder passwordEncoder;
     private final LoginSuccessHandler successHandler;
     private final PasswordResetService passwordResetService;
     private final AuthService authService;
+    private final PostService postService;
 
-    public AuthController(PasswordEncoder passwordEncoder, 
+    public AuthController(PasswordEncoder passwordEncoder,
                          LoginSuccessHandler successHandler,
                          PasswordResetService passwordResetService,
-                         AuthService authService) {
+                         AuthService authService,
+                         PostService postService) {
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.passwordResetService = passwordResetService;
         this.authService = authService;
+        this.postService = postService;
     }
 
     @GetMapping({"/", "/index"})
@@ -72,10 +75,11 @@ public class AuthController {
         }
         model.addAllAttributes(indexData);
 
+        model.addAttribute("posts", postService.getFirst5Posts());
+
         return "guest/index";
     }
 
-    
 
     @GetMapping("/auth/register")
     public String showRegistrationForm(@AuthenticationPrincipal UserDetails userDetails, 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Título por defecto; las páginas pueden sobreescribir con <title layout:fragment="title"> -->
+  <title layout:fragment="title" th:text="${pageTitle} ?: 'Residuos Sólidos - Frontera de la Paz'">Residuos Sólidos - Frontera de la Paz</title>
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="description" th:content="${pageDescription} ?: 'Gestión de residuos sólidos en la frontera de la paz'">
+
+  <!-- Preload recursos críticos -->
+  <link rel="preload" href="/css/typography.css" as="style">
+  <link rel="preload" href="/css/index.css" as="style">
+  <link rel="preload" th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" th:href="${heroImage}" as="image">
+
+  <!-- Tipografía y estilos globales/componentes -->
+  <link rel="stylesheet" href="/css/typography.css">
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="/css/button.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/card.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/badge.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/dropdown.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/alert.css" media="print" onload="this.media='all'">
+
+  <!-- Punto de extensión para CSS extra por página -->
+  <th:block layout:fragment="head-extra"></th:block>
+</head>
+<body>
+  <!-- Loader global: visible hasta que el JS lo oculte -->
+  <div id="pageLoader" class="page-loader">
+    <div class="spinner" aria-label="Cargando" role="status"></div>
+  </div>
+  <!-- Contenido de la página -->
+  <main id="app" class="hidden" layout:fragment="content">
+    <!-- El contenido de cada página se inyectará aquí -->
+  </main>
+
+  <!-- Scripts globales (ligeros) -->
+  <script src="/js/optimized.js" defer></script>
+  <!-- Cache-busting para asegurar última versión del language-switcher -->
+  <script th:src="@{/js/language-switcher.js(v=2)}" src="/js/language-switcher.js?v=2" defer></script>
+
+  <!-- Punto de extensión para JS extra por página -->
+  <th:block layout:fragment="body-scripts"></th:block>
+
+  <!-- Control del loader y transición entre páginas -->
+  <script>
+    (function(){
+      const loader = document.getElementById('pageLoader');
+      const app = document.getElementById('app');
+
+      function showLoader(){ if (loader) loader.classList.remove('hidden'); }
+      function hideLoader(){ if (loader) loader.classList.add('hidden'); }
+      function showApp(){ if (app) app.classList.remove('hidden'); }
+
+      // Ocultar loader al estar lista la página y mostrar la app
+      window.addEventListener('DOMContentLoaded', function(){
+        requestAnimationFrame(function(){
+          hideLoader();
+          showApp();
+        });
+      });
+
+      // Mostrar loader al navegar por enlaces internos
+      document.addEventListener('click', function(e){
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (
+          a.target === '_blank' ||
+          a.hasAttribute('download') ||
+          href.startsWith('#') ||
+          href.startsWith('mailto:') ||
+          href.startsWith('javascript:')
+        ) return;
+        try {
+          const url = new URL(href, window.location.origin);
+          if (url.origin === window.location.origin) {
+            showLoader();
+          }
+        } catch(_) { /* urls relativas simples, mostrar loader igual */ showLoader(); }
+      }, true);
+
+      // Mostrar loader al enviar formularios
+      document.addEventListener('submit', function(){ showLoader(); }, true);
+
+      // Backup: si el navegador dispara beforeunload
+      window.addEventListener('beforeunload', function(){ showLoader(); });
+    })();
+  </script>
+</body>
+</html>

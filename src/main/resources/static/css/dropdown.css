@@ -1,0 +1,29 @@
+/* dropdown.css - componente de menú desplegable reutilizable */
+:root {
+  --dropdown-bg: #ffffff;
+  --dropdown-border: #e5e7eb;
+  --dropdown-shadow: 0 10px 15px rgba(0,0,0,0.08);
+  --dropdown-item-fg: #374151;
+  --dropdown-item-hover-bg: #f3f4f6;
+}
+
+.dropdown { position: relative; }
+.dropdown-toggle { /* estilos visuales heredados de button.css si aplica */ }
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  margin-top: .5rem;
+  min-width: 12rem;
+  background: var(--dropdown-bg);
+  border: 1px solid var(--dropdown-border);
+  border-radius: 8px;
+  box-shadow: var(--dropdown-shadow);
+  z-index: 50;
+}
+.dropdown-menu a {
+  display: block;
+  padding: 8px 12px;
+  color: var(--dropdown-item-fg);
+  text-decoration: none;
+}
+.dropdown-menu a:hover { background: var(--dropdown-item-hover-bg); }

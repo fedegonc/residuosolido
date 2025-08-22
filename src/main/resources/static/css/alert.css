@@ -1,0 +1,34 @@
+/* alert.css - componente de alertas reutilizable */
+:root {
+  /* Defaults (success) mapped to palette */
+  --alert-bg: #E6EFEF; /* mint-ish light for green */
+  --alert-fg: var(--color-green, #2E5749);
+  --alert-border: #CFE0E0;
+}
+
+.alert {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--alert-border);
+  border-radius: .5rem;
+  background: var(--alert-bg);
+  color: var(--alert-fg);
+}
+
+.alert-success { --alert-bg: #E6EFEF; --alert-fg: var(--color-green, #2E5749); --alert-border: #CFE0E0; }
+.alert-warning { --alert-bg: #F7E6C6; --alert-fg: var(--color-yellow, #DA9B2B); --alert-border: #EFD7A6; }
+.alert-error { --alert-bg: #F7E1D9; --alert-fg: var(--color-orange, #BF512C); --alert-border: #E9C8BA; }
+
+.alert-close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+}

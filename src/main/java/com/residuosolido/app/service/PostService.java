@@ -6,6 +6,8 @@ import com.residuosolido.app.repository.PostRepository;
 import com.residuosolido.app.service.CloudinaryService;
 import com.residuosolido.app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PostService {
+    private static final Logger log = LoggerFactory.getLogger(PostService.class);
     
     @Autowired
     private PostRepository postRepository;
@@ -33,11 +36,14 @@ public class PostService {
     
     public List<Post> getAllPostsWithCategories() {
         // Agregar JOIN FETCH para evitar N+1 queries
-        return postRepository.findAllWithCategories();
+        List<Post> list = postRepository.findAllWithCategories();
+        if (log.isDebugEnabled()) {
+            log.debug("[PostService] getAllPostsWithCategories -> {} posts", (list != null ? list.size() : 0));
+        }
+        return list;
     }
 
     public List<Post> getFirst5Posts() {
-        // Usar JOIN FETCH para evitar N+1 queries
         return postRepository.findFirst5WithCategories().stream().limit(5).collect(Collectors.toList());
     }
 

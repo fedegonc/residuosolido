@@ -1,0 +1,77 @@
+/* button.css - componentes de botón mínimos y reutilizables */
+:root {
+  /* Palette tokens */
+  --color-white: #FFFFFF;
+  --color-mauve: #D6C9C5;
+  --color-navy: #0C2C47;
+  --color-yellow: #DA9B2B;
+  --color-green: #2E5749;
+  --color-orange: #BF512C;
+  --color-mint: #ABCBCA;
+
+  /* Button tokens */
+  --btn-fg: var(--color-white);
+  --btn-bg: var(--color-green);
+  --btn-bg-hover: #24473C; /* darker green for hover */
+  --btn-outline-fg: var(--color-green);
+  --btn-outline-border: var(--color-green);
+  --btn-link-fg: var(--color-navy);
+  --btn-link-hover: #103854; /* slightly lighter than navy */
+  --btn-border: #e5e7eb;
+  --focus-ring: 0 0 0 3px rgba(12, 44, 71, 0.28); /* navy ring */
+}
+
+/* Base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  border-radius: .5rem;
+  border: 1px solid transparent;
+  padding: .5rem .875rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, opacity .2s ease, transform .05s ease;
+}
+.btn:focus { outline: none; box-shadow: var(--focus-ring); }
+.btn:active { transform: translateY(1px); }
+.btn[disabled], .btn.disabled { opacity: .6; pointer-events: none; }
+
+/* Variantes */
+.btn-primary {
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  border-color: var(--btn-bg);
+}
+.btn-primary:hover { background: var(--btn-bg-hover); border-color: var(--btn-bg-hover); }
+
+.btn-outline {
+  color: var(--btn-outline-fg);
+  background: transparent;
+  border-color: var(--btn-outline-border);
+}
+.btn-outline:hover { background: rgba(5,150,105,0.06); }
+
+.btn-link {
+  background: transparent;
+  border-color: transparent;
+  color: var(--btn-link-fg);
+  padding: 0; /* links suelen no tener padding */
+}
+.btn-link:hover { color: var(--btn-link-hover); text-decoration: none; }
+
+/* Tamaños */
+.btn-sm { padding: .375rem .625rem; font-size: .875rem; }
+.btn-lg { padding: .75rem 1.125rem; font-size: 1.125rem; }
+
+/* Botón icono */
+.btn-icon { padding: .5rem; width: 2.5rem; height: 2.5rem; }
+.btn svg { width: 1rem; height: 1rem; }
+
+/* Estados utilitarios opcionales */
+.btn-ghost { background: transparent; border-color: transparent; color: inherit; }
+.btn-ghost:hover { background: rgba(0,0,0,0.04); }

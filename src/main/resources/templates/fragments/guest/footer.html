@@ -1,0 +1,31 @@
+<footer th:fragment="guestFooter" class="site-footer" xmlns:th="http://www.thymeleaf.org">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <h3 th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
+                <p th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+            </div>
+
+            <div>
+                <h4 th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
+                <ul>
+                    <li>
+                        <a th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 th:text="#{footer.contact.title}">Contacto</h4>
+                <p th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+            </div>
+        </div>
+
+        <div class="footer-copy">
+            <p th:text="#{footer.copy}">© Frontera de la Paz</p>
+        </div>
+    </div>
+</footer>

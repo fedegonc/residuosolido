@@ -1,0 +1,12 @@
+/* typography.css - fuente global (solo fuentes del sistema para mejor rendimiento) */
+
+:root {
+  /* System font stack to avoid webfont downloads */
+  --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+}
+
+html, body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

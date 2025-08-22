@@ -8,7 +8,6 @@ class LanguageSwitcher {
     }
 
     init() {
-        console.log('[LANG-SWITCHER] Inicializando componente');
         document.addEventListener('DOMContentLoaded', () => {
             this.setupLanguageButtons();
         });
@@ -22,24 +21,17 @@ class LanguageSwitcher {
         specificIds.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                console.log(`[LANG-SWITCHER] Configurando botón: ${id}`, el);
-                
                 // Remover listeners previos si existen
                 el.removeEventListener('click', this.handleLanguageClick);
                 
                 // Agregar nuevo listener
                 el.addEventListener('click', (e) => {
-                    console.log(`[LANG-SWITCHER] ¡CLICK INTERCEPTADO en ${id}!`);
                     this.handleLanguageClick(e, el);
                 });
                 
                 buttonsConfigured++;
-            } else {
-                console.warn(`[LANG-SWITCHER] No se encontró elemento: ${id}`);
             }
         });
-        
-        console.log(`[LANG-SWITCHER] ${buttonsConfigured} botones configurados exitosamente`);
     }
 
     async handleLanguageClick(event, linkElement) {
@@ -54,9 +46,6 @@ class LanguageSwitcher {
             lang = match ? match[1] : 'unknown';
         }
 
-        console.log(`[LANG-SWITCHER] ¡CLICK DETECTADO! Idioma: ${lang}`);
-        console.log(`[LANG-SWITCHER] Elemento:`, linkElement);
-        console.log(`[LANG-SWITCHER] URL destino: ${href}`);
 
         // Enviar tracking al backend INMEDIATAMENTE
         event.preventDefault();
@@ -68,28 +57,23 @@ class LanguageSwitcher {
             if (!urlObj.searchParams.has('referer')) {
                 const safeReferer = window.location.pathname + window.location.search;
                 urlObj.searchParams.set('referer', safeReferer);
-                console.log('[LANG-SWITCHER] referer agregado:', safeReferer);
             }
             // Usar ruta relativa + query para navegación
             finalHref = urlObj.pathname + (urlObj.search || '');
         } catch (e) {
-            console.warn('[LANG-SWITCHER] No se pudo procesar URL, usando href original');
         }
         
         try {
-            await this.sendTrackingData(lang, finalHref);
-            console.log('[LANG-SWITCHER] Tracking enviado, navegando...');
+            // Fire-and-forget: no bloquear navegación
+            this.sendTrackingData(lang, finalHref);
         } catch (error) {
-            console.error('[LANG-SWITCHER] Error en tracking:', error);
-        } finally {
-            // Navegar después del tracking
-            window.location.href = finalHref;
+            // ignorar errores de tracking
         }
+        // Navegar inmediatamente
+        window.location.href = finalHref;
     }
 
-    async sendTrackingData(lang, url) {
-        console.log('[LANG-SWITCHER] Preparando envío al backend...');
-        
+    sendTrackingData(lang, url) {
         const payload = {
             logs: [{
                 level: 'info',
@@ -99,25 +83,23 @@ class LanguageSwitcher {
                 targetUrl: url
             }]
         };
+        const payloadStr = JSON.stringify(payload);
 
-        console.log('[LANG-SWITCHER] Payload preparado:', payload);
-
-        // Usar fetch con await para garantizar envío
         try {
-            console.log('[LANG-SWITCHER] Enviando al endpoint:', '/api/tracking/console-log');
-            
-            const response = await fetch('/api/tracking/console-log', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            
-            console.log('[LANG-SWITCHER] ✅ Response status:', response.status);
-            const responseText = await response.text();
-            console.log('[LANG-SWITCHER] ✅ Backend respondió:', responseText);
-            
-        } catch (error) {
-            console.error('[LANG-SWITCHER] ❌ Error en fetch:', error);
+            if (navigator.sendBeacon) {
+                const blob = new Blob([payloadStr], { type: 'application/json' });
+                navigator.sendBeacon('/api/tracking/console-log', blob);
+            } else {
+                // Fallback con keepalive para permitir envío en navegación
+                fetch('/api/tracking/console-log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: payloadStr,
+                    keepalive: true
+                }).catch(() => {});
+            }
+        } catch (_) {
+            // Silent fail
         }
     }
 }

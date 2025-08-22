@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público
+                // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
