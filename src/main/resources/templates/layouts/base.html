@@ -10,29 +10,33 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <meta name="description" th:content="${pageDescription} ?: 'Gestión de residuos sólidos en la frontera de la paz'">
 
+  <!-- Self-hosted Nunito (woff2) -->
+
   <!-- Preload recursos críticos -->
-  <link rel="preload" href="/css/typography.css" as="style">
-  <link rel="preload" href="/css/index.css" as="style">
+  <!-- Preload de fuentes locales Nunito (recomendado 400 y 700) -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" th:href="@{/fonts/nunito/nunito-latin-400.woff2}" href="/fonts/nunito/nunito-latin-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" th:href="@{/fonts/nunito/nunito-latin-700.woff2}" href="/fonts/nunito/nunito-latin-700.woff2">
+  <link rel="preload" th:href="@{/css/fonts.css(v=1)}" href="/css/fonts.css?v=1" as="style">
+  <link rel="preload" th:href="@{/css/typography.css(v=2)}" href="/css/typography.css?v=2" as="style">
+  <link rel="preload" th:href="@{/css/index.css(v=2)}" href="/css/index.css?v=2" as="style">
   <link rel="preload" th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" th:href="${heroImage}" as="image">
 
   <!-- Tipografía y estilos globales/componentes -->
-  <link rel="stylesheet" href="/css/typography.css">
-  <link rel="stylesheet" href="/css/index.css">
-  <link rel="stylesheet" href="/css/button.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/card.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/badge.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" th:href="@{/css/fonts.css(v=1)}" href="/css/fonts.css?v=1">
+  <link rel="stylesheet" th:href="@{/css/typography.css(v=2)}" href="/css/typography.css?v=2">
+  <link rel="stylesheet" th:href="@{/css/index.css(v=2)}" href="/css/index.css?v=2">
+  <link rel="stylesheet" th:href="@{/css/button.css(v=1)}" href="/css/button.css?v=1" media="print" onload="this.media='all'">
+  <link rel="stylesheet" th:href="@{/css/card.css(v=1)}" href="/css/card.css?v=1" media="print" onload="this.media='all'">
+  <link rel="stylesheet" th:href="@{/css/badge.css(v=1)}" href="/css/badge.css?v=1" media="print" onload="this.media='all'">
+  
   
   
   <!-- Punto de extensión para CSS extra por página -->
   <th:block layout:fragment="head-extra"></th:block>
 </head>
 <body>
-  <!-- Loader global: visible hasta que el JS lo oculte -->
-  <div id="pageLoader" class="page-loader">
-    <div class="spinner" aria-label="Cargando" role="status"></div>
-  </div>
   <!-- Contenido de la página -->
-  <main id="app" class="hidden" layout:fragment="content">
+  <main id="app" layout:fragment="content">
     <!-- El contenido de cada página se inyectará aquí -->
   </main>
 
@@ -40,53 +44,9 @@
   <!-- Cache-busting para asegurar última versión del language-switcher -->
   <script th:src="@{/js/language-switcher.js(v=3)}" src="/js/language-switcher.js?v=3" defer></script>
 
+  
+
   <!-- Punto de extensión para JS extra por página -->
   <th:block layout:fragment="body-scripts"></th:block>
-
-  <!-- Control del loader y transición entre páginas -->
-  <script>
-    (function(){
-      const loader = document.getElementById('pageLoader');
-      const app = document.getElementById('app');
-
-      function showLoader(){ if (loader) loader.classList.remove('hidden'); }
-      function hideLoader(){ if (loader) loader.classList.add('hidden'); }
-      function showApp(){ if (app) app.classList.remove('hidden'); }
-
-      // Ocultar loader al estar lista la página y mostrar la app
-      window.addEventListener('DOMContentLoaded', function(){
-        requestAnimationFrame(function(){
-          hideLoader();
-          showApp();
-        });
-      });
-
-      // Mostrar loader al navegar por enlaces internos
-      document.addEventListener('click', function(e){
-        const a = e.target.closest('a');
-        if (!a) return;
-        const href = a.getAttribute('href') || '';
-        if (
-          a.target === '_blank' ||
-          a.hasAttribute('download') ||
-          href.startsWith('#') ||
-          href.startsWith('mailto:') ||
-          href.startsWith('javascript:')
-        ) return;
-        try {
-          const url = new URL(href, window.location.origin);
-          if (url.origin === window.location.origin) {
-            showLoader();
-          }
-        } catch(_) { /* urls relativas simples, mostrar loader igual */ showLoader(); }
-      }, true);
-
-      // Mostrar loader al enviar formularios
-      document.addEventListener('submit', function(){ showLoader(); }, true);
-
-      // Backup: si el navegador dispara beforeunload
-      window.addEventListener('beforeunload', function(){ showLoader(); });
-    })();
-  </script>
 </body>
 </html>
