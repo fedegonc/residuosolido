@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <!-- Botones reutilizables -->
+  <div>
+    <!-- Botón primario submit, de ancho completo por defecto -->
+    <button th:fragment="primarySubmit(label)"
+            type="submit"
+            class="btn btn-primary btn-lg w-full">
+      <span th:text="${label}">Enviar</span>
+    </button>
+
+    <!-- Botón primario como enlace -->
+    <a th:fragment="primaryLink(label, href, extraClass)"
+       th:href="${href}"
+       th:class="${extraClass} != null ? 'btn btn-primary ' + ${extraClass} : 'btn btn-primary'">
+      <span th:text="${label}">Acción</span>
+    </a>
+
+    <!-- Botón primario como enlace con ícono a la izquierda -->
+    <a th:fragment="primaryLinkIcon(label, href, svgId, extraClass)"
+       th:href="${href}"
+       th:class="${extraClass} != null ? 'btn btn-primary ' + ${extraClass} : 'btn btn-primary'">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><use th:attr="href=${'#' + svgId}"></use></svg>
+      <span th:text="${label}">Acción</span>
+    </a>
+
+    <!-- Botón primario como enlace con ícono y subtítulo (dos líneas) -->
+    <a th:fragment="primaryLinkIconSub(title, subtitle, href, svgId, extraClass)"
+       th:href="${href}"
+       th:class="${extraClass} != null ? 'btn btn-primary ' + ${extraClass} : 'btn btn-primary'"
+       style="align-items: center; text-align: left;">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><use th:attr="href=${'#' + svgId}"></use></svg>
+      <span>
+        <strong th:text="${title}">Título</strong>
+        <small style="display:block; opacity:.9" th:text="${subtitle}">Subtítulo</small>
+      </span>
+    </a>
+
+    <!-- Variante outline opcional (no submit) -->
+    <a th:fragment="outlineLink(label, href)"
+       th:href="${href}"
+       class="btn btn-outline">
+      <span th:text="${label}">Acción</span>
+    </a>
+
+    <!-- Variante link (texto con estilos de botón link) -->
+    <a th:fragment="link(label, href, extraClass)"
+       th:href="${href}"
+       th:class="${extraClass} != null ? 'btn btn-link ' + ${extraClass} : 'btn btn-link'">
+      <span th:text="${label}">Ver</span>
+    </a>
+
+    <!-- Variante link con ícono (usa .btn-link) -->
+    <a th:fragment="linkIcon(label, href, svgId, extraClass)"
+       th:href="${href}"
+       th:class="${extraClass} != null ? 'btn btn-link ' + ${extraClass} : 'btn btn-link'">
+      <span th:text="${label}">Ver</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24"><use th:attr="href=${'#' + svgId}"></use></svg>
+    </a>
+  </div>
+</html>

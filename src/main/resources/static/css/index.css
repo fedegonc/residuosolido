@@ -261,6 +261,30 @@ p { margin: 0 0 8px; }
 .cta strong { display: block; color: #064e3b; }
 .cta small { display: block; color: #374151; font-size: .8125rem; }
 
+/* CTA using reusable button (override primary to a light pill just in hero) */
+.btn.btn-primary.btn-hero {
+  background: rgba(255,255,255,0.95);
+  color: #065f46;
+  border-color: #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.08);
+  max-width: 28rem;
+  justify-content: flex-start;
+  gap: .75rem;
+}
+.btn.btn-primary.btn-hero:hover { background: rgba(255,255,255,0.98); text-decoration: none; }
+.btn.btn-primary.btn-hero svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #059669;
+  background: #d1fae5;
+  border-radius: 9999px;
+  padding: .5rem; /* makes overall 2.5rem circle */
+}
+.btn.btn-primary.btn-hero > span strong { display:block; color:#064e3b; }
+.btn.btn-primary.btn-hero > span small { display:block; color:#374151; font-size:.8125rem; }
+
 /* Language switch */
 .lang-switch { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; }
 .lang-switch a { color: rgba(255,255,255,0.8); }

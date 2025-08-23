@@ -1,0 +1,79 @@
+/* auth.css - estilos semánticos y concisos para login/register */
+:root {
+  --auth-bg: #ffffff;
+  --auth-fg: #111827;
+  --auth-muted: #6b7280;
+  --auth-border: #e5e7eb;
+  --auth-card-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  --auth-focus: 0 0 0 3px rgba(5, 150, 105, 0.25);
+  --auth-green: #059669;
+  --auth-green-dark: #047857;
+  --auth-red: #dc2626;
+}
+
+/* Contenedor de página auth */
+.auth-container { padding: 2rem 1rem; }
+.auth-container-narrow { max-width: 28rem; margin: 0 auto; }
+.auth-container-wide { max-width: 42rem; margin: 0 auto; }
+
+/* Tarjeta */
+.auth-card {
+  background: var(--auth-bg);
+  color: var(--auth-fg);
+  border: 1px solid var(--auth-border);
+  border-radius: .75rem;
+  box-shadow: var(--auth-card-shadow);
+  padding: 2rem;
+}
+
+/* Título */
+.auth-title { font-size: 1.5rem; font-weight: 700; color: #111827; text-align: center; margin: 0 0 1.25rem; }
+
+/* Formulario */
+.auth-form { display: grid; gap: 1.25rem; }
+.auth-fields { display: grid; gap: 1rem; }
+.auth-grid-2 { display: grid; gap: 1rem; }
+@media (min-width: 768px) { .auth-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Campo */
+.auth-field {}
+.auth-label { display: block; font-size: .875rem; color: #374151; font-weight: 500; margin-bottom: .25rem; }
+.auth-input {
+  width: 100%;
+  display: block;
+  padding: .625rem .75rem;
+  border: 1px solid #d1d5db;
+  border-radius: .375rem;
+  color: #111827;
+  background: #fff;
+}
+.auth-input::placeholder { color: #9ca3af; }
+.auth-input:focus { outline: none; border-color: var(--auth-green); box-shadow: var(--auth-focus); }
+
+/* Estados de validación */
+.auth-input.-invalid { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
+.auth-input.-valid { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12); }
+
+/* Mensajes de ayuda y error */
+.auth-hint { font-size: .8125rem; color: #6b7280; margin-top: .375rem; }
+.auth-error { font-size: .875rem; color: #b91c1c; margin-top: .375rem; }
+.auth-success { font-size: .875rem; color: #065f46; margin-top: .375rem; }
+
+/* Recuerdame + ayuda */
+.auth-row { display: flex; align-items: center; justify-content: space-between; }
+.auth-remember { display: inline-flex; align-items: center; gap: .5rem; color: #374151; font-size: .875rem; }
+.auth-help { font-size: .875rem; color: var(--auth-green); text-decoration: none; }
+.auth-help:hover { color: var(--auth-green-dark); text-decoration: none; }
+
+/* Enlaces secundarios */
+.auth-links { text-align: center; font-size: .875rem; color: #4b5563; margin-top: 1rem; }
+.auth-links a { color: var(--auth-green); text-decoration: none; font-weight: 600; }
+.auth-links a:hover { color: var(--auth-green-dark); text-decoration: none; }
+
+/* Alertas */
+.auth-alert { border: 1px solid transparent; border-radius: .5rem; padding: 1rem 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+.auth-alert.-success { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+.auth-alert.-error { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+/* Compactar botón submit dentro del formulario al 100% */
+.auth-form .btn { width: 100%; }

@@ -20,15 +20,7 @@
         <p class="subtitle" th:text="#{index.hero.subtitle}">Rivera - Sant'Ana do Livramento</p>
         <p th:text="#{index.hero.description}">Conectamos comunidad, información y organizaciones...</p>
 
-        <a href="/posts/category/reciclables" class="cta">
-          <span class="cta-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><use href="#recycle"/></svg>
-          </span>
-          <span>
-            <strong th:text="#{index.hero.recyclables.title}">Reciclables</strong>
-            <small th:text="#{index.hero.recyclables.description}">Aprende cómo desechar correctamente...</small>
-          </span>
-        </a>
+        <div th:replace="~{fragments/ui/button :: primaryLinkIconSub(#{index.hero.recyclables.title}, #{index.hero.recyclables.description}, '/posts/category/reciclables', 'recycle', 'btn-hero')}"></div>
 
         <div class="lang-switch">
           <a href="/change-language?lang=es" data-lang="es" id="lang-es-link">🇪🇸 Español</a>

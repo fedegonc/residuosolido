@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <div th:fragment="registerForm">
+    <div class="auth-card">
+      <h1 class="auth-title">Crear Cuenta</h1>
+
+      <!-- Mensajes -->
+      <div th:if="${param.success}" class="auth-alert -success mb-4">
+        <span th:text="${param.success}"></span>
+      </div>
+      <div th:if="${param.error}" class="auth-alert -error mb-4">
+        <span th:text="${param.error}"></span>
+      </div>
+      <!-- Mensajes específicos de duplicados (del backend) -->
+      <div th:if="${param.usernameExists}" class="auth-alert -error mb-4">El nombre de usuario ya está registrado.</div>
+      <div th:if="${param.usernameConflictCase}" class="auth-alert -error mb-4">Ese nombre de usuario ya existe con otra combinación de mayúsculas/minúsculas.</div>
+      <div th:if="${param.emailExists}" class="auth-alert -error mb-4">Ese correo electrónico ya está registrado.</div>
+
+      <form class="auth-form" th:action="@{/auth/register}" method="post" th:object="${user}">
+        <div class="auth-fields">
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label for="username" class="auth-label">Nombre de usuario</label>
+              <input id="username" name="username" type="text" th:field="*{username}" required
+                     class="auth-input"
+                     th:classappend="${#fields.hasErrors('username')} ? ' -invalid' : ''"
+                     th:attr="aria-invalid=${#fields.hasErrors('username')}, aria-describedby=${#fields.hasErrors('username')} ? 'username-error' : null"
+                     placeholder="Ingresa tu nombre de usuario">
+              <p class="auth-hint">No se permiten espacios. La verificación de disponibilidad ignora mayúsculas/minúsculas.</p>
+              <p id="username-error" class="auth-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error en usuario</p>
+            </div>
+            <div class="auth-field">
+              <label for="email" class="auth-label">Correo electrónico</label>
+              <input id="email" name="email" type="email" th:field="*{email}" required
+                     class="auth-input"
+                     th:classappend="${#fields.hasErrors('email')} ? ' -invalid' : ''"
+                     th:attr="aria-invalid=${#fields.hasErrors('email')}, aria-describedby=${#fields.hasErrors('email')} ? 'email-error' : null"
+                     placeholder="Ingresa tu correo electrónico">
+              <p class="auth-hint">Usa un correo válido. Te enviaremos un enlace de verificación.</p>
+              <p id="email-error" class="auth-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error en email</p>
+            </div>
+          </div>
+
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label for="firstName" class="auth-label">Nombre</label>
+              <input id="firstName" name="firstName" type="text" th:field="*{firstName}" required
+                     class="auth-input"
+                     th:classappend="${#fields.hasErrors('firstName')} ? ' -invalid' : ''"
+                     th:attr="aria-invalid=${#fields.hasErrors('firstName')}, aria-describedby=${#fields.hasErrors('firstName')} ? 'firstName-error' : null"
+                     placeholder="Ingresa tu nombre">
+              <p id="firstName-error" class="auth-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Error en nombre</p>
+            </div>
+            <div class="auth-field">
+              <label for="lastName" class="auth-label">Apellido</label>
+              <input id="lastName" name="lastName" type="text" th:field="*{lastName}" required
+                     class="auth-input"
+                     th:classappend="${#fields.hasErrors('lastName')} ? ' -invalid' : ''"
+                     th:attr="aria-invalid=${#fields.hasErrors('lastName')}, aria-describedby=${#fields.hasErrors('lastName')} ? 'lastName-error' : null"
+                     placeholder="Ingresa tu apellido">
+              <p id="lastName-error" class="auth-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Error en apellido</p>
+            </div>
+          </div>
+
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label for="password" class="auth-label">Contraseña</label>
+              <input id="password" name="password" type="password" th:field="*{password}" required
+                     class="auth-input"
+                     th:classappend="${#fields.hasErrors('password')} ? ' -invalid' : ''"
+                     th:attr="aria-invalid=${#fields.hasErrors('password')}, aria-describedby=${#fields.hasErrors('password')} ? 'password-error' : 'password-hint'"
+                     placeholder="Ingresa tu contraseña">
+              <p id="password-hint" class="auth-hint">Mínimo 8 caracteres. Combina letras y números.</p>
+              <p id="password-error" class="auth-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error en contraseña</p>
+            </div>
+            <div class="auth-field">
+              <label for="confirmPassword" class="auth-label">Confirmar contraseña</label>
+              <input id="confirmPassword" name="confirmPassword" type="password" required
+                     class="auth-input"
+                     placeholder="Confirma tu contraseña"
+                     aria-describedby="confirmPassword-hint">
+              <p id="confirmPassword-hint" class="auth-hint">Debe coincidir con la contraseña.</p>
+            </div>
+          </div>
+        </div>
+
+        <div th:replace="~{fragments/ui/button :: primarySubmit('Crear Cuenta')}"></div>
+
+        <div class="auth-links">
+          <p>
+            ¿Ya tienes cuenta?
+            <a th:href="@{/auth/login}">Inicia sesión aquí</a>
+          </p>
+        </div>
+      </form>
+
+      <script>
+        // UX básica: validación de email y confirmación de contraseña con estilos accesibles
+        (function(){
+          const $ = (id) => document.getElementById(id);
+          const username = $('username');
+          const email = $('email');
+          const password = $('password');
+          const confirm = $('confirmPassword');
+
+          function setValidityClass(input, valid){
+            input.classList.remove('-invalid','-valid');
+            input.classList.add(valid ? '-valid' : '-invalid');
+          }
+
+          function validateEmail(){
+            if(!email) return;
+            const ok = email.value.trim().length > 3 && /.+@.+\..+/.test(email.value);
+            setValidityClass(email, ok);
+          }
+
+          function validatePasswords(){
+            if(!password || !confirm) return;
+            const match = confirm.value.length === 0 ? true : (password.value === confirm.value);
+            confirm.setCustomValidity(match ? '' : 'Las contraseñas no coinciden');
+            setValidityClass(confirm, match);
+            // Fuerza feedback en password si es muy corta
+            const pOk = password.value.length >= 8;
+            if(password.value.length > 0){ setValidityClass(password, pOk); }
+          }
+
+          function validateUsername(){
+            if(!username) return;
+            const hasSpace = /\s/.test(username.value);
+            setValidityClass(username, !hasSpace && username.value.trim().length >= 3);
+          }
+
+          email && email.addEventListener('input', validateEmail);
+          password && password.addEventListener('input', validatePasswords);
+          confirm && confirm.addEventListener('input', validatePasswords);
+          username && username.addEventListener('input', validateUsername);
+        })();
+      </script>
+    </div>
+  </div>
+</html>
