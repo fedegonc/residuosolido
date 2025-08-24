@@ -5,7 +5,6 @@
         <svg aria-hidden="true"><use href="#posts"/></svg>
         <span th:text="#{notes.title}">Notas Recientes</span>
       </h2>
-      <div th:replace="~{fragments/ui/button :: linkIcon(#{button.view}, '/posts', 'arrow', null)}"></div>
     </header>
 
     <div th:if="${posts != null and !posts.isEmpty()}" class="notes-grid grid grid-cols-12 gap-6 mt-6 md:mt-8 items-stretch">

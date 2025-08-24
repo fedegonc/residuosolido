@@ -38,7 +38,9 @@
   
   <!-- Debug layout outlines via class on body -->
   <style>
+    /* Outline fino para todos los elementos */
     body.debug-outlines * { outline: 1px solid rgba(0,0,0,0.25) !important; }
+    /* Outline más notorio para contenedores clave */
     body.debug-outlines .container, body.debug-outlines .hero, body.debug-outlines .hero-media, body.debug-outlines .hero-content, body.debug-outlines .hero-content-inner,
     body.debug-outlines .steps, body.debug-outlines .step, body.debug-outlines .notes-header, body.debug-outlines .notes-grid, body.debug-outlines .card, body.debug-outlines .card-media, body.debug-outlines .card-body,
     body.debug-outlines .lang-switch, body.debug-outlines header, body.debug-outlines main, body.debug-outlines footer, body.debug-outlines nav, body.debug-outlines section, body.debug-outlines article, body.debug-outlines aside {
@@ -67,7 +69,7 @@
   <main id="app" layout:fragment="content">
     <!-- El contenido de cada página se inyectará aquí -->
   </main>
-
+  
   <!-- Toggle flotante para activar/desactivar modo debug -->
   <button id="debugToggleBtn" type="button"
           class="fixed bottom-4 right-4 z-50 btn btn-outline btn-sm bg-white/90 backdrop-blur rounded-full shadow hover:shadow-md"
@@ -78,7 +80,7 @@
   <!-- Scripts globales (ligeros) -->
   <!-- Cache-busting para asegurar última versión del language-switcher -->
   <script th:src="@{/js/language-switcher.js(v=3)}" src="/js/language-switcher.js?v=3" defer></script>
-
+  
   <script>
     (function() {
       const KEY = 'debugOutlines';
@@ -110,8 +112,6 @@
       });
     })();
   </script>
-  
-
   <!-- Punto de extensión para JS extra por página -->
   <th:block layout:fragment="body-scripts"></th:block>
 </body>
