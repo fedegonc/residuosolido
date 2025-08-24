@@ -3,7 +3,6 @@
 <head>
     <title layout:fragment="title" th:text="#{page.title}">Inicio - Residuos Sólidos - Frontera de la Paz</title>
     <th:block layout:fragment="head-extra">
-        <link rel="stylesheet" th:href="@{/css/hero.css(v=1)}" href="/css/hero.css?v=1" />
         <svg style="display:none">
             <defs>
                 <g id="recycle"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></g>
@@ -15,17 +14,17 @@
  </head>
  <body>
     <section layout:fragment="content">
-    <div th:replace="~{fragments/guest/menu :: guestMenu}"></div>
+    <th:block th:replace="~{fragments/guest/menu :: guestMenu}"></th:block>
       
-      <div th:replace="~{fragments/guest/hero :: heroSection}"></div>
+      <th:block th:replace="~{fragments/guest/hero :: heroSection}"></th:block>
 
 
-        <div th:replace="~{fragments/guest/howitworks :: howItWorks}"></div>
+        <th:block th:replace="~{fragments/guest/howitworks :: howItWorks}"></th:block>
 
 
-        <div th:replace="~{fragments/guest/notes :: guestNotes}"></div>
+        <th:block th:replace="~{fragments/guest/notes :: guestNotes}"></th:block>
     
-    <div th:replace="~{fragments/guest/footer :: guestFooter}"></div>
+    <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
     </section>
     
 </body>

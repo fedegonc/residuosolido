@@ -20,9 +20,9 @@
           <p class="text-base md:text-lg text-white/90" th:text="#{index.hero.subtitle}">Tu guía para un manejo sostenible de residuos</p>
           <p class="text-sm md:text-base text-white/80" th:text="#{index.hero.description}">Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.</p>
 
-          <div class="pt-1" th:replace="~{fragments/ui/button :: primaryLinkIconSubTw('Cómo Funciona', 'Conoce los pasos', '#how-it-works', 'info', 'px-5 py-2.5 md:px-6 md:py-3 gap-3')}"></div>
+          <th:block th:replace="~{fragments/ui/button :: primaryLinkIconSubTw('Cómo Funciona', 'Conoce los pasos', '#how-it-works', 'info', 'px-5 py-2.5 md:px-6 md:py-3 gap-3')}"></th:block>
 
-          <div class="pt-2 md:pt-3 flex items-center text-sm md:text-base" role="navigation" aria-label="Language switcher">
+          <div class="flex items-center text-sm md:text-base" role="navigation" aria-label="Language switcher">
             <a href="/change-language?lang=es" data-lang="es" id="lang-es-link" class="text-white/90 hover:text-white">🇺🇾 Español</a>
             <span aria-hidden="true" class="mx-3 text-white/70">|</span>
             <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link" class="text-white/90 hover:text-white">🇧🇷 Português</a>
