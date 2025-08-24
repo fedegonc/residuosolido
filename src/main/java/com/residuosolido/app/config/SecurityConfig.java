@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -67,6 +68,19 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
+            )
+            // Cabeceras de seguridad razonables sin romper Tailwind CDN ni Cloudinary
+            .headers(headers -> headers
+                .contentSecurityPolicy(csp -> csp.policyDirectives(
+                    "default-src 'self'; " +
+                    "img-src 'self' data: https:; " +
+                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
+                    "font-src 'self' data: https://fonts.gstatic.com; " +
+                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; " +
+                    "connect-src 'self'"
+                ))
+                .frameOptions(frame -> frame.sameOrigin())
+                .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
             )
             // Desactivamos la protección de sesión para depuración
             .sessionManagement(session -> session

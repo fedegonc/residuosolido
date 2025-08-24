@@ -35,6 +35,20 @@
   
   <!-- Punto de extensión para CSS extra por página -->
   <th:block layout:fragment="head-extra"></th:block>
+  
+  <!-- Debug layout outlines: activar con ?debug=1 -->
+  <th:block th:if="${param.debug != null}">
+    <style>
+      /* Borde fino para todos los elementos */
+      * { outline: 1px solid rgba(0,0,0,0.25) !important; }
+      /* Borde más notorio para bloques clave */
+      .container, .hero, .hero-media, .hero-content, .hero-content-inner,
+      .steps, .step, .notes-header, .notes-grid, .card, .card-media, .card-body,
+      .lang-switch, header, main, footer, nav, section, article, aside {
+        outline: 2px solid #000 !important;
+      }
+    </style>
+  </th:block>
 </head>
 <body>
   <!-- Contenido de la página -->

@@ -32,7 +32,8 @@
   line-height: 1.25;
   border-radius: .5rem;
   border: 1px solid transparent;
-  padding: .5rem .875rem;
+  padding: .625rem 1rem; /* ~10px 16px for better touch target */
+  font-size: .9375rem; /* 15px */
   cursor: pointer;
   text-decoration: none;
   transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, opacity .2s ease, transform .05s ease;
@@ -40,6 +41,9 @@
 .btn:focus { outline: none; box-shadow: var(--focus-ring); }
 .btn:active { transform: translateY(1px); }
 .btn[disabled], .btn.disabled { opacity: .6; pointer-events: none; }
+
+/* Tamaño medio explícito (igual al base) */
+.btn-md { padding: .625rem 1rem; font-size: .9375rem; }
 
 /* Variantes */
 .btn-primary {

@@ -1,4 +1,4 @@
-  <section th:fragment="heroSection" class="hero" xmlns:th="http://www.thymeleaf.org">
+  <section th:fragment="heroSection" class="hero py-12 md:py-16" xmlns:th="http://www.thymeleaf.org">
     <div class="hero-media">
       <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
            th:src="${heroImage}"
@@ -15,14 +15,14 @@
     </div>
 
     <div class="hero-content">
-      <div class="hero-content-inner">
-        <h1 th:text="#{index.hero.title}">Residuos Sólidos - Frontera de la Paz</h1>
-        <p class="subtitle" th:text="#{index.hero.subtitle}">Rivera - Sant'Ana do Livramento</p>
-        <p th:text="#{index.hero.description}">Conectamos comunidad, información y organizaciones...</p>
+      <div class="hero-content-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="mb-3 md:mb-4" th:text="#{index.hero.title}">Residuos Sólidos - Frontera de la Paz</h1>
+        <p class="subtitle mb-2 text-white/80" th:text="#{index.hero.subtitle}">Rivera - Sant'Ana do Livramento</p>
+        <p class="mb-4 md:mb-6" th:text="#{index.hero.description}">Conectamos comunidad, información y organizaciones...</p>
 
         <div th:replace="~{fragments/ui/button :: primaryLinkIconSub(#{index.hero.recyclables.title}, #{index.hero.recyclables.description}, '/posts/category/reciclables', 'recycle', 'btn-hero')}"></div>
 
-        <div class="lang-switch">
+        <div class="lang-switch mt-4 md:mt-6 flex items-center gap-3">
           <a href="/change-language?lang=es" data-lang="es" id="lang-es-link">🇪🇸 Español</a>
           <span aria-hidden="true">|</span>
           <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link">🇧🇷 Português</a>

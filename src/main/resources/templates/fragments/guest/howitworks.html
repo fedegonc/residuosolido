@@ -1,18 +1,18 @@
-  <section th:fragment="howItWorks" id="how-it-works" xmlns:th="http://www.thymeleaf.org">
-    <div class="container">
-      <h2 th:text="#{howItWorks.title}">¿Cómo Funciona?</h2>
-      <div class="steps">
-        <article class="step">
+  <section th:fragment="howItWorks" id="how-it-works" class="py-12 md:py-16" xmlns:th="http://www.thymeleaf.org">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-center mb-8 md:mb-10" th:text="#{howItWorks.title}">¿Cómo Funciona?</h2>
+      <div class="steps grid grid-cols-12 gap-6">
+        <article class="step col-span-12 md:col-span-4 p-4 md:p-6 space-y-2">
           <div class="step-number">1</div>
           <h3 th:text="#{howItWorks.step1.title}">Infórmate</h3>
           <p th:text="#{howItWorks.step1.description}">Encuentra información...</p>
         </article>
-        <article class="step">
+        <article class="step col-span-12 md:col-span-4 p-4 md:p-6 space-y-2">
           <div class="step-number">2</div>
           <h3 th:text="#{howItWorks.step2.title}">Solicita</h3>
           <p th:text="#{howItWorks.step2.description}">Solicita una recolección...</p>
         </article>
-        <article class="step">
+        <article class="step col-span-12 md:col-span-4 p-4 md:p-6 space-y-2">
           <div class="step-number">3</div>
           <h3 th:text="#{howItWorks.step3.title}">Encuentra</h3>
           <p th:text="#{howItWorks.step3.description}">Localiza puntos...</p>
