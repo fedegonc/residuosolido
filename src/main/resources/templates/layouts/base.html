@@ -36,6 +36,18 @@
   <!-- Punto de extensión para CSS extra por página -->
   <th:block layout:fragment="head-extra"></th:block>
   
+  <!-- Debug layout outlines via class on body -->
+  <style>
+    body.debug-outlines * { outline: 1px solid rgba(0,0,0,0.25) !important; }
+    body.debug-outlines .container, body.debug-outlines .hero, body.debug-outlines .hero-media, body.debug-outlines .hero-content, body.debug-outlines .hero-content-inner,
+    body.debug-outlines .steps, body.debug-outlines .step, body.debug-outlines .notes-header, body.debug-outlines .notes-grid, body.debug-outlines .card, body.debug-outlines .card-media, body.debug-outlines .card-body,
+    body.debug-outlines .lang-switch, body.debug-outlines header, body.debug-outlines main, body.debug-outlines footer, body.debug-outlines nav, body.debug-outlines section, body.debug-outlines article, body.debug-outlines aside {
+      outline: 2px solid #000 !important;
+    }
+    /* No dibujar outline sobre la capa de overlay del hero */
+    body.debug-outlines .overlay { outline: none !important; }
+  </style>
+  
   <!-- Debug layout outlines: activar con ?debug=1 -->
   <th:block th:if="${param.debug != null}">
     <style>
@@ -56,10 +68,48 @@
     <!-- El contenido de cada página se inyectará aquí -->
   </main>
 
+  <!-- Toggle flotante para activar/desactivar modo debug -->
+  <button id="debugToggleBtn" type="button"
+          class="fixed bottom-4 right-4 z-50 btn btn-outline btn-sm bg-white/90 backdrop-blur rounded-full shadow hover:shadow-md"
+          aria-pressed="false" title="Alternar bordes de debug">
+    Debug
+  </button>
+
   <!-- Scripts globales (ligeros) -->
   <!-- Cache-busting para asegurar última versión del language-switcher -->
   <script th:src="@{/js/language-switcher.js(v=3)}" src="/js/language-switcher.js?v=3" defer></script>
 
+  <script>
+    (function() {
+      const KEY = 'debugOutlines';
+      const btn = document.getElementById('debugToggleBtn');
+      const body = document.body;
+
+      function setState(enabled) {
+        if (enabled) {
+          body.classList.add('debug-outlines');
+          btn.setAttribute('aria-pressed', 'true');
+          btn.textContent = 'Debug: ON';
+        } else {
+          body.classList.remove('debug-outlines');
+          btn.setAttribute('aria-pressed', 'false');
+          btn.textContent = 'Debug: OFF';
+        }
+        try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch (e) {}
+      }
+
+      // Init from localStorage or URL ?debug=1
+      let init = false;
+      try { init = localStorage.getItem(KEY) === '1'; } catch (e) {}
+      const urlHasDebug = new URLSearchParams(window.location.search).has('debug');
+      if (urlHasDebug) init = true;
+      setState(init);
+
+      btn.addEventListener('click', function() {
+        setState(!body.classList.contains('debug-outlines'));
+      });
+    })();
+  </script>
   
 
   <!-- Punto de extensión para JS extra por página -->

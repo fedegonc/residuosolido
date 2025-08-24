@@ -116,10 +116,7 @@ a:hover { color: var(--green-700); text-decoration: underline; }
 /* (spinner/loader eliminado) */
 
 /* Contenedor genérico */
-.container { max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 16px; padding-right: 16px; }
-.mx-auto { margin-left: auto; margin-right: auto; }
-.max-w-5xl { max-width: 64rem; }
-.max-w-7xl { max-width: 80rem; }
+/* Eliminado: utilidades duplicadas de Tailwind (.container, .mx-auto, .max-w-5xl, .max-w-7xl) para evitar conflictos */
 .max-w-4xl { max-width: 56rem; }
 .w-10 { width: 2.5rem; }
 .h-10 { height: 2.5rem; }
@@ -223,7 +220,7 @@ a:hover { color: var(--green-700); text-decoration: underline; }
 .hero img { width: 100%; height: 100%; object-fit: cover; display: block; transform: translateZ(0); }
 .hero .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
 .hero .hero-content { position: absolute; inset: 0; display:flex; align-items:center; }
-.hero .hero-content-inner { max-width: 720px; color: #fff; padding: 16px; }
+.hero .hero-content-inner { color: #fff; }
 
 /* Tipografía */
 h1 { font-size: 2rem; margin: 0 0 8px; }
@@ -291,18 +288,18 @@ p { margin: 0 0 8px; }
 .lang-switch a:hover { color: #fff; text-decoration: none; }
 
 /* How it works */
-#how-it-works { background: #065f46; color: #fff; padding: 24px 0; }
+#how-it-works { background: #2563eb; color: #fff; padding: 24px 0; }
 #how-it-works h2 { text-align: center; margin-bottom: 16px; font-weight: 600; }
 .steps { display: grid; grid-template-columns: 1fr; gap: 16px; }
 @media (min-width: 768px) { .steps { grid-template-columns: repeat(3, 1fr); } }
-.step { background: #fff; color: #111827; border: 2px solid #059669; border-radius: 10px; padding: 12px; max-width: 280px; }
-.step-number { width: 1.5rem; height: 1.5rem; border: 2px solid #059669; border-radius: 9999px; display: flex; align-items: center; justify-content: center; margin-bottom: .5rem; color: #059669; font-weight: 600; font-size: .75rem; }
+.step { background: #fff; color: #111827; border: 2px solid #1d4ed8; border-radius: 10px; }
+.step-number { width: 1.5rem; height: 1.5rem; border: 2px solid #1d4ed8; border-radius: 9999px; display: flex; align-items: center; justify-content: center; margin-bottom: .5rem; color: #1d4ed8; font-weight: 600; font-size: .75rem; }
 
 /* Notes */
-.notes-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; border-bottom: 1px solid #e5e7eb; }
+.notes-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e7eb; }
 .notes-header h2 { display: flex; align-items: center; gap: .75rem; margin: 0; font-size: 1.25rem; font-weight: 600; }
 .notes-header h2 svg { width: 1.25rem; height: 1.25rem; color: #059669; }
-.notes-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; padding: 1.5rem; }
+.notes-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
 @media (min-width: 768px) { .notes-grid { grid-template-columns: repeat(2, 1fr); } }
 .note-category { position: absolute; top: .75rem; left: .75rem; }
 .note-category span { display: inline-flex; align-items: center; padding: .25rem .5rem; border-radius: 9999px; font-size: .75rem; font-weight: 600; background: rgba(255,255,255,0.9); color: #065f46; }
@@ -315,3 +312,29 @@ p { margin: 0 0 8px; }
 @media (min-width: 768px) { .footer-grid { grid-template-columns: repeat(3, 1fr); } }
 .footer-copy { margin-top: 2rem; border-top: 1px solid #e5e7eb; padding-top: 1rem; font-size: .75rem; color: #6b7280; }
 
+
+/* ================= Debug wireframe mode ================= */
+/* When body has .debug-wireframe, strip visual content and show only element boxes */
+body.debug-wireframe *,
+body.debug-wireframe *::before,
+body.debug-wireframe *::after {
+  background: transparent !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+/* Keep layout but hide media */
+body.debug-wireframe img,
+body.debug-wireframe picture,
+body.debug-wireframe video,
+body.debug-wireframe svg,
+body.debug-wireframe canvas,
+body.debug-wireframe iframe { visibility: hidden !important; }
+/* Avoid overlay noise */
+body.debug-wireframe .overlay { display: none !important; }
+/* Draw outlines on all elements to visualize structure */
+body.debug-wireframe * { outline: 1px dashed rgba(0,0,0,0.4) !important; }
+/* Make containers slightly more visible */
+body.debug-wireframe [class*="container"],
+body.debug-wireframe .max-w-7xl,
+body.debug-wireframe .max-w-4xl { outline-color: rgba(37,99,235,0.7) !important; }

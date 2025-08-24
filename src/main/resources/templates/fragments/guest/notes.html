@@ -1,5 +1,5 @@
   <section th:fragment="guestNotes" id="notes" class="py-12 md:py-16" xmlns:th="http://www.thymeleaf.org">
-  <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <header class="notes-header flex items-center justify-between gap-4 mb-6 md:mb-8">
       <h2 class="flex items-center gap-2">
         <svg aria-hidden="true"><use href="#posts"/></svg>
@@ -8,8 +8,8 @@
       <div th:replace="~{fragments/ui/button :: linkIcon(#{button.view}, '/posts', 'arrow', null)}"></div>
     </header>
 
-    <div th:if="${posts != null and !posts.isEmpty()}" class="notes-grid grid grid-cols-12 gap-6 mt-6 md:mt-8">
-      <article th:each="post : ${posts}" class="card card-media col-span-12 md:col-span-6 lg:col-span-4">
+    <div th:if="${posts != null and !posts.isEmpty()}" class="notes-grid grid grid-cols-12 gap-6 mt-6 md:mt-8 items-stretch">
+      <article th:each="post : ${posts}" class="card card-media col-span-12 md:col-span-6 lg:col-span-4 h-full flex flex-col">
         <div class="card-media-thumb">
           <img th:if="${post != null and post.imageUrl != null and !post.imageUrl.isEmpty()}"
                th:src="${post.imageUrl}"
@@ -31,7 +31,7 @@
                   th:text="#{category.uncategorized}">Sin categoría</span>
           </div>
         </div>
-        <div class="card-body">
+        <div class="card-body flex-1">
           <h3>
             <a th:if="${post != null and post.id != null}"
                th:href="@{/posts/{id}(id=${post.id})}"
