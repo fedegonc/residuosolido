@@ -3,7 +3,6 @@ package com.residuosolido.app.controller.admin;
 import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
-import com.residuosolido.app.service.CloudinaryService;
 import com.residuosolido.app.service.FeedbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,6 @@ public class AdminUserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private CloudinaryService cloudinaryService;
 
     @Autowired
     private FeedbackService feedbackService;
