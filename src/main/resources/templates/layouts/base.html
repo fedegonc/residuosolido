@@ -8,21 +8,23 @@
   <title layout:fragment="title" th:text="${pageTitle} ?: 'Residuos Sólidos - Frontera de la Paz'">Residuos Sólidos - Frontera de la Paz</title>
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <meta name="description" th:content="${pageDescription} ?: 'Gestión de residuos sólidos en la frontera de la paz'">
+  <meta name="description" th:content="${pageDescription != null ? pageDescription : 'Gestión de residuos sólidos en la frontera de la paz'}">
 
+  <!-- Tipografía Nunito: preconnect + fallback a Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <!-- Self-hosted Nunito (woff2) -->
 
   <!-- Preload recursos críticos -->
-  <!-- Preload de fuentes locales Nunito (recomendado 400 y 700) -->
-  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" th:href="@{/fonts/nunito/nunito-latin-400.woff2}" href="/fonts/nunito/nunito-latin-400.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" th:href="@{/fonts/nunito/nunito-latin-700.woff2}" href="/fonts/nunito/nunito-latin-700.woff2">
-  <link rel="preload" th:href="@{/css/fonts.css(v=1)}" href="/css/fonts.css?v=1" as="style">
+  <!-- Preload de CSS críticos (sin fuentes locales) -->
   <link rel="preload" th:href="@{/css/typography.css(v=2)}" href="/css/typography.css?v=2" as="style">
   <link rel="preload" th:href="@{/css/index.css(v=2)}" href="/css/index.css?v=2" as="style">
   <link rel="preload" th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" th:href="${heroImage}" as="image">
 
   <!-- Tipografía y estilos globales/componentes -->
-  <link rel="stylesheet" th:href="@{/css/fonts.css(v=1)}" href="/css/fonts.css?v=1">
+  <!-- Tailwind via CDN (con plugin line-clamp). Debe ir antes de los estilos personalizados. -->
+  <script src="https://cdn.tailwindcss.com?plugins=line-clamp"></script>
   <link rel="stylesheet" th:href="@{/css/typography.css(v=2)}" href="/css/typography.css?v=2">
   <link rel="stylesheet" th:href="@{/css/index.css(v=2)}" href="/css/index.css?v=2">
   <link rel="stylesheet" th:href="@{/css/button.css(v=1)}" href="/css/button.css?v=1" media="print" onload="this.media='all'">

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/guest-layout :: head('Detalle - ' + ${post.title})}">
-    <title>Detalle - Sistema de Gestión de Residuos Sólidos</title>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title" th:text="'Detalle - ' + ${post.title}">Detalle - Sistema de Gestión de Residuos Sólidos</title>
 </head>
 
-<body th:replace="~{fragments/guest-layout :: layout(~{::main})}">
-    <main class="bg-gray-50 min-h-screen">
+<body>
+    <main layout:fragment="content" class="bg-gray-50 min-h-screen">
+        <header th:replace="~{fragments/navbar-guest :: navbar}"></header>
         <!-- Breadcrumbs -->
         <div class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -42,11 +43,11 @@
 
         <!-- Hero Section con imagen -->
         <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" class="relative h-96 bg-gray-900">
-            <img th:src="${post.imageUrl}" th:alt="${post.title}" class="w-full h-full object-cover opacity-80" />
+            <img th:src="${post.imageUrl}" th:alt="${post.title}" loading="lazy" class="w-full h-full object-cover opacity-80" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-8">
                 <div class="max-w-7xl mx-auto">
-                    <span class="inline-flex items-center bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium mb-4" th:text="${categoryName}">Categoría</span>
+                    <span class="inline-flex items-center bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium" th:text="${categoryName}">Categoría</span>
                     <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" th:text="${post.title}">Título del Post</h1>
                 </div>
             </div>
@@ -55,7 +56,7 @@
         <!-- Hero sin imagen -->
         <div th:if="${post.imageUrl == null or post.imageUrl.isEmpty()}" class="bg-gradient-to-r from-green-600 to-teal-600 py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <span class="inline-flex items-center bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium mb-4" th:text="${categoryName}">Categoría</span>
+                <span class="inline-flex items-center bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium" th:text="${categoryName}">Categoría</span>
                 <h1 class="text-4xl md:text-5xl font-bold text-white" th:text="${post.title}">Título del Post</h1>
             </div>
         </div>
@@ -136,7 +137,7 @@
                             </div>
                         </div>
 
-                        <!-- Call-to-Action discreto para usuarios guest -->
+                        <!-- CTA -->
                         <div class="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-100 p-6">
                             <div class="text-center">
                                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -146,41 +147,9 @@
                                 </div>
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">¿Te gustó este contenido?</h3>
                                 <p class="text-gray-600 text-sm mb-4">Únete a nuestra comunidad y accede a más funciones</p>
-                                
-                                <div class="space-y-2 text-xs text-gray-500 mb-4">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Contenido exclusivo y más posts</span>
-                                    </div>
-                                    <div class="flex items-center justify-center gap-2">
-                                        <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Solicitudes de recolección de reciclaje</span>
-                                    </div>
-                                    <div class="flex items-center justify-center gap-2">
-                                        <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Conecta con organizaciones locales</span>
-                                    </div>
-                                </div>
-                                
                                 <div class="flex flex-col sm:flex-row gap-2 justify-center">
-                                    <a href="/auth/login" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                                        </svg>
-                                        Iniciar Sesión
-                                    </a>
-                                    <a href="/auth/register" class="inline-flex items-center justify-center px-4 py-2 bg-white text-green-600 text-sm font-medium rounded-lg border border-green-200 hover:bg-green-50 transition-colors">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                                        </svg>
-                                        Crear Cuenta
-                                    </a>
+                                    <a href="/auth/login" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">Iniciar Sesión</a>
+                                    <a href="/auth/register" class="inline-flex items-center justify-center px-4 py-2 bg-white text-green-600 text-sm font-medium rounded-lg border border-green-200 hover:bg-green-50 transition-colors">Crear Cuenta</a>
                                 </div>
                             </div>
                         </div>
@@ -190,42 +159,14 @@
                 <!-- Sidebar -->
                 <div class="lg:col-span-1 mt-12 lg:mt-0">
                     <div class="sticky top-8 space-y-8">
-                        
                         <!-- Navegación rápida -->
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Navegación</h3>
                             <div class="space-y-3">
-                                <a href="/posts" class="flex items-center gap-3 text-gray-600 hover:text-green-600 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                    </svg>
-                                    Volver a Posts
-                                </a>
+                                <a href="/posts" class="flex items-center gap-3 text-gray-600 hover:text-green-600 transition-colors">Volver a Posts</a>
                                 <a th:href="@{'/posts/category/' + ${categoryName}}" class="flex items-center gap-3 text-gray-600 hover:text-green-600 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                    </svg>
                                     <span>Ver más de </span><span th:text="${categoryName}">Categoría</span>
                                 </a>
-                            </div>
-                        </div>
-
-                        <!-- Acciones -->
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones</h3>
-                            <div class="space-y-3">
-                                <button class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                    </svg>
-                                    Guardar
-                                </button>
-                                <button class="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                                    </svg>
-                                    Imprimir
-                                </button>
                             </div>
                         </div>
 
@@ -237,7 +178,7 @@
                                     <a th:href="@{'/posts/' + ${relatedPost.id}}" class="block">
                                         <div class="flex gap-3">
                                             <div th:if="${relatedPost.imageUrl != null and !relatedPost.imageUrl.isEmpty()}" class="flex-shrink-0">
-                                                <img th:src="${relatedPost.imageUrl}" th:alt="${relatedPost.title}" class="w-16 h-16 object-cover rounded-lg" />
+                                                <img th:src="${relatedPost.imageUrl}" th:alt="${relatedPost.title}" loading="lazy" class="w-16 h-16 object-cover rounded-lg" />
                                             </div>
                                             <div th:if="${relatedPost.imageUrl == null or relatedPost.imageUrl.isEmpty()}" class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
                                                 <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,10 +206,11 @@
             </svg>
         </button>
 
+    </main>
+
+    <th:block layout:fragment="body-scripts">
         <script>
-            // Botón volver arriba
             const scrollToTopBtn = document.getElementById('scrollToTop');
-            
             window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 300) {
                     scrollToTopBtn.classList.remove('opacity-0', 'invisible');
@@ -276,14 +218,10 @@
                     scrollToTopBtn.classList.add('opacity-0', 'invisible');
                 }
             });
-            
             scrollToTopBtn.addEventListener('click', () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         </script>
-    </main>
+    </th:block>
 </body>
 </html>

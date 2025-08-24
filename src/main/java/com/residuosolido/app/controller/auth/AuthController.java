@@ -77,7 +77,7 @@ public class AuthController {
 
         model.addAttribute("posts", postService.getFirst5Posts());
 
-        return "guest/index";
+        return "pages/home";
     }
 
 

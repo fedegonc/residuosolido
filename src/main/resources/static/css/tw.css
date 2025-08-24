@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aquí puedes agregar estilos propios si hace falta, por ejemplo utilidades o overrides mínimos */

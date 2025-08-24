@@ -36,7 +36,7 @@ public class PostController {
     public String listPosts(Model model) {
         model.addAttribute("posts", postService.getAllPostsWithCategories());
         model.addAttribute("categories", categoryService.getAllCategories());
-        return "guest/posts";
+        return "pages/posts/list";
     }
 
     @GetMapping("/posts/{id}")
@@ -48,7 +48,7 @@ public class PostController {
             model.addAttribute("post", post);
             model.addAttribute("categoryName", categoryService.getCategoryNameById(post.getCategoryId()));
             model.addAttribute("relatedPosts", postService.getRelatedPostsById(post.getId(), post.getCategoryId(), 3));
-            return "posts/detail";
+            return "pages/posts/detail";
         }
         
         return "redirect:/posts";
@@ -63,7 +63,7 @@ public class PostController {
             model.addAttribute("posts", postService.getPostsByCategoryId(category.getId()));
             model.addAttribute("category", category);
             model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
-            return "posts/category";
+            return "pages/posts/category";
         }
         
         return "redirect:/posts";

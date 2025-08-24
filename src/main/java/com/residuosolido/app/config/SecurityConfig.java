@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de utilidades de desarrollo deshabilitadas

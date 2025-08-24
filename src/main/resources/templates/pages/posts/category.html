@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/guest-layout :: head(${category.name})}">
-    <title>Categoría - Sistema de Gestión de Residuos Sólidos</title>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title" th:text="${category.name} + ' - Sistema de Gestión de Residuos Sólidos'">Categoría - Sistema de Gestión de Residuos Sólidos</title>
 </head>
 
-<body th:replace="~{fragments/guest-layout :: layout(~{::main})}">
-    <main>
+<body>
+    <main layout:fragment="content">
+        <header th:replace="~{fragments/navbar-guest :: navbar}"></header>
         <!-- Header simple -->
         <div class="bg-white border-b border-gray-200 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
