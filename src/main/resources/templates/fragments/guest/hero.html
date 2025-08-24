@@ -15,7 +15,7 @@
     <div th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" class="pointer-events-none absolute inset-0 bg-black/30"></div>
 
   <div class="absolute inset-0 flex items-center">
-    <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl space-y-3 md:space-y-4">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl space-y-3 md:space-y-4" data-grid-anchor>
       <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight" th:text="#{index.hero.title}">♻️ Fronteira da Paz</h1>
       <p class="text-base md:text-lg text-white/90" th:text="#{index.hero.subtitle}">Tu guía para un manejo sostenible de residuos</p>
       <p class="text-sm md:text-base text-white/80" th:text="#{index.hero.description}">Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.</p>

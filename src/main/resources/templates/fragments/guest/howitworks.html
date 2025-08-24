@@ -1,19 +1,11 @@
   <section th:fragment="howItWorks" id="how-it-works" class="bg-white" th:attr="aria-label=#{howItWorks.title}" xmlns:th="http://www.thymeleaf.org">
-    <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl mt-8 md:mt-12 py-8 md:py-10 space-y-4 md:space-y-6">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl mt-8 md:mt-12 py-8 md:py-10 space-y-4 md:space-y-6" data-grid-anchor>
       <h2 class="text-left text-2xl md:text-3xl font-bold tracking-tight text-slate-900" th:text="#{howItWorks.title}">¿Cómo funciona?</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-        <article class="bg-emerald-800 text-white rounded-xl p-3 md:p-4 space-y-0.5 md:space-y-1">
+      
+        
           <h3 class="text-base md:text-lg font-semibold" th:text="'1. ' + #{howItWorks.step1.title}">1. Infórmate</h3>
           <p class="text-sm md:text-base text-white/90" th:text="#{howItWorks.step1.description}">Encuentra información...</p>
-        </article>
-        <article class="bg-blue-900 text-white rounded-xl p-3 md:p-4 space-y-0.5 md:space-y-1">
-          <h3 class="text-base md:text-lg font-semibold" th:text="'2. ' + #{howItWorks.step2.title}">2. Solicita</h3>
-          <p class="text-sm md:text-base text-white/90" th:text="#{howItWorks.step2.description}">Solicita una recolección...</p>
-        </article>
-        <article class="bg-orange-700 text-white rounded-xl p-3 md:p-4 space-y-0.5 md:space-y-1">
-          <h3 class="text-base md:text-lg font-semibold" th:text="'3. ' + #{howItWorks.step3.title}">3. Encuentra</h3>
-          <p class="text-sm md:text-base text-white/90" th:text="#{howItWorks.step3.description}">Localiza puntos...</p>
-        </article>
-      </div>
+       
+      
     </div>
   </section>

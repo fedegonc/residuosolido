@@ -48,6 +48,45 @@
     }
     /* No dibujar outline sobre la capa de overlay del hero */
     body.debug-outlines .overlay { outline: none !important; }
+
+    /* Overlay de grilla de 12 columnas (bajo nivel) */
+    #gridOverlay { display: none; }
+    body.grid-overlay-on #gridOverlay {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 40; /* botones están con z-50 */
+      pointer-events: none;
+    }
+    /* Wrapper centrado que imita mx-auto px-4 sm:px-6 lg:px-8. Ancho controlado por variable. */
+    #gridOverlay .grid-overlay-inner {
+      height: 100%;
+      /* Por defecto centrado por max-width (mantenemos como fallback) */
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1rem;   /* px-4 */
+      padding-right: 1rem;  /* px-4 */
+      max-width: var(--grid-max, 80rem); /* por defecto 7xl */
+      width: 100%;
+      /* 12 columnas en el ancho del contenedor */
+      background-image: repeating-linear-gradient(
+        to right,
+        rgba(0,0,0,0.18) 0,
+        rgba(0,0,0,0.18) 1px,
+        transparent 1px,
+        transparent calc(100% / 12)
+      );
+    }
+    /* Modo Full: columnas a todo el viewport, respetando padding para gutters */
+    #gridOverlay.full .grid-overlay-inner {
+      max-width: none;
+    }
+    @media (min-width: 640px) { /* sm */
+      #gridOverlay .grid-overlay-inner { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+    @media (min-width: 1024px) { /* lg */
+      #gridOverlay .grid-overlay-inner { padding-left: 2rem; padding-right: 2rem; }
+    }
   </style>
   
   <!-- Debug layout outlines: activar con ?debug=1 -->
@@ -76,6 +115,16 @@
           aria-pressed="false" title="Alternar bordes de debug">
     Debug
   </button>
+
+  <!-- Toggle flotante para activar/desactivar grilla de 12 columnas -->
+  <button id="gridToggleBtn" type="button"
+          class="fixed bottom-16 right-4 z-50 btn btn-outline btn-sm bg-white/90 backdrop-blur rounded-full shadow hover:shadow-md"
+          aria-pressed="false" title="Click: ON/OFF | Alt+Click: cambiar modo (Full/7xl/5xl/2xl)">
+    Grid
+  </button>
+
+  <!-- Capa de overlay de grilla (bajo nivel) -->
+  <div id="gridOverlay" aria-hidden="true"><div class="grid-overlay-inner"></div></div>
 
   <!-- Scripts globales (ligeros) -->
   <!-- Cache-busting para asegurar última versión del language-switcher -->
@@ -109,6 +158,132 @@
 
       btn.addEventListener('click', function() {
         setState(!body.classList.contains('debug-outlines'));
+      });
+    })();
+
+    // Toggle de grilla de 12 columnas con modos (Full, 7xl, 5xl, 2xl)
+    (function() {
+      const KEY = 'gridOverlayOn';
+      const KEY_MODE = 'gridOverlayMode';
+      const btn = document.getElementById('gridToggleBtn');
+      const body = document.body;
+      const overlay = document.getElementById('gridOverlay');
+      const inner = overlay.querySelector('.grid-overlay-inner');
+      const anchors = Array.from(document.querySelectorAll('[data-grid-anchor]'));
+
+      function getActiveAnchor() {
+        if (!anchors.length) return null;
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        let best = null;
+        let bestScore = -1;
+        for (const el of anchors) {
+          const r = el.getBoundingClientRect();
+          const visibleH = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
+          const ratio = visibleH / Math.max(1, r.height);
+          if (ratio > bestScore) { bestScore = ratio; best = el; }
+        }
+        return best;
+      }
+
+      function alignToAnchor(target) {
+        const a = target || getActiveAnchor();
+        if (!a) {
+          // Fallback: centrar por max-width definido
+          inner.style.position = '';
+          inner.style.top = '';
+          inner.style.bottom = '';
+          inner.style.left = '';
+          inner.style.width = '';
+          inner.style.maxWidth = 'var(--grid-max, 80rem)';
+          return;
+        }
+        const rect = a.getBoundingClientRect();
+        inner.style.position = 'fixed';
+        inner.style.top = '0px';
+        inner.style.bottom = '0px';
+        inner.style.left = rect.left + 'px';
+        inner.style.width = rect.width + 'px';
+        inner.style.maxWidth = 'none';
+      }
+
+      const MODES = [
+        { id: 'full', label: 'Full', apply: () => { overlay.classList.add('full'); overlay.style.setProperty('--grid-max', '100%'); } },
+        { id: '7xl',  label: '7xl',  apply: () => { overlay.classList.remove('full'); overlay.style.setProperty('--grid-max', '80rem'); } },
+        { id: '5xl',  label: '5xl',  apply: () => { overlay.classList.remove('full'); overlay.style.setProperty('--grid-max', '64rem'); } },
+        { id: '2xl',  label: '2xl',  apply: () => { overlay.classList.remove('full'); overlay.style.setProperty('--grid-max', '42rem'); } },
+      ];
+
+      function setModeById(id) {
+        const idx = Math.max(0, MODES.findIndex(m => m.id === id));
+        const mode = MODES[idx] || MODES[0];
+        mode.apply();
+        // Alinear al ancla si existe
+        try { alignToAnchor(); } catch(e) {}
+        updateLabel(body.classList.contains('grid-overlay-on'), mode);
+        try { localStorage.setItem(KEY_MODE, mode.id); } catch(e) {}
+        return idx;
+      }
+
+      function nextMode(currentId) {
+        const currentIdx = Math.max(0, MODES.findIndex(m => m.id === currentId));
+        const nextIdx = (currentIdx + 1) % MODES.length;
+        const mode = MODES[nextIdx];
+        mode.apply();
+        updateLabel(body.classList.contains('grid-overlay-on'), mode);
+        try { localStorage.setItem(KEY_MODE, mode.id); } catch(e) {}
+        return nextIdx;
+      }
+
+      function updateLabel(enabled, mode) {
+        const suffix = mode ? ` (${mode.label})` : '';
+        btn.textContent = enabled ? `Grid: ON${suffix}` : `Grid: OFF${suffix}`;
+      }
+
+      function setState(enabled) {
+        if (enabled) {
+          body.classList.add('grid-overlay-on');
+          btn.setAttribute('aria-pressed', 'true');
+        } else {
+          body.classList.remove('grid-overlay-on');
+          btn.setAttribute('aria-pressed', 'false');
+        }
+        const modeId = (function(){ try { return localStorage.getItem(KEY_MODE) || '2xl'; } catch(e) { return '2xl'; } })();
+        const mode = MODES.find(m => m.id === modeId) || MODES[3];
+        updateLabel(enabled, mode);
+        try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch (e) {}
+        if (enabled) { try { alignToAnchor(); } catch(e) {} }
+      }
+
+      // Init desde localStorage
+      let init = false;
+      try { init = localStorage.getItem(KEY) === '1'; } catch (e) {}
+      let modeId = '2xl';
+      try { modeId = localStorage.getItem(KEY_MODE) || '2xl'; } catch(e) {}
+      setModeById(modeId);
+      setState(init);
+      // Recalcular en resize y scroll (con rAF)
+      let ticking = false;
+      function requestAlign() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function(){
+          ticking = false;
+          if (body.classList.contains('grid-overlay-on')) { try { alignToAnchor(); } catch(e) {} }
+        });
+      }
+      window.addEventListener('resize', requestAlign);
+      window.addEventListener('scroll', requestAlign, { passive: true });
+
+      btn.addEventListener('click', function(ev) {
+        if (ev.altKey) {
+          // Cambiar modo
+          try { modeId = localStorage.getItem(KEY_MODE) || '2xl'; } catch(e) { modeId = '2xl'; }
+          const nextIdx = nextMode(modeId);
+          modeId = MODES[nextIdx].id;
+          return;
+        }
+        // Toggle ON/OFF
+        setState(!body.classList.contains('grid-overlay-on'));
       });
     })();
   </script>
