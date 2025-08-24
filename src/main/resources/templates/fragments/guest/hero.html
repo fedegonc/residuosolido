@@ -1,34 +1,32 @@
-  <section th:fragment="heroSection" class="hero pt-0 pb-0" xmlns:th="http://www.thymeleaf.org">
-    <div class="hero-media">
-      <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
-           th:src="${heroImage}"
-           alt="Imagen principal"
-           width="1920" height="768"
-           decoding="sync"
-           fetchpriority="high"
-           loading="eager"
-           style="max-width: 100%; height: auto; object-fit: cover; will-change: auto;" />
-      <div th:unless="${heroImage != null and !#strings.isEmpty(heroImage)}"
-           class="hero-placeholder"
-           style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); min-height: 400px;"></div>
-      <div class="overlay pointer-events-none"></div>
-    </div>
+  <section th:fragment="heroSection"
+           class="relative overflow-hidden pt-0 pb-0"
+           th:classappend="${heroImage == null or #strings.isEmpty(heroImage)} ? ' min-h-[400px] bg-gradient-to-br from-emerald-900 to-emerald-700' : ''"
+           xmlns:th="http://www.thymeleaf.org">
+    <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
+         th:src="${heroImage}"
+         alt="Imagen principal"
+         width="1920" height="768"
+         decoding="sync"
+         fetchpriority="high"
+         loading="eager"
+         class="w-full h-full object-cover block" />
 
-    <div class="hero-content">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="hero-content-inner max-w-2xl">
-          <h1 class="mb-3 md:mb-4" th:text="#{index.hero.title}">♻️ Fronteira da Paz</h1>
-          <p class="subtitle mb-2 text-white/80" th:text="#{index.hero.subtitle}">Tu guía para un manejo sostenible de residuos</p>
-          <p class="mb-4 md:mb-6" th:text="#{index.hero.description}">Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.</p>
+    <!-- Overlay con Tailwind (sin CSS personalizado) -->
+    <div th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" class="pointer-events-none absolute inset-0 bg-black/30"></div>
 
-          <div th:replace="~{fragments/ui/button :: primaryLinkIconSub('Cómo Funciona', 'Conoce los pasos', '#how-it-works', 'info', 'btn-hero')}"></div>
+    <div class="absolute inset-0 flex items-center">
+      <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl space-y-3 md:space-y-4">
+          <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight" th:text="#{index.hero.title}">♻️ Fronteira da Paz</h1>
+          <p class="text-base md:text-lg text-white/90" th:text="#{index.hero.subtitle}">Tu guía para un manejo sostenible de residuos</p>
+          <p class="text-sm md:text-base text-white/80" th:text="#{index.hero.description}">Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.</p>
 
-          <div class="lang-switch mt-4 md:mt-6 flex items-center gap-3">
-            <a href="/change-language?lang=es" data-lang="es" id="lang-es-link">🇺🇾 Español</a>
-            <span aria-hidden="true">|</span>
-            <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link">🇧🇷 Português</a>
+          <div class="pt-1" th:replace="~{fragments/ui/button :: primaryLinkIconSubTw('Cómo Funciona', 'Conoce los pasos', '#how-it-works', 'info', 'px-5 py-2.5 md:px-6 md:py-3 gap-3')}"></div>
+
+          <div class="pt-2 md:pt-3 flex items-center text-sm md:text-base" role="navigation" aria-label="Language switcher">
+            <a href="/change-language?lang=es" data-lang="es" id="lang-es-link" class="text-white/90 hover:text-white">🇺🇾 Español</a>
+            <span aria-hidden="true" class="mx-3 text-white/70">|</span>
+            <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link" class="text-white/90 hover:text-white">🇧🇷 Português</a>
           </div>
-        </div>
       </div>
     </div>
   </section>

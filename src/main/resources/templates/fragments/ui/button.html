@@ -36,6 +36,20 @@
       </span>
     </a>
 
+    <!-- Tailwind-only variant for hero CTA (no CSS classes) -->
+    <a th:fragment="primaryLinkIconSubTw(title, subtitle, href, svgId, extraClass)"
+       th:href="${href}"
+       th:class="${extraClass} != null ? 'inline-flex items-center gap-3 rounded-full bg-white/95 text-emerald-900 border border-gray-200 px-5 py-2.5 md:px-6 md:py-3 shadow-sm hover:bg-white transition ' + ${extraClass} : 'inline-flex items-center gap-3 rounded-full bg-white/95 text-emerald-900 border border-gray-200 px-5 py-2.5 md:px-6 md:py-3 shadow-sm hover:bg-white transition'"
+       class="inline-flex items-center gap-3 rounded-full bg-white/95 text-emerald-900 border border-gray-200 px-5 py-2.5 md:px-6 md:py-3 shadow-sm hover:bg-white transition">
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 md:w-6 md:h-6 text-emerald-600 bg-emerald-100 rounded-full p-1.5 md:p-2">
+        <use th:attr="href=${'#' + svgId}"></use>
+      </svg>
+      <span class="text-left leading-snug">
+        <strong class="block text-emerald-800 text-sm md:text-base font-semibold" th:text="${title}">Título</strong>
+        <small class="block text-slate-700/90 text-[0.75rem] md:text-[0.8125rem]" th:text="${subtitle}">Subtítulo</small>
+      </span>
+    </a>
+
     <!-- Variante outline opcional (no submit) -->
     <a th:fragment="outlineLink(label, href)"
        th:href="${href}"
