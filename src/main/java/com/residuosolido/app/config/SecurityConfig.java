@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final LoginSuccessHandler successHandler;
@@ -42,8 +44,6 @@ public class SecurityConfig {
                 // Rutas de utilidades de desarrollo deshabilitadas
                 // Rutas de gestión de usuarios para admin
                 .requestMatchers("/admin/users/**").hasRole("ADMIN")
-                // Rutas de mapa para admin
-                .requestMatchers("/mapa/**").hasRole("ADMIN")
                 // Rutas de usuario (solo usuarios)
                 .requestMatchers("/users/**").hasRole("USER")
                 .requestMatchers("/requests/**").hasRole("USER")
@@ -57,21 +57,20 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
-                .defaultSuccessUrl("/init", true)
                 .successHandler(successHandler)
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 // Usar un flag simple para evitar problemas de codificación en la URL
-                .logoutSuccessUrl("/?logout=1")
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
             // Desactivamos la protección de sesión para depuración
             .sessionManagement(session -> session
-                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.ALWAYS)
+                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
             );
         
         return http.build();
