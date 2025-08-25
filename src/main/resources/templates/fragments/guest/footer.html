@@ -1,31 +1,36 @@
-<footer th:fragment="guestFooter" class="site-footer" xmlns:th="http://www.thymeleaf.org">
-    <div class="container">
-        <div class="footer-grid">
-            <div>
-                <h3 th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
-                <p th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
-            </div>
-
-            <div>
-                <h4 th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
-                <ul>
-                    <li>
-                        <a th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 th:text="#{footer.contact.title}">Contacto</h4>
-                <p th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
-            </div>
+<footer th:fragment="guestFooter" class="bg-white" xmlns:th="http://www.thymeleaf.org">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-base md:text-lg font-semibold text-slate-900" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
+          <p class="mt-2 text-sm text-slate-600" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
         </div>
 
-        <div class="footer-copy">
-            <p th:text="#{footer.copy}">© Frontera de la Paz</p>
+        <div>
+          <h4 class="text-sm font-semibold text-slate-900" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
+          <ul class="mt-2 space-y-1 text-sm">
+            <li>
+              <a class="text-emerald-700 hover:text-emerald-800" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
+            </li>
+            <li>
+              <a class="text-emerald-700 hover:text-emerald-800" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
+            </li>
+          </ul>
         </div>
+
+        <div>
+          <h4 class="text-sm font-semibold text-slate-900" th:text="#{footer.contact.title}">Contacto</h4>
+          <p class="mt-2 text-sm text-slate-600" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+        </div>
+      </div>
+
+      <div class="mt-8 border-t border-slate-200 pt-4 flex items-center justify-between">
+        <p class="text-xs text-slate-500" th:text="#{footer.copy}"> Frontera de la Paz</p>
+        <a th:href="@{/sistema-visual}"
+           class="inline-flex items-center gap-2 rounded-sm ring-1 ring-emerald-900/20 px-3 py-2 text-sm font-semibold text-emerald-900 bg-white hover:bg-emerald-50 transition">
+          <span class="material-symbols-rounded text-emerald-700" aria-hidden="true">design_services</span>
+          <span>Sistema Visual</span>
+        </a>
+      </div>
     </div>
 </footer>

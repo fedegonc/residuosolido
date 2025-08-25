@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index", "/invitados", "/guest/**").permitAll()
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
+                .requestMatchers("/sistema-visual").permitAll()
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()

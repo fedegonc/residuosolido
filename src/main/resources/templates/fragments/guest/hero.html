@@ -1,5 +1,5 @@
   <section th:fragment="heroSection"
-           class="relative overflow-hidden pt-0 pb-0"
+           class="relative overflow-hidden pt-0 pb-0 h-[400px] sm:h-[460px] md:h-[520px] lg:h-[580px]"
            th:classappend="${heroImage == null or #strings.isEmpty(heroImage)} ? ' min-h-[400px] bg-gradient-to-br from-emerald-900 to-emerald-700' : ''"
            xmlns:th="http://www.thymeleaf.org">
     <img th:if="${heroImage != null and !#strings.isEmpty(heroImage)}"
@@ -12,18 +12,25 @@
          class="w-full h-full object-cover block" />
 
     <!-- Overlay con Tailwind (sin CSS personalizado) -->
-    <div th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" class="pointer-events-none absolute inset-0 bg-black/30"></div>
+    <div th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" class="pointer-events-none absolute inset-0 bg-brand/40"></div>
+    <!-- Grid de líneas (verticales y horizontales) -->
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 hidden sm:block"
+         style="background-image:
+           repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 96px),
+           repeating-linear-gradient(0deg, rgba(255,255,255,0.055) 0px, rgba(255,255,255,0.055) 1px, transparent 1px, transparent 80px);"></div>
 
   <div class="absolute inset-0 flex items-center">
-    <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl space-y-3 md:space-y-4" data-grid-anchor>
-      <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight" th:text="#{index.hero.title}">♻️ Fronteira da Paz</h1>
-      <p class="text-base md:text-lg text-white/90" th:text="#{index.hero.subtitle}">Tu guía para un manejo sostenible de residuos</p>
-      <p class="text-sm md:text-base text-white/80" th:text="#{index.hero.description}">Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.</p>
+    <div class="px-6 sm:px-6 lg:px-8 max-w-3xl space-y-3 md:space-y-4" data-grid-anchor>
+      <div class="bg-black/35 backdrop-blur-[1px] p-6 md:p-8 lg:p-10 shadow-lg ring-1 ring-white/15 rounded-sm">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight drop-shadow-sm" th:text="#{index.hero.title}">♻️ Fronteira da Paz</h1>
+        <p class="mt-2 text-lg md:text-xl font-semibold text-white/90" th:text="#{index.hero.subtitle}">Tu guía para un manejo sostenible de residuos</p>
+        <p class="mt-2 text-base md:text-lg text-white/80 max-w-prose" th:text="#{index.hero.description}">Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.</p>
 
-      <div class="flex items-center text-sm md:text-base" role="navigation" aria-label="Language switcher">
-        <a href="/change-language?lang=es" data-lang="es" id="lang-es-link" class="text-white/90 hover:text-white">🇺🇾 Español</a>
-        <span aria-hidden="true" class="mx-3 text-white/70">|</span>
-        <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link" class="text-white/90 hover:text-white">🇧🇷 Português</a>
+        <div class="mt-3 flex items-center text-sm md:text-base" role="navigation" aria-label="Language switcher">
+          <a href="/change-language?lang=es" data-lang="es" id="lang-es-link" class="text-white/90 hover:text-white">🇺🇾 Español</a>
+          <span aria-hidden="true" class="mx-3 text-white/70">|</span>
+          <a href="/change-language?lang=pt" data-lang="pt" id="lang-pt-link" class="text-white/90 hover:text-white">🇧🇷 Português</a>
+        </div>
       </div>
     </div>
   </div>

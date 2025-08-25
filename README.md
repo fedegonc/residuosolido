@@ -62,91 +62,95 @@ Aplicación web full-stack para gestión integral de residuos sólidos urbanos e
 ### Backend Architecture
 ```
 src/main/java/com/residuosolido/app/
-├── controller/
-│   ├── admin/          # AdminUserController, AdminPostController
-│   ├── auth/           # AuthController (login/register)
-│   ├── guest/          # PostController, DashboardController
-│   ├── org/            # OrganizationController
-│   ├── user/           # UserController
-│   ├── LanguageController # Cambio de idioma con LocaleResolver
-│   └── DashboardController # Dashboard unificado con fragmentos condicionales
-├── service/            # Lógica de negocio
-│   ├── AuthService     # Autenticación + index data
-│   ├── UserService     # CRUD usuarios + validaciones integradas
-│   ├── PostService     # Gestión contenido con optimizaciones N+1
-│   ├── MaterialService # Gestión materiales
-│   ├── CategoryService # Gestión categorías con slugs
-│   ├── WasteSectionService # Secciones optimizadas con JOIN FETCH
-│   ├── FeedbackService # Gestión de feedback
-│   ├── RequestService  # Gestión de solicitudes
-│   └── PasswordResetService # Recuperación de contraseñas
-├── repository/         # JPA Repositories con queries optimizadas
-├── model/              # Entidades JPA optimizadas (FetchType.LAZY)
-├── dto/                # Data Transfer Objects
-└── config/             # Security + PerformanceInterceptor + LocaleResolver
+├── controller/              # Web MVC controllers
+│   ├── admin/               # Administración (usuarios, posts, secciones, etc.)
+│   ├── auth/                # Autenticación (login, registro, forgot-password)
+│   ├── org/                 # Funcionalidades de organizaciones
+│   ├── user/                # Funcionalidades de usuarios
+│   ├── public/              # Páginas públicas y contenido
+│   ├── LanguageController   # Cambio de idioma (LocaleResolver)
+│   └── DashboardController  # Dashboard unificado por rol
+├── service/                 # Lógica de negocio
+│   ├── AuthService
+│   ├── UserService
+│   ├── PostService
+│   ├── CategoryService
+│   ├── WasteSectionService
+│   ├── MaterialService
+│   ├── RequestService
+│   ├── FeedbackService
+│   └── PasswordResetService
+├── repository/              # Repositorios JPA (consultas optimizadas)
+├── model/                   # Entidades JPA (FetchType.LAZY por defecto)
+├── dto/                     # Data Transfer Objects
+└── config/                  # Security, LocaleResolver, interceptores
 ```
 
 ### Frontend Structure
 ```
 src/main/resources/
 ├── templates/
-│   ├── fragments/           # 19 componentes reutilizables
-│   │   ├── layout.html           # Layout principal
-│   │   ├── admin-layout.html     # Layout admin
-│   │   ├── auth-layout.html      # Layout autenticación
-│   │   ├── guest-dropdown.html   # Menú dropdown navegación
-│   │   ├── index-hero.html       # Hero section con imagen
-│   │   ├── posts.html           # Lista de posts
-│   │   ├── organizations.html   # Lista organizaciones
-│   │   ├── sections-sidebar.html # Sidebar categorías
-│   │   ├── footer.html          # Footer del sitio
-│   │   ├── userlist.html        # Lista usuarios admin
-│   │   ├── materiallist.html    # Lista materiales
-│   │   ├── requestlist.html     # Lista solicitudes
-│   │   ├── category-cards.html  # Cards de categorías
-│   │   ├── waste-categories.html # Categorías residuos
-│   │   ├── empty-state.html     # Estados vacíos
-│   │   └── [otros fragmentos]   # Componentes específicos
-│   ├── admin/              # 21 páginas administración
-│   │   ├── dashboard.html       # Panel principal admin
-│   │   ├── users.html          # Gestión usuarios
-│   │   ├── posts.html          # Gestión posts
-│   │   ├── edit-post.html      # Editor posts con múltiples fuentes
-│   │   ├── categories.html     # Gestión categorías
-│   │   ├── materials.html      # Gestión materiales
-│   │   ├── organizations.html  # Gestión organizaciones
-│   │   ├── waste-sections.html # Secciones residuos
-│   │   ├── requests.html       # Solicitudes recolección
-│   │   ├── config.html         # Configuración sitio
-│   │   └── [otras páginas]     # Formularios y vistas
-│   ├── auth/               # 3 páginas autenticación
-│   │   ├── login.html          # Formulario login
-│   │   ├── register.html       # Formulario registro
-│   │   └── forgot-password.html # Recuperar contraseña
-│   ├── guest/              # Página pública
-│   │   └── index.html          # Página principal visitantes
-│   ├── org/                # Dashboard organizaciones
-│   │   └── dashboard.html      # Panel organización
-│   ├── users/              # 7 páginas usuario
-│   │   ├── dashboard.html      # Panel usuario (pendiente)
-│   │   ├── profile.html        # Perfil usuario
-│   │   ├── profile-edit.html   # Editar perfil
-│   │   ├── requests.html       # Mis solicitudes
-│   │   ├── request-form.html   # Nueva solicitud
-│   │   ├── stats.html          # Estadísticas
-│   │   └── view.html           # Vista detalle
-│   ├── posts/              # 4 páginas contenido
-│   │   ├── list.html           # Lista posts
-│   │   ├── detail.html         # Detalle post
-│   │   ├── view.html           # Vista post
-│   │   └── category.html       # Posts por categoría
-│   ├── categories/         # Páginas categorías
-│   │   └── list.html           # Lista categorías
-│   └── feedback/           # Formulario feedback
-│       └── form.html           # Contacto/sugerencias
+│   ├── fragments/                 # Componentes reutilizables
+│   │   ├── admin-layout.html      # Layout admin
+│   │   ├── layout.html            # Layout principal
+│   │   ├── navbar-guest.html      # Navbar público
+│   │   ├── footer.html            # Footer principal
+│   │   ├── simple-footer.html     # Footer simple
+│   │   ├── post.html              # Fragmentos de tarjetas/listas de posts
+│   │   ├── userlist.html          # Lista de usuarios (admin)
+│   │   ├── auth/                  # Subfragmentos de auth
+│   │   ├── guest/                 # Subfragmentos públicos (hero, menú, notas, cómo funciona)
+│   │   └── ui/                    # UI genérica
+│   ├── admin/                     # Páginas administración
+│   │   ├── users.html
+│   │   ├── posts.html
+│   │   ├── edit-post.html
+│   │   ├── categories.html
+│   │   ├── edit-category.html
+│   │   ├── materials.html
+│   │   ├── material-form.html
+│   │   ├── organizations.html
+│   │   ├── edit-organization.html
+│   │   ├── waste-sections.html
+│   │   ├── waste-section-form.html
+│   │   ├── waste-section-view.html
+│   │   ├── requests.html
+│   │   ├── feedback.html
+│   │   ├── password-reset-requests.html
+│   │   ├── config.html
+│   │   ├── documentation.html
+│   │   ├── form.html
+│   │   └── view.html
+│   ├── auth/                      # Autenticación
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   └── forgot-password.html
+│   ├── categories/
+│   │   └── list.html
+│   ├── feedback/
+│   │   └── form.html
+│   ├── org/
+│   │   └── dashboard.html
+│   ├── pages/                     # Páginas públicas varias
+│   ├── posts/
+│   │   ├── list.html
+│   │   └── detail.html
+│   ├── requests/
+│   │   └── list.html
+│   ├── shared/
+│   ├── users/
+│   │   ├── dashboard.html
+│   │   ├── profile.html
+│   │   ├── profile-edit.html
+│   │   ├── requests.html
+│   │   ├── request-form.html
+│   │   ├── stats.html
+│   │   └── view.html
+│   ├── dashboard.html             # Dashboard unificado
+│   └── i18n-test.html
 └── static/
-    ├── js/                 # JavaScript modular
-    └── images/             # Assets estáticos
+    ├── js/
+    └── images/
 ```
 
 ## 🗃️ Modelo de Datos

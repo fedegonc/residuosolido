@@ -5,7 +5,12 @@ module.exports = {
     "./src/main/resources/static/js/**/*.js"
   ],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        // Paleta base: brand + neutrales de Tailwind (slate/white)
+        brand: '#065f46' // Primario/CTAs
+      }
+    }
   },
   plugins: []
 };
