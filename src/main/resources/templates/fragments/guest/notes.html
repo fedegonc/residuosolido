@@ -1,12 +1,12 @@
   <section th:fragment="guestNotes" id="notes" class="py-12 md:py-16" xmlns:th="http://www.thymeleaf.org">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="flex items-center gap-2 mb-6 md:mb-8">
-      <svg aria-hidden="true"><use href="#posts"/></svg>
+    <h2 class="flex items-center gap-2 mb-6 md:mb-8 text-2xl md:text-3xl font-bold leading-snug text-slate-900">
       <span th:text="#{notes.title}">Notas Recientes</span>
+      <svg aria-hidden="true" class="w-5 h-5 text-brand"><use href="#posts"/></svg>
     </h2>
 
     <div th:if="${posts != null and !posts.isEmpty()}" class="grid grid-cols-12 gap-6">
-      <article th:each="post : ${posts}" class="col-span-12 md:col-span-6 lg:col-span-4 h-full flex flex-col rounded-sm border border-slate-200 overflow-hidden bg-white shadow-sm">
+      <article th:each="post : ${posts}" class="col-span-12 md:col-span-6 lg:col-span-4 h-full flex flex-col rounded-sm ring-1 ring-emerald-900/10 overflow-hidden bg-white shadow-sm hover:shadow transition-shadow">
         <figure class="relative aspect-[16/9] bg-slate-100">
           <img th:if="${post != null && post.imageUrl != null && !post.imageUrl.isEmpty()}"
                th:src="${post.imageUrl}"
@@ -34,7 +34,11 @@
         </div>
 
         <footer class="flex items-center justify-between px-4 md:px-5 pb-4 md:pb-5 text-xs text-slate-500">
-          <small><span th:text="#{notes.published_recently}">Publicado recientemente</span></small>
+          <small th:with="pub=${post != null && post.createdAt != null ? post.createdAt : null}">
+            <span th:if="${pub != null}"
+                  th:text="|Publicado el ${#temporals.format(pub, 'dd/MM/yyyy')}|">Publicado el 01/01/2025</span>
+            <span th:unless="${pub != null}" th:text="#{notes.published_recently}">Publicado recientemente</span>
+          </small>
           <a th:if="${post != null && post.id != null}"
              th:href="@{/posts/{id}(id=${post.id})}"
              class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800">

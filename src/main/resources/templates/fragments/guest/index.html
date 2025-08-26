@@ -1,4 +1,6 @@
-<section th:fragment="guestIndex" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="guestIndex" xmlns:th="http://www.thymeleaf.org">
+  <!-- Header (menú unificado) -->
+  <th:block th:replace="~{fragments/guest/menu :: guestMenu}"></th:block>
   <!-- Hero -->
   <th:block th:replace="~{fragments/guest/hero :: heroSection}"></th:block>
 
@@ -10,4 +12,4 @@
 
   <!-- Footer -->
   <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
-</section>
+</th:block>

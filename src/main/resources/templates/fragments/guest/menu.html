@@ -1,130 +1,62 @@
-  <div th:fragment="guestMenu" xmlns:th="http://www.thymeleaf.org">
-    <style>
-      .guest-menu-container {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1000;
-      }
-      
-      .menu-button {
-        background-color: #059669;
-        color: white;
-        border: none;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: background-color 0.2s ease;
-      }
-      
-      .menu-button:hover {
-        background-color: #047857;
-      }
-      
-      .menu-icon {
-        width: 1.25rem;
-        height: 1.25rem;
-        stroke: currentColor;
-        fill: none;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      
-      .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        margin-top: 0.5rem;
-        width: 12rem;
-        background-color: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e5e7eb;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.2s ease;
-      }
-      
-      .dropdown-menu.show {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-      
-      .dropdown-menu-content {
-        padding: 0.5rem 0;
-      }
-      
-      .dropdown-item {
-        display: block;
-        padding: 0.5rem 1rem;
-        color: #374151;
-        text-decoration: none;
-        font-size: 0.875rem;
-        transition: all 0.2s ease;
-      }
-      
-      .dropdown-item:hover {
-        background-color: #f0fdf4;
-        color: #059669;
-      }
-      
-      .dropdown-divider {
-        height: 1px;
-        background-color: #e5e7eb;
-        margin: 0.25rem 0;
-      }
-    </style>
-    
-    <nav class="guest-menu-container">
-      <div style="position: relative;">
-        <button id="menu-toggle-btn" class="menu-button" onclick="toggleGuestMenu()">
-          <svg class="menu-icon" viewBox="0 0 24 24">
-            <path d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-          <span th:text="#{menu.title}">Menú</span>
-        </button>
-        <div id="guest-menu" class="dropdown-menu" role="menu" aria-labelledby="menu-toggle-btn">
-          <div class="dropdown-menu-content">
-            <a href="/posts/category/reciclables" class="dropdown-item" th:text="#{menu.recyclables}">Reciclables</a>
-            <a href="/posts/category/no-reciclables" class="dropdown-item" th:text="#{menu.non_recyclables}">No Reciclables</a>
-            <a href="/posts/category/informaciones" class="dropdown-item" th:text="#{menu.information}">Informaciones</a>
-            <div class="dropdown-divider"></div>
-            <a href="/auth/login" class="dropdown-item" th:text="#{menu.login}">Ingresar</a>
-          </div>
-        </div>
+  <nav th:fragment="guestMenu" class="fixed top-4 right-4 z-50 relative" xmlns:th="http://www.thymeleaf.org">
+    <button id="menu-toggle-btn"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm font-medium"
+            type="button" onclick="toggleGuestMenu()">
+      <svg class="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <span th:text="#{menu.title}">Menú</span>
+    </button>
+
+    <div id="guest-menu"
+         data-open="false"
+         class="absolute mt-2 right-0 w-48 bg-white rounded-lg shadow-lg ring-1 ring-gray-200 opacity-0 scale-95 translate-y-[-10px] pointer-events-none transition duration-200 origin-top-right"
+         role="menu" aria-labelledby="menu-toggle-btn">
+      <div class="py-2">
+        <a href="/posts/category/reciclables" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.recyclables}">Reciclables</a>
+        <a href="/posts/category/no-reciclables" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.non_recyclables}">No Reciclables</a>
+        <a href="/posts/category/informaciones" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.information}">Informaciones</a>
+        <div class="my-1 h-px bg-gray-200"></div>
+        <a href="/auth/login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.login}">Ingresar</a>
       </div>
-    </nav>
-    
+    </div>
+
     <script>
       function toggleGuestMenu() {
         const menu = document.getElementById('guest-menu');
-        menu.classList.toggle('show');
+        const isOpen = menu.getAttribute('data-open') === 'true';
+        menu.setAttribute('data-open', String(!isOpen));
+        applyMenuState(menu);
       }
-      
-      // Cerrar menú al hacer clic fuera
-      document.addEventListener('click', function(event) {
+
+      function applyMenuState(menu) {
+        const open = menu.getAttribute('data-open') === 'true';
+        if (open) {
+          menu.classList.remove('opacity-0', 'scale-95', 'translate-y-[-10px]', 'pointer-events-none');
+          menu.classList.add('opacity-100', 'scale-100', 'translate-y-0', 'pointer-events-auto');
+        } else {
+          menu.classList.add('opacity-0', 'scale-95', 'translate-y-[-10px]', 'pointer-events-none');
+          menu.classList.remove('opacity-100', 'scale-100', 'translate-y-0', 'pointer-events-auto');
+        }
+      }
+
+      // Cerrar al hacer clic fuera
+      document.addEventListener('click', (event) => {
         const menu = document.getElementById('guest-menu');
         const button = document.getElementById('menu-toggle-btn');
-        
         if (!menu.contains(event.target) && !button.contains(event.target)) {
-          menu.classList.remove('show');
+          menu.setAttribute('data-open', 'false');
+          applyMenuState(menu);
         }
       });
-      
-      // Cerrar menú al presionar Escape
-      document.addEventListener('keydown', function(event) {
+
+      // Cerrar con Escape
+      document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-          document.getElementById('guest-menu').classList.remove('show');
+          const menu = document.getElementById('guest-menu');
+          menu.setAttribute('data-open', 'false');
+          applyMenuState(menu);
         }
       });
     </script>
-  </div>
+  </nav>

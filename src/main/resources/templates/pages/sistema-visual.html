@@ -11,12 +11,43 @@
           <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">Sistema Visual</h1>
           <p class="mt-2 text-slate-600 max-w-2xl">Catálogo de componentes UI del proyecto. Aquí iremos agregando los elementos (botones, tarjetas, tipografías, badges, etc.).</p>
         </header>
-
+        
         <!-- Secciones -->
         <div class="grid grid-cols-1 gap-6 md:gap-8" data-grid-anchor>
+          <!-- Patrón de contenedor (alineación global) -->
+          <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Patrón de contenedor</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">grid_view</span>
+            </h2>
+            <p class="mt-1 text-slate-600">Usar SIEMPRE este wrapper para alinear con el grid de la página:</p>
+            <ul class="mt-3 text-sm text-slate-700 list-disc pl-5 space-y-1">
+              <li>Clase: <code>max-w-7xl mx-auto px-4 sm:px-6 lg:px-8</code></li>
+              <li>Secciones: <code>py-12 md:py-16</code></li>
+              <li>Bloques internos opcionales para lectura: <code>max-w-3xl</code> o <code>max-w-5xl</code> (centrados dentro)</li>
+              <li>Siempre incluir <strong>Header</strong> y <strong>Footer</strong> unificados:
+                <code>&lt;th:block th:replace="~{fragments/guest/menu :: guestMenu}"&gt;&lt;/th:block&gt;</code>
+                y
+                <code>&lt;th:block th:replace="~{fragments/guest/footer :: guestFooter}"&gt;&lt;/th:block&gt;</code>
+              </li>
+            </ul>
+            <!-- Demostración visual alineada al grid -->
+            <div class="mt-4 bg-emerald-50/40 ring-1 ring-emerald-900/10 rounded-sm">
+              <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="max-w-3xl">
+                  <div class="text-sm text-slate-500">Demo de contenedor alineado</div>
+                  <h3 class="text-lg font-semibold text-slate-900">Borde izquierdo coincide con columnas del grid 7xl</h3>
+                  <p class="mt-1 text-sm text-slate-700">Este bloque muestra cómo los contenidos deben respetar el mismo wrapper que el resto de páginas.</p>
+                </div>
+              </div>
+            </div>
+          </section>
           <!-- Tipografía -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Tipografía</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Tipografía</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">text_fields</span>
+            </h2>
             <p class="mt-1 text-slate-600">Escalas, pesos, line-height y espaciado entre elementos.</p>
 
             <div class="mt-6 space-y-4">
@@ -68,7 +99,10 @@
 
           <!-- Reglas de combinación de colores -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Combinación de colores</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Combinación de colores</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">palette</span>
+            </h2>
             <p class="mt-1 text-slate-600">Pares recomendados y casos a evitar.</p>
             <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               <!-- Do: Brand + Blanco -->
@@ -109,7 +143,10 @@
           </section>
 
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Colores</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Colores</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">palette</span>
+            </h2>
             <p class="mt-1 text-slate-600">Paleta con códigos HEX, variaciones y usos recomendados.</p>
 
             <!-- Leyenda de roles -->
@@ -223,7 +260,10 @@
 
           <!-- Spacing / Grid System -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Spacing y Grid</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Spacing y Grid</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">grid_on</span>
+            </h2>
             <p class="mt-1 text-slate-600">Escalas: 8, 16, 24, 32, 48, 64. Contenedores y columnas.</p>
             <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-700">
               <div class="rounded-sm ring-1 ring-emerald-900/10 p-4">
@@ -256,7 +296,10 @@
 
           <!-- Iconografía -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Iconografía</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Iconografía</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">symbols</span>
+            </h2>
             <p class="mt-1 text-slate-600">Material Symbols Rounded. Tamaño base 20–24px, color acorde al contexto.</p>
             <div class="mt-4 flex flex-wrap items-center gap-4 text-slate-700">
               <span class="material-symbols-rounded text-brand">recycling</span>
@@ -272,7 +315,10 @@
 
           <!-- Componentes básicos -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Componentes</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Componentes</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">widgets</span>
+            </h2>
             <p class="mt-1 text-slate-600">Botones, inputs, cards y navegación.</p>
 
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -319,12 +365,29 @@
                   <a class="text-brand font-semibold" href="#">Acción</a>
                 </nav>
               </div>
+
+              <!-- Header (menú invitado) -->
+              <div class="rounded-sm ring-1 ring-emerald-900/10 p-4">
+                <div class="font-semibold text-slate-900 mb-3">Header</div>
+                <p class="text-sm text-slate-700">Usar siempre el menú unificado para invitados:</p>
+                <pre class="mt-2 bg-slate-50 p-3 rounded-sm text-xs overflow-x-auto"><code>&lt;th:block th:replace="~{fragments/guest/menu :: guestMenu}"&gt;&lt;/th:block&gt;</code></pre>
+              </div>
+
+              <!-- Tarjeta: Login -->
+              <div class="rounded-sm ring-1 ring-emerald-900/10 p-4">
+                <div class="font-semibold text-slate-900 mb-3">Card · Inicio de sesión</div>
+                <p class="text-sm text-slate-700">Card compacta y centrada. Incluir así:</p>
+                <pre class="mt-2 bg-slate-50 p-3 rounded-sm text-xs overflow-x-auto"><code>&lt;div class="max-w-md mx-auto" th:insert="~{fragments/auth/login-form :: loginForm}"&gt;&lt;/div&gt;</code></pre>
+              </div>
             </div>
           </section>
 
           <!-- Estados -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Estados interactivos</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Estados interactivos</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">toggle_on</span>
+            </h2>
             <p class="mt-1 text-slate-600">Leyenda de estados (aplicar a cualquier componente).</p>
             <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
               <div class="rounded-sm ring-1 ring-emerald-900/10 p-3 bg-white">
@@ -352,7 +415,10 @@
 
           <!-- Responsive -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Responsive</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Responsive</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">devices</span>
+            </h2>
             <p class="mt-1 text-slate-600">Breakpoints y comportamiento móvil.</p>
             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
               <div class="rounded-sm ring-1 ring-emerald-900/10 p-4">
@@ -376,7 +442,10 @@
 
           <!-- Sombras / Elevación -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Sombras y elevación</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Sombras y elevación</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">layers</span>
+            </h2>
             <p class="mt-1 text-slate-600">Niveles de sombra para jerarquía visual.</p>
             <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="rounded-sm bg-white ring-1 ring-emerald-900/10 p-4 shadow-sm">
@@ -396,7 +465,10 @@
 
           <!-- Anti‑patrones: Cuándo NO usar -->
           <section class="ring-1 ring-emerald-900/10 rounded-sm p-6">
-            <h2 class="text-xl font-bold text-slate-900">Cuándo NO usar</h2>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>Cuándo NO usar</span>
+              <span class="material-symbols-rounded text-slate-400" aria-hidden="true">block</span>
+            </h2>
             <p class="mt-1 text-slate-600">Ejemplos de anti‑patrones a evitar.</p>
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
               <div class="rounded-sm ring-1 ring-emerald-900/10 p-4">
