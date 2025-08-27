@@ -38,6 +38,15 @@
   <!-- Punto de extensión para CSS extra por página -->
   <th:block layout:fragment="head-extra"></th:block>
   
+  <!-- Hotwire Turbo Drive: navegación rápida sin recargar assets -->
+  <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" defer></script>
+  <script>
+    // Opcional: reducir el delay de la barra de progreso
+    document.addEventListener('DOMContentLoaded', function() {
+      try { Turbo.setProgressBarDelay(100); } catch(e) {}
+    });
+  </script>
+  
   <!-- Debug layout outlines via class on body -->
   <style>
     /* Outline fino para todos los elementos */
