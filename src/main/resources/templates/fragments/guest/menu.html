@@ -1,6 +1,6 @@
-  <nav th:fragment="guestMenu" class="fixed top-4 right-4 z-50 relative" xmlns:th="http://www.thymeleaf.org">
+  <nav th:fragment="guestMenu" class="fixed top-4 inset-x-0 z-50 relative w-full flex justify-end px-4" xmlns:th="http://www.thymeleaf.org">
     <button id="menu-toggle-btn"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm font-medium"
+            class="absolute right-4 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm font-medium"
             type="button" onclick="toggleGuestMenu()">
       <svg class="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M4 6h16M4 12h16M4 18h16"></path>
@@ -12,13 +12,11 @@
          data-open="false"
          class="absolute mt-2 right-0 w-48 bg-white rounded-lg shadow-lg ring-1 ring-gray-200 opacity-0 scale-95 translate-y-[-10px] pointer-events-none transition duration-200 origin-top-right"
          role="menu" aria-labelledby="menu-toggle-btn">
-      <div class="py-2">
-        <a href="/posts/category/reciclables" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.recyclables}">Reciclables</a>
-        <a href="/posts/category/no-reciclables" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.non_recyclables}">No Reciclables</a>
-        <a href="/posts/category/informaciones" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.information}">Informaciones</a>
-        <div class="my-1 h-px bg-gray-200"></div>
-        <a href="/auth/login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.login}">Ingresar</a>
-      </div>
+      <a href="/posts/category/reciclables" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.recyclables}">Reciclables</a>
+      <a href="/posts/category/no-reciclables" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.non_recyclables}">No Reciclables</a>
+      <a href="/posts/category/informaciones" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.information}">Informaciones</a>
+      <div class="my-1 h-px bg-gray-200"></div>
+      <a href="/auth/login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700" th:text="#{menu.login}">Ingresar</a>
     </div>
 
     <script>
