@@ -2,7 +2,6 @@ package com.residuosolido.app.controller.auth;
 
 import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.Role;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.AuthService;
 import com.residuosolido.app.service.PostService;
@@ -19,9 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.List;
-
-import java.util.stream.Collectors;
 
 @Controller
 public class AuthController {
