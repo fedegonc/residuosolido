@@ -118,10 +118,12 @@
   <!-- Aviso global de testing (delgado, alineado a la izquierda, sin espacio superior) -->
   <div class="w-full bg-emerald-700 text-white">
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="py-1 text-left text-[11px] sm:text-xs leading-none flex items-center gap-2">
+      <button id="testingNoticeBtn" type="button"
+              class="w-full py-1 text-left text-[11px] sm:text-xs leading-none flex items-center gap-2 cursor-pointer hover:bg-emerald-800/40 focus:outline-none focus:ring-2 focus:ring-white/60 rounded"
+              aria-controls="testingModal" aria-haspopup="dialog">
         <span class="material-symbols-rounded text-white" aria-hidden="true">warning</span>
         <span>Sistema en desarrollo</span>
-      </div>
+      </button>
     </div>
   </div>
 
