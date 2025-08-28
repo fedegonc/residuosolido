@@ -8,9 +8,9 @@
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
-  <section layout:fragment="content">
-    <!-- Menú unificado para invitados -->
-    <th:block th:replace="~{fragments/guest/menu :: guestMenu}"></th:block>
+  <section layout:fragment="content" class="min-h-screen flex flex-col">
+    <!-- Navbar guest completo -->
+    <div th:replace="~{fragments/navbar-guest :: navbar}"></div>
 
     <!-- Breadcrumbs (alineado al contenedor 7xl) -->
     <div class="bg-white">
@@ -26,16 +26,18 @@
     </div>
 
     <!-- Contenido principal -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-      <!-- Mensajes -->
-      <div class="max-w-md mx-auto">
-        <div th:if="${param.success}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm" th:text="${param.success}"></div>
-        <div th:if="${param.logout}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</div>
-        <div th:if="${param.error}" class="mb-4 rounded-sm ring-1 ring-rose-900/10 bg-rose-50 text-rose-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</div>
-      </div>
+    <div class="flex-1">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        <!-- Mensajes -->
+        <div class="max-w-md mx-auto">
+          <div th:if="${param.success}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm" th:text="${param.success}"></div>
+          <div th:if="${param.logout}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</div>
+          <div th:if="${param.error}" class="mb-4 rounded-sm ring-1 ring-rose-900/10 bg-rose-50 text-rose-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</div>
+        </div>
 
-      <!-- Formulario (fragmento) -->
-      <div class="max-w-md mx-auto" th:insert="~{fragments/auth/login-form :: loginForm}"></div>
+        <!-- Formulario (fragmento) -->
+        <div class="max-w-md mx-auto" th:insert="~{fragments/auth/login-form :: loginForm}"></div>
+      </div>
     </div>
     
     <!-- Footer unificado -->
@@ -44,7 +46,7 @@
 
   <!-- Scripts extra -->
   <th:block layout:fragment="body-scripts">
-    <!-- Sin scripts adicionales -->
+    <script th:replace="~{fragments/navbar-guest :: navbar-script}"></script>
   </th:block>
 </body>
 </html>
