@@ -1,28 +1,35 @@
-  <section th:fragment="howItWorks" id="how-it-works" class="bg-white py-12 md:py-16 shadow-sm ring-1 ring-emerald-900/10 rounded-sm" th:attr="aria-label=#{howItWorks.title}" xmlns:th="http://www.thymeleaf.org">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 p-6 sm:p-8 md:p-10" data-grid-anchor>
-      <h2 class="text-left text-2xl md:text-3xl font-bold tracking-tight text-slate-900 mb-6 md:mb-8 flex items-center gap-2">
-        <span th:text="#{howItWorks.title}">¿Cómo funciona?</span>
-        <span class="material-symbols-rounded text-slate-400" aria-hidden="true">recycling</span>
-      </h2>
+  <div th:fragment="howItWorks" class="p-6" xmlns:th="http://www.thymeleaf.org">
+    <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+      <span th:text="#{howItWorks.title}">¿Cómo funciona?</span>
+      <span class="material-symbols-rounded text-emerald-600 text-lg" aria-hidden="true">recycling</span>
+    </h3>
 
-      <ol class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        <!-- Paso 1 -->
-        <li class="space-y-2 ring-1 ring-emerald-900/10 rounded-sm p-4">
-          <div class="flex items-start gap-3">
-            <span class="material-symbols-rounded text-emerald-700 select-none" aria-hidden="true">info</span>
-            <h3 class="text-base md:text-lg font-semibold text-slate-900" th:text="'1. ' + #{howItWorks.step1.title}">1. Infórmate</h3>
-          </div>
-          <p class="text-sm md:text-base text-slate-700" th:text="#{howItWorks.step1.description}">Encuentra información...</p>
-        </li>
+    <div class="space-y-4">
+      <!-- Paso 1 -->
+      <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
+        <span class="material-symbols-rounded text-emerald-700 text-sm mt-0.5" aria-hidden="true">info</span>
+        <div>
+          <h4 class="font-semibold text-slate-900 text-sm" th:text="'1. ' + #{howItWorks.step1.title}">1. Infórmate</h4>
+          <p class="text-xs text-slate-600 mt-1" th:text="#{howItWorks.step1.description}">Encuentra información...</p>
+        </div>
+      </div>
 
-        <!-- Paso 2 (si existe) -->
-        <li class="space-y-2 ring-1 ring-emerald-900/10 rounded-sm p-4" th:if="${#messages.msgOrNull('howItWorks.step2.title')} != null">
-          <div class="flex items-start gap-3">
-            <span class="material-symbols-rounded text-emerald-700 select-none" aria-hidden="true">assignment_turned_in</span>
-            <h3 class="text-base md:text-lg font-semibold text-slate-900" th:text="'2. ' + #{howItWorks.step2.title}">2. Solicite</h3>
-          </div>
-          <p class="text-sm md:text-base text-slate-700" th:text="#{howItWorks.step2.description}">Solicite coleta...</p>
-        </li>
-      </ol>
+      <!-- Paso 2 -->
+      <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+        <span class="material-symbols-rounded text-blue-700 text-sm mt-0.5" aria-hidden="true">assignment_turned_in</span>
+        <div>
+          <h4 class="font-semibold text-slate-900 text-sm" th:text="'2. ' + #{howItWorks.step2.title}">2. Solicita</h4>
+          <p class="text-xs text-slate-600 mt-1" th:text="#{howItWorks.step2.description}">Solicita coleta...</p>
+        </div>
+      </div>
+
+      <!-- Paso 3 -->
+      <div class="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+        <span class="material-symbols-rounded text-purple-700 text-sm mt-0.5" aria-hidden="true">location_on</span>
+        <div>
+          <h4 class="font-semibold text-slate-900 text-sm" th:text="'3. ' + #{howItWorks.step3.title}">3. Encuentra</h4>
+          <p class="text-xs text-slate-600 mt-1" th:text="#{howItWorks.step3.description}">Localiza puntos...</p>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>

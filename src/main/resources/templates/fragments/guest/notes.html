@@ -1,60 +1,45 @@
-  <section th:fragment="guestNotes" id="notes" class="py-12 md:py-16" xmlns:th="http://www.thymeleaf.org">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="flex items-center gap-2 mb-6 md:mb-8 text-2xl md:text-3xl font-bold leading-snug text-slate-900">
+  <div th:fragment="guestNotes" class="p-6" xmlns:th="http://www.thymeleaf.org">
+    <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
       <span th:text="#{notes.title}">Notas Recientes</span>
-      <svg aria-hidden="true" class="w-5 h-5 text-brand"><use href="#posts"/></svg>
-    </h2>
+      <svg aria-hidden="true" class="w-5 h-5 text-emerald-600"><use href="#posts"/></svg>
+    </h3>
 
-    <div th:if="${posts != null and !posts.isEmpty()}" class="grid grid-cols-12 gap-6">
-      <article th:each="post : ${posts}" class="col-span-6 md:col-span-6 lg:col-span-4 h-full flex flex-col rounded-sm ring-1 ring-emerald-900/10 overflow-hidden bg-white shadow-sm hover:shadow transition-shadow">
-        <figure class="relative aspect-[16/9] bg-slate-100">
-          <img th:if="${post != null && post.imageUrl != null && !post.imageUrl.isEmpty()}"
-               th:src="${post.imageUrl}"
-               th:alt="${post != null && !#strings.isEmpty(post.title) ? post.title : (!#strings.isEmpty(post.sourceName) ? post.sourceName : '')}"
-               class="absolute inset-0 w-full h-full object-cover"
-               loading="lazy" decoding="async" />
-          <div th:unless="${post != null && post.imageUrl != null && !post.imageUrl.isEmpty()}" class="absolute inset-0 grid place-items-center text-slate-400">
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-10 h-10"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 01-2-2V9.5a2.5 2.5 0 00-2.5-2.5H15"></path></svg>
-          </div>
-          <span class="absolute left-3 top-3 inline-flex items-center rounded-md bg-emerald-700/90 px-2 py-0.5 text-xs font-medium text-white"
-                th:text="${post != null and post.categoryName != null and !#strings.isEmpty(post.categoryName)} ? ${post.categoryName} : #{category.uncategorized}">Categoría</span>
-        </figure>
-
-        <div class="flex-1 p-3 md:p-4 space-y-2">
-          <h3 class="text-sm md:text-base font-semibold text-slate-900">
-            <a th:if="${post != null && post.id != null}"
-               th:href="@{/posts/{id}(id=${post.id})}"
-               th:text="${!#strings.isEmpty(post.title) ? post.title : (!#strings.isEmpty(post.sourceName) ? post.sourceName : '...')}"
-               th:title="${!#strings.isEmpty(post.title) ? post.title : (!#strings.isEmpty(post.sourceName) ? post.sourceName : '')}"
-               class="hover:underline">Título de la Nota</a>
-            <span th:unless="${post != null && post.id != null}"
-                  th:text="${post != null && !#strings.isEmpty(post.title) ? post.title : (!#strings.isEmpty(post.sourceName) ? post.sourceName : '...')}">Título</span>
-          </h3>
-          <p class="text-xs text-slate-600" th:text="${post != null && !#strings.isEmpty(post.content) ? #strings.abbreviate(post.content, 100) : ''}">Contenido de la nota...</p>
-        </div>
-
-        <footer class="flex items-center justify-between px-3 md:px-4 pb-3 md:pb-4 text-xs text-slate-500">
-          <small th:with="pub=${post != null && post.createdAt != null ? post.createdAt : null}">
-            <span th:if="${pub != null}"
-                  th:text="|Publicado el ${#temporals.format(pub, 'dd/MM/yyyy')}|">Publicado el 01/01/2025</span>
-            <span th:unless="${pub != null}" th:text="#{notes.published_recently}">Publicado recientemente</span>
-          </small>
+    <div th:if="${posts != null and !posts.isEmpty()}" class="space-y-3">
+      <article th:each="post, iterStat : ${posts}" th:if="${iterStat.index < 3}" 
+               class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+        <h4 class="font-semibold text-slate-900 text-sm mb-1">
           <a th:if="${post != null && post.id != null}"
              th:href="@{/posts/{id}(id=${post.id})}"
-             class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800">
+             th:text="${!#strings.isEmpty(post.title) ? #strings.abbreviate(post.title, 40) : '...'}"
+             class="hover:text-emerald-700">Título</a>
+        </h4>
+        <p class="text-xs text-slate-600 mb-2" 
+           th:text="${post != null && !#strings.isEmpty(post.content) ? #strings.abbreviate(post.content, 60) : ''}">Contenido...</p>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-500" 
+                th:text="${post != null && post.categoryName != null ? post.categoryName : ''}">Categoría</span>
+          <a th:if="${post != null && post.id != null}"
+             th:href="@{/posts/{id}(id=${post.id})}"
+             class="text-xs text-emerald-600 hover:text-emerald-700">
             <span th:text="#{notes.read_more}">Leer más</span>
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </a>
-        </footer>
+        </div>
       </article>
     </div>
 
-    <div th:if="${posts == null or posts.isEmpty()}" class="empty-state mt-6 text-center">
-      <svg aria-hidden="true" viewBox="0 0 24 24">
+    <div th:if="${posts == null or posts.isEmpty()}" class="text-center py-8">
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="w-8 h-8 mx-auto text-slate-400 mb-2">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 002-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
       </svg>
-      <p th:text="#{notes.no_notes_available}">No hay notas disponibles</p>
-      <p th:text="#{notes.be_first_to_share}">¡Sé el primero en compartir contenido!</p>
+      <p class="text-sm text-slate-600" th:text="#{notes.no_notes_available}">No hay notas disponibles</p>
+    </div>
+
+    <div class="mt-4 pt-3 border-t border-slate-200">
+      <a href="/posts" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+        <span>Ver todas las notas</span>
+        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
     </div>
   </div>
-</section>

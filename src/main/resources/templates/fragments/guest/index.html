@@ -4,12 +4,100 @@
   <!-- Hero -->
   <th:block th:replace="~{fragments/guest/hero :: heroSection}"></th:block>
 
-  <!-- Cómo funciona -->
-  <th:block th:replace="~{fragments/guest/howitworks :: howItWorks}"></th:block>
+  <!-- Grid de contenido principal -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-12 gap-6">
 
-  <!-- Notas recientes -->
-  <th:block th:replace="~{fragments/guest/notes :: guestNotes}"></th:block>
+        <!-- Cómo funciona (destacado) -->
+        <article class="col-span-12 lg:col-span-8 bg-white rounded-lg overflow-hidden shadow-sm">
+          <th:block th:replace="~{fragments/guest/howitworks :: howItWorks}"></th:block>
+        </article>
 
-  <!-- Footer -->
-  <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
+        <!-- Notas recientes (secundario) -->
+        <article class="col-span-6 lg:col-span-4 bg-white rounded-lg overflow-hidden shadow-sm">
+          <th:block th:replace="~{fragments/guest/notes :: guestNotes}"></th:block>
+        </article>
+
+        <!-- Categorías principales -->
+        <article class="col-span-6 md:col-span-4 lg:col-span-4 bg-white rounded-lg overflow-hidden shadow-sm">
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-slate-900 mb-3" th:text="#{waste.recyclable}">Reciclable</h3>
+            <p class="text-sm text-slate-600 mb-4">Aprende cómo desechar correctamente materiales reciclables</p>
+            <a href="/categories/recyclable" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+              <span>Ver más</span>
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <article class="col-span-6 md:col-span-4 lg:col-span-4 bg-white rounded-lg overflow-hidden shadow-sm">
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-slate-900 mb-3" th:text="#{waste.non_recyclable}">No Reciclable</h3>
+            <p class="text-sm text-slate-600 mb-4">Información sobre residuos no reciclables</p>
+            <a href="/categories/non-recyclable" class="inline-flex items-center text-orange-600 hover:text-orange-700 text-sm font-medium">
+              <span>Ver más</span>
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <article class="col-span-6 md:col-span-4 lg:col-span-4 bg-white rounded-lg overflow-hidden shadow-sm">
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-slate-900 mb-3" th:text="#{waste.information}">Informaciones</h3>
+            <p class="text-sm text-slate-600 mb-4">Recursos educativos y guías prácticas</p>
+            <a href="/categories/information" class="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium">
+              <span>Ver más</span>
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Organizaciones -->
+        <article class="col-span-12 md:col-span-6 bg-white rounded-lg overflow-hidden shadow-sm">
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-slate-900 mb-3" th:text="#{organizations.title}">Organizaciones</h3>
+            <p class="text-slate-600 text-sm mb-4">Encuentra organizaciones que gestionan residuos en tu área</p>
+            <a href="/organizations" class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors">
+              <span>Ver Organizaciones</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Posts recientes -->
+        <article class="col-span-6 md:col-span-3 bg-white rounded-lg overflow-hidden shadow-sm">
+          <div class="p-4">
+            <h4 class="text-sm font-medium text-slate-900 mb-2" th:text="#{posts.title}">Posts Recientes</h4>
+            <a href="/posts" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 text-xs font-medium">
+              <span>Ver todos</span>
+              <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <article class="col-span-6 md:col-span-3 bg-white rounded-lg overflow-hidden shadow-sm">
+          <div class="p-4">
+            <h4 class="text-sm font-medium text-slate-900 mb-2">Recursos</h4>
+            <a href="/resources" class="inline-flex items-center text-blue-600 hover:text-blue-700 text-xs font-medium">
+              <span>Explorar</span>
+              <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 </th:block>
