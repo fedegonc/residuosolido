@@ -118,9 +118,10 @@
   <!-- Aviso global de testing (delgado, alineado a la izquierda, sin espacio superior) -->
   <div class="w-full bg-emerald-700 text-white">
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
-      <button id="testingNoticeBtn" type="button" class="py-1 text-left text-[11px] sm:text-xs leading-none hover:underline">
-        Sitio en etapa de testing — no usar datos reales
-      </button>
+      <div class="py-1 text-left text-[11px] sm:text-xs leading-none flex items-center gap-2">
+        <span class="material-symbols-rounded text-white" aria-hidden="true">warning</span>
+        <span>Sistema en desarrollo</span>
+      </div>
     </div>
   </div>
 
@@ -137,7 +138,7 @@
 
   <!-- Scripts globales (ligeros) -->
   <!-- Cache-busting para asegurar última versión del language-switcher -->
-  <script th:src="@{/js/language-switcher.js(v=3)}" src="/js/language-switcher.js?v=3" defer></script>
+  <script th:src="@{/js/language-switcher.js(v=4)}" src="/js/language-switcher.js?v=4" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function(){
       var btn = document.getElementById('testingNoticeBtn');
@@ -161,12 +162,10 @@
       function setState(enabled) {
         if (enabled) {
           body.classList.add('debug-outlines');
-          btn.setAttribute('aria-pressed', 'true');
-          btn.textContent = 'Debug: ON';
+          if (btn) { btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Debug: ON'; }
         } else {
           body.classList.remove('debug-outlines');
-          btn.setAttribute('aria-pressed', 'false');
-          btn.textContent = 'Debug: OFF';
+          if (btn) { btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Debug: OFF'; }
         }
         try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch (e) {}
       }
@@ -178,9 +177,14 @@
       if (urlHasDebug) init = true;
       setState(init);
 
-      btn.addEventListener('click', function() {
-        setState(!body.classList.contains('debug-outlines'));
-      });
+      if (btn) {
+        btn.addEventListener('click', function() {
+          setState(!body.classList.contains('debug-outlines'));
+        });
+      }
+
+      // Expose helper
+      try { window.__debugSetState = setState; } catch(e) {}
     })();
 
     // Toggle de grilla de 12 columnas con modos (Full, 7xl, 5xl, 2xl)
@@ -257,6 +261,7 @@
       }
 
       function updateLabel(enabled, mode) {
+        if (!btn) return;
         const suffix = mode ? ` (${mode.label})` : '';
         btn.textContent = enabled ? `Grid: ON${suffix}` : `Grid: OFF${suffix}`;
       }
@@ -264,10 +269,10 @@
       function setState(enabled) {
         if (enabled) {
           body.classList.add('grid-overlay-on');
-          btn.setAttribute('aria-pressed', 'true');
+          if (btn) { btn.setAttribute('aria-pressed', 'true'); }
         } else {
           body.classList.remove('grid-overlay-on');
-          btn.setAttribute('aria-pressed', 'false');
+          if (btn) { btn.setAttribute('aria-pressed', 'false'); }
         }
         const modeId = (function(){ try { return localStorage.getItem(KEY_MODE) || '2xl'; } catch(e) { return '2xl'; } })();
         const mode = MODES.find(m => m.id === modeId) || MODES[3];
@@ -296,17 +301,22 @@
       window.addEventListener('resize', requestAlign);
       window.addEventListener('scroll', requestAlign, { passive: true });
 
-      btn.addEventListener('click', function(ev) {
-        if (ev.altKey) {
-          // Cambiar modo
-          try { modeId = localStorage.getItem(KEY_MODE) || '2xl'; } catch(e) { modeId = '2xl'; }
-          const nextIdx = nextMode(modeId);
-          modeId = MODES[nextIdx].id;
-          return;
-        }
-        // Toggle ON/OFF
-        setState(!body.classList.contains('grid-overlay-on'));
-      });
+      if (btn) {
+        btn.addEventListener('click', function(ev) {
+          if (ev.altKey) {
+            // Cambiar modo
+            try { modeId = localStorage.getItem(KEY_MODE) || '2xl'; } catch(e) { modeId = '2xl'; }
+            const nextIdx = nextMode(modeId);
+            modeId = MODES[nextIdx].id;
+            return;
+          }
+          // Toggle ON/OFF
+          setState(!body.classList.contains('grid-overlay-on'));
+        });
+      }
+
+      // Expose helper
+      try { window.__gridSetState = setState; } catch(e) {}
     })();
   </script>
 
@@ -314,8 +324,6 @@
   <script>
     document.addEventListener('DOMContentLoaded', function(){
       var devBtn = document.getElementById('devToggleBtn');
-      var debugBtn = document.getElementById('debugToggleBtn');
-      var gridBtn = document.getElementById('gridToggleBtn');
       var body = document.body;
 
       if (!devBtn) return;
@@ -337,19 +345,22 @@
       // Initial label
       updateDevLabel();
 
-      // Keep in sync when individual buttons are used
-      if (debugBtn) debugBtn.addEventListener('click', function(){ setTimeout(updateDevLabel, 0); });
-      if (gridBtn) gridBtn.addEventListener('click', function(){ setTimeout(updateDevLabel, 0); });
-
       devBtn.addEventListener('click', function(){
         var s = states();
         var shouldTurnOn = !(s.debugOn && s.gridOn);
-        if (shouldTurnOn) {
-          if (!s.debugOn && debugBtn) debugBtn.click();
-          if (!s.gridOn && gridBtn) gridBtn.click();
+        // Prefer helpers exposed by the modules
+        if (typeof window.__debugSetState === 'function') {
+          try { window.__debugSetState(shouldTurnOn); } catch(e) {}
         } else {
-          if (s.debugOn && debugBtn) debugBtn.click();
-          if (s.gridOn && gridBtn) gridBtn.click();
+          // Fallback toggle
+          body.classList.toggle('debug-outlines', shouldTurnOn);
+          try { localStorage.setItem('debugOutlines', shouldTurnOn ? '1' : '0'); } catch(e) {}
+        }
+        if (typeof window.__gridSetState === 'function') {
+          try { window.__gridSetState(shouldTurnOn); } catch(e) {}
+        } else {
+          body.classList.toggle('grid-overlay-on', shouldTurnOn);
+          try { localStorage.setItem('gridOverlayOn', shouldTurnOn ? '1' : '0'); } catch(e) {}
         }
         setTimeout(updateDevLabel, 0);
       });

@@ -30,9 +30,11 @@
         <p class="text-[11px] text-white/70" th:text="#{footer.copy}"> Frontera de la Paz</p>
         <div class="flex items-center gap-3">
           <a th:href="@{/feedback}"
+             th:title="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
+             th:attr="aria-label=${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
              class="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition">
             <span class="material-symbols-rounded text-slate-900" aria-hidden="true">forum</span>
-            <span>Cuéntanos qué piensas</span>
+            <span th:text="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}">Cuéntanos qué piensas</span>
           </a>
           <a th:href="@{/sistema-visual}"
              class="inline-flex items-center gap-2 rounded-sm ring-1 ring-gray-400 px-3 py-1.5 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition">
@@ -44,16 +46,6 @@
                   class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
                   aria-pressed="false" title="Alternar Debug + Grid simultáneamente">
             Dev: OFF
-          </button>
-          <button id="gridToggleBtn" type="button"
-                  class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
-                  aria-pressed="false" title="Click: ON/OFF | Alt+Click: cambiar modo (Full/7xl/5xl/2xl)">
-            Grid: OFF (7xl)
-          </button>
-          <button id="debugToggleBtn" type="button"
-                  class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
-                  aria-pressed="false" title="Alternar bordes de debug">
-            Debug: OFF
           </button>
         </div>
       </div>

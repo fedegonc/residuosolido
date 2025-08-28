@@ -1,0 +1,17 @@
+<div th:fragment="languageSwitcher"
+     class="inline-flex items-center gap-2 bg-gray-200/90 text-slate-900 rounded-md ring-1 ring-gray-300 shadow-sm px-2 py-1"
+     aria-label="Language switcher">
+  <a href="/change-language?lang=es" data-lang="es"
+     class="inline-flex items-center gap-2 rounded-md bg-gray-200 hover:bg-gray-300 text-slate-900 px-3 py-1.5 text-xs sm:text-sm font-semibold transition"
+     aria-label="Cambiar a Español">
+    <img src="https://flagcdn.com/uy.svg" alt="Uruguay" class="h-3.5 w-5 rounded-sm ring-1 ring-slate-300 select-none" loading="lazy" width="20" height="14" />
+    <span>Español</span>
+  </a>
+  <span aria-hidden="true" class="text-gray-400">|</span>
+  <a href="/change-language?lang=pt" data-lang="pt"
+     class="inline-flex items-center gap-2 rounded-md bg-gray-200 hover:bg-gray-300 text-slate-900 px-3 py-1.5 text-xs sm:text-sm font-semibold transition"
+     aria-label="Mudar para Português">
+    <img src="https://flagcdn.com/br.svg" alt="Brasil" class="h-3.5 w-5 rounded-sm ring-1 ring-slate-300 select-none" loading="lazy" width="20" height="14" />
+    <span>Português</span>
+  </a>
+</div>

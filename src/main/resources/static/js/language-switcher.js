@@ -14,23 +14,14 @@ class LanguageSwitcher {
     }
 
     setupLanguageButtons() {
-        // Solo buscar por IDs específicos para evitar duplicados
-        const specificIds = ['lang-es-link', 'lang-pt-link'];
-        let buttonsConfigured = 0;
-        
-        specificIds.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                // Remover listeners previos si existen
-                el.removeEventListener('click', this.handleLanguageClick);
-                
-                // Agregar nuevo listener
-                el.addEventListener('click', (e) => {
-                    this.handleLanguageClick(e, el);
-                });
-                
-                buttonsConfigured++;
-            }
+        // Buscar todos los enlaces con data-lang y evitar bindings duplicados
+        const links = document.querySelectorAll('a[data-lang]');
+        links.forEach((el) => {
+            if (el.dataset.langInit === '1') return;
+            el.addEventListener('click', (e) => {
+                this.handleLanguageClick(e, el);
+            });
+            el.dataset.langInit = '1';
         });
     }
 
