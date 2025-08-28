@@ -39,12 +39,18 @@
                     </div>
                 </div>
                 <a href="/organizations" class="text-gray-600 hover:text-green-600 transition-colors">Organizaciones</a>
+                <!-- Feedback (solo autenticados) -->
+                <a sec:authorize="isAuthenticated()" href="/feedback" class="text-gray-600 hover:text-green-600 transition-colors">Feedback</a>
             </nav>
 
             <!-- Auth buttons -->
             <div class="flex items-center space-x-4">
-                <a href="/auth/login" class="text-gray-600 hover:text-green-600 transition-colors">Iniciar Sesión</a>
-                <a href="/auth/register" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">Crear Cuenta</a>
+                <!-- Botón destacado de Feedback cuando autenticado -->
+                <a sec:authorize="isAuthenticated()" href="/feedback" class="hidden md:inline-flex items-center bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm">
+                    Enviar Feedback
+                </a>
+                <a sec:authorize="isAnonymous()" href="/auth/login" class="text-gray-600 hover:text-green-600 transition-colors">Iniciar Sesión</a>
+                <a sec:authorize="isAnonymous()" href="/auth/register" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">Crear Cuenta</a>
                 
                 <!-- Mobile menu button -->
                 <button class="md:hidden p-2 text-gray-600 hover:text-green-600" onclick="toggleMobileMenu()">
@@ -66,9 +72,11 @@
             <a href="/posts/category/informaciones" class="block py-2 pl-4 text-sm text-gray-600 hover:text-green-600">• Informaciones</a>
             <a href="/posts/category/compostaje" class="block py-2 pl-4 text-sm text-gray-600 hover:text-green-600">• Compostaje</a>
             <a href="/organizations" class="block py-2 text-gray-600 hover:text-green-600">Organizaciones</a>
+            <!-- Feedback en mobile (solo autenticados) -->
+            <a sec:authorize="isAuthenticated()" href="/feedback" class="block py-2 text-gray-600 hover:text-green-600">Feedback</a>
             <div class="border-t border-gray-200 pt-2 mt-2">
-                <a href="/auth/login" class="block py-2 text-gray-600 hover:text-green-600">Iniciar Sesión</a>
-                <a href="/auth/register" class="block py-2 text-green-600 font-medium">Crear Cuenta</a>
+                <a sec:authorize="isAnonymous()" href="/auth/login" class="block py-2 text-gray-600 hover:text-green-600">Iniciar Sesión</a>
+                <a sec:authorize="isAnonymous()" href="/auth/register" class="block py-2 text-green-600 font-medium">Crear Cuenta</a>
             </div>
         </div>
     </div>
