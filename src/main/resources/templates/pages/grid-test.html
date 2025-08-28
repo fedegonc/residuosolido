@@ -132,8 +132,85 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
-  </section>
-</body>
-</html>
+    <!-- Footer modelo inspirado en el footer del index -->
+    <footer class="bg-slate-900 text-white mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="py-8">
+          <!-- Grid del footer -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Información del sitio -->
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Grid Test - Sistema Visual</h3>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Página de prueba para validar el sistema de grid responsive y alineación de elementos.
+              </p>
+            </div>
+
+            <!-- Enlaces útiles -->
+            <div>
+              <h4 class="text-sm font-semibold text-white mb-3">Enlaces de Prueba</h4>
+              <ul class="space-y-2 text-sm">
+                <li>
+                  <a href="/sistema-visual" class="text-slate-300 hover:text-white transition-colors">
+                    Sistema Visual
+                  </a>
+                </li>
+                <li>
+                  <a href="/" class="text-slate-300 hover:text-white transition-colors">
+                    Página Principal
+                  </a>
+                </li>
+                <li>
+                  <a href="#top" class="text-slate-300 hover:text-white transition-colors">
+                    Volver arriba
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Información técnica -->
+            <div>
+              <h4 class="text-sm font-semibold text-white mb-3">Información Técnica</h4>
+              <div class="space-y-2 text-xs text-slate-400">
+                <p>Grid: 12 columnas</p>
+                <p>Breakpoints: sm/md/lg</p>
+                <p>Framework: Tailwind CSS</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Línea divisoria y acciones -->
+          <div class="mt-8 pt-6 border-t border-slate-700">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+              <!-- Copyright -->
+              <p class="text-xs text-slate-400">
+                © Grid Test - Sistema de diseño
+              </p>
+
+              <!-- Botones de acción -->
+              <div class="flex items-center gap-3">
+                <button type="button"
+                        class="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium text-slate-900 bg-slate-200 hover:bg-slate-300 transition-colors">
+                  <span class="material-symbols-rounded text-slate-900 text-sm" aria-hidden="true">forum</span>
+                  <span>Feedback</span>
+                </button>
+
+                <a href="/sistema-visual"
+                   class="inline-flex items-center gap-2 rounded-sm ring-1 ring-slate-600 px-3 py-1.5 text-xs font-medium text-white bg-transparent hover:bg-white/10 transition-colors">
+                  <span class="material-symbols-rounded text-white text-sm" aria-hidden="true">design_services</span>
+                  <span>Sistema Visual</span>
+                </a>
+
+                <button id="devToggleBtn" type="button"
+                        class="rounded-full ring-1 ring-white/30 px-3 py-1 text-xs font-medium text-white bg-transparent hover:bg-white/10 transition-colors"
+                        aria-pressed="false">
+                  Dev: OFF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
