@@ -30,7 +30,7 @@ public class FeedbackController {
         }
         // Info del usuario autenticado para el formulario/vista si se requiere
         if (authentication != null) {
-            User currentUser = userService.findByUsername(authentication.getName());
+            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
             model.addAttribute("currentUser", currentUser);
         }
         return "feedback/form";
@@ -42,7 +42,7 @@ public class FeedbackController {
                                  RedirectAttributes redirectAttributes) {
         try {
             if (authentication != null) {
-                User currentUser = userService.findByUsername(authentication.getName());
+                User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
                 feedback.setUser(currentUser);
                 // Completar nombre/email si es posible
                 if (feedback.getName() == null || feedback.getName().isBlank()) {
