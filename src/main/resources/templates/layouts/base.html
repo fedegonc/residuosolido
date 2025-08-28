@@ -309,6 +309,53 @@
       });
     })();
   </script>
+
+  <!-- Unified Dev toggle (controls Debug + Grid together) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      var devBtn = document.getElementById('devToggleBtn');
+      var debugBtn = document.getElementById('debugToggleBtn');
+      var gridBtn = document.getElementById('gridToggleBtn');
+      var body = document.body;
+
+      if (!devBtn) return;
+
+      function states(){
+        return {
+          debugOn: body.classList.contains('debug-outlines'),
+          gridOn: body.classList.contains('grid-overlay-on')
+        };
+      }
+
+      function updateDevLabel(){
+        var s = states();
+        var on = s.debugOn && s.gridOn;
+        devBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        devBtn.textContent = on ? 'Dev: ON' : 'Dev: OFF';
+      }
+
+      // Initial label
+      updateDevLabel();
+
+      // Keep in sync when individual buttons are used
+      if (debugBtn) debugBtn.addEventListener('click', function(){ setTimeout(updateDevLabel, 0); });
+      if (gridBtn) gridBtn.addEventListener('click', function(){ setTimeout(updateDevLabel, 0); });
+
+      devBtn.addEventListener('click', function(){
+        var s = states();
+        var shouldTurnOn = !(s.debugOn && s.gridOn);
+        if (shouldTurnOn) {
+          if (!s.debugOn && debugBtn) debugBtn.click();
+          if (!s.gridOn && gridBtn) gridBtn.click();
+        } else {
+          if (s.debugOn && debugBtn) debugBtn.click();
+          if (s.gridOn && gridBtn) gridBtn.click();
+        }
+        setTimeout(updateDevLabel, 0);
+      });
+    });
+  </script>
+  
   <!-- Punto de extensión para JS extra por página -->
   <th:block layout:fragment="body-scripts"></th:block>
 </body>

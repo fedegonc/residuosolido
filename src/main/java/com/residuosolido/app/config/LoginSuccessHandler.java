@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -43,8 +45,21 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("Usuario '{}' autenticado exitosamente con roles: {}", username, userRoles);
         
         try {
-            String targetUrl = determineTargetUrl(userRoles);
-            logger.info("Destino de autenticación para '{}': {}", username, targetUrl);
+            // 1) Si existe una URL guardada (SavedRequest), priorizarla
+            HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+            SavedRequest savedRequest = requestCache.getRequest(request, response);
+
+            String targetUrl;
+            if (savedRequest != null) {
+                targetUrl = savedRequest.getRedirectUrl();
+                logger.info("SavedRequest encontrado para '{}': {}", username, targetUrl);
+                // Limpia la solicitud guardada para evitar redirecciones repetidas
+                requestCache.removeRequest(request, response);
+            } else {
+                // 2) Fallback por rol
+                targetUrl = determineTargetUrl(userRoles);
+                logger.info("Destino por rol para '{}': {}", username, targetUrl);
+            }
 
             boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
                     || (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json"));
