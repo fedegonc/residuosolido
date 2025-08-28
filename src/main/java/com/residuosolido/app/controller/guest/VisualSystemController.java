@@ -10,4 +10,9 @@ public class VisualSystemController {
     public String visualSystemPage() {
         return "pages/sistema-visual";
     }
+
+    @GetMapping("/grid-test")
+    public String gridTestPage() {
+        return "pages/grid-test";
+    }
 }

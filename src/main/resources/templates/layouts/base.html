@@ -79,14 +79,11 @@
       padding-right: 1rem;  /* px-4 */
       max-width: var(--grid-max, 80rem); /* por defecto 7xl */
       width: 100%;
-      /* 12 columnas en el ancho del contenedor */
-      background-image: repeating-linear-gradient(
-        to right,
-        rgba(0,0,0,0.18) 0,
-        rgba(0,0,0,0.18) 1px,
-        transparent 1px,
-        transparent calc(100% / 12)
-      );
+      /* Overlay simple: líneas cada 4 columnas (col-span-4) */
+      background-image: 
+        linear-gradient(to right, rgba(255,0,0,0.2) 0, rgba(255,0,0,0.2) 1px, transparent 1px, transparent 33.333%),
+        linear-gradient(to right, transparent 33.333%, rgba(255,0,0,0.2) 33.333%, rgba(255,0,0,0.2) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%),
+        linear-gradient(to right, transparent 66.666%, rgba(255,0,0,0.2) 66.666%, rgba(255,0,0,0.2) calc(66.666% + 1px), transparent calc(66.666% + 1px));
     }
     /* Modo Full: columnas a todo el viewport, respetando padding para gutters */
     #gridOverlay.full .grid-overlay-inner {
@@ -347,6 +344,48 @@
       // Initial label
       updateDevLabel();
 
+      // Sync mobile dev button
+      var devBtnMobile = document.getElementById('devToggleBtnMobile');
+      if (devBtnMobile) {
+        devBtnMobile.addEventListener('click', function(){
+          toggleDebug();
+          toggleGrid();
+          updateDevLabel();
+          updateMobileDevLabel();
+        });
+      }
+
+      function updateMobileDevLabel(){
+        if (!devBtnMobile) return;
+        var s = states();
+        var on = s.debugOn && s.gridOn;
+        devBtnMobile.setAttribute('aria-pressed', on ? 'true' : 'false');
+        devBtnMobile.textContent = on ? 'Dev: ON' : 'Dev: OFF';
+      }
+
+      // Footer toggle for mobile
+      var footerToggleBtn = document.getElementById('footerToggleBtn');
+      var footerContent = document.getElementById('footerContent');
+      var footerToggleIcon = document.getElementById('footerToggleIcon');
+      
+      if (footerToggleBtn && footerContent && footerToggleIcon) {
+        footerToggleBtn.addEventListener('click', function(){
+          var isExpanded = footerToggleBtn.getAttribute('aria-expanded') === 'true';
+          
+          if (isExpanded) {
+            footerContent.classList.add('hidden');
+            footerToggleBtn.setAttribute('aria-expanded', 'false');
+            footerToggleIcon.textContent = 'expand_more';
+            footerToggleIcon.style.transform = 'rotate(0deg)';
+          } else {
+            footerContent.classList.remove('hidden');
+            footerToggleBtn.setAttribute('aria-expanded', 'true');
+            footerToggleIcon.textContent = 'expand_less';
+            footerToggleIcon.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
       devBtn.addEventListener('click', function(){
         var s = states();
         var shouldTurnOn = !(s.debugOn && s.gridOn);
@@ -364,7 +403,10 @@
           body.classList.toggle('grid-overlay-on', shouldTurnOn);
           try { localStorage.setItem('gridOverlayOn', shouldTurnOn ? '1' : '0'); } catch(e) {}
         }
-        setTimeout(updateDevLabel, 0);
+        setTimeout(function(){
+          updateDevLabel();
+          updateMobileDevLabel();
+        }, 0);
       });
     });
   </script>

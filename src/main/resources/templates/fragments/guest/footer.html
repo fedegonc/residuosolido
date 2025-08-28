@@ -1,52 +1,105 @@
 <footer th:fragment="guestFooter" class="bg-[#0b0b0b] text-white" xmlns:th="http://www.thymeleaf.org">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div>
-          <h3 class="text-sm md:text-base font-semibold text-white" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
-          <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+    <!-- Footer compacto en móvil -->
+    <div class="md:hidden">
+      <button id="footerToggleBtn" type="button" 
+              class="w-full bg-[#0b0b0b] border-t border-gray-700 px-4 py-3 flex items-center justify-between text-white hover:bg-gray-900 transition-colors"
+              aria-expanded="false" aria-controls="footerContent">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-rounded text-white text-sm" aria-hidden="true">info</span>
+          <span class="text-xs font-medium">Información del sitio</span>
         </div>
-
-        <div>
-          <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
-          <ul class="mt-2 space-y-1 text-xs md:text-sm">
-            <li>
-              <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
-            </li>
-            <li>
-              <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.contact.title}">Contacto</h4>
-          <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+        <span class="material-symbols-rounded text-white text-sm transition-transform duration-200" aria-hidden="true" id="footerToggleIcon">expand_more</span>
+      </button>
+      
+      <div id="footerContent" class="hidden bg-[#0b0b0b] border-t border-gray-700">
+        <div class="px-4 py-4 space-y-4">
+          <div>
+            <h3 class="text-sm font-semibold text-white" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
+            <p class="mt-1 text-xs text-white/80" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <h4 class="text-xs font-semibold text-white" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
+              <ul class="mt-1 space-y-1 text-xs">
+                <li><a class="text-white/90 hover:text-white" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a></li>
+                <li><a class="text-white/90 hover:text-white" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-white" th:text="#{footer.contact.title}">Contacto</h4>
+              <p class="mt-1 text-xs text-white/80" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+            </div>
+          </div>
+          
+          <div class="border-t border-gray-700 pt-3 space-y-2">
+            <div class="flex flex-wrap gap-2">
+              <a th:href="@{/feedback}" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition">
+                <span class="material-symbols-rounded text-slate-900 text-sm" aria-hidden="true">forum</span>
+                <span>Feedback</span>
+              </a>
+              <a th:href="@{/sistema-visual}" class="inline-flex items-center gap-1 rounded-sm ring-1 ring-gray-400 px-2 py-1 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition">
+                <span class="material-symbols-rounded text-white text-sm" aria-hidden="true">design_services</span>
+                <span>Sistema Visual</span>
+              </a>
+              <button id="devToggleBtnMobile" type="button" class="rounded-full ring-1 ring-white/30 px-2 py-1 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition" aria-pressed="false">
+                Dev: OFF
+              </button>
+            </div>
+            <p class="text-xs text-white/70" th:text="#{footer.copy}">© Frontera de la Paz</p>
+          </div>
         </div>
       </div>
+    </div>
 
-      
+    <!-- Footer completo en desktop -->
+    <div class="hidden md:block">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div>
+            <h3 class="text-sm md:text-base font-semibold text-white" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
+            <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+          </div>
 
-      <div class="mt-5 border-t border-red-900/30 pt-3 flex items-center justify-between">
-        <p class="text-[11px] text-white/70" th:text="#{footer.copy}"> Frontera de la Paz</p>
-        <div class="flex items-center gap-3">
-          <a th:href="@{/feedback}"
-             th:title="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
-             th:attr="aria-label=${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
-             class="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition">
-            <span class="material-symbols-rounded text-slate-900" aria-hidden="true">forum</span>
-            <span th:text="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}">Cuéntanos qué piensas</span>
-          </a>
-          <a th:href="@{/sistema-visual}"
-             class="inline-flex items-center gap-2 rounded-sm ring-1 ring-gray-400 px-3 py-1.5 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition">
-            <span class="material-symbols-rounded text-white" aria-hidden="true">design_services</span>
-            <span>Sistema Visual</span>
-          </a>
-          <!-- Botones de utilidades (ubicados en el footer) -->
-          <button id="devToggleBtn" type="button"
-                  class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
-                  aria-pressed="false" title="Alternar Debug + Grid simultáneamente">
-            Dev: OFF
-          </button>
+          <div>
+            <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
+            <ul class="mt-2 space-y-1 text-xs md:text-sm">
+              <li>
+                <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
+              </li>
+              <li>
+                <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.contact.title}">Contacto</h4>
+            <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+          </div>
+        </div>
+
+        <div class="mt-5 border-t border-red-900/30 pt-3 flex items-center justify-between">
+          <p class="text-[11px] text-white/70" th:text="#{footer.copy}"> Frontera de la Paz</p>
+          <div class="flex items-center gap-3">
+            <a th:href="@{/feedback}"
+               th:title="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
+               th:attr="aria-label=${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
+               class="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition">
+              <span class="material-symbols-rounded text-slate-900" aria-hidden="true">forum</span>
+              <span th:text="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}">Cuéntanos qué piensas</span>
+            </a>
+            <a th:href="@{/sistema-visual}"
+               class="inline-flex items-center gap-2 rounded-sm ring-1 ring-gray-400 px-3 py-1.5 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition">
+              <span class="material-symbols-rounded text-white" aria-hidden="true">design_services</span>
+              <span>Sistema Visual</span>
+            </a>
+            <button id="devToggleBtn" type="button"
+                    class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
+                    aria-pressed="false" title="Alternar Debug + Grid simultáneamente">
+              Dev: OFF
+            </button>
+          </div>
         </div>
       </div>
     </div>
