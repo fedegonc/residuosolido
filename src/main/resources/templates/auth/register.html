@@ -10,7 +10,7 @@
 <body>
   <section layout:fragment="content">
     <!-- Navbar guest (visible en páginas guest excepto index) -->
-    <div th:replace="~{fragments/navbar-guest :: navbar}"></div>
+    <div th:replace="~{fragments/navbar-guest :: navbar(${true})}"></div>
 
     <!-- Breadcrumbs -->
     <div class="bg-gray-50 py-4">
@@ -32,6 +32,9 @@
         <div th:replace="~{fragments/auth/register-form :: registerForm}"></div>
       </div>
     </div>
+    
+    <!-- Footer compacto para páginas guest -->
+    <th:block th:replace="~{fragments/guest/footer-compact :: guestFooterCompact}"></th:block>
   </section>
 
   <th:block layout:fragment="body-scripts">

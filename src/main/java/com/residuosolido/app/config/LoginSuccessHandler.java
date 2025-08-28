@@ -44,8 +44,20 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         
         try {
             String targetUrl = determineTargetUrl(userRoles);
-            logger.info("Redirigiendo usuario '{}' a: {}", username, targetUrl);
-            response.sendRedirect(targetUrl);
+            logger.info("Destino de autenticación para '{}': {}", username, targetUrl);
+
+            boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
+                    || (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json"));
+
+            if (isAjax) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setContentType("application/json;charset=UTF-8");
+                String body = "{\"success\":true,\"redirectUrl\":\"" + targetUrl + "\"}";
+                response.getWriter().write(body);
+                response.getWriter().flush();
+            } else {
+                response.sendRedirect(targetUrl);
+            }
             
         } catch (Exception e) {
             logger.error("Error al redireccionar usuario '{}': {}", username, e.getMessage(), e);

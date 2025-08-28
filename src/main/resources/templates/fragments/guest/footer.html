@@ -1,57 +1,52 @@
-<footer th:fragment="guestFooter" class="bg-white" xmlns:th="http://www.thymeleaf.org">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<footer th:fragment="guestFooter" class="bg-[#0b0b0b] text-white" xmlns:th="http://www.thymeleaf.org">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div>
-          <h3 class="text-base md:text-lg font-semibold text-slate-900" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
-          <p class="mt-2 text-sm text-slate-600" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+          <h3 class="text-sm md:text-base font-semibold text-white" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
+          <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
         </div>
 
         <div>
-          <h4 class="text-sm font-semibold text-slate-900" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
-          <ul class="mt-2 space-y-1 text-sm">
+          <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
+          <ul class="mt-2 space-y-1 text-xs md:text-sm">
             <li>
-              <a class="text-emerald-700 hover:text-emerald-800" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
+              <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
             </li>
             <li>
-              <a class="text-emerald-700 hover:text-emerald-800" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
+              <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 class="text-sm font-semibold text-slate-900" th:text="#{footer.contact.title}">Contacto</h4>
-          <p class="mt-2 text-sm text-slate-600" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+          <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.contact.title}">Contacto</h4>
+          <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
         </div>
       </div>
 
-      <!-- Aviso de testing (discreto) -->
-      <div class="mt-6 flex justify-center" aria-label="Aviso de testing">
-        <span class="inline-block px-2 py-1 text-[11px] sm:text-xs text-red-700 bg-red-50 border border-red-200 rounded">
-          Sitio en etapa de testing — no usar datos reales
-        </span>
-      </div>
+      
 
-      <div class="mt-8 border-t border-slate-200 pt-4 flex items-center justify-between">
-        <p class="text-xs text-slate-500" th:text="#{footer.copy}"> Frontera de la Paz</p>
+      <div class="mt-5 border-t border-red-900/30 pt-3 flex items-center justify-between">
+        <p class="text-[11px] text-white/70" th:text="#{footer.copy}"> Frontera de la Paz</p>
         <div class="flex items-center gap-3">
           <a th:href="@{/feedback}"
-             class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition">
-            <span class="material-symbols-rounded text-white" aria-hidden="true">forum</span>
+             class="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition">
+            <span class="material-symbols-rounded text-slate-900" aria-hidden="true">forum</span>
             <span>Cuéntanos qué piensas</span>
           </a>
           <a th:href="@{/sistema-visual}"
-             class="inline-flex items-center gap-2 rounded-sm ring-1 ring-emerald-900/20 px-3 py-2 text-sm font-semibold text-emerald-900 bg-white hover:bg-emerald-50 transition">
-            <span class="material-symbols-rounded text-emerald-700" aria-hidden="true">design_services</span>
+             class="inline-flex items-center gap-2 rounded-sm ring-1 ring-gray-400 px-3 py-1.5 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition">
+            <span class="material-symbols-rounded text-white" aria-hidden="true">design_services</span>
             <span>Sistema Visual</span>
           </a>
           <!-- Botones de utilidades (ubicados en el footer) -->
           <button id="gridToggleBtn" type="button"
-                  class="rounded-full ring-1 ring-emerald-900/30 px-3 py-1.5 text-xs font-semibold text-emerald-900 bg-white hover:bg-emerald-50 transition"
+                  class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
                   aria-pressed="false" title="Click: ON/OFF | Alt+Click: cambiar modo (Full/7xl/5xl/2xl)">
             Grid: OFF (7xl)
           </button>
           <button id="debugToggleBtn" type="button"
-                  class="rounded-full ring-1 ring-emerald-900/30 px-3 py-1.5 text-xs font-semibold text-emerald-900 bg-white hover:bg-emerald-50 transition"
+                  class="rounded-full ring-1 ring-white/30 px-3 py-1 text-[11px] font-semibold text-white bg-transparent hover:bg-white/10 transition"
                   aria-pressed="false" title="Alternar bordes de debug">
             Debug: OFF
           </button>

@@ -115,10 +115,22 @@
   </th:block>
 </head>
 <body>
+  <!-- Aviso global de testing (delgado, alineado a la izquierda, sin espacio superior) -->
+  <div class="w-full bg-emerald-700 text-white">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
+      <button id="testingNoticeBtn" type="button" class="py-1 text-left text-[11px] sm:text-xs leading-none hover:underline">
+        Sitio en etapa de testing — no usar datos reales
+      </button>
+    </div>
+  </div>
+
   <!-- Contenido de la página -->
   <main id="app" layout:fragment="content">
     <!-- El contenido de cada página se inyectará aquí -->
   </main>
+  
+  <!-- Modal reutilizable: aviso de testing -->
+  <th:block th:replace="~{fragments/ui/modal :: modal(id='testingModal', title='Sitio en etapa de testing', message='Este sistema está en etapa de testing. Por favor, no ingreses datos personales ni información sensible.\n\nTen en cuenta que los datos y acciones pueden resetearse o ser eliminados sin previo aviso.')}" />
   
   <!-- Capa de overlay de grilla (bajo nivel) -->
   <div id="gridOverlay" aria-hidden="true"><div class="grid-overlay-inner"></div></div>
@@ -126,6 +138,19 @@
   <!-- Scripts globales (ligeros) -->
   <!-- Cache-busting para asegurar última versión del language-switcher -->
   <script th:src="@{/js/language-switcher.js(v=3)}" src="/js/language-switcher.js?v=3" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      var btn = document.getElementById('testingNoticeBtn');
+      var modal = document.getElementById('testingModal');
+      if (btn && modal) {
+        btn.addEventListener('click', function(){ modal.classList.remove('hidden'); });
+        modal.addEventListener('click', function(e){
+          var closeAttr = e.target.getAttribute && e.target.getAttribute('data-close');
+          if (closeAttr === 'testingModal') modal.classList.add('hidden');
+        });
+      }
+    });
+  </script>
   
   <script>
     (function() {

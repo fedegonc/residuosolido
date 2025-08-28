@@ -10,6 +10,14 @@
  </head>
 
 <body th:fragment="layout(content)" class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Aviso global de testing (delgado, alineado a la izquierda, sin espacio superior) -->
+    <div class="w-full bg-emerald-700 text-white">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8">
+            <button id="testingNoticeBtnAdmin" type="button" class="py-1 text-left text-[11px] sm:text-xs leading-none hover:underline">
+                Sitio en etapa de testing — no usar datos reales
+            </button>
+        </div>
+    </div>
     <!-- Recursos críticos dentro del fragmento para asegurar estilos aunque <head> no se procese -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -87,12 +95,7 @@
         </div>
     </div>
 
-    <!-- Aviso de testing (discreto, consistente con sistema de diseño) -->
-    <div class="bg-transparent mt-3 flex justify-center" aria-label="Aviso de testing">
-        <span class="inline-block px-2 py-1 text-[11px] sm:text-xs text-red-700 bg-red-50 border border-red-200 rounded">
-            Sitio en etapa de testing — no usar datos reales
-        </span>
-    </div>
+    
 
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-gray-200">
@@ -141,7 +144,22 @@
     <div th:replace="~{fragments/simple-footer :: simple}"></div>
 
     <!-- Scripts -->
+    <!-- Modal reutilizable: aviso de testing -->
+    <th:block th:replace="~{fragments/ui/modal :: modal(id='testingModal', title='Sitio en etapa de testing', message='Este sistema está en etapa de testing. Por favor, no ingreses datos personales ni información sensible.\n\nPara explorar el sitio puedes usar un usuario de prueba:\n• Email: test@test.com\n• Contraseña: test1234\n\nTen en cuenta que los datos y acciones pueden resetearse o ser eliminados sin previo aviso.')}" />
+
     <script>
+        // Modal testing notice (admin)
+        document.addEventListener('DOMContentLoaded', function(){
+            var btn = document.getElementById('testingNoticeBtnAdmin');
+            var modal = document.getElementById('testingModal');
+            if (btn && modal) {
+                btn.addEventListener('click', function(){ modal.classList.remove('hidden'); });
+                modal.addEventListener('click', function(e){
+                    var closeAttr = e.target.getAttribute && e.target.getAttribute('data-close');
+                    if (closeAttr === 'testingModal') modal.classList.add('hidden');
+                });
+            }
+        });
         // Manejar dropdown de notificaciones y menú mobile
         document.addEventListener('DOMContentLoaded', function() {
             const DEBUG = false; // Cambia a true para reactivar logs detallados
