@@ -37,6 +37,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)
                         .cachePublic());
+
+        // Ignore Chrome DevTools requests to prevent 404 errors
+        registry.addResourceHandler("/.well-known/**")
+                .addResourceLocations("classpath:/static/.well-known/")
+                .setCacheControl(CacheControl.noCache());
     }
 
     @Override
