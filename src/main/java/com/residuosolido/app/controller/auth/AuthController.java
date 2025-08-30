@@ -41,42 +41,6 @@ public class AuthController {
         this.postService = postService;
     }
 
-    @GetMapping({"/", "/index"})
-    public String index(
-        @AuthenticationPrincipal UserDetails userDetails,
-        HttpServletRequest request,
-        HttpServletResponse response,
-        Model model) throws Exception {
-
-        log.info("[INDEX] GET / - userAuthenticated={} principal={} uri={}", userDetails != null, (userDetails != null ? userDetails.getUsername() : "anonymous"), request.getRequestURI());
-        if (userDetails != null) {
-            log.info("[INDEX] Authenticated user, delegating to successHandler by role");
-            successHandler.redirectByRole(request, response, userDetails);
-            return null;
-        }
-
-        Map<String, Object> indexData = authService.getIndexData();
-        try {
-            Object categories = indexData.get("categories");
-            Object posts = indexData.get("posts");
-            Object orgs = indexData.get("organizations");
-            Object hero = indexData.get("heroImage");
-            int categoriesCount = (categories instanceof java.util.Collection) ? ((java.util.Collection<?>) categories).size() : (categories == null ? 0 : 1);
-            int postsCount = (posts instanceof java.util.Collection) ? ((java.util.Collection<?>) posts).size() : (posts == null ? 0 : 1);
-            int orgsCount = (orgs instanceof java.util.Collection) ? ((java.util.Collection<?>) orgs).size() : (orgs == null ? 0 : 1);
-            boolean hasHero = (hero instanceof String) && !((String) hero).isEmpty();
-            log.info("[INDEX] Data loaded -> categories={}, posts={}, orgs={}, heroImage={}", categoriesCount, postsCount, orgsCount, hasHero ? "yes" : "no");
-        } catch (Exception e) {
-            log.warn("[INDEX] Error inspecting indexData: {}", e.toString());
-        }
-        model.addAllAttributes(indexData);
-
-        model.addAttribute("posts", postService.getFirst5Posts());
-
-        return "pages/home";
-    }
-
-
     @GetMapping("/auth/register")
     public String showRegistrationForm(@AuthenticationPrincipal UserDetails userDetails, 
                                      HttpServletRequest request, 

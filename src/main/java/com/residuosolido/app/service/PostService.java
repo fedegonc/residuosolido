@@ -31,7 +31,7 @@ public class PostService {
     private CloudinaryService cloudinaryService;
 
     public List<Post> getAllPosts() {
-        return postRepository.findAllOrderedByIdAsc();
+        return postRepository.findAllWithCategories();
     }
     
     public List<Post> getAllPostsWithCategories() {
@@ -43,8 +43,14 @@ public class PostService {
         return list;
     }
 
-    public List<Post> getFirst5Posts() {
-        return postRepository.findFirst5WithCategories().stream().limit(5).collect(Collectors.toList());
+    public List<Post> getRecentPosts(int limit) {
+        // Optimización crítica: Solo cargar posts recientes con categorías
+        // Usar JOIN FETCH para evitar N+1 queries en el index
+        List<Post> posts = postRepository.findRecentPostsWithCategories(limit);
+        if (log.isDebugEnabled()) {
+            log.debug("[PostService] getRecentPosts -> {} posts (limit: {})", posts.size(), limit);
+        }
+        return posts;
     }
 
     public boolean hasMoreThan5Posts() {

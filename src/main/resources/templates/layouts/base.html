@@ -25,12 +25,11 @@
   <link rel="preload" th:if="${heroImage != null and !#strings.isEmpty(heroImage)}" th:href="${heroImage}" as="image">
 
   <!-- Tipografía y estilos globales/componentes -->
-  <!-- Tailwind via CDN (con plugin line-clamp). Debe ir antes de los estilos personalizados. -->
-  <script src="https://cdn.tailwindcss.com?plugins=line-clamp"></script>
+  <!-- Tailwind via CDN. Debe ir antes de los estilos personalizados. -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      plugins: ['line-clamp']
-    }
+    // Tailwind config sin plugins deprecated (line-clamp incluido por defecto en v3.3+)
+    tailwind.config = {}
   </script>
   <link rel="stylesheet" th:href="@{/css/typography.css(v=2)}" href="/css/typography.css?v=2">
   <link rel="stylesheet" th:href="@{/css/index.css(v=2)}" href="/css/index.css?v=2">
@@ -71,7 +70,7 @@
       display: block;
       position: fixed;
       inset: 0;
-      z-index: 40; /* botones están con z-50 */
+      z-index: 30; /* Reducido de 40 para no tapar footer */
       pointer-events: none;
     }
     /* Wrapper centrado que imita mx-auto px-4 sm:px-6 lg:px-8. Ancho controlado por variable. */
@@ -353,8 +352,22 @@
       var devBtnMobile = document.getElementById('devToggleBtnMobile');
       if (devBtnMobile) {
         devBtnMobile.addEventListener('click', function(){
-          toggleDebug();
-          toggleGrid();
+          var s = states();
+          var shouldTurnOn = !(s.debugOn && s.gridOn);
+          // Use the same helper functions as the main button
+          if (typeof window.__debugSetState === 'function') {
+            try { window.__debugSetState(shouldTurnOn); } catch(e) {}
+          } else {
+            // Fallback toggle
+            body.classList.toggle('debug-outlines', shouldTurnOn);
+            try { localStorage.setItem('debugOutlines', shouldTurnOn ? '1' : '0'); } catch(e) {}
+          }
+          if (typeof window.__gridSetState === 'function') {
+            try { window.__gridSetState(shouldTurnOn); } catch(e) {}
+          } else {
+            body.classList.toggle('grid-overlay-on', shouldTurnOn);
+            try { localStorage.setItem('gridOverlayOn', shouldTurnOn ? '1' : '0'); } catch(e) {}
+          }
           updateDevLabel();
           updateMobileDevLabel();
         });
@@ -413,9 +426,8 @@
           updateMobileDevLabel();
         }, 0);
       });
-    });
   </script>
-  
+
   <!-- Punto de extensión para JS extra por página -->
   <th:block layout:fragment="body-scripts"></th:block>
 </body>

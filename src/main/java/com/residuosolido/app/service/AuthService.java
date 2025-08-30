@@ -35,7 +35,7 @@ public class AuthService {
         Map<String, Object> data = new HashMap<>();
         
         // Solo datos necesarios para el index público
-        List<Post> posts = postService.getFirst5Posts();
+        List<Post> posts = postService.getRecentPosts(5);
         List<User> organizations = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
         List<Category> categories = categoryService.getActiveCategoriesOrderedByDisplayOrder();
         

@@ -24,10 +24,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p ORDER BY p.id DESC")
     List<Post> findAllOrderedByIdDesc();
     
-    @Query("SELECT p FROM Post p ORDER BY p.id ASC")
-    List<Post> findAllOrderedByIdAsc();
-    
     // Método optimizado para cargar todos los posts con sus categorías
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id ASC")
     List<Post> findAllWithCategories();
+
+    // Método optimizado para cargar posts recientes con categorías (INDEX)
+    @Query(value = "SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id DESC", nativeQuery = false)
+    List<Post> findRecentPostsWithCategories(int limit);
 }
