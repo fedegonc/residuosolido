@@ -15,6 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.config.Customizer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -30,11 +35,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
                 .requestMatchers("/", "/index", "/invitados", "/guest/**").permitAll()
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
+                // API pública: login API
+                .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
                 .requestMatchers("/sistema-visual", "/grid-test").permitAll()
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público
@@ -55,6 +63,9 @@ public class SecurityConfig {
                 .requestMatchers("/feedback/**").authenticated()
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(apiAwareAuthenticationEntryPoint())
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
@@ -89,6 +100,38 @@ public class SecurityConfig {
             );
         
         return http.build();
+    }
+
+    // AuthenticationEntryPoint que devuelve 401 JSON para rutas /api/** y redirige a login para el resto
+    private AuthenticationEntryPoint apiAwareAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            String uri = request.getRequestURI();
+            if (uri != null && uri.startsWith("/api/")) {
+                response.setStatus(javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
+            } else {
+                response.sendRedirect("/auth/login");
+            }
+        };
+    }
+
+    // CORS centralizado para toda la app
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(java.util.List.of(
+            "http://localhost:3000",
+            "https://residuosolido.onrender.com"
+        ));
+        config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(java.util.List.of("*"));
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
