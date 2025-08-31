@@ -124,6 +124,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(java.util.List.of(
             "http://localhost:3000",
+            "http://localhost:5173",
             "https://residuosolido.onrender.com"
         ));
         config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
