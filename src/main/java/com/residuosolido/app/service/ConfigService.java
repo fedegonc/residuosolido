@@ -12,7 +12,6 @@ public class ConfigService {
     private static final String HERO_IMAGE_KEY = "hero_image_url";
 
     // Fallback desde application.properties
-    @Value("${app.hero.image.url:#{null}}")
     private String defaultHeroImageUrl;
 
     // Fallback hardcodeado

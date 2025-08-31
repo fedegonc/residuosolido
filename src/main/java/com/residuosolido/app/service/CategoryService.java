@@ -129,6 +129,20 @@ public class CategoryService {
         return false;
     }
     
+    public List<Category> findAllOrderedByDisplayOrder() {
+        return categoryRepository.findAllByOrderByDisplayOrderAsc();
+    }
+
+    public Category save(Category category) {
+        cachedCategories = null;
+        return categoryRepository.save(category);
+    }
+
+    public void deleteById(Long id) {
+        categoryRepository.deleteById(id);
+        cachedCategories = null;
+    }
+    
     public String generateSlug(String text) {
         if (text == null) return "";
         

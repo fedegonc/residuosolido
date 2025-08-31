@@ -3,6 +3,8 @@ package com.residuosolido.app.dto;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.Material;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,6 +13,8 @@ import java.util.ArrayList;
  * Incluye campos adicionales que no pertenecen a la entidad User
  */
 @Data
+@Getter
+@Setter
 public class UserForm {
     private Long id;
     private String username;

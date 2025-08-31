@@ -110,6 +110,10 @@ public class UserService extends GenericEntityService<User, Long> {
     public Page<User> search(String q, Pageable pageable) {
         return userRepository.search(q, pageable);
     }
+
+    public Page<User> searchUsers(String search, Pageable pageable) {
+        return userRepository.search(search, pageable);
+    }
     
     /**
      * Obtiene todos los usuarios, opcionalmente filtrados por rol

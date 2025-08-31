@@ -43,6 +43,18 @@ public class PostService {
         return list;
     }
 
+    public List<Post> findAllWithCategories() {
+        return postRepository.findAllWithCategories();
+    }
+
+    public Post save(Post post) {
+        return postRepository.save(post);
+    }
+
+    public void deleteById(Long id) {
+        postRepository.deleteById(id);
+    }
+
     public List<Post> getRecentPosts(int limit) {
         // Optimización crítica: Solo cargar posts recientes con categorías
         // Usar JOIN FETCH para evitar N+1 queries en el index

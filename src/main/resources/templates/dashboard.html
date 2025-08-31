@@ -1,119 +1,156 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Residuos Sólidos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <title layout:fragment="title">Dashboard - Residuos Sólidos</title>
+  <th:block layout:fragment="head-extra">
+    <!-- Dashboard específico CSS si es necesario -->
+  </th:block>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
-    
-    <!-- Top Bar -->
-    <header class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <h1 class="text-xl font-semibold text-gray-900">Residuos Sólidos</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">¡Bienvenido, <span sec:authentication="name">Usuario</span>!</span>
-                    <form th:action="@{/logout}" method="post" class="inline">
-                        <button type="submit" class="text-sm text-red-600 hover:text-red-800">Cerrar Sesión</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </header>
+<body>
+  <section layout:fragment="content" class="min-h-screen flex flex-col">
+    <!-- Navbar autenticado -->
+    <div th:replace="~{fragments/navbar-auth :: navbar}"></div>
 
-    <!-- Main Content -->
-    <main class="flex-1 py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumbs -->
+    <div class="bg-white border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <nav aria-label="Breadcrumb">
+          <ol class="flex items-center text-sm text-slate-600">
+            <li><a href="/" class="hover:text-slate-900">Inicio</a></li>
+            <li class="px-2 text-slate-400">/</li>
+            <li class="text-slate-900 font-medium" aria-current="page">Dashboard</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Bienvenida personalizada -->
+        <div class="mb-8">
+          <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h1 class="text-2xl font-bold text-slate-900">¡Bienvenido al Dashboard!</h1>
+                <p class="text-slate-600 mt-1">Hola <span sec:authentication="name" class="font-medium text-emerald-700">Usuario</span>, aquí tienes acceso a todas las funciones del sistema.</p>
+              </div>
+              <div class="hidden sm:block">
+                <div class="flex items-center space-x-2 text-sm text-slate-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>Rivera - Sant'ana do Livramento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Section -->
+        <div sec:authorize="hasRole('ADMIN')" class="mb-8">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center">
+              <svg class="w-5 h-5 text-emerald-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+              Panel de Administración
+            </h2>
+            <p class="text-slate-600 text-sm">Gestiona usuarios, contenido y configuraciones del sistema</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6" th:insert="~{shared/components/admin-actions :: actions}"></div>
+        </div>
+
+        <!-- Organization Section -->
+        <div sec:authorize="hasRole('ORGANIZATION')" class="mb-8">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center">
+              <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h10M7 15h10"></path>
+              </svg>
+              Panel de Organización
+            </h2>
+            <p class="text-slate-600 text-sm">Administra materiales y solicitudes de recolección</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="/org/materials" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-blue-200 transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900 group-hover:text-blue-900">Materiales</h3>
+                  <p class="text-sm text-slate-500">Gestionar tipos de materiales reciclables</p>
+                </div>
+              </div>
+            </a>
             
-            <!-- Admin Section -->
-            <div sec:authorize="hasRole('ADMIN')" class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Panel de Administración</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" th:insert="~{shared/components/admin-actions :: actions}"></div>
-            </div>
-
-            <!-- Organization Section -->
-            <div sec:authorize="hasRole('ORGANIZATION')" class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Panel de Organización</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <a href="/org/materials" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-blue-100 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Materiales</h3>
-                                <p class="text-sm text-gray-500">Gestionar materiales</p>
-                            </div>
-                        </div>
-                    </a>
-                    
-                    <a href="/requests" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-green-100 rounded-lg">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Solicitudes</h3>
-                                <p class="text-sm text-gray-500">Ver solicitudes</p>
-                            </div>
-                        </div>
-                    </a>
+            <a href="/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-green-200 transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
                 </div>
-            </div>
-
-            <!-- User Section -->
-            <div sec:authorize="hasRole('USER')" class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Panel de Usuario</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <a href="/requests/new" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-green-100 rounded-lg">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Nueva Solicitud</h3>
-                                <p class="text-sm text-gray-500">Solicitar recolección</p>
-                            </div>
-                        </div>
-                    </a>
-                    
-                    <a href="/requests" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-blue-100 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Mis Solicitudes</h3>
-                                <p class="text-sm text-gray-500">Ver historial</p>
-                            </div>
-                        </div>
-                    </a>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900 group-hover:text-green-900">Solicitudes</h3>
+                  <p class="text-sm text-slate-500">Revisar solicitudes de recolección</p>
                 </div>
-            </div>
-
+              </div>
+            </a>
+          </div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <p class="text-sm">&copy; 2025 Residuos Sólidos - Rivera - Sant'ana do Livramento</p>
-            </div>
+        <!-- User Section -->
+        <div sec:authorize="hasRole('USER')" class="mb-8">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center">
+              <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              Panel de Usuario
+            </h2>
+            <p class="text-slate-600 text-sm">Solicita recolecciones y gestiona tus residuos</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="/requests/new" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-green-200 transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900 group-hover:text-green-900">Nueva Solicitud</h3>
+                  <p class="text-sm text-slate-500">Solicitar recolección de residuos</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-blue-200 transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900 group-hover:text-blue-900">Mis Solicitudes</h3>
+                  <p class="text-sm text-slate-500">Ver historial de solicitudes</p>
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
-    </footer>
 
+      </div>
+    </div>
+    
+    <!-- Footer compacto -->
+    <th:block th:replace="~{fragments/guest/footer-compact :: guestFooterCompact}"></th:block>
+  </section>
 </body>
 </html>

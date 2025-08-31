@@ -22,6 +22,10 @@ public class FeedbackService {
     public List<Feedback> findAll() {
         return feedbackRepository.findAllByOrderByCreatedAtDesc();
     }
+
+    public List<Feedback> findAllOrderedByCreatedAtDesc() {
+        return feedbackRepository.findAllByOrderByCreatedAtDesc();
+    }
     
     public Optional<Feedback> findById(Long id) {
         return feedbackRepository.findById(id);

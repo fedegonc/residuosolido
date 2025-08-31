@@ -46,8 +46,8 @@ public class SecurityConfig {
                 // Rutas de utilidades de desarrollo deshabilitadas
                 // Rutas de gestión de usuarios para admin
                 .requestMatchers("/admin/users/**").hasRole("ADMIN")
-                // Rutas de usuario (solo usuarios)
-                .requestMatchers("/users/**").hasRole("USER")
+                // Rutas de navegación personal (cualquier usuario autenticado)
+                .requestMatchers("/user/**").authenticated()
                 .requestMatchers("/requests/**").hasRole("USER")
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")
