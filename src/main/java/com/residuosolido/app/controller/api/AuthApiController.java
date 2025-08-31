@@ -14,7 +14,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin(
+    origins = {"http://localhost:3000", "https://residuosolido.onrender.com"},
+    allowCredentials = "true",
+    methods = { RequestMethod.POST, RequestMethod.OPTIONS },
+    allowedHeaders = { "*" },
+    maxAge = 3600
+)
 public class AuthApiController {
 
     private final UserService userService;
