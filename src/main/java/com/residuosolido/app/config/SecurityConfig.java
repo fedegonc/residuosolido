@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
                 // API pública: login API
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/logout/**").permitAll()
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
                 .requestMatchers("/sistema-visual", "/grid-test").permitAll()
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público

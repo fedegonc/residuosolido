@@ -15,7 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/auth")
 @CrossOrigin(
-    origins = {"http://localhost:3000", "https://residuosolido.onrender.com"},
+    origins = {"http://localhost:3000", "http://localhost:5173", "https://residuosolido.onrender.com"},
     allowCredentials = "true",
     methods = { RequestMethod.POST, RequestMethod.OPTIONS },
     allowedHeaders = { "*" },
