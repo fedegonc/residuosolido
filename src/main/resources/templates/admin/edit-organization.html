@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/admin-layout :: head('Editar Organización')}"></head>
-<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+<head th:replace="~{fragments/layout :: head('Editar Organización')}"></head>
+<body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content">
         <!-- Encabezado simple -->
         <div class="bg-gray-50 py-8">
@@ -13,7 +13,7 @@
                 <nav class="mt-2" aria-label="Breadcrumb">
                     <ol class="flex items-center text-sm text-gray-500">
                         <li>
-                            <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                            <a href="/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
                         </li>
                         <li class="px-2">/</li>
                         <li>
@@ -56,7 +56,7 @@
                         </div>
                         
                         <div class="flex justify-between pt-4">
-                            <a th:href="@{/users}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            <a th:href="@{/admin/users}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
                                 Cancelar
                             </a>
                             <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">

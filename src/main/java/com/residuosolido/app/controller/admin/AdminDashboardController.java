@@ -29,31 +29,15 @@ public class AdminDashboardController {
         this.feedbackService = feedbackService;
     }
 
-    // Web Template Endpoint
+    // Redirigir dashboard admin al dashboard compartido
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
-        // Estadísticas principales
-        model.addAttribute("totalUsers", userService.findAll().size());
-        model.addAttribute("totalPosts", postService.getAllPosts().size());
-        model.addAttribute("totalCategories", categoryService.getAllCategories().size());
-        model.addAttribute("totalFeedbacks", feedbackService.findAll().size());
-
-        // Estadísticas adicionales para admin
-        model.addAttribute("recentUsers", userService.findAll().stream()
-            .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-            .limit(5)
-            .toList());
-        model.addAttribute("recentPosts", postService.getAllPosts().stream()
-            .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-            .limit(5)
-            .toList());
-
-        return "admin/dashboard";
+        return "redirect:/dashboard";
     }
 
-    // Root admin redirect
+    // Redirigir raíz /admin al dashboard compartido
     @GetMapping
     public String dashboard() {
-        return "redirect:/admin/dashboard";
+        return "redirect:/dashboard";
     }
 }

@@ -49,7 +49,7 @@ public class AuthController {
         // Si ya está autenticado, redirigir a su dashboard
         if (userDetails != null) {
             log.info("[REGISTER] User already authenticated, redirecting to dashboard");
-            successHandler.redirectByRole(request, response, userDetails);
+            successHandler.redirectToDashboard(request, response, userDetails);
             return null;
         }
         
@@ -77,7 +77,7 @@ public class AuthController {
         // Si ya está autenticado, redirigir a su dashboard
         if (userDetails != null) {
             log.info("[LOGIN] User already authenticated, redirecting to dashboard");
-            successHandler.redirectByRole(request, response, userDetails);
+            successHandler.redirectToDashboard(request, response, userDetails);
             return null;
         }
         
@@ -91,7 +91,7 @@ public class AuthController {
         // Si ya está autenticado, redirigir a su dashboard
         if (userDetails != null) {
             log.info("[FORGOT-PASSWORD] User already authenticated, redirecting to dashboard");
-            successHandler.redirectByRole(request, response, userDetails);
+            successHandler.redirectToDashboard(request, response, userDetails);
             return null;
         }
         

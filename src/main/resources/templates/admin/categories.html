@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/admin-layout :: head('Gestión de Categorías')}">
+<head th:replace="~{fragments/layout :: head('Gestión de Categorías')}">
 </head>
-<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+<body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content">
         <!-- Encabezado -->
         <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
@@ -10,7 +10,7 @@
             <nav class="mt-2" aria-label="Breadcrumb">
                 <ol class="flex items-center text-sm text-gray-500">
                     <li>
-                        <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                        <a href="/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
                     </li>
                     <li class="px-2">/</li>
                     <li class="text-gray-700 font-medium" aria-current="page">Categorías</li>

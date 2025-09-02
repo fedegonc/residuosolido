@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
-<head>
-    <title layout:fragment="title">Gestión de Feedback - Admin</title>
-</head>
-    <section layout:fragment="content">
-        <!-- Topbar Admin unificado -->
-        <div th:replace="~{fragments/admin-topbar :: topbar}"></div>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Gestión de Feedback - Admin')}"></head>
+<body th:replace="~{fragments/layout :: layout(~{::content})}">
+    <div th:fragment="content">
         <!-- Encabezado simple -->
         <div class="bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,7 +13,7 @@
                 <nav class="mt-2" aria-label="Breadcrumb">
                     <ol class="flex items-center text-sm text-gray-500">
                         <li>
-                            <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                            <a href="/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
                         </li>
                         <li class="px-2">/</li>
                         <li class="text-gray-700 font-medium" aria-current="page">Feedback</li>
@@ -74,10 +71,6 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Scripts específicos de la página -->
-    <th:block layout:fragment="body-scripts">
-        <th:block th:replace="~{fragments/admin-topbar :: admin-topbar-script}"></th:block>
-    </th:block>
+    </div>
+</body>
 </html>

@@ -17,6 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -36,18 +39,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
                 .requestMatchers("/", "/index", "/invitados", "/guest/**").permitAll()
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
-                // API pública: login API
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/logout/**").permitAll()
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
                 .requestMatchers("/sistema-visual", "/grid-test").permitAll()
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público
+                // Recursos especiales de navegador (evitar guardarlos como destino de login)
+                .requestMatchers("/.well-known/**").permitAll()
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*").permitAll()
@@ -66,9 +67,7 @@ public class SecurityConfig {
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(apiAwareAuthenticationEntryPoint())
-            )
+            // Manejo por defecto: redirige a /auth/login para recursos HTML
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
@@ -83,6 +82,8 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
+            // No usar SavedRequest para decidir redirecciones tras login
+            .requestCache(rc -> rc.disable())
             // Cabeceras de seguridad razonables sin romper Tailwind CDN ni Cloudinary
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
@@ -104,37 +105,17 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // AuthenticationEntryPoint que devuelve 401 JSON para rutas /api/** y redirige a login para el resto
-    private AuthenticationEntryPoint apiAwareAuthenticationEntryPoint() {
-        return (request, response, authException) -> {
-            String uri = request.getRequestURI();
-            if (uri != null && uri.startsWith("/api/")) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
-            } else {
-                response.sendRedirect("/auth/login");
-            }
-        };
-    }
+    // Sin AuthenticationEntryPoint específico para API: app HTML simple
 
-    // CORS centralizado para toda la app
+    // Sin CORS: aplicación strictly same-origin
+
+    // Exponer AuthenticationManager sin depender de AuthenticationConfiguration
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(java.util.List.of(
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "https://residuosolido.onrender.com"
-        ));
-        config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(java.util.List.of("*"));
-        config.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(provider);
     }
 
     @Bean

@@ -20,11 +20,12 @@
 
             <!-- Navigation -->
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="/" class="text-gray-600 hover:text-green-600 transition-colors">Inicio</a>
-                <a href="/dashboard" class="text-gray-600 hover:text-green-600 transition-colors">Dashboard</a>
-                <a href="/posts" class="text-gray-600 hover:text-green-600 transition-colors">Publicaciones</a>
-                <a href="/requests" class="text-gray-600 hover:text-green-600 transition-colors">Solicitudes</a>
-                <a href="/feedback" class="text-gray-600 hover:text-green-600 transition-colors">Feedback</a>
+                <a href="/" class="text-gray-600 hover:text-green-600 transition-colors" sec:authorize="isAuthenticated()">Inicio</a>
+                <a href="/dashboard" class="text-gray-600 hover:text-green-600 transition-colors" sec:authorize="isAuthenticated()">Dashboard</a>
+                <a href="/posts" class="text-gray-600 hover:text-green-600 transition-colors" sec:authorize="isAuthenticated()">Publicaciones</a>
+                <a href="/requests" class="text-gray-600 hover:text-green-600 transition-colors" sec:authorize="hasAnyRole('USER','ORGANIZATION')">Solicitudes</a>
+                <a href="/feedback" class="text-gray-600 hover:text-green-600 transition-colors" sec:authorize="isAuthenticated()">Feedback</a>
+                <a href="/admin" class="text-gray-600 hover:text-green-600 transition-colors" sec:authorize="hasRole('ADMIN')">Admin</a>
             </nav>
 
             <!-- User menu -->
@@ -80,11 +81,16 @@
     <!-- Mobile menu -->
     <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-gray-200">
         <div class="px-4 py-2 space-y-1">
-            <a href="/" class="block py-2 text-gray-600 hover:text-green-600">Inicio</a>
-            <a href="/dashboard" class="block py-2 text-gray-600 hover:text-green-600">Dashboard</a>
-            <a href="/posts" class="block py-2 text-gray-600 hover:text-green-600">Publicaciones</a>
-            <a href="/requests" class="block py-2 text-gray-600 hover:text-green-600">Solicitudes</a>
-            <a href="/feedback" class="block py-2 text-gray-600 hover:text-green-600">Feedback</a>
+            <a href="/" class="block py-2 text-gray-600 hover:text-green-600" sec:authorize="isAuthenticated()">Inicio</a>
+            <a href="/dashboard" class="block py-2 text-gray-600 hover:text-green-600" sec:authorize="isAuthenticated()">Dashboard</a>
+            <a href="/posts" class="block py-2 text-gray-600 hover:text-green-600" sec:authorize="isAuthenticated()">Publicaciones</a>
+            <a href="/posts/category/reciclable" class="block py-2 pl-4 text-sm text-gray-600 hover:text-green-600">• Reciclable</a>
+            <a href="/posts/category/no-reciclable" class="block py-2 pl-4 text-sm text-gray-600 hover:text-green-600">• No Reciclable</a>
+            <a href="/posts/category/informaciones" class="block py-2 pl-4 text-sm text-gray-600 hover:text-green-600">• Informaciones</a>
+            <a href="/posts/category/compostaje" class="block py-2 pl-4 text-sm text-gray-600 hover:text-green-600">• Compostaje</a>
+            <a href="/requests" class="block py-2 text-gray-600 hover:text-green-600" sec:authorize="hasAnyRole('USER','ORGANIZATION')">Solicitudes</a>
+            <a href="/feedback" class="block py-2 text-gray-600 hover:text-green-600" sec:authorize="isAuthenticated()">Feedback</a>
+            <a href="/admin" class="block py-2 text-gray-600 hover:text-green-600" sec:authorize="hasRole('ADMIN')">Admin</a>
             <div class="border-t border-gray-200 pt-2 mt-2">
                 <a href="/profile" class="block py-2 text-gray-600 hover:text-green-600">Mi Perfil</a>
                 <a href="/settings" class="block py-2 text-gray-600 hover:text-green-600">Configuración</a>

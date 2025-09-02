@@ -32,7 +32,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     // Prefijo estándar para roles en Spring Security
     private static final String ROLE_PREFIX = "ROLE_";
     
-    private static final String DEFAULT_TARGET_URL = "/";
+    private static final String DEFAULT_TARGET_URL = "/dashboard";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -41,25 +41,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         
         Set<String> userRoles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         String username = authentication.getName();
-        
-        logger.info("Usuario '{}' autenticado exitosamente con roles: {}", username, userRoles);
-        
-        try {
-            // 1) Si existe una URL guardada (SavedRequest), priorizarla
-            HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-            SavedRequest savedRequest = requestCache.getRequest(request, response);
+        logger.info("Usuario '{}' autenticado. Redirigiendo a dashboard compartido. Roles: {}", username, userRoles);
 
-            String targetUrl;
-            if (savedRequest != null) {
-                targetUrl = savedRequest.getRedirectUrl();
-                logger.info("SavedRequest encontrado para '{}': {}", username, targetUrl);
-                // Limpia la solicitud guardada para evitar redirecciones repetidas
-                requestCache.removeRequest(request, response);
-            } else {
-                // 2) Fallback por rol
-                targetUrl = determineTargetUrl(userRoles);
-                logger.info("Destino por rol para '{}': {}", username, targetUrl);
-            }
+        try {
+            // Redirección única a dashboard compartido
+            String targetUrl = DEFAULT_TARGET_URL;
 
             boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
                     || (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json"));
@@ -87,24 +73,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      * @param userDetails UserDetails del usuario autenticado
      * @throws IOException si hay error en la redirección
      */
-    public void redirectByRole(HttpServletRequest request,
-                              HttpServletResponse response,
-                              UserDetails userDetails) throws IOException {
-        
-        Set<String> userRoles = AuthorityUtils.authorityListToSet(userDetails.getAuthorities());
+    public void redirectToDashboard(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    UserDetails userDetails) throws IOException {
         String username = userDetails.getUsername();
-        
-        logger.info("Redirigiendo usuario '{}' desde controlador con roles: {}", username, userRoles);
-        
-        try {
-            String targetUrl = determineTargetUrl(userRoles);
-            logger.info("Redirigiendo usuario '{}' a: {}", username, targetUrl);
-            response.sendRedirect(targetUrl);
-            
-        } catch (Exception e) {
-            logger.error("Error al redireccionar usuario '{}' desde controlador: {}", username, e.getMessage(), e);
-            response.sendRedirect(DEFAULT_TARGET_URL);
-        }
+        logger.info("Redirigiendo usuario '{}' a dashboard compartido", username);
+        response.sendRedirect(DEFAULT_TARGET_URL);
     }
 
     /**
@@ -114,22 +88,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      * @param userRoles Set de roles del usuario
      * @return URL de destino
      */
-    private String determineTargetUrl(Set<String> userRoles) {
-        // Obtener el rol con mayor prioridad que tenga el usuario
-        Optional<Role> highestPriorityRole = Arrays.stream(Role.values())
-                .filter(role -> userRoles.contains(ROLE_PREFIX + role.name()))
-                .max(Comparator.comparing(Role::getPriority));
-                
-        if (highestPriorityRole.isPresent()) {
-            String targetUrl = highestPriorityRole.get().getDashboardUrl();
-            logger.info("Rol con mayor prioridad: {}, redirigiendo a: {}", 
-                    highestPriorityRole.get(), targetUrl);
-            return targetUrl;
-        } else {
-            logger.warn("Usuario sin roles reconocidos: {}. Redirigiendo a página por defecto.", userRoles);
-            return DEFAULT_TARGET_URL;
-        }
-    }
+    // Sin selección por rol: un único flujo con visibilidad condicional en la vista
     
 
 }

@@ -1,8 +1,20 @@
-<th:block th:replace="~{fragments/admin-layout :: layout(~{::content})}">
-
-<div th:fragment="content">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Documentación del Sistema')}"></head>
+<body th:replace="~{fragments/layout :: layout(~{::content})}">
+    <div th:fragment="content">
     <!-- Contenido principal -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Breadcrumbs -->
+        <nav class="mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center text-sm text-gray-500">
+                <li>
+                    <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                </li>
+                <li class="px-2">/</li>
+                <li class="text-gray-700 font-medium" aria-current="page">Documentación</li>
+            </ol>
+        </nav>
         <div class="md:flex md:items-center md:justify-between mb-8">
             <div class="flex-1 min-w-0">
                 <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
@@ -135,6 +147,6 @@
             </div>
         </div>
     </div>
-</div>
-
-</th:block>
+    </div>
+</body>
+</html>

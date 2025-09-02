@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="~{fragments/admin-layout :: head('Formulario de Usuario')}"></th:block>
+    <th:block th:replace="~{fragments/layout :: head('Formulario de Usuario')}"></th:block>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
+<body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content" class="bg-gray-50 min-h-screen py-4">
         <div class="max-w-6xl mx-auto px-4">
             <!-- Header compacto -->
@@ -17,7 +17,7 @@
             <nav class="mb-6" aria-label="Breadcrumb">
                 <ol class="flex items-center text-sm text-gray-500">
                     <li>
-                        <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
+                        <a href="/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
                     </li>
                     <li class="px-2">/</li>
                     <li>

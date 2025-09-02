@@ -33,9 +33,9 @@ public class HomeController {
         HttpServletResponse response,
         Model model) throws Exception {
 
-        // Si el usuario está autenticado, redirigir según su rol
+        // Si el usuario está autenticado, redirigir al dashboard compartido
         if (userDetails != null) {
-            successHandler.redirectByRole(request, response, userDetails);
+            successHandler.redirectToDashboard(request, response, userDetails);
             return null;
         }
 
