@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
 <head>
-    <title>Posts Públicos - Residuos Sólidos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title layout:fragment="title">Posts Públicos - Residuos Sólidos</title>
+    <th:block layout:fragment="head-extra"></th:block>
 </head>
 <body class="bg-gray-50">
+    <section layout:fragment="content">
     <div class="max-w-4xl mx-auto px-4 py-6">
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Blog - Información del Proyecto</h1>
         
@@ -20,5 +21,6 @@
             <a href="/" class="text-green-600 hover:text-green-800">← Volver al Inicio</a>
         </div>
     </div>
+    </section>
 </body>
 </html>

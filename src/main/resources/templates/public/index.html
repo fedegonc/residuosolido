@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
 <head>
-    <title>Residuos Sólidos - Gestión Circular</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title layout:fragment="title">Residuos Sólidos - Gestión Circular</title>
+    <th:block layout:fragment="head-extra"></th:block>
+    
 </head>
 <body class="bg-white">
+    <section layout:fragment="content">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <header class="text-center mb-12">
             <h1 class="text-4xl font-bold text-green-800 mb-4">Gestión de Residuos Sólidos</h1>
@@ -32,5 +34,6 @@
             </div>
         </div>
     </div>
+    </section>
 </body>
 </html>
