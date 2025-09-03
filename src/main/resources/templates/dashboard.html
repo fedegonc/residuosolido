@@ -8,8 +8,6 @@
 </head>
 <body>
   <section layout:fragment="content" class="min-h-screen flex flex-col">
-    <!-- Navbar autenticado -->
-    <div th:replace="~{fragments/navbar-auth :: navbar}"></div>
 
     <!-- Breadcrumbs -->
     <div class="bg-white border-b">
@@ -59,7 +57,22 @@
             </h2>
             <p class="text-slate-600 text-sm">Gestiona usuarios, contenido y configuraciones del sistema</p>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6" th:insert="~{shared/components/admin-actions :: actions}"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Placeholder de acciones admin mínimas; reemplazar por componentes cuando existan -->
+            <a href="/admin/content/posts" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-emerald-50 rounded-lg">
+                  <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0l-4 4m4-4l-4-4"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900">Gestionar Posts</h3>
+                  <p class="text-sm text-slate-500">Crear y editar publicaciones</p>
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
 
         <!-- Organization Section -->
@@ -148,9 +161,6 @@
 
       </div>
     </div>
-    
-    <!-- Footer compacto -->
-    <th:block th:replace="~{fragments/guest/footer-compact :: guestFooterCompact}"></th:block>
   </section>
 </body>
 </html>

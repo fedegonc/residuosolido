@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
+<!-- AUTH ULTRA-SIMPLIFICADO: solo casos de uso core -->
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title layout:fragment="title">Iniciar Sesión - Residuos Sólidos</title>
   <th:block layout:fragment="head-extra">
@@ -10,7 +11,7 @@
 <body>
   <section layout:fragment="content" class="min-h-screen flex flex-col">
     <!-- Navbar guest completo -->
-    <div th:replace="~{fragments/navbar-guest :: navbar(${true})}"></div>
+    <div th:replace="~{fragments/guest/menu :: guestMenu}"></div>
 
     <!-- Breadcrumbs (alineado al contenedor 7xl) -->
     <div class="bg-white">
@@ -41,12 +42,12 @@
     </div>
     
     <!-- Footer compacto para páginas guest -->
-    <th:block th:replace="~{fragments/guest/footer-compact :: guestFooterCompact}"></th:block>
+    <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
   </section>
 
   <!-- Scripts extra -->
   <th:block layout:fragment="body-scripts">
-    <script th:replace="~{fragments/navbar-guest :: navbar-script}"></script>
+    <!-- Sin scripts adicionales: el menú guest maneja su propio JS -->
   </th:block>
 </body>
 </html>

@@ -1,6 +1,6 @@
 package com.residuosolido.app;
 
-import com.residuosolido.app.controller.admin.AdminDashboardController;
+import com.residuosolido.app.controller.admin.AdminManagementController;
 import com.residuosolido.app.model.*;
 import com.residuosolido.app.service.*;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Test para verificar que el panel de administrador se carga correctamente
  * con todos sus componentes después de la refactorización SOLID
  */
-@WebMvcTest(AdminDashboardController.class)
+@WebMvcTest(AdminManagementController.class)
 @ActiveProfiles("test")
 class AdminDashboardIntegrationTest {
 

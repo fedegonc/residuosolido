@@ -1,152 +1,247 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Documentación del Sistema')}"></head>
-<body th:replace="~{fragments/layout :: layout(~{::content})}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin-layout :: head('Documentación - Casos de Uso')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
     <div th:fragment="content">
-    <!-- Contenido principal -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Breadcrumbs -->
-        <nav class="mb-6" aria-label="Breadcrumb">
-            <ol class="flex items-center text-sm text-gray-500">
-                <li>
-                    <a href="/admin/dashboard" class="hover:text-gray-700">Admin Dashboard</a>
-                </li>
-                <li class="px-2">/</li>
-                <li class="text-gray-700 font-medium" aria-current="page">Documentación</li>
-            </ol>
-        </nav>
-        <div class="md:flex md:items-center md:justify-between mb-8">
-            <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                    Documentación del Sistema
-                </h2>
-                <p class="mt-1 text-sm text-gray-500">
-                    Recursos y documentación para administradores y desarrolladores
-                </p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            
+            <!-- Encabezado -->
+            <div class="bg-gray-50 py-8 mb-8 rounded-lg">
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold text-gray-900">Documentación - Casos de Uso</h1>
+                    <p class="mt-2 text-lg text-gray-600">Sistema de Gestión de Residuos Sólidos</p>
+                </div>
             </div>
-        </div>
 
-        <!-- Sección de documentación principal -->
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
-            <div class="px-4 py-5 sm:px-6 bg-gray-50">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">
-                    <i class="fas fa-book mr-2 text-blue-600"></i>Documentación Principal
-                </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                    Documentación completa del sistema Residuos Sólidos - Frontera de la Paz
-                </p>
-            </div>
-            <div class="border-t border-gray-200">
-                <dl>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">
-                            Manual del Sistema
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0" 
-                               target="_blank" 
-                               class="text-blue-600 hover:text-blue-800 flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i>
-                                Manual completo del sistema (Google Docs)
-                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    Actualizado
-                                </span>
-                            </a>
-                            <p class="mt-2 text-sm text-gray-500">
-                                Contiene información detallada sobre todas las funcionalidades, configuraciones y procedimientos del sistema.
-                            </p>
-                        </dd>
+            <!-- Caso de Uso 1: Administrador -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-900 mb-6">1. Casos de Uso - ADMINISTRADOR</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Gestión CRUD -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-green-700 mb-3">🔧 GESTIÓN CRUD</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Crear/Editar/Eliminar:</strong></li>
+                            <li class="ml-4">• Usuarios</li>
+                            <li class="ml-4">• Categorías</li>
+                            <li class="ml-4">• Materiales</li>
+                            <li class="ml-4">• Organizaciones</li>
+                            <li class="ml-4">• Solicitudes</li>
+                            <li class="ml-4">• Feedback</li>
+                        </ul>
                     </div>
-                </dl>
-            </div>
-        </div>
 
-        <!-- Detalles importantes del sistema -->
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div class="px-4 py-5 sm:px-6 bg-gray-50">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">
-                    <i class="fas fa-info-circle mr-2 text-green-600"></i>Detalles Importantes del Sistema
-                </h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                    Información técnica y operativa relevante
-                </p>
+                    <!-- Gestión Blog -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">📝 GESTIÓN BLOG</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Crear Posts</li>
+                            <li>• Editar Posts</li>
+                            <li>• Eliminar Posts</li>
+                            <li>• Gestionar Categorías</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dashboard -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-purple-700 mb-3">📊 DASHBOARD</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Ver estadísticas</li>
+                            <li>• Resumen general</li>
+                            <li>• Navegación rápida</li>
+                        </ul>
+                    </div>
+
+                    <!-- Reportes -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-orange-700 mb-3">📈 REPORTES</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Estadísticas de solicitudes</li>
+                            <li>• Feedback users</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="border-t border-gray-200">
-                <dl>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">
-                            Versión del Sistema
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            1.0.0
-                        </dd>
+
+            <!-- Caso de Uso 2: Usuarios Registrados -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-green-900 mb-6">2. Casos de Uso - USUARIOS REGISTRADOS</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Solicitudes -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-green-700 mb-3">📋 SOLICITUDES</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Crear nueva solicitud</li>
+                            <li>• Ver mis solicitudes</li>
+                            <li>• Estado de solicitudes</li>
+                        </ul>
                     </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">
-                            Tecnologías Principales
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
-                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                    <div class="w-0 flex-1 flex items-center">
-                                        <i class="fas fa-code flex-shrink-0 h-5 w-5 text-gray-400"></i>
-                                        <span class="ml-2 flex-1 w-0 truncate">
-                                            Spring Boot 3.x
-                                        </span>
-                                    </div>
-                                </li>
-                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                    <div class="w-0 flex-1 flex items-center">
-                                        <i class="fas fa-database flex-shrink-0 h-5 w-5 text-gray-400"></i>
-                                        <span class="ml-2 flex-1 w-0 truncate">
-                                            PostgreSQL
-                                        </span>
-                                    </div>
-                                </li>
-                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                    <div class="w-0 flex-1 flex items-center">
-                                        <i class="fas fa-paint-brush flex-shrink-0 h-5 w-5 text-gray-400"></i>
-                                        <span class="ml-2 flex-1 w-0 truncate">
-                                            Tailwind CSS
-                                        </span>
-                                    </div>
-                                </li>
-                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                    <div class="w-0 flex-1 flex items-center">
-                                        <i class="fas fa-globe flex-shrink-0 h-5 w-5 text-gray-400"></i>
-                                        <span class="ml-2 flex-1 w-0 truncate">
-                                            Thymeleaf
-                                        </span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </dd>
+
+                    <!-- Feedback -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">💭 FEEDBACK</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Enviar feedback</li>
+                            <li>• Ver historial de feedback</li>
+                        </ul>
                     </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">
-                            Contacto Soporte
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            <a href="mailto:soporte@residuosolido.com" class="text-blue-600 hover:text-blue-800">
-                                soporte@residuosolido.com
-                            </a>
-                        </dd>
+
+                    <!-- Perfil -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-purple-700 mb-3">👤 PERFIL</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Ver perfil</li>
+                            <li>• Editar datos</li>
+                            <li>• Cambiar ubicación</li>
+                        </ul>
                     </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">
-                            Repositorio de Código
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            <a href="https://github.com/residuosolido/app" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
-                                <i class="fab fa-github mr-2"></i>
-                                GitHub: residuosolido/app
-                            </a>
-                        </dd>
+
+                    <!-- Navegación -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-orange-700 mb-3">🧭 NAVEGACIÓN</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Ver posts públicos</li>
+                            <li>• Logout</li>
+                            <li>• Dashboard</li>
+                        </ul>
                     </div>
-                </dl>
+                </div>
             </div>
+
+            <!-- Caso de Uso 3: Organizaciones -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-orange-900 mb-6">3. Casos de Uso - ORGANIZACIONES</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Solicitudes -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-green-700 mb-3">📋 SOLICITUDES</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Ver solicitudes recibidas</li>
+                            <li>• Aprobar/Rechazar</li>
+                            <li>• Historial</li>
+                        </ul>
+                    </div>
+
+                    <!-- Materiales -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">♻️ MATERIALES</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Gestionar materiales que acepta</li>
+                        </ul>
+                    </div>
+
+                    <!-- Perfil -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-purple-700 mb-3">🏢 PERFIL</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Ver/editar perfil org</li>
+                            <li>• Dashboard</li>
+                            <li>• Logout</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso de Uso 4: Público General -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">4. Casos de Uso - PÚBLICO GENERAL</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Información -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-green-700 mb-3">ℹ️ INFORMACIÓN</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Ver posts/blog público</li>
+                            <li>• Categorías de residuos</li>
+                            <li>• Información del proyecto</li>
+                        </ul>
+                    </div>
+
+                    <!-- Autenticación -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">🔐 AUTENTICACIÓN</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li>• Login</li>
+                            <li>• Register</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dependencias Técnicas Esenciales -->
+            <div class="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-purple-900 mb-4">🔧 Dependencias Técnicas Esenciales</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <h3 class="font-semibold text-purple-800 mb-2">CloudinaryService:</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li>• Gestión de imágenes en la nube</li>
+                            <li>• Upload de archivos para posts/profiles</li>
+                            <li>• CDN automático y optimización</li>
+                            <li>• Esencial para funcionalidad multimedia</li>
+                        </ul>
+                        
+                        <h3 class="font-semibold text-purple-800 mb-2 mt-4">Thymeleaf Layout Dialect:</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li>• Esencial para layouts reutilizables</li>
+                            <li>• base.html y admin-layout.html</li>
+                            <li>• Evita duplicación de código HTML</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-purple-800 mb-2">Render/Deploy:</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li>• PostgreSQL en producción</li>
+                            <li>• Variables de entorno para Cloudinary</li>
+                            <li>• Spring Boot auto-config</li>
+                            <li>• Tailwind CDN para styling</li>
+                        </ul>
+                        
+                        <div class="mt-4 p-3 bg-purple-100 rounded">
+                            <p class="text-purple-800 font-medium">⚠️ No eliminar: CloudinaryService y Layout Dialect son críticos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de Templates Necesarios -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h2 class="text-2xl font-bold text-blue-900 mb-4">📁 Templates Necesarios (Optimización)</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <h3 class="font-semibold text-blue-800 mb-2">Core Templates (~16):</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li><strong>Admin:</strong> entity-crud.html + dashboard.html (2)</li>
+                            <li><strong>Auth:</strong> login.html + register.html (2)</li>
+                            <li><strong>User:</strong> dashboard.html + profile.html + requests.html + feedback.html (4)</li>
+                            <li><strong>Org:</strong> dashboard.html + materials.html + requests.html (3)</li>
+                            <li><strong>Public:</strong> index.html + posts.html + categories.html (3)</li>
+                            <li><strong>Layouts:</strong> base.html + admin-layout.html (2)</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-blue-800 mb-2">Estado Actual:</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li>Templates actuales: ~29</li>
+                            <li>Templates objetivo: ~16</li>
+                            <li><strong>Reducción necesaria: ~45%</strong></li>
+                        </ul>
+                        
+                        <div class="mt-4 p-3 bg-green-100 rounded">
+                            <p class="text-green-800 font-medium">🎯 Objetivo: Simplicidad máxima basada en casos de uso reales</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
     </div>
 </body>
 </html>

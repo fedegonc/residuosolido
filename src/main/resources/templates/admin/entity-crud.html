@@ -105,18 +105,6 @@
                                 Eliminar
                             </button>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript para funcionalidad CRUD -->
-    <script th:inline="javascript">
-        class EntityCRUD {
-            constructor(entityName, apiEndpoint, fields) {
-                this.entityName = entityName;
-                this.apiEndpoint = apiEndpoint;
                 this.fields = fields;
                 this.currentPage = 0;
                 this.pageSize = 10;

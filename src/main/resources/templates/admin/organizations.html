@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Gestión de Organizaciones')}"></head>
-<body th:replace="~{fragments/layout :: layout(~{::content})}">
+<head th:replace="~{fragments/admin-layout :: head('Gestión de Organizaciones')}"></head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::content})}">
     <div th:fragment="content">
+        <div th:replace="admin/entity-crud :: entityCrud"></div>
         <!-- Encabezado simple -->
         <div class="bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

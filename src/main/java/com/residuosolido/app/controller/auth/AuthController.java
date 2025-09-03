@@ -4,7 +4,6 @@ import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.PasswordResetService;
 import com.residuosolido.app.service.AuthService;
-import com.residuosolido.app.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -27,18 +26,15 @@ public class AuthController {
     private final LoginSuccessHandler successHandler;
     private final PasswordResetService passwordResetService;
     private final AuthService authService;
-    private final PostService postService;
 
     public AuthController(PasswordEncoder passwordEncoder,
                          LoginSuccessHandler successHandler,
                          PasswordResetService passwordResetService,
-                         AuthService authService,
-                         PostService postService) {
+                         AuthService authService) {
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.passwordResetService = passwordResetService;
         this.authService = authService;
-        this.postService = postService;
     }
 
     @GetMapping("/auth/register")

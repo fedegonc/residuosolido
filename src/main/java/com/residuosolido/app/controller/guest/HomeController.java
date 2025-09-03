@@ -1,6 +1,5 @@
 package com.residuosolido.app.controller.guest;
 
-import com.residuosolido.app.service.PostService;
 import com.residuosolido.app.service.ConfigService;
 import com.residuosolido.app.config.LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,14 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-
-    private final PostService postService;
     private final ConfigService configService;
     private final LoginSuccessHandler successHandler;
 
     @Autowired
-    public HomeController(PostService postService, ConfigService configService, LoginSuccessHandler successHandler) {
-        this.postService = postService;
+    public HomeController(ConfigService configService, LoginSuccessHandler successHandler) {
         this.configService = configService;
         this.successHandler = successHandler;
     }
@@ -40,9 +36,8 @@ public class HomeController {
         }
 
         // Usuario no autenticado: mostrar página principal optimizada
-        model.addAttribute("posts", postService.getRecentPosts(3));
         model.addAttribute("heroImage", configService.getHeroImageUrl());
-        return "pages/home";
+        return "public/index";
     }
 
     @GetMapping("/home")

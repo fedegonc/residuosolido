@@ -3,10 +3,7 @@
 <head th:replace="~{fragments/layout :: head('Gestión de Posts')}"></head>
 <body th:replace="~{fragments/layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <!-- Encabezado simple -->
-        <div class="bg-gray-50 py-8">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center">
+        <div th:replace="admin/entity-crud :: entityCrud"></div>
                     <h1 class="text-2xl font-bold text-gray-900">Gestión de Posts</h1>
 
                 </div>
@@ -20,18 +17,6 @@
                         <li class="text-gray-700 font-medium" aria-current="page">Posts</li>
                     </ol>
                 </nav>
-            </div>
-        </div>
-
-        <!-- Contenido principal -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-            
-            <!-- 1. FORMULARIOS DE CREACIÓN (ARRIBA) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Crear Post -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6">
-                        <h2 class="text-xl font-semibold mb-4">Crear Nuevo Post</h2>
                         <form th:action="@{/admin/posts}" method="post" enctype="multipart/form-data" class="space-y-4">
                             <input type="text" name="title" placeholder="Título" required 
                                    class="w-full px-3 py-2 border rounded-lg">

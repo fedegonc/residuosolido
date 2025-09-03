@@ -36,7 +36,7 @@ public class PostController {
     public String listPosts(Model model) {
         model.addAttribute("posts", postService.getAllPostsWithCategories());
         model.addAttribute("categories", categoryService.getAllCategories());
-        return "pages/posts/list";
+        return "posts/list";
     }
 
     @GetMapping("/posts/{id}")
@@ -48,7 +48,11 @@ public class PostController {
             model.addAttribute("post", post);
             model.addAttribute("categoryName", categoryService.getCategoryNameById(post.getCategoryId()));
             model.addAttribute("relatedPosts", postService.getRelatedPostsById(post.getId(), post.getCategoryId(), 3));
-            return "pages/posts/detail";
+            // Simplificado: reutilizamos la lista para mostrar detalles arriba si el template lo soporta
+            // o puedes crear un template posts/detail.html más adelante
+            model.addAttribute("posts", List.of(post));
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "posts/list";
         }
         
         return "redirect:/posts";
@@ -63,7 +67,7 @@ public class PostController {
             model.addAttribute("posts", postService.getPostsByCategoryId(category.getId()));
             model.addAttribute("category", category);
             model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
-            return "pages/posts/category";
+            return "posts/list";
         }
         
         return "redirect:/posts";
@@ -72,12 +76,13 @@ public class PostController {
     @GetMapping("/categories")
     public String viewAllCategories(Model model) {
         model.addAttribute("categories", categoryService.getCategoriesWithSlugs());
-        return "categories/list";
+        return "categories/public";
     }
     
     @GetMapping("/about")
     public String about() {
-        return "guest/about";
+        // Simplificado: reutilizamos el index público
+        return "public/index";
     }
     
     @PostMapping("/posts/create")

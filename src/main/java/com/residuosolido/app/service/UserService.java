@@ -9,7 +9,6 @@ import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,21 +24,17 @@ import org.slf4j.LoggerFactory;
  * Servicio para operaciones CRUD y de negocio con la entidad User
  */
 @Service
-public class UserService extends GenericEntityService<User, Long> {
+public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    protected JpaRepository<User, Long> getRepository() {
-        return userRepository;
     }
     
     /**
@@ -159,7 +154,7 @@ public class UserService extends GenericEntityService<User, Long> {
             user.setPreferredLanguage("es");
         }
         
-        return save(user);
+        return userRepository.save(user);
     }
     
     /**
@@ -170,7 +165,7 @@ public class UserService extends GenericEntityService<User, Long> {
      */
     public User updateUser(User user, String newPassword) {
         logger.info("[UserService] updateUser() called | id={}", user.getId());
-        Optional<User> existingUserOpt = findById(user.getId());
+        Optional<User> existingUserOpt = userRepository.findById(user.getId());
         if (existingUserOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado");
         }
@@ -193,7 +188,7 @@ public class UserService extends GenericEntityService<User, Long> {
             logger.info("[UserService] Password updated for user id={}", existingUser.getId());
         }
         
-        User saved = save(existingUser);
+        User saved = userRepository.save(existingUser);
         logger.info("[UserService] User updated and saved | id={}", saved.getId());
         return saved;
     }
@@ -415,7 +410,7 @@ public class UserService extends GenericEntityService<User, Long> {
      * @throws IllegalArgumentException si el usuario no existe
      */
     public User getUserOrThrow(Long id) {
-        return findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
     }
     
@@ -426,10 +421,10 @@ public class UserService extends GenericEntityService<User, Long> {
      * @throws IllegalArgumentException si el usuario no existe
      */
     public void deleteUser(Long id) {
-        if (!existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
         }
-        deleteById(id);
+        userRepository.deleteById(id);
     }
     
     /**
@@ -438,7 +433,7 @@ public class UserService extends GenericEntityService<User, Long> {
      * @return Usuario encontrado o null si no existe
      */
     public User findUserById(Long id) {
-        return super.findById(id).orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
     
     /**

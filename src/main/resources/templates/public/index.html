@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Residuos Sólidos - Gestión Circular</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-green-800 mb-4">Gestión de Residuos Sólidos</h1>
+            <p class="text-lg text-gray-600">Soluciones innovadoras para el manejo circular de residuos</p>
+        </header>
+        
+        <!-- Casos de uso público: Ver posts e información -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-green-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">📝 Posts e Información</h2>
+                <a href="/posts" class="text-green-600 hover:text-green-800">Ver Blog Público</a>
+            </div>
+            
+            <div class="bg-blue-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">♻️ Categorías</h2>
+                <a href="/categories" class="text-blue-600 hover:text-blue-800">Ver Categorías de Residuos</a>
+            </div>
+            
+            <div class="bg-purple-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">🔐 Acceso</h2>
+                <div class="space-y-2">
+                    <a href="/auth/login" class="block text-purple-600 hover:text-purple-800">Iniciar Sesión</a>
+                    <a href="/auth/register" class="block text-purple-600 hover:text-purple-800">Registrarse</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
