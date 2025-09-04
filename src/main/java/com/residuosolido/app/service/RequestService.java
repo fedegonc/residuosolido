@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RequestService {
@@ -34,6 +35,23 @@ public class RequestService {
     public List<Request> findAll() {
         return requestRepository.findAll();
     }
+
+    public long count() {
+        return requestRepository.count();
+    }
+
+    public Optional<Request> findById(Long id) {
+        return requestRepository.findById(id);
+    }
+
+    public Request rejectRequest(Long requestId) {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request != null) {
+            request.setStatus(Request.RequestStatus.REJECTED);
+            return requestRepository.save(request);
+        }
+        return null;
+    }
     
     public List<Request> getPendingRequests() {
         return requestRepository.findByStatus(Request.RequestStatus.PENDING);
@@ -43,15 +61,6 @@ public class RequestService {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request != null) {
             request.setStatus(Request.RequestStatus.ACCEPTED);
-            return requestRepository.save(request);
-        }
-        return null;
-    }
-
-    public Request rejectRequest(Long requestId) {
-        Request request = requestRepository.findById(requestId).orElse(null);
-        if (request != null) {
-            request.setStatus(Request.RequestStatus.REJECTED);
             return requestRepository.save(request);
         }
         return null;

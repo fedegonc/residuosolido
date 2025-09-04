@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Admin'">CRUD - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+    <main>
+        <!-- Header -->
+        <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+            <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
+                <div class="ml-4 mt-2">
+                    <h3 class="text-2xl font-bold leading-6 text-gray-900" th:text="${pageTitle}">Título</h3>
+                    <p class="mt-1 text-sm text-gray-500" th:text="${pageDescription}">Descripción</p>
+                </div>
+                <div class="ml-4 mt-2 flex-shrink-0" th:if="${showActions}">
+                    <!-- Back button for forms -->
+                    <a th:if="${viewType == 'form' or viewType == 'view'}" th:href="@{/admin/{entity}(entity=${entityType})}" 
+                       class="mr-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Volver
+                    </a>
+                    <!-- New button for lists -->
+                    <a th:if="${viewType == 'list'}" th:href="@{/admin/{entity}/new(entity=${entityType})}" 
+                       class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span th:text="'Nuevo ' + ${entityName}">Nuevo</span>
+                    </a>
+                    <!-- Edit button for view -->
+                    <a th:if="${viewType == 'view' and item != null}" th:href="@{/admin/{entity}/{id}/edit(entity=${entityType}, id=${item.id})}" 
+                       class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <!-- Success Message -->
+            <div th:if="${success}" class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative">
+                <span th:text="${success}"></span>
+            </div>
+
+            <!-- LIST VIEW -->
+            <div th:if="${viewType == 'list'}" class="bg-white shadow overflow-hidden sm:rounded-md">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th th:each="column : ${columns}" 
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                        th:text="${column.label}">Columna</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="item : ${items}" class="hover:bg-gray-50">
+                                    <td th:each="column : ${columns}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <!-- Dynamic column rendering -->
+                                        <span th:switch="${column.type}">
+                                            <span th:case="'role'" th:switch="${#strings.toString(#objects.nullSafe(#reflection.invoke(item, column.getter), ''))}">
+                                                <span th:case="'ADMIN'" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">⚙️ Admin</span>
+                                                <span th:case="'ORGANIZATION'" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">🏢 Organización</span>
+                                                <span th:case="*" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">👤 Usuario</span>
+                                            </span>
+                                            <span th:case="'date'" th:text="${#temporals.format(#reflection.invoke(item, column.getter), 'dd/MM/yyyy')}">Fecha</span>
+                                            <span th:case="'status'" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800" 
+                                                  th:text="${#reflection.invoke(item, column.getter)}">Estado</span>
+                                            <span th:case="*" th:text="${#reflection.invoke(item, column.getter)}">Valor</span>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <a th:href="@{/admin/{entity}/{id}(entity=${entityType}, id=${item.id})}" class="text-blue-600 hover:text-blue-900">Ver</a>
+                                            <a th:href="@{/admin/{entity}/{id}/edit(entity=${entityType}, id=${item.id})}" class="text-green-600 hover:text-green-900">Editar</a>
+                                            <form th:action="@{/admin/{entity}/{id}/delete(entity=${entityType}, id=${item.id})}" method="post" class="inline" 
+                                                  th:attr="onsubmit='return confirm(\'¿Estás seguro de que quieres eliminar este ' + ${entityName} + '?\')'">
+                                                <button type="submit" class="text-red-600 hover:text-red-900">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(items)}">
+                                    <td th:attr="colspan=${#lists.size(columns) + 1}" class="px-6 py-4 text-center text-gray-500">
+                                        <span th:text="'No hay ' + ${entityName} + 's registrados'">No hay elementos</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORM VIEW -->
+            <div th:if="${viewType == 'form'}" class="bg-white shadow sm:rounded-lg">
+                <form th:action="@{/admin/{entity}(entity=${entityType})}" th:object="${item}" method="post" class="space-y-6">
+                    <input type="hidden" th:field="*{id}">
+                    
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                            <div th:each="field : ${formFields}" th:class="${field.fullWidth ? 'sm:col-span-2' : 'sm:col-span-1'}">
+                                <label th:for="${field.name}" class="block text-sm font-medium text-gray-700" th:text="${field.label}">Campo</label>
+                                <div class="mt-1">
+                                    <div th:switch="${field.type}">
+                                        <input th:case="'text'" th:field="*{__${field.name}__}" th:id="${field.name}" 
+                                               th:required="${field.required}" th:placeholder="${field.placeholder}"
+                                               class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                        <input th:case="'email'" type="email" th:field="*{__${field.name}__}" th:id="${field.name}" 
+                                               th:required="${field.required}" th:placeholder="${field.placeholder}"
+                                               class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                        <input th:case="'password'" type="password" th:field="*{__${field.name}__}" th:id="${field.name}" 
+                                               th:required="${field.required}" th:placeholder="${field.placeholder}"
+                                               class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                        <textarea th:case="'textarea'" th:field="*{__${field.name}__}" th:id="${field.name}" rows="3"
+                                                  th:required="${field.required}" th:placeholder="${field.placeholder}"
+                                                  class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
+                                        <select th:case="'select'" th:field="*{__${field.name}__}" th:id="${field.name}" 
+                                                th:required="${field.required}"
+                                                class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                            <option value="" th:text="'Seleccionar ' + ${field.label} + '...'">Seleccionar...</option>
+                                            <option th:each="option : ${field.options}" th:value="${option.value}" th:text="${option.label}">Opción</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p th:if="${field.help}" class="mt-2 text-sm text-gray-500" th:text="${field.help}">Ayuda</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 space-x-3">
+                        <a th:href="@{/admin/{entity}(entity=${entityType})}" 
+                           class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                            <span th:text="${item.id != null ? 'Actualizar' : 'Crear'} + ' ' + ${entityName}">Guardar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- VIEW DETAILS -->
+            <div th:if="${viewType == 'view'}" class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" th:text="'Detalles de ' + ${entityName}">Detalles</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Información completa del elemento</p>
+                </div>
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div th:each="field, iterStat : ${viewFields}" 
+                             th:class="${iterStat.odd ? 'bg-gray-50' : 'bg-white'} + ' px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'">
+                            <dt class="text-sm font-medium text-gray-500" th:text="${field.label}">Campo</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span th:switch="${field.type}">
+                                    <span th:case="'role'" th:switch="${#strings.toString(#objects.nullSafe(#reflection.invoke(item, field.getter), ''))}">
+                                        <span th:case="'ADMIN'" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">⚙️ Administrador</span>
+                                        <span th:case="'ORGANIZATION'" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">🏢 Organización</span>
+                                        <span th:case="*" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">👤 Usuario</span>
+                                    </span>
+                                    <span th:case="'date'" th:text="${#temporals.format(#reflection.invoke(item, field.getter), 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                    <span th:case="'status'" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800" 
+                                          th:text="${#reflection.invoke(item, field.getter)}">Estado</span>
+                                    <span th:case="*" th:text="${#objects.nullSafe(#reflection.invoke(item, field.getter), 'No especificado')}">Valor</span>
+                                </span>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Delete Action for View -->
+            <div th:if="${viewType == 'view' and item != null}" class="mt-6 flex justify-end space-x-3">
+                <form th:action="@{/admin/{entity}/{id}/delete(entity=${entityType}, id=${item.id})}" method="post" class="inline"
+                      th:attr="onsubmit='return confirm(\'¿Estás seguro de que quieres eliminar este ' + ${entityName} + '? Esta acción no se puede deshacer.\')'">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span th:text="'Eliminar ' + ${entityName}">Eliminar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -47,6 +47,14 @@ public class PostService {
         return postRepository.findAllWithCategories();
     }
 
+    public List<Post> findAll() {
+        return postRepository.findAllWithCategories();
+    }
+
+    public long count() {
+        return postRepository.count();
+    }
+
     public Post save(Post post) {
         return postRepository.save(post);
     }

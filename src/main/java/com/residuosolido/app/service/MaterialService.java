@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Servicio para operaciones con la entidad Material
@@ -37,5 +38,13 @@ public class MaterialService {
 
     public void deleteById(Long id) {
         materialRepository.deleteById(id);
+    }
+
+    public long count() {
+        return materialRepository.count();
+    }
+
+    public Optional<Material> findById(Long id) {
+        return materialRepository.findById(id);
     }
 }

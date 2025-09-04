@@ -133,6 +133,14 @@ public class CategoryService {
         return categoryRepository.findAllByOrderByDisplayOrderAsc();
     }
 
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
+    public long count() {
+        return categoryRepository.count();
+    }
+
     public Category save(Category category) {
         cachedCategories = null;
         return categoryRepository.save(category);

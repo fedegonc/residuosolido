@@ -5,6 +5,7 @@
     <div th:fragment="content">
         <div class="bg-gray-50 py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div id="entity-config" th:attr="data-entity-name=${entityName}"></div>
                 
                 <!-- Header -->
                 <div class="bg-white shadow rounded-lg mb-6">
@@ -105,12 +106,87 @@
                                 Eliminar
                             </button>
                         </div>
-                this.fields = fields;
-                this.currentPage = 0;
-                this.pageSize = 10;
-                this.searchTerm = '';
-                this.editingId = null;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            this.fields = fields;
+            this.currentPage = 0;
+            this.pageSize = 10;
+            this.searchTerm = '';
+            this.editingId = null;
+            
+            this.init();
+        }
+        
+        init() {
+            this.setupForm();
+            this.setupEventListeners();
+            this.loadData();
+        }
+        
+        setupForm() {
+            const formFields = document.getElementById('form-fields');
+            formFields.innerHTML = '';
+            
+            this.fields.forEach(field => {
+                const div = document.createElement('div');
+                div.className = 'space-y-1';
                 
+                const label = document.createElement('label');
+                label.textContent = field.label;
+                label.className = 'block text-sm font-medium text-gray-700';
+                label.setAttribute('for', field.name);
+                
+                let input;
+                if (field.type === 'textarea') {
+                    input = document.createElement('textarea');
+                    input.rows = 3;
+                } else if (field.type === 'select') {
+                    input = document.createElement('select');
+                    field.options.forEach(option => {
+                        const opt = document.createElement('option');
+                        opt.value = option.value;
+                        opt.textContent = option.label;
+                        input.appendChild(opt);
+                    });
+                } else {
+                    input = document.createElement('input');
+                    input.type = field.type || 'text';
+                }
+                
+                input.id = field.name;
+                input.name = field.name;
+                input.className = 'block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm';
+                
+                if (field.required) {
+                    input.required = true;
+                }
+                
+                div.appendChild(label);
+                div.appendChild(input);
+                formFields.appendChild(div);
+            });
+        }
+        
+        setupEventListeners() {
+            // Form submit
+            document.getElementById('entity-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveEntity();
+            });
+            
+            // Cancel button
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+                this.resetForm();
+            });
+            
+            // Search
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                this.searchTerm = e.target.value;
+                this.currentPage = 0;
                 this.init();
             }
             
@@ -445,9 +521,10 @@
             }
         };
         
-        // Inicializar según la entidad actual
+        // Inicializar según la entidad actual sin inline Thymeleaf
         document.addEventListener('DOMContentLoaded', function() {
-            const entityName = /*[[${entityName}]]*/ 'users';
+            const cfgEl = document.getElementById('entity-config');
+            const entityName = (cfgEl && cfgEl.dataset.entityName) ? cfgEl.dataset.entityName : 'users';
             const config = entityConfig[entityName];
             
             if (config) {

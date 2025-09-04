@@ -88,4 +88,23 @@ public class User {
 
 
     // @Data genera automáticamente todos los getters/setters
+    // Métodos adicionales para compatibilidad
+    public String getLocation() {
+        return direccion;
+    }
+    
+    public void setLocation(String location) {
+        this.direccion = location;
+    }
+    
+    public String getFullName() {
+        if (firstName != null && lastName != null) {
+            return firstName + " " + lastName;
+        } else if (firstName != null) {
+            return firstName;
+        } else if (lastName != null) {
+            return lastName;
+        }
+        return username;
+    }
 }

@@ -59,16 +59,81 @@
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Placeholder de acciones admin mínimas; reemplazar por componentes cuando existan -->
-            <a href="/admin/content/posts" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+            <a href="/admin/entity/users" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-emerald-50 rounded-lg">
-                  <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0l-4 4m4-4l-4-4"></path>
+                <div class="flex-shrink-0 p-3 bg-blue-50 rounded-lg">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
                   </svg>
                 </div>
                 <div class="ml-4">
-                  <h3 class="text-lg font-medium text-slate-900">Gestionar Posts</h3>
-                  <p class="text-sm text-slate-500">Crear y editar publicaciones</p>
+                  <h3 class="text-lg font-medium text-slate-900">Usuarios</h3>
+                  <p class="text-sm text-slate-500">Gestionar usuarios del sistema</p>
+                </div>
+              </div>
+            </a>
+            <a href="/admin/entity/posts" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-emerald-50 rounded-lg">
+                  <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900">Posts</h3>
+                  <p class="text-sm text-slate-500">Gestionar contenido del blog</p>
+                </div>
+              </div>
+            </a>
+            <a href="/admin/entity/categories" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-purple-50 rounded-lg">
+                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900">Categorías</h3>
+                  <p class="text-sm text-slate-500">Gestionar categorías</p>
+                </div>
+              </div>
+            </a>
+            <a href="/admin/entity/materials" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-orange-50 rounded-lg">
+                  <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900">Materiales</h3>
+                  <p class="text-sm text-slate-500">Gestionar materiales reciclables</p>
+                </div>
+              </div>
+            </a>
+            <a href="/admin/entity/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-red-50 rounded-lg">
+                  <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900">Solicitudes</h3>
+                  <p class="text-sm text-slate-500">Gestionar solicitudes</p>
+                </div>
+              </div>
+            </a>
+            <a href="/admin/entity/feedback" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 p-3 bg-teal-50 rounded-lg">
+                  <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <h3 class="text-lg font-medium text-slate-900">Feedback</h3>
+                  <p class="text-sm text-slate-500">Gestionar comentarios</p>
                 </div>
               </div>
             </a>

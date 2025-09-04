@@ -99,6 +99,19 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
+    public long count() {
+        return userRepository.count();
+    }
+
+    /**
+     * Busca un usuario por su ID
+     * @param id ID del usuario
+     * @return Optional con el usuario encontrado
+     */
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
     /**
      * Busca usuarios por texto (username, email, firstName, lastName) de forma paginada
      */

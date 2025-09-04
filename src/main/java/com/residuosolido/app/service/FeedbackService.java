@@ -46,4 +46,8 @@ public class FeedbackService {
     public long countByUserId(Long userId) {
         return feedbackRepository.countByUserId(userId);
     }
+
+    public long count() {
+        return feedbackRepository.count();
+    }
 }
