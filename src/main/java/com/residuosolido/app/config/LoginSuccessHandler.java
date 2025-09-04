@@ -44,8 +44,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("Usuario '{}' autenticado. Redirigiendo a dashboard compartido. Roles: {}", username, userRoles);
 
         try {
-            // Redirección única a dashboard compartido
-            String targetUrl = DEFAULT_TARGET_URL;
+            // Redirección específica según rol
+            String targetUrl;
+            if (userRoles.contains("ROLE_ADMIN")) {
+                targetUrl = "/admin/dashboard";
+            } else {
+                targetUrl = DEFAULT_TARGET_URL;
+            }
 
             boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
                     || (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json"));

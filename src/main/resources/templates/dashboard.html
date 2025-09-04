@@ -57,11 +57,11 @@
             </h2>
             <p class="text-slate-600 text-sm">Gestiona usuarios, contenido y configuraciones del sistema</p>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Placeholder de acciones admin mínimas; reemplazar por componentes cuando existan -->
-            <a href="/admin/entity/users" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Usuarios -->
+            <a href="/admin/users" class="group bg-white rounded-md shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50 transition-all duration-200 p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-blue-50 rounded-lg">
+                <div class="flex-shrink-0 p-3 bg-blue-50 rounded-md">
                   <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
                   </svg>
@@ -72,68 +72,63 @@
                 </div>
               </div>
             </a>
-            <a href="/admin/entity/posts" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+
+            <!-- Posts -->
+            <a href="/admin/posts" class="group bg-white rounded-md shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50 transition-all duration-200 p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-emerald-50 rounded-lg">
-                  <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                <div class="flex-shrink-0 p-3 bg-green-50 rounded-md">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                   </svg>
                 </div>
                 <div class="ml-4">
                   <h3 class="text-lg font-medium text-slate-900">Posts</h3>
-                  <p class="text-sm text-slate-500">Gestionar contenido del blog</p>
+                  <p class="text-sm text-slate-500">Crear y editar contenido</p>
                 </div>
               </div>
             </a>
-            <a href="/admin/entity/categories" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+
+            <!-- Categories -->
+            <a href="/admin/categories" class="group bg-white rounded-md shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50 transition-all duration-200 p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-purple-50 rounded-lg">
-                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                <div class="flex-shrink-0 p-3 bg-orange-50 rounded-md">
+                  <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                   </svg>
                 </div>
                 <div class="ml-4">
                   <h3 class="text-lg font-medium text-slate-900">Categorías</h3>
-                  <p class="text-sm text-slate-500">Gestionar categorías</p>
+                  <p class="text-sm text-slate-500">Organizar contenido por categorías</p>
                 </div>
               </div>
             </a>
-            <a href="/admin/entity/materials" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+
+            <!-- Requests -->
+            <a href="/admin/requests" class="group bg-white rounded-md shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50 transition-all duration-200 p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-orange-50 rounded-lg">
-                  <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                  </svg>
-                </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-slate-900">Materiales</h3>
-                  <p class="text-sm text-slate-500">Gestionar materiales reciclables</p>
-                </div>
-              </div>
-            </a>
-            <a href="/admin/entity/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-red-50 rounded-lg">
-                  <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-md">
+                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                   </svg>
                 </div>
                 <div class="ml-4">
                   <h3 class="text-lg font-medium text-slate-900">Solicitudes</h3>
-                  <p class="text-sm text-slate-500">Gestionar solicitudes</p>
+                  <p class="text-sm text-slate-500">Gestionar solicitudes de recolección</p>
                 </div>
               </div>
             </a>
-            <a href="/admin/entity/feedback" class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 p-6">
+
+            <!-- Feedback -->
+            <a href="/admin/feedback" class="group bg-white rounded-md shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50 transition-all duration-200 p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-teal-50 rounded-lg">
-                  <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                <div class="flex-shrink-0 p-3 bg-purple-50 rounded-md">
+                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 8l-4-4V6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H7z"/>
                   </svg>
                 </div>
                 <div class="ml-4">
                   <h3 class="text-lg font-medium text-slate-900">Feedback</h3>
-                  <p class="text-sm text-slate-500">Gestionar comentarios</p>
+                  <p class="text-sm text-slate-500">Ver y editar feedback de usuarios</p>
                 </div>
               </div>
             </a>
@@ -165,20 +160,6 @@
                 </div>
               </div>
             </a>
-            
-            <a href="/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-green-200 transition-all duration-200 p-6">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                  </svg>
-                </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-slate-900 group-hover:text-green-900">Solicitudes</h3>
-                  <p class="text-sm text-slate-500">Revisar solicitudes de recolección</p>
-                </div>
-              </div>
-            </a>
           </div>
         </div>
 
@@ -194,7 +175,7 @@
             <p class="text-slate-600 text-sm">Solicita recolecciones y gestiona tus residuos</p>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="/requests/new" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-green-200 transition-all duration-200 p-6">
+            <a href="/users/requests/create" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-green-200 transition-all duration-200 p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0 p-3 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
                   <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +189,7 @@
               </div>
             </a>
             
-            <a href="/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-blue-200 transition-all duration-200 p-6">
+            <a href="/users/requests" class="group bg-white rounded-lg shadow-sm border hover:shadow-md hover:border-blue-200 transition-all duration-200 p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0 p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
                   <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

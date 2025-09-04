@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
@@ -112,18 +114,18 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end space-x-2">
                                     <a th:href="@{/admin/users(action='view', id=${user.id})}" 
-                                       class="text-blue-600 hover:text-blue-900" title="Ver">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                       class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200">
+                                        Ver
                                     </a>
                                     <a th:href="@{/admin/users(action='edit', id=${user.id})}" 
-                                       class="text-green-600 hover:text-green-900" title="Editar">
-                                        <i data-lucide="edit" class="w-4 h-4"></i>
+                                       class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200">
+                                        Editar
                                     </a>
                                     <button onclick="confirmDelete(this)" 
                                             th:data-id="${user.id}" 
                                             th:data-name="${user.username}"
-                                            class="text-red-600 hover:text-red-900" title="Eliminar">
-                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200">
+                                        Eliminar
                                     </button>
                                 </div>
                             </td>
@@ -141,7 +143,7 @@
             </div>
             
             <form th:action="@{/admin/users}" method="post" th:object="${user}" class="p-6 space-y-6">
-                <input type="hidden" name="action" th:value="${isEdit} ? 'update' : ''" />
+                <input type="hidden" name="action" value="update" th:if="${isEdit}" />
                 <input type="hidden" name="id" th:value="${isEdit} ? ${user.id} : ''" />
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -330,9 +332,8 @@
                             class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                         Cancelar
                     </button>
-                    <form id="deleteForm" method="post" th:action="@{/admin/users}" class="inline">
-                        <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" id="deleteUserId">
+                    <form id="deleteForm" method="post" class="inline">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                         <button type="submit" 
                                 class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                             Eliminar
@@ -347,13 +348,22 @@
         // Initialize Lucide icons
         lucide.createIcons();
         
+        // Variables globales
+        let currentUserId;
+        
         // Delete confirmation
         function confirmDelete(button) {
             const userId = button.getAttribute('data-id');
             const userName = button.getAttribute('data-name');
             
-            document.getElementById('deleteUserId').value = userId;
+            // Actualizar el nombre del usuario en el modal
             document.getElementById('deleteUserName').textContent = userName;
+            
+            // Configurar la acción del formulario
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '/admin/users/delete/' + userId;
+            
+            // Mostrar el modal
             document.getElementById('deleteModal').classList.remove('hidden');
         }
         

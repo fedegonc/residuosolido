@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+  <!-- Header -->
+  <div class="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
+    <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
+      <div class="ml-4 mt-2">
+        <h3 class="text-2xl font-bold leading-6 text-gray-900">Panel de Administración</h3>
+        <p class="mt-1 text-sm text-gray-500">Acceso rápido a las funciones administrativas</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Users card -->
+      <a href="/admin/users" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-blue-50 rounded-md">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Usuarios</h3>
+            <p class="text-sm text-slate-500">Gestionar usuarios del sistema</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Feedback card -->
+      <a href="/admin/feedback" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-purple-50 rounded-md">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 8l-4-4V6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H7z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Feedback</h3>
+            <p class="text-sm text-slate-500">Ver y editar feedback de usuarios</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Posts card -->
+      <a href="/admin/posts" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-green-50 rounded-md">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Posts</h3>
+            <p class="text-sm text-slate-500">Gestionar contenido y artículos</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Categories card -->
+      <a href="/admin/categories" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-orange-50 rounded-md">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Categorías</h3>
+            <p class="text-sm text-slate-500">Organizar contenido por categorías</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Requests card -->
+      <a href="/admin/requests" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-yellow-50 rounded-md">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Solicitudes</h3>
+            <p class="text-sm text-slate-500">Gestionar solicitudes de usuarios</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Materials card -->
+      <a href="/admin/materials" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-teal-50 rounded-md">
+            <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Materiales</h3>
+            <p class="text-sm text-slate-500">Gestionar tipos de materiales</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Organizations card -->
+      <a href="/admin/users?role=ORGANIZATION" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-md">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h10M7 15h10"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Organizaciones</h3>
+            <p class="text-sm text-slate-500">Gestionar organizaciones</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Config card -->
+      <a href="/admin/config" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-gray-50 rounded-md">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Configuración</h3>
+            <p class="text-sm text-slate-500">Configurar el sistema</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Password Reset card -->
+      <a href="/admin/password-reset-requests" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-red-50 rounded-md">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Reset Password</h3>
+            <p class="text-sm text-slate-500">Solicitudes de reset de contraseña</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Documentation card -->
+      <a href="/admin/documentation" class="group bg-white rounded-md shadow-sm border border-slate-200 p-6 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 p-3 bg-blue-50 rounded-md">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-medium text-slate-900">Documentation</h3>
+            <p class="text-sm text-slate-500">Documentación del sistema</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

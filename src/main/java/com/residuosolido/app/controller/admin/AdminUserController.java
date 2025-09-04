@@ -22,40 +22,81 @@ public class AdminUserController {
 
     // Lista y formulario en la misma página
     @GetMapping
-    public String users(@RequestParam(required = false) Long edit, Model model) {
-        // Siempre mostrar lista
-        model.addAttribute("users", userService.findAll());
+    public String users(
+            @RequestParam(required = false) String action,
+            @RequestParam(required = false) Long id,
+            Model model) {
         
-        // Si hay ID para editar, cargar ese usuario
-        if (edit != null) {
-            model.addAttribute("editUser", userService.findById(edit).orElse(null));
-        }
-        
-        // Usuario vacío para formulario de nuevo
-        User newUser = new User();
-        newUser.setRole(Role.USER);
-        newUser.setPreferredLanguage("es");
-        model.addAttribute("newUser", newUser);
+        List<User> allUsers = userService.findAll();
+        model.addAttribute("users", allUsers);
+        model.addAttribute("totalUsers", allUsers != null ? allUsers.size() : 0);
         model.addAttribute("roles", Role.values());
         
+        // Determinar el tipo de vista basado en la acción
+        if (action != null) {
+            switch (action) {
+                case "view":
+                    if (id != null) {
+                        User user = userService.findById(id).orElse(null);
+                        if (user != null) {
+                            model.addAttribute("user", user);
+                            model.addAttribute("viewType", "view");
+                            return "admin/users";
+                        }
+                    }
+                    break;
+                    
+                case "edit":
+                    if (id != null) {
+                        User user = userService.findById(id).orElse(null);
+                        if (user != null) {
+                            model.addAttribute("user", user);
+                            model.addAttribute("isEdit", true);
+                            model.addAttribute("viewType", "form");
+                            return "admin/users";
+                        }
+                    }
+                    break;
+                    
+                case "new":
+                    User newUser = new User();
+                    newUser.setRole(Role.USER);
+                    newUser.setPreferredLanguage("es");
+                    newUser.setActive(true);
+                    model.addAttribute("user", newUser);
+                    model.addAttribute("isEdit", false);
+                    model.addAttribute("viewType", "form");
+                    return "admin/users";
+            }
+        }
+        
+        // Vista por defecto: lista
+        model.addAttribute("viewType", "list");
         return "admin/users";
     }
 
     // Guardar usuario
     @PostMapping
-    public String save(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+    public String save(
+            @RequestParam(required = false) String action,
+            @ModelAttribute User user, 
+            RedirectAttributes redirectAttributes) {
+        
+        if ("delete".equals(action) && user.getId() != null) {
+            return delete(user.getId(), redirectAttributes);
+        }
         try {
             if (user.getId() != null) {
                 // Actualiza sin cambio de contraseña desde este formulario
                 userService.updateUser(user, null);
-                redirectAttributes.addFlashAttribute("success", "Usuario actualizado");
+                redirectAttributes.addFlashAttribute("successMessage", "Usuario actualizado");
             } else {
                 // Crear usando la contraseña proporcionada en el formulario
                 userService.createUser(user, user.getPassword());
-                redirectAttributes.addFlashAttribute("success", "Usuario creado");
+                redirectAttributes.addFlashAttribute("successMessage", "Usuario creado");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/users";
     }
@@ -65,9 +106,9 @@ public class AdminUserController {
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("success", "Usuario eliminado");
+            redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/users";
     }
