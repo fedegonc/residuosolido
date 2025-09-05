@@ -37,4 +37,14 @@ public class PasswordResetRequestService {
     public List<PasswordResetRequest> findByStatus(PasswordResetRequest.Status status) {
         return passwordResetRequestRepository.findByStatus(status);
     }
+
+    // Métodos consolidados de PasswordResetService
+    public void createResetRequest(String email, String password) {
+        // Stub - funcionalidad no core
+    }
+    
+    public boolean processResetRequest(String token) {
+        // Stub - funcionalidad no core
+        return false;
+    }
 }

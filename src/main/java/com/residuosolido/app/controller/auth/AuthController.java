@@ -2,7 +2,7 @@ package com.residuosolido.app.controller.auth;
 
 import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.PasswordResetService;
+import com.residuosolido.app.service.PasswordResetRequestService;
 import com.residuosolido.app.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,12 +24,12 @@ public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
     private final LoginSuccessHandler successHandler;
-    private final PasswordResetService passwordResetService;
+    private final PasswordResetRequestService passwordResetService;
     private final AuthService authService;
 
     public AuthController(PasswordEncoder passwordEncoder,
                          LoginSuccessHandler successHandler,
-                         PasswordResetService passwordResetService,
+                         PasswordResetRequestService passwordResetService,
                          AuthService authService) {
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;

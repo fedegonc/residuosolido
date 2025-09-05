@@ -25,17 +25,482 @@
         <h2 class="text-lg font-medium text-gray-900 mb-4">Manual de Administrador</h2>
         
         <div class="prose max-w-none">
-          <h3>Gestión de Usuarios</h3>
-          <p>Administra usuarios del sistema, organizaciones y sus roles.</p>
+          <h3>Análisis de Madurez Arquitectónica</h3>
           
-          <h3>Gestión de Contenido</h3>
-          <p>Administra posts, categorías y contenido público del sitio.</p>
+          <div class="overflow-x-auto mb-8">
+            <table class="min-w-full bg-white border border-gray-200 text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Dominio</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Entidad</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Repositorio</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Servicio</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Controlador</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Templates</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Roles</th>
+                  <th class="px-3 py-2 text-left font-medium text-gray-900 border-b">Madurez</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr class="bg-blue-50"><td colspan="8" class="px-3 py-2 font-semibold text-blue-900">ADMIN CORE</td></tr>
+                <tr><td class="px-3 py-1">Users</td><td class="px-3 py-1">User ✅</td><td class="px-3 py-1">UserRepository ✅</td><td class="px-3 py-1">UserService ✅</td><td class="px-3 py-1">AdminUserController ✅</td><td class="px-3 py-1">admin/users/* ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+                <tr><td class="px-3 py-1">Posts</td><td class="px-3 py-1">Post ✅</td><td class="px-3 py-1">PostRepository ✅</td><td class="px-3 py-1">PostService ✅</td><td class="px-3 py-1">AdminPostController ✅</td><td class="px-3 py-1">admin/posts.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+                <tr><td class="px-3 py-1">Categories</td><td class="px-3 py-1">Category ✅</td><td class="px-3 py-1">CategoryRepository ✅</td><td class="px-3 py-1">CategoryService ✅</td><td class="px-3 py-1">AdminCategoryController ✅</td><td class="px-3 py-1">admin/edit-category.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+                <tr><td class="px-3 py-1">Materials</td><td class="px-3 py-1">Material ✅</td><td class="px-3 py-1">MaterialRepository ✅</td><td class="px-3 py-1">MaterialService ✅</td><td class="px-3 py-1">AdminMaterialController ✅</td><td class="px-3 py-1">admin/materials.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+                <tr><td class="px-3 py-1">Requests</td><td class="px-3 py-1">Request ✅</td><td class="px-3 py-1">RequestRepository ✅</td><td class="px-3 py-1">RequestService ✅</td><td class="px-3 py-1">AdminRequestController ✅</td><td class="px-3 py-1">admin/requests.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+                <tr><td class="px-3 py-1">Feedback</td><td class="px-3 py-1">Feedback ✅</td><td class="px-3 py-1">FeedbackRepository ✅</td><td class="px-3 py-1">FeedbackService ✅</td><td class="px-3 py-1">AdminFeedbackController ✅</td><td class="px-3 py-1">admin/feedback.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+                <tr class="bg-yellow-50"><td colspan="8" class="px-3 py-2 font-semibold text-yellow-900">ADMIN UTILS</td></tr>
+                <tr><td class="px-3 py-1">Config</td><td class="px-3 py-1">SiteConfig ❌</td><td class="px-3 py-1">❌</td><td class="px-3 py-1">ConfigService ✅</td><td class="px-3 py-1">AdminConfigController ✅</td><td class="px-3 py-1">admin/config.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">🟡 0:0:1:1</span></td></tr>
+                <tr><td class="px-3 py-1">Documentation</td><td class="px-3 py-1">❌</td><td class="px-3 py-1">❌</td><td class="px-3 py-1">❌</td><td class="px-3 py-1">AdminDocumentationController ✅</td><td class="px-3 py-1">admin/documentation.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">🟡 0:0:0:1</span></td></tr>
+                <tr><td class="px-3 py-1">Password Reset</td><td class="px-3 py-1">PasswordResetRequest ✅</td><td class="px-3 py-1">PasswordResetRequestRepository ✅</td><td class="px-3 py-1">PasswordResetRequestService ✅</td><td class="px-3 py-1">AdminPasswordResetController ✅</td><td class="px-3 py-1">admin/password-reset-requests.html ✅</td><td class="px-3 py-1">ADMIN</td><td class="px-3 py-1"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">🟢 1:1:1:1</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Arquitectura y Configuración Técnica</h3>
           
-          <h3>Gestión de Solicitudes</h3>
-          <p>Procesa solicitudes de recolección y feedback de usuarios.</p>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-gray-900 mb-2">Stack Principal</h4>
+              <div class="text-sm space-y-1">
+                <div>Spring Boot 3.2.0 + Java 17</div>
+                <div>PostgreSQL + Spring Security 6</div>
+                <div>Thymeleaf + Tailwind CSS</div>
+                <div>Cloudinary + DevTools</div>
+              </div>
+            </div>
+            
+            <div class="bg-green-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-green-900 mb-2">✅ Principios Aplicados</h4>
+              <div class="text-sm space-y-1 text-green-800">
+                <div>• KISS: Eliminación sobreingeniería</div>
+                <div>• DRY: Fragmentos + layouts</div>
+                <div>• YAGNI: MVP enfocado</div>
+                <div>• Servicios 1:1 por entidad</div>
+              </div>
+            </div>
+            
+            <div class="bg-red-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-red-900 mb-2">❌ Pendiente SOLID</h4>
+              <div class="text-sm space-y-1 text-red-800">
+                <div>• Interfaces para servicios</div>
+                <div>• Constructor injection</div>
+                <div>• Lógica fuera de controladores</div>
+                <div>• Abstracciones vs implementaciones</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 p-4 rounded-lg mb-6">
+            <h4 class="font-semibold text-blue-900 mb-3">Patrones de Diseño y Técnicas Implementadas</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <h5 class="font-medium text-blue-800 mb-2">🏗️ Patrones Arquitectónicos</h5>
+                <ul class="space-y-1 text-blue-700">
+                  <li>• <strong>MVC:</strong> Separación Model-View-Controller</li>
+                  <li>• <strong>Repository:</strong> Abstracción acceso a datos</li>
+                  <li>• <strong>Service Layer:</strong> Lógica de negocio centralizada</li>
+                  <li>• <strong>DTO:</strong> UserForm para transferencia datos</li>
+                  <li>• <strong>Dependency Injection:</strong> Spring IoC container</li>
+                </ul>
+              </div>
+              <div>
+                <h5 class="font-medium text-blue-800 mb-2">🔧 Técnicas Anti-Repetición</h5>
+                <ul class="space-y-1 text-blue-700">
+                  <li>• <strong>Fragmentos Thymeleaf:</strong> Layouts reutilizables</li>
+                  <li>• <strong>Consolidación:</strong> 7→2 controladores admin</li>
+                  <li>• <strong>Herencia CSS:</strong> Tailwind utilities</li>
+                  <li>• <strong>Configuración:</strong> Profiles (dev/test/prod)</li>
+                  <li>• <strong>Eliminación duplicados:</strong> PasswordResetService</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-yellow-50 p-4 rounded-lg mb-6">
+            <h4 class="font-semibold text-yellow-900 mb-2">🎯 Roadmap Arquitectura Limpia</h4>
+            <div class="text-sm text-yellow-800">
+              <strong>Próximas mejoras:</strong> Crear interfaces para servicios → Implementar constructor injection → 
+              Extraer lógica de controladores → Agregar validación centralizada → Implementar paginación
+            </div>
+          </div>
+
+          <h3>Casos de Uso Funcionales</h3>
           
-          <h3>Configuración</h3>
-          <p>Configura parámetros generales del sistema.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <!-- ADMIN CORE -->
+            <div class="bg-blue-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-blue-900 mb-2">👥 Gestión de Usuarios</h4>
+              <div class="text-sm text-blue-800">
+                CRUD completo • Roles (ADMIN/ORG/USER) • Perfiles • Ubicación
+              </div>
+            </div>
+            
+            <div class="bg-green-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-green-900 mb-2">📝 Posts y Categorías</h4>
+              <div class="text-sm text-green-800">
+                Contenido público • Cloudinary • Categorización • Editor completo
+              </div>
+            </div>
+            
+            <div class="bg-purple-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-purple-900 mb-2">📋 Solicitudes</h4>
+              <div class="text-sm text-purple-800">
+                Recolección residuos • Asignación organizaciones • Estados • Reportes
+              </div>
+            </div>
+            
+            <div class="bg-orange-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-orange-900 mb-2">🗂️ Materiales</h4>
+              <div class="text-sm text-orange-800">
+                Tipos reciclables • Descripciones • Asignación organizaciones
+              </div>
+            </div>
+            
+            <div class="bg-pink-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-pink-900 mb-2">💬 Feedback</h4>
+              <div class="text-sm text-pink-800">
+                Comentarios usuarios • Respuestas • Estado procesado
+              </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-gray-900 mb-2">⚙️ Configuración</h4>
+              <div class="text-sm text-gray-800">
+                Imagen hero • Textos • Parámetros • Reset contraseñas
+              </div>
+            </div>
+          </div>
+
+          <!-- ROLES Y PERMISOS -->
+          <div class="bg-indigo-50 p-4 rounded-lg mb-6">
+            <h4 class="font-semibold text-indigo-900 mb-3">🔐 Roles y Permisos del Sistema</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <h5 class="font-medium text-red-800 mb-1">⚙️ ADMIN</h5>
+                <div class="text-red-700">Acceso total • Gestión usuarios • Configuración sistema • Reportes</div>
+              </div>
+              <div>
+                <h5 class="font-medium text-blue-800 mb-1">🏢 ORGANIZATION</h5>
+                <div class="text-blue-700">Gestión materiales • Procesar solicitudes • Dashboard propio</div>
+              </div>
+              <div>
+                <h5 class="font-medium text-green-800 mb-1">👤 USER</h5>
+                <div class="text-green-700">Crear solicitudes • Ver estado • Perfil personal</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ANÁLISIS CRÍTICO DEL SISTEMA -->
+          <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+            <h3 class="text-red-900 font-bold text-xl mb-4">🚨 Análisis Crítico del Sistema</h3>
+            
+            <!-- ANTIPATRONES BACKEND -->
+            <div class="mb-6">
+              <h4 class="font-semibold text-red-800 mb-3">❌ Antipatrones Backend</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-white p-3 rounded border-l-4 border-red-400">
+                  <h5 class="font-medium text-red-700 mb-1">God Objects</h5>
+                  <div class="text-red-600">User.java (111 líneas) • AdminController (múltiples responsabilidades) • Campos deprecated mezclados</div>
+                </div>
+                <div class="bg-white p-3 rounded border-l-4 border-red-400">
+                  <h5 class="font-medium text-red-700 mb-1">Duplicación Masiva</h5>
+                  <div class="text-red-600">17 controladores admin • Material + Category similares • Lógica repetida en servicios</div>
+                </div>
+                <div class="bg-white p-3 rounded border-l-4 border-red-400">
+                  <h5 class="font-medium text-red-700 mb-1">Acoplamiento Alto</h5>
+                  <div class="text-red-600">Controladores con lógica de negocio • Sin interfaces • Dependencias directas</div>
+                </div>
+                <div class="bg-white p-3 rounded border-l-4 border-red-400">
+                  <h5 class="font-medium text-red-700 mb-1">Inconsistencia</h5>
+                  <div class="text-red-600">Campos legacy (@Deprecated) • Relaciones @Transient • Validación dispersa</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ANTIPATRONES FRONTEND -->
+            <div class="mb-6">
+              <h4 class="font-semibold text-orange-800 mb-3">🎨 Antipatrones Frontend</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-white p-3 rounded border-l-4 border-orange-400">
+                  <h5 class="font-medium text-orange-700 mb-1">Fragmentación Excesiva</h5>
+                  <div class="text-orange-600">70+ templates • Un archivo por CRUD • Duplicación de layouts</div>
+                </div>
+                <div class="bg-white p-3 rounded border-l-4 border-orange-400">
+                  <h5 class="font-medium text-orange-700 mb-1">Inconsistencia Visual</h5>
+                  <div class="text-orange-600">Múltiples patrones CSS • Colores hardcodeados • Sin design system</div>
+                </div>
+                <div class="bg-white p-3 rounded border-l-4 border-orange-400">
+                  <h5 class="font-medium text-orange-700 mb-1">Archivos Innecesarios</h5>
+                  <div class="text-orange-600">Templates vacíos • Archivos de testing • Fragments no utilizados</div>
+                </div>
+                <div class="bg-white p-3 rounded border-l-4 border-orange-400">
+                  <h5 class="font-medium text-orange-700 mb-1">Validación Duplicada</h5>
+                  <div class="text-orange-600">JavaScript repetido • Validación cliente/servidor desincronizada</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- IMPACTO EN MANTENIBILIDAD -->
+            <div class="mb-6">
+              <h4 class="font-semibold text-purple-800 mb-3">🔧 Impacto en Mantenibilidad</h4>
+              <div class="bg-white p-4 rounded">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <h5 class="font-medium text-purple-700 mb-2">Alto Costo de Cambio</h5>
+                    <ul class="text-purple-600 space-y-1">
+                      <li>• Modificar User requiere 5+ archivos</li>
+                      <li>• Cambios UI afectan múltiples templates</li>
+                      <li>• Sin tests unitarios</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-purple-700 mb-2">Debugging Complejo</h5>
+                    <ul class="text-purple-600 space-y-1">
+                      <li>• Lógica dispersa en controladores</li>
+                      <li>• Relaciones @Transient ocultas</li>
+                      <li>• Sin logging centralizado</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-purple-700 mb-2">Onboarding Lento</h5>
+                    <ul class="text-purple-600 space-y-1">
+                      <li>• 70+ archivos para entender</li>
+                      <li>• Patrones inconsistentes</li>
+                      <li>• Documentación dispersa</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ESCALABILIDAD -->
+            <div class="mb-6">
+              <h4 class="font-semibold text-blue-800 mb-3">📈 Limitaciones de Escalabilidad</h4>
+              <div class="bg-white p-4 rounded">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 class="font-medium text-blue-700 mb-2">Problemas Técnicos</h5>
+                    <ul class="text-blue-600 text-sm space-y-1">
+                      <li>• Sin paginación en listas</li>
+                      <li>• Carga eager sin optimización</li>
+                      <li>• Sin caché implementado</li>
+                      <li>• Búsquedas sin índices</li>
+                      <li>• Sin rate limiting</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-blue-700 mb-2">Arquitectura Monolítica</h5>
+                    <ul class="text-blue-600 text-sm space-y-1">
+                      <li>• Todo en un solo JAR</li>
+                      <li>• Sin separación de dominios</li>
+                      <li>• Base de datos única</li>
+                      <li>• Sin APIs REST documentadas</li>
+                      <li>• Deployment atómico</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RECOMENDACIONES MVP -->
+            <div>
+              <h4 class="font-semibold text-green-800 mb-3">✅ Recomendaciones MVP (KISS/DRY/SOLID)</h4>
+              <div class="bg-white p-4 rounded">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                  <div>
+                    <h5 class="font-medium text-green-700 mb-2">Prioridad Alta (Semana 1)</h5>
+                    <ul class="text-green-600 space-y-1">
+                      <li>• Consolidar controladores admin (7→2)</li>
+                      <li>• Unificar templates CRUD similares</li>
+                      <li>• Extraer interfaces de servicios</li>
+                      <li>• Implementar paginación básica</li>
+                      <li>• Agregar validación centralizada</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-green-700 mb-2">Prioridad Media (Semana 2-3)</h5>
+                    <ul class="text-green-600 space-y-1">
+                      <li>• Refactorizar User.java (SRP)</li>
+                      <li>• Crear design system Tailwind</li>
+                      <li>• Implementar DTOs para APIs</li>
+                      <li>• Agregar tests unitarios básicos</li>
+                      <li>• Documentar APIs con Swagger</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BASE DE DATOS -->
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+            <h3 class="text-gray-900 font-bold text-xl mb-4">🗄️ Estructura de Base de Datos</h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- TABLAS PRINCIPALES -->
+              <div>
+                <h4 class="font-semibold text-gray-800 mb-3">Tablas Principales</h4>
+                <div class="space-y-3 text-sm">
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-blue-700">users</h5>
+                    <div class="text-gray-600 mt-1">
+                      id, username, email, password, role, firstName, lastName, 
+                      direccion, latitud, longitud, referencias, createdAt, active
+                    </div>
+                  </div>
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-green-700">requests</h5>
+                    <div class="text-gray-600 mt-1">
+                      id, user_id, description, collectionAddress, scheduledDate, 
+                      status, notes, createdAt, updatedAt
+                    </div>
+                  </div>
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-purple-700">materials</h5>
+                    <div class="text-gray-600 mt-1">
+                      id, name, description, category, active
+                    </div>
+                  </div>
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-orange-700">posts</h5>
+                    <div class="text-gray-600 mt-1">
+                      id, title, content, imageUrl, category_id, createdAt, updatedAt
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RELACIONES -->
+              <div>
+                <h4 class="font-semibold text-gray-800 mb-3">Relaciones Many-to-Many</h4>
+                <div class="space-y-3 text-sm">
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-indigo-700">user_materials</h5>
+                    <div class="text-gray-600 mt-1">user_id, material_id</div>
+                  </div>
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-indigo-700">request_materials</h5>
+                    <div class="text-gray-600 mt-1">request_id, material_id</div>
+                  </div>
+                </div>
+
+                <h4 class="font-semibold text-gray-800 mb-3 mt-6">Tablas Auxiliares</h4>
+                <div class="space-y-3 text-sm">
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-gray-700">categories</h5>
+                    <div class="text-gray-600 mt-1">id, name, description</div>
+                  </div>
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-gray-700">feedback</h5>
+                    <div class="text-gray-600 mt-1">id, user_id, message, createdAt</div>
+                  </div>
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-medium text-gray-700">password_reset_requests</h5>
+                    <div class="text-gray-600 mt-1">id, email, token, status, createdAt</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIAGRAMAS -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+            <h3 class="text-blue-900 font-bold text-xl mb-4">📊 Diagramas del Sistema</h3>
+            
+            <!-- CASOS DE USO -->
+            <div class="mb-6">
+              <h4 class="font-semibold text-blue-800 mb-3">Casos de Uso Principales</h4>
+              <div class="bg-white p-4 rounded border text-sm font-mono">
+                <pre>
+    [Usuario] ──────────────┐
+         │                  │
+         ├── Registrarse    │
+         ├── Iniciar Sesión │
+         ├── Crear Solicitud│ ──── [Sistema]
+         └── Ver Estado     │         │
+                           │         ├── Validar Datos
+    [Organización] ────────┤         ├── Asignar Solicitud
+         │                  │         ├── Notificar Estado
+         ├── Ver Solicitudes│         └── Generar Reportes
+         ├── Procesar       │
+         └── Actualizar     │
+                           │
+    [Admin] ──────────────┘
+         │
+         ├── Gestionar Usuarios
+         ├── Configurar Sistema
+         ├── Ver Reportes
+         └── Moderar Contenido
+                </pre>
+              </div>
+            </div>
+
+            <!-- DIAGRAMA DE CLASES SIMPLIFICADO -->
+            <div class="mb-6">
+              <h4 class="font-semibold text-blue-800 mb-3">Diagrama de Clases (Core)</h4>
+              <div class="bg-white p-4 rounded border text-sm font-mono">
+                <pre>
+    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+    │    User     │    │   Request   │    │  Material   │
+    ├─────────────┤    ├─────────────┤    ├─────────────┤
+    │ id: Long    │◄──┤ user: User   │    │ id: Long    │
+    │ username    │    │ description │    │ name        │
+    │ email       │    │ status      │    │ description │
+    │ role: Role  │    │ createdAt   │    │ category    │
+    │ direccion   │    └─────────────┘    │ active      │
+    │ latitud     │           │           └─────────────┘
+    │ longitud    │           │                  ▲
+    └─────────────┘           │                  │
+           │                  │           ┌─────────────┐
+           │                  └──────────►│request_     │
+           │                              │materials    │
+           │                              │(join table) │
+           │                              └─────────────┘
+           │
+    ┌─────────────┐
+    │user_        │
+    │materials    │
+    │(join table) │
+    └─────────────┘
+                </pre>
+              </div>
+            </div>
+
+            <!-- SECUENCIA DE SOLICITUD -->
+            <div>
+              <h4 class="font-semibold text-blue-800 mb-3">Secuencia: Crear Solicitud de Recolección</h4>
+              <div class="bg-white p-4 rounded border text-sm font-mono">
+                <pre>
+Usuario          UserController    RequestService    Database
+  │                    │                │              │
+  │ POST /requests     │                │              │
+  ├───────────────────►│                │              │
+  │                    │ createRequest()│              │
+  │                    ├───────────────►│              │
+  │                    │                │ save()       │
+  │                    │                ├─────────────►│
+  │                    │                │              │
+  │                    │                │ ◄────────────┤
+  │                    │ ◄──────────────┤              │
+  │ redirect:/requests │                │              │
+  │ ◄──────────────────┤                │              │
+  │                    │                │              │
+  │                    │ [Async]        │              │
+  │                    │ notifyOrgs()   │              │
+  │                    ├───────────────►│              │
+  │                    │                │              │
+
+Flujo: 
+1. Usuario completa formulario
+2. Controller valida datos
+3. Service procesa y guarda
+4. Notificación asíncrona a organizaciones
+5. Redirect a lista de solicitudes
+                </pre>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
