@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración del Sistema - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+  <!-- Header -->
+  <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+    <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
+      <div class="ml-4 mt-2">
+        <h3 class="text-2xl font-bold leading-6 text-gray-900">Configuración del Sistema</h3>
+        <p class="mt-1 text-sm text-gray-500">Configurar parámetros generales del sistema</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div th:if="${successMessage}" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative mx-4 mt-4">
+    <span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mx-4 mt-4">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <!-- Configuration Form -->
+  <div class="px-4 py-6">
+    <div class="max-w-4xl mx-auto">
+      <form action="/admin/config/update" method="post" class="bg-white shadow rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- App Configurations -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Configuración de Aplicación</h4>
+            
+            <div th:each="entry : ${configurations}" th:if="${entry.key.startsWith('app.')}">
+              <label th:for="${entry.key}" class="block text-sm font-medium text-gray-700" th:text="${entry.key}"></label>
+              <input type="text" th:id="${entry.key}" th:name="${entry.key}" th:value="${entry.value}" 
+                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+            </div>
+          </div>
+
+          <!-- System Configurations -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Configuración del Sistema</h4>
+            
+            <div th:each="entry : ${configurations}" th:unless="${entry.key.startsWith('app.')}">
+              <label th:for="${entry.key}" class="block text-sm font-medium text-gray-700" th:text="${entry.key}"></label>
+              <input type="text" th:id="${entry.key}" th:name="${entry.key}" th:value="${entry.value}" 
+                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <div class="flex justify-end space-x-3">
+            <button type="reset" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+              Restablecer
+            </button>
+            <button type="submit" class="bg-blue-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700">
+              Guardar Configuraciones
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Additional Configuration Info -->
+      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-md p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">Información Importante</h3>
+            <div class="mt-2 text-sm text-blue-700">
+              <ul class="list-disc list-inside space-y-1">
+                <li>Los cambios en la configuración pueden requerir reiniciar la aplicación</li>
+                <li>Mantén copias de seguridad de las configuraciones importantes</li>
+                <li>Algunos cambios pueden afectar el rendimiento del sistema</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
