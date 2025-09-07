@@ -9,13 +9,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body th:replace="bg-gray-50">
+<body class="bg-gray-50">
   <!-- Header -->
   <div class="bg-white shadow-sm border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <div class="flex items-center space-x-4">
-          <a href="/dashboard" class="text-green-600 hover:text-green-700">
+          <a href="/admin/dashboard" class="text-green-600 hover:text-green-700">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
           </a>
           <h1 class="text-2xl font-bold text-gray-900">Gestión de Categorías</h1>
@@ -55,32 +55,27 @@
     <!-- LISTA DE CATEGORÍAS -->
     <div th:if="${viewType} == 'list'" class="bg-white rounded-lg shadow">
       <div class="px-6 py-4 border-b border-gray-200">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold text-gray-900">
-            Categorías creadas (<span th:text="${totalCategories}">0</span>)
-          </h2>
-        </div>
+        <h2 class="text-lg font-semibold text-gray-900">
+          Categorías (<span th:text="${totalCategories}">0</span>)
+        </h2>
       </div>
 
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orden</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr th:each="category : ${categories}" class="hover:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <span class="text-sm font-medium text-orange-800" th:text="${#strings.substring(category.name, 0, 1).toUpperCase()}">C</span>
-                    </div>
+                  <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                    <span class="text-sm font-medium text-orange-800" th:text="${#strings.substring(category.name, 0, 1).toUpperCase()}">C</span>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900" th:text="${category.name}">nombre</div>
@@ -90,7 +85,6 @@
               <td class="px-6 py-4 text-sm text-gray-700 max-w-xs">
                 <div class="truncate" th:text="${category.description}">descripción</div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${category.displayOrder}">orden</td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span th:class="${category.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
                   <span th:text="${category.active} ? 'Activa' : 'Inactiva'">Estado</span>
@@ -133,11 +127,6 @@
           <textarea th:field="*{description}" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">URL de Imagen</label>
-          <input type="url" th:field="*{imageUrl}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-        </div>
-
         <div class="flex items-center">
           <input type="checkbox" th:field="*{active}" id="active" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
           <label for="active" class="ml-2 block text-sm text-gray-700">Categoría Activa</label>
@@ -151,20 +140,17 @@
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
+  <!-- Delete Modal -->
   <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
       <div class="bg-white rounded-lg max-w-md w-full">
         <div class="p-6">
           <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
-            </div>
-            <div class="ml-3">
+            <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600 mr-3"></i>
+            <div>
               <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
               <p class="mt-2 text-sm text-gray-500">
-                ¿Estás seguro de que deseas eliminar la categoría <strong id="deleteCategoryName"></strong>?
-                Esta acción no se puede deshacer.
+                ¿Eliminar la categoría <strong id="deleteCategoryName"></strong>?
               </p>
             </div>
           </div>
@@ -187,8 +173,7 @@
       const id = button.getAttribute('data-id');
       const name = button.getAttribute('data-name');
       document.getElementById('deleteCategoryName').textContent = name;
-      const form = document.getElementById('deleteForm');
-      form.action = '/admin/categories/delete/' + id;
+      document.getElementById('deleteForm').action = '/admin/categories/delete/' + id;
       document.getElementById('deleteModal').classList.remove('hidden');
     }
 
@@ -197,9 +182,7 @@
     }
 
     document.getElementById('deleteModal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeDeleteModal();
-      }
+      if (e.target === this) closeDeleteModal();
     });
   </script>
 </body>

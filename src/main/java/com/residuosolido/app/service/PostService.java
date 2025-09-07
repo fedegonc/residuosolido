@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.ui.Model;
 
 @Service
 public class PostService {
@@ -164,6 +165,54 @@ public class PostService {
 
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+    }
+
+    public String savePost(Post post) {
+        if (post.getId() != null) {
+            getPostById(post.getId()).ifPresent(existing -> {
+                existing.setTitle(post.getTitle());
+                existing.setContent(post.getContent());
+                existing.setImageUrl(post.getImageUrl());
+                existing.setCategory(post.getCategory());
+                existing.setSourceUrl(post.getSourceUrl());
+                existing.setSourceName(post.getSourceName());
+                save(existing);
+            });
+            return "Post actualizado correctamente";
+        } else {
+            save(post);
+            return "Post creado correctamente";
+        }
+    }
+
+    public void preparePostListView(Model model) {
+        List<Post> posts = getAllPostsWithCategories();
+        List<Category> categories = categoryService.findAll();
+        
+        model.addAttribute("posts", posts);
+        model.addAttribute("totalPosts", posts.size());
+        model.addAttribute("categories", categories);
+        model.addAttribute("viewType", "list");
+    }
+
+    public void preparePostFormView(Model model, Long postId, boolean isEdit) {
+        List<Category> categories = categoryService.findAll();
+        
+        model.addAttribute("categories", categories);
+        model.addAttribute("viewType", "form");
+        model.addAttribute("isEdit", isEdit);
+        
+        if (isEdit && postId != null) {
+            Post post = getPostById(postId).orElse(null);
+            if (post != null) {
+                model.addAttribute("post", post);
+            } else {
+                model.addAttribute("errorMessage", "Post no encontrado");
+                preparePostListView(model);
+            }
+        } else {
+            model.addAttribute("post", new Post());
+        }
     }
 
     public boolean isCategoryInUse(Long categoryId) {

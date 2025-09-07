@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentación - Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
@@ -40,16 +41,113 @@
       </div>
 
       <div class="bg-gray-50 p-4 rounded mb-6">
-        <h3 class="font-bold mb-3">📊 Arquitectura Actual</h3>
-        <div class="grid grid-cols-3 gap-4 text-sm">
-          <div>
-            <strong>Controladores:</strong> 6 admin consolidados
+        <h3 class="font-bold mb-3">📊 Arquitectura del Sistema</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="bg-white p-3 rounded">
+            <strong class="text-blue-600">Patrón 1:1:1:1:1</strong><br>
+            Entity → Repository → Service → Controller → Template
           </div>
-          <div>
-            <strong>Servicios:</strong> 1:1 por entidad
+          <div class="bg-white p-3 rounded">
+            <strong class="text-green-600">Thin Controllers</strong><br>
+            Lógica delegada a servicios
           </div>
-          <div>
-            <strong>Templates:</strong> Organizados por dominio
+          <div class="bg-white p-3 rounded">
+            <strong class="text-purple-600">Seguridad</strong><br>
+            @PreAuthorize en controladores admin
+          </div>
+        </div>
+      </div>
+
+      <!-- Ejemplo de Código CRUD -->
+      <div class="bg-white border rounded-lg p-6 mb-8">
+        <h3 class="font-bold mb-4 flex items-center">
+          <i data-lucide="code" class="w-5 h-5 mr-2 text-blue-600"></i>
+          Ejemplo: AdminUserController (CRUD Completo)
+        </h3>
+        
+        <div class="space-y-4">
+          <div class="bg-gray-50 p-4 rounded">
+            <h4 class="font-semibold text-sm mb-2 text-gray-700">Estructura del Controlador</h4>
+            <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>@Controller
+@RequestMapping("/admin/users")
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminUserController {
+    
+    @Autowired
+    private UserService userService;
+    
+    // GET: Lista + Formulario dinámico
+    @GetMapping
+    public String users(@RequestParam(required = false) String action,
+                       @RequestParam(required = false) Long id,
+                       Model model) {
+        // Cargar todos los usuarios
+        List&lt;User&gt; allUsers = userService.findAll();
+        model.addAttribute("users", allUsers);
+        model.addAttribute("roles", Role.values());
+        
+        // Manejar acciones: view, edit, new
+        if ("edit".equals(action) && id != null) {
+            User user = userService.findById(id).orElse(null);
+            model.addAttribute("user", user);
+            model.addAttribute("viewType", "form");
+        } else if ("new".equals(action)) {
+            model.addAttribute("user", new User());
+            model.addAttribute("viewType", "form");
+        }
+        
+        return "admin/users";
+    }</code></pre>
+          </div>
+          
+          <div class="bg-gray-50 p-4 rounded">
+            <h4 class="font-semibold text-sm mb-2 text-gray-700">Operaciones CRUD</h4>
+            <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>    // POST: Crear/Actualizar
+    @PostMapping
+    public String save(@ModelAttribute User user, 
+                      RedirectAttributes redirectAttributes) {
+        try {
+            if (user.getId() != null) {
+                userService.updateUser(user, null);
+                redirectAttributes.addFlashAttribute("successMessage", 
+                    "Usuario actualizado");
+            } else {
+                userService.createUser(user, user.getPassword());
+                redirectAttributes.addFlashAttribute("successMessage", 
+                    "Usuario creado");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                e.getMessage());
+        }
+        return "redirect:/admin/users";
+    }
+    
+    // DELETE: Eliminar
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, 
+                        RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Usuario eliminado");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                e.getMessage());
+        }
+        return "redirect:/admin/users";
+    }</code></pre>
+          </div>
+          
+          <div class="bg-blue-50 p-4 rounded">
+            <h4 class="font-semibold text-sm mb-2 text-blue-700">Características Clave</h4>
+            <ul class="text-sm text-blue-800 space-y-1">
+              <li>• <strong>Una sola página:</strong> Lista + formulario dinámico</li>
+              <li>• <strong>Parámetros URL:</strong> ?action=edit&id=1 para editar</li>
+              <li>• <strong>Thin Controller:</strong> Lógica delegada a UserService</li>
+              <li>• <strong>Flash Messages:</strong> Feedback de operaciones</li>
+              <li>• <strong>Seguridad:</strong> @PreAuthorize("hasRole('ADMIN')")</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -70,15 +168,156 @@
         </div>
       </div>
 
+      <!-- Patrones de Desarrollo -->
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-6">
+        <h3 class="font-bold mb-4 flex items-center">
+          <i data-lucide="layers" class="w-5 h-5 mr-2 text-purple-600"></i>
+          Patrones de Desarrollo Implementados
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-3">
+            <div class="bg-white p-3 rounded">
+              <h4 class="font-semibold text-purple-800">1:1:1:1:1 Pattern</h4>
+              <p class="text-sm text-purple-700">Cada entidad tiene su Repository, Service, Controller y Template dedicados</p>
+            </div>
+            <div class="bg-white p-3 rounded">
+              <h4 class="font-semibold text-blue-800">Thin Controllers</h4>
+              <p class="text-sm text-blue-700">Controladores mínimos que delegan lógica a servicios</p>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="bg-white p-3 rounded">
+              <h4 class="font-semibold text-green-800">Service Layer</h4>
+              <p class="text-sm text-green-700">Lógica de negocio encapsulada en servicios reutilizables</p>
+            </div>
+            <div class="bg-white p-3 rounded">
+              <h4 class="font-semibold text-red-800">Security First</h4>
+              <p class="text-sm text-red-700">Autorización a nivel de controlador con @PreAuthorize</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buenas Prácticas HTML/CSS -->
+      <div class="bg-white border rounded-lg p-6 mb-8">
+        <h3 class="font-bold mb-4 flex items-center">
+          <i data-lucide="layout" class="w-5 h-5 mr-2 text-orange-600"></i>
+          Buenas Prácticas HTML/CSS
+        </h3>
+        
+        <div class="space-y-6">
+          <!-- Evitar Anidamiento Excesivo -->
+          <div>
+            <h4 class="font-semibold text-red-600 mb-3">❌ Evitar: Anidamiento Excesivo</h4>
+            <div class="bg-red-50 p-4 rounded">
+              <pre class="text-xs bg-gray-800 text-red-400 p-3 rounded overflow-x-auto"><code>&lt;!-- MAL: Demasiados divs anidados --&gt;
+&lt;div class="container"&gt;
+  &lt;div class="wrapper"&gt;
+    &lt;div class="content"&gt;
+      &lt;div class="section"&gt;
+        &lt;div class="card"&gt;
+          &lt;div class="card-body"&gt;
+            &lt;div class="text-wrapper"&gt;
+              &lt;div class="title-container"&gt;
+                &lt;h2&gt;Título&lt;/h2&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- Estructura Limpia -->
+          <div>
+            <h4 class="font-semibold text-green-600 mb-3">✅ Mejor: Estructura Semántica y Limpia</h4>
+            <div class="bg-green-50 p-4 rounded">
+              <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>&lt;!-- BIEN: Elementos semánticos con propósito claro --&gt;
+&lt;main class="max-w-6xl mx-auto px-6 py-8"&gt;
+  &lt;section class="bg-white rounded-lg shadow p-6"&gt;
+    &lt;header class="mb-4"&gt;
+      &lt;h2 class="text-xl font-bold"&gt;Título&lt;/h2&gt;
+    &lt;/header&gt;
+    
+    &lt;article class="prose"&gt;
+      &lt;p&gt;Contenido del artículo...&lt;/p&gt;
+    &lt;/article&gt;
+    
+    &lt;footer class="mt-4 pt-4 border-t"&gt;
+      &lt;button class="btn-primary"&gt;Acción&lt;/button&gt;
+    &lt;/footer&gt;
+  &lt;/section&gt;
+&lt;/main&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- Principios Clave -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-blue-50 p-4 rounded">
+              <h4 class="font-semibold text-blue-800 mb-2">🎯 Principios Clave</h4>
+              <ul class="text-sm text-blue-700 space-y-1">
+                <li>• Usar elementos semánticos (header, main, section, article)</li>
+                <li>• Máximo 3-4 niveles de anidamiento</li>
+                <li>• Cada div debe tener un propósito claro</li>
+                <li>• Preferir CSS Grid/Flexbox sobre divs wrapper</li>
+                <li>• Usar clases de Tailwind directamente</li>
+              </ul>
+            </div>
+            
+            <div class="bg-yellow-50 p-4 rounded">
+              <h4 class="font-semibold text-yellow-800 mb-2">⚡ Optimización CSS</h4>
+              <ul class="text-sm text-yellow-700 space-y-1">
+                <li>• Usar CSS Grid: <code>grid grid-cols-3 gap-4</code></li>
+                <li>• Flexbox: <code>flex items-center justify-between</code></li>
+                <li>• Espaciado: <code>space-y-4</code> en lugar de divs</li>
+                <li>• Contenedores: <code>max-w-6xl mx-auto</code></li>
+                <li>• Evitar <code>div.wrapper div.container</code></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Ejemplo Real del Sistema -->
+          <div>
+            <h4 class="font-semibold text-purple-600 mb-3">🏗️ Ejemplo Real: Template Admin</h4>
+            <div class="bg-purple-50 p-4 rounded">
+              <pre class="text-xs bg-gray-800 text-purple-400 p-3 rounded overflow-x-auto"><code>&lt;!-- Estructura limpia usada en nuestros templates admin --&gt;
+&lt;main&gt;
+  &lt;!-- Header --&gt;
+  &lt;header class="bg-white shadow-sm border-b"&gt;
+    &lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"&gt;
+      &lt;div class="flex justify-between items-center py-4"&gt;
+        &lt;h1 class="text-2xl font-bold"&gt;Título&lt;/h1&gt;
+        &lt;nav&gt;
+          &lt;a href="/admin/dashboard" class="btn-secondary"&gt;Volver&lt;/a&gt;
+        &lt;/nav&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;!-- Content --&gt;
+  &lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"&gt;
+    &lt;section class="bg-white rounded-lg shadow p-6"&gt;
+      &lt;!-- Contenido directo sin wrappers innecesarios --&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+&lt;/main&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <h3 class="font-bold mb-4">📋 Guías de Uso</h3>
       <div class="space-y-4">
         <div class="border-l-4 border-blue-500 pl-4">
           <h4 class="font-semibold">Gestión de Usuarios</h4>
-          <p class="text-sm text-gray-600">Crear, editar y asignar roles a usuarios del sistema</p>
+          <p class="text-sm text-gray-600">Crear, editar y asignar roles a usuarios del sistema usando AdminUserController</p>
         </div>
         <div class="border-l-4 border-green-500 pl-4">
           <h4 class="font-semibold">Administración de Contenido</h4>
-          <p class="text-sm text-gray-600">Gestionar posts, categorías y materiales reciclables</p>
+          <p class="text-sm text-gray-600">Gestionar posts, categorías y materiales reciclables con controladores dedicados</p>
         </div>
         <div class="border-l-4 border-purple-500 pl-4">
           <h4 class="font-semibold">Solicitudes de Recolección</h4>
@@ -86,13 +325,14 @@
         </div>
         <div class="border-l-4 border-orange-500 pl-4">
           <h4 class="font-semibold">Configuración del Sistema</h4>
-          <p class="text-sm text-gray-600">Ajustar parámetros y configuraciones generales</p>
+          <p class="text-sm text-gray-600">Ajustar parámetros y configuraciones generales mediante AdminConfigController</p>
         </div>
       </div>
-        </div>
-      </div>
-    </div>
   </div>
+  
+  <script>
+    lucide.createIcons();
+  </script>
 </main>
 </body>
 </html>

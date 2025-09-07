@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.ui.Model;
 
 @Service
 public class CategoryService {
@@ -144,6 +145,48 @@ public class CategoryService {
     public Category save(Category category) {
         cachedCategories = null;
         return categoryRepository.save(category);
+    }
+
+    public String saveCategory(Category category) {
+        if (category.getId() != null) {
+            getCategoryById(category.getId()).ifPresent(existing -> {
+                existing.setName(category.getName());
+                existing.setDescription(category.getDescription());
+                existing.setImageUrl(category.getImageUrl());
+                existing.setDisplayOrder(category.getDisplayOrder());
+                existing.setActive(category.getActive());
+                save(existing);
+            });
+            return "Categoría actualizada correctamente";
+        } else {
+            if (category.getActive() == null) category.setActive(true);
+            save(category);
+            return "Categoría creada correctamente";
+        }
+    }
+
+    public void prepareCategoryListView(Model model) {
+        List<Category> categories = findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("totalCategories", categories.size());
+        model.addAttribute("viewType", "list");
+    }
+
+    public void prepareCategoryFormView(Model model, Long categoryId, boolean isEdit) {
+        model.addAttribute("viewType", "form");
+        model.addAttribute("isEdit", isEdit);
+        
+        if (isEdit && categoryId != null) {
+            Category category = getCategoryById(categoryId).orElse(null);
+            if (category != null) {
+                model.addAttribute("category", category);
+            } else {
+                model.addAttribute("errorMessage", "Categoría no encontrada");
+                prepareCategoryListView(model);
+            }
+        } else {
+            model.addAttribute("category", new Category());
+        }
     }
 
     public void deleteById(Long id) {
