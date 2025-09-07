@@ -31,29 +31,32 @@ public class AdminController {
 
     @GetMapping("/admin/categories")
     public String listCategories(@RequestParam(required = false) String action,
-                                @RequestParam(required = false) Long id,
-                                Model model) {
+                                 @RequestParam(required = false) Long id,
+                                 Model model) {
         List<Category> all = categoryService.findAll();
         model.addAttribute("categories", all);
-        model.addAttribute("totalCategories", all != null ? all.size() : 0);
-
-        if ("edit".equals(action) && id != null) {
-            Optional<Category> category = categoryService.getCategoryById(id);
-            category.ifPresent(c -> model.addAttribute("category", c));
-            model.addAttribute("viewType", "form");
-            model.addAttribute("isEdit", true);
-            return "admin/categories";
-        }
+        model.addAttribute("totalCategories", all.size());
+        model.addAttribute("section", "categories");
 
         if ("new".equals(action)) {
             model.addAttribute("category", new Category());
             model.addAttribute("viewType", "form");
             model.addAttribute("isEdit", false);
-            return "admin/categories";
+        } else if ("edit".equals(action) && id != null) {
+            Category category = categoryService.findById(id);
+            if (category != null) {
+                model.addAttribute("category", category);
+                model.addAttribute("viewType", "form");
+                model.addAttribute("isEdit", true);
+            } else {
+                model.addAttribute("errorMessage", "Categoría no encontrada");
+                model.addAttribute("viewType", "list");
+            }
+        } else {
+            model.addAttribute("viewType", "list");
         }
 
-        model.addAttribute("viewType", "list");
-        return "admin/categories";
+        return "admin/content-management";
     }
 
     @PostMapping("/admin/categories")
@@ -98,27 +101,29 @@ public class AdminController {
                            Model model) {
         List<Post> all = postService.getAllPostsWithCategories();
         model.addAttribute("posts", all);
-        model.addAttribute("totalPosts", all != null ? all.size() : 0);
-
-        if ("edit".equals(action) && id != null) {
-            Optional<Post> post = postService.getPostById(id);
-            post.ifPresent(p -> model.addAttribute("post", p));
-            model.addAttribute("categories", categoryService.findAll());
-            model.addAttribute("viewType", "form");
-            model.addAttribute("isEdit", true);
-            return "admin/posts";
-        }
+        model.addAttribute("totalPosts", all.size());
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("section", "posts");
 
         if ("new".equals(action)) {
             model.addAttribute("post", new Post());
-            model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("viewType", "form");
             model.addAttribute("isEdit", false);
-            return "admin/posts";
+        } else if ("edit".equals(action) && id != null) {
+            Post post = postService.findById(id);
+            if (post != null) {
+                model.addAttribute("post", post);
+                model.addAttribute("viewType", "form");
+                model.addAttribute("isEdit", true);
+            } else {
+                model.addAttribute("errorMessage", "Post no encontrado");
+                model.addAttribute("viewType", "list");
+            }
+        } else {
+            model.addAttribute("viewType", "list");
         }
 
-        model.addAttribute("viewType", "list");
-        return "admin/posts";
+        return "admin/content-management";
     }
 
     @PostMapping("/admin/posts")
