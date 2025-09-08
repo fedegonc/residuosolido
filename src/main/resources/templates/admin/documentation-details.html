@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="'Detalles ' + ${section} + ' - Admin'">Detalles - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+  <div class="bg-gray-50 px-6 py-4 border-b">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900" th:text="'Detalles: ' + ${section}">Detalles</h1>
+        <p class="text-gray-600">Información técnica detallada</p>
+      </div>
+      <a href="/admin/documentation" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+        ← Volver a Documentación
+      </a>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-8">
+    
+    <!-- Frontend Details -->
+    <div th:if="${section == 'frontend'}" class="space-y-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+          <i data-lucide="layout" class="w-5 h-5 mr-2 text-blue-600"></i>
+          Frontend: Templates y Componentes
+        </h2>
+        
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Propósito</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Layout</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">admin/dashboard.html</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Panel principal admin</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">admin-layout</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">admin/users.html</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">CRUD usuarios</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">admin-layout</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">admin/feedback.html</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Gestión feedback</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">admin-layout</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Actualizado</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">auth/login.html</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Autenticación</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">base</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">index.html</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Página principal</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">base</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Rediseñado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-bold mb-4">🎨 Stack Frontend</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-blue-50 p-4 rounded">
+            <h4 class="font-semibold text-blue-800">Thymeleaf</h4>
+            <p class="text-sm text-blue-700">Template engine server-side</p>
+          </div>
+          <div class="bg-green-50 p-4 rounded">
+            <h4 class="font-semibold text-green-800">Tailwind CSS</h4>
+            <p class="text-sm text-green-700">Framework CSS utility-first</p>
+          </div>
+          <div class="bg-purple-50 p-4 rounded">
+            <h4 class="font-semibold text-purple-800">Lucide Icons</h4>
+            <p class="text-sm text-purple-700">Iconografía moderna</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Flows -->
+    <div th:if="${section == 'user-flows'}" class="space-y-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+          <i data-lucide="users" class="w-5 h-5 mr-2 text-purple-600"></i>
+          Casos de Uso: Usuario Común
+        </h2>
+        
+        <div class="space-y-6">
+          <div class="bg-purple-50 p-4 rounded">
+            <h3 class="font-semibold text-purple-800 mb-3">🎯 Flujo Principal: Solicitar Recolección</h3>
+            <div class="space-y-2 text-sm text-purple-700">
+              <div class="flex items-start">
+                <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">1</span>
+                <span>Usuario accede al sistema → <code>/auth/login</code></span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">2</span>
+                <span>Redirigido a dashboard → <code>/users/dashboard</code></span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">3</span>
+                <span>Clic en "Nueva Solicitud" → <code>/users/requests/new</code></span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">4</span>
+                <span>Completa formulario (materiales, dirección, fecha)</span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">5</span>
+                <span>Submit → UserController.createRequest()</span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">6</span>
+                <span>Confirmación → Volver a dashboard con mensaje</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 p-4 rounded">
+            <h3 class="font-semibold text-blue-800 mb-3">👤 Gestión de Perfil</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <h4 class="font-medium text-blue-700 mb-2">Ver Perfil:</h4>
+                <ul class="text-blue-600 space-y-1">
+                  <li>• <code>/users/profile</code> → UserController.userProfile()</li>
+                  <li>• Muestra datos personales</li>
+                  <li>• Historial de solicitudes</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-medium text-blue-700 mb-2">Editar Perfil:</h4>
+                <ul class="text-blue-600 space-y-1">
+                  <li>• <code>/users/profile/edit</code> → Formulario</li>
+                  <li>• Actualizar datos personales</li>
+                  <li>• Cambiar contraseña (opcional)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-green-50 p-4 rounded">
+            <h3 class="font-semibold text-green-800 mb-3">📋 Seguimiento de Solicitudes</h3>
+            <div class="text-sm text-green-700 space-y-2">
+              <div><strong>Estados posibles:</strong></div>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">PENDIENTE</span>
+                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">EN_PROCESO</span>
+                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">COMPLETADA</span>
+                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">RECHAZADA</span>
+              </div>
+              <div class="mt-3">
+                <strong>Acciones disponibles:</strong>
+                <ul class="mt-1 space-y-1">
+                  <li>• Ver detalles de solicitud</li>
+                  <li>• Cancelar solicitud (si está pendiente)</li>
+                  <li>• Contactar organización asignada</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual System -->
+    <div th:if="${section == 'visual-system'}" class="space-y-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+          <i data-lucide="palette" class="w-5 h-5 mr-2 text-pink-600"></i>
+          Visual System - Guía de Diseño
+        </h2>
+        
+        <!-- Water.css Demo Section -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-lg">
+          <h3 class="text-lg font-semibold mb-4">🧪 Prueba con Water.css</h3>
+          <p class="text-sm text-gray-600 mb-4">Esta sección usa Water.css para demostrar estilos automáticos sin clases:</p>
+          
+          <!-- Water.css aplicado solo a este contenedor -->
+          <div class="water-css-demo border-2 border-dashed border-gray-300 p-6 rounded">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+            
+            <h1>Título Principal H1</h1>
+            <h2>Subtítulo H2</h2>
+            <h3>Encabezado H3</h3>
+            
+            <p>Este es un párrafo normal con <strong>texto en negrita</strong> y <em>texto en cursiva</em>. 
+            También incluye un <a href="#">enlace de ejemplo</a> para mostrar los estilos automáticos.</p>
+            
+            <blockquote>
+              Esta es una cita destacada que muestra cómo Water.css estiliza automáticamente los blockquotes.
+            </blockquote>
+            
+            <ul>
+              <li>Elemento de lista 1</li>
+              <li>Elemento de lista 2</li>
+              <li>Elemento de lista 3</li>
+            </ul>
+            
+            <button>Botón Primario</button>
+            <button type="button">Botón Secundario</button>
+            
+            <form style="margin-top: 1rem;">
+              <label for="demo-input">Campo de texto:</label>
+              <input type="text" id="demo-input" placeholder="Escribe algo aquí">
+              
+              <label for="demo-select">Select:</label>
+              <select id="demo-select">
+                <option>Opción 1</option>
+                <option>Opción 2</option>
+                <option>Opción 3</option>
+              </select>
+              
+              <label for="demo-textarea">Textarea:</label>
+              <textarea id="demo-textarea" placeholder="Texto largo aquí..."></textarea>
+            </form>
+            
+            <table>
+              <thead>
+                <tr>
+                  <th>Columna 1</th>
+                  <th>Columna 2</th>
+                  <th>Columna 3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dato 1</td>
+                  <td>Dato 2</td>
+                  <td>Dato 3</td>
+                </tr>
+                <tr>
+                  <td>Dato 4</td>
+                  <td>Dato 5</td>
+                  <td>Dato 6</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Paleta de Colores Actual -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <i data-lucide="droplet" class="w-5 h-5 mr-2 text-blue-600"></i>
+            Paleta de Colores
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center">
+              <div class="w-16 h-16 bg-emerald-500 rounded-lg mx-auto mb-2"></div>
+              <span class="text-sm font-medium">Emerald 500</span>
+              <p class="text-xs text-gray-500">#10b981</p>
+            </div>
+            <div class="text-center">
+              <div class="w-16 h-16 bg-blue-500 rounded-lg mx-auto mb-2"></div>
+              <span class="text-sm font-medium">Blue 500</span>
+              <p class="text-xs text-gray-500">#3b82f6</p>
+            </div>
+            <div class="text-center">
+              <div class="w-16 h-16 bg-purple-500 rounded-lg mx-auto mb-2"></div>
+              <span class="text-sm font-medium">Purple 500</span>
+              <p class="text-xs text-gray-500">#8b5cf6</p>
+            </div>
+            <div class="text-center">
+              <div class="w-16 h-16 bg-orange-500 rounded-lg mx-auto mb-2"></div>
+              <span class="text-sm font-medium">Orange 500</span>
+              <p class="text-xs text-gray-500">#f97316</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Componentes Tailwind -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <i data-lucide="box" class="w-5 h-5 mr-2 text-green-600"></i>
+            Componentes Tailwind
+          </h3>
+          <div class="space-y-4">
+            <div class="p-4 bg-blue-50 rounded-lg">
+              <h4 class="font-medium text-blue-800 mb-2">Tarjetas</h4>
+              <div class="bg-white p-4 rounded-lg shadow border">
+                <h5 class="font-semibold">Tarjeta de ejemplo</h5>
+                <p class="text-sm text-gray-600">Contenido de la tarjeta con sombra y bordes redondeados</p>
+              </div>
+            </div>
+            
+            <div class="p-4 bg-green-50 rounded-lg">
+              <h4 class="font-medium text-green-800 mb-2">Botones</h4>
+              <div class="space-x-2">
+                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Primario</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">Secundario</button>
+                <button class="border border-green-600 text-green-600 hover:bg-green-50 px-4 py-2 rounded-md">Outline</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparación -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <h4 class="font-medium text-yellow-800 mb-2">💡 Comparación: Water.css vs Tailwind</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <h5 class="font-medium text-yellow-700">Water.css:</h5>
+              <ul class="text-yellow-600 space-y-1 mt-1">
+                <li>• Estilos automáticos sin clases</li>
+                <li>• Perfecto para prototipos rápidos</li>
+                <li>• 2KB, muy liviano</li>
+                <li>• Tema claro/oscuro automático</li>
+              </ul>
+            </div>
+            <div>
+              <h5 class="font-medium text-yellow-700">Tailwind CSS:</h5>
+              <ul class="text-yellow-600 space-y-1 mt-1">
+                <li>• Control granular con clases utility</li>
+                <li>• Diseños complejos y personalizados</li>
+                <li>• Sistema de diseño escalable</li>
+                <li>• Usado en nuestro proyecto</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Organization Flows -->
+    <div th:if="${section == 'organization-flows'}" class="space-y-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+          <i data-lucide="building" class="w-5 h-5 mr-2 text-orange-600"></i>
+          Casos de Uso: Organizaciones
+        </h2>
+        
+        <div class="space-y-6">
+          <div class="bg-orange-50 p-4 rounded">
+            <h3 class="font-semibold text-orange-800 mb-3">🏢 Flujo Principal: Gestionar Materiales</h3>
+            <div class="space-y-2 text-sm text-orange-700">
+              <div class="flex items-start">
+                <span class="bg-orange-200 text-orange-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">1</span>
+                <span>Organización accede → <code>/org/dashboard</code></span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-orange-200 text-orange-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">2</span>
+                <span>Clic "Gestionar Materiales" → <code>/org/materials</code></span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-orange-200 text-orange-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">3</span>
+                <span>Selecciona materiales que procesa (checkboxes)</span>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-orange-200 text-orange-800 px-2 py-1 rounded text-xs font-medium mr-3 mt-0.5">4</span>
+                <span>Submit → OrganizationController.updateMaterials()</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 p-4 rounded">
+            <h3 class="font-semibold text-blue-800 mb-3">📦 Procesamiento de Solicitudes</h3>
+            <div class="text-sm text-blue-700 space-y-2">
+              <div><strong>Flujo de trabajo:</strong></div>
+              <ul class="space-y-1 ml-4">
+                <li>• Recibe solicitudes automáticamente según materiales</li>
+                <li>• Revisa detalles y ubicación</li>
+                <li>• Acepta/rechaza solicitud</li>
+                <li>• Programa recolección</li>
+                <li>• Marca como completada</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backend Details -->
+    <div th:if="${section == 'backend'}" class="space-y-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+          <i data-lucide="server" class="w-5 h-5 mr-2 text-green-600"></i>
+          Backend: Controladores y Servicios
+        </h2>
+        
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Controlador</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endpoints</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CRUD</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AdminUserController</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/admin/users</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">✅ Completo</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Patrón OK</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AdminFeedbackController</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/admin/feedback</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">✅ Completo</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Corregido</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AdminRequestController</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/admin/requests</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">⚠️ Limitado</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendiente</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AdminPasswordResetController</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/admin/password-reset-requests</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">⚠️ Limitado</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendiente</span></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AuthController</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/auth/*</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">✅ Completo</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-bold mb-4">⚙️ Stack Backend</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-green-50 p-4 rounded">
+            <h4 class="font-semibold text-green-800">Spring Boot 3.2</h4>
+            <p class="text-sm text-green-700">Framework principal + Java 17</p>
+          </div>
+          <div class="bg-blue-50 p-4 rounded">
+            <h4 class="font-semibold text-blue-800">PostgreSQL</h4>
+            <p class="text-sm text-blue-700">Base de datos principal</p>
+          </div>
+          <div class="bg-purple-50 p-4 rounded">
+            <h4 class="font-semibold text-purple-800">Spring Security 6</h4>
+            <p class="text-sm text-purple-700">Autenticación y autorización</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patrón CRUD documentado -->
+    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 mt-8">
+      <h3 class="text-lg font-bold mb-4 flex items-center">
+        <i data-lucide="code" class="w-5 h-5 mr-2 text-indigo-600"></i>
+        Patrón CRUD Unificado
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded">
+          <h4 class="font-semibold text-indigo-800 mb-2">GET con Actions</h4>
+          <ul class="text-sm text-indigo-700 space-y-1">
+            <li>• <code>?action=new</code> → Formulario crear</li>
+            <li>• <code>?action=edit&id=X</code> → Formulario editar</li>
+            <li>• <code>?action=view&id=X</code> → Vista detalles</li>
+            <li>• Sin params → Lista</li>
+          </ul>
+        </div>
+        <div class="bg-white p-4 rounded">
+          <h4 class="font-semibold text-purple-800 mb-2">POST Unificado</h4>
+          <ul class="text-sm text-purple-700 space-y-1">
+            <li>• <code>id != null</code> → UPDATE</li>
+            <li>• <code>id == null</code> → CREATE</li>
+            <li>• <code>action=delete</code> → DELETE</li>
+            <li>• Flash messages + redirect</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <script>
+    lucide.createIcons();
+  </script>
+</main>
+</body>
+</html>

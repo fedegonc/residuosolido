@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentación - Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
@@ -54,6 +53,22 @@
           <div class="bg-white p-3 rounded">
             <strong class="text-purple-600">Seguridad</strong><br>
             @PreAuthorize en controladores admin
+          </div>
+        </div>
+        
+        <!-- Controladores Admin Actuales -->
+        <div class="mt-4 bg-white p-4 rounded">
+          <h4 class="font-semibold text-gray-800 mb-2">🎛️ Controladores Admin Implementados</h4>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">AdminController</span>
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded">AdminUserController</span>
+            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded">AdminFeedbackController</span>
+            <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded">AdminCategoryController</span>
+            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">AdminRequestController</span>
+            <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">AdminMaterialController</span>
+            <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded">AdminPostController</span>
+            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded">AdminConfigController</span>
+            <span class="bg-red-100 text-red-800 px-2 py-1 rounded">AdminPasswordResetController</span>
           </div>
         </div>
       </div>
@@ -307,6 +322,193 @@ public class AdminUserController {
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Análisis de Consistencia de Controladores -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+        <h3 class="font-bold mb-4 flex items-center">
+          <i data-lucide="alert-triangle" class="w-5 h-5 mr-2 text-yellow-600"></i>
+          Análisis de Consistencia: Controladores Admin
+        </h3>
+        
+        <div class="space-y-6">
+          <!-- Patrón Consistente -->
+          <div>
+            <h4 class="font-semibold text-green-600 mb-3">✅ Controladores Consistentes (Siguen el patrón)</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white p-4 rounded border">
+                <h5 class="font-medium text-green-800">AdminUserController</h5>
+                <ul class="text-sm text-green-700 mt-2 space-y-1">
+                  <li>• CRUD completo (Create, Read, Update, Delete)</li>
+                  <li>• Parámetros: ?action=edit&id=X, ?action=new</li>
+                  <li>• Vista dinámica: list/form en mismo template</li>
+                  <li>• Thin Controller: lógica en UserService</li>
+                </ul>
+              </div>
+              <div class="bg-white p-4 rounded border">
+                <h5 class="font-medium text-green-800">AdminMaterialController</h5>
+                <ul class="text-sm text-green-700 mt-2 space-y-1">
+                  <li>• CRUD completo implementado</li>
+                  <li>• Parámetros consistentes con patrón</li>
+                  <li>• Manejo de Optional correcto</li>
+                  <li>• Flash messages implementados</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Anomalías Detectadas -->
+          <div>
+            <h4 class="font-semibold text-red-600 mb-3">⚠️ Anomalías Detectadas</h4>
+            <div class="space-y-4">
+              
+              <div class="bg-red-50 p-4 rounded border border-red-200">
+                <h5 class="font-medium text-red-800">AdminFeedbackController</h5>
+                <div class="text-sm text-red-700 mt-2">
+                  <p class="font-medium">Problema: CRUD incompleto</p>
+                  <ul class="mt-1 space-y-1">
+                    <li>• ❌ No tiene acción "new" (solo edit)</li>
+                    <li>• ❌ No permite crear feedback desde admin</li>
+                    <li>• ⚠️ Lógica de edición manual en controlador</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="bg-red-50 p-4 rounded border border-red-200">
+                <h5 class="font-medium text-red-800">AdminRequestController</h5>
+                <div class="text-sm text-red-700 mt-2">
+                  <p class="font-medium">Problema: CRUD limitado</p>
+                  <ul class="mt-1 space-y-1">
+                    <li>• ❌ No tiene acción "new" (solo edit)</li>
+                    <li>• ❌ Solo edita status y notes</li>
+                    <li>• ⚠️ Parámetros adicionales en POST</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="bg-red-50 p-4 rounded border border-red-200">
+                <h5 class="font-medium text-red-800">AdminPasswordResetController</h5>
+                <div class="text-sm text-red-700 mt-2">
+                  <p class="font-medium">Problema: CRUD limitado</p>
+                  <ul class="mt-1 space-y-1">
+                    <li>• ❌ No tiene acción "new"</li>
+                    <li>• ❌ Solo edita status y adminNotes</li>
+                    <li>• ⚠️ Parámetros adicionales en POST</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inconsistencias en Templates -->
+          <div>
+            <h4 class="font-semibold text-orange-600 mb-3">🎨 Inconsistencias en Templates</h4>
+            <div class="bg-orange-50 p-4 rounded border border-orange-200">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <h5 class="font-medium text-orange-800">Estructura Inconsistente:</h5>
+                  <ul class="text-orange-700 mt-1 space-y-1">
+                    <li>• <strong>feedback.html:</strong> Estructura moderna (sin admin-layout)</li>
+                    <li>• <strong>materials.html:</strong> Usa admin-layout fragment</li>
+                    <li>• <strong>users.html:</strong> Estructura moderna independiente</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-medium text-orange-800">Estilos Inconsistentes:</h5>
+                  <ul class="text-orange-700 mt-1 space-y-1">
+                    <li>• Algunos usan Lucide icons, otros no</li>
+                    <li>• Headers con diferentes estructuras</li>
+                    <li>• Mensajes con diferentes estilos</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recomendaciones -->
+          <div>
+            <h4 class="font-semibold text-blue-600 mb-3">🔧 Recomendaciones de Corrección</h4>
+            <div class="bg-blue-50 p-4 rounded border border-blue-200">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <h5 class="font-medium text-blue-800">Controladores:</h5>
+                  <ul class="text-blue-700 mt-1 space-y-1">
+                    <li>1. Agregar acción "new" a controladores faltantes</li>
+                    <li>2. Mover lógica manual a servicios</li>
+                    <li>3. Estandarizar parámetros POST</li>
+                    <li>4. Implementar CRUD completo consistente</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-medium text-blue-800">Templates:</h5>
+                  <ul class="text-blue-700 mt-1 space-y-1">
+                    <li>1. Estandarizar estructura (con/sin admin-layout)</li>
+                    <li>2. Unificar estilos de headers y mensajes</li>
+                    <li>3. Implementar Lucide icons consistentemente</li>
+                    <li>4. Usar mismo patrón de navegación</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="font-bold mb-4">📋 Detalles Técnicos</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <a href="/admin/documentation/details/frontend" 
+           class="block bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors">
+          <div class="flex items-center mb-3">
+            <i data-lucide="layout" class="w-6 h-6 text-blue-600 mr-3"></i>
+            <h4 class="font-bold text-blue-800">Frontend Details</h4>
+          </div>
+          <p class="text-sm text-blue-700">Templates, componentes, estilos y organización del frontend</p>
+          <div class="mt-3 text-xs text-blue-600 font-medium">Ver detalles →</div>
+        </a>
+
+        <a href="/admin/documentation/details/backend" 
+           class="block bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200 hover:border-green-300 transition-colors">
+          <div class="flex items-center mb-3">
+            <i data-lucide="server" class="w-6 h-6 text-green-600 mr-3"></i>
+            <h4 class="font-bold text-green-800">Backend Details</h4>
+          </div>
+          <p class="text-sm text-green-700">Controladores, servicios, repositorios y arquitectura del backend</p>
+          <div class="mt-3 text-xs text-green-600 font-medium">Ver detalles →</div>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <a href="/admin/documentation/details/user-flows" 
+           class="block bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200 hover:border-purple-300 transition-colors">
+          <div class="flex items-center mb-3">
+            <i data-lucide="users" class="w-6 h-6 text-purple-600 mr-3"></i>
+            <h4 class="font-bold text-purple-800">User Flows</h4>
+          </div>
+          <p class="text-sm text-purple-700">Casos de uso y flujos de usuarios comunes</p>
+          <div class="mt-3 text-xs text-purple-600 font-medium">Ver detalles →</div>
+        </a>
+
+        <a href="/admin/documentation/details/organization-flows" 
+           class="block bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-lg border border-orange-200 hover:border-orange-300 transition-colors">
+          <div class="flex items-center mb-3">
+            <i data-lucide="building" class="w-6 h-6 text-orange-600 mr-3"></i>
+            <h4 class="font-bold text-orange-800">Organization Flows</h4>
+          </div>
+          <p class="text-sm text-orange-700">Casos de uso y flujos para organizaciones</p>
+          <div class="mt-3 text-xs text-orange-600 font-medium">Ver detalles →</div>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+        <a href="/admin/documentation/details/visual-system" 
+           class="block bg-gradient-to-r from-pink-50 to-rose-50 p-6 rounded-lg border border-pink-200 hover:border-pink-300 transition-colors">
+          <div class="flex items-center mb-3">
+            <i data-lucide="palette" class="w-6 h-6 text-pink-600 mr-3"></i>
+            <h4 class="font-bold text-pink-800">Visual System</h4>
+          </div>
+          <p class="text-sm text-pink-700">Guía de diseño, colores, tipografía y componentes visuales</p>
+          <div class="mt-3 text-xs text-pink-600 font-medium">Ver detalles →</div>
+        </a>
       </div>
 
       <h3 class="font-bold mb-4">📋 Guías de Uso</h3>

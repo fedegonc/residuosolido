@@ -28,12 +28,34 @@ public class AdminFeedbackController {
         model.addAttribute("feedbacks", all);
         model.addAttribute("totalFeedback", all != null ? all.size() : 0);
 
-        if ("edit".equals(action) && id != null) {
-            Optional<Feedback> fb = feedbackService.findById(id);
-            fb.ifPresent(feedback -> model.addAttribute("feedback", feedback));
-            model.addAttribute("viewType", "form");
-            model.addAttribute("isEdit", true);
-            return "admin/feedback";
+        if (action != null) {
+            switch (action) {
+                case "view":
+                    if (id != null) {
+                        feedbackService.findById(id).ifPresent(feedback -> {
+                            model.addAttribute("feedback", feedback);
+                            model.addAttribute("viewType", "view");
+                        });
+                        return "admin/feedback";
+                    }
+                    break;
+                case "edit":
+                    if (id != null) {
+                        feedbackService.findById(id).ifPresent(feedback -> {
+                            model.addAttribute("feedback", feedback);
+                            model.addAttribute("isEdit", true);
+                            model.addAttribute("viewType", "form");
+                        });
+                        return "admin/feedback";
+                    }
+                    break;
+                case "new":
+                    Feedback newFeedback = new Feedback();
+                    model.addAttribute("feedback", newFeedback);
+                    model.addAttribute("isEdit", false);
+                    model.addAttribute("viewType", "form");
+                    return "admin/feedback";
+            }
         }
 
         model.addAttribute("viewType", "list");
@@ -41,18 +63,23 @@ public class AdminFeedbackController {
     }
 
     @PostMapping
-    public String save(@ModelAttribute Feedback feedback,
+    public String save(@RequestParam(required = false) String action,
+                       @ModelAttribute Feedback feedback,
                        RedirectAttributes ra) {
+        
+        if ("delete".equals(action) && feedback.getId() != null) {
+            return delete(feedback.getId(), ra);
+        }
+        
         try {
-            // Solo permitir editar campos básicos: name, email, comment
             if (feedback.getId() != null) {
-                feedbackService.findById(feedback.getId()).ifPresent(existing -> {
-                    existing.setName(feedback.getName());
-                    existing.setEmail(feedback.getEmail());
-                    existing.setComment(feedback.getComment());
-                    feedbackService.save(existing);
-                });
+                // UPDATE: usar servicio directamente
+                feedbackService.save(feedback);
                 ra.addFlashAttribute("successMessage", "Feedback actualizado");
+            } else {
+                // CREATE: nuevo feedback
+                feedbackService.save(feedback);
+                ra.addFlashAttribute("successMessage", "Feedback creado");
             }
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
