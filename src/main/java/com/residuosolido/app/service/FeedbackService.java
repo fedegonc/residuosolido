@@ -50,4 +50,34 @@ public class FeedbackService {
     public long count() {
         return feedbackRepository.count();
     }
+
+    /**
+     * Marca un feedback como leído
+     */
+    public void markAsRead(Long id) {
+        Optional<Feedback> feedback = findById(id);
+        if (feedback.isPresent()) {
+            Feedback fb = feedback.get();
+            fb.setIsRead(true);
+            save(fb);
+        }
+    }
+
+    /**
+     * Responde a un feedback
+     */
+    public void respondToFeedback(Long id, String response) {
+        Optional<Feedback> feedback = findById(id);
+        if (feedback.isPresent()) {
+            Feedback fb = feedback.get();
+            fb.setAdminResponse(response);
+            fb.setRespondedAt(java.time.LocalDateTime.now());
+            save(fb);
+        }
+    }
+
+    /**
+     * Cuenta feedbacks pendientes (sin leer)
+     */
+    
 }

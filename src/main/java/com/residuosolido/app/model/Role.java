@@ -1,18 +1,17 @@
 package com.residuosolido.app.model;
 
 /**
- * Enum that defines the possible user roles in the system
+ * Enum that defines the possible user roles in the system with their specific dashboard URLs
  */
 public enum Role {
-    ADMIN("admin", "/dashboard", 100),       // System administrator
-    ORGANIZATION("org", "/dashboard", 50), // Organization representative
-    USER("user", "/dashboard", 10);        // Normal user who can request collections
+    ADMIN("admin", "/admin/dashboard", 100),       // System administrator
+    ORGANIZATION("org", "/org/dashboard", 50),     // Organization representative  
+    USER("user", "/users/dashboard", 10);          // Normal user who can request collections
     
     private final String urlPrefix;
     private final String dashboardUrl;
     private final int priority;
     
-    // Constructor para el enum Role
     Role(String urlPrefix, String dashboardUrl, int priority) {
         this.urlPrefix = urlPrefix;
         this.dashboardUrl = dashboardUrl;
@@ -31,6 +30,9 @@ public enum Role {
         return priority;
     }
     
+    /**
+     * Returns display name for UI. Consider using MessageSource for i18n in the future.
+     */
     public String getDisplayName() {
         switch (this) {
             case ADMIN:
@@ -39,8 +41,8 @@ public enum Role {
                 return "Organización";
             case USER:
                 return "Usuario";
-            default:
-                return this.name();
         }
+        // No default case - compiler will warn if new roles are added
+        throw new IllegalStateException("Unexpected role: " + this);
     }
 }

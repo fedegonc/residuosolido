@@ -1,6 +1,7 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.RequestStatus;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,36 @@ public class RequestService {
 
     public Request createRequest(User user, String description, String materials) {
         Request request = new Request();
-        // Setters básicos sin Lombok
         request.setUser(user);
         request.setDescription(description);
         request.setMaterials(materials);
-        request.setStatus(Request.RequestStatus.PENDING);
+        request.setStatus(RequestStatus.PENDING);
         request.setCreatedAt(LocalDateTime.now());
         
         return requestRepository.save(request);
+    }
+
+    public Request createRequest(User user, String description, String materials, String address) {
+        Request request = new Request();
+        request.setUser(user);
+        request.setDescription(description);
+        request.setMaterials(materials);
+        request.setAddress(address);
+        request.setStatus(RequestStatus.PENDING);
+        request.setCreatedAt(LocalDateTime.now());
+        
+        return requestRepository.save(request);
+    }
+
+    public List<Request> getRecentRequestsByUser(User user) {
+        return requestRepository.findTop5ByUserOrderByCreatedAtDesc(user);
+    }
+
+    public List<Request> getRecentRequestsByUser(User user, int limit) {
+        return requestRepository.findByUser(user)
+                .stream()
+                .limit(limit)
+                .toList();
     }
 
     public List<Request> getRequestsByUser(User user) {
@@ -47,20 +70,20 @@ public class RequestService {
     public Request rejectRequest(Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request != null) {
-            request.setStatus(Request.RequestStatus.REJECTED);
+            request.setStatus(RequestStatus.REJECTED);
             return requestRepository.save(request);
         }
         return null;
     }
     
     public List<Request> getPendingRequests() {
-        return requestRepository.findByStatus(Request.RequestStatus.PENDING);
+        return requestRepository.findByStatus(RequestStatus.PENDING);
     }
 
     public Request approveRequest(Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request != null) {
-            request.setStatus(Request.RequestStatus.ACCEPTED);
+            request.setStatus(RequestStatus.ACCEPTED);
             return requestRepository.save(request);
         }
         return null;
@@ -72,5 +95,14 @@ public class RequestService {
 
     public void deleteById(Long id) {
         requestRepository.deleteById(id);
+    }
+
+    public Request updateStatus(Long requestId, RequestStatus status) {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request != null) {
+            request.setStatus(status);
+            return requestRepository.save(request);
+        }
+        return null;
     }
 }

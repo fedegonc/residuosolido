@@ -94,6 +94,18 @@ public class PostService {
             .toList();
     }
 
+    public List<Post> getFeaturedPosts() {
+        // Retornar los primeros 5 posts como "destacados"
+        return postRepository.findRecentPostsWithCategories(5);
+    }
+
+    public List<Post> getRelatedPosts(Post post, int limit) {
+        if (post == null || post.getCategory() == null) {
+            return new ArrayList<>();
+        }
+        return getRelatedPostsById(post.getId(), post.getCategory().getId(), limit);
+    }
+
     public void createPost(String title, String content, String imageUrl, Long categoryId) {
         Post post = new Post();
         post.setTitle(title);

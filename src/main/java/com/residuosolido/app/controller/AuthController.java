@@ -1,4 +1,4 @@
-package com.residuosolido.app.controller.auth;
+package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.User;

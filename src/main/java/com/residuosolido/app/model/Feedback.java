@@ -32,10 +32,22 @@ public class Feedback {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
+    @Column(name = "admin_response", length = 1000)
+    private String adminResponse;
+    
+    @Column(name = "responded_at")
+    private LocalDateTime respondedAt;
+    
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead = false;
+    
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
+        }
+        if (isRead == null) {
+            isRead = false;
         }
     }
 }

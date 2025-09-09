@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -119,27 +120,7 @@ public class UserService {
         return userRepository.search(q, pageable);
     }
 
-    public Page<User> searchUsers(String search, Pageable pageable) {
-        return userRepository.search(search, pageable);
-    }
     
-    /**
-     * Obtiene todos los usuarios, opcionalmente filtrados por rol
-     * @param role Rol para filtrar (opcional)
-     * @return Lista de usuarios
-     */
-    public List<User> getAllUsers(String roleName) {
-        if (roleName != null && !roleName.isEmpty()) {
-            try {
-                com.residuosolido.app.model.Role roleEnum = com.residuosolido.app.model.Role.valueOf(roleName);
-                return userRepository.findByRole(roleEnum);
-            } catch (IllegalArgumentException e) {
-                return userRepository.findAll();
-            }
-        } else {
-            return userRepository.findAll();
-        }
-    }
     
     /**
      * Busca un usuario por su nombre de usuario autenticado
@@ -214,17 +195,36 @@ public class UserService {
      * @throws IllegalArgumentException si hay errores de validación
      */
     public User saveUser(UserForm userForm) {
-        // Validar datos del formulario
-        validateUserForm(userForm);
-        
         logger.info("[UserService] saveUser() | id={} | action={} | username={} | email={}",
                 userForm.getId(), (userForm.getId() == null ? "CREATE" : "UPDATE"), userForm.getUsername(), userForm.getEmail());
 
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         
-        // Copiar campos de ubicación geográfica
-        copyLocationFields(userForm, user);
+        // Copiar campos de ubicación geográfica (esquema español)
+        if (userForm.getDireccion() != null) {
+            user.setAddress(userForm.getDireccion());
+        }
+        if (userForm.getReferencias() != null) {
+            user.setAddressReferences(userForm.getReferencias());
+        }
+        if (userForm.getLatitud() != null) {
+            user.setLatitude(userForm.getLatitud());
+        }
+        if (userForm.getLongitud() != null) {
+            user.setLongitude(userForm.getLongitud());
+        }
+        
+        // Compatibilidad con campos legacy (deprecated)
+        if (userForm.getAddress() != null) {
+            user.setAddress(userForm.getAddress());
+        }
+        if (userForm.getLatitude() != null) {
+            user.setLatitude(BigDecimal.valueOf(userForm.getLatitude()));
+        }
+        if (userForm.getLongitude() != null) {
+            user.setLongitude(BigDecimal.valueOf(userForm.getLongitude()));
+        }
         
         if (user.getId() == null) {
             // Usuario nuevo
@@ -237,184 +237,7 @@ public class UserService {
         }
     }
     
-    private void validateUserForm(UserForm form) {
-        if (form == null) {
-            throw new IllegalArgumentException("Formulario de usuario inválido");
-        }
-
-        // Crear nuevo usuario: contraseña obligatoria
-        if (form.getId() == null) {
-            String pw = form.getPassword();
-            String confirm = form.getConfirmPassword();
-            if (pw == null || pw.trim().isEmpty()) {
-                throw new IllegalArgumentException("La contraseña es obligatoria");
-            }
-            if (confirm == null || confirm.trim().isEmpty()) {
-                throw new IllegalArgumentException("Debe confirmar la contraseña");
-            }
-            if (!pw.equals(confirm)) {
-                throw new IllegalArgumentException("Las contraseñas no coinciden");
-            }
-            if (pw.length() < 6) {
-                throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
-            }
-        } else {
-            // Edición: contraseña opcional
-            String newPassword = form.getNewPassword();
-            if (newPassword != null && !newPassword.trim().isEmpty()) {
-                if (newPassword.length() < 6) {
-                    throw new IllegalArgumentException("La nueva contraseña debe tener al menos 6 caracteres");
-                }
-            }
-        }
-
-        if (form.getUsername() == null || form.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de usuario es obligatorio");
-        }
-        if (form.getEmail() == null || form.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("El email es obligatorio");
-        }
-        if (form.getFirstName() == null || form.getFirstName().trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre es obligatorio");
-        }
-        if (form.getLastName() == null || form.getLastName().trim().isEmpty()) {
-            throw new IllegalArgumentException("El apellido es obligatorio");
-        }
-        if (form.getPreferredLanguage() == null || form.getPreferredLanguage().trim().isEmpty()) {
-            throw new IllegalArgumentException("El idioma preferido es obligatorio");
-        }
-    }
     
-    /**
-     * Copia campos de ubicación del formulario a la entidad
-     * @param userForm Formulario origen
-     * @param user Entidad destino
-     */
-    private void copyLocationFields(UserForm userForm, User user) {
-        logger.info("Copiando campos de ubicación:");
-        logger.info("Dirección: {}", userForm.getDireccion());
-        logger.info("Latitud: {}", userForm.getLatitud());
-        logger.info("Longitud: {}", userForm.getLongitud());
-        logger.info("Referencias: {}", userForm.getReferencias());
-        logger.info("Legacy - Latitude: {}", userForm.getLatitude());
-        logger.info("Legacy - Longitude: {}", userForm.getLongitude());
-        
-        user.setDireccion(userForm.getDireccion());
-        user.setLatitud(userForm.getLatitud());
-        user.setLongitud(userForm.getLongitud());
-        user.setReferencias(userForm.getReferencias());
-        
-        // Mantener compatibilidad con campos legacy
-        if (userForm.getLatitud() != null) {
-            user.setLatitude(userForm.getLatitud().doubleValue());
-        }
-        if (userForm.getLongitud() != null) {
-            user.setLongitude(userForm.getLongitud().doubleValue());
-        }
-        if (userForm.getDireccion() != null) {
-            user.setAddress(userForm.getDireccion());
-        }
-        
-        logger.info("Campos copiados a la entidad User:");
-        logger.info("User - Latitud: {}", user.getLatitud());
-        logger.info("User - Longitud: {}", user.getLongitud());
-        logger.info("User - Legacy Latitude: {}", user.getLatitude());
-        logger.info("User - Legacy Longitude: {}", user.getLongitude());
-    }
-    
-    /**
-     * Actualiza solo la ubicación geográfica de un usuario
-     * @param userId ID del usuario
-     * @param direccion Dirección completa
-     * @param latitud Coordenada latitud
-     * @param longitud Coordenada longitud
-     * @param referencias Referencias adicionales
-     * @return Usuario actualizado
-     */
-    public User updateUserLocation(Long userId, String direccion, 
-                                   java.math.BigDecimal latitud, 
-                                   java.math.BigDecimal longitud, 
-                                   String referencias) {
-        User user = getUserOrThrow(userId);
-        
-        user.setDireccion(direccion);
-        user.setLatitud(latitud);
-        user.setLongitud(longitud);
-        user.setReferencias(referencias);
-        
-        // Mantener compatibilidad con campos legacy
-        if (latitud != null) {
-            user.setLatitude(latitud.doubleValue());
-        }
-        if (longitud != null) {
-            user.setLongitude(longitud.doubleValue());
-        }
-        if (direccion != null) {
-            user.setAddress(direccion);
-        }
-        
-        return userRepository.save(user);
-    }
-    
-    /**
-     * Copia campos de ubicación de la entidad al formulario
-     * @param user Entidad origen
-     * @param userForm Formulario destino
-     */
-    public void copyLocationToForm(User user, UserForm userForm) {
-        userForm.setDireccion(user.getDireccion());
-        userForm.setLatitud(user.getLatitud());
-        userForm.setLongitud(user.getLongitud());
-        userForm.setReferencias(user.getReferencias());
-        
-        // Mantener compatibilidad con campos legacy
-        userForm.setLatitude(user.getLatitude());
-        userForm.setLongitude(user.getLongitude());
-        userForm.setAddress(user.getAddress());
-    }
-    
-    /**
-     * Busca usuarios por proximidad geográfica
-     * @param latitud Coordenada latitud central
-     * @param longitud Coordenada longitud central
-     * @param radioKm Radio de búsqueda en kilómetros
-     * @return Lista de usuarios en el área
-     */
-    public List<User> findUsersByLocation(java.math.BigDecimal latitud, 
-                                          java.math.BigDecimal longitud, 
-                                          double radioKm) {
-        // Implementación básica - se puede mejorar con consultas geoespaciales
-        return userRepository.findAll().stream()
-            .filter(user -> user.getLatitud() != null && user.getLongitud() != null)
-            .filter(user -> {
-                double distance = calculateDistance(
-                    latitud.doubleValue(), longitud.doubleValue(),
-                    user.getLatitud().doubleValue(), user.getLongitud().doubleValue());
-                return distance <= radioKm;
-            })
-            .collect(java.util.stream.Collectors.toList());
-    }
-    
-    /**
-     * Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine
-     * @param lat1 Latitud punto 1
-     * @param lon1 Longitud punto 1
-     * @param lat2 Latitud punto 2
-     * @param lon2 Longitud punto 2
-     * @return Distancia en kilómetros
-     */
-    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int R = 6371; // Radio de la Tierra en km
-        
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        
-        return R * c;
-    }
     
     /**
      * Obtiene un usuario por su ID o lanza una excepción si no existe
@@ -440,14 +263,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
     
-    /**
-     * Busca un usuario por su ID y lo devuelve directamente
-     * @param id ID del usuario
-     * @return Usuario encontrado o null si no existe
-     */
-    public User findUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
     
     /**
      * Cuenta la cantidad de usuarios por rol
@@ -475,3 +290,4 @@ public void ensureDefaultAdmin() {
 }
 
 }
+ 

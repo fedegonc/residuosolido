@@ -1,188 +1,202 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Feedback - Admin</title>
-  <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
-  <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Feedback - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body class="bg-gray-50">
-  <!-- Header -->
-  <div class="bg-white shadow-sm border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-4">
-        <div class="flex items-center space-x-4">
-          <a th:href="@{/admin/dashboard}" class="text-green-600 hover:text-green-700">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-          </a>
-          <h1 class="text-2xl font-bold text-gray-900">Gestión de Feedback</h1>
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a th:href="@{/admin/dashboard}" class="text-green-600 hover:text-green-700">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">Gestión de Feedback</h1>
+                </div>
+                <div th:if="${viewType == 'list'}" class="flex space-x-3">
+                    <a th:href="@{/admin/feedback(action='new')}" 
+                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nuevo Feedback</span>
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Messages -->
-  <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-      <div class="flex items-center">
-        <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
-        <span th:text="${successMessage}"></span>
-      </div>
-    </div>
-  </div>
-
-  <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-      <div class="flex items-center">
-        <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
-        <span th:text="${errorMessage}"></span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-    <!-- LISTA DE FEEDBACK -->
-    <div th:if="${viewType} == 'list'" class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold text-gray-900">
-            Feedback recibidos (<span th:text="${totalFeedback}">0</span>)
-          </h2>
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comentario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr th:each="fb : ${feedbacks}" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                      <span class="text-sm font-medium text-purple-800" th:text="${#strings.substring(fb.name, 0, 1).toUpperCase()}">F</span>
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- List View -->
+        <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900">Lista de Feedback</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mensaje</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:each="fb : ${feedbacks}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${fb.id}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${fb.user?.name ?: 'Anónimo'}"></td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                <span th:text="${#strings.abbreviate(fb.message, 50)}"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <a th:href="@{/admin/feedback(action='view', id=${fb.id})}" 
+                                       class="text-blue-600 hover:text-blue-900 flex items-center">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </a>
+                                    <a th:href="@{/admin/feedback(action='edit', id=${fb.id})}" 
+                                       class="text-green-600 hover:text-green-900 flex items-center">
+                                        <i data-lucide="edit" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Form View -->
+        <div th:if="${viewType == 'form'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900" th:text="${feedback.id == null ? 'Nuevo Feedback' : 'Editar Feedback'}"></h2>
+            </div>
+            <form th:action="@{/admin/feedback}" method="post" th:object="${feedback}" class="p-6">
+                <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" name="action" value="save"/>
+                
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
+                        <textarea th:field="*{message}" id="message" rows="4" required
+                                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"></textarea>
                     </div>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900" th:text="${fb.name}">nombre</div>
-                    <div class="text-xs text-gray-500" th:if="${fb.user != null}" th:text="'Usuario: ' + ${fb.user.username}">usuario</div>
-                  </div>
+                    
+                    <div>
+                        <label for="rating" class="block text-sm font-medium text-gray-700">Calificación</label>
+                        <select th:field="*{rating}" id="rating"
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                            <option value="1">1 - Muy malo</option>
+                            <option value="2">2 - Malo</option>
+                            <option value="3">3 - Regular</option>
+                            <option value="4">4 - Bueno</option>
+                            <option value="5">5 - Excelente</option>
+                        </select>
+                    </div>
                 </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${fb.email}">email</td>
-              <td class="px-6 py-4 text-sm text-gray-700">
-                <div class="line-clamp-2" th:text="${fb.comment}">comentario</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div class="flex justify-end space-x-2">
-                  <a th:href="@{/admin/feedback(action='edit', id=${fb.id})}" class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200">Editar</a>
-                  <button onclick="confirmDelete(this)" th:data-id="${fb.id}" th:data-name="${fb.name}" class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200">Eliminar</button>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <a th:href="@{/admin/feedback}" 
+                       class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                        Guardar
+                    </button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- FORMULARIO EDICIÓN FEEDBACK -->
-    <div th:if="${viewType} == 'form'" class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">Editar Feedback</h2>
-      </div>
-
-      <form th:action="@{/admin/feedback}" method="post" th:object="${feedback}" class="p-6 space-y-6">
-        <input type="hidden" th:field="*{id}" />
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-            <input type="text" th:field="*{name}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input type="email" th:field="*{email}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-          </div>
+            </form>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Comentario</label>
-          <textarea th:field="*{comment}" rows="5" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
-        </div>
-
-        <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-          <a th:href="@{/admin/feedback}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</a>
-          <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white rounded-lg max-w-md w-full">
-        <div class="p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
+        <!-- View Mode -->
+        <div th:if="${viewType == 'view'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900">Detalles de Feedback</h2>
             </div>
-            <div class="ml-3">
-              <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
-              <p class="mt-2 text-sm text-gray-500">
-                ¿Estás seguro de que deseas eliminar el feedback de <strong id="deleteFeedbackName"></strong>?
-                Esta acción no se puede deshacer.
-              </p>
+            <div class="p-6">
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ID</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${feedback.id}"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Usuario</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${feedback.user?.name ?: 'Anónimo'}"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Mensaje</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${feedback.message}"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Calificación</label>
+                        <div class="mt-1 flex items-center">
+                            <span class="text-sm text-gray-900" th:text="${feedback.rating}"></span>
+                            <div class="ml-2 flex">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                      th:class="${i <= feedback.rating} ? 'text-yellow-400' : 'text-gray-300'"
+                                      class="text-lg">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fecha de creación</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${#temporals.format(feedback.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <a th:href="@{/admin/feedback}" 
+                       class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+                        Volver
+                    </a>
+                    <a th:href="@{/admin/feedback(action='edit', id=${feedback.id})}" 
+                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                        Editar
+                    </a>
+                    <form th:action="@{/admin/feedback}" method="post" class="inline">
+                        <input type="hidden" name="action" value="delete"/>
+                        <input type="hidden" name="id" th:value="${feedback.id}"/>
+                        <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este feedback?')"
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                            Eliminar
+                        </button>
+                    </form>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="bg-gray-50 px-6 py-3 flex justify-end space-x-3">
-          <button onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
-          <form id="deleteForm" method="post" class="inline">
-            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // Initialize icons
-    lucide.createIcons();
-
-    function confirmDelete(button) {
-      const id = button.getAttribute('data-id');
-      const name = button.getAttribute('data-name');
-      document.getElementById('deleteFeedbackName').textContent = name;
-      const form = document.getElementById('deleteForm');
-      form.action = '/admin/feedback/delete/' + id;
-      document.getElementById('deleteModal').classList.remove('hidden');
-    }
-
-    function closeDeleteModal() {
-      document.getElementById('deleteModal').classList.add('hidden');
-    }
-
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeDeleteModal();
-      }
-    });
-  </script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>

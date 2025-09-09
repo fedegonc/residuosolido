@@ -1,66 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Solicitudes - Residuos Sólidos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="bg-gray-50">
-    <div class="max-w-4xl mx-auto px-4 py-6">
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-3xl font-bold text-gray-900">Mis Solicitudes</h1>
-                    <a th:href="@{/users/requests/create}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Nueva Solicitud
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/users/dashboard" class="text-emerald-600 hover:text-emerald-700 mr-4">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
                     </a>
+                    <h1 class="text-xl font-semibold text-gray-900">Mis Solicitudes</h1>
                 </div>
+                <a href="/users/requests/new" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors">
+                    <i data-lucide="plus" class="w-4 h-4 mr-2 inline"></i>
+                    Nueva Solicitud
+                </a>
+            </div>
+        </div>
+    </header>
 
-                <!-- Filtros -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-                    <div class="flex flex-wrap gap-4">
-                        <select class="px-3 py-2 border border-gray-300 rounded-md">
-                            <option>Todas las solicitudes</option>
-                            <option>Pendientes</option>
-                            <option>En proceso</option>
-                            <option>Completadas</option>
-                        </select>
-                        <input type="date" class="px-3 py-2 border border-gray-300 rounded-md">
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Requests List -->
+        <div class="bg-white rounded-lg shadow">
+            <div th:if="${requests != null and !requests.empty}">
+                <div class="divide-y divide-gray-200">
+                    <div th:each="request : ${requests}" class="p-6 hover:bg-gray-50">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-medium text-gray-900" th:text="${request.description}">Descripción de la solicitud</h3>
+                                <p class="text-sm text-gray-600 mt-1" th:text="${request.address}">Dirección</p>
+                                <p class="text-sm text-gray-500 mt-1" th:text="${request.materials}">Materiales</p>
+                                <p class="text-xs text-gray-400 mt-2" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha de creación</p>
+                            </div>
+                            <div class="ml-4 flex flex-col items-end">
+                                <span class="px-3 py-1 text-sm rounded-full" 
+                                      th:text="${request.status}" 
+                                      th:class="${request.status == 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' : 
+                                               request.status == 'EN_PROCESO' ? 'bg-blue-100 text-blue-800' : 
+                                               request.status == 'COMPLETADA' ? 'bg-green-100 text-green-800' : 
+                                               'bg-red-100 text-red-800'}">
+                                    PENDIENTE
+                                </span>
+                                <div class="mt-2 flex space-x-2">
+                                    <button class="text-emerald-600 hover:text-emerald-700 text-sm">Ver detalles</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Lista de Solicitudes -->
-                <div class="space-y-4">
-                    <!-- Solicitud 1 -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">#SOL-001</h3>
-                                <p class="text-gray-600">Recolección de plásticos</p>
-                            </div>
-                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
-                                Pendiente
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                            <div>
-                                <strong>Fecha:</strong> 20/01/2025
-                            </div>
-                            <div>
-                                <strong>Dirección:</strong> Av. Brasil 123
-                            </div>
-                            <div>
-                                <strong>Material:</strong> Plásticos
-                            </div>
-                        </div>
-                        <div class="mt-4 flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">Ver detalles</button>
-                            <button class="text-red-600 hover:text-red-800 text-sm font-medium">Cancelar</button>
-                        </div>
-                    </div>
-
-                    <!-- Solicitud 2 -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <div class="flex justify-between items-start mb-4">
+            </div>
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900">#SOL-002</h3>
                                 <p class="text-gray-600">Recolección de cartón</p>

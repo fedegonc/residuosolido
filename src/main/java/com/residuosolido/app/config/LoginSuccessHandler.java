@@ -41,16 +41,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         
         Set<String> userRoles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         String username = authentication.getName();
-        logger.info("Usuario '{}' autenticado. Redirigiendo a dashboard compartido. Roles: {}", username, userRoles);
+        logger.info("Usuario '{}' autenticado. Redirigiendo según rol. Roles: {}", username, userRoles);
 
         try {
-            // Redirección específica según rol
-            String targetUrl;
-            if (userRoles.contains("ROLE_ADMIN")) {
-                targetUrl = "/admin/dashboard";
-            } else {
-                targetUrl = DEFAULT_TARGET_URL;
-            }
+            String targetUrl = getTargetUrlByRoles(userRoles);
 
             boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))
                     || (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json"));
@@ -82,18 +76,31 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                     HttpServletResponse response,
                                     UserDetails userDetails) throws IOException {
         String username = userDetails.getUsername();
-        logger.info("Redirigiendo usuario '{}' a dashboard compartido", username);
-        response.sendRedirect(DEFAULT_TARGET_URL);
+        Set<String> userRoles = AuthorityUtils.authorityListToSet(userDetails.getAuthorities());
+        String targetUrl = getTargetUrlByRoles(userRoles);
+        
+        logger.info("Redirigiendo usuario '{}' a '{}' según rol: {}", username, targetUrl, userRoles);
+        response.sendRedirect(targetUrl);
     }
 
     /**
-     * Determina la URL de destino basada en la prioridad de roles.
-     * El rol con mayor prioridad determina el destino.
+     * Determina la URL de destino basada en los roles del usuario.
+     * Prioridad: ADMIN > ORGANIZATION > USER
      * 
      * @param userRoles Set de roles del usuario
      * @return URL de destino
      */
-    // Sin selección por rol: un único flujo con visibilidad condicional en la vista
+    private String getTargetUrlByRoles(Set<String> userRoles) {
+        if (userRoles.contains("ROLE_ADMIN")) {
+            return "/admin/dashboard";
+        } else if (userRoles.contains("ROLE_ORGANIZATION")) {
+            return "/org/dashboard";
+        } else if (userRoles.contains("ROLE_USER")) {
+            return "/users/dashboard";
+        } else {
+            return DEFAULT_TARGET_URL;
+        }
+    }
     
 
 }

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Organización</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="fragments/layout :: header"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Dashboard Organización</h1>
+            <p class="text-gray-600 mt-2">Gestiona tus materiales y solicitudes</p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-lg">
+                        <i data-lucide="building" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Total Organizaciones</p>
+                        <p class="text-2xl font-bold text-gray-900" th:text="${totalOrganizations}">15</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-lg">
+                        <i data-lucide="clipboard-list" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Solicitudes Activas</p>
+                        <p class="text-2xl font-bold text-gray-900" th:text="${activeRequests}">8</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-lg">
+                        <i data-lucide="recycle" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Materiales Gestionados</p>
+                        <p class="text-2xl font-bold text-gray-900" th:text="${managedMaterials}">6</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-orange-100 rounded-lg">
+                        <i data-lucide="users" class="w-6 h-6 text-orange-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Usuarios Atendidos</p>
+                        <p class="text-2xl font-bold text-gray-900" th:text="${usersServed}">42</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Principales -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Acciones Principales</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="/requests" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i data-lucide="clipboard-list" class="w-8 h-8 text-blue-600 mr-3"></i>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Gestionar Solicitudes</h3>
+                        <p class="text-sm text-gray-600">Ver y procesar solicitudes</p>
+                    </div>
+                </a>
+
+                <a href="/org/materials" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                    <i data-lucide="recycle" class="w-8 h-8 text-green-600 mr-3"></i>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Materiales</h3>
+                        <p class="text-sm text-gray-600">Gestionar materiales reciclables</p>
+                    </div>
+                </a>
+
+                <a href="/collections" class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                    <i data-lucide="truck" class="w-8 h-8 text-purple-600 mr-3"></i>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Recolecciones</h3>
+                        <p class="text-sm text-gray-600">Programar recolecciones</p>
+                    </div>
+                </a>
+
+                <a href="/users" class="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
+                    <i data-lucide="users" class="w-8 h-8 text-orange-600 mr-3"></i>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Usuarios</h3>
+                        <p class="text-sm text-gray-600">Gestionar usuarios</p>
+                    </div>
+                </a>
+
+                <a href="/reports" class="flex items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <i data-lucide="bar-chart-3" class="w-8 h-8 text-indigo-600 mr-3"></i>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Reportes</h3>
+                        <p class="text-sm text-gray-600">Ver estadísticas y reportes</p>
+                    </div>
+                </a>
+
+                <a href="/org/profile" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i data-lucide="settings" class="w-8 h-8 text-gray-600 mr-3"></i>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Configuración</h3>
+                        <p class="text-sm text-gray-600">Configurar organización</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="fragments/layout :: footer"></div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

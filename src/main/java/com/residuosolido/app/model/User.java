@@ -1,13 +1,18 @@
 package com.residuosolido.app.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -29,43 +34,25 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-
-
     @Column(nullable = false)
-    private String preferredLanguage; // 'es' o 'pt'
+    private String preferredLanguage = "es"; // Default español
 
     private String firstName;
     private String lastName;
-
-    private String profileImage; // URL imagen de perfil Cloudinary
+    private String profileImage; // URL Cloudinary
     
-    // Campos de ubicación geográfica
-    @Column(name = "direccion", length = 500)
-    private String direccion; // Dirección completa en texto
+    // Ubicación geográfica (nombres en inglés para consistencia)
+    @Column(name = "address", length = 500)
+    private String address;
     
-    @Column(name = "latitud", precision = 10, scale = 8)
-    private java.math.BigDecimal latitud; // Coordenada latitud con precisión 10,8
+    @Column(name = "latitude", precision = 10, scale = 8)
+    private BigDecimal latitude;
     
-    @Column(name = "longitud", precision = 11, scale = 8)
-    private java.math.BigDecimal longitud; // Coordenada longitud con precisión 11,8
+    @Column(name = "longitude", precision = 11, scale = 8)
+    private BigDecimal longitude;
     
-    @Column(name = "referencias", length = 300)
-    private String referencias; // Referencias adicionales de ubicación
-    
-    // Campos legacy para compatibilidad (deprecated)
-    @Deprecated
-    private Double latitude;  // Mantener para compatibilidad
-    @Deprecated
-    private Double longitude; // Mantener para compatibilidad
-    @Deprecated
-    private String address;   // Mantener para compatibilidad
-
-
-    // --- Feedback relation temporarily disabled to avoid orphanRemoval issues during User updates ---
-    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private List<Feedback> feedbacks = new ArrayList<>();
-    @Transient
-    private List<Feedback> feedbacks = new ArrayList<>();
+    @Column(name = "address_references", length = 300)
+    private String addressReferences;
 
     @ManyToMany
     @JoinTable(
@@ -77,26 +64,20 @@ public class User {
 
     private LocalDateTime createdAt;
     private LocalDateTime lastAccessAt;
-    private boolean active;
+    private boolean active = true;
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.active = true;
-
+        this.lastAccessAt = LocalDateTime.now();
     }
 
+    @PreUpdate
+    public void preUpdate() {
+        this.lastAccessAt = LocalDateTime.now();
+    }
 
-    // @Data genera automáticamente todos los getters/setters
-    // Métodos adicionales para compatibilidad
-    public String getLocation() {
-        return direccion;
-    }
-    
-    public void setLocation(String location) {
-        this.direccion = location;
-    }
-    
+    // Métodos de negocio
     public String getFullName() {
         if (firstName != null && lastName != null) {
             return firstName + " " + lastName;
@@ -106,5 +87,19 @@ public class User {
             return lastName;
         }
         return username;
+    }
+
+    // equals/hashCode solo con ID para evitar problemas JPA
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
