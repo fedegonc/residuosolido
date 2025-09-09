@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagramas UML - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+  <header class="bg-gray-50 px-6 py-4 border-b flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Diagramas UML</h1>
+      <p class="text-gray-600">Vista simple con diagramas ASCII</p>
+    </div>
+    <a href="/admin/documentation" class="inline-flex items-center px-3 py-1.5 rounded bg-gray-700 text-white text-sm hover:bg-gray-800">Volver a Documentación</a>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <!-- 1. Entidad-Relación simple -->
+    <section class="bg-white border rounded-lg p-6">
+      <h2 class="text-xl font-bold mb-3">1) Diagrama Entidad-Relación (simple)</h2>
+      <pre class="text-xs md:text-sm bg-gray-900 text-green-200 p-4 rounded overflow-x-auto leading-5">
++----------------+        +----------------+        +----------------+
+|    User        |        |   Request      |        |  Organization  |
+|----------------|        |----------------|        |----------------|
+| id (PK)        | 1    * | id (PK)        | *    1 | id (PK)        |
+| username       |--------| user_id (FK)   |--------| org_user_id(FK)|
+| email          |        | status         |        | name           |
+| role           |        | created_at     |        | materials (M2M)|
++----------------+        +----------------+        +----------------+
+        | 1                                  
+        |                                       +----------------+
+        |                                       |   Material     |
+        |                              M    N   |----------------|
+        +---------------------------------------| id (PK)        |
+                                                | name          |
++----------------+        +----------------+     +----------------+
+|   Category     | 1    N |     Post       |
+|----------------|--------|----------------|
+| id (PK)        |        | id (PK)        |
+| name           |        | title          |
+|                |        | content        |
++----------------+        | image_url      |
+                          | category_id FK |
+                          +----------------+
+      </pre>
+      <p class="text-xs text-gray-500 mt-2">Nota: Esquema simplificado para comunicación. Las relaciones exactas pueden variar.</p>
+    </section>
+
+    <!-- 2. Casos de uso -->
+    <section class="bg-white border rounded-lg p-6">
+      <h2 class="text-xl font-bold mb-3">2) Diagrama de Casos de Uso (alto nivel)</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <pre class="text-xs md:text-sm bg-gray-900 text-blue-200 p-4 rounded overflow-x-auto leading-5">
+Actor: Admin
+  |-- Gestionar Usuarios
+  |-- Gestionar Posts/Categorías
+  |-- Gestionar Materiales
+  |-- Ver Estadísticas
+
+Actor: Organización
+  |-- Ver Solicitudes Pendientes
+  |-- Aceptar/Rechazar Solicitudes
+  |-- Configurar Materiales Aceptados
+
+Actor: Usuario
+  |-- Crear Solicitud de Recolección
+  |-- Ver Mis Solicitudes
+  |-- Enviar Feedback
+        </pre>
+        <pre class="text-xs md:text-sm bg-gray-900 text-blue-200 p-4 rounded overflow-x-auto leading-5">
+[Admin]                [Sistema]
+  |  Gestionar X  -->   Ejecuta CRUD
+  |  Ver Stats    -->   Calcula métricas
+
+[Organización]         [Sistema]
+  |  Ver Pendientes-->  Lista solicitudes
+  |  Aceptar/Rech. -->  Cambia estado
+
+[Usuario]              [Sistema]
+  |  Crear Sol.   -->   Guarda solicitud
+  |  Ver Mis Sol. -->   Lista por usuario
+        </pre>
+      </div>
+    </section>
+
+    <!-- 3. Diagrama de Clases (simplificado) -->
+    <section class="bg-white border rounded-lg p-6">
+      <h2 class="text-xl font-bold mb-3">3) Diagrama de Clases (simplificado)</h2>
+      <pre class="text-xs md:text-sm bg-gray-900 text-yellow-200 p-4 rounded overflow-x-auto leading-5">
++----------------+       +----------------+       +----------------+
+|    User        |       |    Request     |       |    Material    |
+|----------------|       |----------------|       |----------------|
+| id: Long       |1    * | id: Long       |       | id: Long       |
+| username: Str  |-------| user: User     |       | name: Str      |
+| email: Str     |       | status: Enum   |N   M  | users: List<User>
+| role: Role     |       | createdAt: DT  |-------+----------------+
+| address: Str   |       +----------------+
+| latitude: Dec  |
+| longitude: Dec |
++----------------+
+
++----------------+       +----------------+
+|   Category     |1    N |     Post       |
+|----------------|-------|----------------|
+| id: Long       |       | id: Long       |
+| name: Str      |       | title: Str     |
+|                |       | content: Str   |
++----------------+       | imageUrl: Str  |
+                         | category: Cat  |
+                         +----------------+
+      </pre>
+    </section>
+
+    <!-- 4. Secuencia: Solicitud de Recolección -->
+    <section class="bg-white border rounded-lg p-6">
+      <h2 class="text-xl font-bold mb-3">4) Diagrama de Secuencia: Solicitud de Recolección</h2>
+      <pre class="text-xs md:text-sm bg-gray-900 text-pink-200 p-4 rounded overflow-x-auto leading-5">
+Usuario          UI            RequestController        RequestService         RequestRepository
+  |             click "Nueva Solicitud"   |                    |                        |
+  |-------------------------------------->|                    |                        |
+  |              completa formulario      |                    |                        |
+  |--------------------POST /user/requests------------------->|                        |
+  |                                          crearRequest()   |                        |
+  |                                                          |---- save(request) ----->|
+  |                                                          |<--- request guardada ---|
+  |<----------- redirect /user/requests --------------------- |                        |
+  |             ve su lista actualizada                      |                        |
+      </pre>
+    </section>
+  </div>
+</main>
+</body>
+</html>

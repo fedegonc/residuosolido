@@ -45,6 +45,11 @@ public class AdminController {
         return "admin/documentation";
     }
 
+    @GetMapping("/admin/documentation/uml")
+    public String documentationUml() {
+        return "admin/uml";
+    }
+
     @GetMapping("/admin/documentation/details/{section}")
     public String showDocumentationDetails(@PathVariable String section, Model model) {
         model.addAttribute("section", section);
