@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Residuos Sólidos - Inicio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Navbar simple -->
+  <nav class="bg-white shadow-lg border-b border-green-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+            Iniciar Sesión
+          </a>
+          <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
+            Registrarse
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero section -->
+  <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-6xl font-bold mb-4">♻️ Residuos Sólidos</h1>
+      <p class="text-xl md:text-2xl mb-2">Frontera de la Paz</p>
+      <p class="text-lg text-green-100 max-w-2xl mx-auto">
+        Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contenido principal -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <a href="/users/requests/new" class="block rounded-xl border p-6 hover:shadow-lg transition bg-green-50 border-green-200">
+        <h3 class="font-bold text-green-800 mb-2">Solicitar Recolección</h3>
+        <p class="text-sm text-green-700">Crea una solicitud para que una organización retire tus residuos.</p>
+      </a>
+      <a href="/posts" class="block rounded-xl border p-6 hover:shadow-lg transition bg-blue-50 border-blue-200">
+        <h3 class="font-bold text-blue-800 mb-2">Información</h3>
+        <p class="text-sm text-blue-700">Aprende qué materiales puedes reciclar y cómo clasificarlos.</p>
+      </a>
+      <a href="#organizaciones" class="block rounded-xl border p-6 hover:shadow-lg transition bg-amber-50 border-amber-200">
+        <h3 class="font-bold text-amber-800 mb-2">Organizaciones</h3>
+        <p class="text-sm text-amber-700">Ver organizaciones participantes y materiales que gestionan.</p>
+      </a>
+    </div>
+
+    <!-- Sección organizaciones -->
+    <section id="organizaciones" class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Organizaciones</h2>
+      <p class="text-gray-600 mb-6">Explora organizaciones que colaboran en la recolección y reciclaje en la región.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="border rounded-lg p-6 bg-white shadow-sm">
+          <h3 class="font-semibold text-gray-800 mb-2">Eco Rivera</h3>
+          <p class="text-sm text-gray-600">Reciclables secos, vidrio y papel.</p>
+        </div>
+        <div class="border rounded-lg p-6 bg-white shadow-sm">
+          <h3 class="font-semibold text-gray-800 mb-2">Recicla Livramento</h3>
+          <p class="text-sm text-gray-600">Plásticos, metales, electrónicos.</p>
+        </div>
+        <div class="border rounded-lg p-6 bg-white shadow-sm">
+          <h3 class="font-semibold text-gray-800 mb-2">Frontera Limpia</h3>
+          <p class="text-sm text-gray-600">Campañas y educación ambiental.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer simple -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p>&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
+    </div>
+  </footer>
+</body>
+</html>

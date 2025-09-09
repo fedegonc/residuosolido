@@ -30,6 +30,13 @@ public class UserController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    // ========== HOME ==========
+    @GetMapping({"/", "/index"})
+    public String home(Model model) {
+        model.addAttribute("title", "Residuos Sólidos - Inicio");
+        return "index";
+    }
+
     // ========== ADMIN USER CRUD ==========
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/users")
