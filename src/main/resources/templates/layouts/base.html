@@ -4,13 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title layout:fragment="title">Residuos Sólidos</title>
-  <!-- Tailwind (CDN) -->
+  <!-- Tailwind (CDN) con configuración -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            green: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <th:block layout:fragment="head-extra"></th:block>
 </head>
 <body class="min-h-screen bg-white text-slate-900">
   <!-- Navbar global (guest por defecto, se puede reemplazar luego con uno auth) -->
-  <div th:replace="~{fragments/guest/menu :: guestMenu}"></div>
+  <header>
+    <div th:replace="~{fragments/guest/menu :: guestMenu}"></div>
+  </header>
 
   <!-- Contenido principal -->
   <main class="min-h-[70vh]" layout:fragment="content">
@@ -18,7 +42,9 @@
   </main>
 
   <!-- Footer global -->
-  <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
+  <footer>
+    <th:block th:replace="~{fragments/guest/footer :: guestFooter}"></th:block>
+  </footer>
 
   <!-- Scripts por página -->
   <th:block layout:fragment="body-scripts"></th:block>

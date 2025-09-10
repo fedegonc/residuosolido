@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación de Layouts - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+  <div class="bg-gray-50 px-6 py-4 border-b">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Documentación de Layouts</h1>
+        <p class="text-gray-600">Sistema de plantillas y composición</p>
+      </div>
+      <a href="/admin/documentation" class="inline-flex items-center px-3 py-1.5 rounded bg-gray-600 text-white text-sm hover:bg-gray-700">
+        Volver a Documentación
+      </a>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-8">
+    <h2 class="text-xl font-bold mb-6">Sistema de Layouts con Thymeleaf</h2>
+    
+    <!-- Diagrama visual del sistema de layouts -->
+    <div class="bg-white border rounded-lg p-6 mb-8">
+      <h3 class="font-bold mb-4 flex items-center">
+        <i data-lucide="layout" class="w-5 h-5 mr-2 text-purple-600"></i>
+        Estructura del Sistema de Layouts
+      </h3>
+      
+      <div class="flex justify-center py-4 mb-6">
+        <!-- Diagrama SVG simple -->
+        <svg width="600" height="350" viewBox="0 0 600 350" class="border rounded">
+          <!-- Base Layout -->
+          <rect x="200" y="20" width="200" height="100" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2" rx="5" />
+          <text x="300" y="45" text-anchor="middle" fill="#7c3aed" font-weight="bold">base.html</text>
+          <text x="300" y="65" text-anchor="middle" fill="#6b21a8" font-size="12">Layout Base Principal</text>
+          <text x="300" y="85" text-anchor="middle" fill="#6b21a8" font-size="12">⟨header⟩ ⟨main⟩ ⟨footer⟩</text>
+          
+          <!-- Fragmentos -->
+          <rect x="50" y="180" width="150" height="70" fill="#e9d5ff" stroke="#7c3aed" stroke-width="2" rx="5" />
+          <text x="125" y="205" text-anchor="middle" fill="#6b21a8" font-weight="bold">fragments/guest/menu.html</text>
+          <text x="125" y="225" text-anchor="middle" fill="#6b21a8" font-size="12">Menú de navegación</text>
+          
+          <rect x="230" y="180" width="150" height="70" fill="#e9d5ff" stroke="#7c3aed" stroke-width="2" rx="5" />
+          <text x="305" y="205" text-anchor="middle" fill="#6b21a8" font-weight="bold">fragments/guest/footer.html</text>
+          <text x="305" y="225" text-anchor="middle" fill="#6b21a8" font-size="12">Pie de página global</text>
+          
+          <!-- Template con Layout -->
+          <rect x="410" y="180" width="150" height="70" fill="#fae8ff" stroke="#d946ef" stroke-width="2" rx="5" />
+          <text x="485" y="205" text-anchor="middle" fill="#a21caf" font-weight="bold">templates/page.html</text>
+          <text x="485" y="225" text-anchor="middle" fill="#a21caf" font-size="12">Contenido específico</text>
+          
+          <!-- Flechas -->
+          <line x1="125" y1="180" x2="240" y2="120" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowhead)" />
+          <line x1="305" y1="180" x2="300" y2="120" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowhead)" />
+          <line x1="485" y1="180" x2="360" y2="120" stroke="#d946ef" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="4" />
+          
+          <!-- Layout Final -->
+          <rect x="200" y="300" width="200" height="30" fill="#dbeafe" stroke="#2563eb" stroke-width="2" rx="5" />
+          <text x="300" y="320" text-anchor="middle" fill="#1e40af" font-weight="bold">Página Renderizada Final</text>
+          
+          <line x1="300" y1="120" x2="300" y2="300" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead)" />
+          
+          <!-- Marcadores para flechas -->
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed" />
+            </marker>
+          </defs>
+        </svg>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="font-semibold text-purple-800 mb-2">¿Cómo funciona el layout base?</h4>
+          <ul class="text-sm space-y-2 text-gray-700">
+            <li><strong>1. Estructura general:</strong> Define el esqueleto HTML común para todas las páginas.</li>
+            <li><strong>2. Fragmentos incluidos:</strong> Incorpora componentes comunes como header y footer.</li>
+            <li><strong>3. Slots para contenido:</strong> Define espacios donde las páginas pueden insertar su contenido específico.</li>
+            <li><strong>4. Etiquetas semánticas:</strong> Usa &lt;header&gt;, &lt;main&gt; y &lt;footer&gt; para mejorar accesibilidad.</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-purple-800 mb-2">Tipos de layouts en el sistema</h4>
+          <ul class="text-sm space-y-2 text-gray-700">
+            <li><strong>base.html:</strong> Layout general para páginas públicas y usuarios logueados.</li>
+            <li><strong>admin-layout.html:</strong> Layout específico para sección de administración.</li>
+            <li><strong>auth-layout.html:</strong> Layout para páginas de autenticación.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Código de base.html -->
+    <div class="bg-white border rounded-lg p-6 mb-8">
+      <h3 class="font-bold mb-4 flex items-center">
+        <i data-lucide="code" class="w-5 h-5 mr-2 text-purple-600"></i>
+        Código del Layout Base
+      </h3>
+      
+      <div class="bg-gray-50 p-4 rounded">
+        <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+  &lt;title layout:fragment="title"&gt;Residuos Sólidos&lt;/title&gt;
+  &lt;!-- Tailwind (CDN) con configuración --&gt;
+  &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            green: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            }
+          }
+        }
+      }
+    }
+  &lt;/script&gt;
+  &lt;th:block layout:fragment="head-extra"&gt;&lt;/th:block&gt;
+&lt;/head&gt;
+&lt;body class="min-h-screen bg-white text-slate-900"&gt;
+  &lt;!-- Navbar global (encapsulado en header para semántica) --&gt;
+  &lt;header&gt;
+    &lt;div th:replace="~{fragments/guest/menu :: guestMenu}"&gt;&lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;!-- Contenido principal (slot) --&gt;
+  &lt;main class="min-h-[70vh]" layout:fragment="content"&gt;
+    &lt;!-- Aquí se inserta el contenido específico de cada página --&gt;
+  &lt;/main&gt;
+
+  &lt;!-- Footer global --&gt;
+  &lt;footer&gt;
+    &lt;th:block th:replace="~{fragments/guest/footer :: guestFooter}"&gt;&lt;/th:block&gt;
+  &lt;/footer&gt;
+
+  &lt;!-- Scripts por página (slot) --&gt;
+  &lt;th:block layout:fragment="body-scripts"&gt;&lt;/th:block&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+      
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-purple-50 p-4 rounded">
+          <h4 class="font-semibold text-purple-800 mb-2">Puntos clave del layout</h4>
+          <ul class="text-sm space-y-1 text-purple-900">
+            <li>• <span class="font-bold">layout:fragment="title":</span> Slot para título personalizado</li>
+            <li>• <span class="font-bold">layout:fragment="head-extra":</span> Slot para CSS/scripts adicionales</li>
+            <li>• <span class="font-bold">layout:fragment="content":</span> Slot principal para contenido</li>
+            <li>• <span class="font-bold">layout:fragment="body-scripts":</span> Slot para scripts al final</li>
+            <li>• <span class="font-bold">th:replace:</span> Inclusión de fragmentos reutilizables</li>
+          </ul>
+        </div>
+        
+        <div class="bg-blue-50 p-4 rounded">
+          <h4 class="font-semibold text-blue-800 mb-2">Cómo usar el layout en una página</h4>
+          <pre class="text-xs bg-gray-800 text-blue-400 p-3 rounded overflow-x-auto"><code>&lt;!DOCTYPE html&gt;
+&lt;html layout:decorate="~{layouts/base}"&gt;
+&lt;head&gt;
+  &lt;title layout:fragment="title"&gt;Mi Página&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;main layout:fragment="content"&gt;
+    &lt;!-- Contenido específico aquí --&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estructura semántica y accesibilidad -->
+    <div class="bg-white border rounded-lg p-6 mb-8">
+      <h3 class="font-bold mb-4 flex items-center">
+        <i data-lucide="accessibility" class="w-5 h-5 mr-2 text-green-600"></i>
+        Estructura Semántica y Accesibilidad
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="font-semibold text-green-800 mb-2">Elementos semánticos usados</h4>
+          <ul class="text-sm space-y-2 text-gray-700">
+            <li><strong>&lt;header&gt;:</strong> Encapsula el menú de navegación principal.</li>
+            <li><strong>&lt;main&gt;:</strong> Contiene el contenido principal específico de cada página.</li>
+            <li><strong>&lt;footer&gt;:</strong> Encapsula el pie de página global con información de contacto, etc.</li>
+            <li><strong>&lt;nav&gt;:</strong> En el fragmento del menú, indica navegación.</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-green-800 mb-2">Atributos ARIA</h4>
+          <ul class="text-sm space-y-2 text-gray-700">
+            <li><strong>role="navigation":</strong> En el nav para asistencia adicional.</li>
+            <li><strong>aria-label="Menú principal":</strong> Descripción para lectores de pantalla.</li>
+            <li><strong>aria-expanded:</strong> Control dinámico del estado del menú desplegable.</li>
+            <li><strong>aria-controls:</strong> Conecta el botón con el contenido que controla.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Buenas prácticas -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+      <h3 class="font-bold mb-4 flex items-center">
+        <i data-lucide="lightbulb" class="w-5 h-5 mr-2 text-yellow-600"></i>
+        Buenas Prácticas y Recomendaciones
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded shadow-sm">
+          <h4 class="font-semibold text-orange-800 mb-2">Estructura</h4>
+          <ul class="text-xs space-y-1 text-gray-700">
+            <li>• Usar elementos semánticos</li>
+            <li>• Evitar div anidados innecesarios</li>
+            <li>• Limitar profundidad de anidamiento</li>
+            <li>• Componentes específicos como fragmentos</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white p-4 rounded shadow-sm">
+          <h4 class="font-semibold text-blue-800 mb-2">Fragmentos</h4>
+          <ul class="text-xs space-y-1 text-gray-700">
+            <li>• Crear fragmentos para componentes reutilizables</li>
+            <li>• Pasar parámetros cuando sea necesario</li>
+            <li>• Mantener fragmentos pequeños y específicos</li>
+            <li>• Agrupar fragmentos por funcionalidad</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white p-4 rounded shadow-sm">
+          <h4 class="font-semibold text-purple-800 mb-2">Layouts</h4>
+          <ul class="text-xs space-y-1 text-gray-700">
+            <li>• Un layout por contexto principal</li>
+            <li>• Definir slots coherentes</li>
+            <li>• No abusar de layouts anidados</li>
+            <li>• Minimizar duplicación entre layouts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    lucide.createIcons();
+  </script>
+</main>
+</body>
+</html>
