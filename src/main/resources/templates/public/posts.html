@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posts - Residuos Sólidos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Navbar simple -->
+  <nav class="bg-white shadow-lg border-b border-green-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
+          </a>
+        </div>
+        <div class="flex items-center">
+          <a href="/" class="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700">
+            Volver al Inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Posts</h1>
+    
+    <div th:if="${posts != null and !posts.empty}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div th:each="post : ${posts}" class="bg-white rounded-xl border shadow-sm overflow-hidden">
+        <img th:if="${post.imageUrl != null and !post.imageUrl.empty}" 
+             th:src="${post.imageUrl}" 
+             th:alt="${post.title}"
+             class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2" th:text="${post.title}">Título del Post</h2>
+          <p class="text-gray-600 text-sm mb-4" th:text="${post.content != null ? (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content) : ''}">Contenido...</p>
+          <a th:href="@{/posts/{id}(id=${post.id})}" 
+             class="inline-block px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition">
+            Leer más
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div th:if="${posts == null or posts.empty}" class="text-center py-12">
+      <p class="text-gray-500 text-lg">No hay posts disponibles</p>
+      <a href="/" class="mt-4 inline-block px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition">
+        Volver al Inicio
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p>&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
+    </div>
+  </footer>
+</body>
+</html>

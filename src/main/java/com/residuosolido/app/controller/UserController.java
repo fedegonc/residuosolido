@@ -1,6 +1,7 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.*;
+import com.residuosolido.app.model.Role;
 import com.residuosolido.app.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,17 @@ public class UserController {
     
     @Autowired
     private CategoryService categoryService;
+    
+    @Autowired
+    private PostService postService;
 
     // ========== HOME ==========
     @GetMapping({"/", "/index"})
     public String home(Model model) {
         model.addAttribute("title", "Residuos Sólidos - Inicio");
         model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("posts", postService.getRecentPosts(5));
+        model.addAttribute("organizations", userService.findByRole(Role.ORGANIZATION));
         return "index";
     }
 
