@@ -8,15 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Controller
 public class AuthController {
@@ -42,7 +39,6 @@ public class AuthController {
                                      HttpServletRequest request, 
                                      HttpServletResponse response, 
                                      Model model) throws Exception {
-        // Si ya está autenticado, redirigir a su dashboard
         if (userDetails != null) {
             log.info("[REGISTER] User already authenticated, redirecting to dashboard");
             successHandler.redirectToDashboard(request, response, userDetails);
@@ -61,30 +57,24 @@ public class AuthController {
             return "auth/register";
         }
         
-        
         authService.registerUser(user);
         return "redirect:/auth/login?success=Registro exitoso. Inicia sesión con tus credenciales.";
     }
     
     @GetMapping("/auth/login")
-    public String showLoginForm(@AuthenticationPrincipal UserDetails userDetails, 
-                               HttpServletRequest request, 
-                               HttpServletResponse response) throws Exception {
-        // Si ya está autenticado, redirigir a su dashboard
-        if (userDetails != null) {
-            log.info("[LOGIN] User already authenticated, redirecting to dashboard");
-            successHandler.redirectToDashboard(request, response, userDetails);
-            return null;
-        }
-        
-        return "auth/login"; 
+    public String showLoginPage() {
+        return "auth/login";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        return "redirect:/";
     }
     
     @GetMapping("/auth/forgot-password")
     public String showForgotPasswordForm(@AuthenticationPrincipal UserDetails userDetails, 
                                         HttpServletRequest request, 
                                         HttpServletResponse response) throws Exception {
-        // Si ya está autenticado, redirigir a su dashboard
         if (userDetails != null) {
             log.info("[FORGOT-PASSWORD] User already authenticated, redirecting to dashboard");
             successHandler.redirectToDashboard(request, response, userDetails);
@@ -100,6 +90,4 @@ public class AuthController {
         passwordResetService.createResetRequest(maskedEmail, lastKnownPassword);
         return "redirect:/auth/login?info=Solicitud enviada al administrador";
     }
-
-    // Eliminado handler duplicado de /change-language (ver LanguageController)
 }

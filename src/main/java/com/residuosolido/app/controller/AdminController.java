@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -33,6 +34,9 @@ public class AdminController {
     
     @Autowired
     private FeedbackService feedbackService;
+    
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     // ========== DASHBOARD & DOCS ==========
     @GetMapping("/admin/dashboard")
@@ -74,13 +78,18 @@ public class AdminController {
     }
 
     @PostMapping("/admin/config/hero-image")
-    public String updateHeroImage(@RequestParam("heroImage") String heroImageUrl, 
+    public String updateHeroImage(@RequestParam("heroImageFile") MultipartFile heroImageFile, 
                                  RedirectAttributes redirectAttributes) {
         try {
-            // Lógica para actualizar imagen hero
-            redirectAttributes.addFlashAttribute("successMessage", "Imagen hero actualizada correctamente");
+            if (heroImageFile != null && !heroImageFile.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadFile(heroImageFile);
+                // TODO: Guardar imageUrl en configuración/base de datos
+                redirectAttributes.addFlashAttribute("successMessage", "Imagen hero actualizada correctamente");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "No se seleccionó ninguna imagen");
+            }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar imagen");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar imagen: " + e.getMessage());
         }
         return "redirect:/admin/config";
     }

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Feedbacks - Residuos Sólidos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Navbar simple -->
+  <nav class="bg-white shadow-lg border-b border-green-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/feedback" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
+            Nuevo Feedback
+          </a>
+          <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+            Cerrar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumbs -->
+  <div class="bg-gray-50 py-4">
+    <div class="max-w-4xl mx-auto px-4">
+      <nav class="mb-3" aria-label="Breadcrumb">
+        <ol class="flex items-center text-sm text-gray-500">
+          <li><a href="/" class="hover:text-gray-700">Inicio</a></li>
+          <li class="px-2">/</li>
+          <li class="text-gray-700 font-medium" aria-current="page">Mis Feedbacks</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Mis Feedbacks</h2>
+        <a href="/feedback" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+          Nuevo Feedback
+        </a>
+      </div>
+
+      <!-- Lista de feedbacks -->
+      <div th:if="${feedbacks != null and !feedbacks.empty}" class="space-y-4">
+        <div th:each="feedback : ${feedbacks}" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold text-gray-900" th:text="${feedback.subject}">Asunto del feedback</h3>
+            <div class="flex items-center space-x-2">
+              <span th:switch="${feedback.category}" class="px-2 py-1 text-xs font-medium rounded-full">
+                <span th:case="'SUGGESTION'" class="bg-blue-100 text-blue-800">Sugerencia</span>
+                <span th:case="'BUG_REPORT'" class="bg-red-100 text-red-800">Error</span>
+                <span th:case="'FEATURE_REQUEST'" class="bg-purple-100 text-purple-800">Funcionalidad</span>
+                <span th:case="'GENERAL'" class="bg-gray-100 text-gray-800">General</span>
+                <span th:case="'COMPLAINT'" class="bg-yellow-100 text-yellow-800">Queja</span>
+                <span th:case="*" class="bg-gray-100 text-gray-800">Otro</span>
+              </span>
+              <span th:if="${feedback.isRead}" class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                Leído
+              </span>
+              <span th:unless="${feedback.isRead}" class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                Pendiente
+              </span>
+            </div>
+          </div>
+          
+          <p class="text-gray-600 mb-3" th:text="${feedback.message}">Mensaje del feedback</p>
+          
+          <div class="flex justify-between items-center text-sm text-gray-500">
+            <span th:text="${#temporals.format(feedback.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+          </div>
+          
+          <!-- Respuesta del admin si existe -->
+          <div th:if="${feedback.adminResponse != null and !feedback.adminResponse.isEmpty()}" 
+               class="mt-4 p-3 bg-green-50 border-l-4 border-green-400 rounded-r-md">
+            <h4 class="text-sm font-semibold text-green-800 mb-1">Respuesta del Administrador:</h4>
+            <p class="text-sm text-green-700" th:text="${feedback.adminResponse}">Respuesta</p>
+            <p class="text-xs text-green-600 mt-1" th:if="${feedback.respondedAt != null}" 
+               th:text="'Respondido el ' + ${#temporals.format(feedback.respondedAt, 'dd/MM/yyyy HH:mm')}">Fecha respuesta</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado vacío -->
+      <div th:if="${feedbacks == null or feedbacks.empty}" class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No tienes feedbacks</h3>
+        <p class="mt-1 text-sm text-gray-500">Comparte tu experiencia enviando tu primer feedback.</p>
+        <div class="mt-6">
+          <a href="/feedback" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+            Enviar Feedback
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer simple -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p>&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
+    </div>
+  </footer>
+</body>
+</html>

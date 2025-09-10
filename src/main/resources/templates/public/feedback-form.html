@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enviar Feedback - Residuos Sólidos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Navbar simple -->
+  <nav class="bg-white shadow-lg border-b border-green-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/feedback/my" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
+            Mis Feedbacks
+          </a>
+          <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+            Cerrar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumbs -->
+  <div class="bg-gray-50 py-4">
+    <div class="max-w-2xl mx-auto px-4">
+      <nav class="mb-3" aria-label="Breadcrumb">
+        <ol class="flex items-center text-sm text-gray-500">
+          <li><a href="/" class="hover:text-gray-700">Inicio</a></li>
+          <li class="px-2">/</li>
+          <li class="text-gray-700 font-medium" aria-current="page">Enviar Feedback</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="max-w-md mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Enviar Feedback</h2>
+      
+      <!-- Mensajes -->
+      <div th:if="${errorMessage}" class="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm">
+        <span th:text="${errorMessage}"></span>
+      </div>
+      
+      <div th:if="${successMessage}" class="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm">
+        <span th:text="${successMessage}"></span>
+      </div>
+
+      <!-- Formulario -->
+      <form th:action="@{/feedback}" method="post" th:object="${feedback}" class="space-y-4">
+        <div>
+          <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Asunto</label>
+          <input type="text" id="subject" th:field="*{subject}" required
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                 placeholder="Describe brevemente tu feedback">
+        </div>
+
+        <div>
+          <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
+          <textarea id="message" th:field="*{message}" required rows="6"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="Comparte tu experiencia, sugerencias o reporta problemas..."></textarea>
+        </div>
+
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+          <select id="category" th:field="*{category}" required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+            <option value="">Selecciona una categoría</option>
+            <option value="SUGGESTION">Sugerencia</option>
+            <option value="BUG_REPORT">Reporte de Error</option>
+            <option value="FEATURE_REQUEST">Solicitud de Funcionalidad</option>
+            <option value="GENERAL">General</option>
+            <option value="COMPLAINT">Queja</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium">
+          Enviar Feedback
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          ¿Quieres ver tus feedbacks anteriores? 
+          <a href="/feedback/my" class="text-green-600 hover:text-green-700 font-medium">Ver mis feedbacks</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer simple -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p>&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -74,6 +74,37 @@
         </div>
       </div>
 
+      <!-- Hero Image Configuration -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Imagen Hero</h2>
+        <form th:action="@{/admin/config/hero-image}" method="post" enctype="multipart/form-data" class="space-y-4">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+          
+          <div>
+            <label for="heroImageFile" class="block text-sm font-medium text-gray-700 mb-2">
+              Imagen de fondo del hero
+            </label>
+            <input type="file" 
+                   id="heroImageFile" 
+                   name="heroImageFile" 
+                   accept="image/*"
+                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"/>
+            <p class="mt-1 text-xs text-gray-500">Formatos: JPG, PNG, WebP. Tamaño recomendado: 1920x1080px</p>
+          </div>
+          
+          <!-- Vista previa -->
+          <div id="imagePreview" class="hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Vista previa:</label>
+            <img id="previewImg" src="" alt="Vista previa" class="w-full max-w-md h-32 object-cover rounded-lg border"/>
+          </div>
+          
+          <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-md">
+            <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
+            Actualizar Imagen Hero
+          </button>
+        </form>
+      </div>
+
       <!-- System Actions -->
       <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Acciones del Sistema</h2>
@@ -133,6 +164,24 @@
 
   <script>
     lucide.createIcons();
+    
+    // Vista previa de imagen
+    document.getElementById('heroImageFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const preview = document.getElementById('imagePreview');
+      const previewImg = document.getElementById('previewImg');
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.classList.add('hidden');
+      }
+    });
   </script>
 </body>
 </html>
