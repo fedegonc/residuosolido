@@ -64,8 +64,11 @@
                             </a>
                             <span class="text-gray-700" th:text="${#authentication.name}">Usuario</span>
                             <form th:action="@{/logout}" method="POST">
-                                <button type="submit" class="text-gray-500 hover:text-green-500">
-                                    Cerrar Sesión
+                                <button type="submit" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-md flex items-center transition-colors">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    <span>Cerrar sesión</span>
                                 </button>
                             </form>
                         </div>
@@ -159,7 +162,10 @@
                         Mi Perfil
                     </a>
                     <form th:action="@{/logout}" method="POST">
-                        <button type="submit" class="block w-full text-left px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-green-500">
+                        <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-red-50">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
                             Cerrar Sesión
                         </button>
                     </form>
