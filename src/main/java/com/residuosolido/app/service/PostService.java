@@ -53,10 +53,10 @@ public class PostService {
     }
     
     /**
-     * Retorna solo los posts activos con sus categorías
+     * Retorna todos los posts con sus categorías
      */
     public List<Post> findAllActive() {
-        return postRepository.findAllActiveWithCategories();
+        return postRepository.findAllWithCategories();
     }
 
     public long count() {

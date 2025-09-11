@@ -33,7 +33,7 @@
 <body class="min-h-screen bg-white text-slate-900">
   <!-- Navbar global (guest por defecto, se puede reemplazar luego con uno auth) -->
   <header th:unless="${hideMenu != null and hideMenu}">
-    <div th:replace="~{fragments/guest/menu :: guestMenu}"></div>
+    <div th:unless="${hideGuestMenu != null and hideGuestMenu}" th:replace="~{fragments/guest/menu :: guestMenu}"></div>
   </header>
 
   <!-- Contenido principal -->

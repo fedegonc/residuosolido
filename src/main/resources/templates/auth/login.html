@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- AUTH ULTRA-SIMPLIFICADO: solo casos de uso core -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}" th:with="hideMenu=true">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}" th:with="hideMenu=true, hideGuestMenu=true">
 <head>
   <title layout:fragment="title">Iniciar Sesión - Residuos Sólidos</title>
   <th:block layout:fragment="head-extra">
@@ -33,16 +33,16 @@
     </nav>
 
     <!-- Contenido principal -->
-    <section class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+    <section class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
       <!-- Mensajes -->
-      <div class="max-w-md mx-auto">
-        <p th:if="${param.success}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm" th:text="${param.success}"></p>
-        <p th:if="${param.logout}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</p>
-        <p th:if="${param.error}" class="mb-4 rounded-sm ring-1 ring-rose-900/10 bg-rose-50 text-rose-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</p>
+      <div class="max-w-2xl mx-auto">
+        <p th:if="${param.success}" class="mb-3 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm" th:text="${param.success}"></p>
+        <p th:if="${param.logout}" class="mb-3 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</p>
+        <p th:if="${param.error}" class="mb-3 rounded-sm ring-1 ring-rose-900/10 bg-rose-50 text-rose-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</p>
       </div>
 
       <!-- Formulario (fragmento) -->
-      <div class="max-w-md mx-auto" th:replace="~{fragments/auth/login-form :: loginForm}"></div>
+      <div class="max-w-2xl mx-auto" th:replace="~{fragments/auth/login-form :: loginForm}"></div>
     </section>
   </main>
 

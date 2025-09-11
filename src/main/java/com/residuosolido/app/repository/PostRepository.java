@@ -18,8 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // Método para contar posts por categoría
     long countByCategory(Category category);
     
-    // Método para encontrar posts activos
-    List<Post> findByActiveTrueOrderByIdDesc();
     
     // Método optimizado usando JOIN FETCH para evitar N+1 queries
     @Query(value = "SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id ASC")
@@ -34,9 +32,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id ASC")
     List<Post> findAllWithCategories();
 
-    // Método optimizado para cargar posts activos con categorías
-    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.category WHERE p.active = true ORDER BY p.id DESC")
-    List<Post> findAllActiveWithCategories();
     
     // Método optimizado para cargar posts recientes con categorías (INDEX)
     @Query(value = "SELECT p FROM Post p LEFT JOIN FETCH p.category ORDER BY p.id DESC")
@@ -47,12 +42,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         return findAllWithCategoriesOrderedByIdDesc().stream().limit(limit).toList();
     }
     
-    // Método optimizado para cargar posts activos recientes con categorías
-    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.category WHERE p.active = true ORDER BY p.id DESC")
-    List<Post> findAllActiveWithCategoriesOrderedByIdDesc();
-    
-    // Método optimizado para cargar posts activos recientes con categorías
-    default List<Post> findRecentActivePostsWithCategories(int limit) {
-        return findAllActiveWithCategoriesOrderedByIdDesc().stream().limit(limit).toList();
-    }
 }

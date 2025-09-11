@@ -1,101 +1,101 @@
-<footer th:fragment="guestFooter" class="bg-[#0b0b0b] text-white relative z-20" xmlns:th="http://www.thymeleaf.org">
+<footer th:fragment="guestFooter" class="bg-emerald-900 text-white relative z-20" xmlns:th="http://www.thymeleaf.org">
     <!-- Footer compacto en móvil -->
     <div class="md:hidden">
       <button id="footerToggleBtn" type="button" 
-              class="w-full bg-[#0b0b0b] border-t border-gray-700 px-4 py-3 flex items-center justify-between text-white hover:bg-gray-900 transition-colors"
+              class="w-full bg-emerald-900 border-t border-emerald-800 px-4 py-2.5 flex items-center justify-between text-white hover:bg-emerald-800 transition-colors"
               aria-expanded="false" aria-controls="footerContent">
         <div class="flex items-center gap-2">
           <span class="material-symbols-rounded text-white text-sm" aria-hidden="true">info</span>
-          <span class="text-xs font-medium">Información del sitio</span>
+          <span class="text-xs font-medium text-white">Información del sitio</span>
         </div>
         <span class="material-symbols-rounded text-white text-sm transition-transform duration-200" aria-hidden="true" id="footerToggleIcon">expand_more</span>
       </button>
       
-      <div id="footerContent" class="hidden bg-[#0b0b0b] border-t border-gray-700">
-        <div class="px-4 py-4 space-y-4">
+      <div id="footerContent" class="hidden bg-emerald-900 border-t border-emerald-800">
+        <div class="px-4 py-3 space-y-3">
           <div>
             <h3 class="text-sm font-semibold text-white" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
-            <p class="mt-1 text-xs text-white/80" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+            <p class="mt-1 text-xs text-emerald-200" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
           </div>
           
           <div class="grid grid-cols-2 gap-4">
             <div>
               <h4 class="text-xs font-semibold text-white" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
               <ul class="mt-1 space-y-1 text-xs">
-                <li><a class="text-white/90 hover:text-white" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a></li>
-                <li><a class="text-white/90 hover:text-white" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a></li>
+                <li><a class="text-emerald-100 hover:text-white" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a></li>
+                <li><a class="text-emerald-100 hover:text-white" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a></li>
               </ul>
             </div>
             <div>
               <h4 class="text-xs font-semibold text-white" th:text="#{footer.contact.title}">Contacto</h4>
-              <p class="mt-1 text-xs text-white/80" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+              <p class="mt-1 text-xs text-emerald-200" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
             </div>
           </div>
           
-          <div class="border-t border-gray-700 pt-3 space-y-2">
+          <div class="border-t border-emerald-700 pt-3 space-y-2">
             <div class="flex flex-wrap gap-2">
-              <a th:href="@{/feedback}" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition">
-                <span class="material-symbols-rounded text-slate-900 text-sm" aria-hidden="true">forum</span>
+              <a th:href="@{/feedback}" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-600 transition">
+                <span class="material-symbols-rounded text-white text-sm" aria-hidden="true">forum</span>
                 <span>Feedback</span>
               </a>
-              <a th:href="@{/sistema-visual}" class="inline-flex items-center gap-1 rounded-sm ring-1 ring-gray-400 px-2 py-1 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition">
+              <a th:href="@{/sistema-visual}" class="inline-flex items-center gap-1 rounded-sm ring-1 ring-emerald-400 px-2 py-1 text-xs font-semibold text-white bg-emerald-800 hover:bg-emerald-700 transition">
                 <span class="material-symbols-rounded text-white text-sm" aria-hidden="true">design_services</span>
                 <span>Sistema Visual</span>
               </a>
-              <button id="devToggleBtnMobile" type="button" class="rounded-full ring-1 ring-white/30 px-2 py-1 text-xs font-semibold text-white bg-transparent hover:bg-white/10 transition" aria-pressed="false">
+              <button id="devToggleBtnMobile" type="button" class="rounded-full ring-1 ring-emerald-400 px-2 py-1 text-xs font-semibold text-white bg-emerald-800 hover:bg-emerald-700 transition" aria-pressed="false">
                 Dev: OFF
               </button>
             </div>
-            <p class="text-xs text-white/70" th:text="#{footer.copy}">© Frontera de la Paz</p>
+            <p class="text-xs text-emerald-300" th:text="#{footer.copy}">© Frontera de la Paz</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Footer completo en desktop -->
-    <div class="hidden md:block bg-[#0b0b0b] border-t-4 border-red-500 mt-8">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="hidden md:block bg-emerald-900 border-t-4 border-emerald-500 mt-6">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <h3 class="text-sm md:text-base font-semibold text-white" th:text="#{footer.title}">Residuos Sólidos - Frontera de la Paz</h3>
-            <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
+            <p class="mt-2 text-xs md:text-sm text-emerald-200" th:text="#{footer.description}">Plataforma comunitaria para gestionar residuos...</p>
           </div>
 
           <div>
             <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.sitemap.title}">Mapa del sitio</h4>
             <ul class="mt-2 space-y-1 text-xs md:text-sm">
               <li>
-                <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
+                <a class="text-emerald-100 hover:text-white underline-offset-2 hover:underline" th:href="@{/}" th:text="#{footer.links.home}">Inicio</a>
               </li>
               <li>
-                <a class="text-white/90 hover:text-white underline-offset-2 hover:underline" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
+                <a class="text-emerald-100 hover:text-white underline-offset-2 hover:underline" th:href="@{/about}" th:text="#{footer.links.about}">Acerca</a>
               </li>
             </ul>
           </div>
 
           <div>
             <h4 class="text-xs md:text-sm font-semibold text-white" th:text="#{footer.contact.title}">Contacto</h4>
-            <p class="mt-2 text-xs md:text-sm text-white/80" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
+            <p class="mt-2 text-xs md:text-sm text-emerald-200" th:text="#{footer.contact.description}">Rivera - Sant'Ana do Livramento</p>
           </div>
         </div>
 
-        <div class="mt-8 border-t border-red-900/30 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <p class="text-sm text-white/70" th:text="#{footer.copy}">© Frontera de la Paz</p>
+        <div class="mt-6 border-t border-emerald-700 pt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p class="text-sm text-emerald-300" th:text="#{footer.copy}">© Frontera de la Paz</p>
           <div class="flex flex-wrap items-center gap-3">
             <a th:href="@{/feedback}"
                th:title="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
                th:attr="aria-label=${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}"
-               class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-slate-900 bg-gray-300 hover:bg-gray-400 transition-colors">
-              <span class="material-symbols-rounded text-slate-900 text-base" aria-hidden="true">forum</span>
+               class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white bg-emerald-700 hover:bg-emerald-600 transition-colors">
+              <span class="material-symbols-rounded text-white text-base" aria-hidden="true">forum</span>
               <span th:text="${#messages.msgOrNull('footer.feedback.cta') ?: 'Cuéntanos qué piensas'}">Cuéntanos qué piensas</span>
             </a>
             <a th:href="@{/sistema-visual}"
-               class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/20 transition-colors border border-white/20">
+               class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white bg-emerald-800 hover:bg-emerald-700 transition-colors border border-emerald-600">
               <span class="material-symbols-rounded text-white text-base" aria-hidden="true">design_services</span>
               <span>Sistema Visual</span>
             </a>
             <button id="devToggleBtn" type="button"
-                    class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/20 transition-colors border border-white/30"
+                    class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white bg-emerald-800 hover:bg-emerald-700 transition-colors border border-emerald-600"
                     aria-pressed="false" title="Alternar Debug + Grid simultáneamente">
               <span>Dev: OFF</span>
             </button>

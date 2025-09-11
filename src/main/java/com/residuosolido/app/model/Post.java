@@ -33,9 +33,6 @@ public class Post {
     private String sourceUrl;
     private String sourceName;
     
-    // Campo active para controlar visibilidad
-    @Column(nullable = false)
-    private boolean active = true;  // Por defecto los posts están activos
     
     @CreationTimestamp
     @Column(updatable = false)
@@ -55,8 +52,4 @@ public class Post {
         return category != null ? category.getName() : null;
     }
     
-    // Método explícito para verificar si está activo (aunque lombok ya lo genera)
-    public boolean isActive() {
-        return active;
-    }
 }

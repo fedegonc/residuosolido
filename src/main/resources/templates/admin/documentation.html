@@ -519,6 +519,94 @@ public class AdminUserController {
         </a>
       </div>
 
+      <!-- Sistemas de diseño / Design System -->
+      <div id="design-system" class="bg-white border rounded-lg p-6 mb-8">
+        <h3 class="font-bold mb-4 flex items-center">
+          <i data-lucide="palette" class="w-5 h-5 mr-2 text-emerald-600"></i>
+          Sistemas de diseño (Design System)
+        </h3>
+        <div class="space-y-6 text-sm">
+          <div class="bg-emerald-50 p-4 rounded border border-emerald-100">
+            <h4 class="font-semibold text-emerald-800 mb-2">🎯 Objetivo</h4>
+            <p class="text-emerald-900">Armonizar la UI con paleta emerald, estilos consistentes y componentes reutilizables.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded border">
+              <h5 class="font-semibold text-gray-800 mb-2">🟢 Botones</h5>
+              <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                <li>Unificar variantes en <code>templates/fragments/components/buttons.html</code>: primary, secondary, outline, danger</li>
+                <li>Estados: <code>hover</code>, <code>focus:ring-emerald-500</code>, <code>disabled:opacity-50</code></li>
+                <li>Tamaños: <code>sm</code>, <code>md</code>, <code>lg</code></li>
+                <li>Aplicar al submit de login y botones del footer/menu</li>
+              </ul>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded border">
+              <h5 class="font-semibold text-gray-800 mb-2">📝 Inputs y focus-ring</h5>
+              <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                <li>Estandarizar bordes, <code>focus:ring-emerald-500</code>, <code>placeholder:text-emerald-300</code></li>
+                <li>Estados de validación: error/success</li>
+                <li>Crear fragmento de input reusable para formularios</li>
+              </ul>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded border">
+              <h5 class="font-semibold text-gray-800 mb-2">🔗 Enlaces</h5>
+              <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                <li>Estilo base: <code>text-emerald-600 hover:text-emerald-700 underline-offset-2 hover:underline</code></li>
+                <li>En fondos oscuros (footer): <code>text-emerald-100 hover:text-white</code></li>
+                <li>Aplicar en <code>fragments/guest/footer.html</code>, <code>fragments/guest/menu.html</code>, <code>templates/index.html</code></li>
+              </ul>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded border">
+              <h5 class="font-semibold text-gray-800 mb-2">🔤 Tipografía</h5>
+              <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                <li>Alinear escala (títulos, subtítulos, body) y pesos</li>
+                <li>Usar <code>underline-offset-2</code> y <code>font-semibold</code> coherente en CTAs</li>
+              </ul>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded border">
+              <h5 class="font-semibold text-gray-800 mb-2">🧩 Radios y sombras</h5>
+              <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                <li>Normalizar <code>rounded-md</code> y <code>shadow-sm</code> para tarjetas y botones</li>
+              </ul>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded border">
+              <h5 class="font-semibold text-gray-800 mb-2">🌐 i18n</h5>
+              <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                <li>Verificar llaves en <code>src/main/resources/messages*.properties</code></li>
+                <li>Incluir símbolo <code>©</code> en textos de footer</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded border">
+            <h5 class="font-semibold text-gray-800 mb-2">🧰 Utilidades / Tokens</h5>
+            <p class="text-gray-700">Opcional: definir utilidades con <code>@apply</code> en <code>static/css/index.css</code> (p. ej. <code>.btn-primary</code>, <code>.link-muted</code>) o mantenerlo en fragmentos Thymeleaf.</p>
+          </div>
+
+          <div class="bg-white p-4 rounded border">
+            <h5 class="font-semibold text-gray-800 mb-2">📂 Archivos clave</h5>
+            <ul class="list-disc ml-5 space-y-1 text-gray-700">
+              <li><code>templates/fragments/components/buttons.html</code></li>
+              <li><code>templates/fragments/auth/login-form.html</code></li>
+              <li><code>templates/fragments/guest/footer.html</code></li>
+              <li><code>templates/fragments/guest/menu.html</code></li>
+              <li><code>src/main/resources/static/css/index.css</code> (si se usan utilidades)</li>
+            </ul>
+          </div>
+
+          <div class="bg-emerald-50 p-4 rounded border border-emerald-100">
+            <h5 class="font-semibold text-emerald-800 mb-2">🚀 Siguiente paso sugerido</h5>
+            <p class="text-emerald-900">Unificar los botones en <code>buttons.html</code> y aplicar el <strong>primaryButton</strong> al submit del login para impacto inmediato.</p>
+          </div>
+        </div>
+      </div>
+
       <h3 class="font-bold mb-4">📋 Guías de Uso</h3>
       <div class="space-y-4">
         <div class="border-l-4 border-blue-500 pl-4">
