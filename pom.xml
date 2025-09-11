@@ -23,7 +23,7 @@
   </properties>
 
   <dependencies>
-    <!-- Cloudinary para almacenamiento de imágenes -->
+    
     <dependency>
       <groupId>com.cloudinary</groupId>
       <artifactId>cloudinary-http44</artifactId>
@@ -37,13 +37,11 @@
     </dependency>
 
 
-    <!-- Web + exclusión de commons-logging -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!-- JPA y base de datos -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -55,16 +53,11 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- La dependencia de Clounary ya está definida arriba con exclusiones -->
-    <!-- No es necesario duplicarla -->
-
-    <!-- Thymeleaf -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
-    <!-- DevTools para recarga automática -->
     <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-devtools</artifactId>
@@ -78,33 +71,32 @@
       <version>3.2.1</version>
     </dependency>
 
-    <!-- Lombok -->
+  
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
 
-    <!-- Spring Security -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
 
-    <!-- Thymeleaf + Spring Security -->
+  
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
       <artifactId>thymeleaf-extras-springsecurity6</artifactId>
     </dependency>
 
-    <!-- Testing -->
+    
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
     
-    <!-- Spring Security Test -->
+   
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>

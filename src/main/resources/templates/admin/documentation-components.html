@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+  <title>Componentes UI - Documentación</title>
+</head>
+<body>
+  <section>
+    <!-- Header -->
+    <header class="bg-gray-50 py-6 mb-8 border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-bold text-gray-900">Componentes UI</h1>
+        <p class="mt-1 text-sm text-gray-600">Biblioteca de componentes reutilizables con Thymeleaf y Tailwind CSS</p>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <!-- Introducción -->
+      <div class="mb-12">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Sistema de componentes</h2>
+        <p class="text-gray-700 mb-4">
+          Esta biblioteca de componentes proporciona fragmentos Thymeleaf reutilizables para mantener una apariencia
+          consistente en toda la aplicación. Los componentes utilizan exclusivamente Tailwind CSS y están diseñados
+          para ser fácilmente incorporados en cualquier página.
+        </p>
+      </div>
+
+      <!-- Botones -->
+      <div class="mb-12 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Botones</h2>
+        <p class="text-gray-700 mb-4">
+          Incluye los botones usando <code class="bg-gray-100 px-1 py-0.5 rounded">th:replace</code> o
+          <code class="bg-gray-100 px-1 py-0.5 rounded">th:insert</code> en tus templates.
+        </p>
+
+        <!-- Botón primario -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Botón primario</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-6 flex items-center justify-center">
+              <div th:replace="~{fragments/components/buttons :: primary('Botón primario', '#')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/buttons :: primary('Texto del botón', '/ruta/destino')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+              <p class="text-sm text-gray-600 mt-2">
+                Usar para acciones principales y positivas como crear, guardar o confirmar.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón secundario -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Botón secundario</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-6 flex items-center justify-center">
+              <div th:replace="~{fragments/components/buttons :: secondary('Botón secundario', '#')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/buttons :: secondary('Texto del botón', '/ruta/destino')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+              <p class="text-sm text-gray-600 mt-2">
+                Usar para acciones secundarias como cancelar o volver.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón de peligro -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Botón de peligro</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-6 flex items-center justify-center">
+              <div th:replace="~{fragments/components/buttons :: danger('Botón de peligro', '#')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/buttons :: danger('Texto del botón', '/ruta/destino')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+              <p class="text-sm text-gray-600 mt-2">
+                Usar para acciones destructivas como eliminar o cancelar operaciones irreversibles.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón con icono -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Botón con icono</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-6 flex items-center justify-center space-x-4">
+              <div th:replace="~{fragments/components/buttons :: iconLeft('Nuevo', '#', 'plus')}"></div>
+              <div th:replace="~{fragments/components/buttons :: iconLeft('Editar', '#', 'edit')}"></div>
+              <div th:replace="~{fragments/components/buttons :: iconLeft('Eliminar', '#', 'trash')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/buttons :: iconLeft('Texto del botón', '/ruta/destino', 'plus')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+              <p class="text-sm text-gray-600 mt-2">
+                Iconos disponibles: <code>plus</code>, <code>edit</code>, <code>trash</code>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de formulario -->
+        <div class="mb-4">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Botones de formulario</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-6 flex items-center justify-center space-x-4">
+              <div th:replace="~{fragments/components/buttons :: primaryButton('Guardar')}"></div>
+              <div th:replace="~{fragments/components/buttons :: secondaryButton('Cancelar')}"></div>
+              <div th:replace="~{fragments/components/buttons :: dangerButton('Eliminar')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/buttons :: primaryButton('Guardar')}"&gt;&lt;/div&gt;
+&lt;div th:replace="~{fragments/components/buttons :: secondaryButton('Cancelar')}"&gt;&lt;/div&gt;
+&lt;div th:replace="~{fragments/components/buttons :: dangerButton('Eliminar')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertas -->
+      <div class="mb-12 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Alertas</h2>
+        <p class="text-gray-700 mb-4">
+          Alertas para mostrar mensajes de éxito, error, advertencia e información.
+        </p>
+
+        <!-- Alerta de éxito -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Alerta de éxito</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1">
+              <div th:replace="~{fragments/components/alerts :: success('Operación completada correctamente.')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/alerts :: success('Operación completada correctamente.')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerta de error -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Alerta de error</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1">
+              <div th:replace="~{fragments/components/alerts :: error('No se pudo completar la operación.')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/alerts :: error('No se pudo completar la operación.')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerta de advertencia -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Alerta de advertencia</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1">
+              <div th:replace="~{fragments/components/alerts :: warning('Esta acción podría tener consecuencias.')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/alerts :: warning('Esta acción podría tener consecuencias.')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerta de información -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Alerta de información</h3>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1">
+              <div th:replace="~{fragments/components/alerts :: info('Información relevante para el usuario.')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/alerts :: info('Información relevante para el usuario.')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerta flash automática -->
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Alerta flash automática</h3>
+          <p class="text-gray-700 mb-4">Esta alerta desaparece automáticamente después de 5 segundos.</p>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Vista previa -->
+            <div class="flex-1">
+              <div th:replace="~{fragments/components/alerts :: flash('Este mensaje desaparecerá en 5 segundos', 'success')}"></div>
+            </div>
+            
+            <!-- Código -->
+            <div class="flex-1">
+              <div class="bg-gray-800 rounded-lg p-4">
+                <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;div th:replace="~{fragments/components/alerts :: flash('Este mensaje desaparecerá en 5 segundos', 'success')}"&gt;&lt;/div&gt;</code></pre>
+              </div>
+              <p class="text-sm text-gray-600 mt-2">
+                Tipos disponibles: <code>success</code>, <code>error</code>, <code>warning</code>, <code>info</code>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Uso en controladores -->
+      <div class="mb-12 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Uso en controladores</h2>
+        
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Mensajes flash en controladores</h3>
+          <div class="bg-gray-800 rounded-lg p-4">
+            <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>@PostMapping("/admin/categories")
+public String adminSaveCategory(
+        @RequestParam(value = "action", required = false) String action,
+        @ModelAttribute Category category,
+        RedirectAttributes redirectAttributes) {
+    try {
+        // ... lógica del controlador ...
+        
+        // Mensaje de éxito
+        redirectAttributes.addFlashAttribute("successMessage", "Categoría creada correctamente");
+        
+        // También se puede usar errorMessage, warningMessage, infoMessage
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Error al procesar categoría: " + e.getMessage());
+    }
+    
+    return "redirect:/admin/categories";
+}</code></pre>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Mostrar mensajes en la plantilla</h3>
+          <div class="bg-gray-800 rounded-lg p-4">
+            <pre class="text-gray-100 text-sm whitespace-pre-wrap"><code>&lt;!-- Mostrar mensajes flash en cualquier plantilla --&gt;
+&lt;div th:if="${successMessage}" th:replace="~{fragments/components/alerts :: success(${successMessage})}"&gt;&lt;/div&gt;
+&lt;div th:if="${errorMessage}" th:replace="~{fragments/components/alerts :: error(${errorMessage})}"&gt;&lt;/div&gt;
+&lt;div th:if="${warningMessage}" th:replace="~{fragments/components/alerts :: warning(${warningMessage})}"&gt;&lt;/div&gt;
+&lt;div th:if="${infoMessage}" th:replace="~{fragments/components/alerts :: info(${infoMessage})}"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

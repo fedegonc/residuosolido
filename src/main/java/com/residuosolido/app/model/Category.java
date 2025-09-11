@@ -21,7 +21,7 @@ public class Category {
     private String description;
     private String imageUrl;
     private Integer displayOrder;
-    private Boolean active;
+    private Boolean active = true; // Por defecto las categorías están activas
 
     // === Constructores ===
     public Category() {}
@@ -53,6 +53,14 @@ public class Category {
 
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
+    
+    /**
+     * Método conveniente para verificar si la categoría está activa
+     * @return true si la categoría está activa, false en caso contrario
+     */
+    public boolean isActive() {
+        return active != null && active;
+    }
 
 
     @Transient

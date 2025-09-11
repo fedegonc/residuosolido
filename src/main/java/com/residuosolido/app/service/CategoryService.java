@@ -137,6 +137,13 @@ public class CategoryService {
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
+    
+    /**
+     * Retorna solo las categorías activas ordenadas por orden de visualización
+     */
+    public List<Category> findAllActive() {
+        return categoryRepository.findByActiveTrueOrderByDisplayOrderAsc();
+    }
 
     public long count() {
         return categoryRepository.count();

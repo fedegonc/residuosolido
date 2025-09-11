@@ -51,6 +51,13 @@ public class PostService {
     public List<Post> findAll() {
         return postRepository.findAllWithCategories();
     }
+    
+    /**
+     * Retorna solo los posts activos con sus categorías
+     */
+    public List<Post> findAllActive() {
+        return postRepository.findAllActiveWithCategories();
+    }
 
     public long count() {
         return postRepository.count();
@@ -225,6 +232,17 @@ public class PostService {
         } else {
             model.addAttribute("post", new Post());
         }
+    }
+
+    /**
+     * Cuenta el número de posts asociados a una categoría
+     * @param categoryId ID de la categoría
+     * @return Número de posts asociados a la categoría
+     */
+    public long countPostsByCategory(Long categoryId) {
+        return categoryService.getCategoryById(categoryId)
+            .map(category -> postRepository.countByCategory(category))
+            .orElse(0L);
     }
 
     public boolean isCategoryInUse(Long categoryId) {
