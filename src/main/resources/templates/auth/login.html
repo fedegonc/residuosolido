@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- AUTH ULTRA-SIMPLIFICADO: solo casos de uso core -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/base}" th:with="hideMenu=true">
 <head>
   <title layout:fragment="title">Iniciar Sesión - Residuos Sólidos</title>
   <th:block layout:fragment="head-extra">
@@ -9,36 +9,42 @@
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
-  <section layout:fragment="content" class="min-h-screen flex flex-col">
+  <main layout:fragment="content" class="min-h-screen flex flex-col">
 
-    <!-- Breadcrumbs (alineado al contenedor 7xl) -->
-    <div class="bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <nav aria-label="Breadcrumb">
-          <ol class="flex items-center text-sm text-slate-600">
-            <li><a href="/" class="hover:text-slate-900">Inicio</a></li>
-            <li class="px-2 text-slate-400">/</li>
-            <li class="text-slate-900 font-medium" aria-current="page">Iniciar Sesión</li>
-          </ol>
-        </nav>
+    <!-- Header del login -->
+    <header class="bg-green-600 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex justify-between items-center">
+          <a href="/" class="text-xl font-bold text-white hover:text-green-100 transition-colors">♻️ Residuos Sólidos</a>
+          <h1 class="text-lg font-medium">Iniciar Sesión</h1>
+        </div>
       </div>
-    </div>
+    </header>
+    
+    <!-- Breadcrumbs (alineado al contenedor 7xl) -->
+    <nav class="bg-white" aria-label="Breadcrumb">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <ol class="flex items-center text-sm text-slate-600">
+          <li><a href="/" class="hover:text-slate-900">Inicio</a></li>
+          <li class="px-2 text-slate-400">/</li>
+          <li class="text-slate-900 font-medium" aria-current="page">Iniciar Sesión</li>
+        </ol>
+      </div>
+    </nav>
 
     <!-- Contenido principal -->
-    <div class="flex-1">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        <!-- Mensajes -->
-        <div class="max-w-md mx-auto">
-          <div th:if="${param.success}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm" th:text="${param.success}"></div>
-          <div th:if="${param.logout}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</div>
-          <div th:if="${param.error}" class="mb-4 rounded-sm ring-1 ring-rose-900/10 bg-rose-50 text-rose-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</div>
-        </div>
-
-        <!-- Formulario (fragmento) -->
-        <div class="max-w-md mx-auto" th:insert="~{fragments/auth/login-form :: loginForm}"></div>
+    <section class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+      <!-- Mensajes -->
+      <div class="max-w-md mx-auto">
+        <p th:if="${param.success}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm" th:text="${param.success}"></p>
+        <p th:if="${param.logout}" class="mb-4 rounded-sm ring-1 ring-emerald-900/10 bg-emerald-50 text-emerald-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</p>
+        <p th:if="${param.error}" class="mb-4 rounded-sm ring-1 ring-rose-900/10 bg-rose-50 text-rose-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</p>
       </div>
-    </div>
-  </section>
+
+      <!-- Formulario (fragmento) -->
+      <div class="max-w-md mx-auto" th:replace="~{fragments/auth/login-form :: loginForm}"></div>
+    </section>
+  </main>
 
   <!-- Scripts extra -->
   <th:block layout:fragment="body-scripts">
