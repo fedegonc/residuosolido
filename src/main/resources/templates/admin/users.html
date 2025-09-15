@@ -8,6 +8,7 @@
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
@@ -145,8 +146,15 @@
             <form th:action="@{/admin/users}" method="post" th:object="${user}" class="p-6 space-y-6">
                 <input type="hidden" name="action" value="update" th:if="${isEdit}" />
                 <input type="hidden" name="id" th:value="${isEdit} ? ${user.id} : ''" />
+                <button type="button"
+                        class="px-3 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-sm"
+                        hx-get="/admin/users/form-demo"
+                        hx-target="#user-form-fields"
+                        hx-swap="outerHTML">
+                    Autocompletar demo
+                </button>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="user-form-fields" th:fragment="userFormFields" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Username -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Usuario *</label>

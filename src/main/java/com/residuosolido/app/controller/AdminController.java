@@ -98,4 +98,29 @@ public class AdminController {
         }
         return "redirect:/admin/config";
     }
+
+    // ========= USERS: HTMX demo autocompletar =========
+    @GetMapping("/admin/users/form-demo")
+    public String userFormDemo(Model model) {
+        User demo = new User();
+        demo.setUsername("demo_user");
+        demo.setEmail("demo@example.com");
+        demo.setFirstName("Demo");
+        demo.setLastName("User");
+        demo.setRole(Role.USER);
+        demo.setActive(true);
+        demo.setPreferredLanguage("es");
+        demo.setAddress("Av. Siempre Viva 742");
+        // Nota: el campo password es plano aquí solo para prellenar el input; se encripta al guardar
+        demo.setPassword("Demo1234");
+        demo.setAddressReferences("Frente a la plaza principal");
+        demo.setLatitude(new java.math.BigDecimal("-34.9055"));
+        demo.setLongitude(new java.math.BigDecimal("-56.1850"));
+        demo.setProfileImage("https://res.cloudinary.com/demo/image/upload/v123456789/avatar.png");
+
+        model.addAttribute("user", demo);
+        model.addAttribute("roles", Role.values());
+        model.addAttribute("isEdit", false);
+        return "admin/users :: userFormFields";
+    }
 }

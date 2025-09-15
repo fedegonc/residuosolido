@@ -32,13 +32,11 @@ import org.slf4j.LoggerFactory;
 public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
-
+    
     private final LoginSuccessHandler successHandler;
-    private final LoginFailureHandler failureHandler;
 
-    public SecurityConfig(LoginSuccessHandler successHandler, LoginFailureHandler failureHandler) {
+    public SecurityConfig(LoginSuccessHandler successHandler) {
         this.successHandler = successHandler;
-        this.failureHandler = failureHandler;
     }
 
     @Bean
@@ -77,7 +75,6 @@ public class SecurityConfig {
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
                 .successHandler(successHandler)
-                .failureHandler(failureHandler)
                 .permitAll()
             )
             .logout(logout -> logout
