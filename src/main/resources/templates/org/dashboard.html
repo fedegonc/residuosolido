@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body class="bg-gray-50">
-    <div th:replace="fragments/layout :: header"></div>
+    <div th:replace="~{fragments/layout :: header}"></div>
     
     <!-- Breadcrumbs -->
     <nav class="bg-white border-b" aria-label="Breadcrumb">
@@ -146,7 +146,7 @@
         </div>
     </main>
 
-    <div th:replace="fragments/layout :: footer"></div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
 
     <script>
         lucide.createIcons();

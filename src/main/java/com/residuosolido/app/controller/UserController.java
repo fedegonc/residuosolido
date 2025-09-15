@@ -38,25 +38,32 @@ public class UserController {
     private PostService postService;
 
     // ========== HOME ==========
-    @GetMapping({"/", "/index"})
-    public String home(Model model) {
-        model.addAttribute("title", "Residuos Sólidos - Inicio");
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("posts", postService.getRecentPosts(5));
-        model.addAttribute("organizations", userService.findByRole(Role.ORGANIZATION));
-        return "index";
-    }
+    // NOTA: Las rutas "/" y "/index" ahora son manejadas por AuthController
+    // para redirigir automáticamente según el rol del usuario autenticado
 
     // ========== ADMIN USER CRUD ==========
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/users")
     public String adminUsers(@RequestParam(required = false) String action,
                             @RequestParam(required = false) Long id,
+                            @RequestParam(required = false, name = "q") String query,
                             Model model) {
         
         List<User> allUsers = userService.findAll();
+        if (query != null && !query.trim().isEmpty()) {
+            String qLower = query.trim().toLowerCase();
+            allUsers = allUsers.stream()
+                    .filter(u -> {
+                        String username = u.getUsername() != null ? u.getUsername().toLowerCase() : "";
+                        String email = u.getEmail() != null ? u.getEmail().toLowerCase() : "";
+                        String fullName = u.getFullName() != null ? u.getFullName().toLowerCase() : "";
+                        return username.contains(qLower) || email.contains(qLower) || fullName.contains(qLower);
+                    })
+                    .toList();
+        }
         model.addAttribute("users", allUsers);
         model.addAttribute("totalUsers", allUsers != null ? allUsers.size() : 0);
+        model.addAttribute("query", query);
         model.addAttribute("roles", Role.values());
         
         if (action != null) {

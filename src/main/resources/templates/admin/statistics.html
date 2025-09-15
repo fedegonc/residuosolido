@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estadísticas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN para integrar fácil -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+  <!-- Header + Breadcrumbs -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <h1 class="text-2xl font-bold text-gray-900">Estadísticas</h1>
+      <p class="mt-1 text-sm text-gray-500">Métricas y análisis del sistema</p>
+      <div class="mt-3">
+        <th:block th:with="bcItems=${#lists.list({'label':'Panel de Administración','url':'/admin/dashboard'})}"
+                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Estadísticas')}">
+        </th:block>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPIs rápidos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white border rounded-md p-5">
+        <p class="text-sm text-slate-500">Usuarios totales</p>
+        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiUsers">1.254</p>
+      </div>
+      <div class="bg-white border rounded-md p-5">
+        <p class="text-sm text-slate-500">Organizaciones</p>
+        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiOrgs">18</p>
+      </div>
+      <div class="bg-white border rounded-md p-5">
+        <p class="text-sm text-slate-500">Solicitudes (30 días)</p>
+        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiReqs">342</p>
+      </div>
+      <div class="bg-white border rounded-md p-5">
+        <p class="text-sm text-slate-500">Feedback recibidos</p>
+        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiFdb">76</p>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Usuarios por mes -->
+      <div class="bg-white border rounded-md p-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-medium text-slate-900">Altas de usuarios por mes</h2>
+          <span class="text-xs text-slate-500">Ejemplo con Chart.js (CDN)</span>
+        </div>
+        <div class="mt-4">
+          <canvas id="chartUsersPerMonth" height="140"></canvas>
+        </div>
+      </div>
+
+      <!-- Solicitudes por estado -->
+      <div class="bg-white border rounded-md p-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-medium text-slate-900">Solicitudes por estado</h2>
+          <span class="text-xs text-slate-500">Ejemplo con Chart.js (CDN)</span>
+        </div>
+        <div class="mt-4">
+          <canvas id="chartRequestsByStatus" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribución de materiales -->
+    <div class="bg-white border rounded-md p-5">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-medium text-slate-900">Materiales recolectados (kg) por tipo</h2>
+        <span class="text-xs text-slate-500">Ejemplo con Chart.js (CDN)</span>
+      </div>
+      <div class="mt-4">
+        <canvas id="chartMaterials" height="120"></canvas>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Script de ejemplo: datos dummy. Reemplazable por endpoints JSON -->
+<script>
+  // En producción, puedes traer datos con fetch('/admin/statistics/data') y mapearlos a los datasets
+  document.addEventListener('DOMContentLoaded', () => {
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    // Usuarios por mes (ejemplo)
+    const usersData = [25, 31, 28, 40, 52, 61, 75, 88, 70, 66, 54, 49];
+    new Chart(document.getElementById('chartUsersPerMonth'), {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [{
+          label: 'Altas',
+          data: usersData,
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37, 99, 235, 0.15)',
+          borderWidth: 2,
+          tension: 0.35,
+          fill: true,
+          pointRadius: 3,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Solicitudes por estado (ejemplo)
+    const reqStatusLabels = ['Pendientes', 'En curso', 'Completadas', 'Canceladas'];
+    const reqStatusData   = [48, 76, 190, 28];
+    new Chart(document.getElementById('chartRequestsByStatus'), {
+      type: 'doughnut',
+      data: {
+        labels: reqStatusLabels,
+        datasets: [{
+          data: reqStatusData,
+          backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
+          borderColor: '#ffffff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    // Materiales por tipo (ejemplo)
+    const materialsLabels = ['Plástico', 'Papel', 'Vidrio', 'Metal', 'Orgánico'];
+    const materialsData   = [420, 310, 260, 190, 510];
+    new Chart(document.getElementById('chartMaterials'), {
+      type: 'bar',
+      data: {
+        labels: materialsLabels,
+        datasets: [{
+          label: 'Kg',
+          data: materialsData,
+          backgroundColor: '#14b8a6'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  });
+</script>
+</body>
+</html>

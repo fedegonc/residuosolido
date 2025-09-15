@@ -8,6 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Residuos Sólidos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <!-- Font Awesome (WebJars) -->
+    <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/6.5.2/css/all.min.css}" />
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     
@@ -23,13 +26,12 @@
                             </svg>
                         </div>
                         <span class="ml-2 text-lg font-semibold text-gray-900">Residuos Sólidos</span>
-                        <span class="ml-2 text-sm text-gray-500">- Rivera Sant'ana</span>
+                        <span class="ml-2 text-sm text-gray-500">Rivera - Sant'Ana do Livramento</span>
                     </div>
                 </div>
                 
-                <!-- Admin User Info -->
+                <!-- User Info -->
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">Admin</span>
                     <span class="text-sm font-medium text-gray-900" th:text="${#authentication.name}">Usuario</span>
                     <form th:action="@{/logout}" method="POST" class="inline">
                         <button type="submit" class="text-sm text-gray-500 hover:text-gray-700">
@@ -43,26 +45,152 @@
     
     <!-- Main Content -->
     <main class="flex-1">
+        <!-- Mensajes Flash (solo se muestran si existen) -->
+        <div th:if="${successMessage != null or errorMessage != null or warningMessage != null or infoMessage != null}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <!-- Mensaje de éxito -->
+            <div th:if="${successMessage != null}" class="flash-alert rounded-md bg-green-50 p-4 border border-green-100 mb-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800" th:text="${successMessage}">Operación completada con éxito.</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <div class="-mx-1.5 -my-1.5">
+                            <button type="button" onclick="this.closest('.flash-alert').remove()" class="inline-flex bg-green-50 rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none">
+                                <span class="sr-only">Cerrar</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mensaje de error -->
+            <div th:if="${errorMessage != null}" class="flash-alert rounded-md bg-red-50 p-4 border border-red-100 mb-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800" th:text="${errorMessage}">Se produjo un error.</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <div class="-mx-1.5 -my-1.5">
+                            <button type="button" onclick="this.closest('.flash-alert').remove()" class="inline-flex bg-red-50 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none">
+                                <span class="sr-only">Cerrar</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mensaje de advertencia -->
+            <div th:if="${warningMessage != null}" class="flash-alert rounded-md bg-yellow-50 p-4 border border-yellow-100 mb-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-yellow-800" th:text="${warningMessage}">Advertencia importante.</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <div class="-mx-1.5 -my-1.5">
+                            <button type="button" onclick="this.closest('.flash-alert').remove()" class="inline-flex bg-yellow-50 rounded-md p-1.5 text-yellow-500 hover:bg-yellow-100 focus:outline-none">
+                                <span class="sr-only">Cerrar</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mensaje de información -->
+            <div th:if="${infoMessage != null}" class="flash-alert rounded-md bg-blue-50 p-4 border border-blue-100 mb-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-blue-800" th:text="${infoMessage}">Información relevante.</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <div class="-mx-1.5 -my-1.5">
+                            <button type="button" onclick="this.closest('.flash-alert').remove()" class="inline-flex bg-blue-50 rounded-md p-1.5 text-blue-500 hover:bg-blue-100 focus:outline-none">
+                                <span class="sr-only">Cerrar</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Script para eliminar los mensajes flash de la sesión -->
+            <script th:inline="javascript">
+                // Eliminar mensajes flash después de mostrarlos
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Eliminar automáticamente solo las cajas de flash después de 5 segundos
+                    setTimeout(function() {
+                        var alerts = document.querySelectorAll('.flash-alert');
+                        alerts.forEach(function(alert) {
+                            alert.style.transition = 'opacity 1s ease-out';
+                            alert.style.opacity = '0';
+                            setTimeout(function() {
+                                if (alert.parentNode) {
+                                    alert.parentNode.removeChild(alert);
+                                }
+                            }, 1000);
+                        });
+                    }, 5000);
+                });
+            </script>
+        </div>
+        
         <th:block th:replace="${content}"></th:block>
     </main>
     
-    <!-- Admin Footer -->
+    <!-- Admin Footer (simplificado, sin redundancias) -->
     <footer class="bg-gray-800 text-white py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm">Panel de Administración</span>
-                    <span class="text-xs text-gray-400">Rivera - Sant'ana do Livramento</span>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-gray-300">Residuos Sólidos</span>
+                    <span class="text-xs text-gray-500">• Rivera - Sant'Ana do Livramento</span>
                 </div>
-                <div class="flex items-center space-x-4">
+                <nav class="flex items-center space-x-4">
                     <a href="/admin/dashboard" class="text-xs text-gray-300 hover:text-white">Dashboard</a>
                     <a href="/admin/documentation" class="text-xs text-gray-300 hover:text-white">Ayuda</a>
-                    <span class="text-xs text-gray-400" th:text="${#authentication.name}">Admin</span>
-                </div>
+                </nav>
             </div>
         </div>
     </footer>
     
+    <!-- Global scripts -->
+    <script>
+        // Hooks HTMX disponibles si se necesitan en el futuro
+        document.body.addEventListener('htmx:afterSettle', function() {
+            // Nada por ahora
+        });
+    </script>
+
 </body>
 </html>
 </th:block>

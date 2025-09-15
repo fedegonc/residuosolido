@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .requestMatchers("/.well-known/**").permitAll()
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de utilidades de desarrollo deshabilitadas
@@ -94,7 +94,7 @@ public class SecurityConfig {
                     "img-src 'self' data: https:; " +
                     "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
                     "font-src 'self' data: https://fonts.gstatic.com; " +
-                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; " +
+                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; " +
                     "connect-src 'self'"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
