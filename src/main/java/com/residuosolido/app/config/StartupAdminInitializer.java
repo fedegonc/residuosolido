@@ -35,7 +35,7 @@ public class StartupAdminInitializer implements ApplicationRunner {
         if (totalUsers == 0) {
             User admin = new User();
             admin.setUsername("admin");
-            admin.setEmail("admin@example.com");
+            admin.setEmail("admin@admin.com");
             admin.setPassword(passwordEncoder.encode("123456"));
             admin.setRole(Role.ADMIN);
             admin.setPreferredLanguage("es");

@@ -6,6 +6,7 @@
   </header>
 
   <form th:action="@{/auth/login}" method="post" class="space-y-3">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <!-- Username -->
     <label for="username" class="block">
       <span class="block text-sm font-medium text-slate-700 mb-1">Usuario</span>

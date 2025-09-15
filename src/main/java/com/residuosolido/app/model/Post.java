@@ -15,7 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
     @Column(nullable = false)
@@ -33,6 +33,9 @@ public class Post {
     private String sourceUrl;
     private String sourceName;
     
+    // Estado del post (activo/inactivo)
+    private Boolean active = true;
+    
     
     @CreationTimestamp
     @Column(updatable = false)
@@ -40,6 +43,14 @@ public class Post {
     
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    
+    /**
+     * Método conveniente para verificar si el post está activo
+     * @return true si el post está activo, false en caso contrario
+     */
+    public boolean isActive() {
+        return active != null && active;
+    }
     
     // Métodos de conveniencia
     @Transient

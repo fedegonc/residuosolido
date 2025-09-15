@@ -273,21 +273,7 @@ public class UserService {
         return userRepository.countByRole(role);
     }
 
-    @PostConstruct
-public void ensureDefaultAdmin() {
-    if (userRepository.count() == 0) {
-        User admin = new User();
-        admin.setUsername("admin");
-        admin.setEmail("admin@admin.com");
-        admin.setFirstName("Admin");
-        admin.setLastName("Principal");
-        admin.setRole(Role.ADMIN);
-        admin.setActive(true);
-        admin.setPreferredLanguage("es");
-        admin.setPassword(passwordEncoder.encode("12345"));
-        userRepository.save(admin);
-    }
+    // Eliminado el @PostConstruct ensureDefaultAdmin para evitar conflicto con
+    // StartupAdminInitializer. El administrador por defecto se crea únicamente
+    // desde StartupAdminInitializer con credenciales consistentes.
 }
-
-}
- 

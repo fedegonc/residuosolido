@@ -24,15 +24,21 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final LoginSuccessHandler successHandler;
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
-    public SecurityConfig(LoginSuccessHandler successHandler) {
+    private final LoginSuccessHandler successHandler;
+    private final LoginFailureHandler failureHandler;
+
+    public SecurityConfig(LoginSuccessHandler successHandler, LoginFailureHandler failureHandler) {
         this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
     }
 
     @Bean
@@ -71,6 +77,7 @@ public class SecurityConfig {
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
                 .successHandler(successHandler)
+                .failureHandler(failureHandler)
                 .permitAll()
             )
             .logout(logout -> logout
@@ -120,11 +127,17 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByUsername(username)
-            .map(user -> new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-            ))
+            .map(user -> {
+                // Logging de diagnóstico
+                log.info("[AUTH][LOAD] username='{}' | id={} | role={} | active={} | passHashLen={}",
+                        user.getUsername(), user.getId(), user.getRole(), user.isActive(),
+                        (user.getPassword() != null ? user.getPassword().length() : -1));
+                return new org.springframework.security.core.userdetails.User(
+                    user.getUsername(),
+                    user.getPassword(),
+                    java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                );
+            })
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
     
