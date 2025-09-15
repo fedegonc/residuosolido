@@ -33,6 +33,14 @@
     </div>
 
     <!-- Messages -->
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Usuarios','url':@{/admin/users}})}"
+                  th:replace="fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Usuarios')">
+        </th:block>
+    </div>
+
+    <!-- Messages -->
     <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
             <div class="flex items-center">
