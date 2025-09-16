@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Organizaciones - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Organizaciones','url':@{/admin/organizations}})}"
+                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Organizaciones')}">
+        </th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fa-solid fa-circle-check mr-2 text-base"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fa-solid fa-circle-exclamation mr-2 text-base"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- LISTA -->
+        <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    Lista de Organizaciones (<span th:text="${totalOrganizations}">0</span>)
+                </h2>
+                <form th:action="@{/admin/organizations}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                    <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, nombre o email..."
+                           class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+                    <div class="flex gap-2">
+                        <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
+                        <a th:href="@{/admin/organizations}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
+                    </div>
+                </form>
+            </div>
+            <div class="overflow-x-auto px-6 py-4">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Organización</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Email</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Estado</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700 hidden md:table-cell">Idioma</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700 hidden xl:table-cell">Dirección</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Creado</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-700">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orgTableBody" class="bg-white divide-y divide-gray-200">
+                    <tr th:each="org : ${organizations}" class="hover:bg-gray-50 odd:bg-gray-50">
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <span class="text-sm font-medium text-blue-800"
+                                              th:text="${#strings.substring(org.username, 0, 1).toUpperCase()}">O</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900" th:text="${org.username}">username</div>
+                                    <div class="text-xs text-gray-500" th:text="${org.fullName}">Nombre</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900" th:text="${org.email}">email</td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                  th:classappend="${org.active} ? ' bg-green-100 text-green-800' : ' bg-red-100 text-red-800'"
+                                  th:text="${org.active} ? 'Activo' : 'Inactivo'">Estado</span>
+                        </td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell"
+                            th:text="${org.preferredLanguage == 'es'} ? 'Español' : 'Português'">Idioma</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell max-w-[220px] truncate"
+                            th:attr="title=${org.address}"
+                            th:text="${org.address}">Dirección</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500"
+                            th:text="${#temporals.format(org.createdAt, 'dd/MM/yyyy')}">Fecha</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end gap-2">
+                                <a th:href="@{/admin/organizations(action='view', id=${org.id})}"
+                                   class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-blue-700 border-blue-200 flex items-center">Ver</a>
+                                <a th:href="@{/admin/organizations(action='edit', id=${org.id})}"
+                                   class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-green-700 border-green-200 flex items-center">Editar</a>
+                                <button onclick="confirmDelete(this)" th:data-id="${org.id}" th:data-name="${org.username}"
+                                        class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-red-700 border-red-200 flex items-center">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Filas por página:</span>
+                    <select id="pageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span id="pageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+                </div>
+                <div id="paginationControls" class="flex items-center gap-1"></div>
+            </div>
+            <div class="px-6 pb-4 flex justify-start">
+                <a th:if="${viewType == 'list'}" th:href="@{/admin/organizations(action='new')}"
+                   class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
+                    <i class="fa-solid fa-user-plus text-xs" aria-hidden="true"></i>
+                    <span>Alta de organización</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div th:if="${viewType == 'form'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900" th:text="${isEdit} ? 'Editar organización' : 'Alta de organización'">Formulario</h2>
+            </div>
+
+            <form th:action="@{/admin/organizations}" method="post" th:object="${organization}" class="px-6 py-3 space-y-3 form-compact">
+                <input type="hidden" name="action" value="update" th:if="${isEdit}" />
+                <input type="hidden" name="id" th:value="${isEdit} ? ${organization.id} : ''" />
+                <button type="button" class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+                        hx-get="/admin/users/form-demo" hx-target="#org-form-fields" hx-swap="innerHTML">
+                    Llenar campos
+                </button>
+
+                <div id="org-form-fields" th:object="${organization}" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <!-- Selector de Usuario Existente (solo para nueva organización) -->
+                    <div th:if="${!isEdit}" class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Seleccionar Usuario Existente</label>
+                        <select id="existingUserSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" onchange="fillUserData()">
+                            <option value="">-- Seleccionar usuario --</option>
+                            <option th:each="user : ${availableUsers}" 
+                                    th:value="${user.id}" 
+                                    th:text="${user.username + ' (' + user.email + ')'}"
+                                    th:data-username="${user.username}"
+                                    th:data-email="${user.email}"
+                                    th:data-firstname="${user.firstName}"
+                                    th:data-lastname="${user.lastName}"
+                                    th:data-address="${user.address}"
+                                    th:data-addressref="${user.addressReferences}"
+                                    th:data-latitude="${user.latitude}"
+                                    th:data-longitude="${user.longitude}"
+                                    th:data-profileimage="${user.profileImage}">
+                                Usuario
+                            </option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Selecciona un usuario existente para convertirlo en organización</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Usuario *</label>
+                        <input type="text" th:field="*{username}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" th:field="*{email}" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div th:if="${!isEdit}">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                        <input type="text" th:field="*{password}" th:required="${!isEdit}" autocomplete="new-password"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Idioma Preferido</label>
+                        <select th:field="*{preferredLanguage}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="es" th:selected="${organization.preferredLanguage == 'es'}">Español</option>
+                            <option value="pt" th:selected="${organization.preferredLanguage == 'pt'}">Português</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" th:field="*{active}" id="active"
+                               class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                        <label for="active" class="ml-2 block text-sm text-gray-700">Organización Activa</label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                    <textarea th:field="*{address}" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Referencias de Dirección (opcional)</label>
+                    <input type="text" th:field="*{addressReferences}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Puntos de referencia cercanos, indicaciones adicionales"/>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Latitud (opcional)</label>
+                        <input type="number" step="0.00000001" th:field="*{latitude}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="-34.9055"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Longitud (opcional)</label>
+                        <input type="number" step="0.00000001" th:field="*{longitude}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="-56.1850"/>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Imagen de Perfil (URL, opcional)</label>
+                    <input type="url" th:field="*{profileImage}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="https://..."/>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200">
+                    <a th:href="@{/admin/organizations}" class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm">Cancelar</a>
+                    <button type="submit" class="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
+                        <span th:text="${isEdit} ? 'Actualizar' : 'Crear'">Guardar</span>
+                    </button>
+                </div>
+            </form>
+            <style>
+                .form-compact input[type="text"],
+                .form-compact input[type="email"],
+                .form-compact input[type="number"],
+                .form-compact input[type="url"],
+                .form-compact input[type="password"],
+                .form-compact select,
+                .form-compact textarea {
+                    padding-top: 0.25rem;
+                    padding-bottom: 0.25rem;
+                    font-size: 0.875rem;
+                }
+                .form-compact label { margin-bottom: 0.25rem; }
+            </style>
+        </div>
+
+        <!-- DETALLE -->
+        <div th:if="${viewType == 'view'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-gray-900">Detalles de la Organización</h2>
+                    <div class="flex space-x-2">
+                        <a th:href="@{/admin/organizations(action='edit', id=${organization.id})}"
+                           class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 text-sm">Editar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Usuario</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${organization.username}">username</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Email</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${organization.email}">email</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Estado</label>
+                        <span th:class="${organization.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                              class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                            <span th:text="${organization.active} ? 'Activo' : 'Inactivo'">Estado</span>
+                        </span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Idioma Preferido</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${organization.preferredLanguage == 'es'} ? 'Español' : 'Português'">idioma</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Fecha de Registro</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${#temporals.format(organization.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</p>
+                    </div>
+                </div>
+                <div th:if="${organization.address}" class="mt-6">
+                    <label class="block text-sm font-medium text-gray-500">Dirección</label>
+                    <p class="mt-1 text-sm text-gray-900" th:text="${organization.address}">dirección</p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
+                <a th:href="@{/admin/organizations}"
+                   class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span>Volver</span>
+                </a>
+                <form th:action="@{/admin/organizations}" method="post" class="inline">
+                    <input type="hidden" name="action" value="delete"/>
+                    <input type="hidden" name="id" th:value="${organization.id}"/>
+                    <button type="submit" onclick="return confirm('¿Estás seguro de eliminar esta organización?')"
+                            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                        <span>Eliminar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-md w-full">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    ¿Estás seguro de que deseas eliminar a la organización <strong id="deleteOrgName"></strong>?
+                                    Esta acción no se puede deshacer.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-3 flex justify-end space-x-3">
+                        <button onclick="closeDeleteModal()"
+                                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <form id="deleteForm" method="post" class="inline">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Delete confirmation
+        function confirmDelete(button) {
+            const orgId = button.getAttribute('data-id');
+            const orgName = button.getAttribute('data-name');
+            document.getElementById('deleteOrgName').textContent = orgName;
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '/admin/organizations/delete/' + orgId;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        // Fill user data from selected user
+        function fillUserData() {
+            const select = document.getElementById('existingUserSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption.value) {
+                // Fill form fields with selected user data
+                document.querySelector('input[name="username"]').value = selectedOption.dataset.username || '';
+                document.querySelector('input[name="email"]').value = selectedOption.dataset.email || '';
+                document.querySelector('input[name="firstName"]').value = selectedOption.dataset.firstname || '';
+                document.querySelector('input[name="lastName"]').value = selectedOption.dataset.lastname || '';
+                document.querySelector('textarea[name="address"]').value = selectedOption.dataset.address || '';
+                document.querySelector('input[name="addressReferences"]').value = selectedOption.dataset.addressref || '';
+                document.querySelector('input[name="latitude"]').value = selectedOption.dataset.latitude || '';
+                document.querySelector('input[name="longitude"]').value = selectedOption.dataset.longitude || '';
+                document.querySelector('input[name="profileImage"]').value = selectedOption.dataset.profileimage || '';
+                
+                // Set the user ID to update existing user instead of creating new one
+                document.querySelector('input[name="id"]').value = selectedOption.value;
+            } else {
+                // Clear form if no user selected
+                document.querySelector('input[name="username"]').value = '';
+                document.querySelector('input[name="email"]').value = '';
+                document.querySelector('input[name="firstName"]').value = '';
+                document.querySelector('input[name="lastName"]').value = '';
+                document.querySelector('textarea[name="address"]').value = '';
+                document.querySelector('input[name="addressReferences"]').value = '';
+                document.querySelector('input[name="latitude"]').value = '';
+                document.querySelector('input[name="longitude"]').value = '';
+                document.querySelector('input[name="profileImage"]').value = '';
+                document.querySelector('input[name="id"]').value = '';
+            }
+        }
+
+        // Paginación Front-End
+        (function() {
+            const tbody = document.getElementById('orgTableBody');
+            if (!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const pageSizeSelect = document.getElementById('pageSize');
+            const pageInfo = document.getElementById('pageInfo');
+            const controls = document.getElementById('paginationControls');
+            let pageSize = parseInt(localStorage.getItem('org_page_size') || '10', 10);
+            if (![10,25,50,100].includes(pageSize)) pageSize = 10;
+            pageSizeSelect.value = String(pageSize);
+            let currentPage = 1;
+            function renderPage() {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / pageSize));
+                if (currentPage > totalPages) currentPage = totalPages;
+                const startIdx = (currentPage - 1) * pageSize;
+                const endIdx = Math.min(startIdx + pageSize, total);
+                rows.forEach((tr, idx) => {
+                    tr.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+                });
+                pageInfo.textContent = total === 0 ? 'Mostrando 0–0 de 0' : `Mostrando ${startIdx + 1}–${endIdx} de ${total}`;
+                buildControls(totalPages);
+            }
+            function buildControls(totalPages) {
+                controls.innerHTML = '';
+                const btnClass = 'px-3 py-1 border rounded-md text-sm hover:bg-gray-50';
+                const activeClass = 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700';
+                function addButton(label, disabled, onClick, extraClass = '') {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = label;
+                    btn.className = `${btnClass} ${extraClass}`;
+                    btn.disabled = disabled;
+                    btn.onclick = onClick;
+                    controls.appendChild(btn);
+                }
+                addButton('«', currentPage === 1, () => { currentPage = 1; renderPage(); });
+                addButton('‹', currentPage === 1, () => { currentPage--; renderPage(); });
+                const maxBtns = 7;
+                let start = Math.max(1, currentPage - Math.floor(maxBtns/2));
+                let end = Math.min(totalPages, start + maxBtns - 1);
+                if (end - start + 1 < maxBtns) start = Math.max(1, end - maxBtns + 1);
+                for (let p = start; p <= end; p++) {
+                    addButton(String(p), false, () => { currentPage = p; renderPage(); }, p === currentPage ? activeClass : '');
+                }
+                addButton('›', currentPage === totalPages, () => { currentPage++; renderPage(); });
+                addButton('»', currentPage === totalPages, () => { currentPage = totalPages; renderPage(); });
+            }
+            pageSizeSelect.addEventListener('change', () => {
+                pageSize = parseInt(pageSizeSelect.value, 10);
+                localStorage.setItem('org_page_size', String(pageSize));
+                currentPage = 1;
+                renderPage();
+            });
+            renderPage();
+        })();
+    </script>
+</main>
+</body>
+</html>

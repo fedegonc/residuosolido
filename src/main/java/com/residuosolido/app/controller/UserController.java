@@ -107,75 +107,7 @@ public class UserController {
         return "admin/users";
     }
 
-    // ======== ADMIN ORGANIZATIONS (dedicated route following project patterns) ========
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/organizations")
-    public String adminOrganizations(@RequestParam(required = false) String action,
-                                     @RequestParam(required = false) Long id,
-                                     @RequestParam(required = false, name = "q") String query,
-                                     Model model) {
-        // Lista base: solo organizaciones
-        List<User> orgs = userService.findByRole(Role.ORGANIZATION);
-        if (query != null && !query.trim().isEmpty()) {
-            String qLower = query.trim().toLowerCase();
-            orgs = orgs.stream()
-                    .filter(u -> {
-                        String username = u.getUsername() != null ? u.getUsername().toLowerCase() : "";
-                        String email = u.getEmail() != null ? u.getEmail().toLowerCase() : "";
-                        String fullName = u.getFullName() != null ? u.getFullName().toLowerCase() : "";
-                        return username.contains(qLower) || email.contains(qLower) || fullName.contains(qLower);
-                    })
-                    .toList();
-        }
-        model.addAttribute("users", orgs);
-        model.addAttribute("totalUsers", orgs != null ? orgs.size() : 0);
-        model.addAttribute("query", query);
-        model.addAttribute("roles", Role.values());
-        model.addAttribute("isOrganizations", true); // Para ajustar títulos/breadcrumbs si se desea
-
-        if (action != null) {
-            switch (action) {
-                case "view":
-                    if (id != null) {
-                        User user = userService.findById(id).orElse(null);
-                        if (user != null && user.getRole() == Role.ORGANIZATION) {
-                            model.addAttribute("user", user);
-                            model.addAttribute("viewType", "view");
-                            model.addAttribute("isOrganizations", true);
-                            return "admin/users";
-                        }
-                    }
-                    break;
-
-                case "edit":
-                    if (id != null) {
-                        User user = userService.findById(id).orElse(null);
-                        if (user != null && user.getRole() == Role.ORGANIZATION) {
-                            model.addAttribute("user", user);
-                            model.addAttribute("isEdit", true);
-                            model.addAttribute("viewType", "form");
-                            model.addAttribute("isOrganizations", true);
-                            return "admin/users";
-                        }
-                    }
-                    break;
-
-                case "new":
-                    User newOrg = new User();
-                    newOrg.setRole(Role.ORGANIZATION);
-                    newOrg.setPreferredLanguage("es");
-                    newOrg.setActive(true);
-                    model.addAttribute("user", newOrg);
-                    model.addAttribute("isEdit", false);
-                    model.addAttribute("viewType", "form");
-                    model.addAttribute("isOrganizations", true);
-                    return "admin/users";
-            }
-        }
-
-        model.addAttribute("viewType", "list");
-        return "admin/users";
-    }
+    // (Rutas de organizaciones movidas a OrganizationAdminController)
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/users")
@@ -198,6 +130,27 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/users";
+    }
+
+    // (Operaciones POST de organizaciones movidas a OrganizationAdminController)
+
+    // ========== HTMX ENDPOINTS ==========
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/users/form-demo")
+    public String getUserFormDemo(Model model) {
+        User demo = new User();
+        demo.setUsername("org_demo");
+        demo.setEmail("org_demo@example.com");
+        demo.setFirstName("Org");
+        demo.setLastName("Demo");
+        demo.setPreferredLanguage("es");
+        demo.setActive(true);
+        demo.setRole(Role.ORGANIZATION);
+        demo.setAddress("Av. Principal 123, Rivera");
+        demo.setAddressReferences("Frente a la plaza");
+        model.addAttribute("user", demo);
+        model.addAttribute("roles", Role.values());
+        return "admin/users :: userFormFields";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -325,36 +278,7 @@ public class UserController {
         return "redirect:/users/requests";
     }
 
-    // ========== ORG DASHBOARD & PROFILE ==========
-    @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/org/dashboard")
-    public String orgDashboard(Model model) {
-        model.addAttribute("totalOrganizations", 15);
-        model.addAttribute("activeRequests", 8);
-        model.addAttribute("managedMaterials", 6);
-        model.addAttribute("usersServed", 42);
-        return "org/dashboard";
-    }
+    
 
-    @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/org/profile")
-    public String orgProfile(Model model) {
-        model.addAttribute("currentZone", "Barrio Centro (Rivera)");
-        model.addAttribute("currentPhone", "098 123 456");
-        return "org/profile";
-    }
-
-    @PreAuthorize("hasRole('ORGANIZATION')")
-    @PostMapping("/org/profile")
-    public String updateOrgProfile(@RequestParam("zone") String zone,
-                                  @RequestParam("phone") String phone,
-                                  RedirectAttributes redirectAttributes) {
-        try {
-            // Lógica de actualización
-            redirectAttributes.addFlashAttribute("success", "Perfil actualizado correctamente");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar perfil");
-        }
-        return "redirect:/org/profile";
-    }
+    // (Método duplicado eliminado - se usa getUserFormDemo arriba)
 }

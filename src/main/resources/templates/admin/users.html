@@ -122,9 +122,9 @@
                                 th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}">Fecha</td>
                             <td class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">
-                                    <a th:href="@{/admin/users(action='view', id=${user.id})}"
+                                    <a th:href="${isOrganizations} ? @{/admin/organizations(action='view', id=${user.id})} : @{/admin/users(action='view', id=${user.id})}"
                                        class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-blue-700 border-blue-200 flex items-center">Ver</a>
-                                    <a th:href="@{/admin/users(action='edit', id=${user.id})}"
+                                    <a th:href="${isOrganizations} ? @{/admin/organizations(action='edit', id=${user.id})} : @{/admin/users(action='edit', id=${user.id})}"
                                        class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-green-700 border-green-200 flex items-center">Editar</a>
                                     <button onclick="confirmDelete(this)" th:data-id="${user.id}" th:data-name="${user.username}"
                                             class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-red-700 border-red-200 flex items-center">Eliminar</button>
@@ -168,7 +168,7 @@
                     th:text="${isOrganizations} ? (${isEdit} ? 'Editar organización' : 'Alta de organización') : (${isEdit} ? 'Editar usuario' : 'Alta de usuario')">Formulario</h2>
             </div>
             
-            <form th:action="@{/admin/users}" method="post" th:object="${user}" class="px-6 py-3 space-y-3 form-compact">
+            <form th:action="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" method="post" th:object="${user}" class="px-6 py-3 space-y-3 form-compact">
                 <input type="hidden" name="action" value="update" th:if="${isEdit}" />
                 <input type="hidden" name="id" th:value="${isEdit} ? ${user.id} : ''" />
                 <button type="button"
@@ -284,7 +284,7 @@
                 
                 <!-- Actions -->
                 <div class="flex justify-end gap-2 pt-2 border-t border-gray-200">
-                    <a th:href="@{/admin/users}" 
+                    <a th:href="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" 
                        class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm">
                         Cancelar
                     </a>
@@ -317,7 +317,7 @@
                 <div class="flex justify-between items-center">
                     <h2 class="text-lg font-semibold text-gray-900">Detalles del Usuario</h2>
                     <div class="flex space-x-2">
-                        <a th:href="@{/admin/users(action='edit', id=${user.id})}" 
+                        <a th:href="${isOrganizations} ? @{/admin/organizations(action='edit', id=${user.id})} : @{/admin/users(action='edit', id=${user.id})}" 
                            class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 text-sm">
                             Editar
                         </a>
@@ -424,7 +424,7 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         // Lucide icons are initialized globally in the admin layout
         
         // Variables globales
@@ -440,7 +440,8 @@
             
             // Configurar la acción del formulario
             const deleteForm = document.getElementById('deleteForm');
-            deleteForm.action = '/admin/users/delete/' + userId;
+            const basePath = /*[[${isOrganizations} ? '/admin/organizations' : '/admin/users']]]*/ '/admin/users';
+            deleteForm.action = basePath + '/delete/' + userId;
             
             // Mostrar el modal
             document.getElementById('deleteModal').classList.remove('hidden');
