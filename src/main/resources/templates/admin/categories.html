@@ -8,6 +8,7 @@
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
@@ -29,6 +30,27 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:with="
+                      bcItems=${
+                        viewType == 'form' ? 
+                          #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
+                                     {'label':'Categorías','url':@{/admin/categories}},
+                                     {'label': (${category.id} == null ? 'Alta' : 'Editar'), 'url': null}) :
+                          (viewType == 'view' ?
+                            #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
+                                       {'label':'Categorías','url':@{/admin/categories}},
+                                       {'label':'Detalle', 'url': null}) :
+                            #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
+                                       {'label':'Categorías','url':@{/admin/categories}})
+                          )
+                      }
+                    "
+                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Categorías')}">
+        </th:block>
     </div>
 
     <!-- Messages -->
@@ -55,8 +77,17 @@
         
         <!-- List View -->
         <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
                 <h2 class="text-lg font-medium text-gray-900">Lista de Categorías</h2>
+                <!-- Buscador -->
+                <form th:action="@{/admin/categories}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                    <input type="text" name="q" th:value="${query}" placeholder="Buscar por nombre o descripción..."
+                           class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+                    <div class="flex gap-2">
+                        <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
+                        <a th:href="@{/admin/categories}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
+                    </div>
+                </form>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -68,8 +99,8 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr th:each="cat : ${categories}">
+                    <tbody id="categoriesTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr th:each="cat : ${categories}" class="hover:bg-gray-50 odd:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${cat.id}"></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${cat.name}"></td>
                             <td class="px-6 py-4 text-sm text-gray-500" th:text="${cat.description}"></td>
@@ -89,6 +120,20 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Paginación front-end -->
+            <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Filas por página:</span>
+                    <select id="categoriesPageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span id="categoriesPageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+                </div>
+                <div id="categoriesPaginationControls" class="flex items-center gap-1"></div>
+            </div>
         </div>
 
         <!-- Form View -->
@@ -97,24 +142,37 @@
                 <h2 class="text-lg font-medium text-gray-900" th:text="${category.id == null ? 'Nueva Categoría' : 'Editar Categoría'}"></h2>
             </div>
             <form th:action="@{/admin/categories}" method="post" th:object="${category}" class="p-6">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                 <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" name="action" value="save"/>
-                
-                <div class="grid grid-cols-1 gap-6">
+
+                <!-- Fragmento HTMX para campos del formulario -->
+                <div id="category-form-fields" th:fragment="categoryFormFields" th:object="${category}" class="grid grid-cols-1 gap-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
                         <input type="text" th:field="*{name}" id="name" required
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
                     </div>
-                    
+
                     <div>
                         <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
                         <textarea th:field="*{description}" id="description" rows="3"
                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"></textarea>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button"
+                            class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                            hx-get="/admin/categories/form-demo"
+                            hx-target="#category-form-fields"
+                            hx-swap="outerHTML">
+                        Completar campos
+                    </button>
+                    <button type="submit" formmethod="post" th:formaction="@{/admin/categories/form-demo}"
+                            class="px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">
+                        Crear demo
+                    </button>
                     <a th:href="@{/admin/categories}" 
                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
                         Cancelar
@@ -158,6 +216,7 @@
                         Editar
                     </a>
                     <form th:action="@{/admin/categories}" method="post" class="inline">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                         <input type="hidden" name="action" value="delete"/>
                         <input type="hidden" name="id" th:value="${category.id}"/>
                         <button type="submit" onclick="return confirm('¿Estás seguro de eliminar esta categoría?')"
@@ -172,6 +231,81 @@
 
     <script>
         lucide.createIcons();
+        // Paginación front-end simple
+        (function() {
+            const tbody = document.getElementById('categoriesTableBody');
+            if (!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const pageSizeSelect = document.getElementById('categoriesPageSize');
+            const pageInfo = document.getElementById('categoriesPageInfo');
+            const controls = document.getElementById('categoriesPaginationControls');
+
+            let pageSize = parseInt(localStorage.getItem('categories_page_size') || '10', 10);
+            if (![10,25,50,100].includes(pageSize)) pageSize = 10;
+            pageSizeSelect.value = String(pageSize);
+            let currentPage = 1;
+
+            function renderPage() {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / pageSize));
+                if (currentPage > totalPages) currentPage = totalPages;
+                const startIdx = (currentPage - 1) * pageSize;
+                const endIdx = Math.min(startIdx + pageSize, total);
+
+                rows.forEach((tr, idx) => {
+                    tr.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+                });
+
+                if (total === 0) {
+                    pageInfo.textContent = 'Mostrando 0–0 de 0';
+                } else {
+                    pageInfo.textContent = `Mostrando ${startIdx + 1}–${endIdx} de ${total}`;
+                }
+
+                buildControls(totalPages);
+            }
+
+            function buildControls(totalPages) {
+                controls.innerHTML = '';
+                const btnClass = 'px-3 py-1 border rounded-md text-sm hover:bg-gray-50';
+                const activeClass = 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700';
+
+                function addButton(label, disabled, onClick, extraClass = '') {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = label;
+                    btn.className = `${btnClass} ${extraClass}`;
+                    btn.disabled = disabled;
+                    btn.onclick = onClick;
+                    controls.appendChild(btn);
+                }
+
+                addButton('«', currentPage === 1, () => { currentPage = 1; renderPage(); });
+                addButton('‹', currentPage === 1, () => { currentPage--; renderPage(); });
+
+                const maxBtns = 7;
+                let start = Math.max(1, currentPage - Math.floor(maxBtns/2));
+                let end = Math.min(totalPages, start + maxBtns - 1);
+                if (end - start + 1 < maxBtns) {
+                    start = Math.max(1, end - maxBtns + 1);
+                }
+                for (let p = start; p <= end; p++) {
+                    addButton(String(p), false, () => { currentPage = p; renderPage(); }, p === currentPage ? activeClass : '');
+                }
+
+                addButton('›', currentPage === totalPages, () => { currentPage++; renderPage(); });
+                addButton('»', currentPage === totalPages, () => { currentPage = totalPages; renderPage(); });
+            }
+
+            pageSizeSelect.addEventListener('change', () => {
+                pageSize = parseInt(pageSizeSelect.value, 10);
+                localStorage.setItem('categories_page_size', String(pageSize));
+                currentPage = 1;
+                renderPage();
+            });
+
+            renderPage();
+        })();
     </script>
 </body>
 </html>

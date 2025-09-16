@@ -59,6 +59,7 @@ public class CategoryController {
     public String adminCategories(
             @RequestParam(value = "action", required = false) String action,
             @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "q", required = false) String query,
             Model model) {
         
         // Valor por defecto: lista
@@ -68,10 +69,12 @@ public class CategoryController {
         // Determinar tipo de vista según acción
         if ("new".equals(action)) {
             viewType = "form";
+            model.addAttribute("isEdit", false);
             // category ya está inicializado como nuevo
         } else if ("edit".equals(action) && id != null) {
             viewType = "form";
             category = categoryService.getCategoryById(id).orElse(new Category());
+            model.addAttribute("isEdit", true);
         } else if ("view".equals(action) && id != null) {
             viewType = "view";
             category = categoryService.getCategoryById(id).orElse(new Category());
@@ -79,8 +82,18 @@ public class CategoryController {
         
         // Preparar modelo común
         List<Category> allCategories = categoryService.findAll();
+        // Filtro de búsqueda
+        if (query != null && !query.trim().isEmpty()) {
+            String q = query.trim().toLowerCase();
+            allCategories = allCategories.stream().filter(c -> {
+                String name = c.getName() != null ? c.getName().toLowerCase() : "";
+                String description = c.getDescription() != null ? c.getDescription().toLowerCase() : "";
+                return name.contains(q) || description.contains(q);
+            }).toList();
+        }
         prepareCategoryModel(model, allCategories, viewType);
         model.addAttribute("category", category);
+        model.addAttribute("query", query);
         
         return "admin/categories";
     }
@@ -94,8 +107,49 @@ public class CategoryController {
             @RequestParam(value = "action", required = false) String action,
             @ModelAttribute Category category,
             RedirectAttributes redirectAttributes) {
-        
-        
+        try {
+            if ("delete".equals(action) && category.getId() != null) {
+                // Redirigir a endpoint dedicado de delete
+                return "redirect:/admin/categories/delete/" + category.getId();
+            }
+            String message = categoryService.saveCategory(category);
+            redirectAttributes.addFlashAttribute("successMessage", message);
+        } catch (Exception e) {
+            handleCategoryError(e, redirectAttributes, "Error al procesar categoría");
+        }
+        return "redirect:/admin/categories";
+    }
+
+    // ========== HTMX ENDPOINTS ==========
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/categories/form-demo")
+    public String getCategoryFormDemo(Model model) {
+        Category demo = new Category();
+        demo.setName("Residuos Orgánicos");
+        demo.setDescription("Restos de comida y materiales biodegradables aptos para compostaje.");
+        demo.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+        demo.setDisplayOrder(10);
+        demo.setActive(true);
+        model.addAttribute("category", demo);
+        return "admin/categories :: categoryFormFields";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/categories/form-demo")
+    public String createCategoryDemo(RedirectAttributes redirectAttributes) {
+        try {
+            Category demo = new Category();
+            demo.setName("Categoría de Prueba");
+            demo.setDescription("Categoría creada desde el botón 'Completar campos' para demo.");
+            demo.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+            demo.setDisplayOrder(99);
+            demo.setActive(true);
+            categoryService.save(demo);
+            redirectAttributes.addFlashAttribute("successMessage", "Categoría de prueba creada exitosamente");
+        } catch (Exception e) {
+            handleCategoryError(e, redirectAttributes, "Error al crear categoría de prueba");
+        }
         return "redirect:/admin/categories";
     }
 

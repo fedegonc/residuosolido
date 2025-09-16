@@ -3,19 +3,25 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.RequestStatus;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Role;
 import com.residuosolido.app.repository.RequestRepository;
+import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RequestService {
 
     @Autowired
     private RequestRepository requestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Request createRequest(User user, String description, String materials) {
         Request request = new Request();
@@ -104,5 +110,31 @@ public class RequestService {
             return requestRepository.save(request);
         }
         return null;
+    }
+
+    // ====== Organization availability validation ======
+
+    /**
+     * Returns true if there is at least one active organization available to handle requests
+     */
+    public boolean hasActiveOrganizations() {
+        List<User> orgs = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
+        return orgs != null && !orgs.isEmpty();
+    }
+
+    /**
+     * Returns the list of active organizations (users with role ORGANIZATION and active=true)
+     */
+    public List<User> getActiveOrganizations() {
+        return userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
+    }
+
+    /**
+     * Convenience method to expose just organization names for the UI
+     */
+    public List<String> getActiveOrganizationNames() {
+        return getActiveOrganizations().stream()
+                .map(u -> u.getUsername() != null ? u.getUsername() : (u.getFullName() != null ? u.getFullName() : "Organización"))
+                .collect(Collectors.toList());
     }
 }

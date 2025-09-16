@@ -107,6 +107,76 @@ public class UserController {
         return "admin/users";
     }
 
+    // ======== ADMIN ORGANIZATIONS (dedicated route following project patterns) ========
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/organizations")
+    public String adminOrganizations(@RequestParam(required = false) String action,
+                                     @RequestParam(required = false) Long id,
+                                     @RequestParam(required = false, name = "q") String query,
+                                     Model model) {
+        // Lista base: solo organizaciones
+        List<User> orgs = userService.findByRole(Role.ORGANIZATION);
+        if (query != null && !query.trim().isEmpty()) {
+            String qLower = query.trim().toLowerCase();
+            orgs = orgs.stream()
+                    .filter(u -> {
+                        String username = u.getUsername() != null ? u.getUsername().toLowerCase() : "";
+                        String email = u.getEmail() != null ? u.getEmail().toLowerCase() : "";
+                        String fullName = u.getFullName() != null ? u.getFullName().toLowerCase() : "";
+                        return username.contains(qLower) || email.contains(qLower) || fullName.contains(qLower);
+                    })
+                    .toList();
+        }
+        model.addAttribute("users", orgs);
+        model.addAttribute("totalUsers", orgs != null ? orgs.size() : 0);
+        model.addAttribute("query", query);
+        model.addAttribute("roles", Role.values());
+        model.addAttribute("isOrganizations", true); // Para ajustar títulos/breadcrumbs si se desea
+
+        if (action != null) {
+            switch (action) {
+                case "view":
+                    if (id != null) {
+                        User user = userService.findById(id).orElse(null);
+                        if (user != null && user.getRole() == Role.ORGANIZATION) {
+                            model.addAttribute("user", user);
+                            model.addAttribute("viewType", "view");
+                            model.addAttribute("isOrganizations", true);
+                            return "admin/users";
+                        }
+                    }
+                    break;
+
+                case "edit":
+                    if (id != null) {
+                        User user = userService.findById(id).orElse(null);
+                        if (user != null && user.getRole() == Role.ORGANIZATION) {
+                            model.addAttribute("user", user);
+                            model.addAttribute("isEdit", true);
+                            model.addAttribute("viewType", "form");
+                            model.addAttribute("isOrganizations", true);
+                            return "admin/users";
+                        }
+                    }
+                    break;
+
+                case "new":
+                    User newOrg = new User();
+                    newOrg.setRole(Role.ORGANIZATION);
+                    newOrg.setPreferredLanguage("es");
+                    newOrg.setActive(true);
+                    model.addAttribute("user", newOrg);
+                    model.addAttribute("isEdit", false);
+                    model.addAttribute("viewType", "form");
+                    model.addAttribute("isOrganizations", true);
+                    return "admin/users";
+            }
+        }
+
+        model.addAttribute("viewType", "list");
+        return "admin/users";
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/users")
     public String adminSaveUser(@RequestParam(required = false) String action,

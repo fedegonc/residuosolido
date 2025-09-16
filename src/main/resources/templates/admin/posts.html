@@ -1,198 +1,423 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Posts - Admin</title>
-  <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
-  <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Posts - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
 </head>
-<body class="bg-gray-50">
-  <!-- Header -->
-  <div class="bg-white shadow-sm border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-4">
-        <div class="flex items-center space-x-4">
-          <a href="/admin/dashboard" class="text-green-600 hover:text-green-700">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-          </a>
-          <h1 class="text-2xl font-bold text-gray-900">Gestión de Posts</h1>
-        </div>
-        <div th:if="${viewType == 'list'}" class="flex space-x-3">
-          <a th:href="@{/admin/posts(action='new')}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Nuevo Post</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <!-- List View Breadcrumbs -->
+        <th:block th:if="${viewType eq 'list'}"
+                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}})}"
+                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Posts')}">
+        </th:block>
 
-  <!-- Messages -->
-  <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-      <div class="flex items-center">
-        <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
-        <span th:text="${successMessage}"></span>
-      </div>
-    </div>
-  </div>
+        <!-- Form View Breadcrumbs -->
+        <th:block th:if="${viewType eq 'form'}"
+                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':${post.id != null ? 'Editar' : 'Nuevo'},'url':''})}"
+                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, ${post.id != null ? 'Editar Post' : 'Nuevo Post'})}">
+        </th:block>
 
-  <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-      <div class="flex items-center">
-        <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
-        <span th:text="${errorMessage}"></span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-    <!-- LISTA DE POSTS -->
-    <div th:if="${viewType} == 'list'" class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">
-          Posts (<span th:text="${totalPosts}">0</span>)
-        </h2>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Título</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categoría</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr th:each="post : ${posts}" class="hover:bg-gray-50">
-              <td class="px-6 py-4">
-                <div class="flex items-center">
-                  <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center">
-                    <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900" th:text="${post.title}">título</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800" th:text="${post.category?.name}">categoría</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}">fecha</td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div class="flex justify-end space-x-2">
-                  <a th:href="@{/admin/posts(action='edit', id=${post.id})}" class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200">Editar</a>
-                  <button onclick="confirmDelete(this)" th:data-id="${post.id}" th:data-title="${post.title}" class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200">Eliminar</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <!-- View Mode Breadcrumbs -->
+        <th:block th:if="${viewType eq 'view'}"
+                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':'Ver','url':''})}"
+                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Detalles del Post')}">
+        </th:block>
     </div>
 
-    <!-- FORMULARIO POST -->
-    <div th:if="${viewType} == 'form'" class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900" th:text="${isEdit} ? 'Editar Post' : 'Nuevo Post'">Formulario Post</h2>
-      </div>
 
-      <form th:action="@{/admin/posts}" method="post" th:object="${post}" class="p-6 space-y-6">
-        <input type="hidden" th:field="*{id}" />
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Título *</label>
-          <input type="text" th:field="*{title}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
-          <select th:field="*{category}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-            <option value="">Seleccionar categoría</option>
-            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">categoría</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Contenido *</label>
-          <textarea th:field="*{content}" rows="8" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">URL de Imagen</label>
-            <input type="url" th:field="*{imageUrl}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">URL de Fuente</label>
-            <input type="url" th:field="*{sourceUrl}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Fuente</label>
-          <input type="text" th:field="*{sourceName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-        </div>
-
-        <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-          <a th:href="@{/admin/posts}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</a>
-          <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700" th:text="${isEdit} ? 'Actualizar' : 'Crear'">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Delete Modal -->
-  <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white rounded-lg max-w-md w-full">
-        <div class="p-6">
-          <div class="flex items-center">
-            <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600 mr-3"></i>
-            <div>
-              <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
-              <p class="mt-2 text-sm text-gray-500">
-                ¿Eliminar el post <strong id="deletePostTitle"></strong>?
-              </p>
+        <!-- List View -->
+        <div th:if="${viewType eq 'list'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">Lista de Posts (<span th:text="${totalPosts}">0</span>)</h2>
+                <!-- Buscador -->
+                <form th:action="@{/admin/posts}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                    <input type="text" name="q" th:value="${query}" placeholder="Buscar por título, categoría o contenido..."
+                           class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+                    <div class="flex gap-2">
+                        <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
+                        <a th:href="@{/admin/posts}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
+                    </div>
+                </form>
             </div>
-          </div>
+            <div class="overflow-x-auto px-6 py-4">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Título</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Categoría</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Fecha</th>
+                            <th class="px-4 py-2 text-right text-sm font-medium text-gray-700">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="postsTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr th:each="post : ${posts}" class="hover:bg-gray-50 odd:bg-gray-50">
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-10 w-10 rounded bg-blue-100 flex items-center justify-center">
+                                        <i class="fa-solid fa-file-text text-blue-600 text-sm"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900" th:text="${#strings.abbreviate(post.title, 50)}">título</div>
+                                        <div class="text-xs text-gray-500" th:text="${#strings.abbreviate(post.content, 60)}">contenido</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                      th:text="${post.category?.name ?: 'Sin categoría'}">categoría</span>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500" th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex justify-end gap-2">
+                                    <a th:href="@{/admin/posts(action='view', id=${post.id})}"
+                                       class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-blue-700 border-blue-200 flex items-center">Ver</a>
+                                    <a th:href="@{/admin/posts(action='edit', id=${post.id})}"
+                                       class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-green-700 border-green-200 flex items-center">Editar</a>
+                                    <button onclick="confirmDelete(this)" th:data-id="${post.id}" th:data-title="${post.title}"
+                                            class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-red-700 border-red-200 flex items-center">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginación Front-end -->
+            <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Filas por página:</span>
+                    <select id="postsPageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span id="postsPageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+                </div>
+                <div id="postsPaginationControls" class="flex items-center gap-1"></div>
+            </div>
+
+            <!-- Botón 'Nuevo Post' (abajo, alineado a la izquierda) -->
+            <div class="px-6 pb-4 flex justify-start">
+                <a th:if="${viewType eq 'list'}" th:href="@{/admin/posts(action='new')}"
+                   class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
+                    <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+                    <span>Nuevo Post</span>
+                </a>
+            </div>
         </div>
-        <div class="bg-gray-50 px-6 py-3 flex justify-end space-x-3">
-          <button onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
-          <form id="deleteForm" method="post" class="inline">
-            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
-          </form>
+
+        <!-- Form View -->
+        <div th:if="${viewType eq 'form'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900" th:text="${post.id != null ? 'Editar Post' : 'Nuevo Post'}"></h2>
+            </div>
+            <form th:action="@{/admin/posts}" method="post" th:object="${post}" class="px-6 py-3 space-y-3 form-compact">
+                <input type="hidden" th:field="*{id}"/>
+
+                <button type="button"
+                        class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+                        hx-get="/admin/posts/form-demo"
+                        hx-target="#postFormFields"
+                        hx-swap="outerHTML">
+                    Completar campos
+                </button>
+                
+                <div id="postFormFields" th:fragment="postFormFields" th:object="${post}" class="space-y-6">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Título <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" th:field="*{title}" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                    <select th:field="*{category}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <option value="">Seleccionar categoría</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">categoría</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Contenido <span class="text-red-500">*</span>
+                    </label>
+                    <textarea th:field="*{content}" rows="8" required
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">URL de Imagen</label>
+                        <input type="url" th:field="*{imageUrl}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">URL de Fuente</label>
+                        <input type="url" th:field="*{sourceUrl}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Fuente</label>
+                    <input type="text" th:field="*{sourceName}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200">
+                    <a th:href="@{/admin/posts}"
+                       class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
+                        <span th:text="${post.id != null ? 'Actualizar' : 'Crear'}">Guardar</span>
+                    </button>
+                </div>
+            </form>
+            <style>
+                /* Compactar campos del formulario para alinear con la lista */
+                .form-compact input[type="text"],
+                .form-compact input[type="email"],
+                .form-compact input[type="number"],
+                .form-compact input[type="url"],
+                .form-compact input[type="password"],
+                .form-compact select,
+                .form-compact textarea {
+                    padding-top: 0.25rem; /* py-1 */
+                    padding-bottom: 0.25rem;
+                    font-size: 0.875rem; /* text-sm */
+                }
+                .form-compact label { margin-bottom: 0.25rem; } /* mb-1 */
+            </style>
         </div>
-      </div>
+
+        <!-- View Mode -->
+        <div th:if="${viewType eq 'view'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-gray-900">Detalles del Post</h2>
+                    <div class="flex space-x-2">
+                        <a th:href="@{/admin/posts(action='edit', id=${post.id})}"
+                           class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-edit text-xs"></i>
+                            <span>Editar</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">ID</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${post.id}"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Título</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${post.title}"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Categoría</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${post.category?.name ?: 'Sin categoría'}"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Fecha de creación</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-500">Contenido</label>
+                    <p class="mt-1 text-sm text-gray-900 bg-gray-50 p-4 rounded-md" th:text="${post.content}"></p>
+                </div>
+
+                <div th:if="${post.imageUrl}" class="mt-6">
+                    <label class="block text-sm font-medium text-gray-500">Imagen</label>
+                    <div class="mt-1">
+                        <img th:src="${post.imageUrl}" alt="Post image" class="max-w-md rounded-md shadow-sm">
+                    </div>
+                </div>
+
+                <div th:if="${post.sourceUrl or post.sourceName}" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div th:if="${post.sourceUrl}">
+                        <label class="block text-sm font-medium text-gray-500">URL de Fuente</label>
+                        <a th:href="${post.sourceUrl}" target="_blank" class="mt-1 text-sm text-blue-600 hover:text-blue-800" th:text="${post.sourceUrl}"></a>
+                    </div>
+                    <div th:if="${post.sourceName}">
+                        <label class="block text-sm font-medium text-gray-500">Nombre de Fuente</label>
+                        <p class="mt-1 text-sm text-gray-900" th:text="${post.sourceName}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
+                <a th:href="@{/admin/posts}"
+                   class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span>Volver</span>
+                </a>
+
+                <form th:action="@{/admin/posts}" method="post" class="inline">
+                    <input type="hidden" name="action" value="delete"/>
+                    <input type="hidden" name="id" th:value="${post.id}"/>
+                    <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este post?')"
+                            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                        <span>Eliminar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-md w-full">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    ¿Estás seguro de que deseas eliminar este post?
+                                    Esta acción no se puede deshacer.
+                                </p>
+                                <p class="mt-2 text-sm text-gray-700">
+                                    <strong>Título:</strong> <span id="deletePostTitle"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-3 flex justify-end space-x-3">
+                        <button onclick="closeDeleteModal()" 
+                                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <form id="deleteForm" method="post" class="inline">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    lucide.createIcons();
+    <script>
+        // Variables globales
+        let currentPostId;
+        
+        // Delete confirmation
+        function confirmDelete(button) {
+            const postId = button.getAttribute('data-id');
+            const postTitle = button.getAttribute('data-title');
+            
+            // Actualizar el título del post en el modal
+            document.getElementById('deletePostTitle').textContent = postTitle;
+            
+            // Configurar la acción del formulario
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '/admin/posts';
+            
+            // Mostrar el modal
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+        
+        // Close modal on outside click
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
 
-    function confirmDelete(button) {
-      const id = button.getAttribute('data-id');
-      const title = button.getAttribute('data-title');
-      document.getElementById('deletePostTitle').textContent = title;
-      document.getElementById('deleteForm').action = '/admin/posts/delete/' + id;
-      document.getElementById('deleteModal').classList.remove('hidden');
-    }
+        // Paginación Front-end (Posts)
+        (function() {
+            const tbody = document.getElementById('postsTableBody');
+            if (!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const pageSizeSelect = document.getElementById('postsPageSize');
+            const pageInfo = document.getElementById('postsPageInfo');
+            const controls = document.getElementById('postsPaginationControls');
 
-    function closeDeleteModal() {
-      document.getElementById('deleteModal').classList.add('hidden');
-    }
+            let pageSize = parseInt(localStorage.getItem('posts_page_size') || '10', 10);
+            if (![10,25,50,100].includes(pageSize)) pageSize = 10;
+            pageSizeSelect.value = String(pageSize);
+            let currentPage = 1;
 
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-      if (e.target === this) closeDeleteModal();
-    });
-  </script>
-</body>
-</html>
+            function renderPage() {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / pageSize));
+                if (currentPage > totalPages) currentPage = totalPages;
+                const startIdx = (currentPage - 1) * pageSize;
+                const endIdx = Math.min(startIdx + pageSize, total);
+
+                rows.forEach((tr, idx) => {
+                    tr.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+                });
+
+                pageInfo.textContent = total === 0 ? 'Mostrando 0–0 de 0' : `Mostrando ${startIdx + 1}–${endIdx} de ${total}`;
+                buildControls(totalPages);
+            }
+
+            function buildControls(totalPages) {
+                controls.innerHTML = '';
+                const btnClass = 'px-3 py-1 border rounded-md text-sm hover:bg-gray-50';
+                const activeClass = 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700';
+                function addButton(label, disabled, onClick, extraClass = '') {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = label;
+                    btn.className = `${btnClass} ${extraClass}`;
+                    btn.disabled = disabled;
+                    btn.onclick = onClick;
+                    controls.appendChild(btn);
+                }
+                addButton('«', currentPage === 1, () => { currentPage = 1; renderPage(); });
+                addButton('‹', currentPage === 1, () => { currentPage--; renderPage(); });
+                const maxBtns = 7;
+                let start = Math.max(1, currentPage - Math.floor(maxBtns/2));
+                let end = Math.min(totalPages, start + maxBtns - 1);
+                if (end - start + 1 < maxBtns) start = Math.max(1, end - maxBtns + 1);
+                for (let p = start; p <= end; p++) {
+                    addButton(String(p), false, () => { currentPage = p; renderPage(); }, p === currentPage ? activeClass : '');
+                }
+                addButton('›', currentPage === totalPages, () => { currentPage++; renderPage(); });
+                addButton('»', currentPage === totalPages, () => { currentPage = totalPages; renderPage(); });
+            }
+
+            pageSizeSelect.addEventListener('change', () => {
+                pageSize = parseInt(pageSizeSelect.value, 10);
+                localStorage.setItem('posts_page_size', String(pageSize));
+                currentPage = 1;
+                renderPage();
+            });
+
+            renderPage();
+        })();
+    </script>

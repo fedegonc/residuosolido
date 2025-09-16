@@ -8,20 +8,33 @@
   <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-</head>
-<body class="bg-gray-50">
-  <!-- Header -->
-  <div class="bg-white shadow-sm border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-4">
-        <div class="flex items-center space-x-4">
-          <a href="/dashboard" class="text-green-600 hover:text-green-700">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-          </a>
-          <h1 class="text-2xl font-bold text-gray-900">Gestión de Solicitudes</h1>
-        </div>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+ </head>
+ <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+ <main>
+  <!-- Header inline title to match other admin pages -->
+  <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+    <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
+      <div class="ml-4 mt-2">
+        <h1 class="text-2xl font-bold text-gray-900">Gestión de Solicitudes</h1>
       </div>
     </div>
+  </div>
+
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <th:block th:with="
+                  bcItems=${
+                    viewType == 'form' ? 
+                      #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
+                                 {'label':'Solicitudes','url':@{/admin/requests}},
+                                 {'label':'Gestionar', 'url': null}) :
+                      #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
+                                 {'label':'Solicitudes','url':@{/admin/requests}})
+                  }
+                "
+              th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Solicitudes')}">
+    </th:block>
   </div>
 
   <!-- Messages -->
@@ -47,16 +60,23 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     <!-- LISTA DE SOLICITUDES -->
-    <div th:if="${viewType} == 'list'" class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold text-gray-900">
-            Solicitudes de recolección (<span th:text="${totalRequests}">0</span>)
-          </h2>
-        </div>
+    <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+        <h2 class="text-lg font-semibold text-gray-900">
+          Solicitudes de recolección (<span th:text="${totalRequests}">0</span>)
+        </h2>
+        <!-- Buscador -->
+        <form th:action="@{/admin/requests}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+          <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, materiales, dirección, estado o fecha..."
+                 class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+          <div class="flex gap-2">
+            <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
+            <a th:href="@{/admin/requests}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
+          </div>
+        </form>
       </div>
 
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto px-6 py-4">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -68,8 +88,8 @@
               <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr th:each="request : ${requests}" class="hover:bg-gray-50">
+          <tbody id="requestsTableBody" class="bg-white divide-y divide-gray-200">
+            <tr th:each="request : ${requests}" class="hover:bg-gray-50 odd:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10">
@@ -111,69 +131,123 @@
           </tbody>
         </table>
       </div>
+      <!-- Paginación front-end -->
+      <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <span>Filas por página:</span>
+          <select id="requestsPageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span id="requestsPageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+        </div>
+        <div id="requestsPaginationControls" class="flex items-center gap-1"></div>
+      </div>
+      <!-- Botón 'Nueva Solicitud' (opcional, mismo lugar que 'Alta de usuario') -->
+      <div class="px-6 pb-4 flex justify-start">
+        <a th:if="${showCreateButton}" th:href="@{/admin/requests(action='new')}"
+           class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Nueva Solicitud</span>
+        </a>
+      </div>
     </div>
 
     <!-- FORMULARIO SOLICITUD -->
-    <div th:if="${viewType} == 'form'" class="bg-white rounded-lg shadow">
+    <div th:if="${viewType == 'form'}" class="bg-white rounded-lg shadow">
       <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">Gestionar Solicitud</h2>
+        <h2 class="text-lg font-semibold text-gray-900" th:text="${isCreate} ? 'Nueva Solicitud' : 'Gestionar Solicitud'">Gestionar Solicitud</h2>
       </div>
 
       <form th:action="@{/admin/requests}" method="post" th:object="${request}" class="p-6 space-y-6">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <input type="hidden" th:field="*{id}" />
 
-        <!-- Información de la solicitud (readonly) -->
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <h3 class="text-sm font-medium text-gray-900 mb-3">Información de la Solicitud</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <span class="text-gray-500">Usuario:</span>
-              <span class="ml-2 font-medium" th:text="${request.user?.username}">usuario</span>
-            </div>
-            <div>
-              <span class="text-gray-500">Fecha creación:</span>
-              <span class="ml-2" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</span>
-            </div>
-            <div>
-              <span class="text-gray-500">Dirección:</span>
-              <span class="ml-2" th:text="${request.collectionAddress}">dirección</span>
-            </div>
-            <div>
-              <span class="text-gray-500">Fecha programada:</span>
-              <span class="ml-2" th:text="${request.scheduledDate != null ? #temporals.format(request.scheduledDate, 'dd/MM/yyyy') : 'No programada'}">fecha</span>
-            </div>
-            <div class="md:col-span-2">
-              <span class="text-gray-500">Materiales:</span>
-              <span class="ml-2" th:text="${request.materialsAsString}">materiales</span>
-            </div>
-            <div class="md:col-span-2" th:if="${request.description}">
-              <span class="text-gray-500">Descripción:</span>
-              <p class="ml-2 mt-1" th:text="${request.description}">descripción</p>
-            </div>
-          </div>
+        <!-- Botones HTMX para completar o crear demo -->
+        <div class="flex justify-end gap-2">
+          <button type="button"
+                  class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+                  hx-get="/admin/requests/form-demo"
+                  hx-target="#request-form-fields"
+                  hx-swap="outerHTML">
+            Completar campos
+          </button>
+          <button type="submit" formmethod="post" th:formaction="@{/admin/requests/form-demo}"
+                  class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">
+            Crear demo
+          </button>
         </div>
 
-        <!-- Campos editables -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Fragmento con campos del formulario (dinámico para HTMX) -->
+        <div id="request-form-fields" th:fragment="requestFormFields" th:object="${request}" class="space-y-6">
+          <!-- Información de la solicitud (readonly o inputs en modo crear) -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-sm font-medium text-gray-900 mb-3">Información de la Solicitud</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-gray-500">Usuario:</span>
+                <span class="ml-2 font-medium" th:unless="${isCreate}" th:text="${request.user?.username}">usuario</span>
+                <select th:if="${isCreate}" name="userId"
+                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                  <option value="" selected>Seleccionar usuario</option>
+                  <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.username}"></option>
+                </select>
+              </div>
+              <div>
+                <span class="text-gray-500">Fecha creación:</span>
+                <span class="ml-2" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</span>
+              </div>
+              <div th:if="${isCreate}" class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Organización</label>
+                <select name="organizationId"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                  <option value="" selected>Seleccionar organización</option>
+                  <option th:each="o : ${organizations}" th:value="${o.id}" th:text="${o.username}"></option>
+                </select>
+                <p th:if="${organizations == null or #lists.isEmpty(organizations)}" class="mt-1 text-xs text-gray-500">No hay organizaciones activas registradas aún.</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                <input type="text" th:field="*{collectionAddress}" placeholder="Dirección de recolección"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fecha programada</label>
+                <input type="date" th:field="*{scheduledDate}"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <textarea th:field="*{description}" rows="2" placeholder="Detalle de los residuos..."
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campos editables -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
+              <select name="status" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <option th:value="PENDING" th:selected="${request.status.name() == 'PENDING'}">Pendiente</option>
+                <option th:value="ACCEPTED" th:selected="${request.status.name() == 'ACCEPTED'}">Aceptada</option>
+                <option th:value="COMPLETED" th:selected="${request.status.name() == 'COMPLETED'}">Completada</option>
+                <option th:value="REJECTED" th:selected="${request.status.name() == 'REJECTED'}">Rechazada</option>
+              </select>
+            </div>
+          </div>
+
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
-            <select name="status" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-              <option th:value="PENDING" th:selected="${request.status.name() == 'PENDING'}">Pendiente</option>
-              <option th:value="ACCEPTED" th:selected="${request.status.name() == 'ACCEPTED'}">Aceptada</option>
-              <option th:value="COMPLETED" th:selected="${request.status.name() == 'COMPLETED'}">Completada</option>
-              <option th:value="REJECTED" th:selected="${request.status.name() == 'REJECTED'}">Rechazada</option>
-            </select>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Notas del Administrador</label>
+            <textarea th:field="*{notes}" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Agregar notas sobre el estado de la solicitud..."></textarea>
           </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Notas del Administrador</label>
-          <textarea name="notes" rows="4" th:text="${request.notes}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Agregar notas sobre el estado de la solicitud..."></textarea>
         </div>
 
         <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
           <a th:href="@{/admin/requests}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</a>
-          <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Actualizar</button>
+          <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700" th:text="${isCreate} ? 'Crear' : 'Actualizar'">Actualizar</button>
         </div>
       </form>
     </div>
@@ -210,6 +284,81 @@
 
   <script>
     lucide.createIcons();
+    // Paginación front-end simple
+    (function() {
+      const tbody = document.getElementById('requestsTableBody');
+      if (!tbody) return;
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const pageSizeSelect = document.getElementById('requestsPageSize');
+      const pageInfo = document.getElementById('requestsPageInfo');
+      const controls = document.getElementById('requestsPaginationControls');
+
+      let pageSize = parseInt(localStorage.getItem('requests_page_size') || '10', 10);
+      if (![10,25,50,100].includes(pageSize)) pageSize = 10;
+      pageSizeSelect.value = String(pageSize);
+      let currentPage = 1;
+
+      function renderPage() {
+        const total = rows.length;
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const startIdx = (currentPage - 1) * pageSize;
+        const endIdx = Math.min(startIdx + pageSize, total);
+
+        rows.forEach((tr, idx) => {
+          tr.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+
+        if (total === 0) {
+          pageInfo.textContent = 'Mostrando 0–0 de 0';
+        } else {
+          pageInfo.textContent = `Mostrando ${startIdx + 1}–${endIdx} de ${total}`;
+        }
+
+        buildControls(totalPages);
+      }
+
+      function buildControls(totalPages) {
+        controls.innerHTML = '';
+        const btnClass = 'px-3 py-1 border rounded-md text-sm hover:bg-gray-50';
+        const activeClass = 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700';
+
+        function addButton(label, disabled, onClick, extraClass = '') {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = label;
+          btn.className = `${btnClass} ${extraClass}`;
+          btn.disabled = disabled;
+          btn.onclick = onClick;
+          controls.appendChild(btn);
+        }
+
+        addButton('«', currentPage === 1, () => { currentPage = 1; renderPage(); });
+        addButton('‹', currentPage === 1, () => { currentPage--; renderPage(); });
+
+        const maxBtns = 7;
+        let start = Math.max(1, currentPage - Math.floor(maxBtns/2));
+        let end = Math.min(totalPages, start + maxBtns - 1);
+        if (end - start + 1 < maxBtns) {
+          start = Math.max(1, end - maxBtns + 1);
+        }
+        for (let p = start; p <= end; p++) {
+          addButton(String(p), false, () => { currentPage = p; renderPage(); }, p === currentPage ? activeClass : '');
+        }
+
+        addButton('›', currentPage === totalPages, () => { currentPage++; renderPage(); });
+        addButton('»', currentPage === totalPages, () => { currentPage = totalPages; renderPage(); });
+      }
+
+      pageSizeSelect.addEventListener('change', () => {
+        pageSize = parseInt(pageSizeSelect.value, 10);
+        localStorage.setItem('requests_page_size', String(pageSize));
+        currentPage = 1;
+        renderPage();
+      });
+
+      renderPage();
+    })();
 
     function confirmDelete(button) {
       const id = button.getAttribute('data-id');
@@ -230,5 +379,6 @@
       }
     });
   </script>
-</body>
-</html>
+ </main>
+ </body>
+ </html>

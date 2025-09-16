@@ -80,7 +80,13 @@
       <version>3.2.1</version>
     </dependency>
 
-  
+    <!-- Font Awesome 6 via WebJars (npm: @fortawesome/fontawesome-free) -->
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>fortawesome__fontawesome-free</artifactId>
+      <version>6.5.2</version>
+    </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>

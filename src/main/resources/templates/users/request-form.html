@@ -24,6 +24,31 @@
 
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Alerta cuando no hay organizaciones disponibles -->
+        <div th:if="${noOrganizationsAvailable}" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+            <div class="flex items-center">
+                <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
+                <div>
+                    <h3 class="font-medium">No hay organizaciones disponibles</h3>
+                    <p class="text-sm mt-1">Actualmente no hay organizaciones registradas para procesar solicitudes de recolección. Por favor, inténtalo más tarde o contacta al administrador del sistema.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información sobre organizaciones disponibles -->
+        <div th:if="${availableOrganizations != null and #lists.size(availableOrganizations) > 0}" class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-6">
+            <div class="flex items-center">
+                <i data-lucide="info" class="w-5 h-5 mr-2"></i>
+                <div>
+                    <h3 class="font-medium">Organizaciones disponibles para recolección</h3>
+                    <p class="text-sm mt-1">
+                        Hay <span th:text="${#lists.size(availableOrganizations)}">0</span> organizaciones disponibles: 
+                        <span th:text="${#strings.listJoin(availableOrganizations, ', ')}">organizaciones</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white rounded-lg shadow p-6">
             <form action="/users/requests" method="post" class="space-y-6">
                 <div>
@@ -85,9 +110,11 @@
                     <a href="/users/requests" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
                         Cancelar
                     </a>
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors">
+                    <button type="submit" 
+                            th:disabled="${noOrganizationsAvailable}"
+                            th:class="${noOrganizationsAvailable} ? 'bg-gray-400 cursor-not-allowed text-white px-6 py-2 rounded-md' : 'bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors'">
                         <i data-lucide="send" class="w-4 h-4 mr-2 inline"></i>
-                        Enviar Solicitud
+                        <span th:text="${noOrganizationsAvailable} ? 'No disponible' : 'Enviar Solicitud'">Enviar Solicitud</span>
                     </button>
                 </div>
             </form>

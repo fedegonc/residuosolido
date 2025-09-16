@@ -61,6 +61,7 @@ public class MaterialController {
     public String adminMaterials(
             @RequestParam(value = "action", required = false) String action,
             @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "q", required = false) String query,
             Model model) {
         
         // Valor por defecto: lista
@@ -70,10 +71,12 @@ public class MaterialController {
         // Determinar tipo de vista según acción
         if ("new".equals(action)) {
             viewType = "form";
+            model.addAttribute("isEdit", false);
             // material ya está inicializado como nuevo
         } else if ("edit".equals(action) && id != null) {
             viewType = "form";
             material = materialService.findById(id).orElse(new Material());
+            model.addAttribute("isEdit", true);
         } else if ("view".equals(action) && id != null) {
             viewType = "view";
             material = materialService.findById(id).orElse(new Material());
@@ -81,8 +84,19 @@ public class MaterialController {
         
         // Preparar modelo común
         List<Material> allMaterials = materialService.findAll();
+        // Aplicar filtro de búsqueda si hay query
+        if (query != null && !query.trim().isEmpty()) {
+            String q = query.trim().toLowerCase();
+            allMaterials = allMaterials.stream().filter(m -> {
+                String name = m.getName() != null ? m.getName().toLowerCase() : "";
+                String description = m.getDescription() != null ? m.getDescription().toLowerCase() : "";
+                String category = m.getCategory() != null ? m.getCategory().toLowerCase() : "";
+                return name.contains(q) || description.contains(q) || category.contains(q);
+            }).toList();
+        }
         prepareMaterialModel(model, allMaterials, viewType);
         model.addAttribute("material", material);
+        model.addAttribute("query", query);
         
         return "admin/materials";
     }
@@ -112,6 +126,39 @@ public class MaterialController {
             handleMaterialError(e, redirectAttributes, "Error al procesar material");
         }
         
+        return "redirect:/admin/materials";
+    }
+
+    // ========== HTMX ENDPOINTS ==========
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/materials/form-demo")
+    public String getMaterialFormDemo(Model model) {
+        Material demo = new Material();
+        demo.setName("Plástico PET (Botellas)");
+        demo.setDescription("El PET es un plástico común utilizado en botellas y envases de bebidas. Es altamente reciclable y debe limpiarse antes de su disposición en el contenedor de reciclaje.");
+        demo.setCategory("Plástico");
+
+        model.addAttribute("material", demo);
+        return "admin/materials :: materialFormFields";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/materials/form-demo")
+    public String createMaterialDemo(RedirectAttributes redirectAttributes) {
+        try {
+            Material demo = new Material();
+            demo.setName("Material de Prueba - Cartón");
+            demo.setDescription("Este es un material de prueba creado desde el botón 'Completar campos'. Ideal para simular el flujo de creación en el panel de administración.");
+            demo.setCategory("Papel y Cartón");
+            demo.setActive(true);
+
+            materialService.save(demo);
+            redirectAttributes.addFlashAttribute("successMessage", "Material de prueba creado exitosamente");
+        } catch (Exception e) {
+            handleMaterialError(e, redirectAttributes, "Error al crear material de prueba");
+        }
+
         return "redirect:/admin/materials";
     }
 

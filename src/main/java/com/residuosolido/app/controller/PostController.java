@@ -68,6 +68,7 @@ public class PostController {
     public String adminPosts(
             @RequestParam(value = "action", required = false) String action,
             @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "q", required = false) String query,
             Model model) {
         
         // Valor por defecto: lista
@@ -88,9 +89,23 @@ public class PostController {
         
         // Preparar modelo común
         List<Post> allPosts = postService.findAll();
+        
+        // Aplicar filtro de búsqueda si hay query
+        if (query != null && !query.trim().isEmpty()) {
+            String q = query.trim().toLowerCase();
+            allPosts = allPosts.stream().filter(p -> {
+                String title = p.getTitle() != null ? p.getTitle().toLowerCase() : "";
+                String content = p.getContent() != null ? p.getContent().toLowerCase() : "";
+                String categoryName = p.getCategory() != null && p.getCategory().getName() != null ? p.getCategory().getName().toLowerCase() : "";
+                String created = p.getCreatedAt() != null ? p.getCreatedAt().toString().toLowerCase() : "";
+                return title.contains(q) || content.contains(q) || categoryName.contains(q) || created.contains(q);
+            }).toList();
+        }
+        
         preparePostModel(model, allPosts, viewType);
         model.addAttribute("post", post);
         model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("query", query);
         
         return "admin/posts";
     }
@@ -132,21 +147,46 @@ public class PostController {
         return "redirect:/admin/posts";
     }
 
-    /**
-     * Elimina un post por ID (admin)
-     */
+    // ========== HTMX ENDPOINTS ==========
+
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/posts/delete/{id}")
-    public String adminDeletePost(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
+    @GetMapping("/admin/posts/form-demo")
+    public String getPostFormDemo(Model model) {
+        Post demoPost = new Post();
+        demoPost.setTitle("Cómo reducir residuos en el hogar");
+        demoPost.setContent("En la actualidad, la gestión adecuada de los residuos sólidos se ha convertido en un tema de vital importancia para el cuidado del medio ambiente. Implementar prácticas sostenibles en nuestros hogares puede marcar una gran diferencia en la reducción de la contaminación y la conservación de recursos naturales.\n\nUna de las estrategias más efectivas es la separación de residuos en origen. Esto implica clasificar los materiales reciclables desde el momento en que se generan, facilitando así su posterior tratamiento y reutilización. Papel, cartón, plástico, vidrio y metal son algunos de los materiales que pueden ser reciclados fácilmente.\n\nOtra práctica recomendada es la reducción del consumo de productos desechables. Optar por alternativas reutilizables como bolsas de tela, botellas de agua recargables y contenedores para alimentos puede disminuir significativamente la generación de residuos.\n\nLa compostación de residuos orgánicos es también una excelente opción para quienes tienen espacio disponible. Este proceso permite transformar restos de alimentos y jardín en abono natural, reduciendo la cantidad de basura destinada a vertederos.\n\nImplementar estas medidas no solo contribuye al cuidado del planeta, sino que también puede generar ahorros económicos a largo plazo. Cada pequeño cambio cuenta en la construcción de un futuro más sostenible.");
+        demoPost.setSourceUrl("https://www.epa.gov/recycle/reducing-waste-what-you-can-do");
+        demoPost.setSourceName("Environmental Protection Agency");
+
+        model.addAttribute("post", demoPost);
+        model.addAttribute("categories", categoryService.findAll());
+        return "admin/posts :: postFormFields";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/posts/form-demo")
+    public String createPostDemo(@ModelAttribute Post post, RedirectAttributes redirectAttributes) {
         try {
-            postService.deleteById(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Post eliminado correctamente");
+            // Crear post de prueba con datos demo
+            Post demoPost = new Post();
+            demoPost.setTitle("Post de Prueba - Gestión de Residuos");
+            demoPost.setContent("Este es un post de prueba creado desde el botón 'Completar campos'. Contiene información sobre buenas prácticas para la gestión sostenible de residuos sólidos en entornos urbanos y rurales.\n\nLa correcta separación de residuos permite optimizar los procesos de reciclaje y reducir la contaminación ambiental. Implementar sistemas de recolección selectiva en comunidades contribuye significativamente a la preservación del medio ambiente.\n\nEs fundamental educar a la población sobre la importancia de estas prácticas para lograr un cambio sostenible a largo plazo.");
+            demoPost.setSourceUrl("https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health");
+            demoPost.setSourceName("Organización Mundial de la Salud");
+
+            // Asignar primera categoría disponible si existe
+            List<Category> categories = categoryService.findAll();
+            if (!categories.isEmpty()) {
+                demoPost.setCategory(categories.get(0));
+            }
+
+            postService.save(demoPost);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Post de prueba creado exitosamente");
         } catch (Exception e) {
-            handlePostError(e, redirectAttributes, "Error al eliminar post");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al crear post de prueba: " + e.getMessage());
         }
-        
+
         return "redirect:/admin/posts";
     }
 

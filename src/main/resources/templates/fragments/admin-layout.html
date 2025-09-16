@@ -44,7 +44,7 @@
     </nav>
     
     <!-- Main Content -->
-    <main class="flex-1">
+    <main class="flex-1 flex flex-col">
         <!-- Mensajes Flash (solo se muestran si existen) -->
         <div th:if="${successMessage != null or errorMessage != null or warningMessage != null or infoMessage != null}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
             <!-- Mensaje de éxito -->

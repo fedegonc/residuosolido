@@ -63,21 +63,50 @@ public class RequestController {
     public String adminRequests(
             @RequestParam(required = false) String action,
             @RequestParam(required = false) Long id,
+            @RequestParam(value = "q", required = false) String query,
             Model model) {
         
+        // Modo creación (nuevo)
+        if ("new".equals(action)) {
+            model.addAttribute("request", new Request());
+            model.addAttribute("viewType", "form");
+            // Lista de usuarios finales para seleccionar en el form de alta
+            model.addAttribute("users", userService.findByRole(com.residuosolido.app.model.Role.USER));
+            // Lista de organizaciones activas para seleccionar en el form de alta
+            model.addAttribute("organizations", requestService.getActiveOrganizations());
+            model.addAttribute("isCreate", true);
+            return "admin/requests";
+        }
+
         // Modo edición
         if ("edit".equals(action) && id != null) {
             Optional<Request> requestOpt = requestService.findById(id);
             if (requestOpt.isPresent()) {
                 model.addAttribute("request", requestOpt.get());
                 model.addAttribute("viewType", "form");
+                model.addAttribute("isCreate", false);
                 return "admin/requests";
             }
         }
-        
+
         // Modo lista (por defecto)
         List<Request> allRequests = requestService.findAll();
+        // Filtro de búsqueda (usuario, dirección, materiales, estado, fecha)
+        if (query != null && !query.trim().isEmpty()) {
+            String q = query.trim().toLowerCase();
+            allRequests = allRequests.stream().filter(r -> {
+                String username = (r.getUser() != null && r.getUser().getUsername() != null) ? r.getUser().getUsername().toLowerCase() : "";
+                String address = r.getCollectionAddress() != null ? r.getCollectionAddress().toLowerCase() : "";
+                String materials = r.getMaterialsAsString() != null ? r.getMaterialsAsString().toLowerCase() : "";
+                String status = r.getStatus() != null ? r.getStatus().name().toLowerCase() : "";
+                String created = r.getCreatedAt() != null ? r.getCreatedAt().toString().toLowerCase() : "";
+                return username.contains(q) || address.contains(q) || materials.contains(q) || status.contains(q) || created.contains(q);
+            }).toList();
+        }
         prepareRequestModel(model, allRequests, "list");
+        model.addAttribute("query", query);
+        // Mostrar botón 'Nueva Solicitud' en la lista (misma ubicación que 'Alta de usuario')
+        model.addAttribute("showCreateButton", true);
         return "admin/requests";
     }
 
@@ -88,19 +117,96 @@ public class RequestController {
     @PostMapping("/admin/requests")
     public String adminUpdateRequest(
             @ModelAttribute Request request,
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "organizationId", required = false) Long organizationId,
             RedirectAttributes redirectAttributes) {
         try {
-            // Obtener solicitud original para preservar datos no modificables
-            Optional<Request> originalRequest = requestService.findById(request.getId());
-            if (originalRequest.isPresent()) {
-                Request updatedRequest = originalRequest.get();
-                updatedRequest.setStatus(request.getStatus());
-                updatedRequest.setNotes(request.getNotes());
-                requestService.save(updatedRequest);
-                redirectAttributes.addFlashAttribute("successMessage", "Solicitud actualizada correctamente");
+            // Crear nueva
+            if (request.getId() == null) {
+                // Validación: debe existir al menos una organización activa
+                if (!requestService.hasActiveOrganizations()) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "No es posible crear la solicitud: no hay organizaciones disponibles para realizar la recolección en este momento.");
+                    return "redirect:/admin/requests?action=new";
+                }
+                if (userId == null) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Seleccione un usuario para crear la solicitud.");
+                    return "redirect:/admin/requests?action=new";
+                }
+                User user = userService.getUserOrThrow(userId);
+                request.setUser(user);
+                // Organización seleccionada (opcional mientras no exista relación en el modelo)
+                if (organizationId != null) {
+                    try {
+                        User org = userService.getUserOrThrow(organizationId);
+                        // Validación básica de rol
+                        // Nota: Asignación real se realizará cuando exista relación en el modelo.
+                        String orgName = org.getUsername() != null ? org.getUsername() : String.valueOf(org.getId());
+                        String prefix = request.getNotes() != null ? request.getNotes() + "\n" : "";
+                        request.setNotes(prefix + "Organización seleccionada: " + orgName);
+                    } catch (Exception ignored) { }
+                }
+                if (request.getStatus() == null) request.setStatus(RequestStatus.PENDING);
+                requestService.save(request);
+                redirectAttributes.addFlashAttribute("successMessage", "Solicitud creada correctamente");
+            } else {
+                // Actualizar existente: preservar campos no editables
+                Optional<Request> originalRequest = requestService.findById(request.getId());
+                if (originalRequest.isPresent()) {
+                    Request updatedRequest = originalRequest.get();
+                    updatedRequest.setStatus(request.getStatus());
+                    updatedRequest.setNotes(request.getNotes());
+                    updatedRequest.setScheduledDate(request.getScheduledDate());
+                    requestService.save(updatedRequest);
+                    redirectAttributes.addFlashAttribute("successMessage", "Solicitud actualizada correctamente");
+                }
             }
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al actualizar solicitud");
+        }
+        return "redirect:/admin/requests";
+    }
+
+    // ========== HTMX FORM DEMO (ADMIN) ==========
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/requests/form-demo")
+    public String getRequestFormDemo(Model model) {
+        Request demo = new Request();
+        demo.setCollectionAddress("Av. Principal 123, Rivera");
+        demo.setDescription("Residuos reciclables: plásticos y cartón.");
+        demo.setScheduledDate(java.time.LocalDate.now().plusDays(3));
+        demo.setStatus(RequestStatus.PENDING);
+        demo.setNotes("Prioridad normal. Coordinar con organización disponible.");
+        model.addAttribute("request", demo);
+        // También se necesita la lista de usuarios para el select en modo crear
+        model.addAttribute("users", userService.findByRole(com.residuosolido.app.model.Role.USER));
+        // y la lista de organizaciones activas
+        model.addAttribute("organizations", requestService.getActiveOrganizations());
+        model.addAttribute("isCreate", true);
+        return "admin/requests :: requestFormFields";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/requests/form-demo")
+    public String createRequestDemo(RedirectAttributes redirectAttributes) {
+        try {
+            // Usar el primer usuario ROLE.USER disponible para la demo
+            java.util.List<User> users = userService.findByRole(com.residuosolido.app.model.Role.USER);
+            if (users == null || users.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "No hay usuarios disponibles para crear una solicitud demo.");
+                return "redirect:/admin/requests";
+            }
+            User u = users.get(0);
+            Request demo = new Request();
+            demo.setUser(u);
+            demo.setCollectionAddress("Av. Principal 123, Rivera");
+            demo.setDescription("Residuos reciclables: plásticos y cartón.");
+            demo.setScheduledDate(java.time.LocalDate.now().plusDays(3));
+            demo.setStatus(RequestStatus.PENDING);
+            demo.setNotes("Solicitud creada automáticamente para demo.");
+            requestService.save(demo);
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud demo creada correctamente");
+        } catch (Exception e) {
+            handleRequestError(e, redirectAttributes, "Error al crear solicitud demo");
         }
         return "redirect:/admin/requests";
     }
@@ -166,6 +272,12 @@ public class RequestController {
     @GetMapping("/user/requests/new")
     public String userNewRequestForm(Model model) {
         model.addAttribute("request", new Request());
+        // Flags de organizaciones disponibles para la UI
+        boolean noOrgs = !requestService.hasActiveOrganizations();
+        model.addAttribute("noOrganizationsAvailable", noOrgs);
+        if (!noOrgs) {
+            model.addAttribute("availableOrganizations", requestService.getActiveOrganizationNames());
+        }
         return "users/request-form";
     }
 
@@ -179,6 +291,12 @@ public class RequestController {
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
+            // Validación: debe existir al menos una organización activa
+            if (!requestService.hasActiveOrganizations()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "No es posible crear la solicitud: no hay organizaciones disponibles para realizar la recolección en este momento.");
+                return "redirect:/user/requests/new";
+            }
+
             User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
             request.setUser(currentUser);
             request.setStatus(RequestStatus.PENDING);
@@ -186,6 +304,7 @@ public class RequestController {
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud creada correctamente");
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al crear solicitud");
+            return "redirect:/user/requests/new";
         }
         return "redirect:/user/requests";
     }
