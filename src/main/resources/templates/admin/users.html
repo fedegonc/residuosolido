@@ -175,7 +175,8 @@
                         class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
                         hx-get="/admin/users/form-demo"
                         hx-target="#user-form-fields"
-                        hx-swap="outerHTML">
+                        hx-swap="outerHTML"
+                        hx-headers='{"Cache-Control":"no-cache, no-store, must-revalidate", "Pragma":"no-cache", "Expires":"0"}'>
                     Llenar campos
                 </button>
                 

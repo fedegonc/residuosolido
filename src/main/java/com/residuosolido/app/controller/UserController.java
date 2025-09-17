@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -137,19 +138,25 @@ public class UserController {
     // ========== HTMX ENDPOINTS ==========
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/users/form-demo")
-    public String getUserFormDemo(Model model) {
+    public String getUserFormDemo(Model model, HttpServletResponse response) {
+        // Disable caching for HTMX fragment fetches
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
         User demo = new User();
-        demo.setUsername("org_demo");
-        demo.setEmail("org_demo@example.com");
-        demo.setFirstName("Org");
+        demo.setUsername("user_demo");
+        demo.setEmail("user_demo@example.com");
+        demo.setFirstName("User");
         demo.setLastName("Demo");
         demo.setPreferredLanguage("es");
         demo.setActive(true);
-        demo.setRole(Role.ORGANIZATION);
+        demo.setRole(Role.USER);
         demo.setAddress("Av. Principal 123, Rivera");
         demo.setAddressReferences("Frente a la plaza");
         model.addAttribute("user", demo);
         model.addAttribute("roles", Role.values());
+        // Importante: para que el fragmento pueda evaluar "!isEdit" sin error
+        model.addAttribute("isEdit", false);
         return "admin/users :: userFormFields";
     }
 

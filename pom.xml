@@ -60,12 +60,6 @@
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
-    <!-- WebJars: Font Awesome for icons -->
-    <dependency>
-      <groupId>org.webjars.npm</groupId>
-      <artifactId>fortawesome__fontawesome-free</artifactId>
-      <version>6.5.2</version>
-    </dependency>
 
     <dependency>
     <groupId>org.springframework.boot</groupId>

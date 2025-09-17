@@ -11,23 +11,22 @@
 <main>
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <!-- List View Breadcrumbs -->
-        <th:block th:if="${viewType eq 'list'}"
-                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Posts')}">
-        </th:block>
+        <th:switch expression="${viewType}">
+            <th:block th:case="'list'"
+                      th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}})}"
+                      th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Posts')}">
+            </th:block>
 
-        <!-- Form View Breadcrumbs -->
-        <th:block th:if="${viewType eq 'form'}"
-                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':${post.id != null ? 'Editar' : 'Nuevo'},'url':''})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, ${post.id != null ? 'Editar Post' : 'Nuevo Post'})}">
-        </th:block>
+            <th:block th:case="'form'"
+                      th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':${post.id != null ? 'Editar' : 'Nuevo'},'url':''})}"
+                      th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, ${post.id != null ? 'Editar Post' : 'Nuevo Post'})}">
+            </th:block>
 
-        <!-- View Mode Breadcrumbs -->
-        <th:block th:if="${viewType eq 'view'}"
-                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':'Ver','url':''})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Detalles del Post')}">
-        </th:block>
+            <th:block th:case="'view'"
+                      th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':'Ver','url':''})}"
+                      th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Detalles del Post')}">
+            </th:block>
+        </th:switch>
     </div>
 
 

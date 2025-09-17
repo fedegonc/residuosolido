@@ -1,6 +1,5 @@
 package com.residuosolido.app.config;
 
-import com.residuosolido.app.model.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

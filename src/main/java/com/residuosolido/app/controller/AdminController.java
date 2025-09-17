@@ -1,6 +1,5 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.model.*;
 import com.residuosolido.app.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,30 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Optional;
+
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
-    
-    @Autowired
-    private PostService postService;
-    
-    @Autowired
-    private CategoryService categoryService;
-    
-    @Autowired
-    private MaterialService materialService;
-    
-    @Autowired
-    private RequestService requestService;
-    
-    @Autowired
-    private FeedbackService feedbackService;
     
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -98,6 +79,17 @@ public class AdminController {
         }
         return "redirect:/admin/config";
     }
-
     
+    // ========== PASSWORD RESET ==========
+    @GetMapping("/admin/password-reset-requests")
+    public String passwordResetRequests() {
+        return "admin/password-reset-requests";
+    }
+
+    @PostMapping("/admin/password-reset-requests")
+    public String handlePasswordReset(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
+        // TODO: Implement password reset logic
+        return "redirect:/admin/password-reset-requests";
+    }
+
 }

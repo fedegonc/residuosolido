@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,14 +98,14 @@ public class AuthController {
     }
 
     @GetMapping({"/", "/index"})
-    public String rootOrIndex(RedirectAttributes redirectAttributes) {
+    public String rootOrIndex() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !isAnonymous(auth)) {
-            String target = resolvePanel(auth);
-            redirectAttributes.addFlashAttribute("infoMessage", "Ya estás autenticado. Te redirigimos a tu panel.");
-            return "redirect:" + target;
+            // Usuario autenticado: redirigir a su panel correspondiente
+            return "redirect:" + resolvePanel(auth);
         }
-        return "redirect:/auth/login";
+        // Usuario no autenticado: mostrar la página de inicio (index.html)
+        return "index";
     }
 
 

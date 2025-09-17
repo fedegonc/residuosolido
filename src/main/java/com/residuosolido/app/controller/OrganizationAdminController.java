@@ -78,8 +78,6 @@ public class OrganizationAdminController {
                     model.addAttribute("organization", newOrg);
                     model.addAttribute("isEdit", false);
                     model.addAttribute("viewType", "form");
-
-
                     return "admin/organizations";
             }
         }
@@ -99,16 +97,49 @@ public class OrganizationAdminController {
         try {
             organization.setRole(Role.ORGANIZATION); // Enforce role
             if (organization.getId() != null) {
+                // Converting existing user to organization - don't change password
                 userService.updateUser(organization, null);
-                redirectAttributes.addFlashAttribute("successMessage", "Organización actualizada");
+                redirectAttributes.addFlashAttribute("successMessage", "Usuario convertido a organización exitosamente");
             } else {
-                userService.createUser(organization, organization.getPassword());
-                redirectAttributes.addFlashAttribute("successMessage", "Organización creada");
+                // Creating new organization - use a default password if none provided
+                String password = organization.getPassword();
+                if (password == null || password.trim().isEmpty()) {
+                    password = "temp123"; // Default temporary password
+                }
+                userService.createUser(organization, password);
+                redirectAttributes.addFlashAttribute("successMessage", "Organización creada exitosamente");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/organizations";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/organizations/form-demo")
+    public String getOrganizationFormDemo(Model model) {
+        // Demo organization data
+        User demo = new User();
+        demo.setUsername("org_demo");
+        demo.setEmail("org_demo@example.com");
+        demo.setFirstName("Org");
+        demo.setLastName("Demo");
+        demo.setPreferredLanguage("es");
+        demo.setActive(true);
+        demo.setRole(Role.ORGANIZATION);
+        demo.setAddress("Av. Principal 123, Rivera");
+        demo.setAddressReferences("Frente a la plaza");
+
+        model.addAttribute("organization", demo);
+        // Provide available users list for the selector on 'new' flow
+        List<User> availableUsers = userService.findAll().stream()
+                .filter(u -> u.getRole() == Role.USER)
+                .toList();
+        model.addAttribute("availableUsers", availableUsers);
+        // Important so the fragment can evaluate conditions like !isEdit
+        model.addAttribute("isEdit", false);
+
+        return "admin/organizations :: orgFormFields";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
