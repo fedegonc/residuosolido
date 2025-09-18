@@ -126,8 +126,12 @@
                                        class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-blue-700 border-blue-200 flex items-center">Ver</a>
                                     <a th:href="${isOrganizations} ? @{/admin/organizations(action='edit', id=${user.id})} : @{/admin/users(action='edit', id=${user.id})}"
                                        class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-green-700 border-green-200 flex items-center">Editar</a>
-                                    <button onclick="confirmDelete(this)" th:data-id="${user.id}" th:data-name="${user.username}"
-                                            class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-red-700 border-red-200 flex items-center">Eliminar</button>
+                                    <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" class="inline-block">
+                                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                        <button type="submit"
+        th:attr="onclick=|return confirm('¿Estás seguro de que deseas eliminar al usuario ${user.username}?')|"
+        class="h-9 px-3 text-sm rounded border hover:bg-gray-50 text-red-700 border-red-200 flex items-center">Eliminar</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -176,7 +180,9 @@
                         hx-get="/admin/users/form-demo"
                         hx-target="#user-form-fields"
                         hx-swap="outerHTML"
-                        hx-headers='{"Cache-Control":"no-cache, no-store, must-revalidate", "Pragma":"no-cache", "Expires":"0"}'>
+                        hx-headers='{"Cache-Control":"no-cache, no-store, must-revalidate", "Pragma":"no-cache", "Expires":"0"}'
+                        hx-indicator="#loading-indicator">
+                    <span id="loading-indicator" class="htmx-indicator">Cargando...</span>
                     Llenar campos
                 </button>
                 
@@ -198,7 +204,7 @@
                     <!-- Password (solo para nuevo usuario) -->
                     <div th:if="${!isEdit}">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
-                        <input type="text" th:field="*{password}" th:required="${!isEdit}" autocomplete="new-password"
+                        <input type="text" th:field="*{password}" th:required="${!isEdit}" autocomplete="new-password" value="demo123456"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     
@@ -309,10 +315,20 @@
                     font-size: 0.875rem; /* text-sm */
                 }
                 .form-compact label { margin-bottom: 0.25rem; } /* mb-1 */
+                
+                /* HTMX loading indicator */
+                .htmx-indicator {
+                    display: none;
+                }
+                .htmx-request .htmx-indicator {
+                    display: inline;
+                }
+                .htmx-request.htmx-indicator {
+                    display: inline;
+                }
             </style>
-        </div>
-
-        <!-- VISTA DETALLE USUARIO -->
+                
+                <!-- VISTA DETALLE USUARIO -->
         <div th:if="${viewType == 'view'}" class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200">
                 <div class="flex justify-between items-center">
@@ -327,6 +343,19 @@
             </div>
             
             <div class="p-6">
+                <!-- Imagen de Perfil -->
+                <div th:if="${user.profileImage}" class="mb-6">
+                    <label class="block text-sm font-medium text-gray-500">Imagen de Perfil</label>
+                    <img th:src="${user.profileImage}" alt="Imagen de perfil" class="mt-2 max-w-xs rounded"/>
+                </div>
+                
+                <!-- Nombre y Apellido -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-500">Nombre y Apellido</label>
+                    <p class="mt-1 text-sm text-gray-900" th:text="${user.firstName} + ' ' + user.lastName">nombre y apellido</p>
+                </div>
+                
+                <!-- Datos Restantes -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-500">Nombre de Usuario</label>
@@ -359,16 +388,6 @@
                         </span>
                     </div>
                     
-                    <div th:if="${user.firstName}">
-                        <label class="block text-sm font-medium text-gray-500">Nombre</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${user.firstName}">nombre</p>
-                    </div>
-                    
-                    <div th:if="${user.lastName}">
-                        <label class="block text-sm font-medium text-gray-500">Apellido</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${user.lastName}">apellido</p>
-                    </div>
-                    
                     <div>
                         <label class="block text-sm font-medium text-gray-500">Idioma Preferido</label>
                         <p class="mt-1 text-sm text-gray-900" 
@@ -386,9 +405,20 @@
                     <label class="block text-sm font-medium text-gray-500">Dirección</label>
                     <p class="mt-1 text-sm text-gray-900" th:text="${user.address}">dirección</p>
                 </div>
+                <div th:if="${user.addressReferences}" class="mt-4">
+                    <label class="block text-sm font-medium text-gray-500">Referencias de Dirección</label>
+                    <p class="mt-1 text-sm text-gray-900" th:text="${user.addressReferences}">referencias</p>
+                </div>
+                <div th:if="${user.latitude}" class="mt-4">
+                    <label class="block text-sm font-medium text-gray-500">Latitud</label>
+                    <p class="mt-1 text-sm text-gray-900" th:text="${user.latitude}">latitud</p>
+                </div>
+                <div th:if="${user.longitude}" class="mt-4">
+                    <label class="block text-sm font-medium text-gray-500">Longitud</label>
+                    <p class="mt-1 text-sm text-gray-900" th:text="${user.longitude}">longitud</p>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
@@ -415,6 +445,7 @@
                     </button>
                     <form id="deleteForm" method="post" class="inline">
                         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <input type="hidden" name="_csrf_header" th:value="${_csrf.headerName}"/>
                         <button type="submit" 
                                 class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                             Eliminar

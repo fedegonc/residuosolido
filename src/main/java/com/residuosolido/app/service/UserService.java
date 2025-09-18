@@ -273,6 +273,55 @@ public class UserService {
         return userRepository.countByRole(role);
     }
 
+    /**
+     * Crea un usuario demo con datos de ejemplo completos (incluyendo contraseña)
+     * Útil para llenar formularios de demostración
+     * @return Usuario demo con todos los campos llenos y valores únicos
+     */
+    public User createDemoUser() {
+        User demo = new User();
+        
+        // Generar un timestamp para hacer el usuario único
+        long timestamp = System.currentTimeMillis() % 10000;
+        
+        // Usar valores únicos para evitar duplicados en la base de datos
+        demo.setUsername("user_demo" + timestamp);
+        demo.setEmail("user_demo" + timestamp + "@example.com");
+        demo.setFirstName("User");
+        demo.setLastName("Demo");
+        demo.setPreferredLanguage("es");
+        demo.setActive(true);
+        demo.setRole(Role.USER);
+        demo.setAddress("Av. Principal 123, Rivera");
+        demo.setAddressReferences("Puntos de referencia cercanos, indicaciones adicionales");
+        
+        // Coordenadas de ejemplo para Rivera, Uruguay
+        demo.setLatitude(new BigDecimal("-34.3055"));
+        demo.setLongitude(new BigDecimal("-56.1850"));
+        
+        // Imagen de perfil de ejemplo
+        demo.setProfileImage("https://example.com/profile.jpg");
+        
+        // Establecer contraseña predeterminada para el formulario
+        demo.setPassword("demo123456");
+        
+        logger.info("Creando usuario demo con username={} y email={}", demo.getUsername(), demo.getEmail());
+        
+        return demo;
+    }
+    
+    /**
+     * Crea un usuario rápidamente con contraseña generada automáticamente
+     * @param user Usuario base con los datos
+     * @return Usuario creado con contraseña generada
+     */
+    public User createQuickUser(User user) {
+        // Generar contraseña temporal
+        String tempPassword = "temp123456";
+        logger.info("[UserService] Creating quick user with temporary password");
+        return createUser(user, tempPassword);
+    }
+
     // Eliminado el @PostConstruct ensureDefaultAdmin para evitar conflicto con
     // StartupAdminInitializer. El administrador por defecto se crea únicamente
     // desde StartupAdminInitializer con credenciales consistentes.

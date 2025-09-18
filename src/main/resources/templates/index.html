@@ -9,82 +9,90 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; }
+    body { 
+      font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+      background-color: white;
+    }
+    .card {
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    }
+    .card:hover {
+      box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <!-- Navbar simple -->
-  <nav class="bg-white shadow-lg border-b border-green-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <a href="/" class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-            </div>
-            <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
-          </a>
-        </div>
-        <div class="flex items-center space-x-4">
+<body class="bg-white min-h-screen">
+  <!-- Navbar simplificado -->
+  <header>
+    <nav class="bg-white shadow-sm border-b border-green-100">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <!-- Logo y nombre -->
+        <a href="/" class="flex items-center gap-2">
+          <span class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+          </span>
+          <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
+        </a>
+        
+        <!-- Navegación y acciones -->
+        <div class="flex items-center gap-4">
           <!-- Selector de idioma -->
-          <div class="relative">
-            <form id="language-form" method="get" action="" class="inline-block">
-              <select id="language-selector" name="lang" onchange="this.form.submit()" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                <option value="es" th:selected="${#locale.language == 'es' || #locale.language == 'es_ES'}">🇪🇸 <th:block th:text="#{language.spanish}">Español</th:block></option>
-                <option value="pt" th:selected="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR' || #locale.language == null}">🇧🇷 <th:block th:text="#{language.portuguese}">Português</th:block></option>
-              </select>
-            </form>
-          </div>
+          <form id="language-form" method="get" action="" class="inline-block">
+            <select id="language-selector" name="lang" onchange="this.form.submit()" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+              <option value="es" th:selected="${#locale.language == 'es' || #locale.language == 'es_ES'}">🇪🇸 <th:block th:text="#{language.spanish}">Español</th:block></option>
+              <option value="pt" th:selected="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR' || #locale.language == null}">🇧🇷 <th:block th:text="#{language.portuguese}">Português</th:block></option>
+            </select>
+          </form>
           
           <!-- Botones para usuarios no autenticados -->
-          <div sec:authorize="!isAuthenticated()" class="flex items-center space-x-4">
-            <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+          <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
+            <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
               Iniciar Sesión
             </a>
-            <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
+            <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
               Registrarse
             </a>
           </div>
           
           <!-- Botones para usuarios autenticados -->
-          <div sec:authorize="isAuthenticated()" class="flex items-center space-x-4">
-            <a href="/feedback" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
+          <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
+            <a href="/feedback" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
               Feedback
             </a>
-            <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+            <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
               Cerrar Sesión
             </a>
           </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
-  <!-- Hero section -->
-  <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-20">
-    <div class="max-w-7xl mx-auto pl-4 sm:pl-6 lg:pl-8 pr-4 sm:pr-6 lg:pr-8 text-left">
-      <div class="max-w-4xl">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">♻️ <span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
-        <p class="text-xl md:text-2xl mb-2" th:text="#{index.hero.subtitle}">Frontera de la Paz</p>
-        <p class="text-lg text-green-100 max-w-3xl" th:text="#{index.hero.description}">
-          Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
-        </p>
-      </div>
+  <!-- Hero section simplificado -->
+  <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl md:text-6xl font-bold mb-4">♻️ <span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
+      <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Frontera de la Paz</p>
+      <p class="text-lg text-green-100 max-w-2xl" th:text="#{index.hero.description}">
+        Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
+      </p>
     </div>
   </section>
 
-  <!-- Contenido principal -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <!-- Contenido principal simplificado -->
+  <main class="container mx-auto px-4 py-10">
     <!-- Categorías dinámicas desde BD -->
-    <div class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Notas por Categoría</h2>
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Categorías</h2>
+      
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${categories != null and !categories.empty}">
         <a th:each="category, iterStat : ${categories}" 
            th:href="@{/categories/{id}(id=${category.id})}" 
-           class="block rounded-xl border p-6 hover:shadow-lg transition"
-           th:classappend="${iterStat.index % 3 == 0} ? 'bg-green-50 border-green-200' : (${iterStat.index % 3 == 1} ? 'bg-blue-50 border-blue-200' : 'bg-amber-50 border-amber-200')">
+           class="card rounded-lg p-5 transition"
+           th:classappend="${iterStat.index % 3 == 0} ? 'bg-green-50' : (${iterStat.index % 3 == 1} ? 'bg-blue-50' : 'bg-amber-50')">
           <h3 class="font-bold mb-2" 
               th:classappend="${iterStat.index % 3 == 0} ? 'text-green-800' : (${iterStat.index % 3 == 1} ? 'text-blue-800' : 'text-amber-800')"
               th:text="${category.name}">Categoría</h3>
@@ -93,50 +101,56 @@
              th:text="${category.description}">Descripción de la categoría</p>
         </a>
       </div>
-      <div th:if="${categories == null or categories.empty}" class="text-center py-8">
-        <p class="text-gray-500">No hay categorías disponibles</p>
-      </div>
-    </div>
+      
+      <p th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
+        No hay categorías disponibles
+      </p>
+    </section>
 
     <!-- Acciones rápidas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-      <a href="/users/requests/new" class="block rounded-xl border p-6 hover:shadow-lg transition bg-green-50 border-green-200">
-        <h3 class="font-bold text-green-800 mb-2">Solicitar Recolección</h3>
-        <p class="text-sm text-green-700">Crea una solicitud para que una organización retire tus residuos.</p>
-      </a>
-      <a href="#organizaciones" class="block rounded-xl border p-6 hover:shadow-lg transition bg-amber-50 border-amber-200">
-        <h3 class="font-bold text-amber-800 mb-2">Organizaciones</h3>
-        <p class="text-sm text-amber-700">Ver organizaciones participantes y materiales que gestionan.</p>
-      </a>
-    </div>
+    <section class="mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="/users/requests/new" class="card rounded-lg p-5 bg-green-50">
+          <h3 class="font-bold text-green-800 mb-2">Solicitar Recolección</h3>
+          <p class="text-sm text-green-700">Crea una solicitud para que una organización retire tus residuos.</p>
+        </a>
+        <a href="#organizaciones" class="card rounded-lg p-5 bg-amber-50">
+          <h3 class="font-bold text-amber-800 mb-2">Organizaciones</h3>
+          <p class="text-sm text-amber-700">Ver organizaciones participantes y materiales que gestionan.</p>
+        </a>
+      </div>
+    </section>
 
     <!-- Sección organizaciones -->
     <section id="organizaciones" class="mt-12">
       <h2 class="text-2xl font-bold text-gray-900 mb-4">Organizaciones</h2>
       <p class="text-gray-600 mb-6">Explora organizaciones que colaboran en la recolección y reciclaje en la región.</p>
+      
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="border rounded-lg p-6 bg-white shadow-sm">
+        <article class="card rounded-lg p-5 bg-white">
           <h3 class="font-semibold text-gray-800 mb-2">Eco Rivera</h3>
           <p class="text-sm text-gray-600">Reciclables secos, vidrio y papel.</p>
-        </div>
-        <div class="border rounded-lg p-6 bg-white shadow-sm">
+        </article>
+        
+        <article class="card rounded-lg p-5 bg-white">
           <h3 class="font-semibold text-gray-800 mb-2">Recicla Livramento</h3>
           <p class="text-sm text-gray-600">Plásticos, metales, electrónicos.</p>
-        </div>
-        <div class="border rounded-lg p-6 bg-white shadow-sm">
+        </article>
+        
+        <article class="card rounded-lg p-5 bg-white">
           <h3 class="font-semibold text-gray-800 mb-2">Frontera Limpia</h3>
           <p class="text-sm text-gray-600">Campañas y educación ambiental.</p>
-        </div>
+        </article>
       </div>
     </section>
   </main>
 
-  <!-- Footer con botón Debug -->
-  <footer class="bg-gray-800 text-white py-8 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Footer simplificado -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center justify-between">
         <p class="mb-4 md:mb-0">&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
-        <button id="debug-toggle" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md shadow flex items-center">
+        <button id="debug-toggle" class="card bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md flex items-center transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
           </svg>

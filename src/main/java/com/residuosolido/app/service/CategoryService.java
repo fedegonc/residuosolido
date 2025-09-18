@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.ui.Model;
@@ -23,50 +24,79 @@ public class CategoryService {
 
     @PostConstruct
     public void initializeCategories() {
-        if (categoryRepository.count() == 0) {
-            // Categorías principales con campos extendidos
-            Category reciclable = new Category(null, "Reciclable");
-            reciclable.setDescription("Materiales que pueden ser reciclados");
-            reciclable.setDisplayOrder(1);
-            reciclable.setActive(true);
-            reciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
-            categoryRepository.save(reciclable);
-            
-            Category noReciclable = new Category(null, "No Reciclable");
-            noReciclable.setDescription("Residuos que requieren disposición especial");
-            noReciclable.setDisplayOrder(2);
-            noReciclable.setActive(true);
-            noReciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
-            categoryRepository.save(noReciclable);
-            
-            Category informaciones = new Category(null, "Informaciones");
-            informaciones.setDescription("Guías y recursos educativos");
-            informaciones.setDisplayOrder(3);
-            informaciones.setActive(true);
-            informaciones.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
-            categoryRepository.save(informaciones);
-            
-            // Categorías adicionales
-            createSimpleCategory("Compostaje", 4);
-            createSimpleCategory("Reducción de Residuos", 5);
-            createSimpleCategory("Educación Ambiental", 6);
-            createSimpleCategory("Normativas", 7);
+        try {
+            if (categoryRepository.count() == 0) {
+                System.out.println("Inicializando categorías por defecto...");
+                
+                // Categorías principales con campos extendidos
+                Category reciclable = new Category(null, "Reciclable");
+                reciclable.setDescription("Materiales que pueden ser reciclados");
+                reciclable.setDisplayOrder(1);
+                reciclable.setActive(true);
+                reciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+                categoryRepository.save(reciclable);
+                System.out.println("Categoría creada: " + reciclable.getName());
+                
+                Category noReciclable = new Category(null, "No Reciclable");
+                noReciclable.setDescription("Residuos que requieren disposición especial");
+                noReciclable.setDisplayOrder(2);
+                noReciclable.setActive(true);
+                noReciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+                categoryRepository.save(noReciclable);
+                System.out.println("Categoría creada: " + noReciclable.getName());
+                
+                Category informaciones = new Category(null, "Informaciones");
+                informaciones.setDescription("Guías y recursos educativos");
+                informaciones.setDisplayOrder(3);
+                informaciones.setActive(true);
+                informaciones.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+                categoryRepository.save(informaciones);
+                System.out.println("Categoría creada: " + informaciones.getName());
+                
+                // Categorías adicionales
+                createSimpleCategory("Compostaje", 4);
+                createSimpleCategory("Reducción de Residuos", 5);
+                createSimpleCategory("Educación Ambiental", 6);
+                createSimpleCategory("Normativas", 7);
+                
+                System.out.println("Inicialización de categorías completada. Total: " + categoryRepository.count());
+                
+                // Invalidar cache
+                cachedCategories = null;
+            } else {
+                System.out.println("Las categorías ya están inicializadas. Total: " + categoryRepository.count());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al inicializar categorías: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     private void createSimpleCategory(String name, int order) {
-        Category category = new Category(null, name);
-        category.setDisplayOrder(order);
-        category.setActive(true);
-        category.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
-        categoryRepository.save(category);
+        try {
+            Category category = new Category(null, name);
+            category.setDisplayOrder(order);
+            category.setActive(true);
+            category.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
+            categoryRepository.save(category);
+            System.out.println("Categoría adicional creada: " + name);
+        } catch (Exception e) {
+            System.err.println("Error al crear categoría '" + name + "': " + e.getMessage());
+        }
     }
 
     public List<Category> getAllCategories() {
-        if (cachedCategories == null) {
-            cachedCategories = categoryRepository.findAll();
+        try {
+            if (cachedCategories == null) {
+                cachedCategories = categoryRepository.findAll();
+                System.out.println("Cargando categorías desde la base de datos. Total: " + cachedCategories.size());
+            }
+            return cachedCategories;
+        } catch (Exception e) {
+            System.err.println("Error al obtener categorías: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>(); // Devolver lista vacía en caso de error
         }
-        return cachedCategories;
     }
     
     // Métodos que reemplazan WasteSectionService
@@ -142,7 +172,15 @@ public class CategoryService {
      * Retorna solo las categorías activas ordenadas por orden de visualización
      */
     public List<Category> findAllActive() {
-        return categoryRepository.findByActiveTrueOrderByDisplayOrderAsc();
+        try {
+            List<Category> activeCategories = categoryRepository.findByActiveTrueOrderByDisplayOrderAsc();
+            System.out.println("Categorías activas cargadas. Total: " + activeCategories.size());
+            return activeCategories;
+        } catch (Exception e) {
+            System.err.println("Error al obtener categorías activas: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>(); // Devolver lista vacía en caso de error
+        }
     }
 
     public long count() {

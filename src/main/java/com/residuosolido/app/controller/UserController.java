@@ -122,13 +122,40 @@ public class UserController {
         try {
             if (user.getId() != null) {
                 userService.updateUser(user, null);
-                redirectAttributes.addFlashAttribute("successMessage", "Usuario actualizado");
+                redirectAttributes.addFlashAttribute("successMessage", "Usuario actualizado correctamente");
             } else {
+                // Verificar si ya existe un usuario con ese email o username
+                if (userService.existsByEmail(user.getEmail())) {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "Error: Ya existe un usuario con el email " + user.getEmail() + ". Por favor utilice otro email.");
+                    return "redirect:/admin/users?action=new";
+                }
+                
+                if (userService.existsByUsername(user.getUsername())) {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "Error: Ya existe un usuario con el nombre de usuario " + user.getUsername() + ". Por favor utilice otro nombre de usuario.");
+                    return "redirect:/admin/users?action=new";
+                }
+                
                 userService.createUser(user, user.getPassword());
-                redirectAttributes.addFlashAttribute("successMessage", "Usuario creado");
+                redirectAttributes.addFlashAttribute("successMessage", "Usuario creado exitosamente");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            logger.error("Error al guardar usuario: {}", e.getMessage(), e);
+            String errorMsg = "Error al procesar la solicitud";
+            
+            // Mejorar el mensaje de error para hacerlo más amigable
+            if (e.getMessage() != null && e.getMessage().contains("duplicate key")) {
+                if (e.getMessage().contains("email")) {
+                    errorMsg = "Ya existe un usuario con ese email. Por favor utilice otro email.";
+                } else if (e.getMessage().contains("username")) {
+                    errorMsg = "Ya existe un usuario con ese nombre de usuario. Por favor utilice otro nombre de usuario.";
+                } else {
+                    errorMsg = "Ya existe un usuario con esos datos. Por favor verifique la información.";
+                }
+            }
+            
+            redirectAttributes.addFlashAttribute("errorMessage", errorMsg);
         }
         return "redirect:/admin/users";
     }
@@ -143,21 +170,52 @@ public class UserController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        User demo = new User();
-        demo.setUsername("user_demo");
-        demo.setEmail("user_demo@example.com");
-        demo.setFirstName("User");
-        demo.setLastName("Demo");
-        demo.setPreferredLanguage("es");
-        demo.setActive(true);
-        demo.setRole(Role.USER);
-        demo.setAddress("Av. Principal 123, Rivera");
-        demo.setAddressReferences("Frente a la plaza");
+        
+        // Usar el método del servicio que NO incluye contraseña por seguridad
+        User demo = userService.createDemoUser();
+        
         model.addAttribute("user", demo);
         model.addAttribute("roles", Role.values());
         // Importante: para que el fragmento pueda evaluar "!isEdit" sin error
         model.addAttribute("isEdit", false);
         return "admin/users :: userFormFields";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/users/create-quick")
+    public String createQuickUser(RedirectAttributes redirectAttributes) {
+        try {
+            // Crear usuario demo con contraseña generada automáticamente
+            User demoUser = userService.createDemoUser();
+            
+            // Verificar si ya existe un usuario con ese email o username (aunque debería ser único por el timestamp)
+            if (userService.existsByEmail(demoUser.getEmail())) {
+                // Intentar con otro timestamp
+                demoUser.setEmail("user_demo" + System.currentTimeMillis() + "@example.com");
+            }
+            
+            if (userService.existsByUsername(demoUser.getUsername())) {
+                // Intentar con otro timestamp
+                demoUser.setUsername("user_demo" + System.currentTimeMillis());
+            }
+            
+            User createdUser = userService.createQuickUser(demoUser);
+            
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Usuario creado exitosamente. Username: " + createdUser.getUsername() + 
+                ", Contraseña temporal: temp123456 (cambiar al primer login)");
+        } catch (Exception e) {
+            logger.error("Error al crear usuario rápido: {}", e.getMessage(), e);
+            String errorMsg = "Error al crear usuario";
+            
+            // Mejorar el mensaje de error para hacerlo más amigable
+            if (e.getMessage() != null && e.getMessage().contains("duplicate key")) {
+                errorMsg = "Error: Ya existe un usuario con esos datos. Intente nuevamente.";
+            }
+            
+            redirectAttributes.addFlashAttribute("errorMessage", errorMsg);
+        }
+        return "redirect:/admin/users";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
