@@ -22,6 +22,9 @@ public class AdminController {
     @Autowired
     private ConfigService configService;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     // ========== DASHBOARD & DOCS ==========
     @GetMapping("/admin/dashboard")
     public String dashboard() {
@@ -56,7 +59,25 @@ public class AdminController {
     }
 
     @GetMapping("/admin/statistics")
-    public String statistics() {
+    public String statistics(Model model) {
+        try {
+            // Obtener estadísticas dinámicas
+            var stats = statisticsService.getDashboardStats();
+            model.addAttribute("stats", stats);
+
+            // Obtener datos para gráficos
+            var usersByMonth = statisticsService.getUsersByMonth();
+            var requestsByStatus = statisticsService.getRequestsByStatus();
+            var materialsByType = statisticsService.getMaterialsByType();
+
+            model.addAttribute("usersByMonth", usersByMonth);
+            model.addAttribute("requestsByStatus", requestsByStatus);
+            model.addAttribute("materialsByType", materialsByType);
+
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al cargar estadísticas: " + e.getMessage());
+        }
+
         return "admin/statistics";
     }
 

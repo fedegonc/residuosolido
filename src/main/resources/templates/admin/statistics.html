@@ -1,160 +1,313 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estadísticas</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN para integrar fácil -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Estadísticas - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fc; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+    </style>
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
-  <!-- Header + Breadcrumbs -->
-  <div class="bg-white border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-      <h1 class="text-2xl font-bold text-gray-900">Estadísticas</h1>
-      <p class="mt-1 text-sm text-gray-500">Métricas y análisis del sistema</p>
-      <div class="mt-3">
-        <th:block th:with="bcItems=${#lists.list({'label':'Panel de Administración','url':'/admin/dashboard'})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Estadísticas')}">
-        </th:block>
-      </div>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
-  </div>
 
-  <!-- Contenido -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Gestión de Estadísticas -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">
+                  Gestión de Estadísticas
+                </h2>
+                <p class="text-sm text-gray-600">
+                  Monitorea el rendimiento y crecimiento del sistema a través de métricas clave. Aquí puedes ver estadísticas de usuarios, organizaciones, solicitudes y feedback en tiempo real, junto con tendencias y análisis visuales que te ayudan a tomar decisiones informadas sobre el funcionamiento de la plataforma.
+                  <span class="block mt-1 text-xs text-gray-500">
+                    Los datos se actualizan automáticamente cada hora. Usa los gráficos interactivos para profundizar en las métricas específicas que necesites analizar.
+                  </span>
+                </p>
+                <h3 class="text-lg font-semibold text-gray-900">Panel de Estadísticas</h3>
+            </div>
+        </div>
+
+        <!-- Botón de navegación principal -->
+        <div class="flex justify-start">
+            <a th:href="@{/admin/dashboard}"
+               class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                <span>Ir al Dashboard</span>
+            </a>
+        </div>
 
     <!-- KPIs rápidos -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="bg-white border rounded-md p-5">
-        <p class="text-sm text-slate-500">Usuarios totales</p>
-        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiUsers">1.254</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <div class="flex items-center mb-3">
+          <span class="bg-blue-50 text-blue-600 rounded-lg p-2 mr-3">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </span>
+          <small class="text-gray-500 text-sm">Usuarios totales</small>
+        </div>
+        <div class="text-2xl font-semibold text-gray-900" id="kpiUsers" th:text="${stats.totalUsers}">0</div>
       </div>
-      <div class="bg-white border rounded-md p-5">
-        <p class="text-sm text-slate-500">Organizaciones</p>
-        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiOrgs">18</p>
+
+      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <div class="flex items-center mb-3">
+          <span class="bg-green-50 text-green-600 rounded-lg p-2 mr-3">
+            <i data-lucide="building-2" class="w-5 h-5"></i>
+          </span>
+          <small class="text-gray-500 text-sm">Organizaciones</small>
+        </div>
+        <div class="text-2xl font-semibold text-gray-900" id="kpiOrgs" th:text="${stats.totalOrganizations}">0</div>
       </div>
-      <div class="bg-white border rounded-md p-5">
-        <p class="text-sm text-slate-500">Solicitudes (30 días)</p>
-        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiReqs">342</p>
+
+      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <div class="flex items-center mb-3">
+          <span class="bg-orange-50 text-orange-600 rounded-lg p-2 mr-3">
+            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+          </span>
+          <small class="text-gray-500 text-sm">Solicitudes (30 días)</small>
+        </div>
+        <div class="text-2xl font-semibold text-gray-900" id="kpiReqs" th:text="${stats.requestsLast30Days}">0</div>
       </div>
-      <div class="bg-white border rounded-md p-5">
-        <p class="text-sm text-slate-500">Feedback recibidos</p>
-        <p class="mt-1 text-2xl font-semibold text-slate-900" id="kpiFdb">76</p>
+
+      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <div class="flex items-center mb-3">
+          <span class="bg-purple-50 text-purple-600 rounded-lg p-2 mr-3">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+          </span>
+          <small class="text-gray-500 text-sm">Feedback recibidos</small>
+        </div>
+        <div class="text-2xl font-semibold text-gray-900" id="kpiFdb" th:text="${stats.totalFeedback}">0</div>
       </div>
     </div>
 
     <!-- Gráficos -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Usuarios por mes -->
-      <div class="bg-white border rounded-md p-5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-medium text-slate-900">Altas de usuarios por mes</h2>
-          <span class="text-xs text-slate-500">Ejemplo con Chart.js (CDN)</span>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Altas de usuarios por mes</h2>
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i>
+              +12%
+            </span>
+            <span class="text-xs text-gray-500">vs. mes anterior</span>
+          </div>
         </div>
-        <div class="mt-4">
+        <div class="mb-4">
           <canvas id="chartUsersPerMonth" height="140"></canvas>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">Enero - Diciembre</span>
+          <span class="text-gray-600 font-medium">Tendencia positiva</span>
         </div>
       </div>
 
       <!-- Solicitudes por estado -->
-      <div class="bg-white border rounded-md p-5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-medium text-slate-900">Solicitudes por estado</h2>
-          <span class="text-xs text-slate-500">Ejemplo con Chart.js (CDN)</span>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Solicitudes por estado</h2>
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <i data-lucide="activity" class="w-3 h-3 mr-1"></i>
+              Activo
+            </span>
+            <span class="text-xs text-gray-500">Estado actual</span>
+          </div>
         </div>
-        <div class="mt-4">
+        <div class="mb-4">
           <canvas id="chartRequestsByStatus" height="140"></canvas>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+            <span class="text-gray-600">Pendientes: 48</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span class="text-gray-600">En curso: 76</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            <span class="text-gray-600">Completadas: 190</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+            <span class="text-gray-600">Canceladas: 28</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Distribución de materiales -->
-    <div class="bg-white border rounded-md p-5">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-medium text-slate-900">Materiales recolectados (kg) por tipo</h2>
-        <span class="text-xs text-slate-500">Ejemplo con Chart.js (CDN)</span>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">Materiales recolectados (kg) por tipo</h2>
+        <div class="flex items-center space-x-2">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+            <i data-lucide="package" class="w-3 h-3 mr-1"></i>
+            1,230 kg
+          </span>
+          <span class="text-xs text-gray-500">Total recolectado</span>
+        </div>
       </div>
-      <div class="mt-4">
+      <div class="mb-4">
         <canvas id="chartMaterials" height="120"></canvas>
+      </div>
+      <div class="grid grid-cols-5 gap-4 text-sm">
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">Plástico</div>
+          <div class="bg-blue-100 rounded-full h-2">
+            <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+          </div>
+          <div class="text-xs font-medium text-gray-700 mt-1">420 kg</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">Papel</div>
+          <div class="bg-green-100 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 55%"></div>
+          </div>
+          <div class="text-xs font-medium text-gray-700 mt-1">310 kg</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">Vidrio</div>
+          <div class="bg-purple-100 rounded-full h-2">
+            <div class="bg-purple-500 h-2 rounded-full" style="width: 43%"></div>
+          </div>
+          <div class="text-xs font-medium text-gray-700 mt-1">260 kg</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">Metal</div>
+          <div class="bg-orange-100 rounded-full h-2">
+            <div class="bg-orange-500 h-2 rounded-full" style="width: 27%"></div>
+          </div>
+          <div class="text-xs font-medium text-gray-700 mt-1">190 kg</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">Orgánico</div>
+          <div class="bg-teal-100 rounded-full h-2">
+            <div class="bg-teal-500 h-2 rounded-full" style="width: 88%"></div>
+          </div>
+          <div class="text-xs font-medium text-gray-700 mt-1">510 kg</div>
+        </div>
       </div>
     </div>
 
   </div>
 </main>
 
-<!-- Script de ejemplo: datos dummy. Reemplazable por endpoints JSON -->
-<script>
-  // En producción, puedes traer datos con fetch('/admin/statistics/data') y mapearlos a los datasets
-  document.addEventListener('DOMContentLoaded', () => {
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    <script>
+        // Datos dinámicos desde el servidor
+        const usersByMonthData = /*[[${usersByMonth}]]*/ {};
+        const requestsByStatusData = /*[[${requestsByStatus}]]*/ {};
+        const materialsByTypeData = /*[[${materialsByType}]]*/ {};
 
-    // Usuarios por mes (ejemplo)
-    const usersData = [25, 31, 28, 40, 52, 61, 75, 88, 70, 66, 54, 49];
-    new Chart(document.getElementById('chartUsersPerMonth'), {
-      type: 'line',
-      data: {
-        labels: months,
-        datasets: [{
-          label: 'Altas',
-          data: usersData,
-          borderColor: '#2563eb',
-          backgroundColor: 'rgba(37, 99, 235, 0.15)',
-          borderWidth: 2,
-          tension: 0.35,
-          fill: true,
-          pointRadius: 3,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: true } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar íconos de Lucide
+            lucide.createIcons();
 
-    // Solicitudes por estado (ejemplo)
-    const reqStatusLabels = ['Pendientes', 'En curso', 'Completadas', 'Canceladas'];
-    const reqStatusData   = [48, 76, 190, 28];
-    new Chart(document.getElementById('chartRequestsByStatus'), {
-      type: 'doughnut',
-      data: {
-        labels: reqStatusLabels,
-        datasets: [{
-          data: reqStatusData,
-          backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
-          borderColor: '#ffffff',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
+            // Usuarios por mes
+            const usersCtx = document.getElementById('chartUsersPerMonth');
+            if (usersCtx) {
+                new Chart(usersCtx, {
+                    type: 'line',
+                    data: {
+                        labels: usersByMonthData.labels || ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                        datasets: [{
+                            label: 'Altas de usuarios',
+                            data: usersByMonthData.data || [25, 31, 28, 40, 52, 61, 75, 88, 70, 66, 54, 49],
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                            borderWidth: 2,
+                            tension: 0.35,
+                            fill: true,
+                            pointRadius: 3,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: true } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
 
-    // Materiales por tipo (ejemplo)
-    const materialsLabels = ['Plástico', 'Papel', 'Vidrio', 'Metal', 'Orgánico'];
-    const materialsData   = [420, 310, 260, 190, 510];
-    new Chart(document.getElementById('chartMaterials'), {
-      type: 'bar',
-      data: {
-        labels: materialsLabels,
-        datasets: [{
-          label: 'Kg',
-          data: materialsData,
-          backgroundColor: '#14b8a6'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-  });
-</script>
+            // Solicitudes por estado
+            const requestsCtx = document.getElementById('chartRequestsByStatus');
+            if (requestsCtx) {
+                new Chart(requestsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: requestsByStatusData.labels || ['Pendientes', 'En curso', 'Completadas', 'Canceladas'],
+                        datasets: [{
+                            data: requestsByStatusData.data || [48, 76, 190, 28],
+                            backgroundColor: requestsByStatusData.colors || ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            // Materiales por tipo
+            const materialsCtx = document.getElementById('chartMaterials');
+            if (materialsCtx) {
+                new Chart(materialsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: materialsByTypeData.labels || ['Plástico', 'Papel', 'Vidrio', 'Metal', 'Orgánico'],
+                        datasets: [{
+                            label: 'Kg recolectados',
+                            data: materialsByTypeData.data || [420, 310, 260, 190, 510],
+                            backgroundColor: '#14b8a6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

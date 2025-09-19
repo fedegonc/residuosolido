@@ -83,9 +83,9 @@ public class BreadcrumbService {
                     breadcrumbs.add(new BreadcrumbItem("Feedback", "/admin/feedback"));
                     break;
                     
-                case "configuration":
-                case "configuracion":
-                    breadcrumbs.add(new BreadcrumbItem("Configuración", "/admin/configuration"));
+                case "statistics":
+                case "estadisticas":
+                    breadcrumbs.add(new BreadcrumbItem("Estadísticas", "/admin/statistics"));
                     break;
                     
                 default:
@@ -253,9 +253,9 @@ public class BreadcrumbService {
                 return "Solicitudes";
             case "feedback":
                 return "Feedback";
-            case "configuration":
-            case "configuracion":
-                return "Configuración";
+            case "statistics":
+            case "estadisticas":
+                return "Estadísticas";
             default:
                 // Si es un ID, buscar en el segmento anterior
                 if (esNumerico(ultimoSegmento) && segmentos.length > 1) {

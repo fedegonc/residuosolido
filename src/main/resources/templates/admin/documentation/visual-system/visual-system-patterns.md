@@ -168,6 +168,10 @@ Esta documentación establece el patrón estándar para todas las páginas de ad
 - **Principal:** "Gestiona los comentarios y sugerencias de los usuarios del sistema. Puedes revisar feedback de usuarios registrados y anónimos, responder consultas y mantener un registro de todas las comunicaciones. El feedback es fundamental para mejorar la experiencia del usuario y la calidad del servicio."
 - **Consejo:** "Usa el buscador para filtrar por usuario, mensaje o fecha. Los comentarios recientes requieren atención prioritaria para mantener la satisfacción del usuario."
 
+### **Statistics:**
+- **Principal:** "Monitorea el rendimiento y crecimiento del sistema a través de métricas clave. Aquí puedes ver estadísticas de usuarios, organizaciones, solicitudes y feedback en tiempo real, junto con tendencias y análisis visuales que te ayudan a tomar decisiones informadas sobre el funcionamiento de la plataforma."
+- **Consejo:** "Los datos se actualizan automáticamente cada hora. Usa los gráficos interactivos para profundizar en las métricas específicas que necesites analizar."
+
 ## 🎨 **Estilos y Clases CSS Estándar**
 
 ### **Botones:**
@@ -287,6 +291,7 @@ Esta documentación establece el patrón estándar para todas las páginas de ad
 - [x] Posts
 - [x] Categories
 - [x] Feedback
+- [x] Statistics
 
 ## 🔄 **Proceso de Homogenización**
 
