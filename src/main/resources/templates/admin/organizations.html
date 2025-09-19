@@ -43,6 +43,13 @@
                 <h2 class="text-lg font-semibold text-gray-900">
                     Lista de Organizaciones (<span th:text="${totalOrganizations}">0</span>)
                 </h2>
+                <p class="text-sm text-gray-600">
+                    Gestiona las organizaciones registradas en el sistema. Puedes ver detalles, editar información de contacto y gestionar el estado de cada organización. Las organizaciones pueden crear y gestionar solicitudes de recolección de residuos.
+                    <span class="block mt-1 text-xs text-gray-500">
+                        Usa el buscador para filtrar por nombre de usuario, nombre o email. Las organizaciones marcadas como inactivas no podrán acceder al sistema ni crear nuevas solicitudes.
+                    </span>
+                </p>
+                <!-- Buscador -->
                 <form th:action="@{/admin/organizations}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                     <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, nombre o email..."
                            class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
