@@ -74,8 +74,8 @@
   <!-- Hero section simplificado -->
   <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16">
     <div class="container mx-auto px-4">
-      <h1 class="text-4xl md:text-6xl font-bold mb-4">♻️ <span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
-      <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Frontera de la Paz</p>
+      <h1 class="text-4xl md:text-6xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
+      <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
       <p class="text-lg text-green-100 max-w-2xl" th:text="#{index.hero.description}">
         Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
       </p>
@@ -88,23 +88,41 @@
     <section class="mb-12">
       <h2 class="text-2xl font-bold text-gray-900 mb-6">Categorías</h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${categories != null and !categories.empty}">
-        <a th:each="category, iterStat : ${categories}" 
-           th:href="@{/categories/{id}(id=${category.id})}" 
-           class="card rounded-lg p-5 transition"
-           th:classappend="${iterStat.index % 3 == 0} ? 'bg-green-50' : (${iterStat.index % 3 == 1} ? 'bg-blue-50' : 'bg-amber-50')">
-          <h3 class="font-bold mb-2" 
-              th:classappend="${iterStat.index % 3 == 0} ? 'text-green-800' : (${iterStat.index % 3 == 1} ? 'text-blue-800' : 'text-amber-800')"
-              th:text="${category.name}">Categoría</h3>
-          <p class="text-sm" 
-             th:classappend="${iterStat.index % 3 == 0} ? 'text-green-700' : (${iterStat.index % 3 == 1} ? 'text-blue-700' : 'text-amber-700')"
-             th:text="${category.description}">Descripción de la categoría</p>
+      <p th:if="${categories != null and !categories.empty}" class="text-gray-700">
+        <span th:each="category, iterStat : ${categories}" 
+              th:if="${iterStat.last == false}">
+          <a th:href="@{/categories/{id}(id=${category.id})}" 
+             class="italic hover:underline">
+            <span th:text="${category.name}">Categoría</span>
+          </a> - 
+        </span>
+        <a th:if="${categories.size() > 0}" href="/categories" 
+           class="italic hover:underline font-medium text-green-800">
+          Ver todas las categorías →
         </a>
-      </div>
+      </p>
       
       <p th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
         No hay categorías disponibles
       </p>
+    </section>
+
+    <!-- Notas recientes -->
+    <section class="mb-12">
+      <div class="bg-gray-50 p-6 rounded-lg">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Notas recientes</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <article th:each="note : ${recentNotes}" class="card rounded-lg p-4 bg-white shadow">
+            <div class="w-full h-32 mb-3 flex items-center justify-center bg-gray-100 rounded-lg" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+              <span class="text-2xl font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
+            </div>
+            <img th:src="${note.image}" alt="Imagen de la nota" class="w-full h-32 object-cover rounded-lg mb-3" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+            <h4 th:text="${note.title}" class="font-semibold text-gray-900 mb-2">Título de la nota</h4>
+            <p th:text="${note.excerpt}" class="text-sm text-gray-600 mb-3">Extracto de la nota...</p>
+            <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-sm">Ver más →</a>
+          </article>
+        </div>
+      </div>
     </section>
 
     <!-- Acciones rápidas -->

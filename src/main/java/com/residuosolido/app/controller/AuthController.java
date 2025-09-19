@@ -2,10 +2,12 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.LoginSuccessHandler;
 import com.residuosolido.app.model.Category;
+import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CategoryService;
 import com.residuosolido.app.service.PasswordResetRequestService;
 import com.residuosolido.app.service.AuthService;
+import com.residuosolido.app.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -21,7 +23,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -104,6 +109,9 @@ public class AuthController {
     @Autowired
     private CategoryService categoryService;
     
+    @Autowired
+    private PostService postService;
+    
     @GetMapping({"/", "/index"})
     public String rootOrIndex(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -115,6 +123,49 @@ public class AuthController {
         // Cargar categorías activas para mostrar en la página de inicio
         List<Category> activeCategories = categoryService.findAllActive();
         model.addAttribute("categories", activeCategories);
+        
+        // Cargar posts recientes para mostrar en la página de inicio
+        List<Post> recentPosts = postService.getRecentPosts(3);
+        List<Map<String, String>> recentNotes = new ArrayList<>();
+        
+        if (recentPosts.isEmpty()) {
+            // Fallback hardcode si no hay posts en la base de datos
+            Map<String, String> note1 = new HashMap<>();
+            note1.put("title", "Bienvenidos a Residuos Sólidos");
+            note1.put("image", "/images/placeholder.jpg");
+            note1.put("excerpt", "Descubre cómo podemos ayudar a gestionar los residuos en la región fronteriza de una manera sostenible.");
+            note1.put("url", "/about");
+            recentNotes.add(note1);
+            
+            Map<String, String> note2 = new HashMap<>();
+            note2.put("title", "Cómo reciclar correctamente");
+            note2.put("image", "/images/placeholder.jpg");
+            note2.put("excerpt", "Guía práctica para separar y preparar tus residuos reciclables antes de la recolección.");
+            note2.put("url", "/about");
+            recentNotes.add(note2);
+            
+            Map<String, String> note3 = new HashMap<>();
+            note3.put("title", "Organizaciones participantes");
+            note3.put("image", "/images/placeholder.jpg");
+            note3.put("excerpt", "Conoce las organizaciones que colaboran en la recolección y reciclaje en Rivera y Sant'Ana do Livramento.");
+            note3.put("url", "/about");
+            recentNotes.add(note3);
+        } else {
+            // Convertir posts reales a mapas
+            for (Post post : recentPosts) {
+                Map<String, String> note = new HashMap<>();
+                note.put("title", post.getTitle());
+                note.put("image", post.getImageUrl() != null ? post.getImageUrl() : "/images/placeholder.jpg");
+                String excerpt = post.getContent() != null && post.getContent().length() > 100 
+                    ? post.getContent().substring(0, 100) + "..." 
+                    : post.getContent() != null ? post.getContent() : "";
+                note.put("excerpt", excerpt);
+                note.put("url", "/posts/" + post.getId());
+                recentNotes.add(note);
+            }
+        }
+        
+        model.addAttribute("recentNotes", recentNotes);
         
         // Usuario no autenticado: mostrar la página de inicio (index.html)
         return "index";
