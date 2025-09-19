@@ -11,15 +11,7 @@
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
-  <!-- Header -->
-  <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
-    <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
-      <div class="ml-4 mt-2">
-        <h3 class="text-2xl font-bold leading-6 text-gray-900">Gestión de Materiales</h3>
-      </div>
-    </div>
-  </div>
-
+<main>
   <!-- Breadcrumbs -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
     <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
@@ -51,8 +43,17 @@
     <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
       <div class="px-6 py-4 border-b border-gray-200 space-y-3">
         <h2 class="text-lg font-semibold text-gray-900">
-          Lista de Materiales (<span th:text="${totalMaterials}">0</span>)
+          Gestión de Materiales
         </h2>
+        <p class="text-sm text-gray-600">
+          Gestiona el catálogo de materiales reciclables disponibles en el sistema. Puedes crear nuevos materiales, editar información existente y gestionar el estado de cada material. Los materiales activos estarán disponibles para las solicitudes de recolección.
+          <span class="block mt-1 text-xs text-gray-500">
+            Usa el buscador para filtrar por nombre, descripción o categoría. Los materiales marcados como inactivos no estarán disponibles para nuevas solicitudes.
+          </span>
+        </p>
+        <h3 class="text-lg font-semibold text-gray-900">
+          Lista de Materiales (<span th:text="${totalMaterials}">0</span>)
+        </h3>
         <!-- Buscador -->
         <form method="get" action="/admin/materials" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
           <input type="text" name="q" th:value="${query}" placeholder="Buscar por nombre, descripción o categoría"
