@@ -18,6 +18,9 @@ public class AdminController {
     
     @Autowired
     private CloudinaryService cloudinaryService;
+    
+    @Autowired
+    private ConfigService configService;
 
     // ========== DASHBOARD & DOCS ==========
     @GetMapping("/admin/dashboard")
@@ -69,7 +72,7 @@ public class AdminController {
         try {
             if (heroImageFile != null && !heroImageFile.isEmpty()) {
                 String imageUrl = cloudinaryService.uploadFile(heroImageFile);
-                // TODO: Guardar imageUrl en configuración/base de datos
+                configService.setHeroImageUrl(imageUrl); // Guardar URL en configuración
                 redirectAttributes.addFlashAttribute("successMessage", "Imagen hero actualizada correctamente");
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "No se seleccionó ninguna imagen");

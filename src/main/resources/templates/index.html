@@ -72,8 +72,13 @@
   </header>
 
   <!-- Hero section simplificado -->
-  <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16">
-    <div class="container mx-auto px-4">
+  <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16 relative overflow-hidden">
+    <!-- Imagen de fondo opcional -->
+    <div th:if="${heroImageUrl != null and heroImageUrl != '/images/hero-default.jpg'}" 
+         class="absolute inset-0 bg-cover bg-center opacity-20" 
+         th:style="'background-image: url(' + ${heroImageUrl} + ')'"></div>
+    
+    <div class="container mx-auto px-4 relative z-10">
       <h1 class="text-4xl md:text-6xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
       <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
       <p class="text-lg text-green-100 max-w-2xl" th:text="#{index.hero.description}">
@@ -167,7 +172,7 @@
   <footer class="bg-gray-800 text-white py-6 mt-12">
     <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center justify-between">
-        <p class="mb-4 md:mb-0">&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
+        <p class="mb-4 md:mb-0">&copy; 2024 Residuos Sólidos - Rivera Sant'Ana do Livramento</p>
         <button id="debug-toggle" class="card bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md flex items-center transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />

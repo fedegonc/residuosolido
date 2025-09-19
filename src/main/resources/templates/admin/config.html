@@ -1,9 +1,125 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Config</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Sistema - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
 </head>
-<body>
-    <h1>Config Page</h1>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fa-solid fa-circle-check mr-2 text-base"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i class="fa-solid fa-circle-exclamation mr-2 text-base"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Configuración del Sistema</h2>
+                <p class="mt-1 text-sm text-gray-600">Administra la configuración general de la aplicación</p>
+            </div>
+
+            <div class="px-6 py-6">
+                <!-- Hero Image Configuration -->
+                <div class="mb-8">
+                    <h3 class="text-md font-medium text-gray-900 mb-4">Imagen del Hero</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Current Image Preview -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen Actual</label>
+                            <div th:if="${@configService.getHeroImageUrl() != '/images/hero-default.jpg'}" class="border-2 border-gray-300 border-dashed rounded-lg p-4">
+                                <img th:src="${@configService.getHeroImageUrl()}" alt="Imagen del hero actual" class="w-full h-32 object-cover rounded-lg">
+                            </div>
+                            <div th:if="${@configService.getHeroImageUrl() == '/images/hero-default.jpg'}" class="border-2 border-gray-300 border-dashed rounded-lg p-4 text-center">
+                                <i class="fa-solid fa-image text-gray-400 text-3xl mb-2"></i>
+                                <p class="text-gray-500">Sin imagen personalizada</p>
+                            </div>
+                        </div>
+
+                        <!-- Upload Form -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subir Nueva Imagen</label>
+                            <form action="/admin/config/hero-image" method="post" enctype="multipart/form-data" class="space-y-4">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                <div>
+                                    <input type="file" name="heroImageFile" accept="image/*" required
+                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+                                        <i class="fa-solid fa-upload mr-2"></i>
+                                        Actualizar Imagen
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p><strong>Recomendaciones:</strong></p>
+                        <ul class="list-disc list-inside mt-1">
+                            <li>Formato: JPG, PNG o GIF</li>
+                            <li>Tamaño máximo: 5MB</li>
+                            <li>Resolución recomendada: 1920x1080px</li>
+                            <li>La imagen se mostrará con opacidad reducida como fondo del hero</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- System Configuration -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-md font-medium text-gray-900 mb-4">Configuración General</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- App Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Aplicación</label>
+                            <p class="text-sm text-gray-600" th:text="${@configService.getAppName()}"></p>
+                        </div>
+
+                        <!-- Features Status -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Funcionalidades Activas</label>
+                            <div class="space-y-1">
+                                <div class="flex items-center">
+                                    <i th:class="${@configService.isFeatureEnabled('posts')} ? 'fa-solid fa-circle-check text-green-500' : 'fa-solid fa-circle-xmark text-red-500'" class="mr-2"></i>
+                                    <span class="text-sm">Publicaciones</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i th:class="${@configService.isFeatureEnabled('requests')} ? 'fa-solid fa-circle-check text-green-500' : 'fa-solid fa-circle-xmark text-red-500'" class="mr-2"></i>
+                                    <span class="text-sm">Solicitudes</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i th:class="${@configService.isFeatureEnabled('feedback')} ? 'fa-solid fa-circle-check text-green-500' : 'fa-solid fa-circle-xmark text-red-500'" class="mr-2"></i>
+                                    <span class="text-sm">Feedback</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 </body>
 </html>

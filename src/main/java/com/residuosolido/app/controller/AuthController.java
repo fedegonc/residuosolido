@@ -8,6 +8,7 @@ import com.residuosolido.app.service.CategoryService;
 import com.residuosolido.app.service.PasswordResetRequestService;
 import com.residuosolido.app.service.AuthService;
 import com.residuosolido.app.service.PostService;
+import com.residuosolido.app.service.ConfigService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -112,6 +113,9 @@ public class AuthController {
     @Autowired
     private PostService postService;
     
+    @Autowired
+    private ConfigService configService;
+    
     @GetMapping({"/", "/index"})
     public String rootOrIndex(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -123,6 +127,10 @@ public class AuthController {
         // Cargar categorías activas para mostrar en la página de inicio
         List<Category> activeCategories = categoryService.findAllActive();
         model.addAttribute("categories", activeCategories);
+        
+        // Cargar imagen del hero desde configuración
+        String heroImageUrl = configService.getHeroImageUrl();
+        model.addAttribute("heroImageUrl", heroImageUrl);
         
         // Cargar posts recientes para mostrar en la página de inicio
         List<Post> recentPosts = postService.getRecentPosts(3);
