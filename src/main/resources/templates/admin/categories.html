@@ -10,47 +10,11 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <div class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-4">
-                    <a th:href="@{/admin/dashboard}" class="text-green-600 hover:text-green-700">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    </a>
-                    <h1 class="text-2xl font-bold text-gray-900">Gestión de Categorías</h1>
-                </div>
-                <div th:if="${viewType == 'list'}" class="flex space-x-3">
-                    <a th:href="@{/admin/categories(action='new')}" 
-                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                        <span>Nueva Categoría</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:with="
-                      bcItems=${
-                        viewType == 'form' ? 
-                          #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
-                                     {'label':'Categorías','url':@{/admin/categories}},
-                                     {'label': (${category.id} == null ? 'Alta' : 'Editar'), 'url': null}) :
-                          (viewType == 'view' ?
-                            #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
-                                       {'label':'Categorías','url':@{/admin/categories}},
-                                       {'label':'Detalle', 'url': null}) :
-                            #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},
-                                       {'label':'Categorías','url':@{/admin/categories}})
-                          )
-                      }
-                    "
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Categorías')}">
-        </th:block>
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
 
     <!-- Messages -->
@@ -72,13 +36,22 @@
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
         <!-- List View -->
         <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 space-y-3">
-                <h2 class="text-lg font-medium text-gray-900">Lista de Categorías</h2>
+                <h2 class="text-lg font-semibold text-gray-900">
+                  Gestión de Categorías
+                </h2>
+                <p class="text-sm text-gray-600">
+                  Organiza y administra las categorías de posts disponibles en el sistema. Puedes crear nuevas categorías, editar información existente y mantener la estructura de contenido organizada. Las categorías ayudan a clasificar los posts de manera eficiente.
+                  <span class="block mt-1 text-xs text-gray-500">
+                    Usa el buscador para filtrar por nombre o descripción. Las categorías bien organizadas facilitan la navegación de contenido.
+                  </span>
+                </p>
+                <h3 class="text-lg font-semibold text-gray-900">Lista de Categorías</h3>
                 <!-- Buscador -->
                 <form th:action="@{/admin/categories}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                     <input type="text" name="q" th:value="${query}" placeholder="Buscar por nombre o descripción..."
@@ -183,6 +156,15 @@
                     </button>
                 </div>
             </form>
+        </div>
+
+        <!-- Botón 'Nueva Categoría' (al final de la lista) -->
+        <div class="px-6 pb-4 flex justify-start">
+            <a th:if="${viewType == 'list'}" th:href="@{/admin/categories(action='new')}"
+               class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Nueva Categoría</span>
+            </a>
         </div>
 
         <!-- View Mode -->
@@ -306,6 +288,15 @@
 
             renderPage();
         })();
+
+        <!-- Botón 'Nueva Categoría' (al final de la lista) -->
+        <div class="px-6 pb-4 flex justify-start">
+            <a th:if="${viewType == 'list'}" th:href="@{/admin/categories(action='new')}"
+               class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Nueva Categoría</span>
+            </a>
+        </div>
     </script>
 </body>
 </html>

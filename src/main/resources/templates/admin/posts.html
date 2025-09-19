@@ -11,22 +11,7 @@
 <main>
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:switch expression="${viewType}">
-            <th:block th:case="'list'"
-                      th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}})}"
-                      th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Posts')}">
-            </th:block>
-
-            <th:block th:case="'form'"
-                      th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':${post.id != null ? 'Editar' : 'Nuevo'},'url':''})}"
-                      th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, ${post.id != null ? 'Editar Post' : 'Nuevo Post'})}">
-            </th:block>
-
-            <th:block th:case="'view'"
-                      th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Posts','url':@{/admin/posts}},{'label':'Ver','url':''})}"
-                      th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Detalles del Post')}">
-            </th:block>
-        </th:switch>
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
 
 
@@ -36,7 +21,16 @@
         <!-- List View -->
         <div th:if="${viewType eq 'list'}" class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 space-y-3">
-                <h2 class="text-lg font-semibold text-gray-900">Lista de Posts (<span th:text="${totalPosts}">0</span>)</h2>
+                <h2 class="text-lg font-semibold text-gray-900">
+                  Gestión de Posts
+                </h2>
+                <p class="text-sm text-gray-600">
+                  Gestiona el contenido informativo del sistema. Puedes crear, editar y organizar posts con información relevante sobre reciclaje y medio ambiente. Los posts publicados estarán disponibles en el portal público para educar a los usuarios.
+                  <span class="block mt-1 text-xs text-gray-500">
+                    Usa el buscador para filtrar por título, categoría o contenido. Los posts organizados por categorías facilitan la navegación de los usuarios.
+                  </span>
+                </p>
+                <h3 class="text-lg font-semibold text-gray-900">Lista de Posts (<span th:text="${totalPosts}">0</span>)</h3>
                 <!-- Buscador -->
                 <form th:action="@{/admin/posts}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                     <input type="text" name="q" th:value="${query}" placeholder="Buscar por título, categoría o contenido..."

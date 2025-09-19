@@ -6,38 +6,52 @@
     <title>Gestión de Feedback - Admin</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <!-- List View Breadcrumbs -->
-        <th:block th:if="${viewType eq 'list'}"
-                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Feedback','url':@{/admin/feedback}})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Feedback')}">
-        </th:block>
-
-        <!-- Form View Breadcrumbs -->
-        <th:block th:if="${viewType eq 'form'}"
-                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Feedback','url':@{/admin/feedback}},{'label':${feedback.id == null ? 'Nuevo' : 'Editar'},'url':''})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, ${feedback.id == null ? 'Nuevo Feedback' : 'Editar Feedback'})}">
-        </th:block>
-
-        <!-- View Mode Breadcrumbs -->
-        <th:block th:if="${viewType eq 'view'}"
-                  th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Feedback','url':@{/admin/feedback}},{'label':'Ver','url':''})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Detalles del Feedback')}">
-        </th:block>
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
 
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
 
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
+
         <!-- List View -->
         <div th:if="${viewType eq 'list'}" class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 space-y-3">
-                <h2 class="text-lg font-semibold text-gray-900">Lista de Feedback (<span th:text="${totalFeedbacks}">0</span>)</h2>
+                <h2 class="text-lg font-semibold text-gray-900">
+                  Gestión de Feedback
+                </h2>
+                <p class="text-sm text-gray-600">
+                  Gestiona los comentarios y sugerencias de los usuarios del sistema. Puedes revisar feedback de usuarios registrados y anónimos, responder consultas y mantener un registro de todas las comunicaciones. El feedback es fundamental para mejorar la experiencia del usuario y la calidad del servicio.
+                  <span class="block mt-1 text-xs text-gray-500">
+                    Usa el buscador para filtrar por usuario, mensaje o fecha. Los comentarios recientes requieren atención prioritaria para mantener la satisfacción del usuario.
+                  </span>
+                </p>
+                <h3 class="text-lg font-semibold text-gray-900">Lista de Feedback</h3>
                 <!-- Buscador -->
                 <form th:action="@{/admin/feedback}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                     <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, mensaje o fecha..."
@@ -103,7 +117,7 @@
             <div class="px-6 pb-4 flex justify-start">
                 <a th:if="${viewType eq 'list'}" th:href="@{/admin/feedback(action='new')}" 
                    class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
-                    <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+                    <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>Nuevo Feedback</span>
                 </a>
             </div>
@@ -219,7 +233,7 @@
                     <div class="flex space-x-2">
                         <a th:href="@{/admin/feedback(action='edit', id=${feedback.id})}"
                            class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 text-sm flex items-center space-x-2">
-                            <i class="fa-solid fa-edit text-xs"></i>
+                            <i data-lucide="edit" class="w-4 h-4"></i>
                             <span>Editar</span>
                         </a>
                     </div>
@@ -263,7 +277,7 @@
             <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
                 <a th:href="@{/admin/feedback}"
                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm flex items-center space-x-2">
-                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
                     <span>Volver</span>
                 </a>
 
@@ -272,7 +286,7 @@
                     <input type="hidden" name="id" th:value="${feedback.id}"/>
                     <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este feedback?')"
                             class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm flex items-center space-x-2">
-                        <i class="fa-solid fa-trash text-xs"></i>
+                        <i data-lucide="trash" class="w-4 h-4"></i>
                         <span>Eliminar</span>
                     </button>
                 </form>
@@ -281,19 +295,6 @@
 
         <!-- Delete Confirmation Modal -->
         <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-            <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="bg-white rounded-lg max-w-md w-full">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg"></i>
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
-                                <p class="mt-2 text-sm text-gray-500">
-                                    ¿Estás seguro de que deseas eliminar este feedback?
-                                    Esta acción no se puede deshacer.
-                                </p>
                                 <p class="mt-2 text-sm text-gray-700">
                                     <strong>Comentario:</strong> <span id="deleteFeedbackText"></span>
                                 </p>
@@ -472,6 +473,9 @@
                 // No hacer nada especial aquí
             });
         })();
+
+        // Inicializar íconos de Lucide
+        lucide.createIcons();
     </script>
 </body>
 </html>
