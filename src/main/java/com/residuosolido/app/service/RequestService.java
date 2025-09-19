@@ -8,6 +8,7 @@ import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,16 +62,47 @@ public class RequestService {
         return requestRepository.findByUser(user);
     }
 
+    @Transactional(readOnly = true)
     public List<Request> findAll() {
-        return requestRepository.findAll();
+        List<Request> requests = requestRepository.findAll();
+        // Forzar la inicialización de propiedades lazy del User y collections
+        requests.forEach(request -> {
+            if (request.getUser() != null) {
+                request.getUser().getUsername();
+                request.getUser().getFirstName();
+                request.getUser().getLastName();
+                request.getUser().getEmail();
+            }
+            // Forzar la inicialización de la colección materials
+            if (request.getMaterials() != null) {
+                request.getMaterials().size(); // Esto fuerza la carga de la colección
+            }
+        });
+        return requests;
     }
 
     public long count() {
         return requestRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Request> findById(Long id) {
-        return requestRepository.findById(id);
+        Optional<Request> requestOpt = requestRepository.findById(id);
+        // Forzar la inicialización de propiedades lazy si existe la request
+        if (requestOpt.isPresent()) {
+            Request request = requestOpt.get();
+            if (request.getUser() != null) {
+                request.getUser().getUsername();
+                request.getUser().getFirstName();
+                request.getUser().getLastName();
+                request.getUser().getEmail();
+            }
+            // Forzar la inicialización de la colección materials
+            if (request.getMaterials() != null) {
+                request.getMaterials().size();
+            }
+        }
+        return requestOpt;
     }
 
     public Request rejectRequest(Long requestId) {
@@ -125,8 +157,17 @@ public class RequestService {
     /**
      * Returns the list of active organizations (users with role ORGANIZATION and active=true)
      */
+    @Transactional(readOnly = true)
     public List<User> getActiveOrganizations() {
-        return userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
+        List<User> orgs = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
+        // Forzar la inicialización de propiedades lazy
+        orgs.forEach(org -> {
+            org.getUsername();
+            org.getFirstName();
+            org.getLastName();
+            org.getEmail();
+        });
+        return orgs;
     }
 
     /**

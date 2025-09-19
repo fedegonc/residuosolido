@@ -5,14 +5,13 @@ import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 
-import jakarta.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -75,12 +74,22 @@ public class UserService {
     }
     
     /**
-     * Busca usuarios por rol
+     * Busca usuarios por rol con eager loading para evitar LazyInitializationException
      * @param role Rol para filtrar
      * @return Lista de usuarios con el rol especificado
      */
+    @Transactional(readOnly = true)
     public List<User> findByRole(com.residuosolido.app.model.Role role) {
-        return userRepository.findByRole(role);
+        List<User> users = userRepository.findByRole(role);
+        // Forzar la inicialización de propiedades lazy
+        users.forEach(user -> {
+            user.getUsername(); // Forzar carga
+            user.getFirstName();
+            user.getLastName();
+            user.getEmail();
+            user.getAddress();
+        });
+        return users;
     }
     
     /**
