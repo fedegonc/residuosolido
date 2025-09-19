@@ -11,11 +11,27 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <!-- Font Awesome (WebJars) -->
     <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/6.5.2/css/all.min.css}" />
+    <style>
+      :root {
+        /* Paleta 4 colores */
+        --rs-bg: #F8F9FA;      /* Fondo general */
+        --rs-card: #FFFFFF;    /* Tarjetas */
+        --rs-primary: #0D6EFD; /* Primario */
+        --rs-text: #212529;    /* Texto */
+      }
+      body { background: var(--rs-bg); color: var(--rs-text); }
+      .rs-card { background: var(--rs-card); }
+      .rs-btn-primary { background: var(--rs-primary); color: #fff; }
+      .rs-btn-primary:hover { filter: brightness(0.95); }
+      .rs-link { color: var(--rs-primary); }
+      .rs-link:hover { text-decoration: underline; }
+      .focus-ring:focus { outline: 3px solid rgba(13,110,253,.45); outline-offset: 2px; }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
     
     <!-- Admin Top Bar -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="rs-card shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -25,17 +41,17 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
                         </div>
-                        <span class="ml-2 text-lg font-semibold text-gray-900">Residuos Sólidos</span>
-                        <span class="ml-2 text-sm text-gray-500">Rivera - Sant'Ana do Livramento</span>
+                        <span class="ml-2 text-lg font-semibold" style="color:var(--rs-text)">Residuos Sólidos</span>
+                        <span class="ml-2 text-sm" style="color:#6c757d">Rivera - Sant'Ana do Livramento</span>
                     </div>
                 </div>
                 
                 <!-- User Info -->
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm font-medium text-gray-900" th:text="${#authentication.name}">Usuario</span>
+                    <span class="text-sm font-medium" th:text="${#authentication.name}">Usuario</span>
                     <form th:action="@{/logout}" method="POST" class="inline">
-                        <button type="submit" class="text-sm text-gray-500 hover:text-gray-700">
-                            Cerrar Sesión
+                        <button type="submit" class="text-sm rs-link focus-ring" aria-label="Cerrar sesión">
+                            Cerrar sesión
                         </button>
                     </form>
                 </div>
@@ -168,7 +184,7 @@
     </main>
     
     <!-- Admin Footer (simplificado, sin redundancias) -->
-    <footer class="bg-gray-800 text-white py-4 mt-auto">
+    <footer class="mt-auto" style="background:#212529; color:#fff">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">

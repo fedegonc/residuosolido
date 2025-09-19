@@ -14,13 +14,7 @@
     <!-- Messages -->
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:with="
-            bcItems=${isOrganizations} ? 
-                #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Organizaciones','url':@{/admin/organizations}}) : 
-                #lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Usuarios','url':@{/admin/users}})
-            "
-            th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, ${isOrganizations} ? 'Gestión de Organizaciones' : 'Gestión de Usuarios')}">
-        </th:block>
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
 
     <!-- Messages -->
@@ -343,21 +337,44 @@
                 </div>
             </div>
             
-            <div class="p-6">
-                <!-- Imagen de Perfil -->
-                <div th:if="${user.profileImage}" class="mb-6">
-                    <label class="block text-sm font-medium text-gray-500">Imagen de Perfil</label>
-                    <img th:src="${user.profileImage}" alt="Imagen de perfil" class="mt-2 max-w-xs rounded"/>
-                </div>
+            <div class="p-6 space-y-6">
+                <!-- Sección de Perfil -->
+                <section class="rs-card rounded-lg border border-gray-200 p-6">
+                    <div class="flex items-start gap-6">
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0">
+                            <img th:if="${user.profileImage != null and !#strings.isEmpty(user.profileImage)}" 
+                                 th:src="${user.profileImage}" 
+                                 th:alt="${#strings.concat('Foto de perfil de ', user.firstName, ' ', user.lastName)}"
+                                 class="h-24 w-24 object-cover rounded-full border"/>
+                            <div th:if="${user.profileImage == null or #strings.isEmpty(user.profileImage)}" 
+                                 class="h-24 w-24 rounded-full bg-green-100 flex items-center justify-center">
+                                <span class="text-2xl font-medium text-green-800" 
+                                      th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</span>
+                            </div>
+                        </div>
+                        <!-- Info Principal -->
+                        <div class="flex-1">
+                            <h1 class="text-xl font-semibold mb-1" th:text="${#strings.concat(user.firstName, ' ', user.lastName)}">Nombre Completo</h1>
+                            <p class="text-sm mb-3" style="color: #6c757d" th:text="${#strings.concat('@', user.username)}">@usuario</p>
+                            <div class="flex gap-3">
+                                <a th:href="${isOrganizations} ? @{/admin/organizations(action='edit', id=${user.id})} : @{/admin/users(action='edit', id=${user.id})}" 
+                                   class="rs-btn-primary px-3 py-1.5 rounded-md text-sm focus-ring">
+                                   Editar perfil
+                                </a>
+                                <button class="px-3 py-1.5 rounded-md text-sm border focus-ring"
+                                        style="color:var(--rs-primary); border-color:#dee2e6">
+                                    Cambiar foto
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 
-                <!-- Nombre y Apellido -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-500">Nombre y Apellido</label>
-                    <p class="mt-1 text-sm text-gray-900" th:text="${user.firstName} + ' ' + user.lastName">nombre y apellido</p>
-                </div>
-                
-                <!-- Datos Restantes -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Sección de Cuenta -->
+                <section class="rs-card rounded-lg border border-gray-200 p-6">
+                    <h3 class="text-base font-semibold mb-4">Información de Cuenta</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-500">Nombre de Usuario</label>
                         <p class="mt-1 text-sm text-gray-900" th:text="${user.username}">username</p>
@@ -421,6 +438,8 @@
             </div>
         </div>
 
+    </div>
+    
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">

@@ -39,6 +39,31 @@ controller/admin/
 ├── AdminRequestController # Solicitudes de recolección
 ├── AdminFeedbackController # Comentarios
 └── AdminPasswordResetController # Reset contraseñas
+
+interceptor/
+└── BreadcrumbInterceptor  # Sistema automático de breadcrumbs
+
+service/
+├── BreadcrumbService      # Generación inteligente de navegación
+└── [otros servicios...]   # UserService, MaterialService, etc.
+```
+
+### 🧭 Sistema de Breadcrumbs Automático
+
+El sistema incluye navegación automática que genera breadcrumbs basándose en la URL:
+
+- **Automático**: Analiza la ruta y construye la navegación dinámicamente
+- **Inteligente**: Resuelve IDs a nombres de entidades (ej: `/admin/users/123` → "Juan Pérez")
+- **Consistente**: Mismo formato en toda la aplicación
+- **Flexible**: Permite override manual cuando sea necesario
+
+**Uso en templates:**
+```html
+<!-- Automático (recomendado) -->
+<th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+
+<!-- Manual (casos especiales) -->
+<th:block th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${items}, 'Título')}"></th:block>
 ```
 
 ## 📋 Guías de Uso

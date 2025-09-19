@@ -1,12 +1,40 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Breadcrumbs Fragment</title>
-</head>
-<body>
-<th:block th:fragment="breadcrumbs(items, currentTitle)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="breadcrumbs(bcItems, title)">
     <!-- Breadcrumbs Component -->
+    <!-- Usar parámetros si se pasan, sino usar los del interceptor automático -->
+    <th:block th:with="
+        items=${bcItems != null ? bcItems : breadcrumbItems},
+        finalTitle=${title != null ? title : breadcrumbTitle}
+    ">
+        <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center">
+                <!-- Home fijo -->
+                <li class="inline-flex items-center">
+                    <a href="/" class="inline-flex items-center text-gray-500 hover:text-gray-700">
+                        <span>Inicio</span>
+                    </a>
+                </li>
+
+                <!-- Items intermedios (si existen) -->
+                <li th:if="${items != null and !items.empty}" th:remove="tag">
+                    <span th:each="item : ${items}" class="inline-flex items-center">
+                        <span class="mx-2 text-gray-400">›</span>
+                        <a th:href="${item.url}" class="text-gray-500 hover:text-gray-700" th:text="${item.label}">Item</a>
+                    </span>
+                </li>
+
+                <!-- Página actual -->
+                <li class="inline-flex items-center">
+                    <span class="mx-2 text-gray-400">›</span>
+                    <span class="text-gray-700 font-medium" th:text="${finalTitle ?: 'Página'}">Actual</span>
+                </li>
+            </ol>
+        </nav>
+    </th:block>
+</th:block>
+
+<!-- Fragmento sin parámetros que usa los valores automáticos del interceptor -->
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="auto">
+    <!-- Usar valores automáticos del interceptor -->
     <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
         <ol class="inline-flex items-center">
             <!-- Home fijo -->
@@ -17,8 +45,8 @@
             </li>
 
             <!-- Items intermedios (si existen) -->
-            <li th:if="${items != null}" th:remove="tag">
-                <span th:each="item : ${items}" class="inline-flex items-center">
+            <li th:if="${breadcrumbItems != null and !breadcrumbItems.empty}" th:remove="tag">
+                <span th:each="item : ${breadcrumbItems}" class="inline-flex items-center">
                     <span class="mx-2 text-gray-400">›</span>
                     <a th:href="${item.url}" class="text-gray-500 hover:text-gray-700" th:text="${item.label}">Item</a>
                 </span>
@@ -27,10 +55,8 @@
             <!-- Página actual -->
             <li class="inline-flex items-center">
                 <span class="mx-2 text-gray-400">›</span>
-                <span class="text-gray-700 font-medium" th:text="${currentTitle}">Actual</span>
+                <span class="text-gray-700 font-medium" th:text="${breadcrumbTitle ?: 'Página'}">Actual</span>
             </li>
         </ol>
     </nav>
 </th:block>
-</body>
-</html>
