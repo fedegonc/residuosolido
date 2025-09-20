@@ -39,13 +39,7 @@
         
         <!-- Navegación y acciones -->
         <div class="flex items-center gap-4">
-          <!-- Selector de idioma -->
-          <form id="language-form" method="get" action="" class="inline-block">
-            <select id="language-selector" name="lang" onchange="this.form.submit()" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-              <option value="es" th:selected="${#locale.language == 'es' || #locale.language == 'es_ES'}">🇪🇸 <th:block th:text="#{language.spanish}">Español</th:block></option>
-              <option value="pt" th:selected="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR' || #locale.language == null}">🇧🇷 <th:block th:text="#{language.portuguese}">Português</th:block></option>
-            </select>
-          </form>
+          
           
           <!-- Botones para usuarios no autenticados -->
           <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
@@ -79,6 +73,22 @@
          th:style="'background-image: url(' + ${heroImageUrl} + ')'"></div>
     
     <div class="container mx-auto px-4 relative z-10">
+      <!-- Selector de idioma arriba del H1 -->
+      <div class="mb-4 flex items-center justify-start text-white/90 text-sm">
+        <a th:href="@{/(lang='es')}"
+           class="hover:underline"
+           th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? ' font-semibold underline' : ''"
+           aria-label="Cambiar a Español">
+          🇪🇸 <span th:text="#{language.spanish}">Español</span>
+        </a>
+        <span class="mx-2">/</span>
+        <a th:href="@{/(lang='pt')}"
+           class="hover:underline"
+           th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR' || #locale.language == null} ? ' font-semibold underline' : ''"
+           aria-label="Mudar para Português">
+          🇧🇷 <span th:text="#{language.portuguese}">Português</span>
+        </a>
+      </div>
       <h1 class="text-4xl md:text-6xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
       <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
       <p class="text-lg text-green-100 max-w-2xl" th:text="#{index.hero.description}">
