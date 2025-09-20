@@ -1,112 +1,53 @@
 # 🌱 Sistema de Gestión de Residuos Sólidos
 **Rivera - Sant'ana do Livramento**
 
-Sistema web para gestión de residuos sólidos urbanos con arquitectura Spring Boot + PostgreSQL + Thymeleaf. Incluye sistema multi-rol, internacionalización (ES/PT) y panel de administración consolidado.
+## 🎯 Objetivo
+El propósito de la app es facilitar la gestión de residuos sólidos urbanos:
+- Registro y autenticación de usuarios con roles (ADMIN, ORGANIZATION, USER).
+- Creación y gestión de solicitudes de recolección.
+- Administración de materiales, posts y categorías.
+- Panel de administración para seguimiento y configuración.
 
-## 🎯 Funcionalidades Principales
-
-- **Gestión de usuarios** (Admin/Organización/Usuario)
-- **Solicitudes de recolección** de residuos
-- **Administración de materiales** reciclables
-- **Sistema de posts y categorías** educativas
-- **Panel de administración** completo
-
-## ⚙️ Stack Tecnológico
-
-- **Spring Boot 3.2** + Java 17
-- **PostgreSQL** + Spring Security 6
-- **Thymeleaf** + Tailwind CSS
-- **Cloudinary** para imágenes
-
-## 🔐 Roles del Sistema
-
-- **⚙️ ADMIN**: Acceso completo al sistema, gestión de usuarios y configuración
-- **🏢 ORGANIZATION**: Gestión de materiales y procesamiento de solicitudes
-- **👤 USER**: Creación de solicitudes y gestión de perfil
-
-## 🏗️ Arquitectura Actual
-
-**Controladores:** 6 admin consolidados  
-**Servicios:** 1:1 por entidad  
-**Templates:** Organizados por dominio
-
-### Estructura Backend
-```
-controller/admin/
-├── AdminController        # Dashboard, Categories, Posts, Documentation
-├── AdminUserController    # Gestión de usuarios
-├── AdminMaterialController # Materiales reciclables
-├── AdminRequestController # Solicitudes de recolección
-├── AdminFeedbackController # Comentarios
-└── AdminPasswordResetController # Reset contraseñas
-
-interceptor/
-└── BreadcrumbInterceptor  # Sistema automático de breadcrumbs
-
-service/
-├── BreadcrumbService      # Generación inteligente de navegación
-└── [otros servicios...]   # UserService, MaterialService, etc.
-```
-
-### 🧭 Sistema de Breadcrumbs Automático
-
-El sistema incluye navegación automática que genera breadcrumbs basándose en la URL:
-
-- **Automático**: Analiza la ruta y construye la navegación dinámicamente
-- **Inteligente**: Resuelve IDs a nombres de entidades (ej: `/admin/users/123` → "Juan Pérez")
-- **Consistente**: Mismo formato en toda la aplicación
-- **Flexible**: Permite override manual cuando sea necesario
-
-**Uso en templates:**
-```html
-<!-- Automático (recomendado) -->
-<th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-
-<!-- Manual (casos especiales) -->
-<th:block th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${items}, 'Título')}"></th:block>
-```
-
-## 📋 Guías de Uso
-
-### Gestión de Usuarios
-Crear, editar y asignar roles a usuarios del sistema
-
-### Administración de Contenido  
-Gestionar posts, categorías y materiales reciclables
-
-### Solicitudes de Recolección
-Supervisar y procesar solicitudes de recolección de residuos
-
-## 🚀 Instalación
-
-### Prerrequisitos
-- Java 17+
-- PostgreSQL 12+
+## ⚙️ Requisitos
+- Java 17
 - Maven 3.8+
+- PostgreSQL 12+
 
-### Desarrollo Local
+## 🔧 Configuración
+### Base de Datos
+```properties
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/residuosolido
+SPRING_DATASOURCE_USERNAME=<usuario_db>
+SPRING_DATASOURCE_PASSWORD=<password_db>
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+```
+### Cloudinary (opcional)
+```properties
+cloudinary.cloud_name=<cloud_name>
+cloudinary.api_key=<api_key>
+cloudinary.api_secret=<api_secret>
+```
+
+- URL base local: http://localhost:8080
+
+## 🚀 Ejecución Local
 ```bash
-# 1. Clonar proyecto
-git clone [repository-url]
-cd residuosolido
-
-# 2. Configurar base de datos
-CREATE DATABASE residuosolido;
-
-# 3. Ejecutar aplicación
 mvn spring-boot:run
-
-# 4. Acceso
-# URL: http://localhost:8080
-# Admin: admin / 12345
 ```
 
-### Testing Rápido
+## 📦 Build
 ```bash
-# H2 en memoria (sin PostgreSQL)
-mvn spring-boot:run -Dspring.profiles.active=test
+mvn -DskipTests package
 ```
 
----
+## 🐳 Docker
+```bash
+docker build -t residuosolido:latest .
+docker run -p 8080:8080 --env-file .env residuosolido:latest
+```
 
-**Desarrollado para la gestión sostenible de residuos en Rivera - Sant'ana do Livramento**
+## 🧪 Perfiles
+- Test con H2: `mvn spring-boot:run -Dspring.profiles.active=test`
+
+## ☁️ Despliegue
+Compatibles con proveedores como Render, Railway, Fly.io, Heroku (buildpack Java). Configurar variables de entorno para DB y Cloudinary.
