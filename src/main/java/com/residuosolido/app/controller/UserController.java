@@ -113,7 +113,8 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/users")
     public String adminSaveUser(@RequestParam(required = false) String action,
-                               @ModelAttribute User user, 
+                               @ModelAttribute User user,
+                               @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
                                RedirectAttributes redirectAttributes) {
         
         if ("delete".equals(action) && user.getId() != null) {
@@ -121,6 +122,12 @@ public class UserController {
         }
         try {
             if (user.getId() != null) {
+                // Manejar imagen de perfil si se subió
+                if (profileImageFile != null && !profileImageFile.isEmpty() && cloudinaryService != null) {
+                    String imageUrl = cloudinaryService.uploadFile(profileImageFile);
+                    user.setProfileImage(imageUrl);
+                }
+                
                 userService.updateUser(user, null);
                 redirectAttributes.addFlashAttribute("successMessage", "Usuario actualizado correctamente");
             } else {

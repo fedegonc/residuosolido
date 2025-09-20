@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -34,6 +35,9 @@ public class RequestController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired(required = false)
+    private CloudinaryService cloudinaryService;
 
     // ========== MÉTODOS COMUNES ==========
     
@@ -119,6 +123,7 @@ public class RequestController {
             @ModelAttribute Request request,
             @RequestParam(value = "userId", required = false) Long userId,
             @RequestParam(value = "organizationId", required = false) Long organizationId,
+            @RequestParam(value = "requestImageFile", required = false) MultipartFile requestImageFile,
             RedirectAttributes redirectAttributes) {
         try {
             // Crear nueva
@@ -134,6 +139,13 @@ public class RequestController {
                 }
                 User user = userService.getUserOrThrow(userId);
                 request.setUser(user);
+                
+                // Manejar imagen si se subió
+                if (requestImageFile != null && !requestImageFile.isEmpty() && cloudinaryService != null) {
+                    String imageUrl = cloudinaryService.uploadFile(requestImageFile);
+                    request.setImageUrl(imageUrl);
+                }
+                
                 // Organización seleccionada (opcional mientras no exista relación en el modelo)
                 if (organizationId != null) {
                     try {
@@ -153,6 +165,13 @@ public class RequestController {
                 Optional<Request> originalRequest = requestService.findById(request.getId());
                 if (originalRequest.isPresent()) {
                     Request updatedRequest = originalRequest.get();
+                    
+                    // Manejar imagen si se subió
+                    if (requestImageFile != null && !requestImageFile.isEmpty() && cloudinaryService != null) {
+                        String imageUrl = cloudinaryService.uploadFile(requestImageFile);
+                        updatedRequest.setImageUrl(imageUrl);
+                    }
+                    
                     updatedRequest.setStatus(request.getStatus());
                     updatedRequest.setNotes(request.getNotes());
                     updatedRequest.setScheduledDate(request.getScheduledDate());

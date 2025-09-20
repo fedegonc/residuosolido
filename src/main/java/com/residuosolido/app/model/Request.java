@@ -51,6 +51,8 @@ public class Request {
     @Column(length = 2000)
     private String notes;
 
+    private String imageUrl;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

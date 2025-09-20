@@ -92,10 +92,13 @@
             <tr th:each="request : ${requests}" class="hover:bg-gray-50 odd:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <span class="text-sm font-medium text-indigo-800" th:text="${request.user != null ? #strings.substring(request.user.username, 0, 1).toUpperCase() : 'U'}">U</span>
-                    </div>
+                  <div class="h-10 w-10 rounded bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img th:if="${request.imageUrl != null and !#strings.isEmpty(request.imageUrl) and request.imageUrl != '/images/placeholder.jpg'}"
+                         th:src="${request.imageUrl}"
+                         alt="Request image"
+                         class="h-10 w-10 object-cover rounded">
+                    <i th:unless="${request.imageUrl != null and !#strings.isEmpty(request.imageUrl) and request.imageUrl != '/images/placeholder.jpg'}"
+                       class="fa-solid fa-file-text text-blue-600 text-sm"></i>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900" th:text="${request.user != null ? request.user.username : 'Sin usuario'}">usuario</div>
@@ -222,6 +225,22 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
                 <textarea th:field="*{description}" rows="2" placeholder="Detalle de los residuos..."
                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Imagen de la solicitud -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen de la Solicitud</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <input type="url" th:field="*{imageUrl}" placeholder="URL de imagen externa"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+              </div>
+              <div>
+                <input type="file" name="requestImageFile" accept="image/*"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <p class="mt-1 text-xs text-gray-500">O sube una imagen de los residuos (JPG, PNG, GIF)</p>
               </div>
             </div>
           </div>

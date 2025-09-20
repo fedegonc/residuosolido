@@ -39,14 +39,6 @@
         
         <!-- Navegación y acciones -->
         <div class="flex items-center gap-4">
-          <!-- Selector de idioma -->
-          <form id="language-form" method="get" action="" class="inline-block">
-            <select id="language-selector" name="lang" onchange="this.form.submit()" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-              <option value="es" th:selected="${#locale.language == 'es' || #locale.language == 'es_ES'}">🇪🇸 <th:block th:text="#{language.spanish}">Español</th:block></option>
-              <option value="pt" th:selected="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR' || #locale.language == null}">🇧🇷 <th:block th:text="#{language.portuguese}">Português</th:block></option>
-            </select>
-          </form>
-          
           <!-- Botones para usuarios no autenticados -->
           <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
             <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
@@ -79,11 +71,40 @@
          th:style="'background-image: url(' + ${heroImageUrl} + ')'"></div>
     
     <div class="container mx-auto px-4 relative z-10">
-      <h1 class="text-4xl md:text-6xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
+      <!-- Selector de idioma arriba del H1 -->
+      <div class="mb-6">
+        <form id="language-form-hero" method="get" action="" class="inline-block">
+          <div class="flex items-center gap-2 text-white">
+            <a href="?lang=es" class="hover:text-green-200 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? 'font-bold' : ''">
+              <span class="text-base">🇪🇸</span>
+              <span>Español</span>
+            </a>
+            <span class="text-white text-sm sm:text-base">|</span>
+            <a href="?lang=pt" class="hover:text-green-200 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR'} ? 'font-bold' : ''">
+              <span class="text-base">🇧🇷</span>
+              <span>Português</span>
+            </a>
+          </div>
+        </form>
+      </div>
+      
+      <h1 class="text-3xl md:text-5xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
       <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
-      <p class="text-lg text-green-100 max-w-2xl" th:text="#{index.hero.description}">
+      <p class="text-lg text-green-100 max-w-2xl mb-6" th:text="#{index.hero.description}">
         Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
       </p>
+
+      <!-- Botones de acción principales -->
+      <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <a href="/users/requests/new" class="bg-white text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 transition font-semibold text-center flex items-center justify-center gap-2">
+          <span>🚚</span>
+          <span>Solicitar Recolección</span>
+        </a>
+        <a href="/posts" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold text-center flex items-center justify-center gap-2">
+          <span>📚</span>
+          <span>Ver Artículos</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -130,20 +151,6 @@
       </div>
     </section>
 
-    <!-- Acciones rápidas -->
-    <section class="mb-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a href="/users/requests/new" class="card rounded-lg p-5 bg-green-50">
-          <h3 class="font-bold text-green-800 mb-2">Solicitar Recolección</h3>
-          <p class="text-sm text-green-700">Crea una solicitud para que una organización retire tus residuos.</p>
-        </a>
-        <a href="#organizaciones" class="card rounded-lg p-5 bg-amber-50">
-          <h3 class="font-bold text-amber-800 mb-2">Organizaciones</h3>
-          <p class="text-sm text-amber-700">Ver organizaciones participantes y materiales que gestionan.</p>
-        </a>
-      </div>
-    </section>
-
     <!-- Sección organizaciones -->
     <section id="organizaciones" class="mt-12">
       <h2 class="text-2xl font-bold text-gray-900 mb-4">Organizaciones</h2>
@@ -155,7 +162,7 @@
               th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
           <p class="text-sm text-gray-600" th:text="${org.address != null ? org.address : 'Dirección no especificada'}"></p>
           <div class="mt-2" th:if="${org.email != null and !org.email.isEmpty()}">
-            <a th:href="'mailto:' + ${org.email}" class="text-green-600 hover:text-green-800 text-sm">
+            <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm">
               <i class="fa-solid fa-envelope mr-1"></i>Contactar
             </a>
           </div>
