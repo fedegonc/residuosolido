@@ -174,9 +174,11 @@ public class StatisticsService {
         List<Long> values = new ArrayList<>();
 
         LocalDateTime now = LocalDateTime.now();
+        // Use a Java 17 compatible Locale creation (Locale.of is Java 19+)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy", new Locale("es", "ES"));
         for (int i = 11; i >= 0; i--) {
             LocalDateTime monthStart = now.minusMonths(i).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-            String label = monthStart.format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.of("es", "ES")));
+            String label = monthStart.format(formatter);
             labels.add(label);
             values.add(0L);
         }
@@ -187,7 +189,7 @@ public class StatisticsService {
             Long count = (Long) result[2];
 
             LocalDateTime date = LocalDateTime.of(year, month, 1, 0, 0);
-            String label = date.format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.of("es", "ES")));
+            String label = date.format(formatter);
 
             int index = labels.indexOf(label);
             if (index != -1) {
