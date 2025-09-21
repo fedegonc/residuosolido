@@ -142,7 +142,7 @@ public class AuthController {
         model.addAttribute("heroImageUrl", heroImageUrl);
         
         // Cargar posts recientes para mostrar en la página de inicio
-        List<Post> recentPosts = postService.getRecentPosts(3);
+        List<Post> recentPosts = postService.getRecentPosts(10);
         List<Map<String, String>> recentNotes = new ArrayList<>();
         
         if (recentPosts.isEmpty()) {

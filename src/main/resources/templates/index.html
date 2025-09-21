@@ -115,137 +115,111 @@
   <!-- Contenido principal simplificado -->
   <main class="max-w-7xl mx-auto px-4 py-10">
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Categorías - Full Width -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Categorías</h2>
 
-      <!-- Left Column -->
-      <div class="space-y-6">
+      <div th:if="${categories != null and !categories.empty}">
+        <div class="flex flex-wrap gap-3">
+          <span th:each="category : ${categories}"
+                th:text="${category.name}"
+                class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"></span>
+        </div>
+        <div class="mt-4">
+          <a href="/categories" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+            <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+            Ver todas las categorías
+          </a>
+        </div>
+      </div>
 
-        <!-- Categorías -->
-        <div class="card section-card rounded-lg p-6">
-          <div class="flex items-center mb-4">
-            <i data-lucide="grid-3x3" class="w-5 h-5 text-blue-600 mr-3"></i>
-            <h2 class="text-xl font-bold text-gray-900">Categorías</h2>
-          </div>
+      <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
+        <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+        <p class="text-sm">No hay categorías disponibles</p>
+      </div>
+    </section>
 
-          <div th:if="${categories != null and !categories.empty}">
-            <div class="flex flex-wrap gap-2 mb-3">
-              <span th:each="category : ${categories}"
-                    th:text="${category.name}"
-                    class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"></span>
+    <!-- Notas Recientes - Full Width Grid -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Notas Recientes</h2>
+
+      <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <!-- Notas reales (máximo 9) -->
+        <article th:each="note, iterStat : ${recentNotes}" th:if="${iterStat.index < 9}"
+                 class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="flex items-start space-x-3">
+            <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg flex-shrink-0" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+              <span class="text-lg font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
             </div>
-            <a href="/categories" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
-              <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
-              Ver todas las categorías
+            <img th:src="${note.image}" alt="Imagen de la nota" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+
+            <div class="flex-1 min-w-0">
+              <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título de la nota</h4>
+              <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto de la nota...</p>
+              <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-xs flex items-center">
+                <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
+                Ver
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tarjeta "Ver más" -->
+        <article class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border-2 border-dashed border-green-200 hover:border-green-300 transition-colors cursor-pointer">
+          <div class="flex flex-col items-center justify-center h-full text-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
+              <i data-lucide="plus" class="w-6 h-6 text-green-600"></i>
+            </div>
+            <h4 class="font-semibold text-green-800 text-sm mb-1">Ver más</h4>
+            <p class="text-xs text-green-600 mb-3">Explora todas las notas</p>
+            <a href="/posts" class="text-green-700 hover:text-green-800 font-medium text-xs">
+              Ir a artículos →
             </a>
           </div>
+        </article>
 
-          <div th:if="${categories == null or categories.empty}" class="text-center py-6 text-gray-500">
-            <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-            <p class="text-sm">No hay categorías disponibles</p>
+        <!-- Rellenar con tarjetas vacías si hay menos de 9 notas -->
+        <article th:if="${recentNotes.size() < 9}" th:each="i : ${#numbers.sequence(recentNotes.size(), 8)}"
+                 class="bg-gray-50 rounded-lg p-6 border border-gray-100 opacity-50">
+          <div class="flex flex-col items-center justify-center h-full text-center">
+            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mb-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-gray-400"></i>
+            </div>
+            <div class="text-xs text-gray-400">Próxima nota</div>
           </div>
-        </div>
-
-        <!-- Acciones Rápidas -->
-        <div class="card section-card rounded-lg p-6">
-          <div class="flex items-center mb-4">
-            <i data-lucide="zap" class="w-5 h-5 text-green-600 mr-3"></i>
-            <h2 class="text-xl font-bold text-gray-900">Acciones Rápidas</h2>
-          </div>
-          <div class="space-y-3">
-            <a href="/users/requests/new" class="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-              <i data-lucide="truck" class="w-5 h-5 text-green-600 mr-3"></i>
-              <div>
-                <div class="font-medium text-green-800">Solicitar Recolección</div>
-                <div class="text-sm text-green-600">Programa una recogida de residuos</div>
-              </div>
-            </a>
-            <a href="/posts" class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-              <i data-lucide="book-open" class="w-5 h-5 text-blue-600 mr-3"></i>
-              <div>
-                <div class="font-medium text-blue-800">Ver Artículos</div>
-                <div class="text-sm text-blue-600">Información sobre reciclaje</div>
-              </div>
-            </a>
-          </div>
-        </div>
-
+        </article>
       </div>
 
-      <!-- Right Column -->
-      <div class="space-y-6">
+      <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-8 text-gray-500">
+        <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+        <p class="text-sm">No hay notas recientes disponibles</p>
+      </div>
+    </section>
 
-        <!-- Notas recientes -->
-        <div class="card section-card rounded-lg p-6">
-          <div class="flex items-center mb-4">
-            <i data-lucide="file-text" class="w-5 h-5 text-purple-600 mr-3"></i>
-            <h2 class="text-xl font-bold text-gray-900">Notas Recientes</h2>
+    <!-- Organizaciones -->
+    <section>
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Organizaciones</h2>
+      <p class="text-gray-600 mb-6">Explora organizaciones que colaboran en la recolección y reciclaje en la región.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
+        <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <h3 class="font-semibold text-gray-800 mb-2"
+              th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
+          <p class="text-sm text-gray-600 mb-3" th:text="${org.address != null ? org.address : 'Dirección no especificada'}"></p>
+          <div th:if="${org.email != null and !org.email.isEmpty()}">
+            <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm flex items-center">
+              <i data-lucide="mail" class="w-3 h-3 mr-1"></i>
+              Contactar
+            </a>
           </div>
-
-          <div th:if="${recentNotes != null and !recentNotes.empty}" class="space-y-4">
-            <article th:each="note : ${recentNotes}" class="bg-white rounded-lg p-4 border border-gray-100">
-              <div class="flex items-start space-x-3">
-                <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg flex-shrink-0" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
-                  <span class="text-lg font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
-                </div>
-                <img th:src="${note.image}" alt="Imagen de la nota" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
-
-                <div class="flex-1 min-w-0">
-                  <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título de la nota</h4>
-                  <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto de la nota...</p>
-                  <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-xs flex items-center">
-                    <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
-                    Ver más
-                  </a>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-6 text-gray-500">
-            <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-            <p class="text-sm">No hay notas recientes disponibles</p>
-          </div>
-        </div>
-
-        <!-- Organizaciones -->
-        <div class="card section-card rounded-lg p-6">
-          <div class="flex items-center mb-4">
-            <i data-lucide="building" class="w-5 h-5 text-orange-600 mr-3"></i>
-            <h2 class="text-xl font-bold text-gray-900">Organizaciones</h2>
-          </div>
-          <p class="text-sm text-gray-600 mb-4">Organizaciones que colaboran en la recolección y reciclaje en la región.</p>
-
-          <div th:if="${organizations != null and !organizations.empty}" class="space-y-3">
-            <article th:each="org : ${organizations}" class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="flex items-start space-x-3">
-                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <i data-lucide="building" class="w-4 h-4 text-orange-600"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-semibold text-gray-800 text-sm mb-1"
-                      th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
-                  <p class="text-xs text-gray-600 mb-2" th:text="${org.address != null ? org.address : 'Dirección no especificada'}"></p>
-                  <div th:if="${org.email != null and !org.email.isEmpty()}">
-                    <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-xs flex items-center">
-                      <i data-lucide="mail" class="w-3 h-3 mr-1"></i>
-                      Contactar
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div th:if="${organizations == null or organizations.empty}" class="text-center py-6 text-gray-500">
-            <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-            <p class="text-sm">No hay organizaciones disponibles actualmente</p>
-          </div>
-        </div>
-
+        </article>
       </div>
 
-    </div>
+      <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
+        <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+        <p>No hay organizaciones disponibles actualmente</p>
+      </div>
+    </section>
 
   </main>
 

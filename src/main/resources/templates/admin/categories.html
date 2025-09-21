@@ -119,8 +119,7 @@
                 <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" name="action" value="save"/>
 
-                <!-- Fragmento HTMX para campos del formulario -->
-                <div id="category-form-fields" th:fragment="categoryFormFields" th:object="${category}" class="grid grid-cols-1 gap-6">
+                <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
                         <input type="text" th:field="*{name}" id="name" required
@@ -135,22 +134,11 @@
                 </div>
 
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button"
-                            class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
-                            hx-get="/admin/categories/form-demo"
-                            hx-target="#category-form-fields"
-                            hx-swap="outerHTML">
-                        Completar campos
-                    </button>
-                    <button type="submit" formmethod="post" th:formaction="@{/admin/categories/form-demo}"
-                            class="px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">
-                        Crear demo
-                    </button>
-                    <a th:href="@{/admin/categories}" 
+                    <a th:href="@{/admin/categories}"
                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
                         Cancelar
                     </a>
-                    <button type="submit" 
+                    <button type="submit"
                             class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
                         Guardar
                     </button>
@@ -289,14 +277,6 @@
             renderPage();
         })();
 
-        <!-- Botón 'Nueva Categoría' (al final de la lista) -->
-        <div class="px-6 pb-4 flex justify-start">
-            <a th:if="${viewType == 'list'}" th:href="@{/admin/categories(action='new')}"
-               class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>Nueva Categoría</span>
-            </a>
-        </div>
     </script>
 </body>
 </html>
