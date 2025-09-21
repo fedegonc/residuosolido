@@ -3,17 +3,30 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Documentación - Admin</title>
+    <title>Documentación - Admin</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7f9fc; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        body {
+            font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+            background-color: white;
+        }
+        .card {
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        .card:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        }
+        .section-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
@@ -43,1348 +56,341 @@
     </div>
 
     <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div class="max-w-7xl mx-auto px-4 py-10">
 
-        <!-- Gestión de Documentación -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
-            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
-                <h2 class="text-lg font-semibold text-gray-900">
-                  Gestión de Documentación
-                </h2>
-                <p class="text-sm text-gray-600">
-                  Documentación completa del sistema de gestión de residuos sólidos. Aquí encontrarás información detallada sobre la arquitectura, patrones de desarrollo, funcionalidades implementadas y guías técnicas para el mantenimiento y desarrollo del sistema.
-                  <span class="block mt-1 text-xs text-gray-500">
-                    Explora las diferentes secciones para obtener información detallada sobre cada componente del sistema.
-                  </span>
-              <div class="p-6 space-y-8">
-                <h2 class="text-xl font-bold">Sistema de Gestión de Residuos Sólidos</h2>
+        <!-- Header -->
+        <div class="text-left mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">📘 Documentación del Sistema</h1>
+            <p class="text-lg text-gray-600 max-w-2xl">Sistema de Gestión de Residuos Sólidos</p>
+            <p class="text-gray-700 max-w-3xl mt-3">
+                Información completa sobre arquitectura, patrones de desarrollo, funcionalidades implementadas y guías técnicas.
+            </p>
+        </div>
 
-                <!-- Repositorio GitHub - Primero -->
-                <div class="bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <i data-lucide="github" class="w-6 h-6 text-white mr-3"></i>
-                            <div>
-                                <h3 class="font-semibold text-white">Código Fuente del Sistema</h3>
-                                <p class="text-sm text-gray-300">Explora el código completo en GitHub para entender la implementación técnica</p>
-                            </div>
-                        </div>
-                        <a href="https://github.com/fedegonc/residuosolido"
-                           target="_blank"
-                           class="bg-white text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-100 flex items-center space-x-2 text-sm font-medium transition-colors">
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                            <span>Ver en GitHub</span>
-                        </a>
-                    </div>
-                </div>
+        <!-- Quick Links -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Enlaces externos</h2>
+            <ul class="space-y-2">
+                <li class="flex items-center">
+                    <a href="https://github.com/fedegonc/residuosolido" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                        Código Fuente (GitHub)
+                    </a>
+                </li>
+                <li class="flex items-center">
+                    <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                        Artículo técnico
+                    </a>
+                </li>
+                <li class="flex items-center text-gray-500">
+                    <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                    Guía Técnica (En desarrollo)
+                </li>
+                <li class="flex items-center">
+                    <a href="https://docs.google.com/document/d/1CdG2M1nPxRI_MQ-ROP7RXtTozYTPpE8Q14qluDhW4kA/edit?tab=t.0#heading=h.pwph5y4zizfi" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                        Documento de requerimientos
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-                <!-- Artículo/Documentación en Desarrollo -->
-                <div class="bg-gradient-to-r from-blue-800 to-indigo-900 border border-blue-700 rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <i data-lucide="file-text" class="w-6 h-6 text-white mr-3"></i>
-                            <div>
-                                <h3 class="font-semibold text-white">Documentación en Desarrollo</h3>
-                                <p class="text-sm text-blue-200">Accede al artículo detallado sobre el sistema que estoy escribiendo</p>
-                            </div>
-                        </div>
-                        <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0"
-                           target="_blank"
-                           class="bg-white text-blue-900 px-4 py-2 rounded-lg hover:bg-blue-50 flex items-center space-x-2 text-sm font-medium transition-colors">
-                            <i data-lucide="book-open" class="w-4 h-4"></i>
-                            <span>Leer Artículo</span>
-                        </a>
-                    </div>
-                </div>
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- Guía de Implementación -->
-                <div class="bg-gradient-to-r from-purple-800 to-pink-900 border border-purple-700 rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <i data-lucide="code-2" class="w-6 h-6 text-white mr-3"></i>
-                            <div>
-                                <h3 class="font-semibold text-white">Guía de Implementación</h3>
-                                <p class="text-sm text-purple-200">Manual técnico detallado para desarrolladores y administradores</p>
-                            </div>
-                        </div>
-                        <a href="https://docs.google.com/document/d/1CdG2M1nPxRI_MQ-ROP7RXtTozYTPpE8Q14qluDhW4kA/edit?tab=t.0#heading=h.pwph5y4zizfi"
-                           target="_blank"
-                           class="bg-white text-purple-900 px-4 py-2 rounded-lg hover:bg-purple-50 flex items-center space-x-2 text-sm font-medium transition-colors">
-                            <i data-lucide="wrench" class="w-4 h-4"></i>
-                            <span>Ver Guía</span>
-                        </a>
-                    </div>
-                </div>
+            <!-- Left Column - Core Information -->
+            <div class="space-y-6">
 
-                <!-- Documento de Requerimientos -->
-                <div class="bg-gradient-to-r from-green-800 to-teal-900 border border-green-700 rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <i data-lucide="clipboard-list" class="w-6 h-6 text-white mr-3"></i>
-                            <div>
-                                <h3 class="font-semibold text-white">Documento de Requerimientos</h3>
-                                <p class="text-sm text-green-200">Especificación completa de funcionalidades y características del sistema</p>
-                            </div>
-                        </div>
-                        <div class="bg-white text-green-900 px-4 py-2 rounded-lg flex items-center space-x-2 text-sm font-medium">
-                            <i data-lucide="file-check" class="w-4 h-4"></i>
-                            <span>En Desarrollo</span>
-                        </div>
-                    </div>
-
-                    <!-- Explicación de qué es el documento de requerimientos -->
-                    <div class="mt-4 bg-green-900/50 border border-green-600 rounded-lg p-4">
-                        <h4 class="font-medium text-white mb-2 flex items-center">
-                            <i data-lucide="info" class="w-4 h-4 mr-2"></i>
-                            ¿Qué es un Documento de Requerimientos?
-                        </h4>
-                        <div class="text-sm text-green-100 space-y-2">
-                            <p><strong>Es la base fundamental</strong> de todo proyecto de software. Define exactamente qué debe hacer el sistema, cómo debe comportarse y qué características debe tener.</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                                <div>
-                                    <h5 class="font-medium text-green-200 mb-1">📋 Incluye:</h5>
-                                    <ul class="text-green-100 text-xs space-y-1">
-                                        <li>• Requisitos funcionales</li>
-                                        <li>• Requisitos no funcionales</li>
-                                        <li>• Casos de uso</li>
-                                        <li>• Reglas de negocio</li>
-                                        <li>• Interfaces de usuario</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h5 class="font-medium text-green-200 mb-1">🎯 Propósito:</h5>
-                                    <ul class="text-green-100 text-xs space-y-1">
-                                        <li>• Guiar el desarrollo</li>
-                                        <li>• Validar el alcance</li>
-                                        <li>• Documentar acuerdos</li>
-                                        <li>• Base para pruebas</li>
-                                        <li>• Referencia futura</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 1. ROLES DEL SISTEMA - Lo más importante primero -->
-                <div class="flex items-center mb-4">
-                    <i data-lucide="shield" class="w-5 h-5 text-gray-600 mr-2"></i>
-                    <h3 class="font-semibold text-gray-900">1. Roles del Sistema</h3>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="settings" class="w-5 h-5 text-red-600 mr-2"></i>
-                            <h4 class="font-semibold text-red-800">ADMIN</h4>
-                        </div>
-                        <div class="space-y-2">
-                            <p class="text-sm text-red-700">
-                                <strong>¿Qué hace?</strong> Tiene acceso completo al sistema de administración.
-                            </p>
-                            <ul class="text-sm text-red-700 space-y-1">
-                                <li>• Gestiona usuarios y organizaciones</li>
-                                <li>• Administra materiales y solicitudes</li>
-                                <li>• Configura el sistema</li>
-                                <li>• Ve estadísticas y reportes</li>
-                                <li>• Gestiona contenido del portal</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="building" class="w-5 h-5 text-blue-600 mr-2"></i>
-                            <h4 class="font-semibold text-blue-800">ORGANIZATION</h4>
-                        </div>
-                        <div class="space-y-2">
-                            <p class="text-sm text-blue-700">
-                                <strong>¿Qué hace?</strong> Gestiona la recolección de residuos en su zona.
-                            </p>
-                            <ul class="text-sm text-blue-700 space-y-1">
-                                <li>• Recibe solicitudes de usuarios</li>
-                                <li>• Programa fechas de recolección</li>
-                                <li>• Actualiza estado de solicitudes</li>
-                                <li>• Gestiona materiales disponibles</li>
-                                <li>• Reporta actividad de su zona</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="user" class="w-5 h-5 text-green-600 mr-2"></i>
-                            <h4 class="font-semibold text-green-800">USER</h4>
-                        </div>
-                        <div class="space-y-2">
-                            <p class="text-sm text-green-700">
-                                <strong>¿Qué hace?</strong> Solicita servicios de recolección de residuos.
-                            </p>
-                            <ul class="text-sm text-green-700 space-y-1">
-                                <li>• Crea solicitudes de recolección</li>
-                                <li>• Selecciona materiales a reciclar</li>
-                                <li>• Programa fechas preferidas</li>
-                                <li>• Rastrea estado de solicitudes</li>
-                                <li>• Gestiona su perfil personal</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. FUNCIONALIDADES PRINCIPALES -->
-                <div class="flex items-center mb-4">
-                    <i data-lucide="target" class="w-5 h-5 text-gray-600 mr-2"></i>
-                    <h3 class="font-semibold text-gray-900">2. Funcionalidades Principales</h3>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="target" class="w-5 h-5 text-blue-600 mr-2"></i>
-                            <h3 class="font-semibold text-blue-900">Funcionalidades del Sistema</h3>
-                        </div>
-                        <ul class="text-sm text-blue-800 space-y-1">
-                            <li>• Gestión completa de usuarios (Admin/Organización/Usuario)</li>
-                            <li>• Sistema de solicitudes de recolección de residuos</li>
-                            <li>• Catálogo de materiales reciclables</li>
-                            <li>• Portal público con información educativa</li>
-                            <li>• Panel de administración con estadísticas</li>
-                            <li>• Sistema de feedback y soporte</li>
-                        </ul>
-                    </div>
-
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="settings" class="w-5 h-5 text-green-600 mr-2"></i>
-                            <h3 class="font-semibold text-green-900">Stack Tecnológico</h3>
-                        </div>
-                        <ul class="text-sm text-green-800 space-y-1">
-                            <li>• <strong>Backend:</strong> Spring Boot 3.2 + Java 17</li>
-                            <li>• <strong>Base de datos:</strong> PostgreSQL + Spring Data JPA</li>
-                            <li>• <strong>Frontend:</strong> Thymeleaf + Tailwind CSS</li>
-                            <li>• <strong>Seguridad:</strong> Spring Security 6 + CSRF</li>
-                            <li>• <strong>Almacenamiento:</strong> Cloudinary para imágenes</li>
-                            <li>• <strong>Íconos:</strong> Lucide React (biblioteca moderna)</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- 3. ARQUITECTURA DEL SISTEMA -->
-                <div class="flex items-center mb-4">
-                    <i data-lucide="layers" class="w-5 h-5 text-gray-600 mr-2"></i>
-                    <h3 class="font-semibold text-gray-900">3. Arquitectura del Sistema</h3>
-                </div>
-                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div class="bg-white border border-gray-200 rounded-lg p-3">
-                            <h4 class="font-medium text-blue-800 mb-2">Patrón 1:1:1:1:1</h4>
-                            <p class="text-gray-700">Cada entidad del negocio tiene su propia capa completa:</p>
-                            <ul class="text-gray-600 mt-2 space-y-1">
-                                <li>• Entity (modelo de datos)</li>
-                                <li>• Repository (acceso a BD)</li>
-                                <li>• Service (lógica de negocio)</li>
-                                <li>• Controller (endpoints REST)</li>
-                                <li>• Template (vistas HTML)</li>
-                            </ul>
-                        </div>
-                        <div class="bg-white border border-gray-200 rounded-lg p-3">
-                            <h4 class="font-medium text-green-800 mb-2">Thin Controllers</h4>
-                            <p class="text-gray-700">Los controladores son minimalistas y delegan toda la lógica compleja a los servicios especializados.</p>
-                        </div>
-                        <div class="bg-white border border-gray-200 rounded-lg p-3">
-                            <h4 class="font-medium text-purple-800 mb-2">Seguridad Robusta</h4>
-                            <p class="text-gray-700">Cada endpoint está protegido con @PreAuthorize basado en roles de usuario.</p>
-                        </div>
-                    </div>
-
-                    <!-- Componentes del Sistema -->
-                    <div class="mt-4 bg-white border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <i data-lucide="cpu" class="w-5 h-5 text-gray-600 mr-2"></i>
-                            <h4 class="font-semibold text-gray-800">Componentes Principales</h4>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">AdminController</span>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded">UserController</span>
-                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded">MaterialController</span>
-                            <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded">RequestController</span>
-                            <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">FeedbackController</span>
-                            <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded">PostController</span>
-                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded">CategoryController</span>
-                        </div>
-
-                        <div class="flex items-center mt-4 mb-2">
-                            <i data-lucide="cog" class="w-5 h-5 text-gray-600 mr-2"></i>
-                            <h5 class="font-semibold text-gray-800">Servicios y Utilidades</h5>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                            <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded">BreadcrumbInterceptor</span>
-                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">BreadcrumbService</span>
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded">UserService</span>
-                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded">ConfigService</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. DETALLES TÉCNICOS - Más abajo -->
-                <div class="flex items-center mb-4">
-                    <i data-lucide="settings" class="w-5 h-5 text-gray-600 mr-2"></i>
-                    <h3 class="font-semibold text-gray-900">4. Detalles Técnicos del Sistema</h3>
-                </div>
-
-                <div class="flex items-center mb-4">
-                    <i data-lucide="shield" class="w-5 h-5 text-gray-600 mr-2"></i>
-                    <h3 class="font-semibold text-gray-900">Roles del Sistema</h3>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="settings" class="w-5 h-5 text-red-600 mr-2"></i>
-                            <h4 class="font-semibold text-red-800">ADMIN</h4>
-                        </div>
-                        <p class="text-sm text-red-700">Acceso completo al sistema, gestión de usuarios y configuración</p>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="building" class="w-5 h-5 text-blue-600 mr-2"></i>
-                            <h4 class="font-semibold text-blue-800">ORGANIZATION</h4>
-                        </div>
-                        <p class="text-sm text-blue-700">Gestión de materiales y procesamiento de solicitudes</p>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div class="flex items-center mb-3">
-                            <i data-lucide="user" class="w-5 h-5 text-green-600 mr-2"></i>
-                            <h4 class="font-semibold text-green-800">USER</h4>
-                        </div>
-                        <p class="text-sm text-green-700">Creación de solicitudes y gestión de perfil</p>
-                    </div>
-                </div>
-
-                <!-- 5. SISTEMA DE BREADCRUMBS AUTOMÁTICO -->
-                <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-6">
+                <!-- 1. Introducción -->
+                <div class="card section-card rounded-lg p-6">
                     <div class="flex items-center mb-4">
-                        <i data-lucide="navigation" class="w-5 h-5 text-indigo-600 mr-2"></i>
-                        <h3 class="font-semibold text-indigo-900">5. Sistema de Breadcrumbs Automático</h3>
+                        <i data-lucide="book-open" class="w-5 h-5 text-blue-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">1. Introducción</h2>
                     </div>
-                    <div class="space-y-4">
-                        <div class="bg-white border border-gray-200 rounded-lg p-4">
-                            <h4 class="font-medium text-indigo-800 mb-2">Funcionamiento Automático</h4>
-                            <p class="text-sm text-indigo-700 mb-3">
-                                El sistema genera breadcrumbs automáticamente basado en la URL usando un interceptor que analiza la ruta y construye la navegación dinámicamente.
-                            </p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                                    <h5 class="font-medium text-indigo-800">BreadcrumbInterceptor</h5>
-                                    <ul class="text-indigo-700 space-y-1 mt-2">
-                                        <li>• Se ejecuta en postHandle de cada request</li>
-                                        <li>• Analiza la URI y genera breadcrumbs automáticamente</li>
-                                        <li>• Agrega breadcrumbItems y breadcrumbTitle al modelo</li>
-                                        <li>• Funciona solo en rutas admin y usuarios</li>
-                                    </ul>
-                                </div>
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                    <h5 class="font-medium text-blue-800">BreadcrumbService</h5>
-                                    <ul class="text-blue-700 space-y-1 mt-2">
-                                        <li>• Mapea segmentos URL a nombres legibles</li>
-                                        <li>• Resuelve IDs a nombres de entidades</li>
-                                        <li>• Maneja parámetros de query (?action=edit&id=1)</li>
-                                        <li>• Genera títulos contextuales automáticamente</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-          <div class="bg-white p-4 rounded">
-            <h4 class="font-semibold text-green-800 mb-2">📝 Uso en Templates</h4>
-            <div class="space-y-3">
-              <div class="bg-green-50 p-3 rounded">
-                <h5 class="font-medium text-green-800">Opción 1: Automático (Recomendado)</h5>
-                <pre class="text-xs bg-gray-800 text-green-400 p-2 rounded mt-2 overflow-x-auto"><code>&lt;!-- Usa valores automáticos del interceptor --&gt;
-&lt;th:block th:replace="~{fragments/components/breadcrumbs :: auto}"&gt;&lt;/th:block&gt;</code></pre>
-              </div>
-              <div class="bg-blue-50 p-3 rounded">
-                <h5 class="font-medium text-blue-800">Opción 2: Con parámetros manuales</h5>
-                <pre class="text-xs bg-gray-800 text-blue-400 p-2 rounded mt-2 overflow-x-auto"><code>&lt;!-- Para casos especiales con breadcrumbs personalizados --&gt;
-&lt;th:block th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}})}"
-          th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Título Custom')}"&gt;
-&lt;/th:block&gt;</code></pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-4 rounded">
-            <h4 class="font-semibold text-purple-800 mb-2">🛠️ Resolución de Problemas</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div class="bg-purple-50 p-3 rounded">
-                <h5 class="font-medium text-purple-800">Problema Común: Fragment no encontrado</h5>
-                <ul class="text-purple-700 space-y-1">
-                  <li>• Error: "Fragment breadcrumbs not found"</li>
-                  <li>• Causa: Inconsistencia en nombres de fragmentos</li>
-                  <li>• Solución: Usar fragmento 'auto' o 'breadcrumbs(params)'</li>
-                </ul>
-              </div>
-              <div class="bg-orange-50 p-3 rounded">
-                <h5 class="font-medium text-orange-800">Problema: Type Mismatch</h5>
-                <ul class="text-orange-700 space-y-1">
-                  <li>• Error: "Model vs ModelMap incompatible"</li>
-                  <li>• Causa: Interceptor usa ModelMap, Service esperaba Model</li>
-                  <li>• Solución: Cambiar signatures a ModelMap</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-4 rounded">
-            <h4 class="font-semibold text-gray-800 mb-2">📊 Ejemplos de Mapeo URL → Breadcrumb</h4>
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs border-collapse border border-gray-300">
-                <thead class="bg-gray-100">
-                  <tr>
-                    <th class="border border-gray-300 p-2 text-left">URL</th>
-                    <th class="border border-gray-300 p-2 text-left">Breadcrumbs Generados</th>
-                    <th class="border border-gray-300 p-2 text-left">Título Final</th>
-                  </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/users</td>
-                    <td class="border border-gray-300 p-2">Inicio → Usuarios</td>
-                    <td class="border border-gray-300 p-2">Usuarios</td>
-                  </tr>
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/users?action=edit&id=123</td>
-                    <td class="border border-gray-300 p-2">Inicio → Usuarios</td>
-                    <td class="border border-gray-300 p-2">Editar</td>
-                  </tr>
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/users?action=view&id=123</td>
-                    <td class="border border-gray-300 p-2">Inicio → Usuarios</td>
-                    <td class="border border-gray-300 p-2">[Nombre del Usuario]</td>
-                  </tr>
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/materials?action=new</td>
-                    <td class="border border-gray-300 p-2">Inicio → Materiales</td>
-                    <td class="border border-gray-300 p-2">Nuevo</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
-            <h4 class="font-semibold text-yellow-800 mb-2">⚡ Beneficios del Sistema</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <ul class="text-yellow-700 space-y-1">
-                <li>• <strong>Automático:</strong> No requiere configuración manual</li>
-                <li>• <strong>Consistente:</strong> Mismo formato en toda la aplicación</li>
-                <li>• <strong>Inteligente:</strong> Resuelve nombres de entidades por ID</li>
-              </ul>
-              <ul class="text-yellow-700 space-y-1">
-                <li>• <strong>Flexible:</strong> Permite override manual cuando sea necesario</li>
-                <li>• <strong>Performante:</strong> Se ejecuta solo en rutas relevantes</li>
-                <li>• <strong>Mantenible:</strong> Lógica centralizada en un servicio</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. PATRONES DE DESARROLLO -->
-      <div class="flex items-center mb-4">
-        <i data-lucide="layers" class="w-5 h-5 text-gray-600 mr-2"></i>
-        <h3 class="font-semibold text-gray-900">6. Patrones de Desarrollo Implementados</h3>
-      </div>
-      <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-3">
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-purple-800">1:1:1:1:1 Pattern</h4>
-              <p class="text-sm text-purple-700">Cada entidad tiene su Repository, Service, Controller y Template dedicados</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-blue-800">Thin Controllers</h4>
-              <p class="text-sm text-blue-700">Controladores mínimos que delegan lógica a servicios</p>
-            </div>
-          </div>
-          <div class="space-y-3">
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-green-800">Service Layer</h4>
-              <p class="text-sm text-green-700">Lógica de negocio encapsulada en servicios reutilizables</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-red-800">Security First</h4>
-              <p class="text-sm text-red-700">Autorización a nivel de controlador con @PreAuthorize</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 7. EJEMPLO DE CÓDIGO CRUD - Al final -->
-      <div class="flex items-center mb-4">
-        <i data-lucide="code" class="w-5 h-5 text-gray-600 mr-2"></i>
-        <h3 class="font-semibold text-gray-900">7. Ejemplo: UserController (CRUD Completo)</h3>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-lg p-6">
-        <div class="space-y-4">
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h4 class="font-medium text-sm mb-2 text-gray-700">Estructura del Controlador</h4>
-            <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>@Controller
-@RequestMapping("/admin/users")
-@PreAuthorize("hasRole('ADMIN')")
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    // GET: Lista + Formulario dinámico
-    @GetMapping
-    public String users(@RequestParam(required = false) String action,
-                       @RequestParam(required = false) Long id,
-                       Model model) {
-        // Cargar todos los usuarios
-        List&lt;User&gt; allUsers = userService.findAll();
-        model.addAttribute("users", allUsers);
-        model.addAttribute("roles", Role.values());
-
-        // Manejar acciones: view, edit, new
-        if ("edit".equals(action) && id != null) {
-            User user = userService.findById(id).orElse(null);
-            model.addAttribute("user", user);
-            model.addAttribute("viewType", "form");
-        } else if ("new".equals(action)) {
-            model.addAttribute("user", new User());
-            model.addAttribute("viewType", "form");
-        }
-
-        return "admin/users";
-    }</code></pre>
-          </div>
-
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h4 class="font-medium text-sm mb-2 text-gray-700">Operaciones CRUD</h4>
-            <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>    // POST: Crear/Actualizar
-    @PostMapping
-    public String save(@ModelAttribute User user,
-                      RedirectAttributes redirectAttributes) {
-        try {
-            if (user.getId() != null) {
-                userService.updateUser(user, null);
-                redirectAttributes.addFlashAttribute("successMessage",
-                    "Usuario actualizado");
-            } else {
-                userService.createUser(user, user.getPassword());
-                redirectAttributes.addFlashAttribute("successMessage",
-                    "Usuario creado");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                e.getMessage());
-        }
-        return "redirect:/admin/users";
-    }
-
-    // DELETE: Eliminar
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id,
-                        RedirectAttributes redirectAttributes) {
-        try {
-            userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("successMessage",
-                "Usuario eliminado");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                e.getMessage());
-        }
-        return "redirect:/admin/users";
-    }</code></pre>
-          </div>
-
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 class="font-medium text-sm mb-2 text-blue-700">Características Clave</h4>
-            <ul class="text-sm text-blue-800 space-y-1">
-              <li>• <strong>Una sola página:</strong> Lista + formulario dinámico</li>
-              <li>• <strong>Parámetros URL:</strong> ?action=edit&id=1 para editar</li>
-              <li>• <strong>Thin Controller:</strong> Lógica delegada a UserService</li>
-              <li>• <strong>Flash Messages:</strong> Feedback de operaciones</li>
-              <li>• <strong>Seguridad:</strong> @PreAuthorize("hasRole('ADMIN')")</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Patrones de Desarrollo -->
-      <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6">
-        <div class="flex items-center mb-4">
-          <i data-lucide="layers" class="w-5 h-5 text-purple-600 mr-2"></i>
-          <h3 class="font-semibold text-purple-900">Patrones de Desarrollo Implementados</h3>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-3">
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-purple-800">1:1:1:1:1 Pattern</h4>
-              <p class="text-sm text-purple-700">Cada entidad tiene su Repository, Service, Controller y Template dedicados</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-blue-800">Thin Controllers</h4>
-              <p class="text-sm text-blue-700">Controladores mínimos que delegan lógica a servicios</p>
-            </div>
-          </div>
-          <div class="space-y-3">
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-green-800">Service Layer</h4>
-              <p class="text-sm text-green-700">Lógica de negocio encapsulada en servicios reutilizables</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <h4 class="font-medium text-red-800">Security First</h4>
-              <p class="text-sm text-red-700">Autorización a nivel de controlador con @PreAuthorize</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sistema de Breadcrumbs Automático -->
-      <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-6">
-        <div class="flex items-center mb-4">
-          <i data-lucide="navigation" class="w-5 h-5 text-indigo-600 mr-2"></i>
-          <h3 class="font-semibold text-indigo-900">Sistema de Breadcrumbs Automático</h3>
-        </div>
-        <div class="space-y-4">
-          <div class="bg-white border border-gray-200 rounded-lg p-4">
-            <h4 class="font-medium text-indigo-800 mb-2">Funcionamiento Automático</h4>
-            <p class="text-sm text-indigo-700 mb-3">
-              El sistema genera breadcrumbs automáticamente basado en la URL usando un interceptor que analiza la ruta y construye la navegación dinámicamente.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                <h5 class="font-medium text-indigo-800">BreadcrumbInterceptor</h5>
-                <ul class="text-indigo-700 space-y-1 mt-2">
-                  <li>• Se ejecuta en postHandle de cada request</li>
-                  <li>• Analiza la URI y genera breadcrumbs automáticamente</li>
-                  <li>• Agrega breadcrumbItems y breadcrumbTitle al modelo</li>
-                  <li>• Funciona solo en rutas admin y usuarios</li>
-                </ul>
-              </div>
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <h5 class="font-medium text-blue-800">BreadcrumbService</h5>
-                <ul class="text-blue-700 space-y-1 mt-2">
-                  <li>• Mapea segmentos URL a nombres legibles</li>
-                  <li>• Resuelve IDs a nombres de entidades</li>
-                  <li>• Maneja parámetros de query (?action=edit&id=1)</li>
-                  <li>• Genera títulos contextuales automáticamente</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-4 rounded">
-            <h4 class="font-semibold text-green-800 mb-2">📝 Uso en Templates</h4>
-            <div class="space-y-3">
-              <div class="bg-green-50 p-3 rounded">
-                <h5 class="font-medium text-green-800">Opción 1: Automático (Recomendado)</h5>
-                <pre class="text-xs bg-gray-800 text-green-400 p-2 rounded mt-2 overflow-x-auto"><code>&lt;!-- Usa valores automáticos del interceptor --&gt;
-&lt;th:block th:replace="~{fragments/components/breadcrumbs :: auto}"&gt;&lt;/th:block&gt;</code></pre>
-              </div>
-              <div class="bg-blue-50 p-3 rounded">
-                <h5 class="font-medium text-blue-800">Opción 2: Con parámetros manuales</h5>
-                <pre class="text-xs bg-gray-800 text-blue-400 p-2 rounded mt-2 overflow-x-auto"><code>&lt;!-- Para casos especiales con breadcrumbs personalizados --&gt;
-&lt;th:block th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}})}"
-          th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Título Custom')}"&gt;
-&lt;/th:block&gt;</code></pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-4 rounded">
-            <h4 class="font-semibold text-purple-800 mb-2">🛠️ Resolución de Problemas</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div class="bg-purple-50 p-3 rounded">
-                <h5 class="font-medium text-purple-800">Problema Común: Fragment no encontrado</h5>
-                <ul class="text-purple-700 space-y-1">
-                  <li>• Error: "Fragment breadcrumbs not found"</li>
-                  <li>• Causa: Inconsistencia en nombres de fragmentos</li>
-                  <li>• Solución: Usar fragmento 'auto' o 'breadcrumbs(params)'</li>
-                </ul>
-              </div>
-              <div class="bg-orange-50 p-3 rounded">
-                <h5 class="font-medium text-orange-800">Problema: Type Mismatch</h5>
-                <ul class="text-orange-700 space-y-1">
-                  <li>• Error: "Model vs ModelMap incompatible"</li>
-                  <li>• Causa: Interceptor usa ModelMap, Service esperaba Model</li>
-                  <li>• Solución: Cambiar signatures a ModelMap</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-4 rounded">
-            <h4 class="font-semibold text-gray-800 mb-2">📊 Ejemplos de Mapeo URL → Breadcrumb</h4>
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs border-collapse border border-gray-300">
-                <thead class="bg-gray-100">
-                  <tr>
-                    <th class="border border-gray-300 p-2 text-left">URL</th>
-                    <th class="border border-gray-300 p-2 text-left">Breadcrumbs Generados</th>
-                    <th class="border border-gray-300 p-2 text-left">Título Final</th>
-                  </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/users</td>
-                    <td class="border border-gray-300 p-2">Inicio → Usuarios</td>
-                    <td class="border border-gray-300 p-2">Usuarios</td>
-                  </tr>
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/users?action=edit&id=123</td>
-                    <td class="border border-gray-300 p-2">Inicio → Usuarios</td>
-                    <td class="border border-gray-300 p-2">Editar</td>
-                  </tr>
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/users?action=view&id=123</td>
-                    <td class="border border-gray-300 p-2">Inicio → Usuarios</td>
-                    <td class="border border-gray-300 p-2">[Nombre del Usuario]</td>
-                  </tr>
-                  <tr>
-                    <td class="border border-gray-300 p-2 font-mono">/admin/materials?action=new</td>
-                    <td class="border border-gray-300 p-2">Inicio → Materiales</td>
-                    <td class="border border-gray-300 p-2">Nuevo</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
-            <h4 class="font-semibold text-yellow-800 mb-2">⚡ Beneficios del Sistema</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <ul class="text-yellow-700 space-y-1">
-                <li>• <strong>Automático:</strong> No requiere configuración manual</li>
-                <li>• <strong>Consistente:</strong> Mismo formato en toda la aplicación</li>
-                <li>• <strong>Inteligente:</strong> Resuelve nombres de entidades por ID</li>
-              </ul>
-              <ul class="text-yellow-700 space-y-1">
-                <li>• <strong>Flexible:</strong> Permite override manual cuando sea necesario</li>
-                <li>• <strong>Performante:</strong> Se ejecuta solo en rutas relevantes</li>
-                <li>• <strong>Mantenible:</strong> Lógica centralizada en un servicio</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Buenas Prácticas HTML/CSS -->
-      <div class="bg-white border rounded-lg p-6 mb-8">
-        <h3 class="font-bold mb-4 flex items-center">
-          <i data-lucide="layout" class="w-5 h-5 mr-2 text-orange-600"></i>
-          Buenas Prácticas HTML/CSS
-        </h3>
-        
-        <div class="space-y-6">
-          <!-- Evitar Anidamiento Excesivo -->
-          <div>
-            <h4 class="font-semibold text-red-600 mb-3">❌ Evitar: Anidamiento Excesivo</h4>
-            <div class="bg-red-50 p-4 rounded">
-              <pre class="text-xs bg-gray-800 text-red-400 p-3 rounded overflow-x-auto"><code>&lt;!-- MAL: Demasiados divs anidados --&gt;
-&lt;div class="container"&gt;
-  &lt;div class="wrapper"&gt;
-    &lt;div class="content"&gt;
-      &lt;div class="section"&gt;
-        &lt;div class="card"&gt;
-          &lt;div class="card-body"&gt;
-            &lt;div class="text-wrapper"&gt;
-              &lt;div class="title-container"&gt;
-                &lt;h2&gt;Título&lt;/h2&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-            </div>
-          </div>
-
-          <!-- Estructura Limpia -->
-          <div>
-            <h4 class="font-semibold text-green-600 mb-3">✅ Mejor: Estructura Semántica y Limpia</h4>
-            <div class="bg-green-50 p-4 rounded">
-              <pre class="text-xs bg-gray-800 text-green-400 p-3 rounded overflow-x-auto"><code>&lt;!-- BIEN: Elementos semánticos con propósito claro --&gt;
-&lt;main&gt;
-  &lt;!-- Header --&gt;
-  &lt;header class="bg-white shadow-sm border-b"&gt;
-    &lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"&gt;
-      &lt;div class="flex justify-between items-center py-4"&gt;
-        &lt;h1 class="text-2xl font-bold"&gt;Título&lt;/h1&gt;
-        &lt;nav&gt;
-          &lt;a href="/admin/dashboard" class="btn-secondary"&gt;Volver&lt;/a&gt;
-        &lt;/nav&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/header&gt;
-
-  &lt;!-- Content --&gt;
-  &lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"&gt;
-    &lt;section class="bg-white rounded-lg shadow p-6"&gt;
-      &lt;!-- Contenido directo sin wrappers innecesarios --&gt;
-    &lt;/section&gt;
-  &lt;/div&gt;
-&lt;/main&gt;</code></pre>
-            </div>
-          </div>
-
-          <!-- Principios Clave -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-blue-50 p-4 rounded">
-              <h4 class="font-semibold text-blue-800 mb-2">🎯 Principios Clave</h4>
-              <ul class="text-sm text-blue-700 space-y-1">
-                <li>• Usar elementos semánticos (header, main, section, article)</li>
-                <li>• Máximo 3-4 niveles de anidamiento</li>
-                <li>• Cada div debe tener un propósito claro</li>
-                <li>• Preferir CSS Grid/Flexbox sobre divs wrapper</li>
-                <li>• Usar clases de Tailwind directamente</li>
-              </ul>
-            </div>
-            
-            <div class="bg-yellow-50 p-4 rounded">
-              <h4 class="font-semibold text-yellow-800 mb-2">⚡ Optimización CSS</h4>
-              <ul class="text-sm text-yellow-700 space-y-1">
-                <li>• Usar CSS Grid: <code>grid grid-cols-3 gap-4</code></li>
-                <li>• Flexbox: <code>flex items-center justify-between</code></li>
-                <li>• Espaciado: <code>space-y-4</code> en lugar de divs</li>
-                <li>• Contenedores: <code>max-w-6xl mx-auto</code></li>
-                <li>• Evitar <code>div.wrapper div.container</code></li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Ejemplo Real del Sistema -->
-          <div>
-            <h4 class="font-semibold text-purple-600 mb-3">🏗️ Ejemplo Real: Template Admin</h4>
-            <div class="bg-purple-50 p-4 rounded">
-              <pre class="text-xs bg-gray-800 text-purple-400 p-3 rounded overflow-x-auto"><code>&lt;!-- Estructura limpia usada en nuestros templates admin --&gt;
-&lt;main&gt;
-  &lt;!-- Header --&gt;
-  &lt;header class="bg-white shadow-sm border-b"&gt;
-    &lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"&gt;
-      &lt;div class="flex justify-between items-center py-4"&gt;
-        &lt;h1 class="text-2xl font-bold"&gt;Título&lt;/h1&gt;
-        &lt;nav&gt;
-          &lt;a href="/admin/dashboard" class="btn-secondary"&gt;Volver&lt;/a&gt;
-        &lt;/nav&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/header&gt;
-
-  &lt;!-- Content --&gt;
-  &lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"&gt;
-    &lt;section class="bg-white rounded-lg shadow p-6"&gt;
-      &lt;!-- Contenido directo sin wrappers innecesarios --&gt;
-    &lt;/section&gt;
-  &lt;/div&gt;
-&lt;/main&gt;</code></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Análisis de Consistencia de Controladores -->
-      <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-        <h3 class="font-bold mb-4 flex items-center">
-          <i data-lucide="check-circle" class="w-5 h-5 mr-2 text-green-600"></i>
-          Estado del Sistema: Completamente Homogenizado
-        </h3>
-        
-        <div class="space-y-6">
-          <!-- Patrón Consistente -->
-          <div>
-            <h4 class="font-semibold text-green-600 mb-3">✅ Sistema Completamente Homogenizado</h4>
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div class="flex items-center mb-3">
-                <i data-lucide="check-circle" class="w-5 h-5 text-green-600 mr-2"></i>
-                <h5 class="font-medium text-green-800">Estado Actual: 100% Consistente</h5>
-              </div>
-              <p class="text-sm text-green-700 mb-3">
-                Todas las páginas administrativas han sido homogenizadas siguiendo el patrón estándar implementado.
-              </p>
-              <ul class="text-sm text-green-700 space-y-1">
-                <li>• ✅ Todas las páginas usan <code>admin-layout</code> fragment</li>
-                <li>• ✅ Breadcrumbs automáticos implementados en todas las páginas</li>
-                <li>• ✅ Íconos Lucide consistentes en toda la aplicación</li>
-                <li>• ✅ Tipografía Inter moderna aplicada globalmente</li>
-                <li>• ✅ Estilos estándar con sombras y bordes redondeados</li>
-                <li>• ✅ Mensajes de success/error unificados</li>
-                <li>• ✅ Botones principales al final siguiendo patrón estándar</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Controladores Implementados -->
-          <div>
-            <h4 class="font-semibold text-blue-600 mb-3">🎛️ Controladores Admin Implementados</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <h5 class="font-medium text-blue-800">Controladores Principales</h5>
-                <ul class="text-sm text-blue-700 mt-2 space-y-1">
-                  <li>• AdminController - Dashboard y configuración</li>
-                  <li>• UserController - Gestión completa de usuarios</li>
-                  <li>• MaterialController - CRUD de materiales</li>
-                  <li>• RequestController - Gestión de solicitudes</li>
-                  <li>• FeedbackController - Administración de feedback</li>
-                  <li>• PostController - Gestión de contenido</li>
-                  <li>• CategoryController - Administración de categorías</li>
-                </ul>
-              </div>
-              <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <h5 class="font-medium text-blue-800">Características Comunes</h5>
-                <ul class="text-sm text-blue-700 mt-2 space-y-1">
-                  <li>• ✅ CRUD completo implementado</li>
-                  <li>• ✅ Parámetros URL consistentes</li>
-                  <li>• ✅ Thin Controllers con lógica en servicios</li>
-                  <li>• ✅ Manejo de excepciones unificado</li>
-                  <li>• ✅ Flash messages implementados</li>
-                  <li>• ✅ Seguridad @PreAuthorize aplicada</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-      </div>
-
-      <h3 class="font-bold mb-4">📋 Detalles Técnicos</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <a href="/admin/documentation/details/frontend" 
-           class="block bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors">
-          <div class="flex items-center mb-3">
-            <i data-lucide="layout" class="w-6 h-6 text-blue-600 mr-3"></i>
-            <h4 class="font-bold text-blue-800">Frontend Details</h4>
-          </div>
-          <p class="text-sm text-blue-700">Templates, componentes, estilos y organización del frontend</p>
-          <div class="mt-3 text-xs text-blue-600 font-medium">Ver detalles →</div>
-        </a>
-
-        <a href="/admin/documentation/details/backend" 
-           class="block bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200 hover:border-green-300 transition-colors">
-          <div class="flex items-center mb-3">
-            <i data-lucide="server" class="w-6 h-6 text-green-600 mr-3"></i>
-            <h4 class="font-bold text-green-800">Backend Details</h4>
-          </div>
-          <p class="text-sm text-green-700">Controladores, servicios, repositorios y arquitectura del backend</p>
-          <div class="mt-3 text-xs text-green-600 font-medium">Ver detalles →</div>
-        </a>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <a href="/admin/documentation/details/user-flows" 
-           class="block bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200 hover:border-purple-300 transition-colors">
-          <div class="flex items-center mb-3">
-            <i data-lucide="users" class="w-6 h-6 text-purple-600 mr-3"></i>
-            <h4 class="font-bold text-purple-800">User Flows</h4>
-          </div>
-          <p class="text-sm text-purple-700">Casos de uso y flujos de usuarios comunes</p>
-          <div class="mt-3 text-xs text-purple-600 font-medium">Ver detalles →</div>
-        </a>
-
-        <a href="/admin/documentation/details/organization-flows" 
-           class="block bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-lg border border-orange-200 hover:border-orange-300 transition-colors">
-          <div class="flex items-center mb-3">
-            <i data-lucide="building" class="w-6 h-6 text-orange-600 mr-3"></i>
-            <h4 class="font-bold text-orange-800">Organization Flows</h4>
-          </div>
-          <p class="text-sm text-orange-700">Casos de uso y flujos para organizaciones</p>
-          <div class="mt-3 text-xs text-orange-600 font-medium">Ver detalles →</div>
-        </a>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
-        <a href="/admin/documentation/details/visual-system" 
-           class="block bg-gradient-to-r from-pink-50 to-rose-50 p-6 rounded-lg border border-pink-200 hover:border-pink-300 transition-colors">
-          <div class="flex items-center mb-3">
-            <i data-lucide="palette" class="w-6 h-6 text-pink-600 mr-3"></i>
-            <h4 class="font-bold text-pink-800">Visual System</h4>
-          </div>
-          <p class="text-sm text-pink-700">Guía de diseño, colores, tipografía y componentes visuales</p>
-          <div class="mt-3 text-xs text-pink-600 font-medium">Ver detalles →</div>
-        </a>
-      </div>
-
-      <!-- Sistemas de diseño / Design System -->
-      <div id="design-system" class="bg-white border rounded-lg p-6 mb-8">
-        <h3 class="font-bold mb-4 flex items-center">
-          <i data-lucide="palette" class="w-5 h-5 mr-2 text-emerald-600"></i>
-          Sistemas de diseño (Design System)
-        </h3>
-        <div class="space-y-6 text-sm">
-          <div class="bg-emerald-50 p-4 rounded border border-emerald-100">
-            <h4 class="font-semibold text-emerald-800 mb-2">🎯 Objetivo</h4>
-            <p class="text-emerald-900">Armonizar la UI con paleta emerald, estilos consistentes y componentes reutilizables.</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-gray-50 p-4 rounded border">
-              <h5 class="font-semibold text-gray-800 mb-2">🟢 Botones</h5>
-              <ul class="list-disc ml-5 space-y-1 text-gray-700">
-                <li>Unificar variantes en <code>templates/fragments/components/buttons.html</code>: primary, secondary, outline, danger</li>
-                <li>Estados: <code>hover</code>, <code>focus:ring-emerald-500</code>, <code>disabled:opacity-50</code></li>
-                <li>Tamaños: <code>sm</code>, <code>md</code>, <code>lg</code></li>
-                <li>Aplicar al submit de login y botones del footer/menu</li>
-              </ul>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded border">
-              <h5 class="font-semibold text-gray-800 mb-2">📝 Inputs y focus-ring</h5>
-              <ul class="list-disc ml-5 space-y-1 text-gray-700">
-                <li>Estandarizar bordes, <code>focus:ring-emerald-500</code>, <code>placeholder:text-emerald-300</code></li>
-                <li>Estados de validación: error/success</li>
-                <li>Crear fragmento de input reusable para formularios</li>
-              </ul>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded border">
-              <h5 class="font-semibold text-gray-800 mb-2">🔗 Enlaces</h5>
-              <ul class="list-disc ml-5 space-y-1 text-gray-700">
-                <li>Estilo base: <code>text-emerald-600 hover:text-emerald-700 underline-offset-2 hover:underline</code></li>
-                <li>En fondos oscuros (footer): <code>text-emerald-100 hover:text-white</code></li>
-                <li>Aplicar en <code>fragments/guest/footer.html</code>, <code>fragments/guest/menu.html</code>, <code>templates/index.html</code></li>
-              </ul>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded border">
-              <h5 class="font-semibold text-gray-800 mb-2">🔤 Tipografía</h5>
-              <ul class="list-disc ml-5 space-y-1 text-gray-700">
-                <li>Alinear escala (títulos, subtítulos, body) y pesos</li>
-                <li>Usar <code>underline-offset-2</code> y <code>font-semibold</code> coherente en CTAs</li>
-              </ul>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded border">
-              <h5 class="font-semibold text-gray-800 mb-2">🧩 Radios y sombras</h5>
-              <ul class="list-disc ml-5 space-y-1 text-gray-700">
-                <li>Normalizar <code>rounded-md</code> y <code>shadow-sm</code> para tarjetas y botones</li>
-              </ul>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded border">
-              <h5 class="font-semibold text-gray-800 mb-2">🌐 i18n</h5>
-              <ul class="list-disc ml-5 space-y-1 text-gray-700">
-                <li>Verificar llaves en <code>src/main/resources/messages*.properties</code></li>
-                <li>Incluir símbolo <code>©</code> en textos de footer</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="bg-white p-4 rounded border">
-            <h5 class="font-semibold text-gray-800 mb-2">🧰 Utilidades / Tokens</h5>
-            <p class="text-gray-700">Opcional: definir utilidades con <code>@apply</code> en <code>static/css/index.css</code> (p. ej. <code>.btn-primary</code>, <code>.link-muted</code>) o mantenerlo en fragmentos Thymeleaf.</p>
-          </div>
-
-          <div class="bg-white p-4 rounded border">
-            <h5 class="font-semibold text-gray-800 mb-2">📂 Archivos clave</h5>
-            <ul class="list-disc ml-5 space-y-1 text-gray-700">
-              <li><code>templates/fragments/components/buttons.html</code></li>
-              <li><code>templates/fragments/auth/login-form.html</code></li>
-              <li><code>templates/fragments/guest/footer.html</code></li>
-              <li><code>templates/fragments/guest/menu.html</code></li>
-              <li><code>src/main/resources/static/css/index.css</code> (si se usan utilidades)</li>
-            </ul>
-          </div>
-
-          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-            <h5 class="font-medium text-emerald-800 mb-2 flex items-center">
-              <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
-              Estado Actual: Sistema Completamente Implementado
-            </h5>
-            <p class="text-emerald-900 text-sm">
-              ✅ <strong>Homogenización completa:</strong> Todas las páginas admin siguen el patrón estándar con Inter font, Lucide icons, breadcrumbs automáticos y estilos consistentes.
-              <br><br>
-              ✅ <strong>Componentes unificados:</strong> Sistema de botones, breadcrumbs, mensajes y navegación completamente estandarizado.
-              <br><br>
-              ✅ <strong>Arquitectura sólida:</strong> Patrón 1:1:1:1:1 implementado con thin controllers, servicios reutilizables y seguridad consistente.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <h3 class="font-bold mb-4">📋 Guías de Uso</h3>
-      <div class="space-y-4">
-        <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 border-blue-200 rounded-r-lg p-4">
-          <div class="flex items-center mb-2">
-            <i data-lucide="users" class="w-5 h-5 text-blue-600 mr-2"></i>
-            <h4 class="font-semibold text-blue-900">Gestión de Usuarios</h4>
-          </div>
-          <p class="text-sm text-blue-800">Crear, editar y asignar roles a usuarios del sistema usando UserController con CRUD completo</p>
-        </div>
-        <div class="border-l-4 border-green-500 pl-4 bg-green-50 border-green-200 rounded-r-lg p-4">
-          <div class="flex items-center mb-2">
-            <i data-lucide="package" class="w-5 h-5 text-green-600 mr-2"></i>
-            <h4 class="font-semibold text-green-900">Administración de Materiales</h4>
-          </div>
-          <p class="text-sm text-green-800">Gestionar catálogo de materiales reciclables con MaterialController y categorías asociadas</p>
-        </div>
-        <div class="border-l-4 border-purple-500 pl-4 bg-purple-50 border-purple-200 rounded-r-lg p-4">
-          <div class="flex items-center mb-2">
-            <i data-lucide="clipboard-list" class="w-5 h-5 text-purple-600 mr-2"></i>
-            <h4 class="font-semibold text-purple-900">Solicitudes de Recolección</h4>
-          </div>
-          <p class="text-sm text-purple-800">Supervisar y procesar solicitudes de recolección de residuos usando RequestController</p>
-        </div>
-        <div class="border-l-4 border-orange-500 pl-4 bg-orange-50 border-orange-200 rounded-r-lg p-4">
-          <div class="flex items-center mb-2">
-            <i data-lucide="message-square" class="w-5 h-5 text-orange-600 mr-2"></i>
-            <h4 class="font-semibold text-orange-900">Sistema de Feedback</h4>
-          </div>
-          <p class="text-sm text-orange-800">Administrar comentarios y sugerencias de usuarios mediante FeedbackController</p>
-        </div>
-        <div class="border-l-4 border-teal-500 pl-4 bg-teal-50 border-teal-200 rounded-r-lg p-4">
-          <div class="flex items-center mb-2">
-            <i data-lucide="file-text" class="w-5 h-5 text-teal-600 mr-2"></i>
-            <h4 class="font-semibold text-teal-900">Gestión de Contenido</h4>
-          </div>
-          <p class="text-sm text-teal-800">Administrar posts informativos y categorías usando PostController y CategoryController</p>
-        </div>
-        <div class="border-l-4 border-indigo-500 pl-4 bg-indigo-50 border-indigo-200 rounded-r-lg p-4">
-          <div class="flex items-center mb-2">
-            <i data-lucide="settings" class="w-5 h-5 text-indigo-600 mr-2"></i>
-            <h4 class="font-semibold text-indigo-900">Configuración del Sistema</h4>
-          </div>
-          <p class="text-sm text-indigo-800">Ajustar parámetros y configuraciones generales mediante AdminController</p>
-      </div>
-            </div>
-        </div>
-
-        <!-- 8. SISTEMA VISUAL -->
-        <div class="flex items-center mb-4">
-            <i data-lucide="palette" class="w-5 h-5 text-gray-600 mr-2"></i>
-            <h3 class="font-semibold text-gray-900">8. Sistema Visual (Design System)</h3>
-        </div>
-        <div class="bg-gradient-to-r from-cyan-800 to-blue-900 border border-cyan-700 rounded-lg p-6">
-            <div class="space-y-6">
-                <!-- Paleta de Colores -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-cyan-900 mb-3 flex items-center">
-                        <i data-lucide="droplet" class="w-4 h-4 mr-2"></i>
-                        Paleta de Colores
-                    </h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-green-600 rounded-lg mx-auto mb-2"></div>
-                            <div class="font-medium text-gray-800">Primary</div>
-                            <div class="text-gray-600">#16a34a</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-blue-600 rounded-lg mx-auto mb-2"></div>
-                            <div class="font-medium text-gray-800">Secondary</div>
-                            <div class="text-gray-600">#2563eb</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-gray-800 rounded-lg mx-auto mb-2"></div>
-                            <div class="font-medium text-gray-800">Dark</div>
-                            <div class="text-gray-600">#1f2937</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-gray-100 rounded-lg mx-auto mb-2 border"></div>
-                            <div class="font-medium text-gray-800">Light</div>
-                            <div class="text-gray-600">#f3f4f6</div>
-                        </div>
-                    </div>
+                    <p class="text-gray-700 leading-relaxed text-sm">
+                        Documentación completa del sistema de gestión de residuos sólidos. Incluye arquitectura, patrones de desarrollo y guías técnicas.
+                    </p>
                 </div>
 
-                <!-- Componentes Visuales -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-cyan-900 mb-3 flex items-center">
-                        <i data-lucide="box" class="w-4 h-4 mr-2"></i>
-                        Componentes Principales
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h5 class="font-medium text-gray-800 mb-2">🎨 Tarjetas (Cards)</h5>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li>• Bordes redondeados (rounded-lg)</li>
-                                <li>• Sombras suaves (shadow-sm)</li>
-                                <li>• Fondos gradientes</li>
-                                <li>• Espaciado consistente (p-4, p-6)</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h5 class="font-medium text-gray-800 mb-2">🔘 Botones</h5>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li>• Estados hover y focus</li>
-                                <li>• Transiciones suaves</li>
-                                <li>• Íconos Lucide integrados</li>
-                                <li>• Tamaños consistentes</li>
-                            </ul>
-                        </div>
+                <!-- 2. Roles del Sistema -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="shield" class="w-5 h-5 text-red-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">2. Roles</h2>
                     </div>
-                </div>
-
-                <!-- Tipografía -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-cyan-900 mb-3 flex items-center">
-                        <i data-lucide="type" class="w-4 h-4 mr-2"></i>
-                        Tipografía
-                    </h4>
                     <div class="space-y-3">
-                        <div>
-                            <div class="text-2xl font-bold text-gray-900 mb-1">Inter Font Family</div>
-                            <p class="text-sm text-gray-600">Fuente moderna sans-serif optimizada para interfaces digitales</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                            <div class="text-center p-3 bg-gray-50 rounded">
-                                <div class="font-light text-gray-800">Light (300)</div>
-                                <div class="text-xs text-gray-500">Textos secundarios</div>
-                            </div>
-                            <div class="text-center p-3 bg-gray-100 rounded">
-                                <div class="font-medium text-gray-800">Regular (400-500)</div>
-                                <div class="text-xs text-gray-500">Textos principales</div>
-                            </div>
-                            <div class="text-center p-3 bg-gray-200 rounded">
-                                <div class="font-bold text-gray-800">Bold (600-700)</div>
-                                <div class="text-xs text-gray-500">Títulos y énfasis</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 9. REFERENCIAS Y TECNOLOGÍAS -->
-        <div class="flex items-center mb-4">
-            <i data-lucide="link" class="w-5 h-5 text-gray-600 mr-2"></i>
-            <h3 class="font-semibold text-gray-900">9. Referencias y Tecnologías</h3>
-        </div>
-        <div class="bg-gradient-to-r from-orange-800 to-red-900 border border-orange-700 rounded-lg p-6">
-            <div class="space-y-6">
-                <!-- Tecnologías Principales -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-orange-900 mb-3 flex items-center">
-                        <i data-lucide="cpu" class="w-4 h-4 mr-2"></i>
-                        Tecnologías Utilizadas
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h5 class="font-medium text-gray-800 mb-2">⚙️ Backend</h5>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li>• <strong>Spring Boot 3.2:</strong> Framework principal</li>
-                                <li>• <strong>Java 17:</strong> Lenguaje de programación</li>
-                                <li>• <strong>Spring Security 6:</strong> Autenticación y autorización</li>
-                                <li>• <strong>Spring Data JPA:</strong> Acceso a datos</li>
-                                <li>• <strong>PostgreSQL:</strong> Base de datos</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h5 class="font-medium text-gray-800 mb-2">🎨 Frontend</h5>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li>• <strong>Thymeleaf:</strong> Motor de plantillas</li>
-                                <li>• <strong>Tailwind CSS:</strong> Framework CSS</li>
-                                <li>• <strong>Lucide:</strong> Biblioteca de íconos</li>
-                                <li>• <strong>HTMX:</strong> Interacciones dinámicas</li>
-                                <li>• <strong>Google Fonts:</strong> Tipografía Inter</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Servicios Externos -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-orange-900 mb-3 flex items-center">
-                        <i data-lucide="cloud" class="w-4 h-4 mr-2"></i>
-                        Servicios Externos
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                            <i data-lucide="image" class="w-8 h-8 text-purple-600 mr-3"></i>
-                            <div>
-                                <div class="font-medium text-gray-800">Cloudinary</div>
-                                <div class="text-sm text-gray-600">Almacenamiento y gestión de imágenes</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                            <i data-lucide="github" class="w-8 h-8 text-gray-800 mr-3"></i>
-                            <div>
-                                <div class="font-medium text-gray-800">GitHub</div>
-                                <div class="text-sm text-gray-600">Control de versiones y repositorio</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bibliotecas y Dependencias -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-orange-900 mb-3 flex items-center">
-                        <i data-lucide="package" class="w-4 h-4 mr-2"></i>
-                        Bibliotecas y Dependencias
-                    </h4>
-                    <div class="text-sm text-gray-600">
-                        <p class="mb-3"><strong>Maven Dependencies principales:</strong></p>
-                        <div class="bg-gray-50 p-3 rounded font-mono text-xs">
-                            <div>spring-boot-starter-web</div>
-                            <div>spring-boot-starter-data-jpa</div>
-                            <div>spring-boot-starter-security</div>
-                            <div>spring-boot-starter-thymeleaf</div>
-                            <div>postgresql</div>
-                            <div>lombok</div>
-                            <div>cloudinary-http44</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Documentación y Referencias -->
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 class="font-medium text-orange-900 mb-3 flex items-center">
-                        <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>
-                        Documentación y Referencias
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                            <div class="flex items-center mb-2">
-                                <i data-lucide="file-text" class="w-5 h-5 text-blue-600 mr-2"></i>
-                                <div class="font-medium text-blue-900">Documentación del Sistema</div>
-                            </div>
-                            <p class="text-sm text-blue-700">Documentos detallados sobre arquitectura, implementación y uso del sistema.</p>
-                            <div class="mt-2 text-xs text-blue-600">
-                                • Documento de requerimientos<br>
-                                • Guía de implementación<br>
-                                • Artículo técnico del sistema
-                            </div>
-                        </div>
-
-                        <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
-                            <div class="flex items-center mb-2">
-                                <i data-lucide="code" class="w-5 h-5 text-green-600 mr-2"></i>
-                                <div class="font-medium text-green-900">Repositorio GitHub</div>
-                            </div>
-                            <p class="text-sm text-green-700">Código fuente completo del proyecto con toda la implementación técnica.</p>
-                            <div class="mt-2 text-xs text-green-600">
-                                • Código Spring Boot completo<br>
-                                • Templates Thymeleaf<br>
-                                • Scripts y estilos<br>
-                                • Configuración completa
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Próximas Referencias a Agregar -->
-                <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                    <h4 class="font-medium text-orange-900 mb-2 flex items-center">
-                        <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
-                        Próximas Referencias a Completar
-                    </h4>
-                    <div class="text-sm text-orange-700 space-y-2">
                         <div class="flex items-center">
-                            <i data-lucide="clock" class="w-4 h-4 mr-2"></i>
-                            <span>Documentos adicionales en desarrollo...</span>
+                            <i data-lucide="settings" class="w-4 h-4 text-red-600 mr-2"></i>
+                            <span class="text-sm font-medium text-red-800">ADMIN</span>
                         </div>
-                        <div class="text-xs text-orange-600 mt-2">
-                            • Casos de uso detallados<br>
-                            • Diagramas UML<br>
-                            • Manuales de usuario<br>
-                            • Guías de despliegue
+                        <div class="flex items-center">
+                            <i data-lucide="building" class="w-4 h-4 text-blue-600 mr-2"></i>
+                            <span class="text-sm font-medium text-blue-800">ORGANIZATION</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i data-lucide="user" class="w-4 h-4 text-green-600 mr-2"></i>
+                            <span class="text-sm font-medium text-green-800">USER</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- 3. Stack Tecnológico -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="cpu" class="w-5 h-5 text-purple-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">3. Stack</h2>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-xs">
+                            <span class="font-medium text-gray-800">Backend:</span> Spring Boot 3.2 + Java 17
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-medium text-gray-800">Frontend:</span> Thymeleaf + Tailwind
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-medium text-gray-800">DB:</span> PostgreSQL + JPA
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-medium text-gray-800">Images:</span> Cloudinary
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Arquitectura -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="layers" class="w-5 h-5 text-indigo-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">4. Arquitectura</h2>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-indigo-50 p-3 rounded">
+                            <div class="text-sm font-medium text-indigo-800 mb-1">Patrón MVC (Model-View-Controller)</div>
+                            <div class="text-xs text-indigo-700">
+                                Arquitectura tradicional de Spring Boot con separación clara de responsabilidades
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-start">
+                                <i data-lucide="database" class="w-4 h-4 text-blue-600 mr-2 mt-0.5"></i>
+                                <div>
+                                    <div class="text-sm font-medium text-blue-800">Modelo</div>
+                                    <div class="text-xs text-gray-600">Entidades JPA + Repositorios + Lógica de negocio</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i data-lucide="settings" class="w-4 h-4 text-green-600 mr-2 mt-0.5"></i>
+                                <div>
+                                    <div class="text-sm font-medium text-green-800">Controlador</div>
+                                    <div class="text-xs text-gray-600">@Controller + @Service para manejo de requests</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i data-lucide="eye" class="w-4 h-4 text-purple-600 mr-2 mt-0.5"></i>
+                                <div>
+                                    <div class="text-sm font-medium text-purple-800">Vista</div>
+                                    <div class="text-xs text-gray-600">Templates Thymeleaf para renderizado</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
+            <!-- Middle Column - Features & Patterns -->
+            <div class="space-y-6">
+
+                <!-- 5. Funcionalidades -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="target" class="w-5 h-5 text-blue-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">5. Funcionalidades</h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex items-center text-sm">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mr-2"></i>
+                            Gestión de usuarios
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mr-2"></i>
+                            Sistema de solicitudes
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mr-2"></i>
+                            Catálogo de materiales
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mr-2"></i>
+                            Portal público educativo
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mr-2"></i>
+                            Panel de administración
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Patrones de Desarrollo -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="code-2" class="w-5 h-5 text-purple-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">6. Patrones</h2>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="bg-blue-50 p-2 rounded text-xs">
+                            <span class="font-medium text-blue-800">Thin Controllers</span>
+                        </div>
+                        <div class="text-xs text-gray-600 mb-2">Controladores minimalistas que delegan lógica</div>
+                        <div class="bg-green-50 p-2 rounded text-xs">
+                            <span class="font-medium text-green-800">Service Layer</span>
+                        </div>
+                        <div class="text-xs text-gray-600 mb-2">Separación de lógica de negocio</div>
+                        <div class="bg-red-50 p-2 rounded text-xs">
+                            <span class="font-medium text-red-800">Security First</span>
+                        </div>
+                        <div class="text-xs text-gray-600">Protección con @PreAuthorize</div>
+                    </div>
+                </div>
+
+                <!-- 7. Estado del Sistema -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-green-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">7. Estado</h2>
+                    </div>
+                    <div class="space-y-2 text-sm text-green-700">
+                        <div class="flex items-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                            Layout admin homogéneo
+                        </div>
+                        <div class="flex items-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                            Breadcrumbs automáticos
+                        </div>
+                        <div class="flex items-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                            Íconos Lucide globales
+                        </div>
+                        <div class="flex items-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                            Estilos consistentes
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column - Controllers & References -->
+            <div class="space-y-6">
+
+                <!-- 8. Controladores -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="settings" class="w-5 h-5 text-indigo-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">8. Controladores</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 mb-3">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs text-center">Admin</span>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs text-center">User</span>
+                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs text-center">Material</span>
+                        <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs text-center">Request</span>
+                        <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded text-xs text-center">Feedback</span>
+                        <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs text-center">Post</span>
+                    </div>
+                    <p class="text-xs text-gray-600">CRUD completo con seguridad @PreAuthorize</p>
+                </div>
+
+                <!-- 9. Sistema de Breadcrumbs -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="navigation" class="w-5 h-5 text-indigo-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">9. Breadcrumbs</h2>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="bg-indigo-50 p-2 rounded text-xs">
+                            <span class="font-medium text-indigo-800">BreadcrumbInterceptor</span>
+                        </div>
+                        <div class="text-xs text-gray-600">Generación automática según URL</div>
+                        <div class="bg-blue-50 p-2 rounded text-xs mt-2">
+                            <span class="font-medium text-blue-800">BreadcrumbService</span>
+                        </div>
+                        <div class="text-xs text-gray-600">Resuelve IDs dinámicos</div>
+                    </div>
+                </div>
+
+                <!-- 10. Ejemplo: UserController -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="database" class="w-5 h-5 text-orange-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">10. CRUD Ejemplo</h2>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-xs font-medium text-blue-800">GET Mapping</div>
+                        <div class="text-xs text-gray-600">Lista + acciones (?action=edit)</div>
+                        <div class="text-xs font-medium text-green-800 mt-2">POST Mapping</div>
+                        <div class="text-xs text-gray-600">Crear/actualizar con flash messages</div>
+                    </div>
+                </div>
+
+                <!-- 11. Referencias -->
+                <div class="card section-card rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="link" class="w-5 h-5 text-orange-600 mr-3"></i>
+                        <h2 class="text-xl font-bold text-gray-900">11. Referencias</h2>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-blue-50 p-3 rounded">
+                            <h4 class="font-medium text-blue-800 text-sm mb-2">Documentación</h4>
+                            <div class="space-y-1 text-xs text-blue-700">
+                                <div>
+                                    <a href="https://docs.google.com/document/d/1CdG2M1nPxRI_MQ-ROP7RXtTozYTPpE8Q14qluDhW4kA/edit?tab=t.0#heading=h.pwph5y4zizfi" target="_blank" class="text-blue-600 hover:underline flex items-center">
+                                        <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
+                                        Documento de requerimientos
+                                    </a>
+                                </div>
+                                <div>Guía de implementación (En desarrollo)</div>
+                                <div>
+                                    <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0" target="_blank" class="text-blue-600 hover:underline flex items-center">
+                                        <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
+                                        Artículo técnico
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded">
+                            <h4 class="font-medium text-green-800 text-sm mb-2">Repositorio</h4>
+                            <div class="space-y-1 text-xs text-green-700">
+                                <div>
+                                    <a href="https://github.com/fedegonc/residuosolido" target="_blank" class="text-green-600 hover:underline flex items-center">
+                                        <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
+                                        Código Spring Boot
+                                    </a>
+                                </div>
+                                <div>Templates Thymeleaf</div>
+                                <div>Scripts y estilos</div>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded">
+                            <h4 class="font-medium text-purple-800 text-sm mb-2">Dependencias</h4>
+                            <div class="text-xs text-purple-700 space-y-1">
+                                <div>• spring-boot-starter-web</div>
+                                <div>• postgresql + lombok</div>
+                                <div>• cloudinary-http44</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
-        <!-- Botón de navegación principal -->
-        <div class="flex justify-start">
+        <!-- Navigation -->
+        <div class="flex justify-center mt-8">
             <a th:href="@{/admin/dashboard}"
-               class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+               class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm font-medium">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                 <span>Ir al Dashboard</span>
             </a>
         </div>
@@ -1393,7 +399,6 @@ public class UserController {
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Inicializar íconos de Lucide
         lucide.createIcons();
     });
 </script>

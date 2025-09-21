@@ -20,6 +20,10 @@
     .card:hover {
       box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     }
+    .section-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+      border: 1px solid #e2e8f0;
+    }
   </style>
 </head>
 <body class="bg-white min-h-screen">
@@ -97,11 +101,11 @@
       <!-- Botones de acción principales -->
       <div class="flex flex-col sm:flex-row gap-4 mb-8">
         <a href="/users/requests/new" class="bg-white text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 transition font-semibold text-center flex items-center justify-center gap-2">
-          <span>🚚</span>
+          <i data-lucide="truck" class="w-4 h-4"></i>
           <span>Solicitar Recolección</span>
         </a>
         <a href="/posts" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold text-center flex items-center justify-center gap-2">
-          <span>📚</span>
+          <i data-lucide="book-open" class="w-4 h-4"></i>
           <span>Ver Artículos</span>
         </a>
       </div>
@@ -109,76 +113,145 @@
   </section>
 
   <!-- Contenido principal simplificado -->
-  <main class="container mx-auto px-4 py-10">
-    <!-- Categorías dinámicas desde BD -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Categorías</h2>
-      
-      <p th:if="${categories != null and !categories.empty}" class="text-gray-700">
-        <span th:each="category, iterStat : ${categories}" 
-              th:if="${iterStat.last == false}">
-          <a th:href="@{/categories/{id}(id=${category.id})}" 
-             class="italic hover:underline">
-            <span th:text="${category.name}">Categoría</span>
-          </a> - 
-        </span>
-        <a th:if="${categories.size() > 0}" href="/categories" 
-           class="italic hover:underline font-medium text-green-800">
-          Ver todas las categorías →
-        </a>
-      </p>
-      
-      <p th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
-        No hay categorías disponibles
-      </p>
-    </section>
+  <main class="max-w-7xl mx-auto px-4 py-10">
 
-    <!-- Notas recientes -->
-    <section class="mb-12">
-      <div class="bg-gray-50 p-6 rounded-lg">
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Notas recientes</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <article th:each="note : ${recentNotes}" class="card rounded-lg p-4 bg-white shadow">
-            <div class="w-full h-32 mb-3 flex items-center justify-center bg-gray-100 rounded-lg" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
-              <span class="text-2xl font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Left Column -->
+      <div class="space-y-6">
+
+        <!-- Categorías -->
+        <div class="card section-card rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <i data-lucide="grid-3x3" class="w-5 h-5 text-blue-600 mr-3"></i>
+            <h2 class="text-xl font-bold text-gray-900">Categorías</h2>
+          </div>
+
+          <div th:if="${categories != null and !categories.empty}">
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span th:each="category : ${categories}"
+                    th:text="${category.name}"
+                    class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"></span>
             </div>
-            <img th:src="${note.image}" alt="Imagen de la nota" class="w-full h-32 object-cover rounded-lg mb-3" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
-            <h4 th:text="${note.title}" class="font-semibold text-gray-900 mb-2">Título de la nota</h4>
-            <p th:text="${note.excerpt}" class="text-sm text-gray-600 mb-3">Extracto de la nota...</p>
-            <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-sm">Ver más →</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección organizaciones -->
-    <section id="organizaciones" class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Organizaciones</h2>
-      <p class="text-gray-600 mb-6">Explora organizaciones que colaboran en la recolección y reciclaje en la región.</p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
-        <article th:each="org : ${organizations}" class="card rounded-lg p-5 bg-white">
-          <h3 class="font-semibold text-gray-800 mb-2" 
-              th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
-          <p class="text-sm text-gray-600" th:text="${org.address != null ? org.address : 'Dirección no especificada'}"></p>
-          <div class="mt-2" th:if="${org.email != null and !org.email.isEmpty()}">
-            <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm">
-              <i class="fa-solid fa-envelope mr-1"></i>Contactar
+            <a href="/categories" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+              <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+              Ver todas las categorías
             </a>
           </div>
-        </article>
+
+          <div th:if="${categories == null or categories.empty}" class="text-center py-6 text-gray-500">
+            <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+            <p class="text-sm">No hay categorías disponibles</p>
+          </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="card section-card rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <i data-lucide="zap" class="w-5 h-5 text-green-600 mr-3"></i>
+            <h2 class="text-xl font-bold text-gray-900">Acciones Rápidas</h2>
+          </div>
+          <div class="space-y-3">
+            <a href="/users/requests/new" class="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+              <i data-lucide="truck" class="w-5 h-5 text-green-600 mr-3"></i>
+              <div>
+                <div class="font-medium text-green-800">Solicitar Recolección</div>
+                <div class="text-sm text-green-600">Programa una recogida de residuos</div>
+              </div>
+            </a>
+            <a href="/posts" class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+              <i data-lucide="book-open" class="w-5 h-5 text-blue-600 mr-3"></i>
+              <div>
+                <div class="font-medium text-blue-800">Ver Artículos</div>
+                <div class="text-sm text-blue-600">Información sobre reciclaje</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
       </div>
-      
-      <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
-        <i class="fa-solid fa-building text-3xl text-gray-300 mb-2"></i>
-        <p>No hay organizaciones disponibles actualmente</p>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+
+        <!-- Notas recientes -->
+        <div class="card section-card rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <i data-lucide="file-text" class="w-5 h-5 text-purple-600 mr-3"></i>
+            <h2 class="text-xl font-bold text-gray-900">Notas Recientes</h2>
+          </div>
+
+          <div th:if="${recentNotes != null and !recentNotes.empty}" class="space-y-4">
+            <article th:each="note : ${recentNotes}" class="bg-white rounded-lg p-4 border border-gray-100">
+              <div class="flex items-start space-x-3">
+                <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg flex-shrink-0" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+                  <span class="text-lg font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
+                </div>
+                <img th:src="${note.image}" alt="Imagen de la nota" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+
+                <div class="flex-1 min-w-0">
+                  <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título de la nota</h4>
+                  <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto de la nota...</p>
+                  <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-xs flex items-center">
+                    <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
+                    Ver más
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-6 text-gray-500">
+            <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+            <p class="text-sm">No hay notas recientes disponibles</p>
+          </div>
+        </div>
+
+        <!-- Organizaciones -->
+        <div class="card section-card rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <i data-lucide="building" class="w-5 h-5 text-orange-600 mr-3"></i>
+            <h2 class="text-xl font-bold text-gray-900">Organizaciones</h2>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">Organizaciones que colaboran en la recolección y reciclaje en la región.</p>
+
+          <div th:if="${organizations != null and !organizations.empty}" class="space-y-3">
+            <article th:each="org : ${organizations}" class="bg-white rounded-lg p-3 border border-gray-100">
+              <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="building" class="w-4 h-4 text-orange-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-gray-800 text-sm mb-1"
+                      th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
+                  <p class="text-xs text-gray-600 mb-2" th:text="${org.address != null ? org.address : 'Dirección no especificada'}"></p>
+                  <div th:if="${org.email != null and !org.email.isEmpty()}">
+                    <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-xs flex items-center">
+                      <i data-lucide="mail" class="w-3 h-3 mr-1"></i>
+                      Contactar
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div th:if="${organizations == null or organizations.empty}" class="text-center py-6 text-gray-500">
+            <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+            <p class="text-sm">No hay organizaciones disponibles actualmente</p>
+          </div>
+        </div>
+
       </div>
-    </section>
+
+    </div>
+
   </main>
 
   <!-- Footer simplificado -->
   <footer class="bg-gray-800 text-white py-6 mt-12">
-    <div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center justify-between">
         <p class="mb-4 md:mb-0">&copy; 2024 Residuos Sólidos - Rivera Sant'Ana do Livramento</p>
         <button id="debug-toggle" class="card bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md flex items-center transition">
@@ -193,5 +266,9 @@
 
   <!-- Importar JavaScript desde archivo externo -->
   <script src="/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
