@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Map Fragment</title>
+</head>
+<body>
+<!-- Leaflet resources (CSS/JS) to be included once per page -->
+<th:block th:fragment="leaflet_resources">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/js/leaflet-map.js"></script>
+</th:block>
+
+<!-- Reusable Leaflet map widget -->
+<!-- Usage: th:replace="~{fragments/components/map :: leaflet('mapId', '#latitude', '#longitude', lat, lng, 13, 'h-64')}" -->
+<div th:fragment="leaflet(id, latInputSel, lngInputSel, lat, lng, zoom, heightClass)">
+    <div th:id="${id}"
+         class="rs-leaflet rounded-lg border border-gray-200 overflow-hidden"
+         th:classappend="${heightClass} != null ? ' ' + ${heightClass} : ' h-64'"
+         th:attr="data-lat-input=${latInputSel}, data-lng-input=${lngInputSel}, data-lat=${lat}, data-lng=${lng}, data-zoom=${zoom}">
+        <!-- Map will render here -->
+    </div>
+</div>
+
+</body>
+</html>

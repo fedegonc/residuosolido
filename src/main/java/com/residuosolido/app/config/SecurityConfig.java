@@ -91,11 +91,11 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
-                    "img-src 'self' data: https:; " +
-                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
+                    "img-src 'self' data: https: https://tile.openstreetmap.org; " +
+                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com; " +
                     "font-src 'self' data: https://fonts.gstatic.com; " +
                     "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; " +
-                    "connect-src 'self'"
+                    "connect-src 'self' https://unpkg.com"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
                 .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
