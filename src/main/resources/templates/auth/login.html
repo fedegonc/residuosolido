@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- AUTH ULTRA-SIMPLIFICADO: solo casos de uso core -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layouts/base}" th:with="hideMenu=true, hideGuestMenu=true">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layouts/base}" th:with="hideMenu=true, hideGuestMenu=true, hideLoginCtas=true, hideFooter=true">
 <head>
   <title layout:fragment="title">Iniciar Sesión - Residuos Sólidos</title>
   <th:block layout:fragment="head-extra">
@@ -24,12 +24,13 @@
             </span>
             <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
           </a>
-
           <!-- Navegación y acciones -->
           <div class="flex items-center gap-4">
             <!-- Botones para usuarios no autenticados -->
             <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
-              <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
+              <a href="/auth/login"
+                 th:if="${hideLoginCtas != true}"
+                 class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
                 <span th:text="#{nav.login}">Entrar</span>
               </a>
               <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
@@ -51,45 +52,34 @@
       </nav>
     </header>
 
-    <!-- Hero section igual al index -->
-    <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16 relative overflow-hidden">
-      <div class="container mx-auto px-4 relative z-10">
-        <!-- Selector de idioma arriba del H1 -->
-        <div class="mb-6">
-          <form id="language-form-hero" method="get" action="" class="inline-block">
-            <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
-              <div class="flex items-center gap-2 text-gray-800">
-                <a href="?lang=es" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? 'font-bold text-green-600' : ''">
-                  <span class="fi fi-uy w-5 h-3"></span>
-                  <span>Español</span>
-                </a>
-                <span class="text-gray-400 text-sm sm:text-base">|</span>
-                <a href="?lang=pt" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR'} ? 'font-bold text-green-600' : ''">
-                  <span class="fi fi-br w-5 h-3"></span>
-                  <span>Português</span>
-                </a>
-              </div>
-            </div>
-          </form>
-        </div>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+      <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
 
-        <h1 class="text-3xl md:text-5xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
-        <p class="text-xl md:text-2xl mb-6 text-green-100 max-w-2xl">Accede a tu cuenta para gestionar solicitudes y contribuir a la comunidad</p>
+    <!-- Encabezado compacto -->
+    <section class="max-w-7xl mx-auto px-4 pt-10 pb-6">
+      <div class="max-w-md mx-auto space-y-2">
+        <h1 class="text-3xl font-bold text-gray-900" th:utext="#{index.hero.title}">Residuos Sólidos</h1>
+        <p class="text-gray-600">Inicia sesión en tu cuenta</p>
       </div>
     </section>
 
-    <!-- Contenido principal igual al index -->
-    <section class="max-w-7xl mx-auto px-4 py-10">
+    <!-- Contenido principal -->
+    <section class="max-w-7xl mx-auto px-4 pb-10">
 
       <!-- Mensajes -->
-      <div class="max-w-2xl mx-auto mb-6">
+      <div class="max-w-md mx-auto mb-6">
         <p th:if="${param.success}" class="mb-3 rounded-sm ring-1 ring-green-900/10 bg-green-50 text-green-900 px-3 py-2 text-sm" th:text="${param.success}"></p>
         <p th:if="${param.logout}" class="mb-3 rounded-sm ring-1 ring-green-900/10 bg-green-50 text-green-900 px-3 py-2 text-sm">Has cerrado sesión correctamente</p>
         <p th:if="${param.error}" class="mb-3 rounded-sm ring-1 ring-red-900/10 bg-red-50 text-red-900 px-3 py-2 text-sm">Usuario o contraseña incorrectos</p>
       </div>
 
       <!-- Formulario (fragmento) -->
-      <div class="max-w-2xl mx-auto" th:replace="~{fragments/auth/login-form :: loginForm}"></div>
+      <div class="max-w-md mx-auto" th:replace="~{fragments/auth/login-form :: loginForm}"></div>
+    </section>
+    <section class="max-w-7xl mx-auto px-4 pb-10">
+      <div class="max-w-md mx-auto" th:replace="~{fragments/auth/auth-footer :: authFooter}"></div>
     </section>
   </main>
 
