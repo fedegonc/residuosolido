@@ -5,6 +5,8 @@
   <title th:text="#{page.title}">Resíduos Sólidos - Início</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -102,7 +104,7 @@
 
       <!-- Botones de acción principales -->
       <div class="flex flex-col sm:flex-row gap-4 mb-8">
-        <a href="/users/requests/new" class="bg-orange-700 text-white px-6 py-3 rounded-lg hover:bg-orange-800 transition font-semibold text-center flex items-center justify-center gap-2">
+        <a href="/users/requests/new" class="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition font-semibold text-center flex items-center justify-center gap-2">
           <i data-lucide="truck" class="w-4 h-4"></i>
           <span th:text="#{index.hero.button.request}">Solicitar Coleta</span>
         </a>
@@ -208,15 +210,39 @@
       <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
-        <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-2"
-              th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
-          <p class="text-sm text-gray-600 mb-3" th:text="${org.address != null ? org.address : organizations.address_not_specified}">Endereço não especificado</p>
-          <div th:if="${org.email != null and !org.email.isEmpty()}">
-            <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm flex items-center">
-              <i data-lucide="mail" class="w-3 h-3 mr-1"></i>
-              <span th:text="#{organizations.contact}">Contato</span>
-            </a>
+        <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="space-y-4">
+            <!-- Información básica -->
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2 text-lg"
+                  th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
+              <p class="text-sm text-gray-600 mb-3 flex items-start gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0"></i>
+                <span th:text="${org.address != null ? org.address : organizations.address_not_specified}">Endereço não especificado</span>
+              </p>
+              <div th:if="${org.email != null and !org.email.isEmpty()}" class="flex items-center gap-2">
+                <i data-lucide="mail" class="w-4 h-4 text-green-600"></i>
+                <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                  <span th:text="#{organizations.contact}">Contato</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Minimapa -->
+            <div th:if="${org.latitude != null and org.longitude != null}" class="border border-gray-200 rounded-lg overflow-hidden">
+              <div th:id="'map-' + ${org.id}" class="w-full h-32 bg-gray-100 flex items-center justify-center">
+                <div class="text-center text-gray-500">
+                  <i data-lucide="map" class="w-6 h-6 mx-auto mb-1"></i>
+                  <span class="text-xs">Cargando mapa...</span>
+                </div>
+              </div>
+            </div>
+            <div th:if="${org.latitude == null or org.longitude == null}" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div class="text-center text-gray-500">
+                <i data-lucide="map-pin" class="w-5 h-5 mx-auto mb-1"></i>
+                <span class="text-xs">Ubicación no disponible</span>
+              </div>
+            </div>
           </div>
         </article>
       </div>
@@ -224,6 +250,17 @@
       <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
         <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
         <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
+      </div>
+
+      <!-- Texto explicativo adicional -->
+      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+          <div>
+            <h4 class="font-semibold text-blue-900 mb-1">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
+            <p class="text-sm text-blue-800">Además de solicitar recolección, puedes acercarte directamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -246,9 +283,54 @@
 
   <!-- Importar JavaScript desde archivo externo -->
   <script src="/js/main.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script>
+  <script th:inline="javascript">
+/*<![CDATA[*/
     lucide.createIcons();
+
+    // Inicializar mapas de organizaciones directamente desde Thymeleaf
+    document.addEventListener('DOMContentLoaded', function() {
+      [# th:each="org : ${organizations}" th:if="${org != null and org.latitude != null and org.longitude != null}"]
+      (function() {
+        var orgId = /*[[${org.id}]]*/ 0;
+        var orgName = /*[[${org.firstName + ' ' + org.lastName}]]*/ '';
+        var lat = /*[[${org.latitude}]]*/ 0;
+        var lng = /*[[${org.longitude}]]*/ 0;
+
+        if (orgId && lat && lng) {
+          var mapElement = document.getElementById('map-' + orgId);
+          if (mapElement) {
+            // Limpiar contenido anterior
+            mapElement.innerHTML = '';
+
+            // Crear mapa
+            var map = L.map(mapElement, {
+              zoomControl: false,
+              attributionControl: false,
+              dragging: false,
+              touchZoom: false,
+              scrollWheelZoom: false,
+              doubleClickZoom: false,
+              boxZoom: false,
+              keyboard: false
+            }).setView([lat, lng], 15);
+
+            // Usar OpenStreetMap como tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+            }).addTo(map);
+
+            // Agregar marcador
+            L.marker([lat, lng]).addTo(map)
+              .bindPopup('<b>' + orgName + '</b><br/>Ubicación de la organización');
+          }
+        }
+      })();
+      [/]
+    });
+/*]]>*/
   </script>
 </body>
 </html>
