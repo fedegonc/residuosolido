@@ -209,22 +209,48 @@
       </h2>
       <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
 
+      <!-- Texto explicativo adicional -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 mb-8">
+        <div class="flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+          <div>
+            <h4 class="font-semibold text-blue-900 mb-1" th:text="#{index.organizations.info.title}">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
+            <p class="text-sm text-blue-800" th:text="#{index.organizations.info.description}">Además de solicitar recolección, puedes acercarte directamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
         <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="space-y-4">
             <!-- Información básica -->
             <div>
-              <h3 class="font-semibold text-gray-800 mb-2 text-lg"
+              <h3 class="font-semibold text-gray-800 mb-3 text-lg"
                   th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
-              <p class="text-sm text-gray-600 mb-3 flex items-start gap-2">
+
+              <!-- Dirección -->
+              <div class="flex items-start gap-2 mb-2">
                 <i data-lucide="map-pin" class="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0"></i>
-                <span th:text="${org.address != null ? org.address : organizations.address_not_specified}">Endereço não especificado</span>
-              </p>
-              <div th:if="${org.email != null and !org.email.isEmpty()}" class="flex items-center gap-2">
-                <i data-lucide="mail" class="w-4 h-4 text-green-600"></i>
-                <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm font-medium">
-                  <span th:text="#{organizations.contact}">Contato</span>
-                </a>
+                <span class="text-sm text-gray-600" th:text="${org.address != null and !org.address.isEmpty()} ? ${org.address} : #{organizations.address_not_specified}">Endereço não especificado</span>
+              </div>
+
+              <!-- Cómo llegar (referencias de dirección) -->
+              <div th:if="${org.addressReferences != null and !org.addressReferences.isEmpty()}" class="flex items-start gap-2 mb-2">
+                <i data-lucide="navigation" class="w-4 h-4 mt-0.5 text-blue-500 flex-shrink-0"></i>
+                <div>
+                  <span class="text-xs font-medium text-blue-700 uppercase tracking-wide" th:text="#{organizations.how_to_get_there}">Cómo llegar</span>
+                  <p class="text-sm text-gray-600 mt-1" th:text="${org.addressReferences}"></p>
+                </div>
+              </div>
+
+              <!-- Contacto -->
+              <div class="flex items-center gap-4 mt-3">
+                <div th:if="${org.email != null and !org.email.isEmpty()}" class="flex items-center gap-2">
+                  <i data-lucide="mail" class="w-4 h-4 text-green-600"></i>
+                  <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                    <span th:text="#{organizations.contact}">Contacto</span>
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -236,6 +262,12 @@
                   <span class="text-xs">Cargando mapa...</span>
                 </div>
               </div>
+            </div>
+            <div th:if="${org.latitude != null and org.longitude != null}" class="flex justify-end">
+              <a th:href="|https://www.google.com/maps?q=${org.latitude},${org.longitude}|" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2">
+                <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+                <span th:text="#{organizations.view_on_maps}">Ver en Google Maps</span>
+              </a>
             </div>
             <div th:if="${org.latitude == null or org.longitude == null}" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
               <div class="text-center text-gray-500">
@@ -251,14 +283,53 @@
         <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
         <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
       </div>
+    </section>
 
-      <!-- Texto explicativo adicional -->
-      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div class="flex items-start gap-3">
-          <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
-          <div>
-            <h4 class="font-semibold text-blue-900 mb-1">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
-            <p class="text-sm text-blue-800">Además de solicitar recolección, puedes acercarte directamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
+    <!-- Sección de Apoyo -->
+    <section class="mt-16 mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i data-lucide="heart" class="w-6 h-6 text-green-600"></i>
+        <span th:text="#{index.support.title}">Apoyo</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.support.description}">Agradecemos el apoyo de las siguientes instituciones y organizaciones que forman parte de nuestra red de sostenibilidad.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Item 1 -->
+        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="flex flex-col items-center text-center space-y-4">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <i data-lucide="building-2" class="w-8 h-8 text-green-600"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item1.title}">Municipio de Rivera</h3>
+              <p class="text-sm text-gray-600" th:text="#{index.support.item1.description}">Apoyo institucional y logístico para nuestras actividades en la región.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="flex flex-col items-center text-center space-y-4">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <i data-lucide="graduation-cap" class="w-8 h-8 text-blue-600"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item2.title}">Universidad Federal del Pampa</h3>
+              <p class="text-sm text-gray-600" th:text="#{index.support.item2.description}">Colaboración académica para investigación y desarrollo sostenible.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="flex flex-col items-center text-center space-y-4">
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+              <i data-lucide="users" class="w-8 h-8 text-emerald-600"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item3.title}">ONGs Ambientales Locales</h3>
+              <p class="text-sm text-gray-600" th:text="#{index.support.item3.description}">Colaboración en proyectos de sensibilización ambiental.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -269,14 +340,8 @@
   <!-- Footer simplificado -->
   <footer class="bg-gray-800 text-white py-6 mt-12">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex flex-col md:flex-row items-center justify-between">
-        <p class="mb-4 md:mb-0" th:text="#{footer.copy}">© 2024 Resíduos Sólidos - Rivera Sant'Ana do Livramento</p>
-        <button id="debug-toggle" class="card bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md flex items-center transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-          </svg>
-          Debug
-        </button>
+      <div class="text-center">
+        <p th:text="#{footer.copy}">© 2024 Resíduos Sólidos - Rivera Sant'Ana do Livramento</p>
       </div>
     </div>
   </footer>
