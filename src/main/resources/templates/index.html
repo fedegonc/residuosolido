@@ -28,7 +28,7 @@
     }
   </style>
 </head>
-<body class="bg-white min-h-screen">
+<body class="bg-slate-50 min-h-screen">
   <!-- Navbar simplificado -->
   <header>
     <nav class="bg-white shadow-sm border-b border-green-100">
@@ -121,43 +121,47 @@
 
     <!-- Categorías - Full Width -->
     <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <i data-lucide="grid-3x3" class="w-6 h-6 text-green-600"></i>
-        <span th:text="#{nav.categories}">Categorias</span>
-      </h2>
-      <p class="text-sm text-gray-500 mb-6" th:text="#{index.categories.description}">Explore todas las categorías disponibles y aprenda sobre diferentes tipos de residuos y reciclaje.</p>
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i data-lucide="grid-3x3" class="w-6 h-6 text-green-600"></i>
+          <span th:text="#{nav.categories}">Categorias</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.categories.description}">Explore todas las categorías disponibles y aprenda sobre diferentes tipos de residuos y reciclaje.</p>
 
-      <div th:if="${categories != null and !categories.empty}">
-        <div class="flex flex-wrap gap-3 mb-4">
-          <span th:each="category : ${categories}"
-                th:text="${category.name}"
-                class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"></span>
+        <div th:if="${categories != null and !categories.empty}">
+          <div class="flex flex-wrap gap-3 mb-4">
+            <span th:each="category : ${categories}"
+                  th:text="${category.name}"
+                  class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"></span>
+          </div>
+          
+          <!-- Enlace "Ver todas las categorías" -->
+          <div class="mt-4">
+            <a href="/categorias" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+              <i data-lucide="grid-3x3" class="w-4 h-4"></i>
+              <span th:text="#{index.categories.view_all}">Ver todas as categorias</span>
+            </a>
+          </div>
         </div>
-        
-        <!-- Enlace "Ver todas las categorías" -->
-        <div class="mt-4">
-          <a href="/categorias" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
-            <i data-lucide="grid-3x3" class="w-4 h-4"></i>
-            <span th:text="#{index.categories.view_all}">Ver todas as categorias</span>
-          </a>
-        </div>
-      </div>
 
-      <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
-        <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-        <p class="text-sm" th:text="#{index.categories.empty}">Não há categorias disponíveis</p>
+        <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
+          <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+          <p class="text-sm" th:text="#{index.categories.empty}">Não há categorias disponíveis</p>
+        </div>
+        </div>
       </div>
     </section>
 
     <!-- Notas Recientes - Full Width Grid -->
     <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <i data-lucide="file-text" class="w-6 h-6 text-green-600"></i>
-        <span th:text="#{notes.title}">Notas Recentes</span>
-      </h2>
-      <p class="text-sm text-gray-500 mb-6" th:text="#{index.notes.description}">Descubre artículos informativos sobre reciclaje, medio ambiente y gestión sostenible de residuos.</p>
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i data-lucide="file-text" class="w-6 h-6 text-green-600"></i>
+          <span th:text="#{notes.title}">Notas Recentes</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.notes.description}">Descubre artículos informativos sobre reciclaje, medio ambiente y gestión sostenible de residuos.</p>
 
-      <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <!-- Notas reales (máximo 9) -->
         <article th:each="note, iterStat : ${recentNotes}" th:if="${iterStat.index < 9}"
                  class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
@@ -193,35 +197,37 @@
         </article>
 
         
-      </div>
+        </div>
 
-      <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-8 text-gray-500">
-        <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-        <p class="text-sm" th:text="#{notes.no_notes_available}">Não há notas disponíveis</p>
+        <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-8 text-gray-500">
+          <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+          <p class="text-sm" th:text="#{notes.no_notes_available}">Não há notas disponíveis</p>
+        </div>
       </div>
     </section>
 
     <!-- Organizaciones -->
-    <section>
-      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <i data-lucide="building" class="w-6 h-6 text-green-600"></i>
-        <span th:text="#{organizations.title}">Organizações</span>
-      </h2>
-      <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
+    <section class="mb-12">
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i data-lucide="building" class="w-6 h-6 text-green-600"></i>
+          <span th:text="#{organizations.title}">Organizações</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
 
-      <!-- Texto explicativo adicional -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 mb-8">
-        <div class="flex items-start gap-3">
-          <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
-          <div>
-            <h4 class="font-semibold text-blue-900 mb-1" th:text="#{index.organizations.info.title}">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
-            <p class="text-sm text-blue-800" th:text="#{index.organizations.info.description}">Además de solicitar recolección, puedes acercarte directamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
+        <!-- Texto explicativo adicional -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 mb-8">
+          <div class="flex items-start gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+            <div>
+              <h4 class="font-semibold text-blue-900 mb-1" th:text="#{index.organizations.info.title}">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
+              <p class="text-sm text-blue-800" th:text="#{index.organizations.info.description}">Además de solicitar recolección, puedes acercarte diretamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
-        <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
+          <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="space-y-4">
             <!-- Información básica -->
             <div>
@@ -276,24 +282,26 @@
               </div>
             </div>
           </div>
-        </article>
-      </div>
+          </article>
+        </div>
 
-      <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
-        <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-        <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
+        <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
+          <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+          <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
+        </div>
       </div>
     </section>
 
     <!-- Sección de Apoyo -->
     <section class="mt-16 mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <i data-lucide="heart" class="w-6 h-6 text-green-600"></i>
-        <span th:text="#{index.support.title}">Apoyo</span>
-      </h2>
-      <p class="text-sm text-gray-500 mb-6" th:text="#{index.support.description}">Agradecemos el apoyo de las siguientes instituciones y organizaciones que forman parte de nuestra red de sostenibilidad.</p>
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i data-lucide="heart" class="w-6 h-6 text-green-600"></i>
+          <span th:text="#{index.support.title}">Apoyo</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.support.description}">Agradecemos el apoyo de las siguientes instituciones y organizaciones que forman parte de nuestra red de sostenibilidad.</p>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Item 1 -->
         <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center space-y-4">
