@@ -183,7 +183,7 @@ public class CategoryController {
     /**
      * Lista todas las categorías (público)
      */
-    @GetMapping("/categories")
+    @GetMapping("/categorias")
     public String publicCategories(Model model) {
         try {
             List<Category> activeCategories = categoryService.findAllActive();
@@ -198,12 +198,12 @@ public class CategoryController {
     /**
      * Muestra detalle de una categoría con sus posts (público)
      */
-    @GetMapping("/categories/{id}")
+    @GetMapping("/categorias/{id}")
     public String publicCategoryDetail(@PathVariable Long id, Model model) {
         try {
             Optional<Category> categoryOpt = categoryService.getCategoryById(id);
             if (categoryOpt.isEmpty() || !categoryOpt.get().isActive()) {
-                return "redirect:/categories";
+                return "redirect:/categorias";
             }
             
             Category category = categoryOpt.get();
@@ -213,7 +213,7 @@ public class CategoryController {
             return "public/category-detail";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error al cargar categoría: " + e.getMessage());
-            return "redirect:/categories";
+            return "redirect:/categorias";
         }
     }
     

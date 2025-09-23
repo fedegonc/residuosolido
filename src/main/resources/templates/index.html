@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html th:lang="${#locale.language + (#locale.country != null ? '-' + #locale.country : '')}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Residuos Sólidos - Inicio</title>
+  <title th:text="#{page.title}">Resíduos Sólidos - Início</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -46,20 +46,20 @@
           <!-- Botones para usuarios no autenticados -->
           <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
             <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
-              Iniciar Sesión
+              <span th:text="#{nav.login}">Entrar</span>
             </a>
             <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
-              Registrarse
+              <span th:text="#{nav.register}">Registrar-se</span>
             </a>
           </div>
           
           <!-- Botones para usuarios autenticados -->
           <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
             <a href="/feedback" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
-              Feedback
+              <span th:text="#{nav.feedback}">Feedback</span>
             </a>
             <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
-              Cerrar Sesión
+              <span th:text="#{nav.logout}">Sair</span>
             </a>
           </div>
         </div>
@@ -78,16 +78,18 @@
       <!-- Selector de idioma arriba del H1 -->
       <div class="mb-6">
         <form id="language-form-hero" method="get" action="" class="inline-block">
-          <div class="flex items-center gap-2 text-white">
-            <a href="?lang=es" class="hover:text-green-200 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? 'font-bold' : ''">
-              <span class="text-base">🇪🇸</span>
-              <span>Español</span>
-            </a>
-            <span class="text-white text-sm sm:text-base">|</span>
-            <a href="?lang=pt" class="hover:text-green-200 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR'} ? 'font-bold' : ''">
-              <span class="text-base">🇧🇷</span>
-              <span>Português</span>
-            </a>
+          <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
+            <div class="flex items-center gap-2 text-gray-800">
+              <a href="?lang=es" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? 'font-bold text-green-600' : ''">
+                <span class="fi fi-uy w-5 h-3"></span>
+                <span>Español</span>
+              </a>
+              <span class="text-gray-400 text-sm sm:text-base">|</span>
+              <a href="?lang=pt" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR'} ? 'font-bold text-green-600' : ''">
+                <span class="fi fi-br w-5 h-3"></span>
+                <span>Português</span>
+              </a>
+            </div>
           </div>
         </form>
       </div>
@@ -100,13 +102,13 @@
 
       <!-- Botones de acción principales -->
       <div class="flex flex-col sm:flex-row gap-4 mb-8">
-        <a href="/users/requests/new" class="bg-white text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 transition font-semibold text-center flex items-center justify-center gap-2">
+        <a href="/users/requests/new" class="bg-orange-700 text-white px-6 py-3 rounded-lg hover:bg-orange-800 transition font-semibold text-center flex items-center justify-center gap-2">
           <i data-lucide="truck" class="w-4 h-4"></i>
-          <span>Solicitar Recolección</span>
+          <span th:text="#{index.hero.button.request}">Solicitar Coleta</span>
         </a>
-        <a href="/posts" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold text-center flex items-center justify-center gap-2">
+        <a href="/posts" class="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition font-semibold text-center flex items-center justify-center gap-2">
           <i data-lucide="book-open" class="w-4 h-4"></i>
-          <span>Ver Artículos</span>
+          <span th:text="#{index.hero.button.articles}">Ver Artigos</span>
         </a>
       </div>
     </div>
@@ -117,31 +119,41 @@
 
     <!-- Categorías - Full Width -->
     <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Categorías</h2>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i data-lucide="grid-3x3" class="w-6 h-6 text-green-600"></i>
+        <span th:text="#{nav.categories}">Categorias</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.categories.description}">Explore todas las categorías disponibles y aprenda sobre diferentes tipos de residuos y reciclaje.</p>
 
       <div th:if="${categories != null and !categories.empty}">
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-3 mb-4">
           <span th:each="category : ${categories}"
                 th:text="${category.name}"
                 class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"></span>
         </div>
+        
+        <!-- Enlace "Ver todas las categorías" -->
         <div class="mt-4">
-          <a href="/categories" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
-            <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
-            Ver todas las categorías
+          <a href="/categorias" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+            <i data-lucide="grid-3x3" class="w-4 h-4"></i>
+            <span th:text="#{index.categories.view_all}">Ver todas as categorias</span>
           </a>
         </div>
       </div>
 
       <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
         <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-        <p class="text-sm">No hay categorías disponibles</p>
+        <p class="text-sm" th:text="#{index.categories.empty}">Não há categorias disponíveis</p>
       </div>
     </section>
 
     <!-- Notas Recientes - Full Width Grid -->
     <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Notas Recientes</h2>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i data-lucide="file-text" class="w-6 h-6 text-green-600"></i>
+        <span th:text="#{notes.title}">Notas Recentes</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.notes.description}">Descubre artículos informativos sobre reciclaje, medio ambiente y gestión sostenible de residuos.</p>
 
       <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <!-- Notas reales (máximo 9) -->
@@ -158,7 +170,7 @@
               <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto de la nota...</p>
               <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-xs flex items-center">
                 <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
-                Ver
+                <span th:text="#{button.view}">Ver</span>
               </a>
             </div>
           </div>
@@ -170,10 +182,10 @@
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
               <i data-lucide="plus" class="w-6 h-6 text-green-600"></i>
             </div>
-            <h4 class="font-semibold text-green-800 text-sm mb-1">Ver más</h4>
-            <p class="text-xs text-green-600 mb-3">Explora todas las notas</p>
+            <h4 class="font-semibold text-green-800 text-sm mb-1" th:text="#{button.more}">Ver mais</h4>
+            <p class="text-xs text-green-600 mb-3" th:text="#{notes.published_recently}">Publicado recentemente</p>
             <a href="/posts" class="text-green-700 hover:text-green-800 font-medium text-xs">
-              Ir a artículos →
+              <span th:text="#{index.notes.view_articles}">Ir para artigos →</span>
             </a>
           </div>
         </article>
@@ -183,24 +195,27 @@
 
       <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-8 text-gray-500">
         <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-        <p class="text-sm">No hay notas recientes disponibles</p>
+        <p class="text-sm" th:text="#{notes.no_notes_available}">Não há notas disponíveis</p>
       </div>
     </section>
 
     <!-- Organizaciones -->
     <section>
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">Organizaciones</h2>
-      <p class="text-gray-600 mb-6">Explora organizaciones que colaboran en la recolección y reciclaje en la región.</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i data-lucide="building" class="w-6 h-6 text-green-600"></i>
+        <span th:text="#{organizations.title}">Organizações</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
         <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
           <h3 class="font-semibold text-gray-800 mb-2"
               th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
-          <p class="text-sm text-gray-600 mb-3" th:text="${org.address != null ? org.address : 'Dirección no especificada'}"></p>
+          <p class="text-sm text-gray-600 mb-3" th:text="${org.address != null ? org.address : organizations.address_not_specified}">Endereço não especificado</p>
           <div th:if="${org.email != null and !org.email.isEmpty()}">
             <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm flex items-center">
               <i data-lucide="mail" class="w-3 h-3 mr-1"></i>
-              Contactar
+              <span th:text="#{organizations.contact}">Contato</span>
             </a>
           </div>
         </article>
@@ -208,7 +223,7 @@
 
       <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
         <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
-        <p>No hay organizaciones disponibles actualmente</p>
+        <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
       </div>
     </section>
 
@@ -218,7 +233,7 @@
   <footer class="bg-gray-800 text-white py-6 mt-12">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center justify-between">
-        <p class="mb-4 md:mb-0">&copy; 2024 Residuos Sólidos - Rivera Sant'Ana do Livramento</p>
+        <p class="mb-4 md:mb-0" th:text="#{footer.copy}">© 2024 Resíduos Sólidos - Rivera Sant'Ana do Livramento</p>
         <button id="debug-toggle" class="card bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md flex items-center transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
