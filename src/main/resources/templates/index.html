@@ -47,10 +47,12 @@
         <div class="flex items-center gap-4">
           <!-- Botones para usuarios no autenticados -->
           <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
-            <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
+            <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition flex items-center gap-2">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
               <span th:text="#{nav.login}">Entrar</span>
             </a>
-            <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
+            <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition flex items-center gap-2">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
               <span th:text="#{nav.register}">Registrar-se</span>
             </a>
           </div>

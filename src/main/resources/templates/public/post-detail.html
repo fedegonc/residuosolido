@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${post != null ? post.title : 'Detalle del Post'}">Detalle del Post</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Navbar simple -->
+  <header class="bg-white shadow-sm border-b border-green-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 text-gray-800 hover:text-green-700 transition">
+        <div class="w-9 h-9 bg-green-600 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+        </div>
+        <span class="text-xl font-bold">Residuos Sólidos</span>
+      </a>
+      <nav class="flex items-center gap-4 text-sm font-medium">
+        <a href="/posts" class="text-green-600 hover:text-green-700 transition">Volver a posts</a>
+        <a href="/" class="text-gray-500 hover:text-green-600 transition">Inicio</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <main class="flex-1">
+    <section class="bg-gradient-to-br from-green-600 to-green-700 text-white py-12">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-flex items-center gap-2 text-sm uppercase tracking-wide text-green-100">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          Historia y aprendizaje
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-bold mt-3" th:text="${post != null ? post.title : 'Post no encontrado'}">Título del post</h1>
+        <div class="mt-4 flex flex-wrap gap-4 text-green-100 text-sm">
+          <span th:if="${post?.category != null}" class="inline-flex items-center gap-2">
+            <i data-lucide="tag" class="w-4 h-4"></i>
+            <span th:text="${post.category.name}">Categoría</span>
+          </span>
+          <span th:if="${post?.createdAt != null}" class="inline-flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}" >Fecha</span>
+          </span>
+          <span th:if="${post?.author != null}" class="inline-flex items-center gap-2">
+            <i data-lucide="user" class="w-4 h-4"></i>
+            <span th:text="${post.author}">Autor</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12">
+      <article class="bg-white shadow-xl rounded-3xl overflow-hidden border border-emerald-100">
+        <div th:if="${post?.imageUrl != null && !post.imageUrl.isEmpty()}" class="h-72 bg-gray-100">
+          <img th:src="${post.imageUrl}" th:alt="${post.title}" class="w-full h-full object-cover">
+        </div>
+        <div class="p-8 space-y-6 text-gray-700 leading-relaxed">
+          <div th:if="${post?.content != null}" th:utext="${#strings.arrayJoin(#strings.split(post.content, '\n'), '<br/><br/>')}">
+            Contenido del post
+          </div>
+          <div th:if="${post?.sourceName != null || post?.sourceUrl != null}" class="border-t border-gray-200 pt-6 text-sm text-gray-500">
+            <p class="font-semibold mb-2 text-gray-700">Fuente:</p>
+            <a th:if="${post?.sourceUrl != null}" th:href="${post.sourceUrl}" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 text-green-600 hover:text-green-700">
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+              <span th:text="${post?.sourceName != null ? post.sourceName : post.sourceUrl}">Fuente</span>
+            </a>
+            <span th:if="${post?.sourceUrl == null}" th:text="${post?.sourceName}">Nombre de la fuente</span>
+          </div>
+          <div class="border-t border-gray-200 pt-6 flex flex-wrap gap-4">
+            <a href="/posts" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition text-sm font-medium">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              Volver a posts
+            </a>
+            <a th:if="${post?.category != null}" th:href="@{/posts/category/{id}(id=${post.category.id})}"
+               class="inline-flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-50 transition text-sm font-medium">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+              Ver más en la categoría
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" th:if="${relatedPosts != null and !relatedPosts.empty}">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-gray-900">Posts relacionados</h2>
+        <a href="/posts" class="text-sm text-green-600 hover:text-green-700 font-medium">Ver todos</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <article th:each="related : ${relatedPosts}" class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
+          <div th:if="${related.imageUrl != null && !related.imageUrl.isEmpty()}" class="h-40 bg-gray-100">
+            <img th:src="${related.imageUrl}" th:alt="${related.title}" class="w-full h-full object-cover">
+          </div>
+          <div class="p-5 space-y-3">
+            <h3 class="font-semibold text-gray-900 line-clamp-2" th:text="${related.title}">Título relacionado</h3>
+            <p class="text-sm text-gray-600 line-clamp-3"
+               th:text="${related.content != null ? (related.content.length() > 120 ? related.content.substring(0, 120) + '...' : related.content) : ''}">
+              Resumen relacionado
+            </p>
+            <a th:href="@{/posts/{id}(id=${related.id})}" class="inline-flex items-center gap-2 text-sm text-green-600 hover:text-green-700 font-medium">
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              Leer más
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-200 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p>&copy; 2024 Residuos Sólidos - Rivera Sant'Ana do Livramento</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
