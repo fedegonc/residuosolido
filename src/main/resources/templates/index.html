@@ -262,7 +262,9 @@
 
             <!-- Minimapa -->
             <div th:if="${org.latitude != null and org.longitude != null}" class="border border-gray-200 rounded-lg overflow-hidden">
-              <div th:id="'map-' + ${org.id}" class="w-full h-32 bg-gray-100 flex items-center justify-center">
+              <div th:id="'map-' + ${org.id}"
+                   class="w-full h-32 bg-gray-100 flex items-center justify-center org-map"
+                   th:attr="data-lat=${org.latitude}, data-lng=${org.longitude}, data-name=${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}">
                 <div class="text-center text-gray-500">
                   <i data-lucide="map" class="w-6 h-6 mx-auto mb-1"></i>
                   <span class="text-xs">Cargando mapa...</span>
@@ -359,51 +361,6 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script th:inline="javascript">
-/*<![CDATA[*/
-    lucide.createIcons();
-
-    // Inicializar mapas de organizaciones directamente desde Thymeleaf
-    document.addEventListener('DOMContentLoaded', function() {
-      [# th:each="org : ${organizations}" th:if="${org != null and org.latitude != null and org.longitude != null}"]
-      (function() {
-        var orgId = /*[[${org.id}]]*/ 0;
-        var orgName = /*[[${org.firstName + ' ' + org.lastName}]]*/ '';
-        var lat = /*[[${org.latitude}]]*/ 0;
-        var lng = /*[[${org.longitude}]]*/ 0;
-
-        if (orgId && lat && lng) {
-          var mapElement = document.getElementById('map-' + orgId);
-          if (mapElement) {
-            // Limpiar contenido anterior
-            mapElement.innerHTML = '';
-
-            // Crear mapa
-            var map = L.map(mapElement, {
-              zoomControl: false,
-              attributionControl: false,
-              dragging: false,
-              touchZoom: false,
-              scrollWheelZoom: false,
-              doubleClickZoom: false,
-              boxZoom: false,
-              keyboard: false
-            }).setView([lat, lng], 15);
-
-            // Usar OpenStreetMap como tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              maxZoom: 18,
-            }).addTo(map);
-
-            // Agregar marcador
-            L.marker([lat, lng]).addTo(map)
-              .bindPopup('<b>' + orgName + '</b><br/>Ubicación de la organización');
-          }
-        }
-      })();
-      [/]
-    });
-/*]]>*/
-  </script>
+  <script src="/js/index-page.js"></script>
 </body>
 </html>
