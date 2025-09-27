@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -142,6 +144,26 @@ public class RequestService {
             return requestRepository.save(request);
         }
         return null;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<Long, Map<RequestStatus, Long>> getRequestStatsByUserIds(List<Long> userIds) {
+        Map<Long, Map<RequestStatus, Long>> stats = new HashMap<>();
+        if (userIds == null || userIds.isEmpty()) {
+            return stats;
+        }
+
+        List<Object[]> rows = requestRepository.countByUserIdsAndStatus(userIds);
+        for (Object[] row : rows) {
+            Long userId = (Long) row[0];
+            RequestStatus status = (RequestStatus) row[1];
+            Long count = (Long) row[2];
+
+            stats.computeIfAbsent(userId, id -> new HashMap<>())
+                 .put(status, count);
+        }
+
+        return stats;
     }
 
     // ====== Organization availability validation ======

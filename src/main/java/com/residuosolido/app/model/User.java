@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.residuosolido.app.model.Feedback;
+import com.residuosolido.app.model.Request;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -62,6 +65,12 @@ public class User {
     )
     private List<Material> materials = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> feedbacks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Request> requests = new ArrayList<>();
+
     private LocalDateTime createdAt;
     private LocalDateTime lastAccessAt;
     private boolean active = true;
@@ -87,6 +96,26 @@ public class User {
             return lastName;
         }
         return username;
+    }
+
+    public void addFeedback(Feedback feedback) {
+        feedbacks.add(feedback);
+        feedback.setUser(this);
+    }
+
+    public void removeFeedback(Feedback feedback) {
+        feedbacks.remove(feedback);
+        feedback.setUser(null);
+    }
+
+    public void addRequest(Request request) {
+        requests.add(request);
+        request.setUser(this);
+    }
+
+    public void removeRequest(Request request) {
+        requests.remove(request);
+        request.setUser(null);
     }
 
     // equals/hashCode solo con ID para evitar problemas JPA

@@ -16,6 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Controller
@@ -63,6 +65,8 @@ public class UserController {
                     .toList();
         }
         model.addAttribute("users", allUsers);
+        Map<Long, UserRequestStats> userRequestsStats = buildUserRequestStats(allUsers);
+        model.addAttribute("userRequestsStats", userRequestsStats);
         model.addAttribute("totalUsers", allUsers != null ? allUsers.size() : 0);
         model.addAttribute("query", query);
         model.addAttribute("roles", Role.values());
@@ -106,6 +110,28 @@ public class UserController {
         
         model.addAttribute("viewType", "list");
         return "admin/users";
+    }
+
+    private Map<Long, UserRequestStats> buildUserRequestStats(List<User> users) {
+        Map<Long, UserRequestStats> statsMap = new HashMap<>();
+        if (users == null || users.isEmpty()) {
+            return statsMap;
+        }
+
+        List<Long> userIds = users.stream()
+                .map(User::getId)
+                .filter(id -> id != null)
+                .toList();
+
+        Map<Long, Map<RequestStatus, Long>> rawStats = requestService.getRequestStatsByUserIds(userIds);
+        rawStats.forEach((userId, statusCounts) -> {
+            long assigned = statusCounts.getOrDefault(RequestStatus.ACCEPTED, 0L);
+            long inProgress = statusCounts.getOrDefault(RequestStatus.PENDING, 0L);
+            long total = statusCounts.values().stream().mapToLong(Long::longValue).sum();
+            statsMap.put(userId, new UserRequestStats(assigned, inProgress, total));
+        });
+
+        return statsMap;
     }
 
     // (Rutas de organizaciones movidas a OrganizationAdminController)
@@ -350,7 +376,27 @@ public class UserController {
         return "redirect:/users/requests";
     }
 
-    
+    static class UserRequestStats {
+        private final long assigned;
+        private final long inProgress;
+        private final long total;
 
-    // (Método duplicado eliminado - se usa getUserFormDemo arriba)
+        public UserRequestStats(long assigned, long inProgress, long total) {
+            this.assigned = assigned;
+            this.inProgress = inProgress;
+            this.total = total;
+        }
+
+        public long getAssigned() {
+            return assigned;
+        }
+
+        public long getInProgress() {
+            return inProgress;
+        }
+
+        public long getTotal() {
+            return total;
+        }
+    }
 }
