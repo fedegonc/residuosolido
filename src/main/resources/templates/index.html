@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="#{page.title}">Resíduos Sólidos - Início</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/6.5.2/css/all.min.css}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -48,11 +49,11 @@
           <!-- Botones para usuarios no autenticados -->
           <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
             <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition flex items-center gap-2">
-              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <i class="fa-solid fa-right-to-bracket text-sm" aria-hidden="true"></i>
               <span th:text="#{nav.login}">Entrar</span>
             </a>
             <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition flex items-center gap-2">
-              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <i class="fa-solid fa-user-plus text-sm" aria-hidden="true"></i>
               <span th:text="#{nav.register}">Registrar-se</span>
             </a>
           </div>
@@ -107,11 +108,11 @@
       <!-- Botones de acción principales -->
       <div class="flex flex-col sm:flex-row gap-4 mb-8">
         <a href="/users/requests/new" class="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition font-semibold text-center flex items-center justify-center gap-2">
-          <i data-lucide="truck" class="w-4 h-4"></i>
+          <i class="fa-solid fa-truck text-base" aria-hidden="true"></i>
           <span th:text="#{index.hero.button.request}">Solicitar Coleta</span>
         </a>
         <a href="/posts" class="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition font-semibold text-center flex items-center justify-center gap-2">
-          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <i class="fa-solid fa-book-open text-base" aria-hidden="true"></i>
           <span th:text="#{index.hero.button.articles}">Ver Artigos</span>
         </a>
       </div>
@@ -125,7 +126,7 @@
     <section class="mb-12">
       <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <i data-lucide="grid-3x3" class="w-6 h-6 text-green-600"></i>
+          <i class="fa-solid fa-table-cells-large text-green-600 text-xl" aria-hidden="true"></i>
           <span th:text="#{nav.categories}">Categorias</span>
         </h2>
         <p class="text-sm text-gray-500 mb-6" th:text="#{index.categories.description}">Explore todas las categorías disponibles y aprenda sobre diferentes tipos de residuos y reciclaje.</p>
@@ -140,14 +141,14 @@
           <!-- Enlace "Ver todas las categorías" -->
           <div class="mt-4">
             <a href="/categorias" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
-              <i data-lucide="grid-3x3" class="w-4 h-4"></i>
+              <i class="fa-solid fa-table-cells-large text-sm" aria-hidden="true"></i>
               <span th:text="#{index.categories.view_all}">Ver todas as categorias</span>
             </a>
           </div>
         </div>
 
         <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
-          <i data-lucide="grid-3x3" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+          <i class="fa-solid fa-table-cells-large text-2xl text-gray-300" aria-hidden="true"></i>
           <p class="text-sm" th:text="#{index.categories.empty}">Não há categorias disponíveis</p>
         </div>
         </div>
@@ -158,7 +159,7 @@
     <section class="mb-12">
       <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <i data-lucide="file-text" class="w-6 h-6 text-green-600"></i>
+          <i class="fa-solid fa-file-lines text-green-600 text-xl" aria-hidden="true"></i>
           <span th:text="#{notes.title}">Notas Recentes</span>
         </h2>
         <p class="text-sm text-gray-500 mb-6" th:text="#{index.notes.description}">Descubre artículos informativos sobre reciclaje, medio ambiente y gestión sostenible de residuos.</p>
@@ -177,7 +178,7 @@
               <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título de la nota</h4>
               <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto de la nota...</p>
               <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-xs flex items-center">
-                <i data-lucide="external-link" class="w-3 h-3 mr-1"></i>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[0.65rem] mr-1" aria-hidden="true"></i>
                 <span th:text="#{button.view}">Ver</span>
               </a>
             </div>
@@ -188,7 +189,7 @@
         <article class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border-2 border-dashed border-green-200 hover:border-green-300 transition-colors cursor-pointer">
           <div class="flex flex-col items-center justify-center h-full text-center">
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-              <i data-lucide="plus" class="w-6 h-6 text-green-600"></i>
+              <i class="fa-solid fa-plus text-green-600 text-xl" aria-hidden="true"></i>
             </div>
             <h4 class="font-semibold text-green-800 text-sm mb-1" th:text="#{button.more}">Ver mais</h4>
             <p class="text-xs text-green-600 mb-3" th:text="#{notes.published_recently}">Publicado recentemente</p>
@@ -202,7 +203,7 @@
         </div>
 
         <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-8 text-gray-500">
-          <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+          <i class="fa-solid fa-file-lines text-2xl text-gray-300" aria-hidden="true"></i>
           <p class="text-sm" th:text="#{notes.no_notes_available}">Não há notas disponíveis</p>
         </div>
       </div>
@@ -212,7 +213,7 @@
     <section class="mb-12">
       <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <i data-lucide="building" class="w-6 h-6 text-green-600"></i>
+          <i class="fa-solid fa-building text-green-600 text-xl" aria-hidden="true"></i>
           <span th:text="#{organizations.title}">Organizações</span>
         </h2>
         <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
@@ -220,7 +221,7 @@
         <!-- Texto explicativo adicional -->
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 mb-8">
           <div class="flex items-start gap-3">
-            <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+            <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5 flex-shrink-0" aria-hidden="true"></i>
             <div>
               <h4 class="font-semibold text-blue-900 mb-1" th:text="#{index.organizations.info.title}">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
               <p class="text-sm text-blue-800" th:text="#{index.organizations.info.description}">Además de solicitar recolección, puedes acercarte diretamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
@@ -238,13 +239,13 @@
 
               <!-- Dirección -->
               <div class="flex items-start gap-2 mb-2">
-                <i data-lucide="map-pin" class="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0"></i>
+                <i class="fa-solid fa-location-dot text-gray-400 text-sm mt-0.5 flex-shrink-0" aria-hidden="true"></i>
                 <span class="text-sm text-gray-600" th:text="${org.address != null and !org.address.isEmpty()} ? ${org.address} : #{organizations.address_not_specified}">Endereço não especificado</span>
               </div>
 
               <!-- Cómo llegar (referencias de dirección) -->
               <div th:if="${org.addressReferences != null and !org.addressReferences.isEmpty()}" class="flex items-start gap-2 mb-2">
-                <i data-lucide="navigation" class="w-4 h-4 mt-0.5 text-blue-500 flex-shrink-0"></i>
+                <i class="fa-solid fa-location-arrow text-blue-500 text-sm mt-0.5 flex-shrink-0" aria-hidden="true"></i>
                 <div>
                   <span class="text-xs font-medium text-blue-700 uppercase tracking-wide" th:text="#{organizations.how_to_get_there}">Cómo llegar</span>
                   <p class="text-sm text-gray-600 mt-1" th:text="${org.addressReferences}"></p>
@@ -254,7 +255,7 @@
               <!-- Contacto -->
               <div class="flex items-center gap-4 mt-3">
                 <div th:if="${org.email != null and !org.email.isEmpty()}" class="flex items-center gap-2">
-                  <i data-lucide="mail" class="w-4 h-4 text-green-600"></i>
+                  <i class="fa-solid fa-envelope text-green-600 text-sm" aria-hidden="true"></i>
                   <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm font-medium">
                     <span th:text="#{organizations.contact}">Contacto</span>
                   </a>
@@ -268,20 +269,20 @@
                    class="w-full h-32 bg-gray-100 flex items-center justify-center org-map"
                    th:attr="data-lat=${org.latitude}, data-lng=${org.longitude}, data-name=${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}">
                 <div class="text-center text-gray-500">
-                  <i data-lucide="map" class="w-6 h-6 mx-auto mb-1"></i>
+                  <i class="fa-solid fa-map text-lg mx-auto mb-1" aria-hidden="true"></i>
                   <span class="text-xs">Cargando mapa...</span>
                 </div>
               </div>
             </div>
             <div th:if="${org.latitude != null and org.longitude != null}" class="flex justify-end">
               <a th:href="|https://www.google.com/maps?q=${org.latitude},${org.longitude}|" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2">
-                <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+                <i class="fa-solid fa-arrow-up-right-from-square text-sm mr-1" aria-hidden="true"></i>
                 <span th:text="#{organizations.view_on_maps}">Ver en Google Maps</span>
               </a>
             </div>
             <div th:if="${org.latitude == null or org.longitude == null}" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
               <div class="text-center text-gray-500">
-                <i data-lucide="map-pin" class="w-5 h-5 mx-auto mb-1"></i>
+                <i class="fa-solid fa-location-dot text-base mx-auto mb-1" aria-hidden="true"></i>
                 <span class="text-xs">Ubicación no disponible</span>
               </div>
             </div>
@@ -290,7 +291,7 @@
         </div>
 
         <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
-          <i data-lucide="building" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+          <i class="fa-solid fa-building text-2xl text-gray-300" aria-hidden="true"></i>
           <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
         </div>
       </div>
@@ -300,7 +301,7 @@
     <section class="mt-16 mb-12">
       <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <i data-lucide="heart" class="w-6 h-6 text-green-600"></i>
+          <i class="fa-solid fa-heart text-green-600 text-xl" aria-hidden="true"></i>
           <span th:text="#{index.support.title}">Apoyo</span>
         </h2>
         <p class="text-sm text-gray-500 mb-6" th:text="#{index.support.description}">Agradecemos el apoyo de las siguientes instituciones y organizaciones que forman parte de nuestra red de sostenibilidad.</p>
@@ -310,7 +311,7 @@
         <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center space-y-4">
             <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <i data-lucide="building-2" class="w-8 h-8 text-green-600"></i>
+              <i class="fa-solid fa-landmark text-green-600 text-2xl" aria-hidden="true"></i>
             </div>
             <div>
               <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item1.title}">Municipio de Rivera</h3>
@@ -323,7 +324,7 @@
         <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center space-y-4">
             <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <i data-lucide="graduation-cap" class="w-8 h-8 text-blue-600"></i>
+              <i class="fa-solid fa-graduation-cap text-blue-600 text-2xl" aria-hidden="true"></i>
             </div>
             <div>
               <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item2.title}">Universidad Federal del Pampa</h3>
@@ -336,7 +337,7 @@
         <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center space-y-4">
             <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
-              <i data-lucide="users" class="w-8 h-8 text-emerald-600"></i>
+              <i class="fa-solid fa-people-group text-emerald-600 text-2xl" aria-hidden="true"></i>
             </div>
             <div>
               <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item3.title}">ONGs Ambientales Locales</h3>
@@ -352,7 +353,7 @@
   <!-- Footer simplificado -->
   <footer class="bg-gray-800 text-white py-6 mt-12">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center">
+      <div class="text-left">
         <p th:text="#{footer.copy}">© 2024 Resíduos Sólidos - Rivera Sant'Ana do Livramento</p>
       </div>
     </div>
@@ -362,7 +363,6 @@
   <script src="/js/main.js"></script>
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="/js/index-page.js"></script>
 </body>
 </html>

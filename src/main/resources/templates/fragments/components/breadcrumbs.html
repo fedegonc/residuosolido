@@ -3,7 +3,10 @@
     <!-- Usar parámetros si se pasan, sino usar los del interceptor automático -->
     <th:block th:with="
         items=${bcItems != null ? bcItems : breadcrumbItems},
-        finalTitle=${title != null ? title : breadcrumbTitle}
+        finalTitle=${title != null ? title : breadcrumbTitle},
+        displayTitle=${finalTitle != null ? finalTitle : 'Página'},
+        lastLabel=${items != null and !items.empty ? items[#lists.size(items)-1].label : null},
+        showFinal=${displayTitle != lastLabel}
     ">
         <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
             <ol class="inline-flex items-center">
@@ -23,9 +26,9 @@
                 </li>
 
                 <!-- Página actual -->
-                <li class="inline-flex items-center">
+                <li class="inline-flex items-center" th:if="${showFinal}">
                     <span class="mx-2 text-gray-400">›</span>
-                    <span class="text-gray-700 font-medium" th:text="${finalTitle ?: 'Página'}">Actual</span>
+                    <span class="text-gray-700 font-medium" th:text="${displayTitle}">Actual</span>
                 </li>
             </ol>
         </nav>
@@ -35,7 +38,13 @@
 <!-- Fragmento sin parámetros que usa los valores automáticos del interceptor -->
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="auto">
     <!-- Usar valores automáticos del interceptor -->
-    <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
+    <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb" th:with="
+            items=${breadcrumbItems},
+            finalTitle=${breadcrumbTitle},
+            displayTitle=${finalTitle != null ? finalTitle : 'Página'},
+            lastLabel=${items != null and !items.empty ? items[#lists.size(items)-1].label : null},
+            showFinal=${displayTitle != lastLabel}
+        ">
         <ol class="inline-flex items-center">
             <!-- Home fijo -->
             <li class="inline-flex items-center">
@@ -53,9 +62,9 @@
             </li>
 
             <!-- Página actual -->
-            <li class="inline-flex items-center">
+            <li class="inline-flex items-center" th:if="${showFinal}">
                 <span class="mx-2 text-gray-400">›</span>
-                <span class="text-gray-700 font-medium" th:text="${breadcrumbTitle ?: 'Página'}">Actual</span>
+                <span class="text-gray-700 font-medium" th:text="${displayTitle}">Actual</span>
             </li>
         </ol>
     </nav>
