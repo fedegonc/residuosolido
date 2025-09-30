@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/webjars/chart.js/4.4.4/dist/chart.umd.js}"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f9fc; }
@@ -73,44 +73,73 @@
 
     <!-- KPIs rápidos -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <!-- Usuarios Totales -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-        <div class="flex items-center mb-3">
-          <span class="bg-blue-50 text-blue-600 rounded-lg p-2 mr-3">
-            <i data-lucide="users" class="w-5 h-5"></i>
-          </span>
-          <small class="text-gray-500 text-sm">Usuarios totales</small>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center">
+            <span class="bg-blue-50 text-blue-600 rounded-lg p-2 mr-3">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </span>
+            <small class="text-gray-500 text-sm">Usuarios Totales</small>
+          </div>
         </div>
-        <div class="text-2xl font-semibold text-gray-900" id="kpiUsers" th:text="${stats.totalUsers}">0</div>
+        <div class="text-2xl font-semibold text-gray-900" th:text="${stats.totalUsers}">0</div>
+        <div class="mt-2 flex items-center text-xs">
+          <span class="text-gray-500">Activos (30d):</span>
+          <span class="ml-1 font-medium text-blue-600" th:text="${stats.activeUsers}">0</span>
+        </div>
       </div>
 
+      <!-- Solicitudes Pendientes -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-        <div class="flex items-center mb-3">
-          <span class="bg-green-50 text-green-600 rounded-lg p-2 mr-3">
-            <i data-lucide="building-2" class="w-5 h-5"></i>
-          </span>
-          <small class="text-gray-500 text-sm">Organizaciones</small>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center">
+            <span class="bg-orange-50 text-orange-600 rounded-lg p-2 mr-3">
+              <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            </span>
+            <small class="text-gray-500 text-sm">Pendientes</small>
+          </div>
         </div>
-        <div class="text-2xl font-semibold text-gray-900" id="kpiOrgs" th:text="${stats.totalOrganizations}">0</div>
+        <div class="text-2xl font-semibold text-gray-900" th:text="${stats.pendingRequests}">0</div>
+        <div class="mt-2 text-xs text-gray-500">
+          Requieren atención
+        </div>
       </div>
 
+      <!-- Solicitudes Completadas -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-        <div class="flex items-center mb-3">
-          <span class="bg-orange-50 text-orange-600 rounded-lg p-2 mr-3">
-            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
-          </span>
-          <small class="text-gray-500 text-sm">Solicitudes (30 días)</small>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center">
+            <span class="bg-green-50 text-green-600 rounded-lg p-2 mr-3">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </span>
+            <small class="text-gray-500 text-sm">Completadas</small>
+          </div>
         </div>
-        <div class="text-2xl font-semibold text-gray-900" id="kpiReqs" th:text="${stats.requestsLast30Days}">0</div>
+        <div class="text-2xl font-semibold text-gray-900" th:text="${stats.completedRequests}">0</div>
+        <div class="mt-2 flex items-center text-xs">
+          <span class="text-gray-500">Tasa:</span>
+          <span class="ml-1 font-medium text-green-600" th:text="${stats.completionRate} + '%'">0%</span>
+        </div>
       </div>
 
+      <!-- Solicitudes Este Mes -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-        <div class="flex items-center mb-3">
-          <span class="bg-purple-50 text-purple-600 rounded-lg p-2 mr-3">
-            <i data-lucide="message-square" class="w-5 h-5"></i>
-          </span>
-          <small class="text-gray-500 text-sm">Feedback recibidos</small>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center">
+            <span class="bg-purple-50 text-purple-600 rounded-lg p-2 mr-3">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+            </span>
+            <small class="text-gray-500 text-sm">Este Mes</small>
+          </div>
         </div>
-        <div class="text-2xl font-semibold text-gray-900" id="kpiFdb" th:text="${stats.totalFeedback}">0</div>
+        <div class="text-2xl font-semibold text-gray-900" th:text="${stats.currentMonthRequests}">0</div>
+        <div class="mt-2 flex items-center text-xs">
+          <i th:if="${stats.requestsGrowth >= 0}" data-lucide="trending-up" class="w-3 h-3 text-green-600 mr-1"></i>
+          <i th:if="${stats.requestsGrowth < 0}" data-lucide="trending-down" class="w-3 h-3 text-red-600 mr-1"></i>
+          <span th:class="${stats.requestsGrowth >= 0} ? 'text-green-600' : 'text-red-600'" 
+                th:text="${stats.requestsGrowth >= 0 ? '+' : ''} + ${stats.requestsGrowth} + '% vs mes anterior'">0%</span>
+        </div>
       </div>
     </div>
 
@@ -121,9 +150,13 @@
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-900">Altas de usuarios por mes</h2>
           <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span th:if="${stats.usersGrowth >= 0}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
               <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i>
-              +12%
+              <span th:text="'+' + ${stats.usersGrowth} + '%'">+0%</span>
+            </span>
+            <span th:if="${stats.usersGrowth < 0}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              <i data-lucide="trending-down" class="w-3 h-3 mr-1"></i>
+              <span th:text="${stats.usersGrowth} + '%'">0%</span>
             </span>
             <span class="text-xs text-gray-500">vs. mes anterior</span>
           </div>
@@ -132,8 +165,10 @@
           <canvas id="chartUsersPerMonth" height="140"></canvas>
         </div>
         <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-500">Enero - Diciembre</span>
-          <span class="text-gray-600 font-medium">Tendencia positiva</span>
+          <span class="text-gray-500">Últimos 12 meses</span>
+          <span class="text-gray-600 font-medium">
+            <span th:text="${stats.newUsersThisMonth}">0</span> nuevos este mes
+          </span>
         </div>
       </div>
 
@@ -152,23 +187,8 @@
         <div class="mb-4">
           <canvas id="chartRequestsByStatus" height="140"></canvas>
         </div>
-        <div class="grid grid-cols-2 gap-4 text-sm">
-          <div class="flex items-center space-x-2">
-            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-            <span class="text-gray-600">Pendientes: 48</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-            <span class="text-gray-600">En curso: 76</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-            <span class="text-gray-600">Completadas: 190</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-            <span class="text-gray-600">Canceladas: 28</span>
-          </div>
+        <div id="requestsStatusLegend" class="grid grid-cols-2 gap-4 text-sm">
+          <!-- Se llenará dinámicamente con JavaScript -->
         </div>
       </div>
     </div>
@@ -176,54 +196,20 @@
     <!-- Distribución de materiales -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-900">Materiales recolectados (kg) por tipo</h2>
+        <h2 class="text-lg font-semibold text-gray-900">Top 10 Materiales Más Solicitados</h2>
         <div class="flex items-center space-x-2">
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
             <i data-lucide="package" class="w-3 h-3 mr-1"></i>
-            1,230 kg
+            <span th:text="${materialsByType.total}">0</span> solicitudes
           </span>
-          <span class="text-xs text-gray-500">Total recolectado</span>
+          <span class="text-xs text-gray-500">En solicitudes completadas</span>
         </div>
       </div>
       <div class="mb-4">
         <canvas id="chartMaterials" height="120"></canvas>
       </div>
-      <div class="grid grid-cols-5 gap-4 text-sm">
-        <div class="text-center">
-          <div class="text-xs text-gray-500 mb-1">Plástico</div>
-          <div class="bg-blue-100 rounded-full h-2">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
-          </div>
-          <div class="text-xs font-medium text-gray-700 mt-1">420 kg</div>
-        </div>
-        <div class="text-center">
-          <div class="text-xs text-gray-500 mb-1">Papel</div>
-          <div class="bg-green-100 rounded-full h-2">
-            <div class="bg-green-500 h-2 rounded-full" style="width: 55%"></div>
-          </div>
-          <div class="text-xs font-medium text-gray-700 mt-1">310 kg</div>
-        </div>
-        <div class="text-center">
-          <div class="text-xs text-gray-500 mb-1">Vidrio</div>
-          <div class="bg-purple-100 rounded-full h-2">
-            <div class="bg-purple-500 h-2 rounded-full" style="width: 43%"></div>
-          </div>
-          <div class="text-xs font-medium text-gray-700 mt-1">260 kg</div>
-        </div>
-        <div class="text-center">
-          <div class="text-xs text-gray-500 mb-1">Metal</div>
-          <div class="bg-orange-100 rounded-full h-2">
-            <div class="bg-orange-500 h-2 rounded-full" style="width: 27%"></div>
-          </div>
-          <div class="text-xs font-medium text-gray-700 mt-1">190 kg</div>
-        </div>
-        <div class="text-center">
-          <div class="text-xs text-gray-500 mb-1">Orgánico</div>
-          <div class="bg-teal-100 rounded-full h-2">
-            <div class="bg-teal-500 h-2 rounded-full" style="width: 88%"></div>
-          </div>
-          <div class="text-xs font-medium text-gray-700 mt-1">510 kg</div>
-        </div>
+      <div class="text-sm text-gray-500 text-center">
+        Basado en materiales de solicitudes completadas
       </div>
     </div>
 
@@ -235,6 +221,11 @@
         const usersByMonthData = /*[[${usersByMonth}]]*/ {};
         const requestsByStatusData = /*[[${requestsByStatus}]]*/ {};
         const materialsByTypeData = /*[[${materialsByType}]]*/ {};
+
+        // Debug: mostrar datos en consola
+        console.log('Users by month:', usersByMonthData);
+        console.log('Requests by status:', requestsByStatusData);
+        console.log('Materials by type:', materialsByTypeData);
 
         document.addEventListener('DOMContentLoaded', () => {
             // Inicializar íconos de Lucide
@@ -269,22 +260,41 @@
             // Solicitudes por estado
             const requestsCtx = document.getElementById('chartRequestsByStatus');
             if (requestsCtx) {
+                const labels = requestsByStatusData.labels || ['Pendientes', 'En curso', 'Completadas', 'Canceladas'];
+                const data = requestsByStatusData.data || [0, 0, 0, 0];
+                const colors = requestsByStatusData.colors || ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'];
+
                 new Chart(requestsCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: requestsByStatusData.labels || ['Pendientes', 'En curso', 'Completadas', 'Canceladas'],
+                        labels: labels,
                         datasets: [{
-                            data: requestsByStatusData.data || [48, 76, 190, 28],
-                            backgroundColor: requestsByStatusData.colors || ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
+                            data: data,
+                            backgroundColor: colors,
                             borderColor: '#ffffff',
                             borderWidth: 2
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: { legend: { position: 'bottom' } }
+                        plugins: { legend: { display: false } }
                     }
                 });
+
+                // Crear leyenda personalizada
+                const legend = document.getElementById('requestsStatusLegend');
+                if (legend) {
+                    legend.innerHTML = '';
+                    labels.forEach((label, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center space-x-2';
+                        div.innerHTML = `
+                            <div class="w-3 h-3 rounded-full" style="background-color: ${colors[index]}"></div>
+                            <span class="text-gray-600">${label}: ${data[index]}</span>
+                        `;
+                        legend.appendChild(div);
+                    });
+                }
             }
 
             // Materiales por tipo
@@ -293,17 +303,33 @@
                 new Chart(materialsCtx, {
                     type: 'bar',
                     data: {
-                        labels: materialsByTypeData.labels || ['Plástico', 'Papel', 'Vidrio', 'Metal', 'Orgánico'],
+                        labels: materialsByTypeData.labels || ['Sin datos'],
                         datasets: [{
-                            label: 'Kg recolectados',
-                            data: materialsByTypeData.data || [420, 310, 260, 190, 510],
+                            label: 'Solicitudes',
+                            data: materialsByTypeData.data || [0],
                             backgroundColor: '#14b8a6'
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true } }
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y + ' solicitudes';
+                                    }
+                                }
+                            }
+                        },
+                        scales: { 
+                            y: { 
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            } 
+                        }
                     }
                 });
             }

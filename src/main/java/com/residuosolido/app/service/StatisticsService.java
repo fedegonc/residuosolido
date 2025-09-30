@@ -36,28 +36,104 @@ public class StatisticsService {
         Map<String, Object> stats = new HashMap<>();
 
         try {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime thirtyDaysAgo = now.minusDays(30);
+            LocalDateTime previousMonthStart = now.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime currentMonthStart = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+
+            List<Request> allRequests = requestRepository.findAll();
+            // Inicializar colecciones lazy
+            allRequests.forEach(r -> {
+                if (r.getUser() != null) {
+                    r.getUser().getUsername();
+                }
+                if (r.getMaterials() != null) {
+                    r.getMaterials().size();
+                }
+            });
+            
+            List<User> allUsers = userRepository.findAll();
+
             // Estadísticas básicas
-            stats.put("totalUsers", userRepository.count());
-            stats.put("totalOrganizations", 0L); // Temporalmente 0 hasta implementar organizaciones
+            long totalUsers = allUsers.size();
+            stats.put("totalUsers", totalUsers);
+            stats.put("totalOrganizations", 0L);
             stats.put("totalFeedback", feedbackRepository.count());
             stats.put("totalMaterials", materialRepository.count());
             stats.put("totalPosts", postRepository.count());
             stats.put("totalCategories", categoryRepository.count());
 
             // Solicitudes en los últimos 30 días
-            LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-            stats.put("requestsLast30Days", requestRepository.findAll().stream()
-                .filter(r -> r.getCreatedAt().isAfter(thirtyDaysAgo))
-                .count());
+            long requestsLast30Days = allRequests.stream()
+                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(thirtyDaysAgo))
+                .count();
+            stats.put("requestsLast30Days", requestsLast30Days);
 
             // Usuarios activos (con solicitudes en los últimos 30 días)
-            stats.put("activeUsers", requestRepository.findAll().stream()
-                .filter(r -> r.getCreatedAt().isAfter(thirtyDaysAgo))
-                .map(r -> r.getUser())
+            long activeUsers = allRequests.stream()
+                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(thirtyDaysAgo))
+                .map(Request::getUser)
+                .filter(Objects::nonNull)
                 .distinct()
-                .count());
+                .count();
+            stats.put("activeUsers", activeUsers);
 
-            stats.put("activeOrganizations", 0L); // Temporalmente 0
+            // Solicitudes completadas
+            long completedRequests = allRequests.stream()
+                .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
+                .count();
+            stats.put("completedRequests", completedRequests);
+
+            // Solicitudes pendientes
+            long pendingRequests = allRequests.stream()
+                .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                .count();
+            stats.put("pendingRequests", pendingRequests);
+
+            // Tasa de completación
+            double completionRate = allRequests.isEmpty() ? 0.0 : 
+                (completedRequests * 100.0) / allRequests.size();
+            stats.put("completionRate", Math.round(completionRate * 10.0) / 10.0);
+
+            // Solicitudes del mes actual
+            long currentMonthRequests = allRequests.stream()
+                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(currentMonthStart))
+                .count();
+            stats.put("currentMonthRequests", currentMonthRequests);
+
+            // Solicitudes del mes anterior
+            long previousMonthRequests = allRequests.stream()
+                .filter(r -> r.getCreatedAt() != null && 
+                    r.getCreatedAt().isAfter(previousMonthStart) && 
+                    r.getCreatedAt().isBefore(currentMonthStart))
+                .count();
+            stats.put("previousMonthRequests", previousMonthRequests);
+
+            // Crecimiento mensual de solicitudes
+            double requestsGrowth = previousMonthRequests == 0 ? 0.0 :
+                ((currentMonthRequests - previousMonthRequests) * 100.0) / previousMonthRequests;
+            stats.put("requestsGrowth", Math.round(requestsGrowth * 10.0) / 10.0);
+
+            // Usuarios nuevos este mes
+            long newUsersThisMonth = allUsers.stream()
+                .filter(u -> u.getCreatedAt() != null && u.getCreatedAt().isAfter(currentMonthStart))
+                .count();
+            stats.put("newUsersThisMonth", newUsersThisMonth);
+
+            // Usuarios nuevos mes anterior
+            long newUsersPreviousMonth = allUsers.stream()
+                .filter(u -> u.getCreatedAt() != null && 
+                    u.getCreatedAt().isAfter(previousMonthStart) && 
+                    u.getCreatedAt().isBefore(currentMonthStart))
+                .count();
+            stats.put("newUsersPreviousMonth", newUsersPreviousMonth);
+
+            // Crecimiento de usuarios
+            double usersGrowth = newUsersPreviousMonth == 0 ? 0.0 :
+                ((newUsersThisMonth - newUsersPreviousMonth) * 100.0) / newUsersPreviousMonth;
+            stats.put("usersGrowth", Math.round(usersGrowth * 10.0) / 10.0);
+
+            stats.put("activeOrganizations", 0L);
 
         } catch (Exception e) {
             // En caso de error, devolver valores por defecto
@@ -66,6 +142,11 @@ public class StatisticsService {
             stats.put("totalFeedback", 0L);
             stats.put("requestsLast30Days", 0L);
             stats.put("activeUsers", 0L);
+            stats.put("completedRequests", 0L);
+            stats.put("pendingRequests", 0L);
+            stats.put("completionRate", 0.0);
+            stats.put("requestsGrowth", 0.0);
+            stats.put("usersGrowth", 0.0);
             stats.put("activeOrganizations", 0L);
         }
 
@@ -77,16 +158,35 @@ public class StatisticsService {
         Map<String, Object> data = new HashMap<>();
 
         try {
-            // Datos de ejemplo por ahora - en producción se haría con consultas JPQL
-            List<String> labels = Arrays.asList("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic");
-            List<Long> values = Arrays.asList(25L, 31L, 28L, 40L, 52L, 61L, 75L, 88L, 70L, 66L, 54L, 49L);
+            List<User> allUsers = userRepository.findAll();
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM", new Locale("es", "ES"));
+
+            List<String> labels = new ArrayList<>();
+            List<Long> values = new ArrayList<>();
+
+            // Últimos 12 meses
+            for (int i = 11; i >= 0; i--) {
+                LocalDateTime monthStart = now.minusMonths(i).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+                LocalDateTime monthEnd = monthStart.plusMonths(1);
+                
+                String label = monthStart.format(formatter);
+                labels.add(label.substring(0, 1).toUpperCase() + label.substring(1));
+
+                long count = allUsers.stream()
+                    .filter(u -> u.getCreatedAt() != null && 
+                        u.getCreatedAt().isAfter(monthStart) && 
+                        u.getCreatedAt().isBefore(monthEnd))
+                    .count();
+                values.add(count);
+            }
 
             data.put("labels", labels);
             data.put("data", values);
         } catch (Exception e) {
             // Datos de fallback
-            data.put("labels", Arrays.asList("Ene", "Feb", "Mar", "Abr", "May", "Jun"));
-            data.put("data", Arrays.asList(10L, 15L, 20L, 25L, 30L, 35L));
+            data.put("labels", Arrays.asList("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"));
+            data.put("data", Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L));
         }
 
         return data;
@@ -150,16 +250,49 @@ public class StatisticsService {
         Map<String, Object> data = new HashMap<>();
 
         try {
-            // Datos de ejemplo - en producción se haría con consultas más complejas
-            List<String> labels = Arrays.asList("Plástico", "Papel", "Vidrio", "Metal", "Orgánico");
-            List<Double> values = Arrays.asList(420.0, 310.0, 260.0, 190.0, 510.0);
+            List<Request> allRequests = requestRepository.findAll();
+            
+            // Contar materiales en solicitudes completadas
+            Map<String, Long> materialCount = new HashMap<>();
+            for (Request request : allRequests) {
+                if (request.getStatus() == RequestStatus.COMPLETED && request.getMaterials() != null) {
+                    // Forzar inicialización de la colección lazy
+                    request.getMaterials().size();
+                    for (Material material : request.getMaterials()) {
+                        String name = material.getName();
+                        materialCount.put(name, materialCount.getOrDefault(name, 0L) + 1);
+                    }
+                }
+            }
+
+            // Ordenar por cantidad y tomar top 10
+            List<Map.Entry<String, Long>> sortedMaterials = materialCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(10)
+                .toList();
+
+            List<String> labels = new ArrayList<>();
+            List<Long> values = new ArrayList<>();
+
+            for (Map.Entry<String, Long> entry : sortedMaterials) {
+                labels.add(entry.getKey());
+                values.add(entry.getValue());
+            }
+
+            // Si no hay datos, mostrar mensaje apropiado
+            if (labels.isEmpty()) {
+                labels.add("Sin datos");
+                values.add(0L);
+            }
 
             data.put("labels", labels);
             data.put("data", values);
+            data.put("total", values.stream().mapToLong(Long::longValue).sum());
         } catch (Exception e) {
             // Datos de fallback
-            data.put("labels", Arrays.asList("Plástico", "Papel", "Vidrio"));
-            data.put("data", Arrays.asList(100.0, 150.0, 200.0));
+            data.put("labels", Arrays.asList("Sin datos"));
+            data.put("data", Arrays.asList(0L));
+            data.put("total", 0L);
         }
 
         return data;

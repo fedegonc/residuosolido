@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="#{page.title}">Resíduos Sólidos - Início</title>
+  <title th:text="#{page.title}">EcoSolicitud - Inicio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/6.5.2/css/all.min.css}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
@@ -35,14 +35,7 @@
     <nav class="bg-white shadow-sm border-b border-green-100">
       <div class="container mx-auto px-4 py-3 flex justify-between items-center">
         <!-- Logo y nombre -->
-        <a href="/" class="flex items-center gap-2">
-          <span class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-          </span>
-          <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
-        </a>
+        <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(false, 'gap-2', 'text-xl font-bold text-gray-800', 'text-xs text-slate-500')}"></th:block>
         
         <!-- Navegación y acciones -->
         <div class="flex items-center gap-4">
@@ -99,9 +92,9 @@
         </form>
       </div>
       
-      <h1 class="text-3xl md:text-5xl font-bold mb-4"><span th:text="#{index.hero.title}">Residuos Sólidos</span></h1>
-      <p class="text-xl md:text-2xl mb-3" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
-      <p class="text-lg text-green-100 max-w-2xl mb-6" th:text="#{index.hero.description}">
+      <h1 class="text-2xl md:text-4xl font-bold mb-3"><span th:text="#{index.hero.title}">EcoSolicitud</span></h1>
+      <p class="text-lg md:text-xl mb-2" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
+      <p class="text-base text-green-100 max-w-2xl mb-5" th:text="#{index.hero.description}">
         Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
       </p>
 

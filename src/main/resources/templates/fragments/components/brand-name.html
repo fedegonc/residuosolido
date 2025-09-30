@@ -1,0 +1,34 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <!-- Default fragment with no parameters -->
+    <th:block th:fragment="brandName">
+        <a th:href="@{/}"
+           class="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 10c1.5-3.5 5-6 8-6 3.5 0 6 2.5 7 6-1.5 3.5-5 6-8 6-3.5 0-6-2.5-7-6zm7-4v10m3-8.5c0 1.5-1.2 2.7-2.7 2.7-1.5 0-2.7-1.2-2.7-2.7" />
+                </svg>
+            </div>
+            <div class="leading-tight">
+                <span class="block tracking-tight text-lg sm:text-xl font-semibold text-slate-900">EcoSolicitud</span>
+                <span class="block text-xs text-slate-500">Frontera de la Paz</span>
+            </div>
+        </a>
+    </th:block>
+    
+    <!-- Customizable fragment with parameters -->
+    <th:block th:fragment="brandNameCustom(tagline, wrapperClass, titleClass, taglineClass)">
+        <a th:href="@{/}"
+           class="flex items-center space-x-3 hover:opacity-90 transition-opacity"
+           th:classappend=" ${wrapperClass}">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 10c1.5-3.5 5-6 8-6 3.5 0 6 2.5 7 6-1.5 3.5-5 6-8 6-3.5 0-6-2.5-7-6zm7-4v10m3-8.5c0 1.5-1.2 2.7-2.7 2.7-1.5 0-2.7-1.2-2.7-2.7" />
+                </svg>
+            </div>
+            <div class="leading-tight">
+                <span class="block tracking-tight" th:classappend=" ${titleClass}">EcoSolicitud</span>
+                <span th:if="${tagline}" class="block text-xs text-slate-500" th:classappend=" ${taglineClass}">Frontera de la Paz</span>
+            </div>
+        </a>
+    </th:block>
+</th:block>

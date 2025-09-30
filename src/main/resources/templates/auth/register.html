@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crear Cuenta - Residuos Sólidos</title>
+  <title>Crear Cuenta - EcoSolicitud</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -12,14 +12,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
-          <a href="/" class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-            </div>
-            <span class="text-xl font-bold text-gray-800">Residuos Sólidos</span>
-          </a>
+          <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(false, '', 'text-xl font-bold text-gray-800', 'text-xs text-slate-500')}"></th:block>
         </div>
         <div class="flex items-center space-x-4">
           <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
@@ -69,16 +62,16 @@
           </header>
 
           <div class="grid gap-4 md:grid-cols-2">
-            <div class="md:col-span-1">
+            <div class="flex flex-col">
               <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-              <p class="text-xs text-gray-500 mb-1">Usa entre 4 y 20 caracteres sin espacios.</p>
+              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Usa entre 4 y 20 caracteres sin espacios.</p>
               <input type="text" id="username" name="username" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
 
-            <div class="md:col-span-1">
+            <div class="flex flex-col">
               <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <p class="text-xs text-gray-500 mb-1">Recibirás confirmaciones y avisos en esta dirección.</p>
+              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Recibirás confirmaciones y avisos en esta dirección.</p>
               <input type="email" id="email" name="email" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
@@ -92,16 +85,16 @@
           </header>
 
           <div class="grid gap-4 md:grid-cols-2">
-            <div>
+            <div class="flex flex-col">
               <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-              <p class="text-xs text-gray-500 mb-1">Es como aparecerás en la plataforma.</p>
+              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Es como aparecerás en la plataforma.</p>
               <input type="text" id="firstName" name="firstName" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
 
-            <div>
+            <div class="flex flex-col">
               <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
-              <p class="text-xs text-gray-500 mb-1">Incluye tu apellido para facilitar tu identificación.</p>
+              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Incluye tu apellido para facilitar tu identificación.</p>
               <input type="text" id="lastName" name="lastName" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
@@ -115,19 +108,40 @@
           </header>
 
           <div class="grid gap-4 md:grid-cols-2">
-            <div>
+            <div class="flex flex-col">
               <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-              <p class="text-xs text-gray-500 mb-1">Mínimo 8 caracteres combinando letras y números.</p>
+              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Mínimo 8 caracteres combinando letras y números.</p>
               <input type="password" id="password" name="password" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
 
-            <div>
+            <div class="flex flex-col">
               <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
-              <p class="text-xs text-gray-500 mb-1">Repite la contraseña para asegurarnos que no haya errores.</p>
+              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Repite la contraseña para asegurarnos que no haya errores.</p>
               <input type="password" id="confirmPassword" name="confirmPassword" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <header>
+            <h3 class="text-lg font-semibold text-gray-800">Tipo de cuenta</h3>
+            <p class="text-sm text-gray-500">Indica si representas una organización de acopio o reciclaje.</p>
+          </header>
+
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <label class="flex items-start cursor-pointer">
+              <input type="checkbox" id="isOrganization" name="isOrganization" value="true"
+                     class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+              <div class="ml-3">
+                <span class="block text-sm font-medium text-gray-900">Soy una organización de acopio o reciclaje</span>
+                <span class="block text-xs text-gray-600 mt-1">
+                  Marca esta casilla si representas una organización que procesa solicitudes de recolección de residuos.
+                  Los usuarios regulares pueden crear solicitudes de recolección.
+                </span>
+              </div>
+            </label>
           </div>
         </section>
 
@@ -148,7 +162,7 @@
   <!-- Footer simple -->
   <footer class="bg-gray-800 text-white py-8 mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <p>&copy; 2024 Residuos Sólidos - Rivera Sant'ana do Livramento</p>
+      <p>&copy; 2024 EcoSolicitud - Rivera Sant'ana do Livramento</p>
     </div>
   </footer>
 </body>

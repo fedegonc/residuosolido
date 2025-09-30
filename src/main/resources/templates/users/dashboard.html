@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Residuos Sólidos</title>
+    <title>Dashboard - EcoSolicitud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
@@ -121,15 +121,37 @@
                 </div>
             </div>
             
-            <div th:if="${recentRequests == null or recentRequests.empty}" class="text-center py-8">
-                <i data-lucide="inbox" class="w-12 h-12 text-gray-400 mx-auto mb-3"></i>
-                <p class="text-gray-600">No tienes solicitudes recientes</p>
-                <a href="/users/requests/new" class="text-emerald-600 hover:text-emerald-700 font-medium">
-                    Crear tu primera solicitud
-                </a>
+            <div th:if="${recentRequests == null or recentRequests.empty}" class="space-y-6">
+                <div class="text-center py-8">
+                    <i data-lucide="inbox" class="w-12 h-12 text-gray-400 mx-auto mb-3"></i>
+                    <p class="text-gray-600 mb-2">Aún no tienes solicitudes asignadas</p>
+                    <p class="text-sm text-gray-500">Mientras tanto, explora contenido educativo sobre reciclaje</p>
+                </div>
+
+                <!-- Posts educativos cuando no hay solicitudes -->
+                <div th:if="${recentPosts != null and !recentPosts.empty}">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">📚 Posts Educativos Recientes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div th:each="post : ${recentPosts}" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                            <h4 class="font-semibold text-gray-900 mb-2 line-clamp-2" th:text="${post.title}">Título del Post</h4>
+                            <p class="text-sm text-gray-600 mb-3 line-clamp-2" th:text="${post.content}">Contenido...</p>
+                            <a th:href="@{/posts/{id}(id=${post.id})}" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+                                Leer más →
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="/posts" class="text-emerald-600 hover:text-emerald-700 font-medium text-sm">
+                            Ver todos los posts →
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Footer para usuarios autenticados -->
+    <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
 
     <script>
         lucide.createIcons();

@@ -2,7 +2,7 @@
 <th:block th:fragment="head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title}">Residuos Sólidos</title>
+    <title th:text="${title}">EcoSolicitud</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,18 +23,7 @@
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <span class="hidden sm:inline text-xl font-bold text-gray-800">Residuos Sólidos</span>
-                                <span class="hidden sm:inline block text-sm text-gray-600 font-medium">Frontera de la Paz</span>
-                                <span class="sm:hidden text-lg font-bold text-gray-800">Residuos Sólidos</span>
-                            </div>
-                        </a>
+                        <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(true, '', 'text-lg sm:text-xl font-bold text-gray-800', 'text-sm text-gray-600 font-medium')}"></th:block>
                     </div>
                     
                     <!-- Links de navegación principales -->
@@ -192,8 +181,13 @@
     <!-- JavaScript del componente guest-dropdown -->
     <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
 
-    <!-- Footer simple para páginas internas -->
-    <div th:replace="~{fragments/simple-footer :: simple}"></div>
+    <!-- Footer condicional según autenticación -->
+    <div sec:authorize="isAuthenticated()">
+        <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
+    </div>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:replace="~{fragments/simple-footer :: simple}"></div>
+    </div>
     
     <!-- JavaScript para menú móvil (carga al final para asegurar DOM completo) -->
     <script src="/js/mobile-menu.js"></script>

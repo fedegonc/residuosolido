@@ -56,48 +56,65 @@
     </div>
 
     <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Contenedor blanco principal -->
+        <div class="bg-white rounded-lg shadow">
+            <!-- Header del contenedor -->
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    📘 Documentación del Sistema
+                </h2>
+                
+                <p class="text-sm text-gray-600">
+                    Información completa sobre arquitectura, patrones de desarrollo, funcionalidades implementadas y guías técnicas del sistema EcoSolicitud.
+                    <span class="block mt-1 text-xs text-gray-500">
+                        Consulta la documentación técnica y enlaces de referencia para comprender la estructura del proyecto.
+                    </span>
+                </p>
+            </div>
 
-        <!-- Header -->
-        <div class="text-left mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">📘 Documentación del Sistema</h1>
-            <p class="text-lg text-gray-600 max-w-2xl">Sistema de Gestión de Residuos Sólidos</p>
-            <p class="text-gray-700 max-w-3xl mt-3">
-                Información completa sobre arquitectura, patrones de desarrollo, funcionalidades implementadas y guías técnicas.
-            </p>
-        </div>
+            <!-- Enlaces externos -->
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-base font-semibold text-gray-900 mb-3">Enlaces de Referencia</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <a href="https://github.com/fedegonc/residuosolido" target="_blank" 
+                       class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                        <i data-lucide="github" class="w-5 h-5 text-gray-700 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">Código Fuente</div>
+                            <div class="text-xs text-gray-500">Repositorio GitHub</div>
+                        </div>
+                    </a>
+                    <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0" target="_blank"
+                       class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-600 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">Artículo Técnico</div>
+                            <div class="text-xs text-gray-500">Documento completo</div>
+                        </div>
+                    </a>
+                    <a href="https://docs.google.com/document/d/1CdG2M1nPxRI_MQ-ROP7RXtTozYTPpE8Q14qluDhW4kA/edit?tab=t.0#heading=h.pwph5y4zizfi" target="_blank"
+                       class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                        <i data-lucide="clipboard-list" class="w-5 h-5 text-green-600 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">Requerimientos</div>
+                            <div class="text-xs text-gray-500">Especificaciones del sistema</div>
+                        </div>
+                    </a>
+                    <div class="flex items-center p-3 border border-gray-200 rounded-lg bg-gray-50">
+                        <i data-lucide="book-open" class="w-5 h-5 text-gray-400 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium text-gray-500">Guía Técnica</div>
+                            <div class="text-xs text-gray-400">En desarrollo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Quick Links -->
-        <div class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Enlaces externos</h2>
-            <ul class="space-y-2">
-                <li class="flex items-center">
-                    <a href="https://github.com/fedegonc/residuosolido" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
-                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                        Código Fuente (GitHub)
-                    </a>
-                </li>
-                <li class="flex items-center">
-                    <a href="https://docs.google.com/document/d/1dmRmQLjPEDT7MyUo6T9owJP3ZLOeFK-kv7WIA4BQihY/edit?tab=t.0" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
-                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                        Artículo técnico
-                    </a>
-                </li>
-                <li class="flex items-center text-gray-500">
-                    <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
-                    Guía Técnica (En desarrollo)
-                </li>
-                <li class="flex items-center">
-                    <a href="https://docs.google.com/document/d/1CdG2M1nPxRI_MQ-ROP7RXtTozYTPpE8Q14qluDhW4kA/edit?tab=t.0#heading=h.pwph5y4zizfi" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center">
-                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                        Documento de requerimientos
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Content Grid -->
+            <div class="px-6 py-4">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <!-- Left Column - Core Information -->
             <div class="space-y-6">
@@ -384,15 +401,17 @@
 
             </div>
 
-        </div>
+                </div>
+            </div>
 
-        <!-- Navigation -->
-        <div class="flex justify-center mt-8">
-            <a th:href="@{/admin/dashboard}"
-               class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm font-medium">
-                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-                <span>Ir al Dashboard</span>
-            </a>
+            <!-- Navigation -->
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                <a th:href="@{/admin/dashboard}"
+                   class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm font-medium">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    <span>Ir al Dashboard</span>
+                </a>
+            </div>
         </div>
     </div>
 </main>

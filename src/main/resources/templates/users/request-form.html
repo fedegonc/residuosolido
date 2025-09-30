@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nueva Solicitud - Residuos Sólidos</title>
+    <title>Nueva Solicitud - EcoSolicitud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
@@ -140,6 +140,8 @@
             this.appendChild(hiddenInput);
         });
     </script>
+
+    <!-- Footer para usuarios autenticados -->
+    <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
 </body>
-</html>
 </html>

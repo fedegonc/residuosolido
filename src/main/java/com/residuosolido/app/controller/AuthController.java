@@ -68,14 +68,17 @@ public class AuthController {
     }
 
     @PostMapping("/auth/register")
-    public String registerUser(@ModelAttribute User user, Model model) {
+    public String registerUser(@ModelAttribute User user, 
+                               @RequestParam(value = "isOrganization", required = false) String isOrganization,
+                               Model model) {
         String validationError = authService.validateUserRegistration(user);
         if (validationError != null) {
             model.addAttribute("error", validationError);
             return "auth/register";
         }
         
-        authService.registerUser(user);
+        // Registrar usuario con el rol apropiado según el checkbox
+        authService.registerUser(user, isOrganization != null);
         return "redirect:/auth/login?success=Registro exitoso. Inicia sesión con tus credenciales.";
     }
     
@@ -203,9 +206,9 @@ public class AuthController {
             return "/admin/dashboard";
         }
         if (roles.contains("ROLE_ORGANIZATION")) {
-            return "/org/dashboard";
+            return "/users/dashboard";
         }
-        return "/user/dashboard";
+        return "/users/dashboard";
     }
 
 }

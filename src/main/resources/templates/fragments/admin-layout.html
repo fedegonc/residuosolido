@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Residuos Sólidos</title>
+    <title>Admin - EcoSolicitud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <!-- Font Awesome (WebJars) -->
@@ -36,13 +36,7 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center">
-                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 text-lg font-semibold" style="color:var(--rs-text)">Residuos Sólidos</span>
-                        <span class="ml-2 text-sm" style="color:#6c757d">Rivera - Sant'Ana do Livramento</span>
+                        <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(true, '', 'text-lg font-semibold', 'text-sm')}"></th:block>
                     </div>
                 </div>
                 
@@ -188,7 +182,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <span class="text-xs text-gray-300">Residuos Sólidos</span>
+                    <span class="text-xs text-gray-300">EcoSolicitud</span>
                     <span class="text-xs text-gray-500">• Rivera - Sant'Ana do Livramento</span>
                 </div>
                 <nav class="flex items-center space-x-4">

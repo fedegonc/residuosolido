@@ -105,6 +105,10 @@ public class PostService {
         // Retornar los primeros 5 posts como "destacados"
         return postRepository.findRecentPostsWithCategories(5);
     }
+    
+    public List<Post> findRecentPosts(int limit) {
+        return postRepository.findRecentPostsWithCategories(limit);
+    }
 
     public List<Post> getRelatedPosts(Post post, int limit) {
         if (post == null || post.getCategory() == null) {

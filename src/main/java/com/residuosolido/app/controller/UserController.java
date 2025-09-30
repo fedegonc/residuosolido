@@ -264,7 +264,7 @@ public class UserController {
     }
 
     // ========== USER DASHBOARD & PROFILE ==========
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
     @GetMapping("/users/dashboard")
     public String userDashboard(Authentication authentication, Model model) {
         try {
@@ -277,6 +277,12 @@ public class UserController {
             model.addAttribute("recentRequests", recentRequests);
             model.addAttribute("totalRequests", recentRequests.size());
             
+            // Si no hay solicitudes, cargar posts recientes para mostrar contenido educativo
+            if (recentRequests == null || recentRequests.isEmpty()) {
+                List<Post> recentPosts = postService.findRecentPosts(4);
+                model.addAttribute("recentPosts", recentPosts);
+            }
+            
         } catch (Exception e) {
             logger.error("Error al cargar dashboard de usuario: {}", e.getMessage());
             model.addAttribute("errorMessage", "Error al cargar el dashboard");
@@ -285,13 +291,14 @@ public class UserController {
         return "users/dashboard";
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
     @GetMapping("/users/profile")
     public String userProfile(Authentication authentication, Model model) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             model.addAttribute("user", currentUser);
+            model.addAttribute("userForm", currentUser);
         } catch (Exception e) {
             logger.error("Error al cargar perfil: {}", e.getMessage());
             model.addAttribute("errorMessage", "Error al cargar el perfil");
@@ -300,22 +307,24 @@ public class UserController {
         return "users/profile";
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
     @PostMapping("/users/profile")
-    public String updateUserProfile(@ModelAttribute User user,
-                                   @RequestParam(value = "profileImage", required = false) MultipartFile profileImageFile,
+    public String updateUserProfile(@ModelAttribute("userForm") User userForm,
+                                   @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             
-            currentUser.setFirstName(user.getFirstName());
-            currentUser.setLastName(user.getLastName());
-            currentUser.setEmail(user.getEmail());
+            // Actualizar campos editables
+            currentUser.setFirstName(userForm.getFirstName());
+            currentUser.setLastName(userForm.getLastName());
+            currentUser.setEmail(userForm.getEmail());
             
-            if (profileImageFile != null && !profileImageFile.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadFile(profileImageFile);
+            // Subir imagen de perfil si se proporciona
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadFile(imageFile);
                 currentUser.setProfileImage(imageUrl);
             }
             
@@ -324,7 +333,7 @@ public class UserController {
             
         } catch (Exception e) {
             logger.error("Error al actualizar perfil: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar el perfil");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar el perfil: " + e.getMessage());
         }
         
         return "redirect:/users/profile";

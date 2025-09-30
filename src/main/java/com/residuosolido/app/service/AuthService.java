@@ -69,10 +69,22 @@ public class AuthService {
     }
 
     public User registerUser(User user) {
+        return registerUser(user, false);
+    }
+    
+    public User registerUser(User user, boolean isOrganization) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Primer usuario registrado será ADMIN, el resto USER
+        
+        // Primer usuario registrado será ADMIN
+        // Si marca el checkbox de organización será ORGANIZATION
+        // Si no, será USER
         long totalUsers = userRepository.count();
-        user.setRole(totalUsers == 0 ? Role.ADMIN : Role.USER);
+        if (totalUsers == 0) {
+            user.setRole(Role.ADMIN);
+        } else {
+            user.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
+        }
+        
         user.setActive(true);
         user.setPreferredLanguage("es");
         

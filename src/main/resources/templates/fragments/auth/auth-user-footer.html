@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!-- Footer para usuarios autenticados (USER y ORGANIZATION) -->
+<footer th:fragment="authUserFooter" class="bg-emerald-900 text-white border-t-4 border-emerald-500 mt-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Información del sistema -->
+      <div>
+        <h3 class="text-base font-semibold" th:text="#{footer.title}">EcoSolicitud - Frontera de la Paz</h3>
+        <p class="mt-2 text-sm text-emerald-200" th:text="#{footer.description}">
+          Plataforma comunitaria para gestionar residuos en Rivera y Sant'Ana do Livramento.
+        </p>
+      </div>
+
+      <!-- Enlaces rápidos -->
+      <div>
+        <h4 class="text-sm font-semibold text-white mb-3">Enlaces Rápidos</h4>
+        <ul class="space-y-2 text-sm">
+          <li>
+            <a th:href="@{/}" class="text-emerald-100 hover:text-white transition">
+              <i class="fa-solid fa-home w-4 inline-block"></i> Inicio
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/posts}" class="text-emerald-100 hover:text-white transition">
+              <i class="fa-solid fa-book-open w-4 inline-block"></i> Posts Educativos
+            </a>
+          </li>
+          <li sec:authorize="hasRole('USER')">
+            <a th:href="@{/users/requests}" class="text-emerald-100 hover:text-white transition">
+              <i class="fa-solid fa-list w-4 inline-block"></i> Mis Solicitudes
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Botón de Feedback -->
+      <div class="flex flex-col justify-center">
+        <div class="bg-emerald-800 rounded-lg p-4 border border-emerald-700">
+          <h4 class="text-sm font-semibold text-white mb-2">¿Encontraste un problema?</h4>
+          <p class="text-xs text-emerald-200 mb-3">Ayúdanos a mejorar reportando cualquier inconveniente</p>
+          <a th:href="@{/feedback}" 
+             class="block w-full bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 transition text-center font-medium text-sm">
+            <i class="fa-solid fa-flag mr-2"></i>
+            Reportar Problema
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="border-t border-emerald-700 pt-4 mt-6 text-sm text-emerald-300 text-center">
+      <p th:text="#{footer.copy}">© 2024 EcoSolicitud - Frontera de la Paz</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
