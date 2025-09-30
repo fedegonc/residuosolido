@@ -84,7 +84,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     /**
      * Determina la URL de destino basada en los roles del usuario.
-     * Prioridad: ADMIN > ORGANIZATION > USER
      * 
      * @param userRoles Set de roles del usuario
      * @return URL de destino
@@ -93,7 +92,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (userRoles.contains("ROLE_ADMIN")) {
             return "/admin/dashboard";
         } else if (userRoles.contains("ROLE_ORGANIZATION")) {
-            return "/org/dashboard";
+            return "/users/dashboard";
         } else if (userRoles.contains("ROLE_USER")) {
             return "/users/dashboard";
         } else {
@@ -101,5 +100,4 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
     }
     
-
 }
