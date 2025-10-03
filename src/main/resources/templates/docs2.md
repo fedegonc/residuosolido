@@ -280,3 +280,126 @@ Documento de Requerimientos TCC
 
 
 
+Análisis de Sobreingeniería en el Proyecto
+He identificado varios casos de sobreingeniería que están agregando complejidad innecesaria:
+
+🔴 Problemas Críticos
+1. PostService - Métodos Duplicados
+Tienes 5 métodos diferentes que hacen exactamente lo mismo:
+
+java
+// Todos llaman a postRepository.findAllWithCategories()
+public List<Post> getAllPosts()
+public List<Post> getAllPostsWithCategories()
+public List<Post> findAllWithCategories()
+public List<Post> findAll()
+public List<Post> findAllActive()
+
+// También duplicados
+public List<Post> getRecentPosts(int limit)
+public List<Post> findRecentPosts(int limit)
+Recomendación: Mantén solo 
+findAll()
+ y 
+findRecentPosts(int limit)
+.
+
+2. PerformanceInterceptor - Código Muerto
+Este interceptor calcula la duración de requests pero los logs están deshabilitados:
+
+java
+long duration = System.currentTimeMillis() - startTime;
+// logs deshabilitados
+Recomendación: Elimínalo completamente o activa los logs si realmente lo necesitas.
+
+3. DTOs No Usados
+LoginRequest
+ y 
+LoginResponse
+ no se usan en ninguna parte. El proyecto usa Thymeleaf con Spring Security (form-based), no APIs REST.
+
+Recomendación: Elimina estos DTOs o úsalos si planeas crear una API REST.
+
+4. BreadcrumbService - Parsing Manual Complejo
+294 líneas de código para parsear URLs manualmente y generar breadcrumbs. Tiene múltiples switch-case gigantes y lógica duplicada.
+
+Recomendación: Usa anotaciones en controllers o un sistema más simple basado en configuración.
+
+5. Métodos Deprecated con Implementaciones Vacías
+En 
+Request.java
+:
+
+java
+@Deprecated
+public void setMaterials(String materialsString) {
+    // Empty implementation - materials managed through entity relationship
+}
+Recomendación: Elimina completamente el código deprecated en lugar de dejarlo vacío.
+
+🟡 Problemas Moderados
+6. AuthService - Responsabilidad Confusa
+Mezcla lógica pública del index con registro de usuarios sin cohesión clara:
+
+java
+public Map<String, Object> getIndexData()  // Para página pública
+public User registerUser(User user)        // Para autenticación
+Recomendación: Divide en IndexService y mantén solo auth en 
+AuthService
+.
+
+7. Inicialización Lazy Manual Repetitiva
+RequestService
+ tiene código repetido en múltiples métodos para forzar inicialización:
+
+java
+if (request.getUser() != null) {
+    request.getUser().getUsername();
+    request.getUser().getFirstName();
+    // ... repetido en 3 métodos diferentes
+}
+Recomendación: Usa @EntityGraph o cambia a FetchType.EAGER en relaciones críticas, o crea DTOs.
+
+8. Lógica de Vista en Servicios
+PostService
+ tiene métodos que preparan el Model (responsabilidad del controller):
+
+java
+public void preparePostListView(Model model)
+public void preparePostFormView(Model model, Long postId, boolean isEdit)
+Recomendación: Mueve esta lógica a los controllers donde pertenece.
+
+9. MaterialService - Métodos TODO Placeholder
+Tres métodos completos con implementaciones vacías y TODOs:
+
+java
+public List<Material> getAcceptedMaterialsByOrganization(User organization) {
+    // TODO: Implementar consulta real
+    return new ArrayList<>();
+}
+Recomendación: No crees métodos hasta que los necesites (YAGNI - You Aren't Gonna Need It).
+
+10. LoginSuccessHandler Simplificado
+El comentario dice "sistema flexible que utiliza el enum Role con prioridades" pero solo hace if-else simples. Además tiene un método 
+redirectToDashboard
+ que parece no usarse.
+
+Recomendación: Elimina código y comentarios que no reflejan la realidad.
+
+📊 Resumen
+Categoría	Archivos Afectados	Impacto
+Código duplicado	PostService, RequestService	Alto
+Código muerto	PerformanceInterceptor, DTOs	Medio
+Sobreingeniería	BreadcrumbService	Alto
+Violación SRP	AuthService, PostService	Medio
+Placeholder code	MaterialService, Request	Bajo
+✅ Plan de Acción Sugerido
+Eliminar métodos duplicados en PostService (impacto inmediato)
+Eliminar PerformanceInterceptor o activar logs
+Eliminar DTOs no usados (LoginRequest/Response)
+Simplificar o reemplazar BreadcrumbService
+Separar AuthService en servicios con responsabilidades claras
+Mover lógica de vista de services a controllers
+Eliminar métodos deprecated vacíos
+Eliminar métodos TODO hasta que sean necesarios
+Prioridad: El mayor impacto está en PostService (duplicación) y BreadcrumbService (complejidad innecesaria).

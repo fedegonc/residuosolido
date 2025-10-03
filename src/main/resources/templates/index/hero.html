@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="hero" class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16 relative overflow-hidden">
+    <!-- Imagen de fondo opcional -->
+    <div th:if="${heroImageUrl != null and heroImageUrl != '/images/hero-default.jpg'}" 
+         class="absolute inset-0 bg-cover bg-center opacity-20" 
+         th:style="'background-image: url(' + ${heroImageUrl} + ')'"></div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+      <!-- Selector de idioma arriba del H1 -->
+      <div class="mb-6">
+        <form id="language-form-hero" method="get" action="" class="inline-block">
+          <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
+            <div class="flex items-center gap-2 text-gray-800">
+              <a href="?lang=es" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? 'font-bold text-green-600' : ''">
+                <span class="fi fi-uy w-5 h-3"></span>
+                <span>Español</span>
+              </a>
+              <span class="text-gray-400 text-sm sm:text-base">|</span>
+              <a href="?lang=pt" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR'} ? 'font-bold text-green-600' : ''">
+                <span class="fi fi-br w-5 h-3"></span>
+                <span>Português</span>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <h1 class="text-2xl md:text-4xl font-bold mb-3"><span th:text="#{index.hero.title}">EcoSolicitud</span></h1>
+      <p class="text-lg md:text-xl mb-2" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones que facilita el reciclaje responsable en Sant'Ana do Livramento – Rivera.</p>
+      <p class="text-base text-green-100 max-w-2xl mb-5" th:text="#{index.hero.description}">
+        Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
+      </p>
+
+      <!-- Botones de acción principales -->
+      <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <a href="/users/requests/new" class="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition font-semibold text-center flex items-center justify-center gap-2">
+          <i class="fa-solid fa-truck text-base" aria-hidden="true"></i>
+          <span th:text="#{index.hero.button.request}">Solicitar Coleta</span>
+        </a>
+        <a href="/posts" class="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition font-semibold text-center flex items-center justify-center gap-2">
+          <i class="fa-solid fa-book-open text-base" aria-hidden="true"></i>
+          <span th:text="#{index.hero.button.articles}">Ver Artigos</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

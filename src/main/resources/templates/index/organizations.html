@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="organizations" class="mb-12">
+    <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i class="fa-solid fa-building text-green-600 text-xl" aria-hidden="true"></i>
+        <span th:text="#{organizations.title}">Organizações</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizações que colaboram na coleta e reciclagem na região.</p>
+
+      <!-- Texto explicativo adicional -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 mb-8">
+        <div class="flex items-start gap-3">
+          <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+          <div>
+            <h4 class="font-semibold text-blue-900 mb-1" th:text="#{index.organizations.info.title}">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
+            <p class="text-sm text-blue-800" th:text="#{index.organizations.info.description}">Además de solicitar recolección, puedes acercarte diretamente a cualquiera de las organizaciones listadas arriba durante su horario de atención para entregar tus materiales reciclables.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
+        <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="space-y-4">
+          <!-- Información básica -->
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-3 text-lg"
+                th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
+
+            <!-- Dirección -->
+            <div class="flex items-start gap-2 mb-2">
+              <i class="fa-solid fa-location-dot text-gray-400 text-sm mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+              <span class="text-sm text-gray-600" th:text="${org.address != null and !org.address.isEmpty()} ? ${org.address} : #{organizations.address_not_specified}">Endereço não especificado</span>
+            </div>
+
+            <!-- Cómo llegar (referencias de dirección) -->
+            <div th:if="${org.addressReferences != null and !org.addressReferences.isEmpty()}" class="flex items-start gap-2 mb-2">
+              <i class="fa-solid fa-location-arrow text-blue-500 text-sm mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+              <div>
+                <span class="text-xs font-medium text-blue-700 uppercase tracking-wide" th:text="#{organizations.how_to_get_there}">Cómo llegar</span>
+                <p class="text-sm text-gray-600 mt-1" th:text="${org.addressReferences}"></p>
+              </div>
+            </div>
+
+            <!-- Contacto -->
+            <div class="flex items-center gap-4 mt-3">
+              <div th:if="${org.email != null and !org.email.isEmpty()}" class="flex items-center gap-2">
+                <i class="fa-solid fa-envelope text-green-600 text-sm" aria-hidden="true"></i>
+                <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                  <span th:text="#{organizations.contact}">Contacto</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Minimapa -->
+          <div th:if="${org.latitude != null and org.longitude != null}" class="border border-gray-200 rounded-lg overflow-hidden">
+            <div th:id="'map-' + ${org.id}"
+                 class="w-full h-32 bg-gray-100 flex items-center justify-center org-map"
+                 th:attr="data-lat=${org.latitude}, data-lng=${org.longitude}, data-name=${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}">
+              <div class="text-center text-gray-500">
+                <i class="fa-solid fa-map text-lg mx-auto mb-1" aria-hidden="true"></i>
+                <span class="text-xs">Cargando mapa...</span>
+              </div>
+            </div>
+          </div>
+          <div th:if="${org.latitude != null and org.longitude != null}" class="flex justify-end">
+            <a th:href="|https://www.google.com/maps?q=${org.latitude},${org.longitude}|" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2">
+              <i class="fa-solid fa-arrow-up-right-from-square text-sm mr-1" aria-hidden="true"></i>
+              <span th:text="#{organizations.view_on_maps}">Ver en Google Maps</span>
+            </a>
+          </div>
+          <div th:if="${org.latitude == null or org.longitude == null}" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <div class="text-center text-gray-500">
+              <i class="fa-solid fa-location-dot text-base mx-auto mb-1" aria-hidden="true"></i>
+              <span class="text-xs">Ubicación no disponible</span>
+            </div>
+          </div>
+        </div>
+        </article>
+      </div>
+
+      <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
+        <i class="fa-solid fa-building text-2xl text-gray-300" aria-hidden="true"></i>
+        <p th:text="#{organizations.empty}">Não há organizações disponíveis atualmente</p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

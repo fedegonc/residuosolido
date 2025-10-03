@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="categories" class="mb-12">
+    <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i class="fa-solid fa-table-cells-large text-green-600 text-xl" aria-hidden="true"></i>
+        <span th:text="#{nav.categories}">Categorias</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.categories.description}">Explore todas las categorías disponibles y aprenda sobre diferentes tipos de residuos y reciclaje.</p>
+
+      <div th:if="${categories != null and !categories.empty}">
+        <div class="flex flex-wrap gap-3 mb-4">
+          <span th:each="category : ${categories}"
+                th:text="${category.name}"
+                class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"></span>
+        </div>
+        
+        <!-- Enlace "Ver todas las categorías" -->
+        <div class="mt-4">
+          <a href="/categorias" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+            <i class="fa-solid fa-table-cells-large text-sm" aria-hidden="true"></i>
+            <span th:text="#{index.categories.view_all}">Ver todas as categorias</span>
+          </a>
+        </div>
+      </div>
+
+      <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
+        <i class="fa-solid fa-table-cells-large text-2xl text-gray-300" aria-hidden="true"></i>
+        <p class="text-sm" th:text="#{index.categories.empty}">Não há categorias disponíveis</p>
+      </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

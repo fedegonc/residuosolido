@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header th:fragment="navbar">
+    <nav class="bg-white shadow-sm border-b border-green-100">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <!-- Logo y nombre -->
+        <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(false, 'gap-2', 'text-xl font-bold text-gray-800', 'text-xs text-slate-500')}"></th:block>
+        
+        <!-- Navegación y acciones -->
+        <div class="flex items-center gap-4">
+          <!-- Botones para usuarios no autenticados -->
+          <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
+            <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition flex items-center gap-2">
+              <i class="fa-solid fa-right-to-bracket text-sm" aria-hidden="true"></i>
+              <span th:text="#{nav.login}">Entrar</span>
+            </a>
+            <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition flex items-center gap-2">
+              <i class="fa-solid fa-user-plus text-sm" aria-hidden="true"></i>
+              <span th:text="#{nav.register}">Registrar-se</span>
+            </a>
+          </div>
+          
+          <!-- Botones para usuarios autenticados -->
+          <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
+            <a href="/feedback" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition">
+              <span th:text="#{nav.feedback}">Feedback</span>
+            </a>
+            <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">
+              <span th:text="#{nav.logout}">Sair</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+</body>
+</html>

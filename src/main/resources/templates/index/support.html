@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="support" class="mt-16 mb-12">
+    <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+        <i class="fa-solid fa-heart text-green-600 text-xl" aria-hidden="true"></i>
+        <span th:text="#{index.support.title}">Apoyo</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-6" th:text="#{index.support.description}">Agradecemos el apoyo de las siguientes instituciones y organizaciones que forman parte de nuestra red de sostenibilidad.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Item 1 -->
+      <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex flex-col items-center text-center space-y-4">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-landmark text-green-600 text-2xl" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item1.title}">Municipio de Rivera</h3>
+            <p class="text-sm text-gray-600" th:text="#{index.support.item1.description}">Apoyo institucional y logístico para nuestras actividades en la región.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex flex-col items-center text-center space-y-4">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-graduation-cap text-blue-600 text-2xl" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item2.title}">Universidad Federal del Pampa</h3>
+            <p class="text-sm text-gray-600" th:text="#{index.support.item2.description}">Colaboración académica para investigación y desarrollo sostenible.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex flex-col items-center text-center space-y-4">
+          <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-people-group text-emerald-600 text-2xl" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-2" th:text="#{index.support.item3.title}">ONGs Ambientales Locales</h3>
+            <p class="text-sm text-gray-600" th:text="#{index.support.item3.description}">Colaboración en proyectos de sensibilización ambiental.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
