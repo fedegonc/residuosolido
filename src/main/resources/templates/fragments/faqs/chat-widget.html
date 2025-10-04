@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="chatWidget">
+    <!-- Estilos adicionales para mensajes formateados -->
+    <style>
+        .formatted-message {
+            line-height: 1.6;
+        }
+        .formatted-message strong {
+            font-weight: 600;
+            color: #111827;
+        }
+        .formatted-message a {
+            word-break: break-word;
+            transition: color 0.2s;
+        }
+        .formatted-message a:hover {
+            color: #1e40af;
+            text-decoration: underline;
+        }
+        .formatted-message p {
+            margin-bottom: 0.5rem;
+        }
+        .formatted-message p:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+    
     <!-- Botón flotante -->
     <button id="chatWidgetButton" 
             class="fixed bottom-6 right-6 w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 z-50">
@@ -50,7 +75,10 @@
                     </svg>
                 </div>
                 <div class="bg-white rounded-lg rounded-tl-none px-4 py-2 shadow-sm max-w-[80%]">
-                    <p class="text-sm text-gray-800">¡Hola! 👋 Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?</p>
+                    <div class="text-sm text-gray-800">
+                        <p class="mb-2">¡Hola! 👋 Soy tu <strong class="font-semibold text-gray-900">asistente virtual</strong>.</p>
+                        <p>¿En qué puedo ayudarte hoy?</p>
+                    </div>
                     <span class="text-xs text-gray-500 mt-1 block">Ahora</span>
                 </div>
             </div>
@@ -186,12 +214,38 @@
                         </svg>
                     </div>
                     <div class="bg-white rounded-lg rounded-tl-none px-4 py-2 shadow-sm max-w-[80%]">
-                        <p class="text-sm text-gray-800">${escapeHtml(text)}</p>
+                        <div class="text-sm text-gray-800 formatted-message">${formatMessage(text)}</div>
                         <span class="text-xs text-gray-500 mt-1 block">Ahora</span>
                     </div>
                 `;
                 chatMessages.appendChild(messageDiv);
                 scrollToBottom();
+            }
+            
+            // Función para formatear mensajes con markdown básico y links clickeables
+            function formatMessage(text) {
+                // Escapar HTML primero
+                let formatted = escapeHtml(text);
+                
+                // Convertir **texto** a <strong>texto</strong>
+                formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>');
+                
+                // Convertir *texto* a <em>texto</em>
+                formatted = formatted.replace(/\*(.+?)\*/g, '<em class="italic">$1</em>');
+                
+                // Convertir URLs a links clickeables
+                formatted = formatted.replace(
+                    /(https?:\/\/[^\s]+)/g, 
+                    '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline break-all">$1</a>'
+                );
+                
+                // Convertir saltos de línea a <br>
+                formatted = formatted.replace(/\n/g, '<br>');
+                
+                // Convertir listas con - o •
+                formatted = formatted.replace(/^[\-•]\s+(.+)$/gm, '<div class="flex items-start gap-2 my-1"><span class="text-green-600 font-bold">•</span><span>$1</span></div>');
+                
+                return formatted;
             }
 
             // Scroll al final del chat
