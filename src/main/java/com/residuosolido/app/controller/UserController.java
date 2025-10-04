@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -293,15 +294,55 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
     @GetMapping("/users/profile")
+    @Transactional(readOnly = true)
     public String userProfile(Authentication authentication, Model model) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             model.addAttribute("user", currentUser);
             model.addAttribute("userForm", currentUser);
+            
+            // Cargar estadísticas de solicitudes con manejo seguro
+            try {
+                List<Request> userRequests = requestService.getRequestsByUser(currentUser);
+                Map<String, Long> requestStats = new HashMap<>();
+                requestStats.put("pending", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count());
+                requestStats.put("inProgress", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count());
+                requestStats.put("completed", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count());
+                requestStats.put("total", (long) userRequests.size());
+                model.addAttribute("requestStats", requestStats);
+            } catch (Exception e) {
+                logger.warn("Error al cargar estadísticas de solicitudes: {}", e.getMessage());
+                // Valores por defecto si falla
+                Map<String, Long> requestStats = new HashMap<>();
+                requestStats.put("pending", 0L);
+                requestStats.put("inProgress", 0L);
+                requestStats.put("completed", 0L);
+                requestStats.put("total", 0L);
+                model.addAttribute("requestStats", requestStats);
+            }
+            
+            // Cargar contador de feedback con manejo seguro
+            try {
+                long feedbackCount = currentUser.getFeedbacks() != null ? currentUser.getFeedbacks().size() : 0;
+                model.addAttribute("feedbackCount", feedbackCount);
+            } catch (Exception e) {
+                logger.warn("Error al cargar contador de feedback: {}", e.getMessage());
+                model.addAttribute("feedbackCount", 0L);
+            }
+            
         } catch (Exception e) {
-            logger.error("Error al cargar perfil: {}", e.getMessage());
-            model.addAttribute("errorMessage", "Error al cargar el perfil");
+            logger.error("Error al cargar perfil: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Error al cargar el perfil: " + e.getMessage());
+            // Asegurar que al menos el user esté disponible para evitar errores en la vista
+            try {
+                String username = authentication.getName();
+                User currentUser = userService.findAuthenticatedUserByUsername(username);
+                model.addAttribute("user", currentUser);
+                model.addAttribute("userForm", currentUser);
+            } catch (Exception ex) {
+                logger.error("Error crítico al cargar usuario: {}", ex.getMessage(), ex);
+            }
         }
         
         return "users/profile";
@@ -321,6 +362,8 @@ public class UserController {
             currentUser.setFirstName(userForm.getFirstName());
             currentUser.setLastName(userForm.getLastName());
             currentUser.setEmail(userForm.getEmail());
+            currentUser.setPhone(userForm.getPhone());
+            currentUser.setAddress(userForm.getAddress());
             
             // Subir imagen de perfil si se proporciona
             if (imageFile != null && !imageFile.isEmpty()) {

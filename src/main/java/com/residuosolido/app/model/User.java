@@ -44,6 +44,9 @@ public class User {
     private String lastName;
     private String profileImage; // URL Cloudinary
     
+    @Column(name = "phone", length = 20)
+    private String phone;
+    
     // Ubicación geográfica (nombres en inglés para consistencia)
     @Column(name = "address", length = 500)
     private String address;

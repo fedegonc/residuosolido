@@ -1,72 +1,158 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - EcoSolicitud</title>
+    <title>Mi Perfil - Sistema de Residuos Sólidos</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="/users/dashboard" class="text-emerald-600 hover:text-emerald-700 mr-4">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    </a>
-                    <h1 class="text-xl font-semibold text-gray-900">Mi Perfil</h1>
-                </div>
+<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
             </div>
         </div>
-    </header>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Success/Error Messages -->
-        <div th:if="${successMessage}" class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
-            <span th:text="${successMessage}"></span>
-        </div>
-        <div th:if="${errorMessage}" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
-            <span th:text="${errorMessage}"></span>
-        </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        <!-- Profile Form -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Profile Form (2/3 width) -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow p-6">
             <form th:action="@{/users/profile}" method="post" enctype="multipart/form-data" th:object="${userForm}">
-                <!-- Profile Image -->
-                <div class="mb-6 text-center">
+                <!-- Profile Image with Initials Fallback -->
+                <div class="mb-8 text-center">
                     <div class="relative inline-block">
-                        <img th:src="${user.profileImage != null ? user.profileImage : '/images/default-avatar.png'}" 
-                             alt="Foto de perfil" 
-                             class="w-24 h-24 rounded-full object-cover border-4 border-gray-200">
-                        <label for="imageFile" class="absolute bottom-0 right-0 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full p-2 cursor-pointer">
-                            <i data-lucide="camera" class="w-4 h-4"></i>
+                        <!-- Avatar con iniciales o imagen -->
+                        <div class="w-32 h-32 rounded-full border-4 border-emerald-100 overflow-hidden bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+                            <img th:if="${user.profileImage != null and user.profileImage != ''}" 
+                                 th:src="${user.profileImage}" 
+                                 alt="Foto de perfil" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div th:if="${user.profileImage == null or user.profileImage == ''}" 
+                                 class="text-white text-4xl font-bold"
+                                 th:text="${(user.firstName != null and user.firstName != '' ? user.firstName.substring(0,1) : '') + (user.lastName != null and user.lastName != '' ? user.lastName.substring(0,1) : '')}">
+                                U
+                            </div>
+                            <!-- Fallback para cuando la imagen falla -->
+                            <div style="display:none;" 
+                                 class="text-white text-4xl font-bold w-full h-full items-center justify-center"
+                                 th:text="${(user.firstName != null and user.firstName != '' ? user.firstName.substring(0,1) : '') + (user.lastName != null and user.lastName != '' ? user.lastName.substring(0,1) : '')}">
+                                U
+                            </div>
+                        </div>
+                        <label for="imageFile" class="absolute bottom-2 right-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full p-3 cursor-pointer shadow-lg transition-colors">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
                         </label>
                         <input type="file" id="imageFile" name="imageFile" accept="image/*" class="hidden">
                     </div>
+                    <p class="mt-3 text-sm text-gray-500">Haz clic en el ícono de cámara para cambiar tu foto</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de usuario</label>
-                        <input type="text" th:field="*{username}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                <!-- Información Personal -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="user" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                        Información Personal
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i data-lucide="user-circle" class="w-4 h-4 inline mr-1"></i>
+                                Nombre de usuario
+                            </label>
+                            <input type="text" th:field="*{username}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed" 
+                                   readonly>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i data-lucide="mail" class="w-4 h-4 inline mr-1"></i>
+                                Email <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" th:field="*{email}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                   required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i data-lucide="user" class="w-4 h-4 inline mr-1"></i>
+                                Nombre <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" th:field="*{firstName}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                   required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i data-lucide="user" class="w-4 h-4 inline mr-1"></i>
+                                Apellido <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" th:field="*{lastName}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                   required>
+                        </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" th:field="*{email}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-                        <input type="text" th:field="*{firstName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
-                        <input type="text" th:field="*{lastName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="phone" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                        Información de Contacto
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i data-lucide="phone" class="w-4 h-4 inline mr-1"></i>
+                                Teléfono <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" th:field="*{phone}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="+598 99 123 456"
+                                   required>
+                            <p class="mt-1 text-xs text-gray-500">Necesario para coordinar la recolección</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
+                                Dirección <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" th:field="*{address}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Calle, número, ciudad"
+                                   required>
+                            <p class="mt-1 text-xs text-gray-500">Dirección principal para recolecciones</p>
+                        </div>
                     </div>
                 </div>
                 
@@ -79,14 +165,132 @@
                     </button>
                 </div>
             </form>
+                </div>
+            </div>
+
+            <!-- Right Column: User Metrics & Stats (1/3 width) -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- User Summary Card -->
+                <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Mi Actividad</h3>
+                        <i data-lucide="activity" class="w-6 h-6"></i>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-emerald-100">Miembro desde</span>
+                            <span class="font-semibold" th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy') : 'N/A'}">01/01/2025</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-emerald-100">Último acceso</span>
+                            <span class="font-semibold" th:text="${user.lastAccessAt != null ? #temporals.format(user.lastAccessAt, 'dd/MM/yyyy') : 'Hoy'}">Hoy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requests Stats -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i data-lucide="recycle" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                            Solicitudes
+                        </h3>
+                        <a href="/user/requests" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+                            Ver todas →
+                        </a>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                                    <i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i>
+                                </div>
+                                <span class="text-gray-700">Pendientes</span>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900" th:text="${requestStats != null ? requestStats.pending : 0}">0</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <i data-lucide="truck" class="w-5 h-5 text-blue-600"></i>
+                                </div>
+                                <span class="text-gray-700">En proceso</span>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900" th:text="${requestStats != null ? requestStats.inProgress : 0}">0</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+                                </div>
+                                <span class="text-gray-700">Completadas</span>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900" th:text="${requestStats != null ? requestStats.completed : 0}">0</span>
+                        </div>
+                        <div class="pt-3 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 font-medium">Total</span>
+                                <span class="text-3xl font-bold text-emerald-600" th:text="${requestStats != null ? requestStats.total : 0}">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Stats -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i data-lucide="message-square" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                            Feedback
+                        </h3>
+                        <a href="/feedback" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+                            Enviar →
+                        </a>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-emerald-200 rounded-full flex items-center justify-center mr-3">
+                                    <i data-lucide="star" class="w-5 h-5 text-emerald-700"></i>
+                                </div>
+                                <span class="text-gray-700">Enviados</span>
+                            </div>
+                            <span class="text-2xl font-bold text-emerald-700" th:text="${feedbackCount != null ? feedbackCount : 0}">0</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Tu opinión nos ayuda a mejorar el servicio de recolección.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="zap" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                        Acciones Rápidas
+                    </h3>
+                    <div class="space-y-2">
+                        <a href="/user/requests/new" class="flex items-center justify-between p-3 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors group">
+                            <span class="text-emerald-700 font-medium">Nueva Solicitud</span>
+                            <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600 group-hover:text-emerald-700"></i>
+                        </a>
+                        <a href="/feedback" class="flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                            <span class="text-blue-700 font-medium">Enviar Feedback</span>
+                            <i data-lucide="message-circle" class="w-5 h-5 text-blue-600 group-hover:text-blue-700"></i>
+                        </a>
+                        <a href="/users/dashboard" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group">
+                            <span class="text-gray-700 font-medium">Ver Dashboard</span>
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 text-gray-600 group-hover:text-gray-700"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
-    
-    <!-- Footer para usuarios autenticados -->
-    <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
+    </div>
 
     <script>
         lucide.createIcons();
     </script>
+</main>
 </body>
 </html>

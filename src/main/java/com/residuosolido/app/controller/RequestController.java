@@ -296,6 +296,7 @@ public class RequestController {
         model.addAttribute("noOrganizationsAvailable", noOrgs);
         if (!noOrgs) {
             model.addAttribute("availableOrganizations", requestService.getActiveOrganizationNames());
+            model.addAttribute("organizations", requestService.getActiveOrganizations());
         }
         return "users/request-form";
     }
@@ -306,7 +307,9 @@ public class RequestController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/requests")
     public String userCreateRequest(
-            @ModelAttribute Request request, 
+            @ModelAttribute Request request,
+            @RequestParam(value = "materials", required = false) List<String> materialNames,
+            @RequestParam(value = "organizationId", required = false) Long organizationId,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
@@ -319,6 +322,31 @@ public class RequestController {
             User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
             request.setUser(currentUser);
             request.setStatus(RequestStatus.PENDING);
+            
+            // Construir notas con materiales y organización seleccionada
+            StringBuilder notesBuilder = new StringBuilder();
+            if (request.getNotes() != null && !request.getNotes().isEmpty()) {
+                notesBuilder.append(request.getNotes()).append("\n");
+            }
+            
+            // Guardar materiales seleccionados
+            if (materialNames != null && !materialNames.isEmpty()) {
+                String materialsStr = String.join(", ", materialNames);
+                notesBuilder.append("Materiales: ").append(materialsStr).append("\n");
+            }
+            
+            // Guardar organización seleccionada
+            if (organizationId != null) {
+                try {
+                    User org = userService.getUserOrThrow(organizationId);
+                    String orgName = org.getUsername() != null ? org.getUsername() : String.valueOf(org.getId());
+                    notesBuilder.append("Organización preferida: ").append(orgName);
+                } catch (Exception e) {
+                    // Si hay error al obtener la organización, continuar sin ella
+                }
+            }
+            
+            request.setNotes(notesBuilder.toString().trim());
             requestService.save(request);
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud creada correctamente");
         } catch (Exception e) {
@@ -331,7 +359,6 @@ public class RequestController {
     // ========== ORGANIZATION ENDPOINTS ==========
     
     /**
-     * Lista solicitudes pendientes para organizaciones
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
     @GetMapping("/org/requests")

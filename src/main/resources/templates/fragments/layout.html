@@ -13,10 +13,6 @@
 
 <th:block th:fragment="layout(content)">
     <div class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Guest Dropdown (atajo para volver a secciones/inicio) solo para invitados -->
-    <div class="fixed top-4 right-2 z-50" sec:authorize="!isAuthenticated()">
-        <div th:replace="~{fragments/guest-dropdown :: guest-dropdown}"></div>
-    </div>
     <!-- Barra de navegación -->
     <nav th:fragment="navbar" class="bg-white shadow-lg border-b border-green-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -164,9 +160,8 @@
     </nav>
     
     <!-- Contenido principal -->
-    <main class="flex-grow container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+    <main class="flex-grow container mx-auto px-4 py-6 sm:px-6 lg:px-8" layout:fragment="content">
         <!-- Contenido dinámico -->
-        <th:block th:replace="${content}"></th:block>
     </main>
     
     <!-- JavaScript común -->
@@ -177,9 +172,6 @@
             console.log(`${type}: ${message}`);
         }
     </script>
-    
-    <!-- JavaScript del componente guest-dropdown -->
-    <th:block th:replace="~{fragments/guest-dropdown :: guest-dropdown-js}"></th:block>
 
     <!-- Footer condicional según autenticación -->
     <div sec:authorize="isAuthenticated()">
