@@ -7,6 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - Sistema de Residuos Sólidos</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
@@ -50,6 +52,9 @@
     
     <!-- Footer para usuarios autenticados -->
     <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
+    
+    <!-- Chat Widget -->
+    <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
     
     <script>
         lucide.createIcons();

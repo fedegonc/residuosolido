@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión del Asistente - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <!-- Título Principal -->
+                <h2 class="text-lg font-semibold text-gray-900">
+                    Gestión del Asistente Virtual
+                </h2>
+                
+                <!-- Texto Descriptivo -->
+                <p class="text-sm text-gray-600">
+                    Configura el comportamiento del asistente virtual IA mediante un prompt del sistema. Este texto define el contexto, personalidad y conocimiento base que tendrá el asistente al responder a los usuarios.
+                    <span class="block mt-1 text-xs text-gray-500">
+                        El prompt del sistema se envía antes de cada conversación para dar contexto al asistente. Incluye información sobre tu organización, servicios, políticas y cualquier dato relevante para las FAQs.
+                    </span>
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <form th:action="@{/admin/assistant/save}" method="post" class="px-6 py-6 space-y-6">
+                <div>
+                    <label for="systemPrompt" class="block text-sm font-medium text-gray-700 mb-2">
+                        System Prompt del Asistente
+                    </label>
+                    <p class="text-xs text-gray-500 mb-3">
+                        Define el contexto, personalidad y conocimiento del asistente. Por ejemplo: información sobre tu organización, horarios, servicios, políticas, etc.
+                    </p>
+                    <textarea 
+                        id="systemPrompt" 
+                        name="systemPrompt" 
+                        rows="15"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm"
+                        placeholder="Ejemplo:&#10;&#10;Eres un asistente virtual de EcoSolicitud, una plataforma de gestión de residuos sólidos en Rivera Sant'Ana do Livramento.&#10;&#10;Información clave:&#10;- Horario de atención: Lunes a Viernes de 8:00 a 18:00&#10;- Materiales aceptados: Plástico, papel, cartón, vidrio, metal&#10;- Tiempo de respuesta: 24-48 horas&#10;- Área de cobertura: Rivera y Sant'Ana do Livramento&#10;&#10;Tu tono debe ser amable, profesional y orientado a ayudar. Responde en español de forma clara y concisa."
+                        th:text="${config.systemPrompt}"></textarea>
+                    <p class="text-xs text-gray-500 mt-2">
+                        <i data-lucide="info" class="w-3 h-3 inline"></i>
+                        Última actualización: 
+                        <span th:if="${config.updatedAt != null}" th:text="${#temporals.format(config.updatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        <span th:if="${config.updatedAt == null}">Nunca</span>
+                        <span th:if="${config.updatedBy != null}"> por <strong th:text="${config.updatedBy}"></strong></span>
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <a href="/admin/dashboard" class="text-sm text-gray-600 hover:text-gray-900">
+                        <i data-lucide="arrow-left" class="w-4 h-4 inline mr-1"></i>
+                        Volver al dashboard
+                    </a>
+                    <button 
+                        type="submit" 
+                        class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center space-x-2">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Guardar Configuración</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Ejemplo de uso -->
+            <div class="px-6 pb-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 class="text-sm font-semibold text-blue-900 mb-2 flex items-center">
+                        <i data-lucide="lightbulb" class="w-4 h-4 mr-2"></i>
+                        Consejos para un buen System Prompt
+                    </h3>
+                    <ul class="text-xs text-blue-800 space-y-1 list-disc list-inside">
+                        <li>Define claramente quién es el asistente y qué hace tu organización</li>
+                        <li>Incluye información de contacto, horarios y áreas de servicio</li>
+                        <li>Especifica el tono y estilo de comunicación deseado</li>
+                        <li>Agrega políticas importantes y preguntas frecuentes</li>
+                        <li>Mantén el prompt actualizado con cambios en tus servicios</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</main>
+</body>
+</html>

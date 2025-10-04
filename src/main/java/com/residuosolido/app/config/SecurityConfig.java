@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .requestMatchers("/posts/**", "/categories/**").permitAll()
                 .requestMatchers("/sistema-visual", "/grid-test").permitAll()
                 .requestMatchers("/change-language").permitAll() // Cambio de idioma público
+                .requestMatchers("/faq/**").permitAll() // Rutas del chat widget de FAQs
                 // Recursos especiales de navegador (evitar guardarlos como destino de login)
                 .requestMatchers("/.well-known/**").permitAll()
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error

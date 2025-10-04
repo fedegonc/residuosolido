@@ -3,6 +3,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title}">EcoSolicitud</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -180,6 +182,9 @@
     <div sec:authorize="!isAuthenticated()">
         <div th:replace="~{fragments/simple-footer :: simple}"></div>
     </div>
+    
+    <!-- Chat Widget -->
+    <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
     
     <!-- JavaScript para menú móvil (carga al final para asegurar DOM completo) -->
     <script src="/js/mobile-menu.js"></script>
