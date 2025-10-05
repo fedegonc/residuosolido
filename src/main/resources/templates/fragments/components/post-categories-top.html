@@ -1,0 +1,62 @@
+<div th:fragment="list" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 w-full">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h2 class="text-base font-semibold text-gray-900">Categorías de posts más leídas</h2>
+            <p class="text-xs text-gray-500 mt-1">Lecturas registradas en el portal público durante los últimos 30 días</p>
+        </div>
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+            <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+            Datos internos
+        </span>
+    </div>
+    <div class="space-y-2">
+        <div class="group flex items-center justify-between bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 text-sm transition hover:border-emerald-200 hover:bg-emerald-50/60">
+            <span class="flex items-center gap-2 text-gray-700">
+                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-600">
+                    <i data-lucide="leaf" class="w-3.5 h-3.5"></i>
+                </span>
+                <span class="flex flex-col">
+                    <span class="font-medium text-gray-900">Educación ambiental</span>
+                    <span class="text-[11px] text-gray-500">Contenido educativo y campañas</span>
+                </span>
+            </span>
+            <span class="font-semibold text-gray-900">1,280 lecturas</span>
+        </div>
+        <div class="group flex items-center justify-between bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 text-sm transition hover:border-sky-200 hover:bg-sky-50/60">
+            <span class="flex items-center gap-2 text-gray-700">
+                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-100 text-sky-600">
+                    <i data-lucide="recycle" class="w-3.5 h-3.5"></i>
+                </span>
+                <span class="flex flex-col">
+                    <span class="font-medium text-gray-900">Guías de reciclaje</span>
+                    <span class="text-[11px] text-gray-500">Paso a paso para separar residuos</span>
+                </span>
+            </span>
+            <span class="font-semibold text-gray-900">950 lecturas</span>
+        </div>
+        <div class="group flex items-center justify-between bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 text-sm transition hover:border-violet-200 hover:bg-violet-50/60">
+            <span class="flex items-center gap-2 text-gray-700">
+                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-violet-100 text-violet-600">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                </span>
+                <span class="flex flex-col">
+                    <span class="font-medium text-gray-900">Innovación sustentable</span>
+                    <span class="text-[11px] text-gray-500">Tecnología y tendencias verdes</span>
+                </span>
+            </span>
+            <span class="font-semibold text-gray-900">730 lecturas</span>
+        </div>
+        <div class="group flex items-center justify-between bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 text-sm transition hover:border-amber-200 hover:bg-amber-50/60">
+            <span class="flex items-center gap-2 text-gray-700">
+                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-100 text-amber-600">
+                    <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                </span>
+                <span class="flex flex-col">
+                    <span class="font-medium text-gray-900">Historias de la comunidad</span>
+                    <span class="text-[11px] text-gray-500">Casos de éxito y testimonios</span>
+                </span>
+            </span>
+            <span class="font-semibold text-gray-900">615 lecturas</span>
+        </div>
+    </div>
+</div>

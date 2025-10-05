@@ -92,7 +92,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (userRoles.contains("ROLE_ADMIN")) {
             return "/admin/dashboard";
         } else if (userRoles.contains("ROLE_ORGANIZATION")) {
-            return "/users/dashboard";
+            return "/org/dashboard";
         } else if (userRoles.contains("ROLE_USER")) {
             return "/users/dashboard";
         } else {

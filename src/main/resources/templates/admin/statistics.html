@@ -44,7 +44,7 @@
     </div>
 
     <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <!-- KPIs principales -->
         <div th:replace="~{fragments/components/kpi-cards :: cards}"></div>
 
@@ -53,6 +53,12 @@
 
         <!-- Gráfico de crecimiento de solicitudes -->
         <div th:replace="~{fragments/components/requests-growth-chart :: chart}"></div>
+
+        <!-- Bloque inferior: materiales y categorías -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div th:replace="~{fragments/components/materials-pie-chart :: chart}"></div>
+            <div th:replace="~{fragments/components/post-categories-top :: list}"></div>
+        </div>
 
         <script>
             console.log('=== USER GROWTH CHART PAGE ===');
@@ -293,6 +299,63 @@
                     });
                 } catch (error) {
                     console.error('✗✗✗ Error creating Requests Growth Chart:', error);
+                }
+            });
+        </script>
+
+        <!-- Materials Distribution Pie Chart Script (hardcoded) -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('--- Materials Distribution Chart Component ---');
+                const ctx = document.getElementById('chartMaterialsDistribution');
+
+                if (!ctx) {
+                    console.error('✗ Canvas #chartMaterialsDistribution not found!');
+                    return;
+                }
+
+                if (typeof Chart === 'undefined') {
+                    console.error('✗ Chart.js is not loaded!');
+                    return;
+                }
+
+                const labels = ['Plástico PET', 'Vidrio verde', 'Cartón y papel', 'Metales ligeros', 'Orgánicos'];
+                const values = [38, 24, 18, 12, 8];
+                const colors = ['#10b981', '#3b82f6', '#f59e0b', '#6366f1', '#ef4444'];
+
+                try {
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels,
+                            datasets: [{
+                                data: values,
+                                backgroundColor: colors,
+                                borderWidth: 2,
+                                borderColor: '#ffffff',
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '55%',
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.label + ': ' + context.parsed + '%';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('✗✗✗ Error creating Materials Distribution Chart:', error);
                 }
             });
         </script>

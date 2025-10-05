@@ -58,11 +58,9 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**").permitAll()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                // Rutas de utilidades de desarrollo deshabilitadas
-                // Rutas de gestión de usuarios para admin
-                .requestMatchers("/admin/users/**").hasRole("ADMIN")
-                // Rutas de navegación personal (cualquier usuario autenticado)
-                .requestMatchers("/user/**").authenticated()
+                // Rutas de usuarios regulares
+                .requestMatchers("/users/**").hasRole("USER")
+                .requestMatchers("/user/**").hasRole("USER")
                 .requestMatchers("/requests/**").hasRole("USER")
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")

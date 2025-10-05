@@ -60,8 +60,16 @@ public class RequestService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<Request> getRequestsByUser(User user) {
-        return requestRepository.findByUser(user);
+        List<Request> requests = requestRepository.findByUser(user);
+        // Forzar la inicialización de la colección materials para evitar LazyInitializationException
+        requests.forEach(request -> {
+            if (request.getMaterials() != null) {
+                request.getMaterials().size(); // Esto fuerza la carga de la colección
+            }
+        });
+        return requests;
     }
 
     @Transactional(readOnly = true)
