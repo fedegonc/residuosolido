@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -187,6 +188,49 @@ public class StatisticsService {
             // Datos de fallback
             data.put("labels", Arrays.asList("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"));
             data.put("data", Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L));
+        }
+
+        return data;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getUserGrowthLast30Days() {
+        Map<String, Object> data = new HashMap<>();
+
+        try {
+            List<User> allUsers = userRepository.findAll();
+            List<LocalDate> creationDates = allUsers.stream()
+                .map(User::getCreatedAt)
+                .filter(Objects::nonNull)
+                .map(LocalDateTime::toLocalDate)
+                .sorted()
+                .toList();
+
+            LocalDate end = LocalDate.now();
+            LocalDate start = end.minusDays(29);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M");
+            List<String> labels = new ArrayList<>();
+            List<Long> cumulativeValues = new ArrayList<>();
+
+            int index = 0;
+            long cumulative = 0;
+            for (LocalDate day = start; !day.isAfter(end); day = day.plusDays(1)) {
+                while (index < creationDates.size() && !creationDates.get(index).isAfter(day)) {
+                    cumulative++;
+                    index++;
+                }
+                labels.add(day.format(formatter));
+                cumulativeValues.add(cumulative);
+            }
+
+            data.put("labels", labels);
+            data.put("data", cumulativeValues);
+            data.put("total", cumulative);
+        } catch (Exception e) {
+            data.put("labels", Collections.emptyList());
+            data.put("data", Collections.emptyList());
+            data.put("total", 0L);
         }
 
         return data;

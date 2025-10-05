@@ -1,0 +1,21 @@
+<div th:fragment="chart" class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 max-w-5xl mx-auto">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">Crecimiento de Solicitudes Registradas</h2>
+        <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                <i data-lucide="clipboard-list" class="w-3 h-3 mr-1"></i>
+                Últimos 30 días
+            </span>
+        </div>
+    </div>
+    <div class="mb-4" style="position: relative; height: 160px;">
+        <canvas id="chartRequestsGrowth"></canvas>
+    </div>
+    <div class="flex items-center justify-between text-sm">
+        <span class="text-gray-500">Total acumulado de solicitudes</span>
+        <span>
+            <span id="totalRequestsGrowth">0</span>
+            solicitudes registradas
+        </span>
+    </div>
+</div>

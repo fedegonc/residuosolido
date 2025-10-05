@@ -95,8 +95,8 @@ public class SecurityConfig {
                     "img-src 'self' data: https: https://tile.openstreetmap.org; " +
                     "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com; " +
                     "font-src 'self' data: https://fonts.gstatic.com; " +
-                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; " +
-                    "connect-src 'self' https://unpkg.com"
+                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; " +
+                    "connect-src 'self' https://unpkg.com https://cdn.jsdelivr.net"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
                 .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))

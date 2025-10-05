@@ -61,16 +61,17 @@ public class AdminController {
     @GetMapping("/admin/statistics")
     public String statistics(Model model) {
         try {
-            // Obtener estadísticas dinámicas
             var stats = statisticsService.getDashboardStats();
             model.addAttribute("stats", stats);
 
             // Obtener datos para gráficos
             var usersByMonth = statisticsService.getUsersByMonth();
+            var userGrowthLast30Days = statisticsService.getUserGrowthLast30Days();
             var requestsByStatus = statisticsService.getRequestsByStatus();
             var materialsByType = statisticsService.getMaterialsByType();
 
             model.addAttribute("usersByMonth", usersByMonth);
+            model.addAttribute("userGrowthLast30Days", userGrowthLast30Days);
             model.addAttribute("requestsByStatus", requestsByStatus);
             model.addAttribute("materialsByType", materialsByType);
 
