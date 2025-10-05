@@ -14,36 +14,8 @@
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50">
     
-    <!-- User Top Bar -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(false, 'gap-2', 'text-lg font-semibold text-gray-800', 'text-xs text-slate-500')}"></th:block>
-                    </div>
-                </div>
-                
-                <!-- User Info & Navigation -->
-                <div class="flex items-center space-x-4">
-                    <a href="/users/dashboard" class="text-sm text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="/user/requests" class="text-sm text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1">
-                        <i data-lucide="recycle" class="w-4 h-4"></i>
-                        <span>Solicitudes</span>
-                    </a>
-                    <span class="text-sm font-medium text-gray-700" sec:authentication="name">Usuario</span>
-                    <form th:action="@{/logout}" method="POST" class="inline">
-                        <button type="submit" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium" aria-label="Cerrar sesión">
-                            Cerrar sesión
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- User Navbar -->
+    <th:block th:replace="~{fragments/navbar-user :: navbar}"></th:block>
     
     <!-- Main Content -->
     <main class="flex-1 flex flex-col">

@@ -8,6 +8,26 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/js/index-page.js"></script>
+    
+    <!-- Script para dropdown de idioma -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageMenu = document.getElementById('languageMenu');
+        
+        if (languageDropdown && languageMenu) {
+          languageDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+            languageMenu.classList.toggle('hidden');
+          });
+          
+          // Cerrar al hacer clic fuera
+          document.addEventListener('click', function() {
+            languageMenu.classList.add('hidden');
+          });
+        }
+      });
+    </script>
   </th:block>
 </body>
 </html>

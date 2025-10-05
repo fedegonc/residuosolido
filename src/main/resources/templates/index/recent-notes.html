@@ -22,7 +22,7 @@
           <div class="mt-3">
             <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título de la nota</h4>
             <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto de la nota...</p>
-            <a th:href="${note.url}" class="text-green-600 hover:text-green-800 font-medium text-xs flex items-center">
+            <a th:href="${note.url}" class="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center">
               <i class="fa-solid fa-arrow-up-right-from-square text-[0.65rem] mr-1" aria-hidden="true"></i>
               <span th:text="#{button.view}">Ver</span>
             </a>
@@ -31,14 +31,14 @@
       </article>
 
       <!-- Tarjeta "Ver más" -->
-      <article class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border-2 border-dashed border-green-200 hover:border-green-300 transition-colors cursor-pointer">
+      <article class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border-2 border-dashed border-blue-200 hover:border-blue-300 transition-colors cursor-pointer">
         <div class="flex flex-col items-center justify-center h-full text-center">
-          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-            <i class="fa-solid fa-plus text-green-600 text-xl" aria-hidden="true"></i>
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+            <i class="fa-solid fa-plus text-blue-600 text-xl" aria-hidden="true"></i>
           </div>
-          <h4 class="font-semibold text-green-800 text-sm mb-1" th:text="#{button.more}">Ver mais</h4>
-          <p class="text-xs text-green-600 mb-3" th:text="#{notes.published_recently}">Publicado recentemente</p>
-          <a href="/posts" class="text-green-700 hover:text-green-800 font-medium text-xs">
+          <h4 class="font-semibold text-blue-800 text-sm mb-1" th:text="#{button.more}">Ver mais</h4>
+          <p class="text-xs text-blue-600 mb-3" th:text="#{notes.published_recently}">Publicado recentemente</p>
+          <a href="/posts" class="text-blue-700 hover:text-blue-800 font-medium text-xs">
             <span th:text="#{index.notes.view_articles}">Ir para artigos →</span>
           </a>
         </div>

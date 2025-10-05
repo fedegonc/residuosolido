@@ -144,8 +144,16 @@ public class PostService {
         createPost(title, content, finalImageUrl, categoryId, sourceUrl, sourceName);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id);
+        Optional<Post> postOpt = postRepository.findById(id);
+        // Forzar inicialización de la relación lazy Category
+        postOpt.ifPresent(post -> {
+            if (post.getCategory() != null) {
+                post.getCategory().getName(); // Fuerza la carga de Category
+            }
+        });
+        return postOpt;
     }
 
     public void updatePost(Long id, String title, String content, String imageUrl, Long categoryId,

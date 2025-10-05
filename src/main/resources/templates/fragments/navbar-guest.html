@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <nav th:fragment="navbar" class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo + Brand -->
+        <div class="flex items-center gap-3">
+          <a href="/" class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-lg font-bold text-gray-900">EcoSolicitud</span>
+          </a>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-2">
+          <a href="/" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">
+            Inicio
+          </a>
+          <a href="/posts" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">
+            Posts
+          </a>
+          <a href="/auth/login" class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+            Entrar
+          </a>
+          <a href="/auth/register" class="px-4 py-2 text-sm font-medium border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition">
+            Registrarse
+          </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" type="button" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+          <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
+      <div class="px-4 py-3 space-y-1">
+        <a href="/" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+          Inicio
+        </a>
+        <a href="/posts" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+          Posts
+        </a>
+        <div class="pt-2 border-t border-gray-200 mt-2">
+          <a href="/auth/login" class="block px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-md text-center mb-2">
+            Entrar
+          </a>
+          <a href="/auth/register" class="block px-3 py-2 text-sm font-medium border border-blue-600 text-blue-600 rounded-md text-center">
+            Registrarse
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const btn = document.getElementById('mobileMenuBtn');
+      const menu = document.getElementById('mobileMenu');
+      const menuIcon = document.getElementById('menuIcon');
+      const closeIcon = document.getElementById('closeIcon');
+      
+      btn?.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+        menuIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+      });
+    </script>
+  </nav>
+</body>
+</html>

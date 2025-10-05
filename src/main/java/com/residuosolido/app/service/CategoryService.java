@@ -174,7 +174,6 @@ public class CategoryService {
     public List<Category> findAllActive() {
         try {
             List<Category> activeCategories = categoryRepository.findByActiveTrueOrderByDisplayOrderAsc();
-            System.out.println("Categorías activas cargadas. Total: " + activeCategories.size());
             return activeCategories;
         } catch (Exception e) {
             System.err.println("Error al obtener categorías activas: " + e.getMessage());

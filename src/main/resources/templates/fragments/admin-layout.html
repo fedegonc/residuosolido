@@ -32,28 +32,8 @@
 </head>
 <body class="min-h-screen flex flex-col">
     
-    <!-- Admin Top Bar -->
-    <nav class="rs-card shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(true, '', 'text-lg font-semibold', 'text-sm')}"></th:block>
-                    </div>
-                </div>
-                
-                <!-- User Info -->
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm font-medium" th:text="${#authentication.name}">Usuario</span>
-                    <form th:action="@{/logout}" method="POST" class="inline">
-                        <button type="submit" class="text-sm rs-link focus-ring" aria-label="Cerrar sesión">
-                            Cerrar sesión
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Admin Navbar -->
+    <th:block th:replace="~{fragments/navbar-admin :: navbar}"></th:block>
     
     <!-- Main Content -->
     <main class="flex-1 flex flex-col">
