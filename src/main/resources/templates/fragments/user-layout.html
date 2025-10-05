@@ -1,12 +1,9 @@
-<th:block xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
-<th:block th:fragment="layout(content)">
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - Sistema de Residuos Sólidos</title>
+    <title layout:title-pattern="$CONTENT_TITLE - EcoSolicitud">EcoSolicitud</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,7 +16,7 @@
     
     <!-- Main Content -->
     <main class="flex-1 flex flex-col">
-        <th:block th:replace="${content}"/>
+        <th:block layout:fragment="content"></th:block>
     </main>
     
     <!-- Footer para usuarios autenticados -->
@@ -33,6 +30,3 @@
     </script>
 </body>
 </html>
-</th:block>
-
-</th:block>

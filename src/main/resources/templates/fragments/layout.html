@@ -16,7 +16,8 @@
 <th:block th:fragment="layout(content)">
     <div class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Barra de navegación -->
-    <nav th:fragment="navbar" class="bg-white shadow-lg border-b border-green-100">
+    <th:block th:replace="~{fragments/navbar-guest :: navbar}"></th:block>
+    <nav th:fragment="navbar-old" class="bg-white shadow-lg border-b border-green-100 hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
