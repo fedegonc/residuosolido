@@ -11,9 +11,7 @@
 <main>
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:with="bcItems=${#lists.list({'label':'Dashboard','url':@{/admin/dashboard}},{'label':'Organizaciones','url':@{/admin/organizations}})}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Gestión de Organizaciones')}">
-        </th:block>
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
 
     <!-- Messages -->

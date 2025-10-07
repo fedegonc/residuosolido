@@ -19,13 +19,8 @@ public class PerformanceInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        Long startTime = (Long) request.getAttribute(START_TIME);
-        if (startTime != null) {
-            long duration = System.currentTimeMillis() - startTime;
-            String uri = request.getRequestURI();
-            String method = request.getMethod();
-            int status = response.getStatus();
-            // logs deshabilitados
-        }
+        // Performance logging disabled
+        // Long startTime = (Long) request.getAttribute(START_TIME);
+        // Can be re-enabled if needed for performance monitoring
     }
 }

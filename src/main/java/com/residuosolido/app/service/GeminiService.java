@@ -35,9 +35,7 @@ public class GeminiService {
     public String chat(String userMessage, String sessionId) {
         
         if (apiKey == null || apiKey.isEmpty()) {
-            String error = "Error: API Key de Gemini no configurada. Verifica tu archivo .env";
-            System.err.println(error);
-            return error;
+            return "Error: API Key de Gemini no configurada. Verifica tu archivo .env";
         }
 
         try {
@@ -97,12 +95,9 @@ public class GeminiService {
                 }
             }
 
-            String error = "No se pudo obtener respuesta de Gemini - Body vacío o sin candidates";
-            System.err.println(error);
-            return error;
+            return "No se pudo obtener respuesta de Gemini - Body vacío o sin candidates";
 
         } catch (Exception e) {
-            System.err.println("❌ Error al comunicarse con Gemini: " + e.getMessage());
             return "Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.";
         }
     }

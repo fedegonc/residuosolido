@@ -50,8 +50,7 @@ public class BreadcrumbInterceptor implements HandlerInterceptor {
             model.addAttribute("breadcrumbTitle", tituloFinal);
             
         } catch (Exception e) {
-            // En caso de error, no fallar la request, solo log
-            System.err.println("Error generando breadcrumbs para " + requestURI + ": " + e.getMessage());
+            // En caso de error, no fallar la request
         }
     }
     

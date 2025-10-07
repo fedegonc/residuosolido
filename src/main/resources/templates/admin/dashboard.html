@@ -8,16 +8,16 @@
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
-  <!-- Header + Breadcrumbs -->
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+  </div>
+
+  <!-- Header -->
   <div class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
       <h1 class="text-2xl font-bold text-gray-900">Panel de Administración</h1>
       <p class="mt-1 text-sm text-gray-500">Acceso rápido a las funciones administrativas</p>
-      <div class="mt-3">
-        <th:block th:with="bcItems=${#lists.list()}"
-                  th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${bcItems}, 'Panel de Administración')}">
-        </th:block>
-      </div>
     </div>
   </div>
 

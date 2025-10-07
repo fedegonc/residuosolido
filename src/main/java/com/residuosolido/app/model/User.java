@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.residuosolido.app.model.Feedback;
-import com.residuosolido.app.model.Request;
-
 @Getter
 @Setter
 @NoArgsConstructor

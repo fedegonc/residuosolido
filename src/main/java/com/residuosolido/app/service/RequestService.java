@@ -26,17 +26,6 @@ public class RequestService {
     @Autowired
     private UserRepository userRepository;
 
-    public Request createRequest(User user, String description, String materials) {
-        Request request = new Request();
-        request.setUser(user);
-        request.setDescription(description);
-        request.setMaterials(materials);
-        request.setStatus(RequestStatus.PENDING);
-        request.setCreatedAt(LocalDateTime.now());
-        
-        return requestRepository.save(request);
-    }
-
     public Request createRequest(User user, String description, String materials, String address) {
         Request request = new Request();
         request.setUser(user);

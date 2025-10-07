@@ -4,7 +4,6 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.view.BreadcrumbItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 
 import java.util.ArrayList;

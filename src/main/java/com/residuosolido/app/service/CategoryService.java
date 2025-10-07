@@ -26,8 +26,6 @@ public class CategoryService {
     public void initializeCategories() {
         try {
             if (categoryRepository.count() == 0) {
-                System.out.println("Inicializando categorías por defecto...");
-                
                 // Categorías principales con campos extendidos
                 Category reciclable = new Category(null, "Reciclable");
                 reciclable.setDescription("Materiales que pueden ser reciclados");
@@ -35,7 +33,6 @@ public class CategoryService {
                 reciclable.setActive(true);
                 reciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
                 categoryRepository.save(reciclable);
-                System.out.println("Categoría creada: " + reciclable.getName());
                 
                 Category noReciclable = new Category(null, "No Reciclable");
                 noReciclable.setDescription("Residuos que requieren disposición especial");
@@ -43,7 +40,6 @@ public class CategoryService {
                 noReciclable.setActive(true);
                 noReciclable.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
                 categoryRepository.save(noReciclable);
-                System.out.println("Categoría creada: " + noReciclable.getName());
                 
                 Category informaciones = new Category(null, "Informaciones");
                 informaciones.setDescription("Guías y recursos educativos");
@@ -51,7 +47,6 @@ public class CategoryService {
                 informaciones.setActive(true);
                 informaciones.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
                 categoryRepository.save(informaciones);
-                System.out.println("Categoría creada: " + informaciones.getName());
                 
                 // Categorías adicionales
                 createSimpleCategory("Compostaje", 4);
@@ -59,15 +54,10 @@ public class CategoryService {
                 createSimpleCategory("Educación Ambiental", 6);
                 createSimpleCategory("Normativas", 7);
                 
-                System.out.println("Inicialización de categorías completada. Total: " + categoryRepository.count());
-                
                 // Invalidar cache
                 cachedCategories = null;
-            } else {
-                System.out.println("Las categorías ya están inicializadas. Total: " + categoryRepository.count());
             }
         } catch (Exception e) {
-            System.err.println("Error al inicializar categorías: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -79,9 +69,8 @@ public class CategoryService {
             category.setActive(true);
             category.setImageUrl("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg");
             categoryRepository.save(category);
-            System.out.println("Categoría adicional creada: " + name);
         } catch (Exception e) {
-            System.err.println("Error al crear categoría '" + name + "': " + e.getMessage());
+            // Error creating category
         }
     }
 
@@ -89,13 +78,11 @@ public class CategoryService {
         try {
             if (cachedCategories == null) {
                 cachedCategories = categoryRepository.findAll();
-                System.out.println("Cargando categorías desde la base de datos. Total: " + cachedCategories.size());
             }
             return cachedCategories;
         } catch (Exception e) {
-            System.err.println("Error al obtener categorías: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>(); // Devolver lista vacía en caso de error
+            return new ArrayList<>();
         }
     }
     
@@ -176,9 +163,8 @@ public class CategoryService {
             List<Category> activeCategories = categoryRepository.findByActiveTrueOrderByDisplayOrderAsc();
             return activeCategories;
         } catch (Exception e) {
-            System.err.println("Error al obtener categorías activas: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>(); // Devolver lista vacía en caso de error
+            return new ArrayList<>();
         }
     }
 

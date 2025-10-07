@@ -187,7 +187,6 @@ public class PostService {
                 finalImageUrl = cloudinaryService.uploadFile(imageFile);
             } catch (Exception e) {
                 // Si falla la subida, mantener la URL original
-                System.err.println("Error subiendo imagen: " + e.getMessage());
             }
         }
         

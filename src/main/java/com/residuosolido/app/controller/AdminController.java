@@ -75,12 +75,6 @@ public class AdminController {
             model.addAttribute("requestsByStatus", requestsByStatus);
             model.addAttribute("materialsByType", materialsByType);
 
-            // Debug logging
-            System.out.println("Stats: " + stats);
-            System.out.println("Users by month: " + usersByMonth);
-            System.out.println("Requests by status: " + requestsByStatus);
-            System.out.println("Materials by type: " + materialsByType);
-
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Error al cargar estadísticas: " + e.getMessage());

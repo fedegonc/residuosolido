@@ -269,8 +269,7 @@ public class MaterialController {
                 return materialService.getAcceptedMaterialsByOrganization(organization.get());
             }
         } catch (Exception e) {
-            // Log error pero retornar lista vacía
-            System.err.println("Error obteniendo materiales: " + e.getMessage());
+            // Error obteniendo materiales, retornar lista vacía
         }
         return List.of();
     }

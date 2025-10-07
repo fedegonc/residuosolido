@@ -69,7 +69,6 @@ public class MaterialService {
         // TODO: Implementar lógica real cuando se cree la tabla de relación
         // 1. Limpiar materiales actuales de la organización
         // 2. Agregar nuevos materiales seleccionados
-        System.out.println("TODO: Actualizar materiales aceptados para organización " + organization.getUsername());
     }
 
     /**
@@ -81,7 +80,6 @@ public class MaterialService {
         // 1. Verificar si la organización ya acepta este material
         // 2. Si lo acepta, removerlo; si no lo acepta, agregarlo
         // 3. Retornar true si se agregó, false si se removió
-        System.out.println("TODO: Toggle material " + materialId + " para organización " + organization.getUsername());
         return true; // Placeholder
     }
 }
