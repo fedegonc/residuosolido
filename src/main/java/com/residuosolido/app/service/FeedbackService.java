@@ -5,6 +5,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +20,24 @@ public class FeedbackService {
         this.feedbackRepository = feedbackRepository;
     }
     
+    @Transactional(readOnly = true)
     public List<Feedback> findAll() {
-        return feedbackRepository.findAllByOrderByCreatedAtDesc();
+        List<Feedback> feedbacks = feedbackRepository.findAllByOrderByCreatedAtDesc();
+        // Forzar inicialización de propiedades lazy del User
+        feedbacks.forEach(feedback -> {
+            if (feedback.getUser() != null) {
+                feedback.getUser().getUsername();
+                feedback.getUser().getFirstName();
+                feedback.getUser().getLastName();
+                feedback.getUser().getEmail();
+            }
+        });
+        return feedbacks;
     }
 
+    @Transactional(readOnly = true)
     public List<Feedback> findAllOrderedByCreatedAtDesc() {
-        return feedbackRepository.findAllByOrderByCreatedAtDesc();
+        return findAll();
     }
     
     public Optional<Feedback> findById(Long id) {
@@ -39,8 +52,19 @@ public class FeedbackService {
         feedbackRepository.deleteById(id);
     }
     
+    @Transactional(readOnly = true)
     public List<Feedback> findByUser(User user) {
-        return feedbackRepository.findByUser(user);
+        List<Feedback> feedbacks = feedbackRepository.findByUser(user);
+        // Forzar inicialización de propiedades lazy del User
+        feedbacks.forEach(feedback -> {
+            if (feedback.getUser() != null) {
+                feedback.getUser().getUsername();
+                feedback.getUser().getFirstName();
+                feedback.getUser().getLastName();
+                feedback.getUser().getEmail();
+            }
+        });
+        return feedbacks;
     }
     
     public long countByUserId(Long userId) {

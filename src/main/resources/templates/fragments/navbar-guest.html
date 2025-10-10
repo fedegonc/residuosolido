@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
 </head>
@@ -19,8 +19,8 @@
           </a>
         </div>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center gap-2">
+        <!-- Desktop Menu - Usuario NO autenticado -->
+        <div sec:authorize="!isAuthenticated()" class="hidden md:flex items-center gap-2">
           <a href="/" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">
             Inicio
           </a>
@@ -35,6 +35,25 @@
           </a>
         </div>
 
+        <!-- Desktop Menu - Usuario autenticado -->
+        <div sec:authorize="isAuthenticated()" class="hidden md:flex items-center gap-3">
+          <a href="/" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">
+            Inicio
+          </a>
+          <a href="/posts" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">
+            Posts
+          </a>
+          <a href="/feedback/my" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition">
+            Mis Feedbacks
+          </a>
+          <span class="text-sm text-gray-600" sec:authentication="name">Usuario</span>
+          <form th:action="@{/logout}" method="POST" class="inline">
+            <button type="submit" class="px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+              Cerrar Sesión
+            </button>
+          </form>
+        </div>
+
         <!-- Mobile Menu Button -->
         <button id="mobileMenuBtn" type="button" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
           <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,8 +66,8 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
+    <!-- Mobile Menu - Usuario NO autenticado -->
+    <div sec:authorize="!isAuthenticated()" id="mobileMenu" class="hidden md:hidden border-t border-gray-200 bg-white">
       <div class="px-4 py-3 space-y-1">
         <a href="/" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
           Inicio
@@ -67,14 +86,49 @@
       </div>
     </div>
 
+    <!-- Mobile Menu - Usuario autenticado -->
+    <div sec:authorize="isAuthenticated()" id="mobileMenuAuth" class="hidden md:hidden border-t border-gray-200 bg-white">
+      <div class="px-4 py-3 space-y-1">
+        <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-md mb-2">
+          <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            <span sec:authentication="name" th:text="${#authentication.name.substring(0,1).toUpperCase()}">U</span>
+          </div>
+          <span class="text-sm font-medium text-gray-900" sec:authentication="name">Usuario</span>
+        </div>
+        <a href="/" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+          Inicio
+        </a>
+        <a href="/posts" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+          Posts
+        </a>
+        <a href="/feedback/my" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-md">
+          Mis Feedbacks
+        </a>
+        <div class="pt-2 border-t border-gray-200 mt-2">
+          <form th:action="@{/logout}" method="POST">
+            <button type="submit" class="w-full px-3 py-2 text-sm font-medium bg-red-600 text-white rounded-md text-center">
+              Cerrar Sesión
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <script>
       const btn = document.getElementById('mobileMenuBtn');
       const menu = document.getElementById('mobileMenu');
+      const menuAuth = document.getElementById('mobileMenuAuth');
       const menuIcon = document.getElementById('menuIcon');
       const closeIcon = document.getElementById('closeIcon');
       
       btn?.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
+        // Toggle el menú que esté presente (autenticado o no autenticado)
+        if (menu) {
+          menu.classList.toggle('hidden');
+        }
+        if (menuAuth) {
+          menuAuth.classList.toggle('hidden');
+        }
         menuIcon.classList.toggle('hidden');
         closeIcon.classList.toggle('hidden');
       });

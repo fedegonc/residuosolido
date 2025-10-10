@@ -12,7 +12,12 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     
     List<Feedback> findAllByOrderByCreatedAtDesc();
     
-    List<Feedback> findByUser(User user);
+    List<Feedback> findByUserOrderByCreatedAtDesc(User user);
+    
+    // Método legacy para compatibilidad
+    default List<Feedback> findByUser(User user) {
+        return findByUserOrderByCreatedAtDesc(user);
+    }
 
     long countByUserId(Long userId);
 }

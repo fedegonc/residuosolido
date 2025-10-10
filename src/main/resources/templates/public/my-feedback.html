@@ -60,16 +60,8 @@
       <div th:if="${feedbacks != null and !feedbacks.empty}" class="space-y-4">
         <div th:each="feedback : ${feedbacks}" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
           <div class="flex justify-between items-start mb-2">
-            <h3 class="text-lg font-semibold text-gray-900" th:text="${feedback.subject}">Asunto del feedback</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Feedback #<span th:text="${feedback.id}">1</span></h3>
             <div class="flex items-center space-x-2">
-              <span th:switch="${feedback.category}" class="px-2 py-1 text-xs font-medium rounded-full">
-                <span th:case="'SUGGESTION'" class="bg-blue-100 text-blue-800">Sugerencia</span>
-                <span th:case="'BUG_REPORT'" class="bg-red-100 text-red-800">Error</span>
-                <span th:case="'FEATURE_REQUEST'" class="bg-purple-100 text-purple-800">Funcionalidad</span>
-                <span th:case="'GENERAL'" class="bg-gray-100 text-gray-800">General</span>
-                <span th:case="'COMPLAINT'" class="bg-yellow-100 text-yellow-800">Queja</span>
-                <span th:case="*" class="bg-gray-100 text-gray-800">Otro</span>
-              </span>
               <span th:if="${feedback.isRead}" class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                 Leído
               </span>
@@ -79,7 +71,7 @@
             </div>
           </div>
           
-          <p class="text-gray-600 mb-3" th:text="${feedback.message}">Mensaje del feedback</p>
+          <p class="text-gray-600 mb-3" th:text="${feedback.comment}">Mensaje del feedback</p>
           
           <div class="flex justify-between items-center text-sm text-gray-500">
             <span th:text="${#temporals.format(feedback.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>

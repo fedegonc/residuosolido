@@ -64,8 +64,8 @@ public class SecurityConfig {
                 .requestMatchers("/requests/**").hasRole("USER")
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")
-                // Feedback requiere autenticación
-                .requestMatchers("/feedback/**").authenticated()
+                // Feedback - acceso público para ver formulario, autenticación requerida para enviar (controlada en @PreAuthorize)
+                .requestMatchers("/feedback/**").permitAll()
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Feedback Controller - Maneja feedback por rol
@@ -20,6 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 public class FeedbackController {
+
+    private static final Logger log = LoggerFactory.getLogger(FeedbackController.class);
 
     @Autowired
     private FeedbackService feedbackService;
@@ -150,10 +154,10 @@ public class FeedbackController {
     }
 
     // ========== USER ENDPOINTS ==========
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/feedback")
-    public String userFeedbackForm(Model model) {
+    public String userFeedbackForm(Model model, Authentication authentication) {
         model.addAttribute("feedback", new Feedback());
+        model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
         return "public/feedback-form";
     }
 
@@ -162,17 +166,46 @@ public class FeedbackController {
     public String userSubmitFeedback(@ModelAttribute Feedback feedback,
                                     Authentication authentication,
                                     RedirectAttributes redirectAttributes) {
+        log.info("[FEEDBACK][POST] Iniciando envío de feedback");
+        log.info("[FEEDBACK][POST] Authentication: {}", authentication != null ? authentication.getName() : "NULL");
+        log.info("[FEEDBACK][POST] Feedback comment: {}", feedback.getComment());
+        
         try {
-            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
+            String username = authentication.getName();
+            log.info("[FEEDBACK][POST] Buscando usuario: {}", username);
+            
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            log.info("[FEEDBACK][POST] Usuario encontrado: id={}, username={}", 
+                    currentUser != null ? currentUser.getId() : "NULL",
+                    currentUser != null ? currentUser.getUsername() : "NULL");
+            
+            // Asignar usuario y completar campos requeridos desde el usuario autenticado
             feedback.setUser(currentUser);
+            feedback.setName(currentUser.getFullName() != null ? currentUser.getFullName() : currentUser.getUsername());
+            feedback.setEmail(currentUser.getEmail());
+            
+            log.info("[FEEDBACK][POST] Datos asignados - name: {}, email: {}", feedback.getName(), feedback.getEmail());
+            
             feedbackService.save(feedback);
+            log.info("[FEEDBACK][POST] Feedback guardado exitosamente con ID: {}", feedback.getId());
+            
             redirectAttributes.addFlashAttribute("successMessage", 
                 "¡Gracias por tu feedback! Hemos recibido tu mensaje y te responderemos pronto.");
+            
+            return "redirect:/feedback";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al enviar feedback. Inténtalo de nuevo.");
+            log.error("[FEEDBACK][POST] Error al enviar feedback", e);
+            log.error("[FEEDBACK][POST] Tipo de error: {}", e.getClass().getName());
+            log.error("[FEEDBACK][POST] Mensaje: {}", e.getMessage());
+            if (e.getCause() != null) {
+                log.error("[FEEDBACK][POST] Causa: {}", e.getCause().getMessage());
+            }
+            
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error al enviar feedback: " + e.getMessage());
+            
+            return "redirect:/feedback";
         }
-        
-        return "redirect:/feedback";
     }
 
     @PreAuthorize("isAuthenticated()")
