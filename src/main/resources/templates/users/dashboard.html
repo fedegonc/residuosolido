@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Dashboard - EcoSolicitud</title>
+    <title>Inicio - EcoSolicitud</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,187 +17,163 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
         
-        <!-- Hero Section con Bienvenida y Acción Principal -->
-        <div class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-2xl shadow-lg overflow-hidden">
-            <div class="px-6 py-8 sm:px-8 sm:py-10">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    <div class="flex-1">
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
-                            ¡Hola, <span th:text="${#authentication.principal.username}">Usuario</span>! 🌱
-                        </h1>
-                        <p class="text-emerald-50 text-base sm:text-lg mb-4">
-                            Cada acción cuenta. Juntos construimos un futuro más sostenible.
-                        </p>
-                        <div class="flex flex-wrap gap-3">
-                            <a href="/users/requests/new" class="inline-flex items-center px-5 py-2.5 bg-white text-emerald-700 font-semibold rounded-lg hover:bg-emerald-50 transition-colors shadow-md">
-                                <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
-                                Nueva Solicitud de Recolección
-                            </a>
-                            <a href="/posts" class="inline-flex items-center px-5 py-2.5 bg-emerald-700 text-white font-medium rounded-lg hover:bg-emerald-800 transition-colors">
-                                <i data-lucide="book-open" class="w-5 h-5 mr-2"></i>
-                                Aprende a Reciclar
-                            </a>
+        <!-- Hero Section -->
+        <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Barra decorativa superior -->
+            <div class="h-1.5 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600"></div>
+            
+            <div class="p-6">
+                <!-- Saludo -->
+                <div class="mb-6">
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">
+                        Hola, <span th:text="${#authentication.principal.username}">Usuario</span>
+                    </h1>
+                    <p class="text-sm text-gray-500">
+                        ¿Qué necesitas hacer hoy?
+                    </p>
+                </div>
+                
+                <!-- Accesos Rápidos -->
+                <div class="grid grid-cols-3 gap-3">
+                    <a href="/usuarios/solicitudes/nueva" class="group relative bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-lg p-4 border border-emerald-200/50 hover:border-emerald-300 hover:shadow-md transition-all duration-200">
+                        <div class="flex flex-col items-center text-center gap-2">
+                            <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-shadow">
+                                <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Nueva Solicitud</span>
                         </div>
-                    </div>
-                    <div class="hidden md:block">
-                        <div class="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                            <i data-lucide="recycle" class="w-16 h-16 text-white"></i>
+                    </a>
+                    
+                    <a href="/usuarios/solicitudes" class="group relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg p-4 border border-blue-200/50 hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                        <div class="flex flex-col items-center text-center gap-2">
+                            <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-shadow">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Mis Solicitudes</span>
                         </div>
-                    </div>
+                    </a>
+                    
+                    <a href="/posts" class="group relative bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-lg p-4 border border-purple-200/50 hover:border-purple-300 hover:shadow-md transition-all duration-200">
+                        <div class="flex flex-col items-center text-center gap-2">
+                            <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-shadow">
+                                <i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Notas Educativas</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Tu Impacto Ambiental -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">Tu Impacto Ambiental 🌍</h2>
-                    <p class="text-sm text-gray-600">Estadísticas de tus contribuciones al reciclaje</p>
-                </div>
+        <!-- Estadísticas -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100">
+                <h2 class="text-base font-semibold text-gray-900">Resumen de Actividad</h2>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
-                        <span class="text-xs font-medium text-emerald-700">Solicitudes</span>
+            <div class="p-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
+                        <div class="relative bg-white border border-gray-200 rounded-lg p-4 group-hover:border-emerald-300 transition-colors">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total</span>
+                                <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="package" class="w-4 h-4 text-emerald-600"></i>
+                                </div>
+                            </div>
+                            <p class="text-3xl font-bold text-gray-900" th:text="${totalRequests ?: 0}">0</p>
+                            <p class="text-xs text-gray-500 mt-1">Solicitudes</p>
+                        </div>
                     </div>
-                    <p class="text-2xl font-bold text-emerald-900" th:text="${totalRequests ?: 0}">0</p>
-                    <p class="text-xs text-emerald-600 mt-1">Total realizadas</p>
-                </div>
-                
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-blue-600"></i>
-                        <span class="text-xs font-medium text-blue-700">Completadas</span>
+                    
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
+                        <div class="relative bg-white border border-gray-200 rounded-lg p-4 group-hover:border-blue-300 transition-colors">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Finalizadas</span>
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                                </div>
+                            </div>
+                            <p class="text-3xl font-bold text-gray-900" th:text="${completedRequests ?: 0}">0</p>
+                            <p class="text-xs text-gray-500 mt-1">Completadas</p>
+                        </div>
                     </div>
-                    <p class="text-2xl font-bold text-blue-900" th:text="${completedRequests ?: 0}">0</p>
-                    <p class="text-xs text-blue-600 mt-1">Recolecciones exitosas</p>
-                </div>
-                
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i data-lucide="recycle" class="w-5 h-5 text-purple-600"></i>
-                        <span class="text-xs font-medium text-purple-700">Materiales</span>
-                    </div>
-                    <p class="text-2xl font-bold text-purple-900" th:text="${materialTypes ?: 0}">0</p>
-                    <p class="text-xs text-purple-600 mt-1">Tipos reciclados</p>
-                </div>
-                
-                <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-4 border border-amber-200">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-amber-600"></i>
-                        <span class="text-xs font-medium text-amber-700">Este Mes</span>
-                    </div>
-                    <p class="text-2xl font-bold text-amber-900" th:text="${monthRequests ?: 0}">0</p>
-                    <p class="text-xs text-amber-600 mt-1">Solicitudes activas</p>
                 </div>
             </div>
         </div>
 
         <!-- Mis Solicitudes -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <i data-lucide="clipboard-list" class="w-5 h-5 text-gray-600"></i>
-                    Mis Solicitudes Recientes
-                </h2>
-                <a href="/users/requests" class="text-sm font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-gray-900">Solicitudes Recientes</h2>
+                <a href="/usuarios/solicitudes" class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700 gap-1">
                     Ver todas
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
             </div>
             
-            <div th:if="${recentRequests != null and !recentRequests.empty}" class="space-y-3">
-                <div th:each="request : ${recentRequests}" 
-                     class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all">
-                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                        <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-medium text-gray-900 mb-1" th:text="${request.description}">Descripción</p>
-                        <p class="text-sm text-gray-600 mb-2" th:text="${request.collectionAddress}">Dirección</p>
-                        <div class="flex items-center gap-2 text-xs text-gray-500">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                            <span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy')}">Fecha</span>
+            <div th:if="${recentRequests != null and !recentRequests.empty}">
+                <div th:each="request, iterStat : ${recentRequests}" 
+                     class="p-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors"
+                     th:classappend="${iterStat.last ? 'border-b-0' : ''}">
+                    <div class="flex items-start gap-3">
+                        <!-- Icono -->
+                        <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                            <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
+                        </div>
+                        
+                        <!-- Contenido -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <h3 class="font-semibold text-sm text-gray-900" th:text="${request.description}">Descripción</h3>
+                                <span class="px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap"
+                                      th:text="${request.status.displayName}"
+                                      th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                                                     request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' : 
+                                                     request.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' : 
+                                                     'bg-red-100 text-red-800'}">
+                                    Estado
+                                </span>
+                            </div>
+                            
+                            <!-- Detalles -->
+                            <div class="space-y-1">
+                                <div class="flex items-center text-xs text-gray-600">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1.5 flex-shrink-0"></i>
+                                    <span class="truncate" th:text="${request.collectionAddress}">Dirección</span>
+                                </div>
+                                <div class="flex items-center text-xs text-gray-600">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 flex-shrink-0"></i>
+                                    <span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                </div>
+                                <div th:if="${request.materials != null and !request.materials.empty}" class="flex items-start text-xs text-gray-600">
+                                    <i data-lucide="recycle" class="w-3.5 h-3.5 mr-1.5 flex-shrink-0 mt-0.5"></i>
+                                    <span class="line-clamp-1">
+                                        <span th:each="material, mStat : ${request.materials}">
+                                            <span th:text="${material.name}">Material</span><span th:if="${!mStat.last}">, </span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <span class="flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full"
-                          th:text="${request.status}"
-                          th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
-                                         request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' : 
-                                         request.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' : 
-                                         'bg-red-100 text-red-800'}">
-                        Estado
-                    </span>
                 </div>
             </div>
             
             <div th:if="${recentRequests == null or recentRequests.empty}" 
-                 class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                 class="text-center py-8 px-4">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <i data-lucide="inbox" class="w-8 h-8 text-gray-400"></i>
                 </div>
-                <h3 class="text-base font-medium text-gray-900 mb-2">¡Comienza tu viaje de reciclaje!</h3>
-                <p class="text-sm text-gray-600 mb-4 max-w-md mx-auto">
-                    Aún no has creado ninguna solicitud. Haz tu primera contribución al medio ambiente.
-                </p>
-                <a href="/users/requests/new" 
-                   class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+                <p class="text-sm text-gray-600 mb-3">Aún no tienes solicitudes</p>
+                <a href="/usuarios/solicitudes/nueva" 
+                   class="inline-flex items-center px-3 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700">
                     <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
-                    Crear Primera Solicitud
-                </a>
-            </div>
-        </div>
-
-        <!-- Recursos Educativos -->
-        <div th:if="${recentPosts != null and !recentPosts.empty}" 
-             class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <i data-lucide="lightbulb" class="w-5 h-5 text-gray-600"></i>
-                    Aprende Sobre Reciclaje
-                </h2>
-                <a href="/posts" class="text-sm font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-                    Ver más
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </a>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <a th:each="post : ${recentPosts}" 
-                   th:href="@{/posts/{id}(id=${post.id})}"
-                   class="group p-4 rounded-lg border border-gray-200 hover:border-emerald-300 hover:shadow-md transition-all">
-                    <h4 class="font-semibold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors line-clamp-2" 
-                        th:text="${post.title}">Título</h4>
-                    <p class="text-sm text-gray-600 mb-3 line-clamp-2" th:text="${post.content}">Contenido...</p>
-                    <span class="text-sm font-medium text-emerald-600 group-hover:text-emerald-700 flex items-center gap-1">
-                        Leer más
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Acceso Rápido al Perfil -->
-        <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-5">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <i data-lucide="user" class="w-5 h-5 text-gray-600"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">Gestiona tu perfil</p>
-                        <p class="text-xs text-gray-600">Actualiza tu información personal</p>
-                    </div>
-                </div>
-                <a href="/users/profile" 
-                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                    <i data-lucide="settings" class="w-4 h-4 mr-2"></i>
-                    Mi Perfil
+                    Crear Solicitud
                 </a>
             </div>
         </div>

@@ -19,39 +19,71 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Mis Solicitudes</h1>
-                <p class="text-sm text-gray-600 mt-1">Gestiona todas tus solicitudes de recolección</p>
+                <h1 class="text-xl font-bold text-gray-900">Mis Solicitudes</h1>
+                <p class="text-xs text-gray-600 mt-1">Gestiona todas tus solicitudes de recolección</p>
             </div>
-            <a href="/users/requests/new" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
+            <a href="/usuarios/solicitudes/nueva" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg transition-colors inline-flex items-center gap-2 text-sm">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Nueva Solicitud
             </a>
         </div>
         <!-- Requests List -->
-        <div class="bg-white rounded-lg shadow">
+        <div class="bg-white rounded-lg shadow overflow-hidden">
             <div th:if="${requests != null and !requests.empty}">
                 <div class="divide-y divide-gray-200">
-                    <div th:each="request : ${requests}" class="p-6 hover:bg-gray-50">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <h3 class="text-lg font-medium text-gray-900" th:text="${request.description}">Descripción de la solicitud</h3>
-                                <p class="text-sm text-gray-600 mt-1" th:text="${request.address}">Dirección</p>
-                                <p class="text-sm text-gray-500 mt-1" th:text="${request.materials}">Materiales</p>
-                                <p class="text-xs text-gray-400 mt-2" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha de creación</p>
+                    <div th:each="request : ${requests}" class="p-4 hover:bg-emerald-50 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <!-- Icono -->
+                            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                <i data-lucide="package" class="w-6 h-6 text-emerald-600"></i>
                             </div>
-                            <div class="ml-4 flex flex-col items-end">
-                                <span class="px-3 py-1 text-sm rounded-full" 
-                                      th:text="${request.status}" 
-                                      th:class="${request.status == 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' : 
-                                               request.status == 'EN_PROCESO' ? 'bg-blue-100 text-blue-800' : 
-                                               request.status == 'COMPLETADA' ? 'bg-green-100 text-green-800' : 
-                                               'bg-red-100 text-red-800'}">
-                                    PENDIENTE
-                                </span>
-                                <div class="mt-2 flex space-x-2">
-                                    <button class="text-emerald-600 hover:text-emerald-700 text-sm">Ver detalles</button>
+                            
+                            <!-- Contenido -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-base font-semibold text-gray-900" th:text="${request.description}">Descripción de la solicitud</h3>
+                                    <span class="px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap" 
+                                          th:text="${request.status.displayName}" 
+                                          th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                                                       request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' : 
+                                                       request.status.name() == 'IN_PROGRESS' ? 'bg-indigo-100 text-indigo-800' : 
+                                                       request.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' : 
+                                                       'bg-red-100 text-red-800'}">
+                                        Estado
+                                    </span>
+                                </div>
+                                
+                                <!-- Detalles con iconos -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+                                    <div class="flex items-center text-xs text-gray-600">
+                                        <i data-lucide="map-pin" class="w-4 h-4 mr-2 flex-shrink-0 text-gray-400"></i>
+                                        <span class="truncate" th:text="${request.collectionAddress}">Dirección</span>
+                                    </div>
+                                    <div class="flex items-center text-xs text-gray-600">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-2 flex-shrink-0 text-gray-400"></i>
+                                        <span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Materiales -->
+                                <div th:if="${request.materials != null and !request.materials.empty}" class="flex items-start text-xs text-gray-600 mb-3">
+                                    <i data-lucide="recycle" class="w-4 h-4 mr-2 flex-shrink-0 text-emerald-600 mt-0.5"></i>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        <span th:each="material : ${request.materials}" 
+                                              class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium"
+                                              th:text="${material.name}">Material</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Botón de acción -->
+                                <div class="flex items-center gap-2">
+                                    <a th:href="@{/users/requests/{id}(id=${request.id})}" 
+                                       class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700">
+                                        <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i>
+                                        Ver detalles
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -69,7 +101,7 @@
                 <p class="text-sm text-gray-600 mb-6 max-w-md mx-auto">
                     Aún no has creado ninguna solicitud de recolección. Comienza tu viaje de reciclaje ahora.
                 </p>
-                <a href="/users/requests/new" 
+                <a href="/usuarios/solicitudes/nueva" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     Crear Primera Solicitud

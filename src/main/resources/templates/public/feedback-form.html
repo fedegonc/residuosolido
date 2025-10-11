@@ -44,7 +44,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <div>
-                  <h4 class="text-sm font-semibold text-blue-900 mb-1">Inicia sesión para enviar feedback</h4>
+                  <h4 class="text-sm font-semibold text-blue-900 mb-1">Inicia sesión para enviar tu reporte</h4>
                   <p class="text-sm text-blue-700 mb-3">Para enviar tu opinión o reportar problemas, necesitas tener una cuenta.</p>
                   <div class="flex gap-2">
                     <a href="/auth/login" class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
@@ -70,20 +70,20 @@
 
               <button type="submit" class="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 font-medium">
                 <i class="fa-solid fa-paper-plane mr-2"></i>
-                Enviar Feedback
+                Enviar Reporte
               </button>
             </form>
           </div>
         </div>
 
-        <!-- Sidebar - Mis Feedbacks (solo para usuarios autenticados) -->
+        <!-- Sidebar - Mis Reportes (solo para usuarios autenticados) -->
         <div th:if="${isAuthenticated}" class="lg:col-span-1">
           <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Mis Feedbacks</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Mis Reportes</h3>
             <p class="text-sm text-gray-600 mb-4">Revisa el estado de tus reportes anteriores</p>
             
             <a href="/feedback/my" class="block w-full text-center px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition text-sm font-medium">
-              Ver todos mis feedbacks
+              Ver todos mis reportes
             </a>
           </div>
         </div>
@@ -91,7 +91,7 @@
         <!-- Sidebar - Información (para usuarios NO autenticados) -->
         <div th:if="${!isAuthenticated}" class="lg:col-span-1">
           <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">¿Por qué dar feedback?</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">¿Por qué reportar?</h3>
             <ul class="space-y-3 text-sm text-gray-600">
               <li class="flex items-start">
                 <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -72,9 +72,12 @@ public class BreadcrumbInterceptor implements HandlerInterceptor {
             return false;
         }
         
-        // Incluir páginas de admin y usuarios
+        // Incluir páginas de admin, usuarios, acopio, feedback y posts
         return requestURI.startsWith("/admin/") || 
-               requestURI.startsWith("/users/") ||
+               requestURI.startsWith("/usuarios/") ||
+               requestURI.startsWith("/acopio/") ||
+               requestURI.startsWith("/feedback") ||
+               requestURI.startsWith("/posts") ||
                requestURI.equals("/") ||
                requestURI.startsWith("/public/");
     }

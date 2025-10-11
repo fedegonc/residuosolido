@@ -113,8 +113,40 @@ public class RequestService {
         return null;
     }
     
+    @Transactional(readOnly = true)
     public List<Request> getPendingRequests() {
-        return requestRepository.findByStatus(RequestStatus.PENDING);
+        List<Request> requests = requestRepository.findByStatus(RequestStatus.PENDING);
+        // Forzar la inicialización de propiedades lazy
+        requests.forEach(request -> {
+            if (request.getUser() != null) {
+                request.getUser().getUsername();
+                request.getUser().getFirstName();
+                request.getUser().getLastName();
+                request.getUser().getFullName();
+            }
+            if (request.getMaterials() != null) {
+                request.getMaterials().size();
+            }
+        });
+        return requests;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Request> getRequestsByStatus(RequestStatus status) {
+        List<Request> requests = requestRepository.findByStatus(status);
+        // Forzar la inicialización de propiedades lazy
+        requests.forEach(request -> {
+            if (request.getUser() != null) {
+                request.getUser().getUsername();
+                request.getUser().getFirstName();
+                request.getUser().getLastName();
+                request.getUser().getFullName();
+            }
+            if (request.getMaterials() != null) {
+                request.getMaterials().size();
+            }
+        });
+        return requests;
     }
 
     public Request approveRequest(Long requestId) {

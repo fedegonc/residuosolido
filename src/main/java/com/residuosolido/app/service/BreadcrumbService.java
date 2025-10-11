@@ -46,12 +46,25 @@ public class BreadcrumbService {
                     break;
                     
                 case "dashboard":
-                    breadcrumbs.add(new BreadcrumbItem("Dashboard", "/admin/dashboard"));
+                case "inicio":
+                    // Determinar contexto
+                    if (cleanURI.startsWith("/admin/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Inicio", "/admin/dashboard"));
+                    } else if (cleanURI.startsWith("/usuarios/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Inicio", "/usuarios/inicio"));
+                    } else if (cleanURI.startsWith("/acopio/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Inicio", "/acopio/inicio"));
+                    }
                     break;
                     
                 case "users":
                 case "usuarios":
-                    breadcrumbs.add(new BreadcrumbItem("Usuarios", "/admin/users"));
+                    // Determinar si es admin o usuario según el contexto
+                    if (cleanURI.startsWith("/admin/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Usuarios", "/admin/users"));
+                    } else if (cleanURI.startsWith("/usuarios/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Inicio", "/usuarios/inicio"));
+                    }
                     break;
                     
                 case "organizations":
@@ -60,7 +73,12 @@ public class BreadcrumbService {
                     break;
                     
                 case "posts":
-                    breadcrumbs.add(new BreadcrumbItem("Posts", "/admin/posts"));
+                    // Determinar si es admin o público según el contexto
+                    if (cleanURI.startsWith("/admin/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Notas", "/admin/posts"));
+                    } else {
+                        // Para rutas públicas /posts, no agregar breadcrumb intermedio
+                    }
                     break;
                     
                 case "materials":
@@ -75,16 +93,62 @@ public class BreadcrumbService {
                     
                 case "requests":
                 case "solicitudes":
-                    breadcrumbs.add(new BreadcrumbItem("Solicitudes", "/admin/requests"));
+                    // Determinar si es admin o usuario según el contexto
+                    if (cleanURI.startsWith("/admin/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Solicitudes", "/admin/requests"));
+                    } else if (cleanURI.startsWith("/usuarios/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Solicitudes", "/usuarios/solicitudes"));
+                    }
                     break;
                     
                 case "feedback":
-                    breadcrumbs.add(new BreadcrumbItem("Feedback", "/admin/feedback"));
+                    // Determinar si es admin o usuario según el contexto
+                    if (cleanURI.startsWith("/admin/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Feedback", "/admin/feedback"));
+                    } else {
+                        // Para rutas públicas /feedback, no agregar breadcrumb intermedio
+                        // El título se manejará en determinarTituloPorSegmentos
+                    }
+                    break;
+                    
+                case "my":
+                    // Para /feedback/my
+                    if (i > 0 && segmentos[i-1].equalsIgnoreCase("feedback")) {
+                        breadcrumbs.add(new BreadcrumbItem("Reportar Problema", "/feedback"));
+                    }
                     break;
                     
                 case "statistics":
                 case "estadisticas":
-                    breadcrumbs.add(new BreadcrumbItem("Estadísticas", "/admin/statistics"));
+                    // Determinar contexto
+                    if (cleanURI.startsWith("/admin/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Estadísticas", "/admin/statistics"));
+                    } else if (cleanURI.startsWith("/acopio/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Estadísticas", "/acopio/estadisticas"));
+                    }
+                    break;
+                    
+                case "acopio":
+                    // Ruta base para centros de acopio
+                    breadcrumbs.add(new BreadcrumbItem("Inicio", "/acopio/inicio"));
+                    break;
+                    
+                case "perfil":
+                case "profile":
+                    // No agregamos al breadcrumb, será el título final
+                    break;
+                    
+                case "nueva":
+                case "nuevo":
+                case "new":
+                    // No agregamos al breadcrumb, será el título final
+                    break;
+                    
+                case "calendario":
+                case "calendar":
+                    if (cleanURI.startsWith("/acopio/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Calendario", "/acopio/calendario"));
+                    }
                     break;
                     
                 default:
@@ -238,9 +302,10 @@ public class BreadcrumbService {
             case "organizaciones":
                 return "Organizaciones";
             case "dashboard":
-                return "Dashboard";
+            case "inicio":
+                return "Inicio";
             case "posts":
-                return "Posts";
+                return "Notas";
             case "materials":
             case "materiales":
                 return "Materiales";
@@ -251,10 +316,28 @@ public class BreadcrumbService {
             case "solicitudes":
                 return "Solicitudes";
             case "feedback":
-                return "Feedback";
+                return "Reportar Problema";
+            case "my":
+                // Si el segmento anterior es feedback
+                if (segmentos.length > 1 && segmentos[segmentos.length - 2].equalsIgnoreCase("feedback")) {
+                    return "Mis Reportes";
+                }
+                return "Mis Datos";
             case "statistics":
             case "estadisticas":
                 return "Estadísticas";
+            case "perfil":
+            case "profile":
+                return "Perfil";
+            case "nueva":
+            case "nuevo":
+            case "new":
+                return "Nueva Solicitud";
+            case "acopio":
+                return "Centro de Acopio";
+            case "calendario":
+            case "calendar":
+                return "Calendario";
             default:
                 // Si es un ID, buscar en el segmento anterior
                 if (esNumerico(ultimoSegmento) && segmentos.length > 1) {

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/org-layout}">
+<head>
+    <title>Materiales Reciclables</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i data-lucide="recycle" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Materiales Reciclables</h1>
+                        <p class="text-green-100">Selecciona los materiales que tu organización puede reciclar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="flex items-start gap-3">
+                <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                <div class="text-sm text-blue-800">
+                    <p class="font-medium mb-1">¿Cómo funciona?</p>
+                    <p class="text-blue-700">
+                        Marca los materiales que tu organización puede reciclar. Los usuarios verán qué materiales aceptas 
+                        cuando creen solicitudes de recolección. Puedes actualizar esta lista en cualquier momento.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Materials Form -->
+        <form th:action="@{/org/materials/update}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Catálogo de Materiales</h2>
+                    <p class="text-sm text-gray-600 mt-1">
+                        Selecciona los materiales que aceptas. 
+                        <span class="font-medium" th:text="${acceptedMaterials != null ? acceptedMaterials.size() : 0}">0</span> 
+                        materiales seleccionados
+                    </p>
+                </div>
+
+                <div class="p-6">
+                    <div th:if="${allMaterials == null or allMaterials.empty}" class="text-center py-12">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="package-x" class="w-8 h-8 text-gray-400"></i>
+                        </div>
+                        <h3 class="text-base font-medium text-gray-900 mb-2">No hay materiales disponibles</h3>
+                        <p class="text-sm text-gray-600">
+                            El administrador aún no ha creado materiales en el sistema.
+                        </p>
+                    </div>
+
+                    <div th:if="${allMaterials != null and !allMaterials.empty}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div th:each="material : ${allMaterials}" 
+                             class="material-card border-2 rounded-lg p-4 transition-all cursor-pointer hover:shadow-md"
+                             th:classappend="${acceptedMaterials != null and acceptedMaterials.contains(material) ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'}">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" 
+                                       name="materialIds" 
+                                       th:value="${material.id}"
+                                       th:checked="${acceptedMaterials != null and acceptedMaterials.contains(material)}"
+                                       class="mt-1 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                                       onchange="toggleMaterialCard(this)">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i data-lucide="package" class="w-5 h-5 text-green-600"></i>
+                                        <h3 class="font-semibold text-gray-900" th:text="${material.name}">Material</h3>
+                                    </div>
+                                    <p class="text-sm text-gray-600" th:text="${material.description}">Descripción del material</p>
+                                    <div th:if="${material.category}" class="mt-2">
+                                        <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                                            <i data-lucide="tag" class="w-3 h-3 mr-1"></i>
+                                            <span th:text="${material.category.name}">Categoría</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 border-t border-gray-200 flex gap-3">
+                    <button type="submit" 
+                            class="px-6 py-2.5 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition-colors flex items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        Guardar Selección
+                    </button>
+                    <a th:href="@{/org/dashboard}" 
+                       class="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-md hover:bg-gray-300 transition-colors flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Quick Actions -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button onclick="selectAll()" 
+                    class="px-4 py-3 bg-white border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all text-left">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="check-square" class="w-5 h-5 text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">Seleccionar Todos</p>
+                        <p class="text-sm text-gray-600">Marca todos los materiales disponibles</p>
+                    </div>
+                </div>
+            </button>
+            
+            <button onclick="deselectAll()" 
+                    class="px-4 py-3 bg-white border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-all text-left">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="square" class="w-5 h-5 text-red-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">Deseleccionar Todos</p>
+                        <p class="text-sm text-gray-600">Desmarca todos los materiales</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        function toggleMaterialCard(checkbox) {
+            const card = checkbox.closest('.material-card');
+            if (checkbox.checked) {
+                card.classList.remove('border-gray-200', 'hover:border-gray-300');
+                card.classList.add('border-green-500', 'bg-green-50');
+            } else {
+                card.classList.remove('border-green-500', 'bg-green-50');
+                card.classList.add('border-gray-200', 'hover:border-gray-300');
+            }
+            updateCount();
+        }
+        
+        function selectAll() {
+            const checkboxes = document.querySelectorAll('input[name="materialIds"]');
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+                toggleMaterialCard(cb);
+            });
+        }
+        
+        function deselectAll() {
+            const checkboxes = document.querySelectorAll('input[name="materialIds"]');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                toggleMaterialCard(cb);
+            });
+        }
+        
+        function updateCount() {
+            const checked = document.querySelectorAll('input[name="materialIds"]:checked').length;
+            // Update count if needed
+        }
+    </script>
+</main>
+</body>
+</html>

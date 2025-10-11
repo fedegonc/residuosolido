@@ -2,9 +2,14 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.RequestStatus;
 import com.residuosolido.app.service.UserService;
+import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +22,12 @@ public class OrganizationAdminController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private RequestService requestService;
+    
+    @Autowired
+    private MaterialService materialService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/organizations")
@@ -155,34 +166,149 @@ public class OrganizationAdminController {
     }
     // ========== ORG DASHBOARD & PROFILE ==========
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/org/dashboard")
-    public String orgDashboard(Model model) {
-        model.addAttribute("totalOrganizations", 15);
-        model.addAttribute("activeRequests", 8);
-        model.addAttribute("managedMaterials", 6);
-        model.addAttribute("usersServed", 42);
+    @GetMapping("/acopio/inicio")
+    public String orgDashboard(Authentication authentication, Model model) {
+        try {
+            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            
+            // Obtener solicitudes pendientes
+            List<Request> pendingRequests = requestService.getPendingRequests();
+            model.addAttribute("pendingRequests", pendingRequests.size());
+            model.addAttribute("pendingRequestsList", pendingRequests.stream().limit(5).toList());
+            
+            // Obtener solicitudes en proceso
+            List<Request> inProgressRequests = requestService.getRequestsByStatus(RequestStatus.IN_PROGRESS);
+            model.addAttribute("inProgressRequests", inProgressRequests.size());
+            
+            // Obtener solicitudes completadas
+            List<Request> completedRequests = requestService.getRequestsByStatus(RequestStatus.COMPLETED);
+            model.addAttribute("completedRequests", completedRequests.size());
+            
+            // Total de kg reciclados (placeholder - se puede implementar después)
+            model.addAttribute("totalKgRecycled", 0);
+            
+            // Materiales aceptados por la organización
+            if (currentOrg.getMaterials() != null) {
+                model.addAttribute("managedMaterials", currentOrg.getMaterials().size());
+            } else {
+                model.addAttribute("managedMaterials", 0);
+            }
+        } catch (Exception e) {
+            model.addAttribute("pendingRequests", 0);
+            model.addAttribute("inProgressRequests", 0);
+            model.addAttribute("completedRequests", 0);
+            model.addAttribute("totalKgRecycled", 0);
+            model.addAttribute("managedMaterials", 0);
+        }
         return "org/dashboard";
     }
 
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/org/profile")
-    public String orgProfile(Model model) {
-        model.addAttribute("currentZone", "Barrio Centro (Rivera)");
-        model.addAttribute("currentPhone", "098 123 456");
+    @GetMapping("/acopio/perfil")
+    public String orgProfile(Authentication authentication, Model model) {
+        try {
+            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            model.addAttribute("organization", currentOrg);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al cargar perfil");
+        }
         return "org/profile";
     }
 
     @PreAuthorize("hasRole('ORGANIZATION')")
     @PostMapping("/org/profile")
-    public String updateOrgProfile(@RequestParam("zone") String zone,
-                                  @RequestParam("phone") String phone,
-                                  RedirectAttributes redirectAttributes) {
+    public String updateOrgProfile(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String addressReferences,
+            @RequestParam(required = false) String latitude,
+            @RequestParam(required = false) String longitude,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
         try {
-            // Lógica de actualización
-            redirectAttributes.addFlashAttribute("success", "Perfil actualizado correctamente");
+            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            
+            // Actualizar campos
+            if (email != null && !email.trim().isEmpty()) {
+                currentOrg.setEmail(email.trim());
+            }
+            if (firstName != null) {
+                currentOrg.setFirstName(firstName.trim());
+            }
+            if (lastName != null) {
+                currentOrg.setLastName(lastName.trim());
+            }
+            if (phone != null) {
+                currentOrg.setPhone(phone.trim());
+            }
+            if (address != null) {
+                currentOrg.setAddress(address.trim());
+            }
+            if (addressReferences != null) {
+                currentOrg.setAddressReferences(addressReferences.trim());
+            }
+            if (latitude != null && !latitude.trim().isEmpty()) {
+                try {
+                    currentOrg.setLatitude(new java.math.BigDecimal(latitude.trim()));
+                } catch (NumberFormatException e) {
+                    // Ignorar si no es un número válido
+                }
+            }
+            if (longitude != null && !longitude.trim().isEmpty()) {
+                try {
+                    currentOrg.setLongitude(new java.math.BigDecimal(longitude.trim()));
+                } catch (NumberFormatException e) {
+                    // Ignorar si no es un número válido
+                }
+            }
+            
+            userService.updateUser(currentOrg, null);
+            redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado correctamente");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar perfil");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar perfil: " + e.getMessage());
         }
         return "redirect:/org/profile";
+    }
+    
+    /**
+     * Estadísticas de la organización
+     */
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    @GetMapping("/acopio/estadisticas")
+    public String orgStatistics(Authentication authentication, Model model) {
+        try {
+            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            
+            // Obtener todas las solicitudes
+            List<Request> allRequests = requestService.findAll();
+            
+            // Contar por estado
+            long pending = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count();
+            long accepted = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count();
+            long inProgress = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).count();
+            long rejected = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
+            long completed = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count();
+            
+            model.addAttribute("totalRequests", allRequests.size());
+            model.addAttribute("pendingRequests", pending);
+            model.addAttribute("acceptedRequests", accepted);
+            model.addAttribute("inProgressRequests", inProgress);
+            model.addAttribute("rejectedRequests", rejected);
+            model.addAttribute("completedRequests", completed);
+            
+            // Materiales gestionados
+            int materialsCount = currentOrg.getMaterials() != null ? currentOrg.getMaterials().size() : 0;
+            model.addAttribute("managedMaterials", materialsCount);
+            
+            // Total de materiales disponibles
+            model.addAttribute("totalMaterials", materialService.findAllActive().size());
+            
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al cargar estadísticas: " + e.getMessage());
+        }
+        return "org/statistics";
     }
 }

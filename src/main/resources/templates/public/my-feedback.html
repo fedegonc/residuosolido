@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Feedbacks - EcoSolicitud</title>
+    <title>Mis Reportes - EcoSolicitud</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,22 +21,22 @@
       <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <header class="px-6 py-5 border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Mis Feedbacks</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Mis Reportes</h1>
             <p class="text-sm text-gray-600">Revisa el estado de tus reportes y mantente al tanto de las respuestas del equipo.</p>
           </div>
           <a href="/feedback" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            Nuevo Feedback
+            Nuevo Reporte
           </a>
         </header>
 
         <!-- Lista de feedbacks -->
         <div th:if="${feedbacks != null and !feedbacks.empty}" class="divide-y divide-gray-100">
-          <article th:each="feedback : ${feedbacks}" class="px-6 py-5 hover:bg-gray-50 transition-colors">
+          <article th:each="feedback, iterStat : ${feedbacks}" class="px-6 py-5 hover:bg-gray-50 transition-colors">
             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div class="space-y-2">
                 <h2 class="text-lg font-semibold text-gray-900">
-                  Feedback #<span th:text="${feedback.id}">1</span>
+                  Reporte #<span th:text="${iterStat.count}">1</span>
                 </h2>
                 <p class="text-sm text-gray-700" th:text="${feedback.comment}">Mensaje del feedback</p>
                 <p class="text-xs text-gray-500 flex items-center gap-2">
@@ -68,12 +68,12 @@
             <i data-lucide="message-circle" class="w-7 h-7 text-gray-400"></i>
           </div>
           <div>
-            <h2 class="text-lg font-semibold text-gray-900">Aún no enviaste feedback</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Aún no enviaste reportes</h2>
             <p class="text-sm text-gray-600">Cuéntanos tu experiencia y ayúdanos a mejorar EcoSolicitud.</p>
           </div>
           <a href="/feedback" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            Enviar mi primer feedback
+            Enviar mi primer reporte
           </a>
         </div>
       </section>

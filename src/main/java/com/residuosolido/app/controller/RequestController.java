@@ -404,4 +404,30 @@ public class RequestController {
         }
         return "redirect:/org/requests";
     }
+
+    /**
+     * Muestra detalle de una solicitud (organización)
+     */
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    @GetMapping("/org/requests/{id}")
+    public String orgRequestDetail(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        try {
+            Optional<Request> requestOpt = requestService.findById(id);
+            if (requestOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Solicitud no encontrada");
+                return "redirect:/org/requests";
+            }
+            
+            Request request = requestOpt.get();
+            model.addAttribute("request", request);
+            model.addAttribute("viewType", "detail");
+            return "org/requests";
+        } catch (Exception e) {
+            handleRequestError(e, redirectAttributes, "Error al cargar solicitud");
+            return "redirect:/org/requests";
+        }
+    }
 }

@@ -5,7 +5,8 @@ package com.residuosolido.app.model;
  */
 public enum RequestStatus {
     PENDING("Pendiente"),
-    ACCEPTED("Aceptada"), 
+    ACCEPTED("Aceptada"),
+    IN_PROGRESS("En Proceso"),
     REJECTED("Rechazada"),
     COMPLETED("Completada");
     

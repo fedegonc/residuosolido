@@ -267,7 +267,7 @@ public class UserController {
 
     // ========== USER DASHBOARD & PROFILE ==========
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/users/dashboard")
+    @GetMapping("/usuarios/inicio")
     public String userDashboard(Authentication authentication, Model model) {
         try {
             String username = authentication.getName();
@@ -319,7 +319,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/users/profile")
+    @GetMapping("/usuarios/perfil")
     @Transactional(readOnly = true)
     public String userProfile(Authentication authentication, Model model) {
         try {
@@ -410,7 +410,7 @@ public class UserController {
 
     // ========== USER REQUESTS ==========
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/users/requests")
+    @GetMapping("/usuarios/solicitudes")
     public String userRequests(Authentication authentication, Model model) {
         try {
             String username = authentication.getName();
@@ -428,7 +428,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/users/requests/new")
+    @GetMapping("/usuarios/solicitudes/nueva")
     public String newUserRequest() {
         return "users/request-form";
     }
