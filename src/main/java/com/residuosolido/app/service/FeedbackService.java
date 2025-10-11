@@ -54,7 +54,13 @@ public class FeedbackService {
     
     @Transactional(readOnly = true)
     public List<Feedback> findByUser(User user) {
-        List<Feedback> feedbacks = feedbackRepository.findByUser(user);
+        if (user == null || user.getId() == null) {
+            return List.of();
+        }
+        
+        // Usar query explícita con ID para evitar problemas de proxy
+        List<Feedback> feedbacks = feedbackRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+        
         // Forzar inicialización de propiedades lazy del User
         feedbacks.forEach(feedback -> {
             if (feedback.getUser() != null) {

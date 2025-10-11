@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -265,18 +266,43 @@ public class UserController {
     }
 
     // ========== USER DASHBOARD & PROFILE ==========
-    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/users/dashboard")
     public String userDashboard(Authentication authentication, Model model) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             
-            List<Request> recentRequests = requestService.getRecentRequestsByUser(currentUser, 5);
+            // Cargar todas las solicitudes del usuario para estadísticas
+            List<Request> allUserRequests = requestService.getRequestsByUser(currentUser);
+            List<Request> recentRequests = allUserRequests.stream().limit(5).toList();
+            
+            // Calcular estadísticas reales
+            long totalRequests = allUserRequests.size();
+            long completedRequests = allUserRequests.stream()
+                .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
+                .count();
+            
+            // Contar tipos únicos de materiales reciclados
+            long materialTypes = allUserRequests.stream()
+                .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
+                .flatMap(r -> r.getMaterials().stream())
+                .map(m -> m.getId())
+                .distinct()
+                .count();
+            
+            // Solicitudes del mes actual
+            LocalDateTime monthStart = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            long monthRequests = allUserRequests.stream()
+                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(monthStart))
+                .count();
             
             model.addAttribute("user", currentUser);
             model.addAttribute("recentRequests", recentRequests);
-            model.addAttribute("totalRequests", recentRequests.size());
+            model.addAttribute("totalRequests", totalRequests);
+            model.addAttribute("completedRequests", completedRequests);
+            model.addAttribute("materialTypes", materialTypes);
+            model.addAttribute("monthRequests", monthRequests);
             
             // Si no hay solicitudes, cargar posts recientes para mostrar contenido educativo
             if (recentRequests == null || recentRequests.isEmpty()) {
@@ -292,7 +318,7 @@ public class UserController {
         return "users/dashboard";
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/users/profile")
     @Transactional(readOnly = true)
     public String userProfile(Authentication authentication, Model model) {
@@ -348,7 +374,7 @@ public class UserController {
         return "users/profile";
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ORGANIZATION')")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/users/profile")
     public String updateUserProfile(@ModelAttribute("userForm") User userForm,
                                    @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,

@@ -1,46 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${post != null ? post.title : 'Detalle del Post'}">Detalle del Post</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
-      background-color: #f8fafc;
-    }
-  </style>
 </head>
-<body class="min-h-screen flex flex-col">
-  <!-- Navbar simple -->
-  <header class="bg-white shadow-sm border-b border-green-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-      <a href="/" class="flex items-center gap-3 text-gray-800 hover:text-green-700 transition">
-        <div class="w-9 h-9 bg-green-600 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
-        </div>
-        <span class="text-xl font-bold">EcoSolicitud</span>
-      </a>
-      <nav class="flex items-center gap-4 text-sm font-medium">
-        <a href="/" class="text-gray-500 hover:text-green-600 transition">Inicio</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Breadcrumbs -->
-  <div class="bg-gray-50 py-3 border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<body>
+  <main layout:fragment="content">
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
       <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
-  </div>
-
-  <main class="flex-1 pb-16">
     <!-- Header simple -->
     <section class="bg-gray-50 py-6 border-b border-gray-200">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,25 +89,15 @@
         </article>
       </div>
     </section>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      });
+    </script>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-200 py-8 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <p>&copy; 2024 EcoSolicitud - Rivera Sant'Ana do Livramento</p>
-    </div>
-  </footer>
-
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <!-- Chat Widget -->
-  <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons();
-      }
-    });
-  </script>
 </body>
 </html>

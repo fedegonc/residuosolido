@@ -159,21 +159,8 @@
         <th:block th:replace="${content}"></th:block>
     </main>
     
-    <!-- Admin Footer (simplificado, sin redundancias) -->
-    <footer class="mt-auto" style="background:#212529; color:#fff">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs text-gray-300">EcoSolicitud</span>
-                    <span class="text-xs text-gray-500">• Rivera - Sant'Ana do Livramento</span>
-                </div>
-                <nav class="flex items-center space-x-4">
-                    <a href="/admin/dashboard" class="text-xs text-gray-300 hover:text-white">Dashboard</a>
-                    <a href="/admin/documentation" class="text-xs text-gray-300 hover:text-white">Ayuda</a>
-                </nav>
-            </div>
-        </div>
-    </footer>
+    <!-- Admin Footer -->
+    <div th:replace="~{fragments/admin-footer :: adminFooter}"></div>
     
     <!-- Chat Widget -->
     <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>

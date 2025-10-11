@@ -1,46 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/auth-layout}">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crear Cuenta - EcoSolicitud</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Crear Cuenta</title>
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <!-- Navbar simple -->
-  <nav class="bg-white shadow-lg border-b border-green-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <th:block th:replace="~{fragments/components/brand-name :: brandNameCustom(false, '', 'text-xl font-bold text-gray-800', 'text-xs text-slate-500')}"></th:block>
-        </div>
-        <div class="flex items-center space-x-4">
-          <!-- Selector de idioma -->
-          <div class="relative">
-            <button id="languageDropdown" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-600 transition flex items-center gap-2">
-              <i class="fa-solid fa-globe text-sm" aria-hidden="true"></i>
-              <span th:text="${#locale.language == 'es' ? 'ES' : 'PT'}">ES</span>
-              <i class="fa-solid fa-chevron-down text-xs" aria-hidden="true"></i>
-            </button>
-            <div id="languageMenu" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-              <a th:href="@{/auth/register(lang=es)}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition">
-                <i class="fa-solid fa-flag text-xs mr-2" aria-hidden="true"></i>
-                Español
-              </a>
-              <a th:href="@{/auth/register(lang=pt)}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition">
-                <i class="fa-solid fa-flag text-xs mr-2" aria-hidden="true"></i>
-                Português
-              </a>
-            </div>
-          </div>
-          
-          <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
-            Iniciar Sesión
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
+<body>
+<main layout:fragment="content">
 
   <!-- Breadcrumbs -->
   <div class="bg-gray-50 py-4">
@@ -178,37 +144,6 @@
     </div>
   </div>
 
-  <!-- Footer simple -->
-  <footer class="bg-gray-800 text-white py-8 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <p>&copy; 2024 EcoSolicitud - Rivera Sant'ana do Livramento</p>
-    </div>
-  </footer>
-
-  <!-- Chat Widget -->
-  <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
-  
-  <!-- Script para dropdown de idioma -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const languageDropdown = document.getElementById('languageDropdown');
-      const languageMenu = document.getElementById('languageMenu');
-      
-      if (languageDropdown && languageMenu) {
-        languageDropdown.addEventListener('click', function(e) {
-          e.stopPropagation();
-          languageMenu.classList.toggle('hidden');
-        });
-        
-        // Cerrar al hacer clic fuera
-        document.addEventListener('click', function() {
-          languageMenu.classList.add('hidden');
-        });
-      }
-    });
-  </script>
-  
-  <!-- Font Awesome para iconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</main>
 </body>
 </html>

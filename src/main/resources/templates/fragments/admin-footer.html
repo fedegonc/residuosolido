@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Footer para administradores -->
+<footer th:fragment="adminFooter" class="mt-auto" style="background:#212529; color:#fff">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-gray-300">EcoSolicitud</span>
+                <span class="text-xs text-gray-500">• Rivera - Sant'Ana do Livramento</span>
+            </div>
+            <nav class="flex items-center space-x-4">
+                <a href="/admin/dashboard" class="text-xs text-gray-300 hover:text-white transition-colors">Dashboard</a>
+                <a href="/admin/documentation" class="text-xs text-gray-300 hover:text-white transition-colors">Ayuda</a>
+            </nav>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

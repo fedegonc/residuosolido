@@ -211,8 +211,20 @@ public class FeedbackController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/feedback/my")
     public String userMyFeedback(Authentication authentication, Model model) {
+        log.info("[MY-FEEDBACK] Usuario autenticado: {}", authentication.getName());
         User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
-        model.addAttribute("feedbacks", feedbackService.findByUser(currentUser));
+        log.info("[MY-FEEDBACK] Usuario encontrado: id={}, username={}", 
+                currentUser != null ? currentUser.getId() : "NULL",
+                currentUser != null ? currentUser.getUsername() : "NULL");
+        
+        var feedbacks = feedbackService.findByUser(currentUser);
+        log.info("[MY-FEEDBACK] Feedbacks encontrados: {}", feedbacks != null ? feedbacks.size() : "NULL");
+        
+        if (feedbacks != null && !feedbacks.isEmpty()) {
+            feedbacks.forEach(fb -> log.info("[MY-FEEDBACK] Feedback ID: {}, Comment: {}", fb.getId(), fb.getComment()));
+        }
+        
+        model.addAttribute("feedbacks", feedbacks);
         return "public/my-feedback";
     }
 }

@@ -1,33 +1,34 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Solicitudes - EcoSolicitud</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="/users/dashboard" class="text-emerald-600 hover:text-emerald-700 mr-4">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    </a>
-                    <h1 class="text-xl font-semibold text-gray-900">Mis Solicitudes</h1>
-                </div>
-                <a href="/user/requests/new" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors">
-                    <i data-lucide="plus" class="w-4 h-4 mr-2 inline"></i>
-                    Nueva Solicitud
-                </a>
-            </div>
-        </div>
-    </header>
+<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Mis Solicitudes</h1>
+                <p class="text-sm text-gray-600 mt-1">Gestiona todas tus solicitudes de recolección</p>
+            </div>
+            <a href="/users/requests/new" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Nueva Solicitud
+            </a>
+        </div>
         <!-- Requests List -->
         <div class="bg-white rounded-lg shadow">
             <div th:if="${requests != null and !requests.empty}">
@@ -57,48 +58,29 @@
                     </div>
                 </div>
             </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">#SOL-002</h3>
-                                <p class="text-gray-600">Recolección de cartón</p>
-                            </div>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                Completada
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                            <div>
-                                <strong>Fecha:</strong> 15/01/2025
-                            </div>
-                            <div>
-                                <strong>Dirección:</strong> Calle Artigas 456
-                            </div>
-                            <div>
-                                <strong>Material:</strong> Cartón
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">Ver detalles</button>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Paginación -->
-                <div class="mt-8 flex justify-center">
-                    <nav class="flex space-x-2">
-                        <button class="px-3 py-2 text-gray-500 border border-gray-300 rounded-md hover:bg-gray-50">Anterior</button>
-                        <button class="px-3 py-2 bg-green-600 text-white rounded-md">1</button>
-                        <button class="px-3 py-2 text-gray-500 border border-gray-300 rounded-md hover:bg-gray-50">2</button>
-                        <button class="px-3 py-2 text-gray-500 border border-gray-300 rounded-md hover:bg-gray-50">Siguiente</button>
-                    </nav>
+            <!-- Empty State -->
+            <div th:if="${requests == null or requests.empty}" 
+                 class="text-center py-16 px-6">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="inbox" class="w-8 h-8 text-gray-400"></i>
                 </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes solicitudes</h3>
+                <p class="text-sm text-gray-600 mb-6 max-w-md mx-auto">
+                    Aún no has creado ninguna solicitud de recolección. Comienza tu viaje de reciclaje ahora.
+                </p>
+                <a href="/users/requests/new" 
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    Crear Primera Solicitud
+                </a>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Footer para usuarios autenticados -->
-    <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
-
-    <!-- Chat Widget -->
-    <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
+    <script>
+        lucide.createIcons();
+    </script>
+</main>
 </body>
 </html>

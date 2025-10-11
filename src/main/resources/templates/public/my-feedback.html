@@ -1,117 +1,87 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Feedbacks - EcoSolicitud</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Feedbacks - EcoSolicitud</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <!-- Navbar simple -->
-  <nav class="bg-white shadow-lg border-b border-green-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <a href="/" class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-            </div>
-            <span class="text-xl font-bold text-gray-800">EcoSolicitud</span>
-          </a>
-        </div>
-        <div class="flex items-center space-x-4">
-          <a href="/feedback" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50">
+<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
+  <main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+      <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <header class="px-6 py-5 border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900">Mis Feedbacks</h1>
+            <p class="text-sm text-gray-600">Revisa el estado de tus reportes y mantente al tanto de las respuestas del equipo.</p>
+          </div>
+          <a href="/feedback" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+            <i data-lucide="plus" class="w-4 h-4"></i>
             Nuevo Feedback
           </a>
-          <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
-            Cerrar Sesión
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
+        </header>
 
-  <!-- Breadcrumbs -->
-  <div class="bg-gray-50 py-4">
-    <div class="max-w-4xl mx-auto px-4">
-      <nav class="mb-3" aria-label="Breadcrumb">
-        <ol class="flex items-center text-sm text-gray-500">
-          <li><a href="/" class="hover:text-gray-700">Inicio</a></li>
-          <li class="px-2">/</li>
-          <li class="text-gray-700 font-medium" aria-current="page">Mis Feedbacks</li>
-        </ol>
-      </nav>
-    </div>
-  </div>
+        <!-- Lista de feedbacks -->
+        <div th:if="${feedbacks != null and !feedbacks.empty}" class="divide-y divide-gray-100">
+          <article th:each="feedback : ${feedbacks}" class="px-6 py-5 hover:bg-gray-50 transition-colors">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+              <div class="space-y-2">
+                <h2 class="text-lg font-semibold text-gray-900">
+                  Feedback #<span th:text="${feedback.id}">1</span>
+                </h2>
+                <p class="text-sm text-gray-700" th:text="${feedback.comment}">Mensaje del feedback</p>
+                <p class="text-xs text-gray-500 flex items-center gap-2">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                  <span th:text="${#temporals.format(feedback.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                </p>
+              </div>
 
-  <!-- Contenido principal -->
-  <div class="max-w-4xl mx-auto px-4 py-8">
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">Mis Feedbacks</h2>
-        <a href="/feedback" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
-          Nuevo Feedback
-        </a>
-      </div>
+              <div class="flex flex-col items-start md:items-end gap-3">
+                <span class="px-3 py-1 text-xs font-medium rounded-full"
+                      th:classappend="${feedback.isRead} ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-700'"
+                      th:text="${feedback.isRead} ? 'Leído' : 'Pendiente'">Estado</span>
 
-      <!-- Lista de feedbacks -->
-      <div th:if="${feedbacks != null and !feedbacks.empty}" class="space-y-4">
-        <div th:each="feedback : ${feedbacks}" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-          <div class="flex justify-between items-start mb-2">
-            <h3 class="text-lg font-semibold text-gray-900">Feedback #<span th:text="${feedback.id}">1</span></h3>
-            <div class="flex items-center space-x-2">
-              <span th:if="${feedback.isRead}" class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                Leído
-              </span>
-              <span th:unless="${feedback.isRead}" class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                Pendiente
-              </span>
+                <div th:if="${feedback.adminResponse != null and !feedback.adminResponse.isEmpty()}"
+                     class="bg-emerald-50 border border-emerald-100 rounded-lg px-4 py-3 max-w-sm">
+                  <p class="text-xs font-semibold text-emerald-700 mb-1">Respuesta del equipo</p>
+                  <p class="text-sm text-emerald-700" th:text="${feedback.adminResponse}">Respuesta</p>
+                  <p class="text-xs text-emerald-600 mt-2" th:if="${feedback.respondedAt != null}"
+                     th:text="'Respondido el ' + ${#temporals.format(feedback.respondedAt, 'dd/MM/yyyy HH:mm')}">Fecha respuesta</p>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <p class="text-gray-600 mb-3" th:text="${feedback.comment}">Mensaje del feedback</p>
-          
-          <div class="flex justify-between items-center text-sm text-gray-500">
-            <span th:text="${#temporals.format(feedback.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
-          </div>
-          
-          <!-- Respuesta del admin si existe -->
-          <div th:if="${feedback.adminResponse != null and !feedback.adminResponse.isEmpty()}" 
-               class="mt-4 p-3 bg-green-50 border-l-4 border-green-400 rounded-r-md">
-            <h4 class="text-sm font-semibold text-green-800 mb-1">Respuesta del Administrador:</h4>
-            <p class="text-sm text-green-700" th:text="${feedback.adminResponse}">Respuesta</p>
-            <p class="text-xs text-green-600 mt-1" th:if="${feedback.respondedAt != null}" 
-               th:text="'Respondido el ' + ${#temporals.format(feedback.respondedAt, 'dd/MM/yyyy HH:mm')}">Fecha respuesta</p>
-          </div>
+          </article>
         </div>
-      </div>
 
-      <!-- Estado vacío -->
-      <div th:if="${feedbacks == null or feedbacks.empty}" class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No tienes feedbacks</h3>
-        <p class="mt-1 text-sm text-gray-500">Comparte tu experiencia enviando tu primer feedback.</p>
-        <div class="mt-6">
-          <a href="/feedback" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-            Enviar Feedback
+        <!-- Estado vacío -->
+        <div th:if="${feedbacks == null or feedbacks.empty}" class="px-6 py-12 text-center space-y-4">
+          <div class="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
+            <i data-lucide="message-circle" class="w-7 h-7 text-gray-400"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900">Aún no enviaste feedback</h2>
+            <p class="text-sm text-gray-600">Cuéntanos tu experiencia y ayúdanos a mejorar EcoSolicitud.</p>
+          </div>
+          <a href="/feedback" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            Enviar mi primer feedback
           </a>
         </div>
-      </div>
+      </section>
     </div>
-  </div>
 
-  <!-- Footer simple -->
-  <footer class="bg-gray-800 text-white py-8 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <p>&copy; 2024 EcoSolicitud - Rivera Sant'ana do Livramento</p>
-    </div>
-  </footer>
-
-  <!-- Chat Widget -->
-  <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
+    <script>
+      lucide?.createIcons();
+    </script>
+  </main>
 </body>
 </html>
