@@ -206,9 +206,9 @@ public class AuthController {
             return "/admin/dashboard";
         }
         if (roles.contains("ROLE_ORGANIZATION")) {
-            return "/users/dashboard";
+            return "/org/dashboard";
         }
-        return "/users/dashboard";
+        return "/usuarios/inicio";
     }
 
 }

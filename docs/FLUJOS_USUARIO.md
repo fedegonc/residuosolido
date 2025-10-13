@@ -39,7 +39,7 @@ USUARIO REGULAR (ROLE_USER)
 │  └─ / (index.html) → fragmentos directos ⚠️
 │
 ├─ 📋 Mis Solicitudes
-│  ├─ /users/dashboard → user-layout ✅
+│  ├─ /usuarios/inicio → user-layout ✅
 │  │  └─ navbar-user + auth-user-footer
 │  │
 │  ├─ /users/requests → user-layout ✅
@@ -297,7 +297,7 @@ ADMINISTRADOR (ROLE_ADMIN)
 **Beneficio:** Ahora todas las páginas de usuario tienen el mismo navbar y footer, mejorando la experiencia de usuario.
 
 **Resultado:** `user-layout` ahora tiene 5 páginas (antes 3):
-- `/users/dashboard`
+- `/usuarios/inicio`
 - `/users/requests`
 - `/users/request-form`
 - `/feedback` ✨ (nuevo)

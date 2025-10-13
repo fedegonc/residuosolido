@@ -4,8 +4,10 @@ import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.RequestStatus;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
+import com.residuosolido.app.model.Material;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.repository.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,11 +30,29 @@ public class RequestService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MaterialRepository materialRepository;
+
     public Request createRequest(User user, String description, String materials, String address) {
         Request request = new Request();
         request.setUser(user);
         request.setDescription(description);
-        request.setMaterials(materials);
+        
+        // Parse materials string (comma-separated IDs) and convert to List<Material>
+        List<Material> materialList = new ArrayList<>();
+        if (materials != null && !materials.trim().isEmpty()) {
+            String[] materialIds = materials.split(",");
+            for (String idStr : materialIds) {
+                try {
+                    Long materialId = Long.parseLong(idStr.trim());
+                    materialRepository.findById(materialId).ifPresent(materialList::add);
+                } catch (NumberFormatException e) {
+                    // Skip invalid IDs
+                }
+            }
+        }
+        request.setMaterials(materialList);
+        
         request.setAddress(address);
         request.setStatus(RequestStatus.PENDING);
         request.setCreatedAt(LocalDateTime.now());

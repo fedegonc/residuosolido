@@ -154,15 +154,26 @@ public class FeedbackController {
     }
 
     // ========== USER ENDPOINTS ==========
-    @GetMapping("/feedback")
+    @GetMapping("/reportes")
     public String userFeedbackForm(Model model, Authentication authentication) {
         model.addAttribute("feedback", new Feedback());
-        model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
+        boolean isAuth = authentication != null && authentication.isAuthenticated();
+        model.addAttribute("isAuthenticated", isAuth);
+        
+        // Cargar últimos 3 reportes del usuario si está autenticado
+        if (isAuth) {
+            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
+            var userFeedbacks = feedbackService.findByUser(currentUser);
+            // Limitar a los últimos 3
+            var recentFeedbacks = userFeedbacks.stream().limit(3).toList();
+            model.addAttribute("recentFeedbacks", recentFeedbacks);
+        }
+        
         return "public/feedback-form";
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/feedback")
+    @PostMapping("/reportes")
     public String userSubmitFeedback(@ModelAttribute Feedback feedback,
                                     Authentication authentication,
                                     RedirectAttributes redirectAttributes) {
@@ -190,9 +201,9 @@ public class FeedbackController {
             log.info("[FEEDBACK][POST] Feedback guardado exitosamente con ID: {}", feedback.getId());
             
             redirectAttributes.addFlashAttribute("successMessage", 
-                "¡Gracias por tu feedback! Hemos recibido tu mensaje y te responderemos pronto.");
+                "¡Gracias por tu reporte! Hemos recibido tu mensaje y te responderemos pronto.");
             
-            return "redirect:/feedback";
+            return "redirect:/reportes";
         } catch (Exception e) {
             log.error("[FEEDBACK][POST] Error al enviar feedback", e);
             log.error("[FEEDBACK][POST] Tipo de error: {}", e.getClass().getName());
@@ -202,14 +213,14 @@ public class FeedbackController {
             }
             
             redirectAttributes.addFlashAttribute("errorMessage", 
-                "Error al enviar feedback: " + e.getMessage());
+                "Error al enviar reporte: " + e.getMessage());
             
-            return "redirect:/feedback";
+            return "redirect:/reportes";
         }
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/feedback/my")
+    @GetMapping("/reportes/mis-reportes")
     public String userMyFeedback(Authentication authentication, Model model) {
         log.info("[MY-FEEDBACK] Usuario autenticado: {}", authentication.getName());
         User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());

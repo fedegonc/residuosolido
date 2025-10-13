@@ -94,7 +94,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         } else if (userRoles.contains("ROLE_ORGANIZATION")) {
             return "/org/dashboard";
         } else if (userRoles.contains("ROLE_USER")) {
-            return "/users/dashboard";
+            return "/usuarios/inicio";
         } else {
             return DEFAULT_TARGET_URL;
         }

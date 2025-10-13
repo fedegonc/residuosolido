@@ -111,6 +111,10 @@ public class BreadcrumbService {
                     }
                     break;
                     
+                case "backup":
+                    breadcrumbs.add(new BreadcrumbItem("Backup", "/admin/backup"));
+                    break;
+                    
                 case "my":
                     // Para /feedback/my
                     if (i > 0 && segmentos[i-1].equalsIgnoreCase("feedback")) {
@@ -317,6 +321,8 @@ public class BreadcrumbService {
                 return "Solicitudes";
             case "feedback":
                 return "Reportar Problema";
+            case "backup":
+                return "Backup y Restauración";
             case "my":
                 // Si el segmento anterior es feedback
                 if (segmentos.length > 1 && segmentos[segmentos.length - 2].equalsIgnoreCase("feedback")) {

@@ -8,14 +8,18 @@
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
-  <!-- Breadcrumbs -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-    <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-  </div>
-
   <!-- Header -->
   <div class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <!-- Breadcrumbs -->
+      <nav class="flex text-sm text-gray-500 mb-3" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center">
+          <li class="inline-flex items-center">
+            <span class="text-gray-700 font-medium">Inicio</span>
+          </li>
+        </ol>
+      </nav>
+      
       <h1 class="text-2xl font-bold text-gray-900">Panel de Administración</h1>
       <p class="mt-1 text-sm text-gray-500">Acceso rápido a las funciones administrativas</p>
     </div>

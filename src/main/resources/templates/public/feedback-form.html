@@ -59,7 +59,7 @@
             </div>
 
             <!-- Formulario (solo para usuarios autenticados) -->
-            <form th:if="${isAuthenticated}" th:action="@{/feedback}" method="post" th:object="${feedback}" class="space-y-4">
+            <form th:if="${isAuthenticated}" th:action="@{/reportes}" method="post" th:object="${feedback}" class="space-y-4">
 
               <div>
                 <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
@@ -79,10 +79,26 @@
         <!-- Sidebar - Mis Reportes (solo para usuarios autenticados) -->
         <div th:if="${isAuthenticated}" class="lg:col-span-1">
           <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Mis Reportes</h3>
-            <p class="text-sm text-gray-600 mb-4">Revisa el estado de tus reportes anteriores</p>
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">Mis Reportes</h3>
+            <p class="text-xs text-gray-600 mb-4">Revisa el estado de tus reportes anteriores</p>
             
-            <a href="/feedback/my" class="block w-full text-center px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition text-sm font-medium">
+            <!-- Lista de reportes recientes -->
+            <div th:if="${recentFeedbacks != null and !recentFeedbacks.empty}" class="space-y-3 mb-4">
+              <div th:each="fb : ${recentFeedbacks}" class="p-3 bg-gray-50 rounded-md border border-gray-200">
+                <p class="text-xs text-gray-700 line-clamp-2 mb-2" th:text="${fb.comment}">Comentario</p>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-gray-500" th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy')}">Fecha</span>
+                  <span th:if="${fb.isRead}" class="text-emerald-600 font-medium">✓ Leído</span>
+                  <span th:unless="${fb.isRead}" class="text-gray-400">Pendiente</span>
+                </div>
+              </div>
+            </div>
+            
+            <div th:if="${recentFeedbacks == null or recentFeedbacks.empty}" class="text-center py-4 mb-4">
+              <p class="text-xs text-gray-500">Aún no has enviado reportes</p>
+            </div>
+            
+            <a href="/reportes/mis-reportes" class="block w-full text-center px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition text-xs font-medium">
               Ver todos mis reportes
             </a>
           </div>

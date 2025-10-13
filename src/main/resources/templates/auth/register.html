@@ -22,11 +22,11 @@
   </div>
 
   <!-- Contenido principal -->
-  <div class="max-w-2xl mx-auto px-4 py-10">
-    <div class="bg-white rounded-lg shadow-md border border-emerald-100 p-8 space-y-6">
-      <header class="text-center space-y-2">
-        <h2 class="text-3xl font-bold text-gray-900">Crear Cuenta</h2>
-        <p class="text-sm text-gray-500">Completa tus datos para unirte a la comunidad de reciclaje responsable.</p>
+  <div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md border border-emerald-100 p-6 space-y-4">
+      <header class="space-y-1">
+        <h2 class="text-xl font-bold text-gray-900">Crear Cuenta</h2>
+        <p class="text-xs text-gray-500">Completa tus datos para unirte a la comunidad.</p>
       </header>
       
       <!-- Mensajes -->
@@ -39,80 +39,74 @@
       </div>
 
       <!-- Formulario -->
-      <form th:action="@{/auth/register}" method="post" class="space-y-6">
-        <section class="space-y-4">
+      <form th:action="@{/auth/register}" method="post" class="space-y-4">
+        <section class="space-y-3">
           <header>
-            <h3 class="text-lg font-semibold text-gray-800">Información de la cuenta</h3>
-            <p class="text-sm text-gray-500">Elige un usuario y correo válidos. Los usaremos para ingresar y enviarte notificaciones importantes.</p>
+            <h3 class="text-sm font-semibold text-gray-800">Información de la cuenta</h3>
+            <p class="text-xs text-gray-500">Elige un usuario y correo válidos.</p>
           </header>
 
-          <div class="grid gap-4 md:grid-cols-2">
+          <div class="grid gap-3 md:grid-cols-2">
             <div class="flex flex-col">
-              <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Usa entre 4 y 20 caracteres sin espacios.</p>
+              <label for="username" class="block text-xs font-medium text-gray-700 mb-1">Usuario</label>
               <input type="text" id="username" name="username" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
 
             <div class="flex flex-col">
-              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Recibirás confirmaciones y avisos en esta dirección.</p>
+              <label for="email" class="block text-xs font-medium text-gray-700 mb-1">Email</label>
               <input type="email" id="email" name="email" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
           </div>
         </section>
 
-        <section class="space-y-4">
+        <section class="space-y-3">
           <header>
-            <h3 class="text-lg font-semibold text-gray-800">Datos personales</h3>
-            <p class="text-sm text-gray-500">Nos ayudan a personalizar la experiencia y comunicarte correctamente.</p>
+            <h3 class="text-sm font-semibold text-gray-800">Datos personales</h3>
+            <p class="text-xs text-gray-500">Nos ayudan a personalizar la experiencia.</p>
           </header>
 
-          <div class="grid gap-4 md:grid-cols-2">
+          <div class="grid gap-3 md:grid-cols-2">
             <div class="flex flex-col">
-              <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Es como aparecerás en la plataforma.</p>
+              <label for="firstName" class="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
               <input type="text" id="firstName" name="firstName" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
 
             <div class="flex flex-col">
-              <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
-              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Incluye tu apellido para facilitar tu identificación.</p>
+              <label for="lastName" class="block text-xs font-medium text-gray-700 mb-1">Apellido</label>
               <input type="text" id="lastName" name="lastName" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
           </div>
         </section>
 
-        <section class="space-y-4">
+        <section class="space-y-3">
           <header>
-            <h3 class="text-lg font-semibold text-gray-800">Seguridad</h3>
-            <p class="text-sm text-gray-500">Define una contraseña segura y recuerda confirmarla.</p>
+            <h3 class="text-sm font-semibold text-gray-800">Seguridad</h3>
+            <p class="text-xs text-gray-500">Mínimo 8 caracteres.</p>
           </header>
 
-          <div class="grid gap-4 md:grid-cols-2">
+          <div class="grid gap-3 md:grid-cols-2">
             <div class="flex flex-col">
-              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Mínimo 8 caracteres combinando letras y números.</p>
+              <label for="password" class="block text-xs font-medium text-gray-700 mb-1">Contraseña</label>
               <input type="password" id="password" name="password" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
 
             <div class="flex flex-col">
-              <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
-              <p class="text-xs text-gray-500 mb-1 min-h-[2.5rem]">Repite la contraseña para asegurarnos que no haya errores.</p>
+              <label for="confirmPassword" class="block text-xs font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
               <input type="password" id="confirmPassword" name="confirmPassword" required
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
           </div>
         </section>
 
-        <section class="space-y-4">
+        <section class="space-y-3">
           <header>
-            <h3 class="text-lg font-semibold text-gray-800">Tipo de cuenta</h3>
-            <p class="text-sm text-gray-500">Indica si representas una organización de acopio o reciclaje.</p>
+            <h3 class="text-sm font-semibold text-gray-800">Tipo de cuenta</h3>
+            <p class="text-xs text-gray-500">Indica si representas una organización.</p>
           </header>
 
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">

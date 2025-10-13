@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup y Restauración - Admin</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
+<main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    Backup y Restauración de Datos
+                </h2>
+                
+                <p class="text-sm text-gray-600">
+                    Gestiona copias de seguridad de toda la información del sistema. Puedes descargar un backup completo en formato JSON y restaurarlo cuando lo necesites.
+                    <span class="block mt-1 text-xs text-gray-500">
+                        <strong>Importante:</strong> La restauración eliminará todos los datos actuales y los reemplazará con los del archivo de backup.
+                    </span>
+                </p>
+            </div>
+
+            <div class="px-6 py-6 space-y-8">
+                <!-- Descargar Backup -->
+                <div>
+                    <h3 class="text-md font-medium text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="download" class="w-5 h-5 mr-2 text-green-600"></i>
+                        Descargar Backup
+                    </h3>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                        <p class="text-sm text-gray-700 mb-4">
+                            Genera y descarga un archivo JSON con todos los datos del sistema:
+                        </p>
+                        <ul class="list-disc list-inside text-sm text-gray-600 mb-6 space-y-1">
+                            <li>Usuarios y sus configuraciones</li>
+                            <li>Materiales reciclables</li>
+                            <li>Categorías y publicaciones</li>
+                            <li>Solicitudes de recolección</li>
+                            <li>Feedback de usuarios</li>
+                            <li>Configuraciones del sistema</li>
+                        </ul>
+                        <a href="/admin/backup/download" 
+                           class="inline-flex items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+                            <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                            Descargar Backup Completo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Restaurar Backup -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-md font-medium text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="upload" class="w-5 h-5 mr-2 text-blue-600"></i>
+                        Restaurar Backup
+                    </h3>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                        <div class="flex items-start mb-4">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 mr-2 text-yellow-600 mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-900 mb-1">
+                                    ⚠️ Advertencia: Esta acción es irreversible
+                                </p>
+                                <p class="text-sm text-yellow-800">
+                                    Al restaurar un backup, <strong>todos los datos actuales serán eliminados permanentemente</strong> 
+                                    y reemplazados con los datos del archivo. Asegúrate de haber descargado un backup reciente antes de continuar.
+                                </p>
+                            </div>
+                        </div>
+
+                        <form action="/admin/backup/restore" method="post" enctype="multipart/form-data" 
+                              onsubmit="return confirm('⚠️ ADVERTENCIA: Esta acción eliminará TODOS los datos actuales y los reemplazará con los del backup.\n\n¿Estás completamente seguro de que deseas continuar?');"
+                              class="space-y-4">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Seleccionar archivo de backup (.json)
+                                </label>
+                                <input type="file" 
+                                       name="file" 
+                                       accept=".json,application/json" 
+                                       required
+                                       class="block w-full text-sm text-gray-500 
+                                              file:mr-4 file:py-2 file:px-4 
+                                              file:rounded-md file:border-0 
+                                              file:text-sm file:font-semibold 
+                                              file:bg-blue-50 file:text-blue-700 
+                                              hover:file:bg-blue-100
+                                              border border-gray-300 rounded-md
+                                              cursor-pointer">
+                            </div>
+
+                            <div class="bg-white border border-gray-300 rounded-md p-4">
+                                <p class="text-xs text-gray-600 mb-2"><strong>Requisitos del archivo:</strong></p>
+                                <ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
+                                    <li>Formato: JSON (.json)</li>
+                                    <li>Tamaño máximo: 50 MB</li>
+                                    <li>Debe ser un backup generado por este sistema</li>
+                                    <li>Versión compatible: 1.0</li>
+                                </ul>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2">
+                                <div class="flex items-center">
+                                    <input type="checkbox" 
+                                           id="confirmRestore" 
+                                           required
+                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="confirmRestore" class="ml-2 text-sm text-gray-700">
+                                        Confirmo que he leído la advertencia y deseo continuar
+                                    </label>
+                                </div>
+                                <button type="submit" 
+                                        class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                                    <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                    Restaurar Backup
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Información Adicional -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-md font-medium text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="info" class="w-5 h-5 mr-2 text-gray-600"></i>
+                        Información Adicional
+                    </h3>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="space-y-2 text-sm text-blue-900">
+                            <p><strong>📋 Recomendaciones:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 ml-4">
+                                <li>Descarga backups periódicamente (diario, semanal o mensual según tus necesidades)</li>
+                                <li>Almacena los backups en un lugar seguro fuera del servidor</li>
+                                <li>Verifica que el archivo descargado no esté corrupto antes de eliminarlo</li>
+                                <li>Realiza pruebas de restauración en un ambiente de desarrollo antes de producción</li>
+                                <li>Documenta la fecha y hora de cada backup para facilitar la recuperación</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</main>
+</body>
+</html>

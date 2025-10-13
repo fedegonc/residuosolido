@@ -13,7 +13,13 @@
 <main>
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+        <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center">
+                <li class="inline-flex items-center">
+                    <span class="text-gray-700 font-medium">Inicio</span>
+                </li>
+            </ol>
+        </nav>
     </div>
 
     <!-- Main Content -->
@@ -26,11 +32,11 @@
             
             <div class="p-6">
                 <!-- Saludo -->
-                <div class="mb-6">
-                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">
+                <div class="mb-5">
+                    <h1 class="text-xl font-semibold text-gray-900 mb-1">
                         Hola, <span th:text="${#authentication.principal.username}">Usuario</span>
                     </h1>
-                    <p class="text-sm text-gray-500">
+                    <p class="text-xs text-gray-500">
                         ¿Qué necesitas hacer hoy?
                     </p>
                 </div>
@@ -69,8 +75,8 @@
 
         <!-- Estadísticas -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100">
-                <h2 class="text-base font-semibold text-gray-900">Resumen de Actividad</h2>
+            <div class="px-5 py-3 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-900">Resumen de Actividad</h2>
             </div>
             
             <div class="p-5">
@@ -108,8 +114,8 @@
 
         <!-- Mis Solicitudes -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-base font-semibold text-gray-900">Solicitudes Recientes</h2>
+            <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-gray-900">Solicitudes Recientes</h2>
                 <a href="/usuarios/solicitudes" class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700 gap-1">
                     Ver todas
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>

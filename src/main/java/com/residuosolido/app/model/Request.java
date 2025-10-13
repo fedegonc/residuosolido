@@ -94,15 +94,6 @@ public class Request {
     }
 
     /**
-     * Legacy method for String materials compatibility
-     * @deprecated Materials are managed through List<Material> relationship
-     */
-    @Deprecated
-    public void setMaterials(String materialsString) {
-        // Empty implementation - materials managed through entity relationship
-    }
-    
-    /**
      * @return Materials as comma-separated string for display purposes
      */
     @Transient
