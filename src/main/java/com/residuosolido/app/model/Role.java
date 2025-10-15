@@ -5,7 +5,7 @@ package com.residuosolido.app.model;
  */
 public enum Role {
     ADMIN("admin", "/admin/dashboard", 100),       // System administrator
-    ORGANIZATION("org", "/org/dashboard", 50),     // Organization representative  
+    ORGANIZATION("org", "/acopio/inicio", 50),     // Organization representative  
     USER("user", "/usuarios/inicio", 10);          // Normal user who can request collections
     
     private final String urlPrefix;
