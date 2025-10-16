@@ -181,7 +181,7 @@
         <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
     </div>
     <div sec:authorize="!isAuthenticated()">
-        <div th:replace="~{fragments/simple-footer :: simple}"></div>
+        <div th:replace="~{index/footer :: footer}"></div>
     </div>
     
     <!-- Chat Widget -->

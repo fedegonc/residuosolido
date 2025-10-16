@@ -123,29 +123,30 @@
             </div>
             
             <div th:if="${recentRequests != null and !recentRequests.empty}">
-                <div th:each="request, iterStat : ${recentRequests}" 
-                     class="p-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors"
-                     th:classappend="${iterStat.last ? 'border-b-0' : ''}">
+                <a th:each="request, iterStat : ${recentRequests}"
+                   th:href="@{/usuarios/solicitudes/{id}(id=${request.id})}"
+                   class="block p-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:bg-emerald-50"
+                   th:classappend="${iterStat.last ? 'border-b-0' : ''}">
                     <div class="flex items-start gap-3">
                         <!-- Icono -->
                         <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
                             <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
                         </div>
-                        
+
                         <!-- Contenido -->
                         <div class="flex-1 min-w-0">
                             <div class="flex items-start justify-between gap-2 mb-2">
-                                <h3 class="font-semibold text-sm text-gray-900" th:text="${request.description}">Descripción</h3>
+                                <span class="font-semibold text-sm text-gray-900 line-clamp-1" th:text="${request.description}">Descripción</span>
                                 <span class="px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap"
                                       th:text="${request.status.displayName}"
-                                      th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
-                                                     request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' : 
-                                                     request.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' : 
+                                      th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                                                     request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' :
+                                                     request.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' :
                                                      'bg-red-100 text-red-800'}">
                                     Estado
                                 </span>
                             </div>
-                            
+
                             <!-- Detalles -->
                             <div class="space-y-1">
                                 <div class="flex items-center text-xs text-gray-600">
@@ -167,7 +168,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <div th:if="${recentRequests == null or recentRequests.empty}" 

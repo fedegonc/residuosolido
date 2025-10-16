@@ -5,21 +5,24 @@
         items=${bcItems != null ? bcItems : breadcrumbItems},
         finalTitle=${title != null ? title : breadcrumbTitle},
         displayTitle=${finalTitle != null ? finalTitle : 'Página'},
+        firstItem=${items != null and !items.empty ? items[0] : null},
+        remainingItems=${items != null and items.size() > 1 ? items.subList(1, items.size()) : null},
         lastLabel=${items != null and !items.empty ? items[#lists.size(items)-1].label : null},
         showFinal=${displayTitle != lastLabel}
     ">
         <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
             <ol class="inline-flex items-center">
-                <!-- Home fijo -->
+                <!-- Home dinámico -->
                 <li class="inline-flex items-center">
-                    <a href="/" class="inline-flex items-center text-gray-500 hover:text-gray-700">
+                    <a th:if="${firstItem != null}" th:href="${firstItem.url}" class="inline-flex items-center text-gray-500 hover:text-gray-700" th:text="${firstItem.label}">Inicio</a>
+                    <a th:unless="${firstItem != null}" href="/" class="inline-flex items-center text-gray-500 hover:text-gray-700">
                         <span>Inicio</span>
                     </a>
                 </li>
 
                 <!-- Items intermedios (si existen) -->
-                <li th:if="${items != null and !items.empty}" th:remove="tag">
-                    <span th:each="item : ${items}" class="inline-flex items-center">
+                <li th:if="${remainingItems != null and !remainingItems.empty}" th:remove="tag">
+                    <span th:each="item : ${remainingItems}" class="inline-flex items-center">
                         <span class="mx-2 text-gray-400">›</span>
                         <a th:href="${item.url}" class="text-gray-500 hover:text-gray-700" th:text="${item.label}">Item</a>
                     </span>
@@ -42,20 +45,23 @@
             items=${breadcrumbItems},
             finalTitle=${breadcrumbTitle},
             displayTitle=${finalTitle != null ? finalTitle : 'Página'},
+            firstItem=${items != null and !items.empty ? items[0] : null},
+            remainingItems=${items != null and items.size() > 1 ? items.subList(1, items.size()) : null},
             lastLabel=${items != null and !items.empty ? items[#lists.size(items)-1].label : null},
             showFinal=${displayTitle != lastLabel}
         ">
         <ol class="inline-flex items-center">
-            <!-- Home fijo -->
+            <!-- Home dinámico -->
             <li class="inline-flex items-center">
-                <a href="/" class="inline-flex items-center text-gray-500 hover:text-gray-700">
+                <a th:if="${firstItem != null}" th:href="${firstItem.url}" class="inline-flex items-center text-gray-500 hover:text-gray-700" th:text="${firstItem.label}">Inicio</a>
+                <a th:unless="${firstItem != null}" href="/" class="inline-flex items-center text-gray-500 hover:text-gray-700">
                     <span>Inicio</span>
                 </a>
             </li>
 
             <!-- Items intermedios (si existen) -->
-            <li th:if="${breadcrumbItems != null and !breadcrumbItems.empty}" th:remove="tag">
-                <span th:each="item : ${breadcrumbItems}" class="inline-flex items-center">
+            <li th:if="${remainingItems != null and !remainingItems.empty}" th:remove="tag">
+                <span th:each="item : ${remainingItems}" class="inline-flex items-center">
                     <span class="mx-2 text-gray-400">›</span>
                     <a th:href="${item.url}" class="text-gray-500 hover:text-gray-700" th:text="${item.label}">Item</a>
                 </span>
