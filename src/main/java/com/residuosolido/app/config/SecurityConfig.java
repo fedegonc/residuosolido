@@ -64,6 +64,8 @@ public class SecurityConfig {
                 .requestMatchers("/requests/**").hasRole("USER")
                 // Rutas de organización
                 .requestMatchers("/org/**").hasRole("ORGANIZATION")
+                .requestMatchers("/organization/**").hasRole("ORGANIZATION") // Onboarding de organizaciones
+                .requestMatchers("/acopio/**").hasRole("ORGANIZATION")
                 // Feedback - acceso público para ver formulario, autenticación requerida para enviar (controlada en @PreAuthorize)
                 .requestMatchers("/feedback/**").permitAll()
                 // Otras rutas requieren autenticación (ÚLTIMO)

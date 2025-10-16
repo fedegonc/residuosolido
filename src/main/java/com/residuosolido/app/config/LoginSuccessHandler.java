@@ -1,10 +1,13 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.model.User;
+import com.residuosolido.app.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +31,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
     
+    @Autowired
+    @org.springframework.context.annotation.Lazy
+    private UserService userService;
+    
     // Prefijo estándar para roles en Spring Security
     private static final String ROLE_PREFIX = "ROLE_";
     
@@ -43,6 +50,20 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("Usuario '{}' autenticado. Redirigiendo según rol. Roles: {}", username, userRoles);
 
         try {
+            // Verificar si es una organización con perfil incompleto
+            if (userRoles.contains("ROLE_ORGANIZATION")) {
+                try {
+                    User user = userService.findAuthenticatedUserByUsername(username);
+                    if (user.getProfileCompleted() == null || !user.getProfileCompleted()) {
+                        logger.info("Organización '{}' con perfil incompleto, redirigiendo a completar perfil", username);
+                        response.sendRedirect("/organization/complete-profile");
+                        return;
+                    }
+                } catch (Exception e) {
+                    logger.error("Error al verificar perfil de organización '{}': {}", username, e.getMessage());
+                }
+            }
+            
             String targetUrl = getTargetUrlByRoles(userRoles);
 
             boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))

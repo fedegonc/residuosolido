@@ -1,5 +1,6 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.model.Material;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -171,28 +173,46 @@ public class OrganizationAdminController {
         try {
             User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
             
-            // Obtener solicitudes pendientes
-            List<Request> pendingRequests = requestService.getPendingRequests();
-            model.addAttribute("pendingRequests", pendingRequests.size());
-            model.addAttribute("pendingRequestsList", pendingRequests.stream().limit(5).toList());
+            // Obtener IDs de materiales que acepta esta organización
+            List<Long> acceptedMaterialIds = currentOrg.getMaterials() != null 
+                ? currentOrg.getMaterials().stream().map(Material::getId).toList()
+                : new ArrayList<>();
             
-            // Obtener solicitudes en proceso
-            List<Request> inProgressRequests = requestService.getRequestsByStatus(RequestStatus.IN_PROGRESS);
-            model.addAttribute("inProgressRequests", inProgressRequests.size());
+            // Filtrar solicitudes que contengan al menos un material que la organización acepta
+            List<Request> allPendingRequests = requestService.getPendingRequests();
+            List<Request> filteredPendingRequests = allPendingRequests.stream()
+                .filter(request -> request.getMaterials() != null && 
+                    request.getMaterials().stream()
+                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
+                .toList();
             
-            // Obtener solicitudes completadas
-            List<Request> completedRequests = requestService.getRequestsByStatus(RequestStatus.COMPLETED);
-            model.addAttribute("completedRequests", completedRequests.size());
+            model.addAttribute("pendingRequests", filteredPendingRequests.size());
+            model.addAttribute("pendingRequestsList", filteredPendingRequests.stream().limit(5).toList());
+            
+            // Obtener solicitudes en proceso (filtradas)
+            List<Request> allInProgressRequests = requestService.getRequestsByStatus(RequestStatus.IN_PROGRESS);
+            List<Request> filteredInProgressRequests = allInProgressRequests.stream()
+                .filter(request -> request.getMaterials() != null && 
+                    request.getMaterials().stream()
+                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
+                .toList();
+            model.addAttribute("inProgressRequests", filteredInProgressRequests.size());
+            
+            // Obtener solicitudes completadas (filtradas)
+            List<Request> allCompletedRequests = requestService.getRequestsByStatus(RequestStatus.COMPLETED);
+            List<Request> filteredCompletedRequests = allCompletedRequests.stream()
+                .filter(request -> request.getMaterials() != null && 
+                    request.getMaterials().stream()
+                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
+                .toList();
+            model.addAttribute("completedRequests", filteredCompletedRequests.size());
             
             // Total de kg reciclados (placeholder - se puede implementar después)
             model.addAttribute("totalKgRecycled", 0);
             
             // Materiales aceptados por la organización
-            if (currentOrg.getMaterials() != null) {
-                model.addAttribute("managedMaterials", currentOrg.getMaterials().size());
-            } else {
-                model.addAttribute("managedMaterials", 0);
-            }
+            model.addAttribute("managedMaterials", acceptedMaterialIds.size());
+            
         } catch (Exception e) {
             model.addAttribute("pendingRequests", 0);
             model.addAttribute("inProgressRequests", 0);
@@ -209,8 +229,21 @@ public class OrganizationAdminController {
         try {
             User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
             model.addAttribute("organization", currentOrg);
+            
+            // Cargar todos los materiales disponibles
+            List<Material> availableMaterials = materialService.findAll();
+            model.addAttribute("availableMaterials", availableMaterials);
+            
+            // IDs de materiales que la organización ya acepta
+            List<Long> selectedMaterialIds = currentOrg.getMaterials() != null 
+                ? currentOrg.getMaterials().stream().map(Material::getId).toList()
+                : new ArrayList<>();
+            model.addAttribute("selectedMaterialIds", selectedMaterialIds);
+            
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error al cargar perfil");
+            model.addAttribute("availableMaterials", new ArrayList<>());
+            model.addAttribute("selectedMaterialIds", new ArrayList<>());
         }
         return "org/profile";
     }
@@ -226,6 +259,7 @@ public class OrganizationAdminController {
             @RequestParam(required = false) String addressReferences,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude,
+            @RequestParam(required = false) List<Long> materialIds,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
@@ -265,6 +299,21 @@ public class OrganizationAdminController {
                 }
             }
             
+            // Actualizar materiales seleccionados
+            if (materialIds != null && !materialIds.isEmpty()) {
+                List<Material> selectedMaterials = new ArrayList<>();
+                for (Long materialId : materialIds) {
+                    Material material = materialService.findById(materialId).orElse(null);
+                    if (material != null && material.getActive()) {
+                        selectedMaterials.add(material);
+                    }
+                }
+                currentOrg.setMaterials(selectedMaterials);
+            } else {
+                // Si no se seleccionó ningún material, limpiar la lista
+                currentOrg.setMaterials(new ArrayList<>());
+            }
+            
             userService.updateUser(currentOrg, null);
             redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado correctamente");
         } catch (Exception e) {
@@ -282,17 +331,27 @@ public class OrganizationAdminController {
         try {
             User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
             
-            // Obtener todas las solicitudes
+            // Obtener IDs de materiales que acepta esta organización
+            List<Long> acceptedMaterialIds = currentOrg.getMaterials() != null 
+                ? currentOrg.getMaterials().stream().map(Material::getId).toList()
+                : new ArrayList<>();
+            
+            // Obtener todas las solicitudes y filtrar por materiales aceptados
             List<Request> allRequests = requestService.findAll();
+            List<Request> filteredRequests = allRequests.stream()
+                .filter(request -> request.getMaterials() != null && 
+                    request.getMaterials().stream()
+                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
+                .toList();
             
-            // Contar por estado
-            long pending = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count();
-            long accepted = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count();
-            long inProgress = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).count();
-            long rejected = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
-            long completed = allRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count();
+            // Contar por estado (solo solicitudes filtradas)
+            long pending = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count();
+            long accepted = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count();
+            long inProgress = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).count();
+            long rejected = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
+            long completed = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count();
             
-            model.addAttribute("totalRequests", allRequests.size());
+            model.addAttribute("totalRequests", filteredRequests.size());
             model.addAttribute("pendingRequests", pending);
             model.addAttribute("acceptedRequests", accepted);
             model.addAttribute("inProgressRequests", inProgress);
@@ -300,7 +359,7 @@ public class OrganizationAdminController {
             model.addAttribute("completedRequests", completed);
             
             // Materiales gestionados
-            int materialsCount = currentOrg.getMaterials() != null ? currentOrg.getMaterials().size() : 0;
+            int materialsCount = acceptedMaterialIds.size();
             model.addAttribute("managedMaterials", materialsCount);
             
             // Total de materiales disponibles

@@ -137,9 +137,17 @@ public class UserService {
      * @return Usuario encontrado
      * @throws IllegalArgumentException si el usuario no existe
      */
+    @Transactional(readOnly = true)
     public User findAuthenticatedUserByUsername(String username) {
-        return findByUsername(username)
+        User user = findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
+        
+        // Forzar inicialización de colecciones lazy para evitar LazyInitializationException
+        if (user.getMaterials() != null) {
+            user.getMaterials().size();
+        }
+        
+        return user;
     }
     
     

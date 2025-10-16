@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completa tu Perfil - Centro de Acopio</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header Simple -->
+    <div class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="recycle" class="w-6 h-6 text-white"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-900">EcoSolicitud</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Mensajes -->
+        <div th:if="${errorMessage}" class="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2 flex-shrink-0"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+
+        <!-- Card Principal -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <!-- Header del Card -->
+            <div class="bg-gradient-to-r from-emerald-600 to-green-600 px-6 py-8 text-white">
+                <div class="flex items-center gap-3 mb-3">
+                    <i data-lucide="clipboard-check" class="w-8 h-8"></i>
+                    <h1 class="text-2xl font-bold">Completa tu Perfil de Centro de Acopio</h1>
+                </div>
+                <p class="text-emerald-50">
+                    ¡Bienvenido! Para comenzar a recibir solicitudes de recolección, necesitamos que completes la siguiente información.
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <form th:action="@{/organization/complete-profile}" method="post" class="px-6 py-8 space-y-6">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <!-- Información de Contacto -->
+                <div class="space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-emerald-600"></i>
+                        Información de Contacto
+                    </h2>
+
+                    <!-- Dirección -->
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
+                            Dirección Completa <span class="text-red-500">*</span>
+                        </label>
+                        <textarea 
+                            id="address" 
+                            name="address" 
+                            rows="3"
+                            required
+                            minlength="10"
+                            th:value="${organization?.address}"
+                            placeholder="Ej: Av. Principal 123, entre Calle A y B, Edificio Verde, Local 5"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        ></textarea>
+                        <p class="mt-1 text-xs text-gray-500">
+                            Incluye referencias para que los usuarios puedan encontrarte fácilmente
+                        </p>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                            Teléfono de Contacto <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            required
+                            minlength="8"
+                            th:value="${organization?.phone}"
+                            placeholder="Ej: 099 123 456"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            Los usuarios se comunicarán contigo a este número
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Materiales que Acepta -->
+                <div class="space-y-4 border-t border-gray-200 pt-6">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
+                        Materiales que Aceptas
+                    </h2>
+                    <p class="text-sm text-gray-600">
+                        Selecciona todos los materiales reciclables que tu centro puede recibir. 
+                        <span class="font-medium text-emerald-700">Debes seleccionar al menos uno.</span>
+                    </p>
+
+                    <!-- Grid de Materiales -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="materialsGrid">
+                        <div th:each="material : ${availableMaterials}" 
+                             class="relative flex items-start p-3 border border-gray-200 rounded-lg hover:border-emerald-300 hover:bg-emerald-50 transition-colors cursor-pointer">
+                            <div class="flex items-center h-5">
+                                <input 
+                                    type="checkbox" 
+                                    th:id="'material_' + ${material.id}"
+                                    name="materialIds" 
+                                    th:value="${material.id}"
+                                    class="material-checkbox w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                                />
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <label th:for="'material_' + ${material.id}" class="font-medium text-gray-900 cursor-pointer">
+                                    <span th:text="${material.name}"></span>
+                                </label>
+                                <p th:if="${material.description}" 
+                                   th:text="${material.description}" 
+                                   class="text-xs text-gray-500 mt-0.5">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje de error si no selecciona ninguno -->
+                    <p id="materialsError" class="hidden text-sm text-red-600 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                        Debes seleccionar al menos un material
+                    </p>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex flex-col sm:flex-row gap-3 border-t border-gray-200 pt-6">
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-emerald-600 text-white px-6 py-3 rounded-md hover:bg-emerald-700 font-medium flex items-center justify-center gap-2 transition-colors">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        Completar Perfil
+                    </button>
+                </div>
+
+                <!-- Nota informativa -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="flex gap-3">
+                        <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                        <div class="text-sm text-blue-800">
+                            <p class="font-medium mb-1">¿Por qué necesitamos esta información?</p>
+                            <p class="text-blue-700">
+                                Esta información será visible para los usuarios que deseen enviar materiales reciclables a tu centro. 
+                                Podrás actualizar estos datos más tarde desde tu perfil.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Inicializar iconos Lucide
+        lucide.createIcons();
+
+        // Validación de materiales
+        const form = document.querySelector('form');
+        const checkboxes = document.querySelectorAll('.material-checkbox');
+        const errorMsg = document.getElementById('materialsError');
+
+        form.addEventListener('submit', function(e) {
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            if (checkedCount === 0) {
+                e.preventDefault();
+                errorMsg.classList.remove('hidden');
+                errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Reinicializar iconos después de mostrar el error
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+        });
+
+        // Ocultar mensaje de error cuando se selecciona un checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    errorMsg.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

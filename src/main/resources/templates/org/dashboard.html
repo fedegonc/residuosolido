@@ -165,42 +165,42 @@
         <!-- Acciones Rápidas -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Gestión de Materiales -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                         <i data-lucide="recycle" class="w-6 h-6 text-green-600"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-gray-900">Materiales Reciclables</h3>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-900 text-base">Materiales Reciclables</h3>
                         <p class="text-sm text-gray-600">Gestiona el catálogo</p>
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 mb-4">
+                <p class="text-sm text-gray-600 mb-6 flex-1">
                     Administra los tipos de materiales que tu organización puede reciclar y sus características.
                 </p>
                 <a href="/acopio/materials" 
-                   class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors w-full justify-center">
+                   class="inline-flex items-center px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors w-full justify-center">
                     <i data-lucide="list" class="w-4 h-4 mr-2"></i>
                     Ver Materiales
                 </a>
             </div>
 
             <!-- Estadísticas y Reportes -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                         <i data-lucide="bar-chart-3" class="w-6 h-6 text-blue-600"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-gray-900">Estadísticas</h3>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-900 text-base">Estadísticas</h3>
                         <p class="text-sm text-gray-600">Analiza tu rendimiento</p>
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 mb-4">
+                <p class="text-sm text-gray-600 mb-6 flex-1">
                     Visualiza métricas detalladas sobre recolecciones, materiales y eficiencia operativa.
                 </p>
                 <a href="/acopio/estadisticas" 
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors w-full justify-center">
+                   class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors w-full justify-center">
                     <i data-lucide="trending-up" class="w-4 h-4 mr-2"></i>
                     Ver Estadísticas
                 </a>

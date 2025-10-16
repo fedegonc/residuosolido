@@ -161,6 +161,44 @@
                     </div>
                 </div>
 
+                <!-- Materiales que Acepta -->
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
+                            Materiales que Acepta tu Organización
+                        </label>
+                        <p class="text-xs text-gray-600 mb-3">
+                            Selecciona los tipos de materiales reciclables que tu organización puede procesar.
+                        </p>
+                    </div>
+
+                    <div th:if="${availableMaterials != null and !availableMaterials.empty}" 
+                         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                        <label th:each="material : ${availableMaterials}" 
+                               th:for="'material_' + ${material.id}"
+                               class="relative flex items-center p-2 border border-gray-200 rounded-md hover:border-blue-300 hover:bg-blue-50 transition-colors cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                th:id="'material_' + ${material.id}"
+                                name="materialIds" 
+                                th:value="${material.id}"
+                                th:checked="${selectedMaterialIds.contains(material.id)}"
+                                class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
+                            />
+                            <span class="ml-2 text-sm text-gray-900 truncate" th:text="${material.name}"></span>
+                        </label>
+                    </div>
+
+                    <div th:if="${availableMaterials == null or availableMaterials.empty}" 
+                         class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                        <i data-lucide="inbox" class="w-10 h-10 text-gray-400 mx-auto mb-2"></i>
+                        <p class="text-sm text-gray-600">
+                            No hay materiales disponibles. Contacta al administrador.
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Botones -->
                 <div class="flex gap-3 pt-4 border-t border-gray-200">
                     <button type="submit" 
@@ -168,7 +206,7 @@
                         <i data-lucide="save" class="w-4 h-4"></i>
                         Guardar Cambios
                     </button>
-                    <a th:href="@{/org/dashboard}" 
+                    <a th:href="@{/acopio/inicio}" 
                        class="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-md hover:bg-gray-300 transition-colors flex items-center gap-2">
                         <i data-lucide="x" class="w-4 h-4"></i>
                         Cancelar

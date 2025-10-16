@@ -172,10 +172,126 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        <!-- Vista de Detalles -->
+        <div th:if="${viewType == 'detail' and request != null}" class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="clipboard-list" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Detalles de la Solicitud</h2>
+                        <p class="text-sm text-gray-600">Información completa de la solicitud de recolección</p>
+                    </div>
+                </div>
+                <a href="/acopio/requests" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                    Volver a la Lista
+                </a>
+            </div>
 
-    <script>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Información Principal -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${request.description}">Descripción de la solicitud</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                        <span th:text="${request.status.displayName}"
+                              th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                                             request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' :
+                                             request.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                                             'bg-red-100 text-red-800'}"
+                              class="inline-flex items-center px-2.5 py-1 text-sm font-medium rounded-full">
+                        </span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Creación</label>
+                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</p>
+                    </div>
+
+                    <div th:if="${request.scheduledDate}">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Programada</label>
+                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${#temporals.format(request.scheduledDate, 'dd/MM/yyyy')}">Fecha programada</p>
+                    </div>
+                </div>
+
+                <!-- Información del Usuario y Ubicación -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Usuario Solicitante</label>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="font-medium text-gray-900" th:text="${request.user.fullName}">Nombre del usuario</p>
+                            <p class="text-sm text-gray-600" th:text="${request.user.username}">Usuario</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dirección de Recolección</label>
+                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${request.collectionAddress}">Dirección</p>
+                    </div>
+
+                    <div th:if="${request.user.phone}">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono de Contacto</label>
+                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${request.user.phone}">Teléfono</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materiales -->
+            <div th:if="${request.materials != null and !request.materials.empty}" class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Materiales Solicitados</label>
+                <div class="flex flex-wrap gap-2">
+                    <span th:each="material : ${request.materials}"
+                          class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
+                        <i data-lucide="recycle" class="w-4 h-4 mr-1"></i>
+                        <span th:text="${material.name}">Material</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Notas -->
+            <div th:if="${request.notes}" class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Notas Adicionales</label>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-gray-900" th:text="${request.notes}">Notas de la solicitud</p>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
+                <a href="/acopio/requests" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
+                    Volver a la Lista
+                </a>
+                <div class="flex gap-2">
+                    <form th:if="${request.status.name() == 'PENDING'}"
+                          th:action="@{/acopio/requests/accept/{id}(id=${request.id})}"
+                          method="post" class="inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit"
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md transition-colors">
+                            <i data-lucide="check" class="w-4 h-4 mr-2 inline"></i>
+                            Aceptar Solicitud
+                        </button>
+                    </form>
+                    <form th:if="${request.status.name() == 'PENDING'}"
+                          th:action="@{/acopio/requests/reject/{id}(id=${request.id})}"
+                          method="post" class="inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit"
+                                onclick="return confirm('¿Estás seguro de rechazar esta solicitud?')"
+                                class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md transition-colors">
+                            <i data-lucide="x" class="w-4 h-4 mr-2 inline"></i>
+                            Rechazar Solicitud
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
         lucide.createIcons();
         
         function filterRequests(status) {

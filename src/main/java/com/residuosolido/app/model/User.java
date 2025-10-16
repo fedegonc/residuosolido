@@ -74,11 +74,18 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime lastAccessAt;
     private boolean active = true;
+    
+    @Column(name = "profile_completed")
+    private Boolean profileCompleted = false;
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.lastAccessAt = LocalDateTime.now();
+        // Auto-completar perfil para usuarios que no son organizaciones
+        if (this.role != Role.ORGANIZATION) {
+            this.profileCompleted = true;
+        }
     }
 
     @PreUpdate

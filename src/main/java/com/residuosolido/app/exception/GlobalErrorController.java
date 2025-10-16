@@ -32,7 +32,7 @@ public class GlobalErrorController implements ErrorController {
                 .anyMatch(r -> r.equals("ROLE_ADMIN")) ? "/admin/dashboard" :
                auth.getAuthorities().stream()
                 .map(a -> a.getAuthority())
-                .anyMatch(r -> r.equals("ROLE_ORGANIZATION")) ? "/org/dashboard" :
+                .anyMatch(r -> r.equals("ROLE_ORGANIZATION")) ? "/acopio/inicio" :
                "/usuarios/inicio";
     }
 }
