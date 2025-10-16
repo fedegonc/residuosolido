@@ -216,7 +216,7 @@ public class OrganizationAdminController {
     }
 
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @PostMapping("/org/profile")
+    @PostMapping("/acopio/perfil")
     public String updateOrgProfile(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String firstName,
@@ -270,7 +270,7 @@ public class OrganizationAdminController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar perfil: " + e.getMessage());
         }
-        return "redirect:/org/profile";
+        return "redirect:/acopio/perfil";
     }
     
     /**

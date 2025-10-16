@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/auth-layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
 <head>
   <title>Crear Cuenta</title>
   <!-- Font Awesome para iconos -->
@@ -9,17 +9,7 @@
 <main layout:fragment="content">
 
   <!-- Breadcrumbs -->
-  <div class="bg-gray-50 py-4">
-    <div class="max-w-2xl mx-auto px-4">
-      <nav class="mb-3" aria-label="Breadcrumb">
-        <ol class="flex items-center text-sm text-gray-500">
-          <li><a href="/" class="hover:text-gray-700">Inicio</a></li>
-          <li class="px-2">/</li>
-          <li class="text-gray-700 font-medium" aria-current="page">Crear Cuenta</li>
-        </ol>
-      </nav>
-    </div>
-  </div>
+  <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
 
   <!-- Contenido principal -->
   <div class="max-w-2xl mx-auto px-4 py-8">

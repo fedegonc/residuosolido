@@ -151,7 +151,7 @@
                             </form>
                             
                             <form th:if="${request.status.name() == 'PENDING'}" 
-                                  th:action="@{/org/requests/reject/{id}(id=${request.id})}" 
+                                  th:action="@{/acopio/requests/reject/{id}(id=${request.id})}" 
                                   method="post" class="inline">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <button type="submit" 

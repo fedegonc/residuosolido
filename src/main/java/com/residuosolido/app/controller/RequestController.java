@@ -361,7 +361,7 @@ public class RequestController {
     /**
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/org/requests")
+    @GetMapping("/acopio/requests")
     public String orgRequests(Model model) {
         List<Request> pendingRequests = requestService.getPendingRequests();
         prepareRequestModel(model, pendingRequests, "list");
@@ -372,7 +372,7 @@ public class RequestController {
      * Acepta una solicitud
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @PostMapping("/org/requests/accept/{id}")
+    @PostMapping("/acopio/requests/accept/{id}")
     public String orgAcceptRequest(
             @PathVariable Long id, 
             Authentication authentication,
@@ -392,7 +392,7 @@ public class RequestController {
      * Rechaza una solicitud
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @PostMapping("/org/requests/reject/{id}")
+    @PostMapping("/acopio/requests/reject/{id}")
     public String orgRejectRequest(
             @PathVariable Long id, 
             RedirectAttributes redirectAttributes) {
@@ -409,7 +409,7 @@ public class RequestController {
      * Muestra detalle de una solicitud (organización)
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/org/requests/{id}")
+    @GetMapping("/acopio/requests/{id}")
     public String orgRequestDetail(
             @PathVariable Long id,
             Model model,
@@ -418,7 +418,7 @@ public class RequestController {
             Optional<Request> requestOpt = requestService.findById(id);
             if (requestOpt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Solicitud no encontrada");
-                return "redirect:/org/requests";
+                return "redirect:/acopio/requests";
             }
             
             Request request = requestOpt.get();
@@ -427,7 +427,7 @@ public class RequestController {
             return "org/requests";
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al cargar solicitud");
-            return "redirect:/org/requests";
+            return "redirect:/acopio/requests";
         }
     }
 }
