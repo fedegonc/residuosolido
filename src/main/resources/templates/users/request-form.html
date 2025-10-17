@@ -11,6 +11,11 @@
 </head>
 <body th:replace="~{fragments/user-layout :: layout(~{::main})}">
 <main>
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+    
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Alerta cuando no hay organizaciones disponibles -->
         <div th:if="${noOrganizationsAvailable}" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
