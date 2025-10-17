@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.*;
 import com.residuosolido.app.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class RequestController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private MaterialService materialService;
     
     @Autowired(required = false)
     private CloudinaryService cloudinaryService;
@@ -146,15 +150,11 @@ public class RequestController {
                     request.setImageUrl(imageUrl);
                 }
                 
-                // Organización seleccionada (opcional mientras no exista relación en el modelo)
+                // Organización seleccionada
                 if (organizationId != null) {
                     try {
                         User org = userService.getUserOrThrow(organizationId);
-                        // Validación básica de rol
-                        // Nota: Asignación real se realizará cuando exista relación en el modelo.
-                        String orgName = org.getUsername() != null ? org.getUsername() : String.valueOf(org.getId());
-                        String prefix = request.getNotes() != null ? request.getNotes() + "\n" : "";
-                        request.setNotes(prefix + "Organización seleccionada: " + orgName);
+                        request.setOrganization(org);
                     } catch (Exception ignored) { }
                 }
                 if (request.getStatus() == null) request.setStatus(RequestStatus.PENDING);
@@ -298,6 +298,8 @@ public class RequestController {
             model.addAttribute("availableOrganizations", requestService.getActiveOrganizationNames());
             model.addAttribute("organizations", requestService.getActiveOrganizations());
         }
+        // Cargar materiales activos desde la BD
+        model.addAttribute("materials", materialService.findAllActive());
         return "users/request-form";
     }
 
@@ -323,7 +325,7 @@ public class RequestController {
             request.setUser(currentUser);
             request.setStatus(RequestStatus.PENDING);
             
-            // Construir notas con materiales y organización seleccionada
+            // Construir notas con materiales seleccionados
             StringBuilder notesBuilder = new StringBuilder();
             if (request.getNotes() != null && !request.getNotes().isEmpty()) {
                 notesBuilder.append(request.getNotes()).append("\n");
@@ -332,21 +334,20 @@ public class RequestController {
             // Guardar materiales seleccionados
             if (materialNames != null && !materialNames.isEmpty()) {
                 String materialsStr = String.join(", ", materialNames);
-                notesBuilder.append("Materiales: ").append(materialsStr).append("\n");
+                notesBuilder.append("Materiales: ").append(materialsStr);
             }
             
-            // Guardar organización seleccionada
+            request.setNotes(notesBuilder.toString().trim());
+            
+            // Asignar organización seleccionada
             if (organizationId != null) {
                 try {
                     User org = userService.getUserOrThrow(organizationId);
-                    String orgName = org.getUsername() != null ? org.getUsername() : String.valueOf(org.getId());
-                    notesBuilder.append("Organización preferida: ").append(orgName);
+                    request.setOrganization(org);
                 } catch (Exception e) {
                     // Si hay error al obtener la organización, continuar sin ella
                 }
             }
-            
-            request.setNotes(notesBuilder.toString().trim());
             requestService.save(request);
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud creada correctamente");
         } catch (Exception e) {

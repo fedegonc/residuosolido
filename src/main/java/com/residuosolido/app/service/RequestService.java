@@ -74,10 +74,14 @@ public class RequestService {
     @Transactional(readOnly = true)
     public List<Request> getRequestsByUser(User user) {
         List<Request> requests = requestRepository.findByUser(user);
-        // Forzar la inicialización de la colección materials para evitar LazyInitializationException
+        // Forzar la inicialización de relaciones lazy para evitar LazyInitializationException
         requests.forEach(request -> {
             if (request.getMaterials() != null) {
                 request.getMaterials().size(); // Esto fuerza la carga de la colección
+            }
+            // Inicializar organización si existe
+            if (request.getOrganization() != null) {
+                request.getOrganization().getFullName(); // Fuerza la carga del proxy
             }
         });
         return requests;
@@ -93,6 +97,11 @@ public class RequestService {
                 request.getUser().getFirstName();
                 request.getUser().getLastName();
                 request.getUser().getEmail();
+            }
+            // Forzar la inicialización de la organización
+            if (request.getOrganization() != null) {
+                request.getOrganization().getUsername();
+                request.getOrganization().getFullName();
             }
             // Forzar la inicialización de la colección materials
             if (request.getMaterials() != null) {
@@ -117,6 +126,11 @@ public class RequestService {
                 request.getUser().getFirstName();
                 request.getUser().getLastName();
                 request.getUser().getEmail();
+            }
+            // Forzar la inicialización de la organización
+            if (request.getOrganization() != null) {
+                request.getOrganization().getUsername();
+                request.getOrganization().getFullName();
             }
             // Forzar la inicialización de la colección materials
             if (request.getMaterials() != null) {
@@ -146,6 +160,10 @@ public class RequestService {
                 request.getUser().getLastName();
                 request.getUser().getFullName();
             }
+            if (request.getOrganization() != null) {
+                request.getOrganization().getUsername();
+                request.getOrganization().getFullName();
+            }
             if (request.getMaterials() != null) {
                 request.getMaterials().size();
             }
@@ -163,6 +181,10 @@ public class RequestService {
                 request.getUser().getFirstName();
                 request.getUser().getLastName();
                 request.getUser().getFullName();
+            }
+            if (request.getOrganization() != null) {
+                request.getOrganization().getUsername();
+                request.getOrganization().getFullName();
             }
             if (request.getMaterials() != null) {
                 request.getMaterials().size();
@@ -220,19 +242,29 @@ public class RequestService {
     // ====== Organization availability validation ======
 
     /**
-     * Returns true if there is at least one active organization available to handle requests
+     * Returns true if there is at least one organization available to handle requests
+     * Note: Checks for active=true first, falls back to all organizations if none are active
      */
     public boolean hasActiveOrganizations() {
-        List<User> orgs = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
-        return orgs != null && !orgs.isEmpty();
+        List<User> activeOrgs = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
+        if (activeOrgs != null && !activeOrgs.isEmpty()) {
+            return true;
+        }
+        // Fallback: check if there are any organizations at all
+        List<User> allOrgs = userRepository.findByRole(Role.ORGANIZATION);
+        return allOrgs != null && !allOrgs.isEmpty();
     }
 
     /**
-     * Returns the list of active organizations (users with role ORGANIZATION and active=true)
+     * Returns the list of organizations (prioritizes active=true, falls back to all)
      */
     @Transactional(readOnly = true)
     public List<User> getActiveOrganizations() {
         List<User> orgs = userRepository.findByRoleAndActive(Role.ORGANIZATION, true);
+        // Si no hay organizaciones activas, mostrar todas las organizaciones
+        if (orgs == null || orgs.isEmpty()) {
+            orgs = userRepository.findByRole(Role.ORGANIZATION);
+        }
         // Forzar la inicialización de propiedades lazy
         orgs.forEach(org -> {
             org.getUsername();

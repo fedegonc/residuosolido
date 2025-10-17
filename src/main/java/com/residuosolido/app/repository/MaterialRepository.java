@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findByActiveTrue();
-
+    Material findByName(String name);
 }

@@ -18,6 +18,17 @@
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Mensajes -->
+        <div th:if="${successMessage}" class="mb-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg flex items-center">
+            <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        
+        <div th:if="${errorMessage}" class="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center">
+            <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+        
         <!-- Header -->
         <div class="flex justify-between items-center mb-4">
             <div>
@@ -33,7 +44,7 @@
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div th:if="${requests != null and !requests.empty}">
                 <div class="divide-y divide-gray-200">
-                    <div th:each="request : ${requests}" class="p-4 hover:bg-emerald-50 transition-colors">
+                    <div th:each="request : ${requests}" class="p-4 hover:bg-emerald-50 transition-colors cursor-pointer" th:onclick="|window.location.href='/usuarios/solicitud/' + ${request.id}|">
                         <div class="flex items-start gap-3">
                             <!-- Icono -->
                             <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
@@ -67,6 +78,15 @@
                                     </div>
                                 </div>
                                 
+                                <!-- Organización asignada -->
+                                <div th:if="${request.organization != null}" class="flex items-center text-xs mb-3">
+                                    <i data-lucide="building-2" class="w-4 h-4 mr-2 flex-shrink-0 text-emerald-600"></i>
+                                    <span class="text-gray-700">
+                                        <span class="font-medium text-emerald-700">Organización:</span>
+                                        <span th:text="${request.organization.fullName != null ? request.organization.fullName : request.organization.username}">Organización</span>
+                                    </span>
+                                </div>
+                                
                                 <!-- Materiales -->
                                 <div th:if="${request.materials != null and !request.materials.empty}" class="flex items-start text-xs text-gray-600 mb-3">
                                     <i data-lucide="recycle" class="w-4 h-4 mr-2 flex-shrink-0 text-emerald-600 mt-0.5"></i>
@@ -79,8 +99,9 @@
                                 
                                 <!-- Botón de acción -->
                                 <div class="flex items-center gap-2">
-                                    <a th:href="@{/users/requests/{id}(id=${request.id})}" 
-                                       class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700">
+                                    <a th:href="@{/usuarios/solicitud/{id}(id=${request.id})}" 
+                                       class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                                       onclick="event.stopPropagation()">
                                         <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i>
                                         Ver detalles
                                     </a>

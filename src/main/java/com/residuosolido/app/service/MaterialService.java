@@ -50,6 +50,10 @@ public class MaterialService {
         return materialRepository.findById(id);
     }
 
+    public Material findByName(String name) {
+        return materialRepository.findByName(name);
+    }
+
     /**
      * Obtiene los materiales que acepta una organización específica
      * TODO: Implementar relación Many-to-Many entre User y Material

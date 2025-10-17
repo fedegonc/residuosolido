@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nueva Solicitud - EcoSolicitud</title>
+    <title th:text="${(isEdit ?: false) ? 'Editar Solicitud - EcoSolicitud' : 'Nueva Solicitud - EcoSolicitud'}">Nueva Solicitud - EcoSolicitud</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,10 +11,6 @@
 </head>
 <body th:replace="~{fragments/user-layout :: layout(~{::main})}">
 <main>
-    <!-- Breadcrumbs -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-    </div>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Alerta cuando no hay organizaciones disponibles -->
         <div th:if="${noOrganizationsAvailable}" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
@@ -41,17 +37,43 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow p-6">
-            <form th:action="@{/usuarios/solicitudes}" method="post" class="space-y-6">
+        <form th:action="@{${(isEdit ?: false) ? '/usuarios/solicitud/' + request.id + '/editar' : '/usuarios/solicitudes'}}" method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6" th:text="${(isEdit ?: false) ? 'Editar Solicitud de Recolección' : 'Nueva Solicitud de Recolección'}">Nueva Solicitud de Recolección</h2>
+                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <i data-lucide="file-text" class="w-4 h-4 inline mr-1"></i>
                         Descripción de la solicitud
                     </label>
-                    <textarea name="description" rows="4" 
-                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
-                              placeholder="Describe qué tipo de residuos necesitas que recojan y cualquier detalle importante..."
-                              required></textarea>
+                    <textarea name="description" id="description" rows="4" required
+                              th:text="${request?.description}"
+                              class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+                              placeholder="Describe qué tipo de residuos necesitas que recojan y cualquier detalle importante..."></textarea>
+                </div>
+                
+                <!-- Campo de imagen -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i data-lucide="image" class="w-4 h-4 inline mr-1"></i>
+                        Foto de los residuos <span class="text-gray-500 text-xs">(opcional)</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <div class="flex-1">
+                            <input type="file" 
+                                   name="imageFile" 
+                                   id="imageFile"
+                                   accept="image/*"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">
+                        <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                        Sube una foto de los materiales reciclables para ayudar a la organización a preparar la recolección.
+                    </p>
+                    <!-- Preview de la imagen -->
+                    <div id="imagePreview" class="mt-3 hidden">
+                        <img id="previewImg" src="" alt="Preview" class="max-w-xs rounded-lg border border-gray-300 shadow-sm">
+                    </div>
                 </div>
                 
                 <div>
@@ -59,62 +81,76 @@
                         <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
                         Dirección de recolección
                     </label>
-                    <input type="text" name="collectionAddress" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
-                           placeholder="Dirección completa donde recoger los residuos"
-                           required>
+                    <input type="text" name="collectionAddress" id="collectionAddress" required
+                           th:value="${request?.collectionAddress}"
+                           class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                           placeholder="Dirección completa donde recoger los residuos">
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
-                        <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
-                        Tipo de materiales
+                <!-- Selector de Organización de Acopio (PRIMERO) -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-lg border border-emerald-200">
+                    <label class="block text-sm font-semibold text-gray-800 mb-3">
+                        <i data-lucide="building-2" class="w-5 h-5 inline mr-2 text-emerald-600"></i>
+                        Organización de acopio <span class="text-red-600">*</span>
                     </label>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" name="materials" value="Plásticos" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm">🥤 Plásticos</span>
-                        </label>
-                        <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" name="materials" value="Papel/Cartón" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm">📄 Papel/Cartón</span>
-                        </label>
-                        <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" name="materials" value="Vidrio" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm">🍶 Vidrio</span>
-                        </label>
-                        <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" name="materials" value="Metal" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm">🥫 Metal</span>
-                        </label>
-                        <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" name="materials" value="Electrónicos" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm">📱 Electrónicos</span>
-                        </label>
-                        <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" name="materials" value="Orgánicos" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm">🍃 Orgánicos</span>
-                        </label>
+                    
+                    <!-- Si hay organizaciones disponibles -->
+                    <div th:if="${organizations != null and !organizations.isEmpty()}">
+                        <select name="organizationId" 
+                                id="organizationSelector"
+                                required
+                                class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 font-medium shadow-sm hover:border-emerald-400 transition-colors">
+                            <option value="" disabled th:selected="${!(isEdit ?: false) or request.organization == null}" class="text-gray-500">Selecciona una organización de acopio *</option>
+                            <option th:each="org : ${organizations}" 
+                                    th:value="${org.id}" 
+                                    th:text="${org.getFullName()}"
+                                    th:selected="${(isEdit ?: false) and request.organization != null and request.organization.id == org.id}"
+                                    class="text-gray-900">
+                                Organización
+                            </option>
+                        </select>
+                        <div class="mt-3 flex items-start space-x-2 text-xs text-emerald-800 bg-emerald-100 p-2 rounded">
+                            <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                            <p>
+                                <strong>Campo obligatorio:</strong> Selecciona primero una organización para ver los materiales que acepta.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Si NO hay organizaciones disponibles -->
+                    <div th:unless="${organizations != null and !organizations.isEmpty()}">
+                        <div class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-gray-100 text-gray-500 font-medium">
+                            Asignación automática (no hay organizaciones registradas aún)
+                        </div>
+                        <div class="mt-3 flex items-start space-x-2 text-xs text-gray-700 bg-gray-100 p-2 rounded">
+                            <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                            <p>
+                                Actualmente no hay organizaciones de acopio registradas en el sistema. Tu solicitud será procesada cuando haya organizaciones disponibles.
+                            </p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Selector de Organización de Acopio -->
-                <div th:if="${organizations != null and !organizations.isEmpty()}">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="building-2" class="w-4 h-4 inline mr-1"></i>
-                        Organización de acopio (opcional)
+                <!-- Materiales (SE CARGAN DINÁMICAMENTE) -->
+                <div id="materialsSection" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
+                        Materiales que acepta esta organización <span class="text-red-600">*</span>
                     </label>
-                    <select name="organizationId" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500">
-                        <option value="">Seleccionar organización...</option>
-                        <option th:each="org : ${organizations}" 
-                                th:value="${org.id}" 
-                                th:text="${org.username + ' - ' + (org.fullName != null ? org.fullName : 'Sin nombre')}">
-                            Organización
-                        </option>
-                    </select>
-                    <p class="mt-1 text-xs text-gray-500">
-                        Puedes seleccionar una organización específica o dejar en blanco para que el sistema asigne una automáticamente.
+                    
+                    <!-- Contenedor de materiales dinámico -->
+                    <div id="materialsContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            <div class="animate-pulse">
+                                <i data-lucide="loader" class="w-8 h-8 mx-auto mb-2"></i>
+                                <p class="text-sm">Cargando materiales...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-2 text-xs text-gray-500">
+                        <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                        Selecciona al menos un tipo de material para tu solicitud.
                     </p>
                 </div>
                 
@@ -124,17 +160,114 @@
                     </a>
                     <button type="submit" 
                             th:disabled="${noOrganizationsAvailable}"
-                            th:class="${noOrganizationsAvailable} ? 'bg-gray-400 cursor-not-allowed text-white px-6 py-2 rounded-md' : 'bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors'">
-                        <i data-lucide="send" class="w-4 h-4 mr-2 inline"></i>
-                        <span th:text="${noOrganizationsAvailable} ? 'No disponible' : 'Enviar Solicitud'">Enviar Solicitud</span>
+                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span th:if="${isEdit ?: false}">Actualizar Solicitud</span>
+                        <span th:unless="${isEdit ?: false}">Enviar Solicitud</span>
                     </button>
                 </div>
-            </form>
-        </div>
+        </form>
     </div>
 
     <script>
         lucide.createIcons();
+        
+        // Preview de imagen
+        document.getElementById('imageFile')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const img = document.getElementById('previewImg');
+                    img.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Cargar materiales cuando se selecciona una organización
+        const orgSelector = document.getElementById('organizationSelector');
+        const materialsSection = document.getElementById('materialsSection');
+        const materialsContainer = document.getElementById('materialsContainer');
+        
+        if (orgSelector) {
+            orgSelector.addEventListener('change', async function() {
+                const orgId = this.value;
+                
+                if (!orgId) {
+                    materialsSection.classList.add('hidden');
+                    return;
+                }
+                
+                // Mostrar sección de materiales con loading
+                materialsSection.classList.remove('hidden');
+                materialsContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        <div class="animate-pulse">
+                            <i data-lucide="loader" class="w-8 h-8 mx-auto mb-2"></i>
+                            <p class="text-sm">Cargando materiales...</p>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                
+                try {
+                    // Obtener CSRF token
+                    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+                    
+                    // Llamar al endpoint para obtener materiales de la organización
+                    const response = await fetch(`/api/organizations/${orgId}/materials`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(csrfToken && csrfHeader ? { [csrfHeader]: csrfToken } : {})
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Error al cargar materiales');
+                    }
+                    
+                    const materials = await response.json();
+                    
+                    if (materials.length === 0) {
+                        materialsContainer.innerHTML = `
+                            <div class="col-span-full text-center py-8 text-amber-600 bg-amber-50 rounded-lg border border-amber-200">
+                                <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2"></i>
+                                <p class="text-sm font-medium">Esta organización aún no ha configurado los materiales que acepta</p>
+                                <p class="text-xs mt-1">Por favor, selecciona otra organización o contacta al administrador</p>
+                            </div>
+                        `;
+                    } else {
+                        materialsContainer.innerHTML = materials.map(material => `
+                            <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer material-checkbox transition-colors">
+                                <input type="checkbox" 
+                                       name="materials" 
+                                       value="${material.name}" 
+                                       data-material-id="${material.id}"
+                                       class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                <span class="ml-2 text-sm">${material.name}</span>
+                            </label>
+                        `).join('');
+                    }
+                    
+                    lucide.createIcons();
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    materialsContainer.innerHTML = `
+                        <div class="col-span-full text-center py-8 text-red-600 bg-red-50 rounded-lg border border-red-200">
+                            <i data-lucide="alert-circle" class="w-8 h-8 mx-auto mb-2"></i>
+                            <p class="text-sm">Error al cargar materiales. Por favor, intenta de nuevo.</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                }
+            });
+        }
     </script>
 </main>
 </body>

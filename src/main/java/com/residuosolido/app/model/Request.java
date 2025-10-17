@@ -26,6 +26,10 @@ public class Request {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    private User organization;
+    
     @Column(length = 1000)
     private String description;
 

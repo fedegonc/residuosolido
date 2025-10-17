@@ -56,6 +56,8 @@ public class SecurityConfig {
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**").permitAll()
+                // API endpoints para usuarios autenticados
+                .requestMatchers("/api/**").authenticated()
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de usuarios regulares

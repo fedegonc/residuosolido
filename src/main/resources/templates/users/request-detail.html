@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Solicitud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
+<main>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Encabezado -->
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <a href="/usuarios/solicitudes" class="text-emerald-600 hover:text-emerald-700 flex items-center gap-2 mb-4">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    Volver a solicitudes
+                </a>
+                <h1 class="text-2xl font-bold text-gray-900">Detalle de Solicitud</h1>
+            </div>
+            <div th:if="${request.status}" class="text-right">
+                <span th:class="${'inline-block px-3 py-1 rounded-md text-xs font-medium border ' + 
+                    (#strings.equals(request.status, 'PENDING') ? 'bg-amber-50 text-amber-700 border-amber-200' : 
+                    #strings.equals(request.status, 'ASSIGNED') ? 'bg-blue-50 text-blue-700 border-blue-200' : 
+                    #strings.equals(request.status, 'IN_PROGRESS') ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 
+                    #strings.equals(request.status, 'COMPLETED') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
+                    'bg-gray-50 text-gray-700 border-gray-200')}"
+                      th:text="${request.status}">
+                </span>
+            </div>
+        </div>
+
+        <!-- Tarjeta principal -->
+        <div class="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
+            <!-- Imagen si existe -->
+            <div th:if="${request.imageUrl}" class="w-full h-96 bg-gray-200 overflow-hidden">
+                <img th:src="${request.imageUrl}" alt="Imagen de la solicitud" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Contenido -->
+            <div class="p-6">
+                <!-- Información básica -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Descripción -->
+                    <div>
+                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Descripción</h2>
+                        <p class="text-base text-gray-900" th:text="${request?.description ?: 'Sin descripción'}">
+                            Descripción de la solicitud
+                        </p>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div>
+                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                            Dirección de recolección
+                        </h2>
+                        <p class="text-base text-gray-900" th:text="${request?.collectionAddress ?: 'Sin dirección'}">
+                            Dirección
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Materiales -->
+                <div class="mb-6 pb-6 border-b border-gray-200">
+                    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <i data-lucide="recycle" class="w-3.5 h-3.5"></i>
+                        Materiales solicitados
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:if="${request?.materials == null or request.materials.isEmpty()}" class="text-gray-500 italic">
+                            No hay materiales especificados
+                        </span>
+                        <span th:each="material : ${request?.materials ?: {}}" 
+                              class="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-md text-sm font-medium"
+                              th:text="${material?.name}">
+                            Material
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Organización asignada -->
+                <div class="mb-6 pb-6 border-b border-gray-200">
+                    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
+                        Organización asignada
+                    </h2>
+                    <div th:if="${request.organization}" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-base font-semibold text-blue-900" th:text="${request.organization.getFullName()}">
+                            Nombre de organización
+                        </p>
+                        <p th:if="${request.organization.email}" class="text-sm text-blue-700 mt-1">
+                            <i data-lucide="mail" class="w-3 h-3 inline mr-1"></i>
+                            <span th:text="${request.organization.email}"></span>
+                        </p>
+                        <p th:if="${request.organization.phone}" class="text-sm text-blue-700 mt-1">
+                            <i data-lucide="phone" class="w-3 h-3 inline mr-1"></i>
+                            <span th:text="${request.organization.phone}"></span>
+                        </p>
+                    </div>
+                    <div th:unless="${request.organization}" class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <p class="text-gray-600 italic">Sin organización asignada aún</p>
+                    </div>
+                </div>
+
+                <!-- Fechas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div th:if="${request?.createdAt}">
+                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                            Fecha de solicitud
+                        </h2>
+                        <p class="text-base text-gray-900" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">
+                            Fecha
+                        </p>
+                    </div>
+
+                    <div th:if="${request?.scheduledDate}">
+                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+                            <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
+                            Fecha programada
+                        </h2>
+                        <p class="text-base text-gray-900" th:text="${#temporals.format(request.scheduledDate, 'dd/MM/yyyy HH:mm')}">
+                            Fecha programada
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="/usuarios/solicitudes" class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-lg transition-colors text-center font-medium text-sm">
+                Volver
+            </a>
+            <a th:href="@{/usuarios/solicitud/{id}/editar(id=${request.id})}" class="flex-1 bg-white border border-blue-300 hover:bg-blue-50 text-blue-600 px-5 py-2.5 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="edit" class="w-4 h-4"></i>
+                Editar
+            </a>
+            <button onclick="confirmDelete()" class="flex-1 bg-white border border-red-300 hover:bg-red-50 text-red-600 px-5 py-2.5 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                Eliminar
+            </button>
+        </div>
+
+        <!-- Formulario oculto para eliminar -->
+        <form id="deleteForm" th:action="@{/usuarios/solicitud/{id}/eliminar(id=${request.id})}" method="post" class="hidden">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        </form>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        function confirmDelete() {
+            if (confirm('¿Estás seguro de que deseas eliminar esta solicitud? Esta acción no se puede deshacer.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+</main>
+</body>
+</html>

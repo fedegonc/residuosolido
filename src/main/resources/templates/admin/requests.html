@@ -81,6 +81,7 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organización</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Materiales</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Prog.</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
@@ -104,6 +105,18 @@
                     <div class="text-sm font-medium text-gray-900" th:text="${request.user != null ? request.user.username : 'Sin usuario'}">usuario</div>
                     <div class="text-xs text-gray-500" th:text="${request.collectionAddress}">dirección</div>
                   </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div th:if="${request.organization != null}" class="flex items-center">
+                  <i data-lucide="building-2" class="w-4 h-4 mr-2 text-emerald-600"></i>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900" th:text="${request.organization.fullName != null ? request.organization.fullName : request.organization.username}">Organización</div>
+                    <div class="text-xs text-gray-500">Asignada</div>
+                  </div>
+                </div>
+                <div th:unless="${request.organization != null}" class="text-sm text-gray-400 italic">
+                  Sin asignar
                 </div>
               </td>
               <td class="px-6 py-4 text-sm text-gray-700 max-w-xs">

@@ -124,7 +124,7 @@
             
             <div th:if="${recentRequests != null and !recentRequests.empty}">
                 <a th:each="request, iterStat : ${recentRequests}"
-                   th:href="@{/usuarios/solicitudes/{id}(id=${request.id})}"
+                   th:href="@{/usuarios/solicitud/{id}(id=${request.id})}"
                    class="block p-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:bg-emerald-50"
                    th:classappend="${iterStat.last ? 'border-b-0' : ''}">
                     <div class="flex items-start gap-3">

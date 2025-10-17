@@ -6,6 +6,7 @@ import com.residuosolido.app.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -32,6 +34,9 @@ public class UserController {
     
     @Autowired
     private RequestService requestService;
+    
+    @Autowired
+    private MaterialService materialService;
     
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -410,48 +415,249 @@ public class UserController {
 
     // ========== USER REQUESTS ==========
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/usuarios/solicitudes")
-    public String userRequests(Authentication authentication, Model model) {
+    @GetMapping("/usuarios/solicitud/{id}")
+    public String requestDetail(@PathVariable Long id, Authentication authentication, Model model) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             
-            List<Request> userRequests = requestService.getRequestsByUser(currentUser);
-            model.addAttribute("requests", userRequests);
+            Request request = requestService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+            
+            // Verificar que la solicitud pertenece al usuario actual
+            if (!request.getUser().getId().equals(currentUser.getId())) {
+                throw new RuntimeException("No tienes permiso para ver esta solicitud");
+            }
+            
+            model.addAttribute("request", request);
             
         } catch (Exception e) {
-            logger.error("Error al cargar solicitudes: {}", e.getMessage());
-            model.addAttribute("errorMessage", "Error al cargar las solicitudes");
+            logger.error("Error al cargar detalle de solicitud: {}", e.getMessage());
+            model.addAttribute("errorMessage", "Error al cargar la solicitud");
+            return "redirect:/usuarios/solicitudes";
         }
         
-        return "users/requests";
+        return "users/request-detail";
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/usuarios/solicitud/{id}/eliminar")
+    public String deleteRequest(@PathVariable Long id, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            
+            Request request = requestService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+            
+            // Verificar que la solicitud pertenece al usuario actual
+            if (!request.getUser().getId().equals(currentUser.getId())) {
+                throw new RuntimeException("No tienes permiso para eliminar esta solicitud");
+            }
+            
+            // Eliminar la solicitud
+            requestService.deleteById(id);
+            
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud eliminada exitosamente");
+            
+        } catch (Exception e) {
+            logger.error("Error al eliminar solicitud: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar la solicitud: " + e.getMessage());
+        }
+        
+        return "redirect:/usuarios/solicitudes";
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/usuarios/solicitud/{id}/editar")
+    public String editRequestForm(@PathVariable Long id, Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            
+            Request request = requestService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+            
+            // Verificar que la solicitud pertenece al usuario actual
+            if (!request.getUser().getId().equals(currentUser.getId())) {
+                throw new RuntimeException("No tienes permiso para editar esta solicitud");
+            }
+            
+            model.addAttribute("request", request);
+            model.addAttribute("isEdit", true);
+            
+            // Organizaciones disponibles
+            model.addAttribute("organizations", requestService.getActiveOrganizations());
+            
+            // Materiales activos
+            model.addAttribute("materials", materialService.findAllActive());
+            
+            return "users/request-form";
+            
+        } catch (Exception e) {
+            logger.error("Error al cargar formulario de edición: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al cargar la solicitud");
+            return "redirect:/usuarios/solicitudes";
+        }
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/usuarios/solicitud/{id}/editar")
+    public String updateRequest(@PathVariable Long id,
+                               @RequestParam("description") String description,
+                               @RequestParam("collectionAddress") String collectionAddress,
+                               @RequestParam(value = "materials", required = false) List<String> materials,
+                               @RequestParam(value = "organizationId", required = false) Long organizationId,
+                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                               Authentication authentication,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            logger.info("Actualizando solicitud {} con organizationId: {}", id, organizationId);
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            
+            Request request = requestService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+            
+            // Verificar que la solicitud pertenece al usuario actual
+            if (!request.getUser().getId().equals(currentUser.getId())) {
+                throw new RuntimeException("No tienes permiso para editar esta solicitud");
+            }
+            
+            // Actualizar campos
+            request.setDescription(description);
+            request.setCollectionAddress(collectionAddress);
+            
+            // Actualizar materiales si se proporcionaron
+            if (materials != null && !materials.isEmpty()) {
+                List<Material> materialList = new ArrayList<>();
+                for (String materialName : materials) {
+                    Material material = materialService.findByName(materialName);
+                    if (material != null) {
+                        materialList.add(material);
+                    }
+                }
+                request.setMaterials(materialList);
+            }
+            
+            // Actualizar organización si se proporcionó
+            if (organizationId != null && organizationId > 0) {
+                User org = userService.getUserOrThrow(organizationId);
+                request.setOrganization(org);
+            }
+            
+            // Actualizar imagen si se proporcionó
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(imageFile);
+                request.setImageUrl(imageUrl);
+            }
+            
+            requestService.save(request);
+            
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud actualizada exitosamente");
+            return "redirect:/usuarios/solicitud/" + id;
+            
+        } catch (Exception e) {
+            logger.error("Error al actualizar solicitud: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar la solicitud: " + e.getMessage());
+            return "redirect:/usuarios/solicitud/" + id;
+        }
     }
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/usuarios/solicitudes/nueva")
-    public String newUserRequest() {
+    public String newUserRequest(Model model) {
+        // Modelo base de la solicitud
+        model.addAttribute("request", new Request());
+        model.addAttribute("isEdit", false);
+        
+        // Organizaciones disponibles (activa primero, fallback a todas)
+        boolean noOrgs = !requestService.hasActiveOrganizations();
+        model.addAttribute("noOrganizationsAvailable", noOrgs);
+        if (!noOrgs) {
+            model.addAttribute("availableOrganizations", requestService.getActiveOrganizationNames());
+        }
+        model.addAttribute("organizations", requestService.getActiveOrganizations());
+        
+        // Materiales activos desde la BD
+        model.addAttribute("materials", materialService.findAllActive());
+        
         return "users/request-form";
     }
 
+    /**
+     * API endpoint to get materials accepted by an organization
+     */
+    @GetMapping("/api/organizations/{orgId}/materials")
+    @ResponseBody
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<Material>> getOrganizationMaterials(@PathVariable Long orgId) {
+        try {
+            User organization = userService.findById(orgId)
+                .orElseThrow(() -> new RuntimeException("Organización no encontrada"));
+            
+            // Forzar inicialización de la colección de materiales (lazy loading)
+            List<Material> materials = organization.getMaterials();
+            if (materials == null) {
+                materials = new ArrayList<>();
+            }
+            // Forzar la carga accediendo al tamaño
+            materials.size();
+            
+            return ResponseEntity.ok(materials);
+        } catch (Exception e) {
+            logger.error("Error al obtener materiales de organización {}: {}", orgId, e.getMessage(), e);
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+    }
+
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/users/requests")
+    @PostMapping({"/users/requests", "/usuarios/solicitudes"})
     public String createUserRequest(@RequestParam("description") String description,
-                                   @RequestParam("address") String address,
-                                   @RequestParam("materials") String materials,
+                                   @RequestParam("collectionAddress") String collectionAddress,
+                                   @RequestParam(value = "materials", required = false) List<String> materials,
+                                   @RequestParam(value = "organizationId", required = false) Long organizationId,
+                                   @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
             
-            requestService.createRequest(currentUser, description, materials, address);
+            // Crear solicitud básica
+            String materialsString = materials != null ? String.join(", ", materials) : "";
+            Request request = requestService.createRequest(currentUser, description, materialsString, collectionAddress);
+            
+            // Subir imagen si se proporcionó
+            if (imageFile != null && !imageFile.isEmpty() && cloudinaryService != null) {
+                try {
+                    String imageUrl = cloudinaryService.uploadFile(imageFile);
+                    request.setImageUrl(imageUrl);
+                    requestService.save(request);
+                } catch (Exception e) {
+                    logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
+                    // Continuar sin imagen
+                }
+            }
+            
+            // Asignar organización si se seleccionó
+            if (organizationId != null) {
+                try {
+                    User org = userService.getUserOrThrow(organizationId);
+                    request.setOrganization(org);
+                    requestService.save(request);
+                } catch (Exception e) {
+                    logger.warn("Error al asignar organización: {}", e.getMessage());
+                }
+            }
+            
             redirectAttributes.addFlashAttribute("successMessage", "¡Solicitud enviada exitosamente!");
         } catch (Exception e) {
             logger.error("Error al crear solicitud: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Error al procesar la solicitud. Inténtalo de nuevo.");
         }
         
-        return "redirect:/users/requests";
+        return "redirect:/usuarios/solicitudes";
     }
 
     static class UserRequestStats {
