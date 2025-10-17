@@ -36,8 +36,25 @@
             </div>
         </div>
 
+        <!-- Estado sin datos -->
+        <div th:if="${totalRequests == 0}" class="bg-white rounded-lg shadow p-8 mb-6 text-center">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="inbox" class="w-10 h-10 text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Sin Solicitudes Aún</h3>
+            <p class="text-gray-600 mb-4">Todavía no hay solicitudes relacionadas con los materiales que aceptas.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a th:href="@{/acopio/perfil}" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors">
+                    Configurar Materiales
+                </a>
+                <a th:href="@{/acopio/inicio}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Volver al Dashboard
+                </a>
+            </div>
+        </div>
+
         <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div th:if="${totalRequests > 0}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <!-- Total Solicitudes -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center justify-between mb-2">
@@ -47,7 +64,7 @@
                     <span class="text-3xl font-bold text-gray-900" th:text="${totalRequests ?: 0}">0</span>
                 </div>
                 <h3 class="text-sm font-medium text-gray-600">Total Solicitudes</h3>
-                <p class="text-xs text-gray-500 mt-1">Todas las solicitudes del sistema</p>
+                <p class="text-xs text-gray-500 mt-1">Con tus materiales</p>
             </div>
 
             <!-- Pendientes -->
@@ -88,15 +105,21 @@
         </div>
 
         <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div th:if="${totalRequests > 0}" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- Distribution Chart -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i>
                     Distribución de Solicitudes
                 </h2>
-                <div class="h-64 flex items-center justify-center">
+                <div th:if="${totalRequests > 0}" class="h-64 flex items-center justify-center">
                     <canvas id="distributionChart"></canvas>
+                </div>
+                <div th:if="${totalRequests == 0}" class="h-64 flex items-center justify-center text-gray-400">
+                    <div class="text-center">
+                        <i data-lucide="pie-chart" class="w-16 h-16 mx-auto mb-2 opacity-50"></i>
+                        <p class="text-sm">No hay datos para mostrar</p>
+                    </div>
                 </div>
             </div>
 
@@ -135,7 +158,7 @@
         </div>
 
         <!-- Summary Table -->
-        <div class="bg-white rounded-lg shadow">
+        <div th:if="${totalRequests > 0}" class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-900">Resumen por Estado</h2>
             </div>
@@ -224,7 +247,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="mt-6 flex gap-3">
+        <div th:if="${totalRequests > 0}" class="mt-6 flex gap-3">
             <a th:href="@{/acopio/inicio}" 
                class="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-md hover:bg-gray-300 transition-colors flex items-center gap-2">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
