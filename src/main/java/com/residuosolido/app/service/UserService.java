@@ -174,6 +174,7 @@ public class UserService {
      * @param newPassword Nueva contraseña (opcional)
      * @return Usuario actualizado
      */
+    @Transactional
     public User updateUser(User user, String newPassword) {
         logger.info("[UserService] updateUser() called | id={}", user.getId());
         Optional<User> existingUserOpt = userRepository.findById(user.getId());

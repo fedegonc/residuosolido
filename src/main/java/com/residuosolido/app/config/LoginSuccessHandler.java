@@ -56,7 +56,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                     User user = userService.findAuthenticatedUserByUsername(username);
                     if (user.getProfileCompleted() == null || !user.getProfileCompleted()) {
                         logger.info("Organización '{}' con perfil incompleto, redirigiendo a completar perfil", username);
-                        response.sendRedirect("/organization/complete-profile");
+                        response.sendRedirect("/acopio/completar-perfil");
                         return;
                     }
                 } catch (Exception e) {

@@ -36,7 +36,7 @@ public class OrganizationOnboardingController {
      * Solo accesible para organizaciones con perfil incompleto.
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/organization/complete-profile")
+    @GetMapping("/acopio/completar-perfil")
     public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
         try {
             User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
@@ -66,7 +66,7 @@ public class OrganizationOnboardingController {
      * Valida y guarda la información obligatoria de la organización.
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
-    @PostMapping("/organization/complete-profile")
+    @PostMapping("/acopio/completar-perfil")
     public String completeProfile(
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String phone,
@@ -99,7 +99,7 @@ public class OrganizationOnboardingController {
             // Si hay errores, retornar al formulario
             if (!errors.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", String.join(". ", errors));
-                return "redirect:/organization/complete-profile";
+                return "redirect:/acopio/completar-perfil";
             }
             
             // Actualizar datos del usuario
@@ -130,7 +130,7 @@ public class OrganizationOnboardingController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", 
                 "Error al completar perfil: " + e.getMessage());
-            return "redirect:/organization/complete-profile";
+            return "redirect:/acopio/completar-perfil";
         }
     }
 }

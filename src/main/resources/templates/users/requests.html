@@ -97,14 +97,26 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Botón de acción -->
-                                <div class="flex items-center gap-2">
+                                <!-- Botones de acción -->
+                                <div class="flex items-center gap-3">
                                     <a th:href="@{/usuarios/solicitud/{id}(id=${request.id})}" 
                                        class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700"
                                        onclick="event.stopPropagation()">
                                         <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i>
                                         Ver detalles
                                     </a>
+                                    <a th:href="@{/usuarios/solicitud/{id}/editar(id=${request.id})}" 
+                                       class="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+                                       onclick="event.stopPropagation()">
+                                        <i data-lucide="edit" class="w-3.5 h-3.5 mr-1"></i>
+                                        Editar
+                                    </a>
+                                    <button type="button"
+                                            th:onclick="|event.stopPropagation(); confirmDelete(${request.id}, '${request.description}')|"
+                                            class="inline-flex items-center text-xs font-medium text-red-600 hover:text-red-700">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5 mr-1"></i>
+                                        Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -131,8 +143,53 @@
         </div>
     </div>
 
+    <!-- Modal de confirmación de eliminación -->
+    <div id="deleteModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                    <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 text-center mb-2">¿Eliminar solicitud?</h3>
+                <p class="text-sm text-gray-600 text-center mb-4">
+                    ¿Estás seguro de que deseas eliminar la solicitud "<span id="deleteRequestName"></span>"? Esta acción no se puede deshacer.
+                </p>
+                <form id="deleteForm" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="flex gap-3 justify-center">
+                        <button type="button" onclick="closeDeleteModal()" 
+                                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" 
+                                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                            Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        function confirmDelete(id, description) {
+            document.getElementById('deleteRequestName').textContent = description;
+            const form = document.getElementById('deleteForm');
+            form.action = '/usuarios/solicitud/' + id + '/eliminar';
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
     </script>
 </main>
 </body>

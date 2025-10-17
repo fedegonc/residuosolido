@@ -348,14 +348,14 @@ public class OrganizationAdminController {
             long pending = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count();
             long accepted = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count();
             long inProgress = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).count();
-            long rejected = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
+            long cancelled = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
             long completed = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count();
             
             model.addAttribute("totalRequests", filteredRequests.size());
             model.addAttribute("pendingRequests", pending);
             model.addAttribute("acceptedRequests", accepted);
             model.addAttribute("inProgressRequests", inProgress);
-            model.addAttribute("rejectedRequests", rejected);
+            model.addAttribute("cancelledRequests", cancelled);
             model.addAttribute("completedRequests", completed);
             
             // Materiales gestionados

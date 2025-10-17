@@ -410,7 +410,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar el perfil: " + e.getMessage());
         }
         
-        return "redirect:/users/profile";
+        return "redirect:/usuarios/perfil";
     }
 
     // ========== USER REQUESTS ==========

@@ -194,13 +194,33 @@ public class PostController {
     
     /**
      * Lista todos los posts (público)
+     * Soporta filtrado por categoría mediante parámetro ?category=id
      */
     @GetMapping("/posts")
-    public String publicPosts(Model model) {
+    public String publicPosts(
+            @RequestParam(value = "category", required = false) Long categoryId,
+            Model model) {
         try {
-            List<Post> activePosts = postService.findAllActive();
+            List<Post> activePosts;
+            Category selectedCategory = null;
+            
+            // Filtrar por categoría si se especifica
+            if (categoryId != null) {
+                Optional<Category> categoryOpt = categoryService.getCategoryById(categoryId);
+                if (categoryOpt.isPresent() && categoryOpt.get().isActive()) {
+                    selectedCategory = categoryOpt.get();
+                    activePosts = postService.getPostsByCategoryId(categoryId);
+                } else {
+                    // Si la categoría no existe o está inactiva, mostrar todos
+                    activePosts = postService.findAllActive();
+                }
+            } else {
+                activePosts = postService.findAllActive();
+            }
+            
             model.addAttribute("posts", activePosts);
             model.addAttribute("categories", categoryService.findAllActive());
+            model.addAttribute("selectedCategory", selectedCategory);
             return "public/posts";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error al cargar posts: " + e.getMessage());
