@@ -9,15 +9,19 @@
       </h2>
       <p class="text-sm text-gray-500 mb-6" th:text="#{index.notes.description}">Descubre artículos informativos sobre reciclaje, medio ambiente y gestión sostenible de residuos.</p>
 
-      <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       <!-- Notas reales (máximo 9) -->
       <article th:each="note, iterStat : ${recentNotes}" th:if="${iterStat.index < 9}"
-               class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+               class="bg-white rounded-lg p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
         <div>
-          <div class="w-full h-40 bg-gray-100 rounded-lg flex items-center justify-center" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+          <!-- Placeholder para notas sin imagen -->
+          <div class="w-full aspect-[4/3] bg-gray-100 rounded-lg flex items-center justify-center" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
             <span class="text-2xl font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
           </div>
-          <img th:src="${note.image}" alt="Imagen de la nota" class="w-full h-40 object-cover rounded-lg" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+          <!-- Imagen real con aspect ratio -->
+          <div class="w-full aspect-[4/3] rounded-lg overflow-hidden bg-gray-100" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+            <img th:src="${note.image}" alt="Imagen de la nota" class="w-full h-full object-cover">
+          </div>
 
           <div class="mt-3">
             <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título de la nota</h4>
