@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,6 +32,9 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
     
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -121,6 +126,16 @@ public class UserService {
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
+    
+    /**
+     * Busca un usuario por su ID cargando también sus materiales (JOIN FETCH)
+     * Evita LazyInitializationException al acceder a la colección materials
+     * @param id ID del usuario
+     * @return Optional con el usuario y sus materiales cargados
+     */
+    public Optional<User> findByIdWithMaterials(Long id) {
+        return userRepository.findByIdWithMaterials(id);
+    }
 
     /**
      * Busca usuarios por texto (username, email, firstName, lastName) de forma paginada
@@ -176,33 +191,59 @@ public class UserService {
      */
     @Transactional
     public User updateUser(User user, String newPassword) {
-        logger.info("[UserService] updateUser() called | id={}", user.getId());
         Optional<User> existingUserOpt = userRepository.findById(user.getId());
         if (existingUserOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado");
         }
         
         User existingUser = existingUserOpt.get();
+        Boolean profileCompletedValue = user.getProfileCompleted();
         
         // Copiar propiedades preservando campos críticos
-        logger.debug("[UserService] Before copy | username={}, email={}, firstName={}, lastName={}, role={}, active={}, lang={}",
-                existingUser.getUsername(), existingUser.getEmail(), existingUser.getFirstName(), existingUser.getLastName(), existingUser.getRole(), existingUser.isActive(), existingUser.getPreferredLanguage());
         BeanUtils.copyProperties(user, existingUser, "id", "password", "createdAt", "lastAccessAt");
-        logger.debug("[UserService] After copy  | username={}, email={}, firstName={}, lastName={}, role={}, active={}, lang={}",
-                existingUser.getUsername(), existingUser.getEmail(), existingUser.getFirstName(), existingUser.getLastName(), existingUser.getRole(), existingUser.isActive(), existingUser.getPreferredLanguage());
         
-        // Actualizar contraseña solo si se proporciona
+        // Asegurar que profileCompleted se mantenga si fue seteado
+        if (profileCompletedValue != null) {
+            existingUser.setProfileCompleted(profileCompletedValue);
+        }
+        
+        // Actualizar contraseña si se proporciona
         if (newPassword != null && !newPassword.trim().isEmpty()) {
             if (newPassword.length() < 6) {
                 throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
             }
             existingUser.setPassword(passwordEncoder.encode(newPassword));
-            logger.info("[UserService] Password updated for user id={}", existingUser.getId());
         }
         
         User saved = userRepository.save(existingUser);
-        logger.info("[UserService] User updated and saved | id={}", saved.getId());
         return saved;
+    }
+    
+    /**
+     * Guarda un usuario directamente sin usar BeanUtils.copyProperties
+     * Útil cuando el objeto ya está managed por Hibernate y solo queremos persistir cambios
+     * @param user Usuario a guardar
+     * @return Usuario guardado
+     */
+    @Transactional
+    public User saveDirectly(User user) {
+        User saved = userRepository.save(user);
+        // Forzar flush para asegurar que se persiste inmediatamente
+        userRepository.flush();
+        return saved;
+    }
+    
+    /**
+     * Marca el perfil de una organización como completado usando query nativa
+     * @param userId ID del usuario
+     */
+    @Transactional
+    public void markProfileAsCompleted(Long userId) {
+        int rowsAffected = userRepository.markProfileAsCompleted(userId);
+        
+        // Forzar flush y clear del contexto de persistencia para evitar cache
+        userRepository.flush();
+        entityManager.clear();
     }
     
     /**
@@ -213,8 +254,6 @@ public class UserService {
      * @throws IllegalArgumentException si hay errores de validación
      */
     public User saveUser(UserForm userForm) {
-        logger.info("[UserService] saveUser() | id={} | action={} | username={} | email={}",
-                userForm.getId(), (userForm.getId() == null ? "CREATE" : "UPDATE"), userForm.getUsername(), userForm.getEmail());
 
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
@@ -246,11 +285,9 @@ public class UserService {
         
         if (user.getId() == null) {
             // Usuario nuevo
-            logger.info("[UserService] Branch CREATE - encoding initial password and saving user");
             return createUser(user, userForm.getPassword());
         } else {
             // Usuario existente
-            logger.info("[UserService] Branch UPDATE - applying field changes{}", (userForm.getNewPassword()!=null && !userForm.getNewPassword().trim().isEmpty())? " with password change":"");
             return updateUser(user, userForm.getNewPassword());
         }
     }
@@ -323,7 +360,6 @@ public class UserService {
         // Establecer contraseña predeterminada para el formulario
         demo.setPassword("demo123456");
         
-        logger.info("Creando usuario demo con username={} y email={}", demo.getUsername(), demo.getEmail());
         
         return demo;
     }
@@ -336,7 +372,6 @@ public class UserService {
     public User createQuickUser(User user) {
         // Generar contraseña temporal
         String tempPassword = "temp123456";
-        logger.info("[UserService] Creating quick user with temporary password");
         return createUser(user, tempPassword);
     }
 

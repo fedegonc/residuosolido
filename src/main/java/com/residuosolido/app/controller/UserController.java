@@ -82,7 +82,7 @@ public class UserController {
             switch (action) {
                 case "view":
                     if (id != null) {
-                        User user = userService.findById(id).orElse(null);
+                        User user = userService.findByIdWithMaterials(id).orElse(null);
                         if (user != null) {
                             model.addAttribute("user", user);
                             model.addAttribute("viewType", "view");

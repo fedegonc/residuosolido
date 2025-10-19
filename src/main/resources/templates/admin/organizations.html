@@ -263,34 +263,151 @@
                 </div>
             </div>
             <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Usuario</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${organization.username}">username</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Email</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${organization.email}">email</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Estado</label>
-                        <span th:class="${organization.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                              class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                            <span th:text="${organization.active} ? 'Activo' : 'Inactivo'">Estado</span>
-                        </span>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Idioma Preferido</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${organization.preferredLanguage == 'es'} ? 'Español' : 'Português'">idioma</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Fecha de Registro</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${#temporals.format(organization.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</p>
+                <!-- Información de Perfil -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">📋 Información de Perfil</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">ID</label>
+                            <p class="mt-1 text-sm text-gray-900 font-mono" th:text="${organization.id}">id</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Usuario</label>
+                            <p class="mt-1 text-sm text-gray-900 font-semibold" th:text="${organization.username}">username</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Nombre</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${organization.firstName} ?: 'No especificado'">nombre</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Apellido</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${organization.lastName} ?: 'No especificado'">apellido</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Email</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <a th:href="'mailto:' + ${organization.email}" class="text-blue-600 hover:underline" th:text="${organization.email}">email</a>
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Teléfono</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <span th:text="${organization.phone} ?: 'No especificado'">teléfono</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div th:if="${organization.address}" class="mt-6">
-                    <label class="block text-sm font-medium text-gray-500">Dirección</label>
-                    <p class="mt-1 text-sm text-gray-900" th:text="${organization.address}">dirección</p>
+
+                <!-- Estado y Configuración -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">⚙️ Estado y Configuración</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Estado de Cuenta</label>
+                            <span th:class="${organization.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <span th:text="${organization.active} ? 'Activo' : 'Inactivo'">Estado</span>
+                            </span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Perfil Completado</label>
+                            <span th:if="${organization.profileCompleted != null}"
+                                  th:class="${organization.profileCompleted} ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <span th:text="${organization.profileCompleted} ? 'Completado' : 'Pendiente'">Estado</span>
+                            </span>
+                            <span th:if="${organization.profileCompleted == null}"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                No especificado
+                            </span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Rol</label>
+                            <span th:if="${organization.role != null}"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                                  th:text="${organization.role}">rol</span>
+                            <span th:if="${organization.role == null}"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Sin rol
+                            </span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Idioma Preferido</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${organization.preferredLanguage == 'es'} ? 'Español 🇪🇸' : 'Português 🇧🇷'">idioma</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ubicación -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">📍 Ubicación</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Dirección</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${organization.address} ?: 'No especificada'">dirección</p>
+                        </div>
+                        <div th:if="${organization.addressReferences}">
+                            <label class="block text-sm font-medium text-gray-500">Referencias</label>
+                            <p class="mt-1 text-sm text-gray-600 italic" th:text="${organization.addressReferences}">referencias</p>
+                        </div>
+                        <div th:if="${organization.latitude != null and organization.longitude != null}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Latitud</label>
+                                <p class="mt-1 text-sm text-gray-900 font-mono" th:text="${organization.latitude}">lat</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Longitud</label>
+                                <p class="mt-1 text-sm text-gray-900 font-mono" th:text="${organization.longitude}">lng</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Mapa</label>
+                                <a th:href="'https://www.google.com/maps?q=' + ${organization.latitude} + ',' + ${organization.longitude}"
+                                   target="_blank"
+                                   class="mt-1 inline-flex items-center text-sm text-blue-600 hover:underline">
+                                    Ver en Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materiales Aceptados -->
+                <div th:if="${organization.materials != null}" class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">♻️ Materiales Aceptados</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="material : ${organization.materials}"
+                              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <span th:text="${material.name}">material</span>
+                        </span>
+                        <span th:if="${#lists.isEmpty(organization.materials)}" class="text-sm text-gray-500 italic">
+                            No hay materiales especificados
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Imagen de Perfil -->
+                <div th:if="${organization.profileImage}" class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">🖼️ Imagen de Perfil</h3>
+                    <img th:src="${organization.profileImage}" alt="Imagen de perfil" class="w-32 h-32 rounded-lg object-cover shadow-md">
+                </div>
+
+                <!-- Fechas y Registro -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">📅 Fechas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Fecha de Registro</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <span th:text="${#temporals.format(organization.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</span>
+                            </p>
+                        </div>
+                        <div th:if="${organization.lastAccessAt != null}">
+                            <label class="block text-sm font-medium text-gray-500">Último Acceso</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <span th:text="${#temporals.format(organization.lastAccessAt, 'dd/MM/yyyy HH:mm')}">último acceso</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center">

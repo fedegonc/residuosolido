@@ -51,16 +51,44 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         try {
             // Verificar si es una organización con perfil incompleto
+            // IMPORTANTE: Siempre traer desde BD, nunca desde cache
             if (userRoles.contains("ROLE_ORGANIZATION")) {
                 try {
+                    logger.info("========================================");
+                    logger.info("=== LOGIN ORGANIZACIÓN ===");
+                    logger.info("========================================");
+                    
                     User user = userService.findAuthenticatedUserByUsername(username);
-                    if (user.getProfileCompleted() == null || !user.getProfileCompleted()) {
-                        logger.info("Organización '{}' con perfil incompleto, redirigiendo a completar perfil", username);
+                    Boolean profileCompleted = user.getProfileCompleted();
+                    
+                    logger.info("Username: {}", username);
+                    logger.info("ID en BD: {}", user.getId());
+                    logger.info("Email: {}", user.getEmail());
+                    logger.info("Rol: {}", user.getRole());
+                    logger.info("----------------------------------------");
+                    logger.info("profileCompleted en BD: {}", profileCompleted);
+                    logger.info("Tipo de dato: {}", (profileCompleted != null ? profileCompleted.getClass().getSimpleName() : "NULL"));
+                    logger.info("----------------------------------------");
+                    
+                    if (profileCompleted == null || Boolean.FALSE.equals(profileCompleted)) {
+                        logger.warn("⚠️ PERFIL INCOMPLETO DETECTADO ⚠️");
+                        logger.warn("Valor actual: {}", profileCompleted);
+                        logger.warn("Acción: Redirigiendo a /acopio/completar-perfil");
+                        logger.info("========================================");
                         response.sendRedirect("/acopio/completar-perfil");
                         return;
+                    } else {
+                        logger.info("✅ PERFIL COMPLETO DETECTADO ✅");
+                        logger.info("Valor: {}", profileCompleted);
+                        logger.info("Acción: Permitiendo acceso a /acopio/inicio");
+                        logger.info("========================================");
                     }
                 } catch (Exception e) {
-                    logger.error("Error al verificar perfil de organización '{}': {}", username, e.getMessage());
+                    logger.error("========================================");
+                    logger.error("❌ ERROR al verificar perfil de organización '{}'", username);
+                    logger.error("Mensaje: {}", e.getMessage());
+                    logger.error("Stack trace:", e);
+                    logger.error("========================================");
                 }
             }
             

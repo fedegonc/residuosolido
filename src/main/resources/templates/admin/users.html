@@ -395,103 +395,160 @@
                 </div>
             </div>
             
-            <div class="p-6 space-y-6">
-                <!-- Sección de Perfil -->
-                <section class="rs-card rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-start gap-6">
-                        <!-- Avatar -->
-                        <div class="flex-shrink-0">
-                            <img th:if="${user.profileImage != null and !#strings.isEmpty(user.profileImage)}" 
-                                 th:src="${user.profileImage}" 
-                                 th:alt="${#strings.concat('Foto de perfil de ', user.firstName, ' ', user.lastName)}"
-                                 class="h-24 w-24 object-cover rounded-full border"/>
-                            <div th:if="${user.profileImage == null or #strings.isEmpty(user.profileImage)}" 
-                                 class="h-24 w-24 rounded-full bg-green-100 flex items-center justify-center">
-                                <span class="text-2xl font-medium text-green-800" 
-                                      th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</span>
-                            </div>
-                        </div>
-                        <!-- Info Principal -->
-                        <div class="flex-1">
-                            <h1 class="text-xl font-semibold mb-1" th:text="${#strings.concat(user.firstName, ' ', user.lastName)}">Nombre Completo</h1>
-                            <p class="text-sm mb-3" style="color: #6c757d" th:text="${#strings.concat('@', user.username)}">@usuario</p>
-                            <div class="flex gap-3">
-                                <a th:href="${isOrganizations} ? @{/admin/organizations(action='edit', id=${user.id})} : @{/admin/users(action='edit', id=${user.id})}" 
-                                   class="rs-btn-primary px-3 py-1.5 rounded-md text-sm focus-ring">
-                                   Editar perfil
-                                </a>
-                                <button class="px-3 py-1.5 rounded-md text-sm border focus-ring"
-                                        style="color:var(--rs-primary); border-color:#dee2e6">
-                                    Cambiar foto
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            <div class="p-6">
+                <!-- Imagen de Perfil -->
+                <div th:if="${user.profileImage != null and !#strings.isEmpty(user.profileImage)}" class="mb-6 flex justify-center">
+                    <img th:src="${user.profileImage}" 
+                         th:alt="${#strings.concat('Foto de perfil de ', user.firstName, ' ', user.lastName)}"
+                         class="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white ring-2 ring-gray-200"/>
+                </div>
                 
-                <!-- Sección de Cuenta -->
-                <section class="rs-card rounded-lg border border-gray-200 p-6">
-                    <h3 class="text-base font-semibold mb-4">Información de Cuenta</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Nombre de Usuario</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${user.username}">username</p>
+                <!-- Información de Perfil -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">📋 Información de Perfil</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">ID</label>
+                            <p class="mt-1 text-sm text-gray-900 font-mono" th:text="${user.id}">id</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Usuario</label>
+                            <p class="mt-1 text-sm text-gray-900 font-semibold" th:text="${user.username}">username</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Nombre</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${user.firstName} ?: 'No especificado'">nombre</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Apellido</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${user.lastName} ?: 'No especificado'">apellido</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Email</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <a th:href="'mailto:' + ${user.email}" class="text-blue-600 hover:underline" th:text="${user.email}">email</a>
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Teléfono</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <span th:text="${user.phone} ?: 'No especificado'">teléfono</span>
+                            </p>
+                        </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Email</label>
-                        <p class="mt-1 text-sm text-gray-900" th:text="${user.email}">email</p>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Rol</label>
-                        <span th:class="${user.role.name() == 'ADMIN'} ? 'bg-red-100 text-red-800' : 
-                                       (${user.role.name() == 'ORGANIZATION'} ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800')"
-                              class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                            <span th:switch="${user.role.name()}">
-                                <span th:case="'ADMIN'">⚙️ Administrador</span>
-                                <span th:case="'ORGANIZATION'">🏢 Organización</span>
-                                <span th:case="*">👤 Usuario</span>
+                </div>
+
+                <!-- Estado y Configuración -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">⚙️ Estado y Configuración</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Estado de Cuenta</label>
+                            <span th:class="${user.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <span th:text="${user.active} ? 'Activo' : 'Inactivo'">Estado</span>
                             </span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Perfil Completado</label>
+                            <span th:if="${user.profileCompleted != null}"
+                                  th:class="${user.profileCompleted} ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <span th:text="${user.profileCompleted} ? 'Completado' : 'Pendiente'">Estado</span>
+                            </span>
+                            <span th:if="${user.profileCompleted == null}"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                No especificado
+                            </span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Rol</label>
+                            <span th:if="${user.role != null}"
+                                  th:class="${user.role.name() == 'ADMIN'} ? 'bg-red-100 text-red-800' : 
+                                           (${user.role.name() == 'ORGANIZATION'} ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800')"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <span th:switch="${user.role.name()}">
+                                    <span th:case="'ADMIN'">⚙️ Administrador</span>
+                                    <span th:case="'ORGANIZATION'">🏢 Organización</span>
+                                    <span th:case="*">👤 Usuario</span>
+                                </span>
+                            </span>
+                            <span th:if="${user.role == null}"
+                                  class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Sin rol
+                            </span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Idioma Preferido</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${user.preferredLanguage == 'es'} ? 'Español 🇪🇸' : 'Português 🇧🇷'">idioma</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ubicación -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">📍 Ubicación</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Dirección</label>
+                            <p class="mt-1 text-sm text-gray-900" th:text="${user.address} ?: 'No especificada'">dirección</p>
+                        </div>
+                        <div th:if="${user.addressReferences}">
+                            <label class="block text-sm font-medium text-gray-500">Referencias</label>
+                            <p class="mt-1 text-sm text-gray-600 italic" th:text="${user.addressReferences}">referencias</p>
+                        </div>
+                        <div th:if="${user.latitude != null and user.longitude != null}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Latitud</label>
+                                <p class="mt-1 text-sm text-gray-900 font-mono" th:text="${user.latitude}">lat</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Longitud</label>
+                                <p class="mt-1 text-sm text-gray-900 font-mono" th:text="${user.longitude}">lng</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Mapa</label>
+                                <a th:href="'https://www.google.com/maps?q=' + ${user.latitude} + ',' + ${user.longitude}"
+                                   target="_blank"
+                                   class="mt-1 inline-flex items-center text-sm text-blue-600 hover:underline">
+                                    Ver en Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materiales (solo para organizaciones) -->
+                <div th:if="${user.role != null and user.role.name() == 'ORGANIZATION' and user.materials != null}" class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">♻️ Materiales Aceptados</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="material : ${user.materials}"
+                              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <span th:text="${material.name}">material</span>
+                        </span>
+                        <span th:if="${#lists.isEmpty(user.materials)}" class="text-sm text-gray-500 italic">
+                            No hay materiales especificados
                         </span>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Estado</label>
-                        <span th:class="${user.active} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                              class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                            <span th:text="${user.active} ? 'Activo' : 'Inactivo'">Estado</span>
-                        </span>
+                </div>
+
+                <!-- Fechas y Registro -->
+                <div class="mb-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4 border-b pb-2">📅 Fechas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Fecha de Registro</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</span>
+                            </p>
+                        </div>
+                        <div th:if="${user.lastAccessAt != null}">
+                            <label class="block text-sm font-medium text-gray-500">Último Acceso</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                <span th:text="${#temporals.format(user.lastAccessAt, 'dd/MM/yyyy HH:mm')}">último acceso</span>
+                            </p>
+                        </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Idioma Preferido</label>
-                        <p class="mt-1 text-sm text-gray-900" 
-                           th:text="${user.preferredLanguage == 'es'} ? 'Español' : 'Português'">idioma</p>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Fecha de Registro</label>
-                        <p class="mt-1 text-sm text-gray-900" 
-                           th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</p>
-                    </div>
-                </div>
-                
-                <div th:if="${user.address}" class="mt-6">
-                    <label class="block text-sm font-medium text-gray-500">Dirección</label>
-                    <p class="mt-1 text-sm text-gray-900" th:text="${user.address}">dirección</p>
-                </div>
-                <div th:if="${user.addressReferences}" class="mt-4">
-                    <label class="block text-sm font-medium text-gray-500">Referencias de Dirección</label>
-                    <p class="mt-1 text-sm text-gray-900" th:text="${user.addressReferences}">referencias</p>
-                </div>
-                <div th:if="${user.latitude}" class="mt-4">
-                    <label class="block text-sm font-medium text-gray-500">Latitud</label>
-                    <p class="mt-1 text-sm text-gray-900" th:text="${user.latitude}">latitud</p>
-                </div>
-                <div th:if="${user.longitude}" class="mt-4">
-                    <label class="block text-sm font-medium text-gray-500">Longitud</label>
-                    <p class="mt-1 text-sm text-gray-900" th:text="${user.longitude}">longitud</p>
                 </div>
             </div>
         </div>

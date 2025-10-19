@@ -64,7 +64,7 @@ public class OrganizationAdminController {
             switch (action) {
                 case "view":
                     if (id != null) {
-                        User user = userService.findById(id).orElse(null);
+                        User user = userService.findByIdWithMaterials(id).orElse(null);
                         if (user != null && user.getRole() == Role.ORGANIZATION) {
                             model.addAttribute("organization", user);
                             model.addAttribute("viewType", "view");
