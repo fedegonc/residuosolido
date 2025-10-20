@@ -133,8 +133,7 @@ public class BreadcrumbService {
                     break;
                     
                 case "acopio":
-                    // Ruta base para centros de acopio
-                    breadcrumbs.add(new BreadcrumbItem("Inicio", "/acopio/inicio"));
+                    // No agregamos "Acopio" al breadcrumb, el segmento "inicio" lo manejará
                     break;
                     
                 case "perfil":

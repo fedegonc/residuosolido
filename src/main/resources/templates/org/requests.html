@@ -32,27 +32,29 @@
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 mb-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                        <i data-lucide="clipboard-list" class="w-8 h-8 text-white"></i>
+        <!-- Vista de Lista -->
+        <div th:if="${viewType != 'detail'}">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <i data-lucide="clipboard-list" class="w-8 h-8 text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Solicitudes de Recolección</h1>
+                            <p class="text-blue-100">Gestiona las solicitudes de reciclaje de los usuarios</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-white">Solicitudes de Recolección</h1>
-                        <p class="text-blue-100">Gestiona las solicitudes de reciclaje de los usuarios</p>
+                    <div class="text-right">
+                        <p class="text-sm text-blue-100">Total de solicitudes</p>
+                        <p class="text-3xl font-bold text-white" th:text="${requests != null ? requests.size() : 0}">0</p>
                     </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm text-blue-100">Total de solicitudes</p>
-                    <p class="text-3xl font-bold text-white" th:text="${requests != null ? requests.size() : 0}">0</p>
                 </div>
             </div>
-        </div>
 
-        <!-- Filtros -->
-        <div class="bg-white rounded-lg shadow mb-6 p-4">
+            <!-- Filtros -->
+            <div class="bg-white rounded-lg shadow mb-6 p-4">
             <div class="flex flex-wrap items-center gap-3">
                 <button onclick="filterRequests('all')" 
                         class="filter-btn px-4 py-2 rounded-md font-medium transition-colors bg-blue-600 text-white"
@@ -172,6 +174,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        </div>
+        
         <!-- Vista de Detalles -->
         <div th:if="${viewType == 'detail' and request != null}" class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-6">
@@ -292,6 +297,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    
+    <script>
         lucide.createIcons();
         
         function filterRequests(status) {

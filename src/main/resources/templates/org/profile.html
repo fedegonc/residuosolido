@@ -193,21 +193,37 @@
                         </p>
                     </div>
 
-                    <div th:if="${availableMaterials != null and !availableMaterials.empty}" 
-                         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                        <label th:each="material : ${availableMaterials}" 
-                               th:for="'material_' + ${material.id}"
-                               class="relative flex items-center p-2 border border-gray-200 rounded-md hover:border-blue-300 hover:bg-blue-50 transition-colors cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                th:id="'material_' + ${material.id}"
-                                name="materialIds" 
-                                th:value="${material.id}"
-                                th:checked="${selectedMaterialIds.contains(material.id)}"
-                                class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
-                            />
-                            <span class="ml-2 text-sm text-gray-900 truncate" th:text="${material.name}"></span>
-                        </label>
+                    <div th:if="${availableMaterials != null and !availableMaterials.empty}">
+                        <!-- Botón desplegable -->
+                        <button type="button" id="materialsToggle"
+                                class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="package" class="w-4 h-4 text-gray-600"></i>
+                                <span id="materialsSelectedText" class="text-sm text-gray-700 font-medium">
+                                    <span th:text="${selectedMaterialIds.size()}">0</span> materiales seleccionados
+                                </span>
+                            </div>
+                            <i data-lucide="chevron-down" id="materialsChevron" class="w-5 h-5 text-gray-400 transition-transform"></i>
+                        </button>
+
+                        <!-- Lista desplegable de checkboxes -->
+                        <div id="materialsDropdown" class="hidden mt-2 border border-gray-200 rounded-md bg-white shadow-sm max-h-64 overflow-y-auto">
+                            <div class="p-3 space-y-1">
+                                <label th:each="material : ${availableMaterials}" 
+                                       th:for="'material_' + ${material.id}"
+                                       class="flex items-center p-2 rounded hover:bg-blue-50 cursor-pointer group">
+                                    <input 
+                                        type="checkbox" 
+                                        th:id="'material_' + ${material.id}"
+                                        name="materialIds" 
+                                        th:value="${material.id}"
+                                        th:checked="${selectedMaterialIds.contains(material.id)}"
+                                        class="material-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
+                                    />
+                                    <span class="ml-3 text-sm text-gray-900 group-hover:text-blue-700" th:text="${material.name}"></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div th:if="${availableMaterials == null or availableMaterials.empty}" 
@@ -254,6 +270,7 @@
     <script th:inline="javascript">
         lucide.createIcons();
         
+        // ========== MAPA ==========
         // Inicializar mapa con coordenadas de Rivera/Sant'Ana do Livramento por defecto
         let orgLat = /*[[${organization?.latitude}]]*/ null;
         let orgLng = /*[[${organization?.longitude}]]*/ null;
@@ -297,6 +314,43 @@
         
         // Inicializar coordenadas en los campos
         updateCoordinates(defaultLat, defaultLng);
+        
+        // ========== SELECTOR DE MATERIALES ==========
+        const materialsToggle = document.getElementById('materialsToggle');
+        const materialsDropdown = document.getElementById('materialsDropdown');
+        const materialsChevron = document.getElementById('materialsChevron');
+        const materialsSelectedText = document.getElementById('materialsSelectedText');
+        const materialCheckboxes = document.querySelectorAll('.material-checkbox');
+        
+        // Toggle del desplegable
+        if (materialsToggle) {
+            materialsToggle.addEventListener('click', function() {
+                materialsDropdown.classList.toggle('hidden');
+                materialsChevron.classList.toggle('rotate-180');
+            });
+        }
+        
+        // Actualizar contador de materiales seleccionados
+        function updateMaterialsCount() {
+            const checkedCount = document.querySelectorAll('.material-checkbox:checked').length;
+            materialsSelectedText.innerHTML = `${checkedCount} material${checkedCount !== 1 ? 'es' : ''} seleccionado${checkedCount !== 1 ? 's' : ''}`;
+        }
+        
+        // Escuchar cambios en los checkboxes
+        materialCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateMaterialsCount);
+        });
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (materialsToggle && !materialsToggle.contains(e.target) && !materialsDropdown.contains(e.target)) {
+                materialsDropdown.classList.add('hidden');
+                materialsChevron.classList.remove('rotate-180');
+            }
+        });
+        
+        // Inicializar contador
+        updateMaterialsCount();
     </script>
 </main>
 </body>
