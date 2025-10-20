@@ -4,6 +4,7 @@ import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.repository.RequestRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
@@ -32,14 +33,16 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RequestRepository requestRepository;
     
     @PersistenceContext
     private EntityManager entityManager;
     
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RequestRepository requestRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.requestRepository = requestRepository;
     }
     
     /**
@@ -307,15 +310,73 @@ public class UserService {
     
     
     /**
-     * Elimina un usuario por su ID
-     * @param id ID del usuario a eliminar
+     * Desactiva un usuario por su ID (soft delete)
+     * En lugar de eliminar físicamente el usuario, lo marca como inactivo
+     * para preservar la integridad referencial con solicitudes y otros datos
+     * @param id ID del usuario a desactivar
      * @throws IllegalArgumentException si el usuario no existe
      */
+    @Transactional
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
-        }
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
+        
+        // Soft delete: marcar como inactivo en lugar de eliminar
+        user.setActive(false);
+        userRepository.save(user);
+    }
+    
+    /**
+     * Elimina permanentemente un usuario y TODAS sus solicitudes asociadas (hard delete)
+     * ⚠️ ADVERTENCIA: Esta acción es IRREVERSIBLE y eliminará:
+     * - El usuario
+     * - Todas sus solicitudes (requests)
+     * - Todos sus feedbacks
+     * - Todas las relaciones con materiales
+     * 
+     * Usar solo cuando estés 100% seguro de que quieres eliminar todo el historial del usuario
+     * 
+     * @param id ID del usuario a eliminar permanentemente
+     * @throws IllegalArgumentException si el usuario no existe
+     */
+    @Transactional
+    public void hardDeleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
+        
+        // Hard delete: eliminar físicamente el usuario y todas sus relaciones
+        // Debido a las restricciones de foreign key, debemos eliminar en orden:
+        
+        logger.info("Iniciando eliminación permanente del usuario ID: {}", id);
+        
+        // 1. Eliminar relaciones request_materials (tabla intermedia)
+        // Incluir solicitudes donde el usuario es creador O organización asignada
+        int deletedRequestMaterials = entityManager.createNativeQuery(
+                "DELETE FROM request_materials WHERE request_id IN " +
+                "(SELECT id FROM requests WHERE user_id = :userId OR organization_id = :userId)")
+                .setParameter("userId", id)
+                .executeUpdate();
+        logger.info("Eliminados {} registros de request_materials", deletedRequestMaterials);
+        
+        // 2. Eliminar solicitudes donde el usuario es creador O organización asignada
+        int deletedRequests = entityManager.createNativeQuery(
+                "DELETE FROM requests WHERE user_id = :userId OR organization_id = :userId")
+                .setParameter("userId", id)
+                .executeUpdate();
+        logger.info("Eliminadas {} solicitudes", deletedRequests);
+        
+        // 3. Eliminar relaciones con materiales del usuario
+        int deletedUserMaterials = entityManager.createNativeQuery("DELETE FROM user_materials WHERE user_id = :userId")
+                .setParameter("userId", id)
+                .executeUpdate();
+        logger.info("Eliminados {} registros de user_materials", deletedUserMaterials);
+        
+        // 4. Flush para asegurar que se ejecuten los DELETE
+        entityManager.flush();
+        
+        // 5. Ahora sí podemos eliminar el usuario
+        userRepository.delete(user);
+        logger.info("Usuario ID: {} eliminado permanentemente", id);
     }
     
     

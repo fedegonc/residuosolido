@@ -263,9 +263,38 @@ public class UserController {
     public String adminDeleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado");
+            redirectAttributes.addFlashAttribute("successMessage", "Usuario desactivado correctamente. El usuario ya no podrá acceder al sistema.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            logger.error("Error al desactivar usuario {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al desactivar usuario: " + e.getMessage());
+        }
+        return "redirect:/admin/users";
+    }
+    
+    /**
+     * Elimina permanentemente un usuario y TODAS sus solicitudes asociadas
+     * ⚠️ ADVERTENCIA: Esta acción es IRREVERSIBLE
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/users/hard-delete/{id}")
+    public String adminHardDeleteUser(@PathVariable Long id, 
+                                     @RequestParam(required = false) String confirm,
+                                     RedirectAttributes redirectAttributes) {
+        try {
+            // Verificar confirmación explícita
+            if (!"ELIMINAR".equals(confirm)) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Debe escribir 'ELIMINAR' para confirmar la eliminación permanente.");
+                return "redirect:/admin/users?action=view&id=" + id;
+            }
+            
+            userService.hardDeleteUser(id);
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Usuario eliminado permanentemente junto con todas sus solicitudes y datos asociados.");
+        } catch (Exception e) {
+            logger.error("Error al eliminar permanentemente usuario {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error al eliminar usuario: " + e.getMessage());
         }
         return "redirect:/admin/users";
     }
