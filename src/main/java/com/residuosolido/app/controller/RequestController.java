@@ -381,12 +381,15 @@ public class RequestController {
         try {
             // Asignar la organización actual a la solicitud
             User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.approveRequest(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Solicitud aceptada correctamente");
+            Request request = requestService.findById(id).orElseThrow();
+            request.setOrganization(organization);
+            request.setStatus(RequestStatus.IN_PROGRESS);
+            requestService.save(request);
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud aceptada y en proceso");
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al aceptar solicitud");
         }
-        return "redirect:/org/requests";
+        return "redirect:/acopio/inicio";
     }
 
     /**
@@ -403,7 +406,26 @@ public class RequestController {
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al rechazar solicitud");
         }
-        return "redirect:/org/requests";
+        return "redirect:/acopio/requests";
+    }
+
+    /**
+     * Completa una solicitud
+     */
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    @PostMapping("/acopio/requests/complete/{id}")
+    public String orgCompleteRequest(
+            @PathVariable Long id, 
+            RedirectAttributes redirectAttributes) {
+        try {
+            Request request = requestService.findById(id).orElseThrow();
+            request.setStatus(RequestStatus.COMPLETED);
+            requestService.save(request);
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitud completada exitosamente");
+        } catch (Exception e) {
+            handleRequestError(e, redirectAttributes, "Error al completar solicitud");
+        }
+        return "redirect:/acopio/inicio";
     }
 
     /**

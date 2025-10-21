@@ -189,21 +189,32 @@ public class OrganizationAdminController {
             model.addAttribute("pendingRequests", filteredPendingRequests.size());
             model.addAttribute("pendingRequestsList", filteredPendingRequests.stream().limit(5).toList());
             
-            // Obtener solicitudes en proceso (filtradas)
+            // Obtener solicitudes en proceso (solo las asignadas a esta organización)
+            // Incluir tanto IN_PROGRESS como ACCEPTED (temporal para compatibilidad)
             List<Request> allInProgressRequests = requestService.getRequestsByStatus(RequestStatus.IN_PROGRESS);
-            List<Request> filteredInProgressRequests = allInProgressRequests.stream()
-                .filter(request -> request.getMaterials() != null && 
-                    request.getMaterials().stream()
-                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
-                .toList();
+            List<Request> allAcceptedRequests = requestService.getRequestsByStatus(RequestStatus.ACCEPTED);
+            
+            List<Request> filteredInProgressRequests = new ArrayList<>();
+            filteredInProgressRequests.addAll(
+                allInProgressRequests.stream()
+                    .filter(request -> request.getOrganization() != null && 
+                        request.getOrganization().getId().equals(currentOrg.getId()))
+                    .toList()
+            );
+            filteredInProgressRequests.addAll(
+                allAcceptedRequests.stream()
+                    .filter(request -> request.getOrganization() != null && 
+                        request.getOrganization().getId().equals(currentOrg.getId()))
+                    .toList()
+            );
+            
             model.addAttribute("inProgressRequests", filteredInProgressRequests.size());
             
-            // Obtener solicitudes completadas (filtradas)
+            // Obtener solicitudes completadas (solo las asignadas a esta organización)
             List<Request> allCompletedRequests = requestService.getRequestsByStatus(RequestStatus.COMPLETED);
             List<Request> filteredCompletedRequests = allCompletedRequests.stream()
-                .filter(request -> request.getMaterials() != null && 
-                    request.getMaterials().stream()
-                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
+                .filter(request -> request.getOrganization() != null && 
+                    request.getOrganization().getId().equals(currentOrg.getId()))
                 .toList();
             model.addAttribute("completedRequests", filteredCompletedRequests.size());
             

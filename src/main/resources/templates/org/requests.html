@@ -135,14 +135,15 @@
                         </div>
                         
                         <div class="flex flex-col gap-2">
-                            <a th:href="@{/org/requests/{id}(id=${request.id})}" 
+                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" 
                                class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
                                 <i data-lucide="eye" class="w-4 h-4 mr-1"></i>
                                 Ver Detalles
                             </a>
                             
+                            <!-- Botones para solicitudes PENDIENTES -->
                             <form th:if="${request.status.name() == 'PENDING'}" 
-                                  th:action="@{/org/requests/accept/{id}(id=${request.id})}" 
+                                  th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" 
                                   method="post" class="inline">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <button type="submit" 
@@ -161,6 +162,18 @@
                                         class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors">
                                     <i data-lucide="x" class="w-4 h-4 mr-1"></i>
                                     Rechazar
+                                </button>
+                            </form>
+                            
+                            <!-- Botón para solicitudes EN PROCESO o ACCEPTED -->
+                            <form th:if="${request.status.name() == 'IN_PROGRESS' or request.status.name() == 'ACCEPTED'}" 
+                                  th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" 
+                                  method="post" class="inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit" 
+                                        class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors">
+                                    <i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>
+                                    Completar
                                 </button>
                             </form>
                         </div>
@@ -259,6 +272,24 @@
                 </div>
             </div>
 
+            <!-- Organización Asignada -->
+            <div th:if="${request.organization}" class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Organización Asignada</label>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p class="text-base font-semibold text-blue-900" th:text="${request.organization.getFullName()}">
+                        Nombre de organización
+                    </p>
+                    <p th:if="${request.organization.email}" class="text-sm text-blue-700 mt-1">
+                        <i data-lucide="mail" class="w-3 h-3 inline mr-1"></i>
+                        <span th:text="${request.organization.email}"></span>
+                    </p>
+                    <p th:if="${request.organization.phone}" class="text-sm text-blue-700 mt-1">
+                        <i data-lucide="phone" class="w-3 h-3 inline mr-1"></i>
+                        <span th:text="${request.organization.phone}"></span>
+                    </p>
+                </div>
+            </div>
+
             <!-- Notas -->
             <div th:if="${request.notes}" class="mt-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Notas Adicionales</label>
@@ -273,6 +304,7 @@
                     Volver a la Lista
                 </a>
                 <div class="flex gap-2">
+                    <!-- Botones para solicitudes PENDIENTES -->
                     <form th:if="${request.status.name() == 'PENDING'}"
                           th:action="@{/acopio/requests/accept/{id}(id=${request.id})}"
                           method="post" class="inline">
@@ -292,6 +324,18 @@
                                 class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md transition-colors">
                             <i data-lucide="x" class="w-4 h-4 mr-2 inline"></i>
                             Rechazar Solicitud
+                        </button>
+                    </form>
+                    
+                    <!-- Botón para solicitudes EN PROCESO o ACCEPTED -->
+                    <form th:if="${request.status.name() == 'IN_PROGRESS' or request.status.name() == 'ACCEPTED'}"
+                          th:action="@{/acopio/requests/complete/{id}(id=${request.id})}"
+                          method="post" class="inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit"
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md transition-colors">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2 inline"></i>
+                            Completar Solicitud
                         </button>
                     </form>
                 </div>
