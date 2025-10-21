@@ -182,7 +182,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${pendingRequests ?: 0}">0</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" 
-                                th:text="${totalRequests > 0 ? String.format('%.1f%%', (pendingRequests * 100.0 / totalRequests)) : '0%'}">0%</td>
+                                th:text="${totalRequests > 0 ? #numbers.formatDecimal((pendingRequests * 100.0 / totalRequests), 1, 1) + '%' : '0%'}">0%</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="w-32 bg-gray-200 rounded-full h-2">
                                     <div class="bg-yellow-500 h-2 rounded-full" 
@@ -199,7 +199,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${inProgressRequests ?: 0}">0</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" 
-                                th:text="${totalRequests > 0 ? String.format('%.1f%%', (inProgressRequests * 100.0 / totalRequests)) : '0%'}">0%</td>
+                                th:text="${totalRequests > 0 ? #numbers.formatDecimal((inProgressRequests * 100.0 / totalRequests), 1, 1) + '%' : '0%'}">0%</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="w-32 bg-gray-200 rounded-full h-2">
                                     <div class="bg-blue-500 h-2 rounded-full" 
@@ -216,7 +216,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${completedRequests ?: 0}">0</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" 
-                                th:text="${totalRequests > 0 ? String.format('%.1f%%', (completedRequests * 100.0 / totalRequests)) : '0%'}">0%</td>
+                                th:text="${totalRequests > 0 ? #numbers.formatDecimal((completedRequests * 100.0 / totalRequests), 1, 1) + '%' : '0%'}">0%</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="w-32 bg-gray-200 rounded-full h-2">
                                     <div class="bg-green-500 h-2 rounded-full" 
@@ -233,7 +233,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${cancelledRequests ?: 0}">0</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" 
-                                th:text="${totalRequests > 0 ? String.format('%.1f%%', (cancelledRequests * 100.0 / totalRequests)) : '0%'}">0%</td>
+                                th:text="${totalRequests > 0 ? #numbers.formatDecimal((cancelledRequests * 100.0 / totalRequests), 1, 1) + '%' : '0%'}">0%</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="w-32 bg-gray-200 rounded-full h-2">
                                     <div class="bg-red-500 h-2 rounded-full" 
