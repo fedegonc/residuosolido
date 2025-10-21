@@ -360,12 +360,64 @@ public class RequestController {
     // ========== ORGANIZATION ENDPOINTS ==========
     
     /**
+     * Muestra las solicitudes de la organización
+     * - Sin parámetro 'status': muestra TODAS las solicitudes de la organización
+     * - Con parámetro 'status=PENDING': muestra solo solicitudes PENDIENTES
+     * - Con parámetro 'status=IN_PROGRESS': muestra solo solicitudes EN PROCESO (incluye ACCEPTED)
+     * - Con parámetro 'status=COMPLETED': muestra solo solicitudes COMPLETADAS
      */
     @PreAuthorize("hasRole('ORGANIZATION')")
     @GetMapping("/acopio/requests")
-    public String orgRequests(Model model) {
-        List<Request> pendingRequests = requestService.getPendingRequests();
-        prepareRequestModel(model, pendingRequests, "list");
+    public String orgRequests(
+            @RequestParam(required = false) String status,
+            Authentication authentication, 
+            Model model) {
+        User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+        List<Request> requests;
+        
+        // Obtener todas las solicitudes de la organización
+        List<Request> allOrgRequests = requestService.getRequestsByOrganization(currentOrg);
+        
+        // Filtrar por estado si se proporciona el parámetro
+        if (status != null && !status.trim().isEmpty()) {
+            switch (status.toUpperCase()) {
+                case "PENDING":
+                    // Mostrar solo solicitudes pendientes
+                    requests = allOrgRequests.stream()
+                        .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                        .toList();
+                    model.addAttribute("statusFilter", "Pendientes");
+                    break;
+                    
+                case "IN_PROGRESS":
+                    // Mostrar solicitudes en proceso (incluye ACCEPTED e IN_PROGRESS)
+                    requests = allOrgRequests.stream()
+                        .filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS || 
+                                   r.getStatus() == RequestStatus.ACCEPTED)
+                        .toList();
+                    model.addAttribute("statusFilter", "En Proceso");
+                    break;
+                    
+                case "COMPLETED":
+                    // Mostrar solo solicitudes completadas
+                    requests = allOrgRequests.stream()
+                        .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
+                        .toList();
+                    model.addAttribute("statusFilter", "Completadas");
+                    break;
+                    
+                default:
+                    // Si el estado no es válido, mostrar todas
+                    requests = allOrgRequests;
+                    break;
+            }
+        } else {
+            // Sin filtro, mostrar todas las solicitudes
+            requests = allOrgRequests;
+        }
+        
+        prepareRequestModel(model, requests, "list");
+        model.addAttribute("currentStatus", status);
         return "org/requests";
     }
 

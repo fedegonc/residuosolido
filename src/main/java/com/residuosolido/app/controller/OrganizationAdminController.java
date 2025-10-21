@@ -334,6 +334,71 @@ public class OrganizationAdminController {
     }
     
     /**
+     * Gestión de materiales que acepta la organización
+     */
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    @GetMapping("/acopio/materials")
+    public String orgMaterials(Authentication authentication, Model model) {
+        try {
+            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            
+            // Obtener todos los materiales activos disponibles
+            List<Material> allMaterials = materialService.findAllActive();
+            model.addAttribute("allMaterials", allMaterials);
+            
+            // Obtener materiales que la organización ya acepta
+            List<Material> acceptedMaterials = currentOrg.getMaterials() != null 
+                ? currentOrg.getMaterials() 
+                : new ArrayList<>();
+            model.addAttribute("acceptedMaterials", acceptedMaterials);
+            
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al cargar materiales: " + e.getMessage());
+            model.addAttribute("allMaterials", new ArrayList<>());
+            model.addAttribute("acceptedMaterials", new ArrayList<>());
+        }
+        return "org/materials";
+    }
+    
+    /**
+     * Actualiza los materiales que acepta la organización
+     */
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    @PostMapping("/acopio/materials/update")
+    public String updateOrgMaterials(
+            @RequestParam(required = false) List<Long> materialIds,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            
+            // Actualizar materiales seleccionados
+            if (materialIds != null && !materialIds.isEmpty()) {
+                List<Material> selectedMaterials = new ArrayList<>();
+                for (Long materialId : materialIds) {
+                    Material material = materialService.findById(materialId).orElse(null);
+                    if (material != null && material.getActive()) {
+                        selectedMaterials.add(material);
+                    }
+                }
+                currentOrg.setMaterials(selectedMaterials);
+                redirectAttributes.addFlashAttribute("successMessage", 
+                    "Materiales actualizados correctamente. Ahora aceptas " + selectedMaterials.size() + " tipos de materiales.");
+            } else {
+                // Si no se seleccionó ningún material, limpiar la lista
+                currentOrg.setMaterials(new ArrayList<>());
+                redirectAttributes.addFlashAttribute("successMessage", 
+                    "Lista de materiales actualizada. No aceptas ningún material en este momento.");
+            }
+            
+            userService.updateUser(currentOrg, null);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al actualizar materiales: " + e.getMessage());
+        }
+        return "redirect:/acopio/materials";
+    }
+    
+    /**
      * Estadísticas de la organización
      */
     @PreAuthorize("hasRole('ORGANIZATION')")

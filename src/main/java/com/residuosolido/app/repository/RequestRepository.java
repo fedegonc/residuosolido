@@ -15,6 +15,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findByUser(User user);
     List<Request> findByUserId(Long userId);
     List<Request> findByStatus(RequestStatus status);
+    List<Request> findByOrganization(User organization);
     List<Request> findTop5ByUserOrderByCreatedAtDesc(User user);
 
     @Query("SELECT YEAR(r.createdAt), MONTH(r.createdAt), COUNT(r) FROM Request r GROUP BY YEAR(r.createdAt), MONTH(r.createdAt) ORDER BY YEAR(r.createdAt), MONTH(r.createdAt)")

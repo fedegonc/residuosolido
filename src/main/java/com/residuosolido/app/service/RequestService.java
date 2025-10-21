@@ -193,6 +193,28 @@ public class RequestService {
         return requests;
     }
 
+    @Transactional(readOnly = true)
+    public List<Request> getRequestsByOrganization(User organization) {
+        List<Request> requests = requestRepository.findByOrganization(organization);
+        // Forzar la inicialización de propiedades lazy
+        requests.forEach(request -> {
+            if (request.getUser() != null) {
+                request.getUser().getUsername();
+                request.getUser().getFirstName();
+                request.getUser().getLastName();
+                request.getUser().getFullName();
+            }
+            if (request.getOrganization() != null) {
+                request.getOrganization().getUsername();
+                request.getOrganization().getFullName();
+            }
+            if (request.getMaterials() != null) {
+                request.getMaterials().size();
+            }
+        });
+        return requests;
+    }
+
     public Request approveRequest(Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request != null) {

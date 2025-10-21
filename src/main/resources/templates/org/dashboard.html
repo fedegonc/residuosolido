@@ -51,6 +51,7 @@
                             Administra solicitudes de reciclaje y optimiza la recolección de residuos
                         </p>
                         <div class="flex flex-wrap gap-3">
+                            <!-- Enlace principal: muestra TODAS las solicitudes sin filtro -->
                             <a href="/acopio/requests" class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
                                 <i data-lucide="clipboard-list" class="w-5 h-5 mr-2"></i>
                                 Ver Solicitudes
@@ -74,13 +75,14 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <div class="flex items-center justify-between mb-5">
                 <div>
-                    <h2 class="text-lg font-bold text-gray-900">Métricas de Operación</h2>
+                    <h2 class="text-lg font-bold text-gray-900">Resumen de Solicitudes</h2>
                     <p class="text-sm text-gray-600">Rendimiento de tu organización este mes</p>
                 </div>
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="/acopio/requests" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 transition-all cursor-pointer group">
+                <!-- Métrica: Solicitudes Pendientes - Filtra por status=PENDING -->
+                <a href="/acopio/requests?status=PENDING" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 transition-all cursor-pointer group">
                     <div class="flex items-center gap-2 mb-2">
                         <i data-lucide="clock" class="w-5 h-5 text-gray-600 group-hover:text-yellow-600"></i>
                         <span class="text-xs font-medium text-gray-700 group-hover:text-yellow-700">Pendientes</span>
@@ -89,7 +91,8 @@
                     <p class="text-xs text-gray-600 group-hover:text-yellow-600 mt-1">Requieren atención</p>
                 </a>
                 
-                <a href="/acopio/requests" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer group">
+                <!-- Métrica: Solicitudes En Proceso - Filtra por status=IN_PROGRESS (incluye ACCEPTED) -->
+                <a href="/acopio/requests?status=IN_PROGRESS" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer group">
                     <div class="flex items-center gap-2 mb-2">
                         <i data-lucide="truck" class="w-5 h-5 text-gray-600 group-hover:text-blue-600"></i>
                         <span class="text-xs font-medium text-gray-700 group-hover:text-blue-700">En Proceso</span>
@@ -98,7 +101,8 @@
                     <p class="text-xs text-gray-600 group-hover:text-blue-600 mt-1">En recolección</p>
                 </a>
                 
-                <a href="/acopio/requests" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all cursor-pointer group">
+                <!-- Métrica: Solicitudes Completadas - Filtra por status=COMPLETED -->
+                <a href="/acopio/requests?status=COMPLETED" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all cursor-pointer group">
                     <div class="flex items-center gap-2 mb-2">
                         <i data-lucide="check-circle" class="w-5 h-5 text-gray-600 group-hover:text-green-600"></i>
                         <span class="text-xs font-medium text-gray-700 group-hover:text-green-700">Completadas</span>
@@ -125,7 +129,8 @@
                     <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600"></i>
                     Solicitudes Pendientes
                 </h2>
-                <a href="/acopio/requests" class="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                <!-- Enlace: muestra solo solicitudes pendientes -->
+                <a href="/acopio/requests?status=PENDING" class="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
                     Ver todas
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
