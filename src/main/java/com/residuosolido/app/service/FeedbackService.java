@@ -40,8 +40,19 @@ public class FeedbackService {
         return findAll();
     }
     
+    @Transactional(readOnly = true)
     public Optional<Feedback> findById(Long id) {
-        return feedbackRepository.findById(id);
+        Optional<Feedback> feedback = feedbackRepository.findById(id);
+        // Forzar inicialización de propiedades lazy del User
+        feedback.ifPresent(fb -> {
+            if (fb.getUser() != null) {
+                fb.getUser().getUsername();
+                fb.getUser().getFirstName();
+                fb.getUser().getLastName();
+                fb.getUser().getEmail();
+            }
+        });
+        return feedback;
     }
     
     public Feedback save(Feedback feedback) {
