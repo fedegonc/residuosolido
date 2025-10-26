@@ -46,20 +46,15 @@ public class AuthenticationSecurityTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    private User testAdmin;
-    private User testUser;
-    private User testOrganization;
-
     @BeforeEach
     void setUp() {
         // Limpiar datos previos
         userRepository.deleteAll();
         
         // Crear usuarios de prueba con nombres únicos para evitar conflictos
-        testAdmin = createTestUser("testadmin", "testadmin@test.com", Role.ADMIN, true);
-        testUser = createTestUser("testuser", "testuser@test.com", Role.USER, true);
-        testOrganization = createTestUser("testorg", "testorg@test.com", Role.ORGANIZATION, true);
+        createTestUser("testadmin", "testadmin@test.com", Role.ADMIN, true);
+        createTestUser("testuser", "testuser@test.com", Role.USER, true);
+        createTestUser("testorg", "testorg@test.com", Role.ORGANIZATION, true);
     }
 
     // ========== TESTS DE AUTENTICACIÓN BÁSICA ==========
@@ -98,7 +93,7 @@ public class AuthenticationSecurityTest {
     @DisplayName("Login fallido con usuario inactivo")
     void testLoginWithInactiveUser() throws Exception {
         // Crear usuario inactivo
-        User inactiveUser = createTestUser("testinactive", "testinactive@test.com", Role.USER, false);
+        createTestUser("testinactive", "testinactive@test.com", Role.USER, false);
         
         mockMvc.perform(formLogin("/auth/login")
                 .user("testinactive")

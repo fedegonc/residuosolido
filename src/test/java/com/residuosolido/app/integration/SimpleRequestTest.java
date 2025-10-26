@@ -5,7 +5,6 @@ import com.residuosolido.app.repository.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,7 +88,7 @@ class SimpleRequestTest {
         // When: Creamos una solicitud manualmente
         Request request = new Request();
         request.setDescription("Test description");
-        request.setAddress("Test address");
+        request.setCollectionAddress("Test address");
         request.setStatus(RequestStatus.PENDING);
         request.setUser(testUser);
         
@@ -110,7 +109,7 @@ class SimpleRequestTest {
         for (int i = 1; i <= 3; i++) {
             Request request = new Request();
             request.setDescription("Solicitud " + i);
-            request.setAddress("Dirección " + i);
+            request.setCollectionAddress("Dirección " + i);
             request.setStatus(RequestStatus.PENDING);
             request.setUser(testUser);
             requestRepository.save(request);
@@ -131,7 +130,7 @@ class SimpleRequestTest {
         // Given: Creamos una solicitud en este test
         Request request = new Request();
         request.setDescription("Test rollback");
-        request.setAddress("Test address");
+        request.setCollectionAddress("Test address");
         request.setStatus(RequestStatus.PENDING);
         request.setUser(testUser);
         requestRepository.save(request);
@@ -164,7 +163,7 @@ class SimpleRequestTest {
         // Given: Una solicitud PENDING
         Request request = new Request();
         request.setDescription("Test");
-        request.setAddress("Test");
+        request.setCollectionAddress("Test");
         request.setStatus(RequestStatus.PENDING);
         request.setUser(testUser);
         request = requestRepository.save(request);
@@ -197,7 +196,7 @@ class SimpleRequestTest {
         for (int i = 1; i <= 2; i++) {
             Request request = new Request();
             request.setDescription("Request " + i);
-            request.setAddress("Address " + i);
+            request.setCollectionAddress("Address " + i);
             request.setStatus(RequestStatus.PENDING);
             request.setUser(testUser);
             requestRepository.save(request);
@@ -206,7 +205,7 @@ class SimpleRequestTest {
         // Solicitud para user2
         Request request3 = new Request();
         request3.setDescription("Request 3");
-        request3.setAddress("Address 3");
+        request3.setCollectionAddress("Address 3");
         request3.setStatus(RequestStatus.PENDING);
         request3.setUser(user2);
         requestRepository.save(request3);

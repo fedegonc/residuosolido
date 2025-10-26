@@ -42,19 +42,15 @@ public class CriticalSecurityTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private User testAdmin;
-    private User testUser;
-    private User testOrganization;
-
     @BeforeEach
     void setUp() {
         // Limpiar datos previos
         userRepository.deleteAll();
         
         // Crear usuarios de prueba
-        testAdmin = createTestUser("securityadmin", "securityadmin@test.com", Role.ADMIN, true);
-        testUser = createTestUser("securityuser", "securityuser@test.com", Role.USER, true);
-        testOrganization = createTestUser("securityorg", "securityorg@test.com", Role.ORGANIZATION, true);
+        createTestUser("securityadmin", "securityadmin@test.com", Role.ADMIN, true);
+        createTestUser("securityuser", "securityuser@test.com", Role.USER, true);
+        createTestUser("securityorg", "securityorg@test.com", Role.ORGANIZATION, true);
     }
 
     // ========== TESTS CRÍTICOS DE AUTENTICACIÓN ==========

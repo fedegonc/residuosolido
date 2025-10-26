@@ -5,6 +5,8 @@ import com.residuosolido.app.view.BreadcrumbItem;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,12 +25,16 @@ public class BreadcrumbInterceptor implements HandlerInterceptor {
     private BreadcrumbService breadcrumbService;
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, 
-                          Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, 
+                          @NonNull Object handler, @Nullable ModelAndView modelAndView) throws Exception {
         
         // Solo procesar si hay un ModelAndView y no es una redirección
-        if (modelAndView == null || modelAndView.getViewName() == null || 
-            modelAndView.getViewName().startsWith("redirect:")) {
+        if (modelAndView == null) {
+            return;
+        }
+
+        String viewName = modelAndView.getViewName();
+        if (viewName == null || viewName.startsWith("redirect:")) {
             return;
         }
         

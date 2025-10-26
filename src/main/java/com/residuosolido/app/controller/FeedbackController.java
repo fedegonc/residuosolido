@@ -159,10 +159,15 @@ public class FeedbackController {
         model.addAttribute("feedback", new Feedback());
         boolean isAuth = authentication != null && authentication.isAuthenticated();
         model.addAttribute("isAuthenticated", isAuth);
-        
+
         // Cargar últimos 3 reportes del usuario si está autenticado
-        if (isAuth) {
-            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            User currentUser = userService.findAuthenticatedUserByUsername(username);
+            if (currentUser == null) {
+                log.warn("[FEEDBACK][GET] Usuario '{}' no encontrado mientras estaba autenticado", username);
+                return "redirect:/auth/login";
+            }
             var userFeedbacks = feedbackService.findByUser(currentUser);
             // Limitar a los últimos 3
             var recentFeedbacks = userFeedbacks.stream().limit(3).toList();
@@ -182,10 +187,22 @@ public class FeedbackController {
         log.info("[FEEDBACK][POST] Feedback comment: {}", feedback.getComment());
         
         try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                log.warn("[FEEDBACK][POST] Intento de envío sin autenticación válida");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                    "Tu sesión expiró. Inicia sesión nuevamente para enviar reportes.");
+                return "redirect:/auth/login";
+            }
             String username = authentication.getName();
             log.info("[FEEDBACK][POST] Buscando usuario: {}", username);
             
             User currentUser = userService.findAuthenticatedUserByUsername(username);
+            if (currentUser == null) {
+                log.error("[FEEDBACK][POST] Usuario '{}' no encontrado tras autenticación", username);
+                redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se pudo identificar tu cuenta. Inicia sesión nuevamente.");
+                return "redirect:/auth/login";
+            }
             log.info("[FEEDBACK][POST] Usuario encontrado: id={}, username={}", 
                     currentUser != null ? currentUser.getId() : "NULL",
                     currentUser != null ? currentUser.getUsername() : "NULL");

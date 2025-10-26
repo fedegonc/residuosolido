@@ -1,14 +1,12 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Material;
-import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.MaterialService;
 import com.residuosolido.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,22 +89,26 @@ public class OrganizationOnboardingController {
             User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
             logger.info("Usuario ANTES de cambios: username={}, id={}, profileCompleted={}", currentUser.getUsername(), currentUser.getId(), currentUser.getProfileCompleted());
             
+            String trimmedAddress = address != null ? address.trim() : null;
+            String trimmedPhone = phone != null ? phone.trim() : null;
+            List<Long> safeMaterialIds = materialIds != null ? materialIds : List.of();
+
             // Validaciones
             List<String> errors = new ArrayList<>();
             
-            if (address == null || address.trim().isEmpty()) {
+            if (trimmedAddress == null || trimmedAddress.isEmpty()) {
                 errors.add("La dirección es obligatoria");
-            } else if (address.trim().length() < 10) {
+            } else if (trimmedAddress.length() < 10) {
                 errors.add("La dirección debe tener al menos 10 caracteres");
             }
             
-            if (phone == null || phone.trim().isEmpty()) {
+            if (trimmedPhone == null || trimmedPhone.isEmpty()) {
                 errors.add("El teléfono es obligatorio");
-            } else if (phone.trim().length() < 8) {
+            } else if (trimmedPhone.length() < 8) {
                 errors.add("El teléfono debe tener al menos 8 dígitos");
             }
             
-            if (materialIds == null || materialIds.isEmpty()) {
+            if (safeMaterialIds.isEmpty()) {
                 errors.add("Debes seleccionar al menos un material que aceptas");
             }
             
@@ -117,12 +119,12 @@ public class OrganizationOnboardingController {
             }
             
             // Actualizar datos del usuario
-            currentUser.setAddress(address.trim());
-            currentUser.setPhone(phone.trim());
+            currentUser.setAddress(trimmedAddress);
+            currentUser.setPhone(trimmedPhone);
             
             // Actualizar materiales aceptados
             List<Material> selectedMaterials = new ArrayList<>();
-            for (Long materialId : materialIds) {
+            for (Long materialId : safeMaterialIds) {
                 Material material = materialService.findById(materialId).orElse(null);
                 if (material != null && material.getActive()) {
                     selectedMaterials.add(material);
@@ -141,7 +143,7 @@ public class OrganizationOnboardingController {
             logger.info("profileCompleted DESPUÉS de setear: {}", currentUser.getProfileCompleted());
             logger.info("----------------------------------------");
             
-            // Guardar TODO junto (dirección, teléfono, materiales, profileCompleted)
+            // Guardar todos los cambios (dirección, teléfono, materiales, profileCompleted)
             logger.info("========== GUARDANDO USUARIO ==========");
             User savedUser = userService.saveDirectly(currentUser);
             logger.info("Usuario guardado. profileCompleted retornado: {}", savedUser.getProfileCompleted());

@@ -3,8 +3,6 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.Category;
 import com.residuosolido.app.repository.PostRepository;
-import com.residuosolido.app.service.CloudinaryService;
-import com.residuosolido.app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.ui.Model;
 
 @Service

@@ -1,18 +1,21 @@
 package com.residuosolido.app.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residuosolido.app.model.AssistantConfig;
 import com.residuosolido.app.model.ChatHistory;
 import com.residuosolido.app.repository.AssistantConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,9 @@ public class GeminiService {
     private AssistantConfigRepository assistantConfigRepository;
 
     private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {};
+    private static final TypeReference<List<Map<String, Object>>> LIST_MAP_TYPE_REF = new TypeReference<>() {};
     
     // Memoria de conversaciones por sessionId (en RAM)
     private final Map<String, ChatHistory> conversationHistory = new ConcurrentHashMap<>();
@@ -74,17 +80,22 @@ public class GeminiService {
 
             // Llamada a la API
             String url = GEMINI_API_URL + "?key=" + apiKey;
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    new ParameterizedTypeReference<>() {}
+            );
 
             // Extraer la respuesta
             Map<String, Object> responseBody = response.getBody();
             if (responseBody != null) {
-                List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
+                List<Map<String, Object>> candidates = extractMapList(responseBody.get("candidates"));
+                if (!candidates.isEmpty()) {
                     Map<String, Object> firstCandidate = candidates.get(0);
-                    Map<String, Object> contentResponse = (Map<String, Object>) firstCandidate.get("content");
-                    List<Map<String, Object>> parts = (List<Map<String, Object>>) contentResponse.get("parts");
-                    if (parts != null && !parts.isEmpty()) {
+                    Map<String, Object> contentResponse = extractMap(firstCandidate.get("content"));
+                    List<Map<String, Object>> parts = contentResponse != null ? extractMapList(contentResponse.get("parts")) : List.of();
+                    if (!parts.isEmpty()) {
                         String geminiText = (String) parts.get(0).get("text");
                         
                         // Agregar la respuesta del modelo al historial
@@ -99,6 +110,28 @@ public class GeminiService {
 
         } catch (Exception e) {
             return "Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.";
+        }
+    }
+
+    private List<Map<String, Object>> extractMapList(Object value) {
+        if (value == null) {
+            return List.of();
+        }
+        try {
+            return OBJECT_MAPPER.convertValue(value, LIST_MAP_TYPE_REF);
+        } catch (IllegalArgumentException ex) {
+            return List.of();
+        }
+    }
+
+    private Map<String, Object> extractMap(Object value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.convertValue(value, MAP_TYPE_REF);
+        } catch (IllegalArgumentException ex) {
+            return null;
         }
     }
     

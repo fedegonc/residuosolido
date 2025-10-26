@@ -21,7 +21,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,16 +36,13 @@ import java.util.stream.Collectors;
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    private final PasswordEncoder passwordEncoder;
     private final LoginSuccessHandler successHandler;
     private final PasswordResetRequestService passwordResetService;
     private final AuthService authService;
 
-    public AuthController(PasswordEncoder passwordEncoder,
-                         LoginSuccessHandler successHandler,
+    public AuthController(LoginSuccessHandler successHandler,
                          PasswordResetRequestService passwordResetService,
                          AuthService authService) {
-        this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.passwordResetService = passwordResetService;
         this.authService = authService;

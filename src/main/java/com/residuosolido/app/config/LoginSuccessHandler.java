@@ -12,14 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -37,6 +32,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     
     // Prefijo estándar para roles en Spring Security
     private static final String ROLE_PREFIX = "ROLE_";
+    private static final String ROLE_ADMIN = ROLE_PREFIX + "ADMIN";
+    private static final String ROLE_ORGANIZATION = ROLE_PREFIX + "ORGANIZATION";
+    private static final String ROLE_USER = ROLE_PREFIX + "USER";
     
     private static final String DEFAULT_TARGET_URL = "/dashboard";
 
@@ -52,7 +50,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             // Verificar si es una organización con perfil incompleto
             // IMPORTANTE: Siempre traer desde BD, nunca desde cache
-            if (userRoles.contains("ROLE_ORGANIZATION")) {
+            if (userRoles.contains(ROLE_ORGANIZATION)) {
                 try {
                     logger.info("========================================");
                     logger.info("=== LOGIN ORGANIZACIÓN ===");
@@ -138,11 +136,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      * @return URL de destino
      */
     private String getTargetUrlByRoles(Set<String> userRoles) {
-        if (userRoles.contains("ROLE_ADMIN")) {
+        if (userRoles.contains(ROLE_ADMIN)) {
             return "/admin/dashboard";
-        } else if (userRoles.contains("ROLE_ORGANIZATION")) {
+        } else if (userRoles.contains(ROLE_ORGANIZATION)) {
             return "/acopio/inicio";
-        } else if (userRoles.contains("ROLE_USER")) {
+        } else if (userRoles.contains(ROLE_USER)) {
             return "/usuarios/inicio";
         } else {
             return DEFAULT_TARGET_URL;

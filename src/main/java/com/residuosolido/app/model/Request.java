@@ -80,7 +80,7 @@ public class Request {
         this.materials.remove(material);
     }
 
-    // Legacy compatibility methods - TODO: remove when migration is complete
+    // Legacy compatibility methods retained until all callers use collectionAddress directly
     /**
      * @deprecated Use collectionAddress field directly
      */

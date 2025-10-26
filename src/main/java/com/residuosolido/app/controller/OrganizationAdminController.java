@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class OrganizationAdminController {
@@ -412,22 +413,16 @@ public class OrganizationAdminController {
                 ? currentOrg.getMaterials().stream().map(Material::getId).toList()
                 : new ArrayList<>();
             
-            // Obtener todas las solicitudes y filtrar por materiales aceptados
-            List<Request> allRequests = requestService.findAll();
-            List<Request> filteredRequests = allRequests.stream()
-                .filter(request -> request.getMaterials() != null && 
-                    request.getMaterials().stream()
-                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
-                .toList();
-            
-            // Contar por estado (solo solicitudes filtradas)
-            long pending = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count();
-            long accepted = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count();
-            long inProgress = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).count();
-            long cancelled = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
-            long completed = filteredRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count();
-            
-            model.addAttribute("totalRequests", filteredRequests.size());
+            long totalRequests = requestService.countRequestsForMaterials(acceptedMaterialIds);
+            Map<RequestStatus, Long> statusCounts = requestService.getRequestStatusCountsForMaterials(acceptedMaterialIds);
+
+            long pending = statusCounts.getOrDefault(RequestStatus.PENDING, 0L);
+            long accepted = statusCounts.getOrDefault(RequestStatus.ACCEPTED, 0L);
+            long inProgress = statusCounts.getOrDefault(RequestStatus.IN_PROGRESS, 0L);
+            long cancelled = statusCounts.getOrDefault(RequestStatus.REJECTED, 0L);
+            long completed = statusCounts.getOrDefault(RequestStatus.COMPLETED, 0L);
+
+            model.addAttribute("totalRequests", totalRequests);
             model.addAttribute("pendingRequests", pending);
             model.addAttribute("acceptedRequests", accepted);
             model.addAttribute("inProgressRequests", inProgress);

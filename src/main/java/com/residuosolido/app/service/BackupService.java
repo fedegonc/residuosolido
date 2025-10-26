@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -31,6 +32,10 @@ public class BackupService {
     private final FeedbackRepository feedbackRepository;
     private final ConfigRepository configRepository;
     private final PasswordResetRequestRepository passwordResetRequestRepository;
+
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {};
+    private static final TypeReference<List<Map<String, Object>>> LIST_OF_MAP_TYPE = new TypeReference<>() {};
+    private static final TypeReference<List<Integer>> LIST_OF_INTEGER_TYPE = new TypeReference<>() {};
 
     /**
      * Genera un backup completo de la base de datos en formato JSON
@@ -72,7 +77,7 @@ public class BackupService {
         log.info("Iniciando restauración de backup...");
         
         ObjectMapper mapper = createObjectMapper();
-        Map<String, Object> backupData = mapper.readValue(file.getInputStream(), Map.class);
+        Map<String, Object> backupData = mapper.readValue(file.getInputStream(), MAP_TYPE_REF);
         
         // Validar versión
         String version = (String) backupData.get("version");
@@ -230,8 +235,8 @@ public class BackupService {
     // Métodos privados de restauración
 
     private void restoreMaterials(Map<String, Object> backupData, ObjectMapper mapper, Map<Long, Long> materialIdMap) {
-        List<Map<String, Object>> materials = (List<Map<String, Object>>) backupData.get("materials");
-        if (materials != null) {
+        List<Map<String, Object>> materials = readMapList(mapper, backupData, "materials");
+        if (!materials.isEmpty()) {
             for (Map<String, Object> materialData : materials) {
                 Long oldId = materialData.get("id") != null ? ((Number) materialData.get("id")).longValue() : null;
                 Material material = mapper.convertValue(materialData, Material.class);
@@ -245,8 +250,8 @@ public class BackupService {
     }
 
     private void restoreCategories(Map<String, Object> backupData, ObjectMapper mapper, Map<Long, Long> categoryIdMap) {
-        List<Map<String, Object>> categories = (List<Map<String, Object>>) backupData.get("categories");
-        if (categories != null) {
+        List<Map<String, Object>> categories = readMapList(mapper, backupData, "categories");
+        if (!categories.isEmpty()) {
             for (Map<String, Object> categoryData : categories) {
                 // Tomar el ID original y evitar reutilizarlo
                 Long oldId = categoryData.get("id") != null ? ((Number) categoryData.get("id")).longValue() : null;
@@ -277,8 +282,8 @@ public class BackupService {
     }
 
     private void restoreUsers(Map<String, Object> backupData, ObjectMapper mapper, Map<Long, Long> userIdMap, Map<Long, Long> materialIdMap) {
-        List<Map<String, Object>> users = (List<Map<String, Object>>) backupData.get("users");
-        if (users != null) {
+        List<Map<String, Object>> users = readMapList(mapper, backupData, "users");
+        if (!users.isEmpty()) {
             for (Map<String, Object> userData : users) {
                 User user = new User();
                 Long oldId = ((Number) userData.get("id")).longValue();
@@ -316,8 +321,8 @@ public class BackupService {
                 userIdMap.put(oldId, savedUser.getId());
                 
                 // Restaurar relación con materiales
-                List<Integer> materialIds = (List<Integer>) userData.get("materialIds");
-                if (materialIds != null && !materialIds.isEmpty()) {
+                List<Integer> materialIds = readIntegerList(mapper, userData.get("materialIds"));
+                if (!materialIds.isEmpty()) {
                     List<Long> newIds = materialIds.stream()
                             .map(Integer::longValue)
                             .map(mid -> materialIdMap.getOrDefault(mid, mid))
@@ -331,8 +336,8 @@ public class BackupService {
     }
 
     private void restorePosts(Map<String, Object> backupData, ObjectMapper mapper, Map<Long, Long> categoryIdMap) {
-        List<Map<String, Object>> posts = (List<Map<String, Object>>) backupData.get("posts");
-        if (posts != null) {
+        List<Map<String, Object>> posts = readMapList(mapper, backupData, "posts");
+        if (!posts.isEmpty()) {
             for (Map<String, Object> postData : posts) {
                 Post post = new Post();
                 // No reutilizar ID
@@ -360,8 +365,8 @@ public class BackupService {
     }
 
     private void restoreRequests(Map<String, Object> backupData, ObjectMapper mapper, Map<Long, Long> userIdMap, Map<Long, Long> materialIdMap, Map<Long, Long> requestIdMap) {
-        List<Map<String, Object>> requests = (List<Map<String, Object>>) backupData.get("requests");
-        if (requests != null) {
+        List<Map<String, Object>> requests = readMapList(mapper, backupData, "requests");
+        if (!requests.isEmpty()) {
             for (Map<String, Object> requestData : requests) {
                 Request request = new Request();
                 Long oldRequestId = ((Number) requestData.get("id")).longValue();
@@ -396,8 +401,8 @@ public class BackupService {
                 requestIdMap.put(oldRequestId, savedRequest.getId());
                 
                 // Restaurar relación con materiales
-                List<Integer> materialIds = (List<Integer>) requestData.get("materialIds");
-                if (materialIds != null && !materialIds.isEmpty()) {
+                List<Integer> materialIds = readIntegerList(mapper, requestData.get("materialIds"));
+                if (!materialIds.isEmpty()) {
                     List<Long> newIds = materialIds.stream()
                             .map(Integer::longValue)
                             .map(mid -> materialIdMap.getOrDefault(mid, mid))
@@ -411,8 +416,8 @@ public class BackupService {
     }
 
     private void restoreFeedbacks(Map<String, Object> backupData, ObjectMapper mapper, Map<Long, Long> userIdMap) {
-        List<Map<String, Object>> feedbacks = (List<Map<String, Object>>) backupData.get("feedbacks");
-        if (feedbacks != null) {
+        List<Map<String, Object>> feedbacks = readMapList(mapper, backupData, "feedbacks");
+        if (!feedbacks.isEmpty()) {
             for (Map<String, Object> feedbackData : feedbacks) {
                 Feedback feedback = new Feedback();
                 // No reutilizar ID
@@ -451,8 +456,8 @@ public class BackupService {
     }
 
     private void restoreConfigs(Map<String, Object> backupData, ObjectMapper mapper) {
-        List<Map<String, Object>> configs = (List<Map<String, Object>>) backupData.get("configs");
-        if (configs != null) {
+        List<Map<String, Object>> configs = readMapList(mapper, backupData, "configs");
+        if (!configs.isEmpty()) {
             for (Map<String, Object> configData : configs) {
                 Config config = mapper.convertValue(configData, Config.class);
                 configRepository.save(config);
@@ -461,8 +466,8 @@ public class BackupService {
     }
 
     private void restorePasswordResetRequests(Map<String, Object> backupData, ObjectMapper mapper) {
-        List<Map<String, Object>> requests = (List<Map<String, Object>>) backupData.get("passwordResetRequests");
-        if (requests != null) {
+        List<Map<String, Object>> requests = readMapList(mapper, backupData, "passwordResetRequests");
+        if (!requests.isEmpty()) {
             for (Map<String, Object> requestData : requests) {
                 PasswordResetRequest request = mapper.convertValue(requestData, PasswordResetRequest.class);
                 passwordResetRequestRepository.save(request);
@@ -478,5 +483,20 @@ public class BackupService {
         // Ignorar propiedades desconocidas para compatibilidad con backups antiguos
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
+    }
+
+    private List<Map<String, Object>> readMapList(ObjectMapper mapper, Map<String, Object> source, String key) {
+        Object value = source.get(key);
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        return mapper.convertValue(value, LIST_OF_MAP_TYPE);
+    }
+
+    private List<Integer> readIntegerList(ObjectMapper mapper, Object value) {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        return mapper.convertValue(value, LIST_OF_INTEGER_TYPE);
     }
 }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -40,9 +39,6 @@ public class UserController {
     
     @Autowired
     private CloudinaryService cloudinaryService;
-    
-    @Autowired
-    private CategoryService categoryService;
     
     @Autowired
     private PostService postService;
@@ -148,6 +144,7 @@ public class UserController {
     public String adminSaveUser(@RequestParam(required = false) String action,
                                @ModelAttribute User user,
                                @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
+                               @RequestParam(value = "newPassword", required = false) String newPassword,
                                RedirectAttributes redirectAttributes) {
         
         if ("delete".equals(action) && user.getId() != null) {
@@ -161,7 +158,8 @@ public class UserController {
                     user.setProfileImage(imageUrl);
                 }
                 
-                userService.updateUser(user, null);
+                String sanitizedNewPassword = (newPassword != null && !newPassword.isBlank()) ? newPassword.trim() : null;
+                userService.updateUser(user, sanitizedNewPassword);
                 redirectAttributes.addFlashAttribute("successMessage", "Usuario actualizado correctamente");
             } else {
                 // Verificar si ya existe un usuario con ese email o username

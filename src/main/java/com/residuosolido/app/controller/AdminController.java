@@ -114,7 +114,7 @@ public class AdminController {
 
     @PostMapping("/admin/password-reset-requests")
     public String handlePasswordReset(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
-        // TODO: Implement password reset logic
+        // Pending: integrate with password reset workflow (token generation + email delivery)
         return "redirect:/admin/password-reset-requests";
     }
 

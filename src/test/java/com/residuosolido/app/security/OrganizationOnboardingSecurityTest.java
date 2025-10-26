@@ -44,18 +44,15 @@ public class OrganizationOnboardingSecurityTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private User incompleteOrganization;
-    private User completeOrganization;
-
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
         
         // Organización con perfil incompleto
-        incompleteOrganization = createOrganization("org_incomplete", "incomplete@test.com", null);
+        createOrganization("org_incomplete", "incomplete@test.com", null);
         
         // Organización con perfil completo
-        completeOrganization = createOrganization("org_complete", "complete@test.com", true);
+        createOrganization("org_complete", "complete@test.com", true);
     }
 
     // ========== TESTS DE REDIRECCIÓN TRAS LOGIN ==========

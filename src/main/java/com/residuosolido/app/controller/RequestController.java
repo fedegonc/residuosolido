@@ -3,7 +3,10 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.*;
 import com.residuosolido.app.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -48,6 +51,14 @@ public class RequestController {
     /**
      * Prepara modelo común para todas las vistas de solicitudes
      */
+    private void prepareRequestModel(Model model, Page<Request> requestsPage, String viewType, String query) {
+        model.addAttribute("requestsPage", requestsPage);
+        model.addAttribute("requests", requestsPage.getContent());
+        model.addAttribute("totalRequests", requestsPage.getTotalElements());
+        model.addAttribute("query", query);
+        model.addAttribute("viewType", viewType);
+    }
+
     private void prepareRequestModel(Model model, List<Request> requests, String viewType) {
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
@@ -72,6 +83,8 @@ public class RequestController {
             @RequestParam(required = false) String action,
             @RequestParam(required = false) Long id,
             @RequestParam(value = "q", required = false) String query,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
             Model model) {
         
         // Modo creación (nuevo)
@@ -98,21 +111,12 @@ public class RequestController {
         }
 
         // Modo lista (por defecto)
-        List<Request> allRequests = requestService.findAll();
-        // Filtro de búsqueda (usuario, dirección, materiales, estado, fecha)
-        if (query != null && !query.trim().isEmpty()) {
-            String q = query.trim().toLowerCase();
-            allRequests = allRequests.stream().filter(r -> {
-                String username = (r.getUser() != null && r.getUser().getUsername() != null) ? r.getUser().getUsername().toLowerCase() : "";
-                String address = r.getCollectionAddress() != null ? r.getCollectionAddress().toLowerCase() : "";
-                String materials = r.getMaterialsAsString() != null ? r.getMaterialsAsString().toLowerCase() : "";
-                String status = r.getStatus() != null ? r.getStatus().name().toLowerCase() : "";
-                String created = r.getCreatedAt() != null ? r.getCreatedAt().toString().toLowerCase() : "";
-                return username.contains(q) || address.contains(q) || materials.contains(q) || status.contains(q) || created.contains(q);
-            }).toList();
-        }
-        prepareRequestModel(model, allRequests, "list");
-        model.addAttribute("query", query);
+        int safeSize = size <= 0 ? 10 : Math.min(size, 100);
+        int safePage = Math.max(page, 0);
+        Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Request> pageResult = requestService.searchAll(query, pageable);
+        prepareRequestModel(model, pageResult, "list", query);
+        model.addAttribute("pageSize", safeSize);
         // Mostrar botón 'Nueva Solicitud' en la lista (misma ubicación que 'Alta de usuario')
         model.addAttribute("showCreateButton", true);
         return "admin/requests";

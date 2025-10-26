@@ -13,102 +13,102 @@
 
     <!-- Messages -->
     <!-- Breadcrumbs -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
         <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
 
     <!-- Messages -->
-    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-3 py-2.5 rounded-md">
             <div class="flex items-center">
-                <i class="fa-solid fa-circle-check mr-2 text-base"></i>
+                <i class="fa-solid fa-circle-check mr-2 text-sm"></i>
                 <span th:text="${successMessage}"></span>
             </div>
         </div>
     </div>
 
-    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-3 py-2.5 rounded-md">
             <div class="flex items-center">
-                <i class="fa-solid fa-circle-exclamation mr-2 text-base"></i>
+                <i class="fa-solid fa-circle-exclamation mr-2 text-sm"></i>
                 <span th:text="${errorMessage}"></span>
             </div>
         </div>
     </div>
 
     <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <!-- Leaflet resources (loaded once) -->
         <th:block th:replace="~{fragments/components/map :: leaflet_resources}"></th:block>
         
         <!-- LISTA DE USUARIOS / ORGANIZACIONES -->
-        <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
-                <h2 class="text-lg font-semibold text-gray-900">
+        <div th:if="${viewType == 'list'}" class="bg-white rounded-md shadow-sm">
+            <div class="px-4 py-3 border-b border-gray-200 space-y-2">
+                <h2 class="text-base font-semibold text-gray-900">
                     <span th:text="${isOrganizations} ? 'Lista de Organizaciones' : 'Lista de Usuarios'"></span>
                     (<span th:text="${totalUsers}">0</span>)
                 </h2>
-                <p class="text-sm text-gray-600">
+                <p class="text-xs text-gray-600 leading-snug">
                     <span th:if="${isOrganizations}">
-                        Gestiona las organizaciones registradas en el sistema. Puedes ver detalles, editar información de contacto y gestionar el estado de cada organización.
+                        Gestiona organizaciones: actualiza datos clave y estado desde esta vista.
                     </span>
                     <span th:unless="${isOrganizations}">
-                        Administra todos los usuarios del sistema. Crea nuevos usuarios, edita perfiles existentes, gestiona roles y permisos, y controla el acceso al sistema.
+                        Administra usuarios: crea cuentas, ajusta roles y controla el acceso.
                     </span>
-                    <span class="block mt-1 text-xs text-gray-500">
-                        Usa el buscador para filtrar por nombre, email o rol. Los usuarios marcados como inactivos no podrán acceder al sistema.
+                    <span class="block mt-1 text-[11px] text-gray-500">
+                        Filtra por usuario, email o rol; los inactivos no pueden iniciar sesión.
                     </span>
                 </p>
                 <!-- Buscador (debajo del párrafo descriptivo) -->
-                <form th:action="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                <form th:action="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 w-full">
                     <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, nombre o email..."
-                           class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
-                    <div class="flex gap-2">
-                        <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
-                        <a th:href="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
+                           class="w-full sm:w-80 h-8 px-3 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500 focus:border-green-500"/>
+                    <div class="flex gap-1.5">
+                        <button type="submit" class="h-8 px-3 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
+                        <a th:href="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" class="h-8 px-3 text-xs border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
                     </div>
                 </form>
                 <!-- (Botón movido debajo de la tabla) -->
             </div>
             
-            <div class="overflow-x-auto px-6 py-4">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
-                    <thead class="bg-gray-100 border-b border-gray-200">
+            <div class="overflow-x-auto px-4 py-3">
+                <table class="min-w-full divide-y divide-gray-200 text-xs">
+                    <thead class="bg-gray-100 border-b border-gray-200 text-[11px]">
                         <tr>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700">Usuario</th>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700">Email</th>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700">Rol</th>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700">Solicitudes</th>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700 hidden md:table-cell">Idioma</th>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700 hidden lg:table-cell">Último acceso</th>
-                            <th class="px-3 py-1.5 text-left text-sm font-medium text-gray-700">Creado</th>
-                            <th class="px-3 py-1.5 text-right text-sm font-medium text-gray-700">Acciones</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700">Usuario</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700">Email</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700">Rol</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700">Solicitudes</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700 hidden md:table-cell">Idioma</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700 hidden lg:table-cell">Último acceso</th>
+                            <th class="px-2.5 py-1 text-left font-semibold text-gray-700">Creado</th>
+                            <th class="px-2.5 py-1 text-right font-semibold text-gray-700">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
                         <tr th:each="user : ${users}" class="hover:bg-gray-50 odd:bg-gray-50">
-                            <td class="px-3 py-1.5 whitespace-nowrap">
+                            <td class="px-2.5 py-1 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                                    <div class="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden relative">
                                         <img th:if="${user.profileImage != null and !#strings.isEmpty(user.profileImage)}"
                                              th:src="${user.profileImage}"
                                              alt="Profile image"
-                                             class="h-10 w-10 object-cover rounded-full"
+                                             class="h-9 w-9 object-cover rounded-full"
                                              onerror="this.classList.add('hidden'); this.setAttribute('data-image-error','true'); this.parentElement.querySelector('[data-avatar-fallback]').classList.remove('hidden');">
                                         <span data-avatar-fallback
                                               class="text-sm font-medium text-gray-600"
                                               th:classappend="${user.profileImage != null and !#strings.isEmpty(user.profileImage)} ? ' hidden' : ''"
                                               th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}"></span>
                                     </div>
-                                    <div class="ml-4">
+                                    <div class="ml-3">
                                         <div class="text-sm font-medium text-gray-900" th:text="${user.username}"></div>
-                                        <div class="text-xs text-gray-500" th:if="${user.firstName != null or user.lastName != null}" th:text="${(user.firstName != null ? user.firstName : '') + (user.lastName != null ? ' ' + user.lastName : '')}"></div>
+                                        <div class="text-[11px] text-gray-500" th:if="${user.firstName != null or user.lastName != null}" th:text="${(user.firstName != null ? user.firstName : '') + (user.lastName != null ? ' ' + user.lastName : '')}"></div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-3 py-1.5 whitespace-nowrap text-sm text-gray-900" th:text="${user.email}">email</td>
-                            <td class="px-3 py-1.5 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            <td class="px-2.5 py-1 whitespace-nowrap text-sm text-gray-900" th:text="${user.email}">email</td>
+                            <td class="px-2.5 py-1 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
                                       th:classappend="${user.role.name() == 'ADMIN'} ? ' bg-red-100 text-red-800' : (${user.role.name() == 'ORGANIZATION'} ? ' bg-blue-100 text-blue-800' : ' bg-green-100 text-green-800')">
                                     <span th:switch="${user.role.name()}">
                                         <span th:case="'ADMIN'">⚙️ Admin</span>
@@ -117,40 +117,40 @@
                                     </span>
                                 </span>
                             </td>
-                            <td class="px-3 py-1.5 whitespace-nowrap">
+                            <td class="px-2.5 py-1 whitespace-nowrap">
                                 <div th:if="${userRequestsStats[user.id] != null}" class="flex flex-wrap gap-1">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800" title="Solicitudes asignadas">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-100 text-blue-800" title="Solicitudes asignadas">
                                         A:<span th:text="${userRequestsStats[user.id].assigned}"></span>
                                     </span>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800" title="Solicitudes en proceso">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-100 text-amber-800" title="Solicitudes en proceso">
                                         P:<span th:text="${userRequestsStats[user.id].inProgress}"></span>
                                     </span>
                                 </div>
-                                <span th:if="${userRequestsStats[user.id] == null}" class="text-xs text-gray-400">N/A</span>
+                                <span th:if="${userRequestsStats[user.id] == null}" class="text-[11px] text-gray-400">N/A</span>
                             </td>
-                            <td class="px-3 py-1.5 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell"
+                            <td class="px-2.5 py-1 whitespace-nowrap text-xs text-gray-500 hidden md:table-cell"
                                 th:text="${user.preferredLanguage == 'es'} ? 'Español' : 'Português'">Idioma</td>
-                            <td class="px-3 py-1.5 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell"
+                            <td class="px-2.5 py-1 whitespace-nowrap text-xs text-gray-500 hidden lg:table-cell"
                                 th:text="${#temporals.format(user.lastAccessAt, 'dd/MM/yyyy HH:mm')}">Último acceso</td>
-                            <td class="px-3 py-1.5 whitespace-nowrap text-sm text-gray-500" 
+                            <td class="px-2.5 py-1 whitespace-nowrap text-xs text-gray-500" 
                                 th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}">Fecha</td>
-                            <td class="px-3 py-1.5 whitespace-nowrap text-right text-sm font-medium">
+                            <td class="px-2.5 py-1 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="relative inline-block text-left user-actions-wrapper"
                                      th:with="menuId=${'user-actions-' + user.id}">
                                     <button type="button"
-                                            class="h-8 px-3 inline-flex items-center justify-center rounded border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1"
+                                            class="h-7 px-2.5 inline-flex items-center justify-center rounded border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-green-500"
                                             th:attr="data-actions-trigger=${menuId}">
                                         Acciones
                                     </button>
-                                    <div class="absolute right-0 mt-1 w-36 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-10 hidden"
+                                    <div class="absolute right-0 mt-1 w-32 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-10 hidden"
                                          th:attr="data-actions-menu=${menuId}">
-                                        <div class="py-1 text-sm text-gray-700">
+                                        <div class="py-1 text-xs text-gray-700">
                                             <a th:href="${isOrganizations} ? @{/admin/organizations(action='view', id=${user.id})} : @{/admin/users(action='view', id=${user.id})}"
-                                               class="block px-4 py-2 hover:bg-gray-50">Ver</a>
+                                               class="block px-3 py-1.5 hover:bg-gray-50">Ver</a>
                                             <a th:href="${isOrganizations} ? @{/admin/organizations(action='edit', id=${user.id})} : @{/admin/users(action='edit', id=${user.id})}"
-                                               class="block px-4 py-2 hover:bg-gray-50">Editar</a>
+                                               class="block px-3 py-1.5 hover:bg-gray-50">Editar</a>
                                             <button type="button"
-                                                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 border-t border-transparent"
+                                                    class="block w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50 border-t border-transparent"
                                                     th:classappend="' border-t border-gray-100'"
                                                     onclick="confirmDelete(this)"
                                                     th:attr="data-id=${user.id},
@@ -170,26 +170,26 @@
             </div>
 
             <!-- Controles de paginación (Front-end) -->
-            <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
+            <div class="px-4 py-3 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-2 text-xs text-gray-600">
+                <div class="flex items-center gap-1.5">
                     <span>Filas por página:</span>
-                    <select id="pageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <select id="pageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring focus:ring-green-500">
                         <option value="10">10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
                     </select>
-                    <span id="pageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+                    <span id="pageInfo" class="ml-2 text-[11px]">Mostrando 0–0 de 0</span>
                 </div>
                 <div id="paginationControls" class="flex items-center gap-1"></div>
             </div>
 
             <!-- Botón 'Alta de usuario/organización' (debajo de la lista, tamaño reducido) -->
-            <div class="px-6 pb-4 flex justify-start">
+            <div class="px-4 pb-3 flex justify-start">
                 <a th:if="${viewType == 'list'}"
                    th:href="${isOrganizations} ? @{/admin/organizations(action='new')} : @{/admin/users(action='new')}" 
-                   class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
-                    <i class="fa-solid fa-user-plus text-xs" aria-hidden="true"></i>
+                   class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 flex items-center space-x-2 text-xs">
+                    <i class="fa-solid fa-user-plus text-[11px]" aria-hidden="true"></i>
                     <span th:text="${isOrganizations} ? 'Alta de organización' : 'Alta de usuario'"></span>
                 </a>
             </div>
@@ -197,30 +197,30 @@
 
         <!-- FORMULARIO USUARIO / ORGANIZACIÓN -->
         <div th:if="${viewType == 'form'}" class="bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900" 
+            <div class="px-4 py-2 border-b border-gray-200">
+                <h2 class="text-base font-semibold text-gray-900" 
                     th:text="${isOrganizations} ? (${isEdit} ? 'Editar organización' : 'Alta de organización') : (${isEdit} ? 'Editar usuario' : 'Alta de usuario')">Formulario</h2>
             </div>
             
-            <form th:action="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" method="post" enctype="multipart/form-data" th:object="${user}" class="px-6 py-3 space-y-3 form-compact">
+            <form th:action="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" method="post" enctype="multipart/form-data" th:object="${user}" class="px-4 py-3 space-y-2 form-compact">
                 <input type="hidden" name="action" value="update" th:if="${isEdit}" />
                 <input type="hidden" name="id" th:value="${isEdit} ? ${user.id} : ''" />
                 <button type="button"
-                        class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+                        class="px-2.5 py-1 text-xs rounded-md border border-gray-300 hover:bg-gray-50"
                         hx-get="/admin/users/form-demo"
                         hx-target="#user-form-fields"
                         hx-swap="outerHTML"
                         hx-headers='{"Cache-Control":"no-cache, no-store, must-revalidate", "Pragma":"no-cache", "Expires":"0"}'
                         hx-indicator="#loading-indicator">
                     <span id="loading-indicator" class="htmx-indicator">Cargando...</span>
-                    Llenar campos
+                    Autocompletar demo
                 </button>
                 
-                <div id="user-form-fields" th:fragment="userFormFields" th:object="${user}" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div id="user-form-fields" th:fragment="userFormFields" th:object="${user}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     <!-- Imagen de Perfil (al principio) -->
-                    <div class="col-span-1 md:col-span-2">
+                    <div class="col-span-1 md:col-span-2 lg:col-span-3">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Imagen de Perfil</label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <div>
                                 <input type="url" th:field="*{profileImage}" placeholder="URL de imagen externa"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
@@ -234,28 +234,37 @@
                     </div>
 
                     <!-- Username -->
-                    <div>
+                    <div class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Usuario *</label>
                         <input type="text" th:field="*{username}" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     
                     <!-- Email -->
-                    <div>
+                    <div class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
                         <input type="email" th:field="*{email}" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     
                     <!-- Password (solo para nuevo usuario) -->
-                    <div th:if="${!isEdit}">
+                    <div th:if="${!isEdit}" class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
-                        <input type="text" th:field="*{password}" th:required="${!isEdit}" autocomplete="new-password" value="demo123456"
+                        <input type="password" th:field="*{password}" th:required="${!isEdit}" autocomplete="new-password"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
-                    
+
+                    <!-- Nueva contraseña (solo para edición) -->
+                    <div th:if="${isEdit}" class="lg:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nueva contraseña</label>
+                        <input type="password" name="newPassword" autocomplete="new-password" minlength="6"
+                               placeholder="Dejar en blanco para mantener la actual"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <p class="mt-1 text-[11px] text-gray-500">Mínimo 6 caracteres. Deja vacío para conservar la contraseña vigente.</p>
+                    </div>
+
                     <!-- Role -->
-                    <div>
+                    <div class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
                         <select th:field="*{role}" required
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
@@ -265,21 +274,21 @@
                     </div>
                     
                     <!-- First Name -->
-                    <div>
+                    <div class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
                         <input type="text" th:field="*{firstName}"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     
                     <!-- Last Name -->
-                    <div>
+                    <div class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
                         <input type="text" th:field="*{lastName}"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     
                     <!-- Preferred Language -->
-                    <div>
+                    <div class="lg:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Idioma Preferido</label>
                         <select th:field="*{preferredLanguage}"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
@@ -289,59 +298,61 @@
                     </div>
                     
                     <!-- Active -->
-                    <div class="flex items-center">
+                    <div class="flex items-center lg:col-span-1">
                         <input type="checkbox" th:field="*{active}" id="active"
                                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
                         <label for="active" class="ml-2 block text-sm text-gray-700">Usuario Activo</label>
                     </div>
                 </div>
                 
-                <!-- Address -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
-                    <textarea th:field="*{address}" rows="2"
-                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
-                </div>
-
-                <!-- Address References -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Referencias de Dirección (opcional)</label>
-                    <input type="text" th:field="*{addressReferences}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                           placeholder="Puntos de referencia cercanos, indicaciones adicionales"/>
-                </div>
-
-                <!-- Ubicación en el mapa -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ubicación en el mapa</label>
-                    <div th:replace="~{fragments/components/map :: leaflet('userMap', '#latitude', '#longitude', *{latitude}, *{longitude}, 14, 'h-72')}"></div>
-                    <p class="text-xs text-gray-500 mt-2">Puedes hacer clic en el mapa o arrastrar el marcador para establecer las coordenadas.</p>
-                </div>
-
-                <!-- Coordenadas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Latitud (opcional)</label>
-                        <input type="number" step="0.00000001" th:field="*{latitude}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                               placeholder="-34.9055"/>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Longitud (opcional)</label>
-                        <input type="number" step="0.00000001" th:field="*{longitude}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                               placeholder="-56.1850"/>
-                    </div>
+                <!-- Ubicación -->
+                <div class="lg:col-span-3">
+                    <details class="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm"
+                             th:attr="open=${user.address != null or user.addressReferences != null or user.latitude != null or user.longitude != null}">
+                        <summary class="cursor-pointer font-medium text-gray-700 select-none">Ubicación (opcional)</summary>
+                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Dirección</label>
+                                <textarea th:field="*{address}" rows="2"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"></textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Referencias</label>
+                                <input type="text" th:field="*{addressReferences}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
+                                       placeholder="Puntos de referencia cercanos, indicaciones adicionales"/>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Mapa</label>
+                            <div th:replace="~{fragments/components/map :: leaflet('userMap', '#latitude', '#longitude', *{latitude}, *{longitude}, 14, 'h-48')}"></div>
+                            <p class="text-[11px] text-gray-500 mt-1">Haz clic o arrastra el marcador para ajustar la ubicación.</p>
+                        </div>
+                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Latitud</label>
+                                <input type="number" step="0.00000001" th:field="*{latitude}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
+                                       placeholder="-34.9055"/>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Longitud</label>
+                                <input type="number" step="0.00000001" th:field="*{longitude}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
+                                       placeholder="-56.1850"/>
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200">
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200 lg:col-span-3">
                     <a th:href="${isOrganizations} ? @{/admin/organizations} : @{/admin/users}" 
-                       class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm">
+                       class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-xs">
                         Cancelar
                     </a>
                     <button type="submit" 
-                            class="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
+                            class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-xs">
                         <span th:text="${isEdit} ? 'Actualizar' : 'Crear'">Guardar</span>
                     </button>
                 </div>

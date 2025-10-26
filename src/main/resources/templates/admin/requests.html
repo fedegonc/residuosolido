@@ -6,8 +6,6 @@
   <title>Gestión de Solicitudes - Admin</title>
   <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
  </head>
  <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
@@ -67,8 +65,16 @@
         </h3>
         <!-- Buscador -->
         <form th:action="@{/admin/requests}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
-          <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, materiales, dirección, estado o fecha..."
-                 class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+          <div class="flex-1 flex gap-2">
+            <input type="text" name="q" th:value="${query}" placeholder="Buscar por usuario, materiales, dirección, estado o fecha..."
+                   class="w-full h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"/>
+            <select name="size" th:value="${pageSize}" class="h-9 px-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 w-28">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
           <div class="flex gap-2">
             <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
             <a th:href="@{/admin/requests}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
@@ -108,8 +114,8 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div th:if="${request.organization != null}" class="flex items-center">
-                  <i data-lucide="building-2" class="w-4 h-4 mr-2 text-emerald-600"></i>
+                <div th:if="${request.organization != null}" class="flex items-center gap-2">
+                  <i class="fa-solid fa-building text-emerald-600 text-sm"></i>
                   <div>
                     <div class="text-sm font-medium text-gray-900" th:text="${request.organization.fullName != null ? request.organization.fullName : request.organization.username}">Organización</div>
                     <div class="text-xs text-gray-500">Asignada</div>
@@ -147,25 +153,28 @@
           </tbody>
         </table>
       </div>
-      <!-- Paginación front-end -->
-      <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div class="flex items-center gap-2 text-sm text-gray-600">
-          <span>Filas por página:</span>
-          <select id="requestsPageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <span id="requestsPageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+      <!-- Paginación -->
+      <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-gray-600" th:with="page=${requestsPage}">
+        <div>
+          <span th:text="${page.totalElements > 0} ? ${'Mostrando ' + (page.number * page.size + 1) + '–' + (page.number * page.size + page.numberOfElements) + ' de ' + page.totalElements} : 'No hay solicitudes'">Mostrando</span>
         </div>
-        <div id="requestsPaginationControls" class="flex items-center gap-1"></div>
+        <div class="flex gap-1 items-center" th:if="${page.totalPages > 1}">
+          <a th:href="@{/admin/requests(q=${query},size=${pageSize},page=0)}" class="px-3 py-1 border rounded-md hover:bg-gray-50" th:classappend="${page.first} ? ' opacity-50 pointer-events-none'">«</a>
+          <a th:href="@{/admin/requests(q=${query},size=${pageSize},page=${page.number - 1})}" class="px-3 py-1 border rounded-md hover:bg-gray-50" th:classappend="${page.first} ? ' opacity-50 pointer-events-none'">‹</a>
+          <span th:each="p : ${#numbers.sequence(0, page.totalPages - 1)}">
+            <a th:href="@{/admin/requests(q=${query},size=${pageSize},page=${p})}" class="px-3 py-1 border rounded-md hover:bg-gray-50"
+               th:classappend="${p == page.number} ? ' bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' : ''"
+               th:text="${p + 1}">1</a>
+          </span>
+          <a th:href="@{/admin/requests(q=${query},size=${pageSize},page=${page.number + 1})}" class="px-3 py-1 border rounded-md hover:bg-gray-50" th:classappend="${page.last} ? ' opacity-50 pointer-events-none'">›</a>
+          <a th:href="@{/admin/requests(q=${query},size=${pageSize},page=${page.totalPages - 1})}" class="px-3 py-1 border rounded-md hover:bg-gray-50" th:classappend="${page.last} ? ' opacity-50 pointer-events-none'">»</a>
+        </div>
       </div>
       <!-- Botón 'Nueva Solicitud' (opcional, mismo lugar que 'Alta de usuario') -->
       <div class="px-6 pb-4 flex justify-start">
         <a th:if="${showCreateButton}" th:href="@{/admin/requests(action='new')}"
            class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 flex items-center space-x-2 text-sm">
-          <i data-lucide="plus" class="w-4 h-4"></i>
+          <i class="fa-solid fa-plus"></i>
           <span>Nueva Solicitud</span>
         </a>
       </div>
@@ -292,7 +301,7 @@
         <div class="p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
+              <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg"></i>
             </div>
             <div class="ml-3">
               <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
@@ -315,83 +324,6 @@
   </div>
 
   <script>
-    lucide.createIcons();
-    // Paginación front-end simple
-    (function() {
-      const tbody = document.getElementById('requestsTableBody');
-      if (!tbody) return;
-      const rows = Array.from(tbody.querySelectorAll('tr'));
-      const pageSizeSelect = document.getElementById('requestsPageSize');
-      const pageInfo = document.getElementById('requestsPageInfo');
-      const controls = document.getElementById('requestsPaginationControls');
-
-      let pageSize = parseInt(localStorage.getItem('requests_page_size') || '10', 10);
-      if (![10,25,50,100].includes(pageSize)) pageSize = 10;
-      pageSizeSelect.value = String(pageSize);
-      let currentPage = 1;
-
-      function renderPage() {
-        const total = rows.length;
-        const totalPages = Math.max(1, Math.ceil(total / pageSize));
-        if (currentPage > totalPages) currentPage = totalPages;
-        const startIdx = (currentPage - 1) * pageSize;
-        const endIdx = Math.min(startIdx + pageSize, total);
-
-        rows.forEach((tr, idx) => {
-          tr.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
-        });
-
-        if (total === 0) {
-          pageInfo.textContent = 'Mostrando 0–0 de 0';
-        } else {
-          pageInfo.textContent = `Mostrando ${startIdx + 1}–${endIdx} de ${total}`;
-        }
-
-        buildControls(totalPages);
-      }
-
-      function buildControls(totalPages) {
-        controls.innerHTML = '';
-        const btnClass = 'px-3 py-1 border rounded-md text-sm hover:bg-gray-50';
-        const activeClass = 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700';
-
-        function addButton(label, disabled, onClick, extraClass = '') {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.textContent = label;
-          btn.className = `${btnClass} ${extraClass}`;
-          btn.disabled = disabled;
-          btn.onclick = onClick;
-          controls.appendChild(btn);
-        }
-
-        addButton('«', currentPage === 1, () => { currentPage = 1; renderPage(); });
-        addButton('‹', currentPage === 1, () => { currentPage--; renderPage(); });
-
-        const maxBtns = 7;
-        let start = Math.max(1, currentPage - Math.floor(maxBtns/2));
-        let end = Math.min(totalPages, start + maxBtns - 1);
-        if (end - start + 1 < maxBtns) {
-          start = Math.max(1, end - maxBtns + 1);
-        }
-        for (let p = start; p <= end; p++) {
-          addButton(String(p), false, () => { currentPage = p; renderPage(); }, p === currentPage ? activeClass : '');
-        }
-
-        addButton('›', currentPage === totalPages, () => { currentPage++; renderPage(); });
-        addButton('»', currentPage === totalPages, () => { currentPage = totalPages; renderPage(); });
-      }
-
-      pageSizeSelect.addEventListener('change', () => {
-        pageSize = parseInt(pageSizeSelect.value, 10);
-        localStorage.setItem('requests_page_size', String(pageSize));
-        currentPage = 1;
-        renderPage();
-      });
-
-      renderPage();
-    })();
-
     function confirmDelete(button) {
       const id = button.getAttribute('data-id');
       const name = button.getAttribute('data-name');

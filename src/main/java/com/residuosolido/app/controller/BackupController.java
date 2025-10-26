@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/admin/backup")
@@ -65,7 +66,8 @@ public class BackupController {
                 return "redirect:/admin/backup";
             }
             
-            if (!file.getOriginalFilename().endsWith(".json")) {
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || !originalFilename.toLowerCase(Locale.ROOT).endsWith(".json")) {
                 redirectAttributes.addFlashAttribute("errorMessage", 
                         "El archivo debe ser un backup JSON válido (.json)");
                 return "redirect:/admin/backup";

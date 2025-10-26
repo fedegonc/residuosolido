@@ -343,6 +343,12 @@ public class BreadcrumbService {
             case "calendario":
             case "calendar":
                 return "Calendario";
+            case "login":
+                return "Iniciar Sesión";
+            case "register":
+                return "Crear Cuenta";
+            case "forgot-password":
+                return "Recuperar Contraseña";
             default:
                 // Si es un ID, buscar en el segmento anterior
                 if (esNumerico(ultimoSegmento) && segmentos.length > 1) {

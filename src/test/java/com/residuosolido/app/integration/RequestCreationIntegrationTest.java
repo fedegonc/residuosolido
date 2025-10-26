@@ -2,7 +2,6 @@ package com.residuosolido.app.integration;
 
 import com.residuosolido.app.model.*;
 import com.residuosolido.app.repository.*;
-import com.residuosolido.app.service.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,15 +37,6 @@ class RequestCreationIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private RequestService requestService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MaterialService materialService;
 
     @Autowired
     private RequestRepository requestRepository;
@@ -110,7 +100,7 @@ class RequestCreationIntegrationTest {
         
         Request savedRequest = requests.get(0);
         assertThat(savedRequest.getDescription()).isEqualTo(description);
-        assertThat(savedRequest.getAddress()).isEqualTo(address);
+        assertThat(savedRequest.getCollectionAddress()).isEqualTo(address);
         assertThat(savedRequest.getStatus()).isEqualTo(RequestStatus.PENDING);
         assertThat(savedRequest.getMaterials()).isNotEmpty();
     }

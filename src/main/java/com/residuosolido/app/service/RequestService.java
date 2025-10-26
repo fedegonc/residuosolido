@@ -8,6 +8,8 @@ import com.residuosolido.app.model.Material;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import com.residuosolido.app.repository.MaterialRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +18,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +55,7 @@ public class RequestService {
         }
         request.setMaterials(materialList);
         
-        request.setAddress(address);
+        request.setCollectionAddress(address);
         request.setStatus(RequestStatus.PENDING);
         request.setCreatedAt(LocalDateTime.now());
         
@@ -88,9 +90,18 @@ public class RequestService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Request> searchAll(String query, Pageable pageable) {
+        Page<Request> page = requestRepository.searchAll(query, pageable);
+        return page;
+    }
+
+    public long count() {
+        return requestRepository.count();
+    }
+
+    @Transactional(readOnly = true)
     public List<Request> findAll() {
         List<Request> requests = requestRepository.findAll();
-        // Forzar la inicialización de propiedades lazy del User y collections
         requests.forEach(request -> {
             if (request.getUser() != null) {
                 request.getUser().getUsername();
@@ -98,21 +109,15 @@ public class RequestService {
                 request.getUser().getLastName();
                 request.getUser().getEmail();
             }
-            // Forzar la inicialización de la organización
             if (request.getOrganization() != null) {
                 request.getOrganization().getUsername();
                 request.getOrganization().getFullName();
             }
-            // Forzar la inicialización de la colección materials
             if (request.getMaterials() != null) {
-                request.getMaterials().size(); // Esto fuerza la carga de la colección
+                request.getMaterials().size();
             }
         });
         return requests;
-    }
-
-    public long count() {
-        return requestRepository.count();
     }
 
     @Transactional(readOnly = true)
@@ -259,6 +264,37 @@ public class RequestService {
         }
 
         return stats;
+    }
+
+    @Transactional(readOnly = true)
+    public long countRequestsForMaterials(List<Long> materialIds) {
+        if (materialIds == null || materialIds.isEmpty()) {
+            return 0L;
+        }
+        return requestRepository.countDistinctByMaterials(materialIds);
+    }
+
+    @Transactional(readOnly = true)
+    public long countRequestsByStatusForMaterials(List<Long> materialIds, RequestStatus status) {
+        if (materialIds == null || materialIds.isEmpty()) {
+            return 0L;
+        }
+        return requestRepository.countDistinctByMaterialsAndStatus(materialIds, status);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<RequestStatus, Long> getRequestStatusCountsForMaterials(List<Long> materialIds) {
+        Map<RequestStatus, Long> statusCounts = new EnumMap<>(RequestStatus.class);
+        if (materialIds == null || materialIds.isEmpty()) {
+            return statusCounts;
+        }
+        List<Object[]> rows = requestRepository.countByStatusForMaterials(materialIds);
+        for (Object[] row : rows) {
+            RequestStatus status = (RequestStatus) row[0];
+            Long count = (Long) row[1];
+            statusCounts.put(status, count);
+        }
+        return statusCounts;
     }
 
     // ====== Organization availability validation ======

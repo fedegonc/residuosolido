@@ -4,7 +4,6 @@ import com.residuosolido.app.dto.UserForm;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
-import com.residuosolido.app.repository.RequestRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
@@ -33,16 +32,13 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RequestRepository requestRepository;
-    
     @PersistenceContext
     private EntityManager entityManager;
     
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RequestRepository requestRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.requestRepository = requestRepository;
     }
     
     /**
@@ -106,6 +102,20 @@ public class UserService {
      */
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+
+    @SuppressWarnings("deprecation")
+    private void applyLegacyLocationFields(UserForm userForm, User user) {
+        if (userForm.getAddress() != null) {
+            user.setAddress(userForm.getAddress());
+        }
+        if (userForm.getLatitude() != null) {
+            user.setLatitude(BigDecimal.valueOf(userForm.getLatitude()));
+        }
+        if (userForm.getLongitude() != null) {
+            user.setLongitude(BigDecimal.valueOf(userForm.getLongitude()));
+        }
     }
 
     /**
@@ -237,22 +247,20 @@ public class UserService {
     }
     
     /**
-     * Marca el perfil de una organización como completado usando query nativa
-     * @param userId ID del usuario
+     * Marca el perfil de un usuario como completado utilizando la consulta nativa del repositorio.
+     * @param userId identificador del usuario a actualizar
+     * @throws IllegalArgumentException si no se encuentra el usuario
      */
     @Transactional
     public void markProfileAsCompleted(Long userId) {
-        int rowsAffected = userRepository.markProfileAsCompleted(userId);
-        
-        // Forzar flush y clear del contexto de persistencia para evitar cache
-        userRepository.flush();
-        entityManager.clear();
+        int updatedRows = userRepository.markProfileAsCompleted(userId);
+        if (updatedRows == 0) {
+            throw new IllegalArgumentException("Usuario no encontrado con ID: " + userId);
+        }
     }
-    
+
     /**
-     * Guarda un usuario a partir de un DTO UserForm
-     * Maneja tanto la creación como la actualización
-     * @param userForm DTO con los datos del formulario
+     * Marca el perfil de una organización como completado usando query nativa
      * @return Usuario guardado
      * @throws IllegalArgumentException si hay errores de validación
      */
@@ -275,16 +283,7 @@ public class UserService {
             user.setLongitude(userForm.getLongitud());
         }
         
-        // Compatibilidad con campos legacy (deprecated)
-        if (userForm.getAddress() != null) {
-            user.setAddress(userForm.getAddress());
-        }
-        if (userForm.getLatitude() != null) {
-            user.setLatitude(BigDecimal.valueOf(userForm.getLatitude()));
-        }
-        if (userForm.getLongitude() != null) {
-            user.setLongitude(BigDecimal.valueOf(userForm.getLongitude()));
-        }
+        applyLegacyLocationFields(userForm, user);
         
         if (user.getId() == null) {
             // Usuario nuevo
