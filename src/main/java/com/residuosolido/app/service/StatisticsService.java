@@ -38,103 +38,58 @@ public class StatisticsService {
 
         try {
             LocalDateTime now = LocalDateTime.now();
+            LocalDateTime currentMonthStart = now.withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime previousMonthStart = currentMonthStart.minusMonths(1);
+            LocalDateTime previousMonthEnd = currentMonthStart.minusNanos(1);
             LocalDateTime thirtyDaysAgo = now.minusDays(30);
-            LocalDateTime previousMonthStart = now.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-            LocalDateTime currentMonthStart = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-
-            List<Request> allRequests = requestRepository.findAll();
-            // Inicializar colecciones lazy
-            allRequests.forEach(r -> {
-                if (r.getUser() != null) {
-                    r.getUser().getUsername();
-                }
-                if (r.getMaterials() != null) {
-                    r.getMaterials().size();
-                }
-            });
-            
-            List<User> allUsers = userRepository.findAll();
 
             // Estadísticas básicas
-            long totalUsers = allUsers.size();
+            long totalUsers = userRepository.count();
             stats.put("totalUsers", totalUsers);
-            stats.put("totalOrganizations", 0L);
+            stats.put("totalOrganizations", userRepository.countByRole(Role.ORGANIZATION));
+            stats.put("activeOrganizations", userRepository.countByRoleAndActive(Role.ORGANIZATION, true));
             stats.put("totalFeedback", feedbackRepository.count());
             stats.put("totalMaterials", materialRepository.count());
             stats.put("totalPosts", postRepository.count());
             stats.put("totalCategories", categoryRepository.count());
 
             // Solicitudes en los últimos 30 días
-            long requestsLast30Days = allRequests.stream()
-                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(thirtyDaysAgo))
-                .count();
+            long requestsLast30Days = requestRepository.countByCreatedAtAfter(thirtyDaysAgo);
             stats.put("requestsLast30Days", requestsLast30Days);
 
             // Usuarios activos (con solicitudes en los últimos 30 días)
-            long activeUsers = allRequests.stream()
-                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(thirtyDaysAgo))
-                .map(Request::getUser)
-                .filter(Objects::nonNull)
-                .distinct()
-                .count();
+            long activeUsers = requestRepository.countDistinctUsersWithRequestsAfter(thirtyDaysAgo);
             stats.put("activeUsers", activeUsers);
 
-            // Solicitudes completadas
-            long completedRequests = allRequests.stream()
-                .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
-                .count();
+            // Solicitudes por estado
+            long completedRequests = requestRepository.countByStatus(RequestStatus.COMPLETED);
+            long pendingRequests = requestRepository.countByStatus(RequestStatus.PENDING);
             stats.put("completedRequests", completedRequests);
-
-            // Solicitudes pendientes
-            long pendingRequests = allRequests.stream()
-                .filter(r -> r.getStatus() == RequestStatus.PENDING)
-                .count();
             stats.put("pendingRequests", pendingRequests);
 
-            // Tasa de completación
-            double completionRate = allRequests.isEmpty() ? 0.0 : 
-                (completedRequests * 100.0) / allRequests.size();
+            long totalRequests = requestRepository.count();
+            double completionRate = totalRequests == 0 ? 0.0 :
+                (completedRequests * 100.0) / totalRequests;
             stats.put("completionRate", Math.round(completionRate * 10.0) / 10.0);
 
-            // Solicitudes del mes actual
-            long currentMonthRequests = allRequests.stream()
-                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(currentMonthStart))
-                .count();
+            long currentMonthRequests = requestRepository.countByCreatedAtBetween(currentMonthStart, now);
+            long previousMonthRequests = requestRepository.countByCreatedAtBetween(previousMonthStart, previousMonthEnd);
             stats.put("currentMonthRequests", currentMonthRequests);
-
-            // Solicitudes del mes anterior
-            long previousMonthRequests = allRequests.stream()
-                .filter(r -> r.getCreatedAt() != null && 
-                    r.getCreatedAt().isAfter(previousMonthStart) && 
-                    r.getCreatedAt().isBefore(currentMonthStart))
-                .count();
             stats.put("previousMonthRequests", previousMonthRequests);
 
-            // Crecimiento mensual de solicitudes
             double requestsGrowth = previousMonthRequests == 0 ? 0.0 :
                 ((currentMonthRequests - previousMonthRequests) * 100.0) / previousMonthRequests;
             stats.put("requestsGrowth", Math.round(requestsGrowth * 10.0) / 10.0);
 
-            // Usuarios nuevos este mes
-            long newUsersThisMonth = allUsers.stream()
-                .filter(u -> u.getCreatedAt() != null && u.getCreatedAt().isAfter(currentMonthStart))
-                .count();
+            long newUsersThisMonth = userRepository.countByCreatedAtBetween(currentMonthStart, now);
+            long newUsersPreviousMonth = userRepository.countByCreatedAtBetween(previousMonthStart, previousMonthEnd);
             stats.put("newUsersThisMonth", newUsersThisMonth);
-
-            // Usuarios nuevos mes anterior
-            long newUsersPreviousMonth = allUsers.stream()
-                .filter(u -> u.getCreatedAt() != null && 
-                    u.getCreatedAt().isAfter(previousMonthStart) && 
-                    u.getCreatedAt().isBefore(currentMonthStart))
-                .count();
             stats.put("newUsersPreviousMonth", newUsersPreviousMonth);
 
-            // Crecimiento de usuarios
             double usersGrowth = newUsersPreviousMonth == 0 ? 0.0 :
                 ((newUsersThisMonth - newUsersPreviousMonth) * 100.0) / newUsersPreviousMonth;
             stats.put("usersGrowth", Math.round(usersGrowth * 10.0) / 10.0);
-
-            stats.put("activeOrganizations", 0L);
 
         } catch (Exception e) {
             // En caso de error, devolver valores por defecto

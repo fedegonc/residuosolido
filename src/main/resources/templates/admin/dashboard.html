@@ -4,41 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Admin</title>
-  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body th:replace="~{fragments/admin-layout :: layout(~{::main})}">
 <main>
-  <!-- Header -->
-  <div class="bg-white border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <!-- Breadcrumbs -->
-      <nav class="flex text-sm text-gray-500 mb-3" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center">
-          <li class="inline-flex items-center">
-            <span class="text-gray-700 font-medium">Inicio</span>
-          </li>
-        </ol>
-      </nav>
-      
-      <h1 class="text-xl font-semibold text-gray-900">Panel de Administración</h1>
-      <p class="mt-1 text-sm text-gray-500">Acceso rápido a las funciones administrativas</p>
+  <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 mt-4 space-y-4">
+    <div class="w-full sm:inline-flex sm:w-auto bg-celeste border border-celeste px-4 py-2 rounded-lg shadow-sm">
+      <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
     </div>
-  </div>
 
-  <!-- Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 space-y-4">
-    <!-- Sección: Gestión de Usuarios -->
-    <div class="space-y-2">
-        <div class="flex items-center justify-between">
-        <h2 class="text-xs font-semibold tracking-wide text-slate-700 uppercase flex items-center gap-2">
-          <span class="text-sm">👥 Gestión de Usuarios</span>
+    <header class="bg-white border border-slate-200 rounded-lg px-4 py-3 shadow-sm">
+      <h1 class="text-xl font-semibold text-gray-900">Panel de Administración</h1>
+      <p class="mt-1 text-sm text-gray-500 leading-snug">Acceso rápido a las funciones administrativas y herramientas del sistema.</p>
+    </header>
+
+    <section class="bg-white border border-slate-200 rounded-lg shadow-sm px-3 sm:px-4 lg:px-6 py-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+          <span>👥 Gestión de Usuarios</span>
         </h2>
       </div>
-      <p class="text-xs text-slate-600">Administra usuarios, organizaciones, solicitudes y materiales del sistema</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <p class="text-xs sm:text-sm text-slate-600 leading-snug">
+        Administra usuarios, organizaciones, solicitudes y materiales del sistema.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       <!-- Users card -->
-      <a href="/admin/users" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/users" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-blue-50 rounded-md">
             <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
@@ -52,7 +42,7 @@
         </div>
       </a>
       <!-- Organizations card -->
-      <a href="/admin/organizations" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/organizations" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-indigo-50 rounded-md">
             <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
@@ -66,7 +56,7 @@
         </div>
       </a>
       <!-- Requests card -->
-      <a href="/admin/requests" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/requests" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-yellow-50 rounded-md">
             <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
@@ -80,7 +70,7 @@
         </div>
       </a>
       <!-- Materials card -->
-      <a href="/admin/materials" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/materials" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-teal-50 rounded-md">
             <svg class="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
@@ -95,18 +85,18 @@
       </a>
     </div>
 
-    <!-- Sección: Gestión de Contenido -->
-    <div class="space-y-2">
-        <div class="flex items-center justify-between">
-        <h2 class="text-xs font-semibold tracking-wide text-slate-700 uppercase flex items-center gap-2">
-          <span class="text-sm">🗂️ Gestión de Contenido</span>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-lg shadow-sm px-4 py-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+          <span>🗂️ Gestión de Contenido</span>
         </h2>
       </div>
-      <p class="text-xs text-slate-600">Crea y organiza posts, artículos y categorías del sitio web</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <p class="text-xs sm:text-sm text-slate-600 leading-snug">Crea y organiza posts, artículos y categorías del sitio web.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       <!-- Posts card -->
-      <a href="/admin/posts" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/posts" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-green-50 rounded-md">
             <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
@@ -120,7 +110,7 @@
         </div>
       </a>
       <!-- Categories card -->
-      <a href="/admin/categories" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/categories" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-orange-50 rounded-md">
             <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
@@ -135,18 +125,18 @@
       </a>
     </div>
 
-    <!-- Sección: Sistema y Soporte -->
-    <div class="space-y-2">
-        <div class="flex items-center justify-between">
-        <h2 class="text-xs font-semibold tracking-wide text-slate-700 uppercase flex items-center gap-2">
-          <span class="text-sm">⚙️ Sistema y Soporte</span>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-lg shadow-sm px-4 py-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+          <span>⚙️ Sistema y Soporte</span>
         </h2>
       </div>
-      <p class="text-xs text-slate-600">Configura el sistema, gestiona contraseñas y revisa feedback de usuarios</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <p class="text-xs sm:text-sm text-slate-600 leading-snug">Configura el sistema, gestiona contraseñas y revisa feedback de usuarios.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       <!-- Config card -->
-      <a href="/admin/config" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/config" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-gray-50 rounded-md">
             <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
@@ -160,7 +150,7 @@
         </div>
       </a>
       <!-- Password Reset card -->
-      <a href="/admin/password-reset-requests" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/password-reset-requests" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-red-50 rounded-md">
             <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
@@ -174,11 +164,11 @@
         </div>
       </a>
       <!-- Feedback card -->
-      <a href="/admin/feedback" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/feedback" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-purple-50 rounded-md">
             <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9Z"/>
+              <path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,0 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9Z"/>
             </svg>
           </div>
           <div class="ml-3">
@@ -188,7 +178,7 @@
         </div>
       </a>
       <!-- Assistant card -->
-      <a href="/admin/assistant" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/assistant" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-cyan-50 rounded-md">
             <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 24 24">
@@ -203,18 +193,18 @@
       </a>
     </div>
 
-    <!-- Sección: Información -->
-    <div class="space-y-2">
-        <div class="flex items-center justify-between">
-        <h2 class="text-xs font-semibold tracking-wide text-slate-700 uppercase flex items-center gap-2">
-          <span class="text-sm">📊 Información</span>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-lg shadow-sm px-4 py-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+          <span>📊 Información</span>
         </h2>
       </div>
-      <p class="text-xs text-slate-600">Consulta estadísticas del sistema y accede a la documentación técnica</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <p class="text-xs sm:text-sm text-slate-600 leading-snug">Consulta estadísticas del sistema y accede a la documentación técnica.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       <!-- Statistics card -->
-      <a href="/admin/statistics" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/statistics" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-emerald-50 rounded-md">
             <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
@@ -228,7 +218,7 @@
         </div>
       </a>
       <!-- Documentation card -->
-      <a href="/admin/documentation" class="group bg-white rounded-md shadow-sm border border-slate-200 p-4 transition-all duration-200 ease-out hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
+      <a href="/admin/documentation" class="group bg-white border border-slate-200 rounded-md p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 hover:bg-slate-50">
         <div class="flex items-center">
           <div class="flex-shrink-0 p-2 bg-blue-50 rounded-md">
             <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">

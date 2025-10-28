@@ -9,6 +9,18 @@
     <title>Admin - EcoSolicitud</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <script>
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              celeste: '#cce7ff'
+            }
+          }
+        }
+      };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <!-- Font Awesome (WebJars) -->

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -20,6 +21,13 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findByStatus(RequestStatus status);
     List<Request> findByOrganization(User organization);
     List<Request> findTop5ByUserOrderByCreatedAtDesc(User user);
+
+    long countByStatus(RequestStatus status);
+    long countByCreatedAtAfter(LocalDateTime date);
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT COUNT(DISTINCT r.user.id) FROM Request r WHERE r.createdAt IS NOT NULL AND r.createdAt > :since")
+    long countDistinctUsersWithRequestsAfter(@Param("since") LocalDateTime since);
 
     @Query("SELECT YEAR(r.createdAt), MONTH(r.createdAt), COUNT(r) FROM Request r GROUP BY YEAR(r.createdAt), MONTH(r.createdAt) ORDER BY YEAR(r.createdAt), MONTH(r.createdAt)")
     List<Object[]> countRequestsByMonth();
