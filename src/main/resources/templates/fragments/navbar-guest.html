@@ -37,6 +37,29 @@
     <!-- Dropdown Menu - Usuario NO autenticado -->
     <div sec:authorize="!isAuthenticated()" id="dropdownMenu" class="hidden absolute right-4 top-16 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
       <div class="px-4 py-3 space-y-1">
+        <!-- Language Selector -->
+        <div class="relative">
+          <button id="languageDropdown" type="button" class="flex items-center justify-between w-full gap-2 text-sm text-gray-600 hover:text-green-600 border border-gray-200 rounded-md px-3 py-2 transition" aria-haspopup="true" aria-expanded="false">
+            <div class="flex items-center gap-2">
+              <span class="fi" th:classappend="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? ' fi-br' : ' fi-uy'"></span>
+              <span th:text="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? 'Português' : 'Español'">Español</span>
+            </div>
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="languageMenu" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <a href="?lang=es" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50" th:classappend="${#locale.language == 'es' or #locale.language == 'es_ES'} ? ' font-semibold text-green-600 bg-green-50' : ''">
+              <span class="fi fi-uy"></span>
+              <span>Español</span>
+            </a>
+            <a href="?lang=pt" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50" th:classappend="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? ' font-semibold text-green-600 bg-green-50' : ''">
+              <span class="fi fi-br"></span>
+              <span>Português</span>
+            </a>
+          </div>
+        </div>
+
         <a href="/" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
           Inicio
         </a>
@@ -61,7 +84,30 @@
           <p class="text-xs text-gray-500 mb-1">Usuario</p>
           <p class="text-sm font-medium text-gray-900" sec:authentication="name">Usuario</p>
         </div>
-        
+
+        <!-- Language Selector -->
+        <div class="relative">
+          <button id="languageDropdownAuth" type="button" class="flex items-center justify-between w-full gap-2 text-sm text-gray-600 hover:text-green-600 border border-gray-200 rounded-md px-3 py-2 transition" aria-haspopup="true" aria-expanded="false">
+            <div class="flex items-center gap-2">
+              <span class="fi" th:classappend="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? ' fi-br' : ' fi-uy'"></span>
+              <span th:text="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? 'Português' : 'Español'">Español</span>
+            </div>
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="languageMenuAuth" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <a href="?lang=es" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50" th:classappend="${#locale.language == 'es' or #locale.language == 'es_ES'} ? ' font-semibold text-green-600 bg-green-50' : ''">
+              <span class="fi fi-uy"></span>
+              <span>Español</span>
+            </a>
+            <a href="?lang=pt" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50" th:classappend="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? ' font-semibold text-green-600 bg-green-50' : ''">
+              <span class="fi fi-br"></span>
+              <span>Português</span>
+            </a>
+          </div>
+        </div>
+
         <a href="/" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
           Inicio
         </a>
@@ -71,7 +117,7 @@
         <a href="/reportes/mis-reportes" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-md">
           Mis Reportes
         </a>
-        
+
         <div class="pt-2 border-t border-gray-200 mt-2">
           <form th:action="@{/logout}" method="POST">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -89,7 +135,11 @@
       const menuAuth = document.getElementById('dropdownMenuAuth');
       const menuIcon = document.getElementById('menuIcon');
       const closeIcon = document.getElementById('closeIcon');
-      
+      const languageDropdowns = [
+        { button: document.getElementById('languageDropdown'), menu: document.getElementById('languageMenu') },
+        { button: document.getElementById('languageDropdownAuth'), menu: document.getElementById('languageMenuAuth') }
+      ];
+
       btn?.addEventListener('click', () => {
         if (menu) {
           menu.classList.toggle('hidden');
@@ -101,6 +151,21 @@
         closeIcon.classList.toggle('hidden');
       });
 
+      languageDropdowns.forEach(({ button, menu }) => {
+        button?.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const isOpen = !menu?.classList.contains('hidden');
+          languageDropdowns.forEach(({ button: otherBtn, menu: otherMenu }) => {
+            if (otherMenu && otherMenu !== menu) {
+              otherMenu.classList.add('hidden');
+              otherBtn?.setAttribute('aria-expanded', 'false');
+            }
+          });
+          menu?.classList.toggle('hidden');
+          button?.setAttribute('aria-expanded', String(isOpen ? false : true));
+        });
+      });
+
       // Cerrar al hacer clic fuera
       document.addEventListener('click', (e) => {
         if (!btn?.contains(e.target) && !menu?.contains(e.target) && !menuAuth?.contains(e.target)) {
@@ -109,6 +174,13 @@
           menuIcon?.classList.remove('hidden');
           closeIcon?.classList.add('hidden');
         }
+
+        languageDropdowns.forEach(({ button, menu }) => {
+          if (!button?.contains(e.target) && !menu?.contains(e.target)) {
+            menu?.classList.add('hidden');
+            button?.setAttribute('aria-expanded', 'false');
+          }
+        });
       });
     </script>
   </nav>

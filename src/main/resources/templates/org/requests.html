@@ -56,29 +56,29 @@
             <!-- Filtros -->
             <div class="bg-white rounded-lg shadow mb-6 p-4">
             <div class="flex flex-wrap items-center gap-3">
-                <button onclick="filterRequests('all')" 
-                        class="filter-btn px-4 py-2 rounded-md font-medium transition-colors bg-blue-600 text-white"
-                        data-filter="all">
+                <a href="/acopio/requests" 
+                   th:classappend="${currentStatus == null ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
+                   class="filter-btn px-4 py-2 rounded-md font-medium transition-colors">
                     Todas
-                </button>
-                <button onclick="filterRequests('PENDING')" 
-                        class="filter-btn px-4 py-2 rounded-md font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        data-filter="PENDING">
+                </a>
+                <a href="/acopio/requests?status=PENDING" 
+                   th:classappend="${currentStatus == 'PENDING' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
+                   class="filter-btn px-4 py-2 rounded-md font-medium transition-colors">
                     <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
                     Pendientes
-                </button>
-                <button onclick="filterRequests('IN_PROGRESS')" 
-                        class="filter-btn px-4 py-2 rounded-md font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        data-filter="IN_PROGRESS">
+                </a>
+                <a href="/acopio/requests?status=IN_PROGRESS" 
+                   th:classappend="${currentStatus == 'IN_PROGRESS' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
+                   class="filter-btn px-4 py-2 rounded-md font-medium transition-colors">
                     <i data-lucide="truck" class="w-4 h-4 inline mr-1"></i>
                     En Proceso
-                </button>
-                <button onclick="filterRequests('COMPLETED')" 
-                        class="filter-btn px-4 py-2 rounded-md font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        data-filter="COMPLETED">
+                </a>
+                <a href="/acopio/requests?status=COMPLETED" 
+                   th:classappend="${currentStatus == 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
+                   class="filter-btn px-4 py-2 rounded-md font-medium transition-colors">
                     <i data-lucide="check-circle" class="w-4 h-4 inline mr-1"></i>
                     Completadas
-                </button>
+                </a>
             </div>
         </div>
 
@@ -345,31 +345,6 @@
     
     <script>
         lucide.createIcons();
-        
-        function filterRequests(status) {
-            const cards = document.querySelectorAll('.request-card');
-            const buttons = document.querySelectorAll('.filter-btn');
-            
-            // Update button styles
-            buttons.forEach(btn => {
-                if (btn.dataset.filter === status) {
-                    btn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-                    btn.classList.add('bg-blue-600', 'text-white');
-                } else {
-                    btn.classList.remove('bg-blue-600', 'text-white');
-                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-                }
-            });
-            
-            // Filter cards
-            cards.forEach(card => {
-                if (status === 'all' || card.dataset.status === status) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
     </script>
 </main>
 </body>

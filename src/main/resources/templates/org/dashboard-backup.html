@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/org-layout}">
+<head>
+    <title>Panel de Control - Organización</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-3">
+        
+        <!-- Hero Section -->
+        <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Barra decorativa superior -->
+            <div class="h-1.5 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600"></div>
+            
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i data-lucide="building-2" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                                Panel de Gestión
+                            </h1>
+                        </div>
+                        <p class="text-gray-600 text-base sm:text-lg mb-4">
+                            Administra solicitudes de reciclaje y optimiza la recolección de residuos
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <!-- Enlace principal: muestra TODAS las solicitudes sin filtro -->
+                            <a href="/acopio/requests" class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 mr-2"></i>
+                                Ver Solicitudes
+                            </a>
+                            <a href="/acopio/perfil" class="inline-flex items-center px-5 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                                <i data-lucide="settings" class="w-5 h-5 mr-2"></i>
+                                Configuración
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="w-32 h-32 bg-blue-50 rounded-full flex items-center justify-center">
+                            <i data-lucide="truck" class="w-16 h-16 text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Métricas Clave -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Resumen de Solicitudes</h2>
+                    <p class="text-sm text-gray-600">Rendimiento de tu organización este mes</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Métrica: Solicitudes Pendientes - Filtra por status=PENDING -->
+                <a href="/acopio/requests?status=PENDING" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 transition-all cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="clock" class="w-5 h-5 text-gray-600 group-hover:text-yellow-600"></i>
+                        <span class="text-xs font-medium text-gray-700 group-hover:text-yellow-700">Pendientes</span>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 group-hover:text-yellow-700" th:text="${pendingRequests ?: 0}">0</p>
+                    <p class="text-xs text-gray-600 group-hover:text-yellow-600 mt-1">Requieren atención</p>
+                </a>
+                
+                <!-- Métrica: Solicitudes En Proceso - Filtra por status=IN_PROGRESS (incluye ACCEPTED) -->
+                <a href="/acopio/requests?status=IN_PROGRESS" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="truck" class="w-5 h-5 text-gray-600 group-hover:text-blue-600"></i>
+                        <span class="text-xs font-medium text-gray-700 group-hover:text-blue-700">En Proceso</span>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 group-hover:text-blue-700" th:text="${inProgressRequests ?: 0}">0</p>
+                    <p class="text-xs text-gray-600 group-hover:text-blue-600 mt-1">En recolección</p>
+                </a>
+                
+                <!-- Métrica: Solicitudes Completadas - Filtra por status=COMPLETED -->
+                <a href="/acopio/requests?status=COMPLETED" class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all cursor-pointer group">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-gray-600 group-hover:text-green-600"></i>
+                        <span class="text-xs font-medium text-gray-700 group-hover:text-green-700">Completadas</span>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 group-hover:text-green-700" th:text="${completedRequests ?: 0}">0</p>
+                    <p class="text-xs text-gray-600 group-hover:text-green-600 mt-1">Este mes</p>
+                </a>
+                
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="recycle" class="w-5 h-5 text-gray-600"></i>
+                        <span class="text-xs font-medium text-gray-700">Kg Reciclados</span>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900" th:text="${totalKgRecycled ?: 0}">0</p>
+                    <p class="text-xs text-gray-600 mt-1">Total acumulado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solicitudes Pendientes - Prioridad Alta -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600"></i>
+                    Solicitudes Pendientes
+                </h2>
+                <!-- Enlace: muestra solo solicitudes pendientes -->
+                <a href="/acopio/requests?status=PENDING" class="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                    Ver todas
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+            
+            <div th:if="${pendingRequestsList != null and !pendingRequestsList.empty}" class="space-y-3">
+                <div th:each="request : ${pendingRequestsList}" 
+                     class="flex items-start gap-4 p-4 rounded-lg border-l-4 border-yellow-400 bg-yellow-50/50 hover:bg-yellow-50 transition-all">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                        <i data-lucide="package" class="w-5 h-5 text-yellow-700"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-4 mb-2">
+                            <div>
+                                <p class="font-semibold text-gray-900 mb-1" th:text="${request.description}">Descripción</p>
+                                <p class="text-sm text-gray-600 mb-1">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1"></i>
+                                    <span th:text="${request.collectionAddress}">Dirección</span>
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 inline mr-1"></i>
+                                    <span th:text="${request.user.fullName}">Usuario</span>
+                                </p>
+                            </div>
+                            <span class="flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                                Pendiente
+                            </span>
+                        </div>
+                        <div class="flex gap-2 mt-3">
+                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" 
+                               class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 transition-colors">
+                                <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i>
+                                Ver Detalles
+                            </a>
+                            <button class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-colors">
+                                <i data-lucide="check" class="w-3.5 h-3.5 mr-1"></i>
+                                Aceptar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${pendingRequestsList == null or pendingRequestsList.empty}" 
+                 class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="check-circle-2" class="w-8 h-8 text-gray-400"></i>
+                </div>
+                <h3 class="text-base font-medium text-gray-900 mb-2">¡Todo al día!</h3>
+                <p class="text-sm text-gray-600">
+                    No hay solicitudes pendientes en este momento.
+                </p>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Gestión de Materiales -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="recycle" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-900 text-base">Materiales Reciclables</h3>
+                        <p class="text-sm text-gray-600">Gestiona el catálogo</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mb-6 flex-1">
+                    Administra los tipos de materiales que tu organización puede reciclar y sus características.
+                </p>
+                <a href="/acopio/materials" 
+                   class="inline-flex items-center px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors w-full justify-center">
+                    <i data-lucide="list" class="w-4 h-4 mr-2"></i>
+                    Ver Materiales
+                </a>
+            </div>
+
+            <!-- Estadísticas y Reportes -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-900 text-base">Estadísticas</h3>
+                        <p class="text-sm text-gray-600">Analiza tu rendimiento</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mb-6 flex-1">
+                    Visualiza métricas detalladas sobre recolecciones, materiales y eficiencia operativa.
+                </p>
+                <a href="/acopio/estadisticas" 
+                   class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors w-full justify-center">
+                    <i data-lucide="trending-up" class="w-4 h-4 mr-2"></i>
+                    Ver Estadísticas
+                </a>
+            </div>
+        </div>
+
+        <!-- Configuración de Perfil -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <i data-lucide="building-2" class="w-5 h-5 text-gray-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Perfil de Organización</p>
+                        <p class="text-xs text-gray-600">Actualiza información de contacto y configuración</p>
+                    </div>
+                </div>
+                <a href="/acopio/perfil" 
+                   class="inline-flex items-center px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                    <i data-lucide="settings" class="w-4 h-4 mr-2"></i>
+                    Configurar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</main>
+</body>
+</html>

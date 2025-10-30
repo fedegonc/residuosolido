@@ -12,11 +12,11 @@
   <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
 
   <!-- Contenido principal -->
-  <div class="min-h-[calc(100vh-10rem)] flex items-center justify-center px-4 py-4">
-    <div class="w-full max-w-3xl bg-white rounded-xl shadow-md border border-emerald-100 p-5 space-y-3 max-h-[680px]">
+  <div class="min-h-[calc(100vh-9rem)] flex items-center justify-center px-4 py-6">
+    <div class="w-full max-w-xl bg-white rounded-xl shadow-md border border-emerald-100 p-6 space-y-5">
       <header class="space-y-1 text-center">
-        <h2 class="text-lg font-semibold text-gray-900">Crear Cuenta</h2>
-        <p class="text-xs text-gray-500">Registra tus datos para empezar.</p>
+        <h2 class="text-xl font-semibold text-gray-900" th:text="#{register.title}">Crear Cuenta</h2>
+        <p class="text-sm text-gray-500" th:text="#{register.subtitle}">Registra tus datos para empezar.</p>
       </header>
 
       <!-- Mensajes -->
@@ -29,100 +29,72 @@
       </div>
 
       <!-- Formulario -->
-      <form th:action="@{/auth/register}" method="post" class="space-y-3">
-        <div class="grid gap-4 md:grid-cols-2 auto-rows-fr">
-        <section class="space-y-2 flex flex-col h-full">
-          <header>
-            <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-600">Cuenta</h3>
-          </header>
-
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div class="flex flex-col">
-              <label for="username" class="block text-xs font-medium text-gray-700 mb-1">Usuario</label>
+      <form th:action="@{/auth/register}" method="post" class="space-y-5">
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500" th:text="#{register.account_section}">Datos de la cuenta</h3>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label for="username" class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.username}">Usuario</label>
               <input type="text" id="username" name="username" required
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
-
-            <div class="flex flex-col">
-              <label for="email" class="block text-xs font-medium text-gray-700 mb-1">Email</label>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.email}">Email</label>
               <input type="email" id="email" name="email" required
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
-          </div>
-        </section>
-
-        <section class="space-y-2 flex flex-col h-full">
-          <header>
-            <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-600">Perfil</h3>
-          </header>
-
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div class="flex flex-col">
-              <label for="firstName" class="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
+            <div>
+              <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.first_name}">Nombre</label>
               <input type="text" id="firstName" name="firstName" required
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
-
-            <div class="flex flex-col">
-              <label for="lastName" class="block text-xs font-medium text-gray-700 mb-1">Apellido</label>
+            <div>
+              <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.last_name}">Apellido</label>
               <input type="text" id="lastName" name="lastName" required
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="space-y-2 flex flex-col h-full">
-          <header>
-            <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-600">Seguridad</h3>
-          </header>
-
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div class="flex flex-col">
-              <label for="password" class="block text-xs font-medium text-gray-700 mb-1">Contraseña</label>
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500" th:text="#{register.security_section}">Seguridad</h3>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.password}">Contraseña</label>
               <input type="password" id="password" name="password" minlength="8" required
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" placeholder="Mín. 8 caracteres">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" th:placeholder="#{register.password_placeholder}">
             </div>
-
-            <div class="flex flex-col">
-              <label for="confirmPassword" class="block text-xs font-medium text-gray-700 mb-1">Confirmar</label>
+            <div>
+              <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.confirm_password}">Confirmar</label>
               <input type="password" id="confirmPassword" name="confirmPassword" required
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" placeholder="Repite la contraseña">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" th:placeholder="#{register.confirm_password_placeholder}">
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="space-y-2 flex flex-col h-full">
-          <header>
-            <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-600">Tipo de cuenta</h3>
-          </header>
-
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex-1" x-data="{ checked: false }" x-init="checked = document.getElementById('isOrganization').checked">
-            <label class="flex items-start cursor-pointer">
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500" th:text="#{register.account_type_section}">Tipo de cuenta</h3>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4" x-data="{ checked: false }" x-init="checked = document.getElementById('isOrganization').checked">
+            <label class="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" id="isOrganization" name="isOrganization" value="true"
                      class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                      x-model="checked">
-              <div class="ml-3 space-y-1">
-                <span class="block text-sm font-medium text-gray-900">Registro de organización</span>
-                <span class="block text-xs text-gray-600">Actívalo si eres un centro de acopio.</span>
+              <div class="space-y-1">
+                <span class="block text-sm font-semibold text-gray-900" th:text="#{register.organization_label}">Registro de organización</span>
+                <span class="block text-xs text-gray-600" th:text="#{register.organization_hint}">Actívalo si eres un centro de acopio.</span>
+                <p class="text-xs text-blue-700" x-show="checked" x-cloak th:text="#{register.organization_description}">Completa la información de contacto de tu organización después del registro.</p>
               </div>
             </label>
-            <div class="mt-3 space-y-2" x-show="checked" x-cloak>
-              <p class="text-xs text-blue-700">Completa la información de contacto de tu organización después del registro.</p>
-            </div>
           </div>
-        </section>
         </div>
 
-        <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm font-medium">
+        <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm font-semibold" th:text="#{register.submit}">
           Crear Cuenta
         </button>
-      </form>
 
-      <div class="mt-6 text-center">
-        <p class="text-sm text-gray-600">
-          ¿Ya tienes cuenta? 
-          <a href="/auth/login" class="text-green-600 hover:text-green-700 font-medium">Iniciar Sesión</a>
-        </p>
+      <div class="text-center text-sm text-gray-600">
+        <span th:text="#{register.has_account}">¿Ya tienes cuenta?</span>
+        <a href="/auth/login" class="text-green-600 hover:text-green-700 font-semibold" th:text="#{register.login_link}">Iniciar Sesión</a>
       </div>
     </div>
   </div>

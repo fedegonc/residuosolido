@@ -10,28 +10,28 @@
     <label for="username" class="block">
       <span class="block text-xs font-semibold text-gray-700 mb-1 flex items-center gap-1.5">
         <i class="fa-solid fa-user text-[13px]" aria-hidden="true"></i>
-        Usuario
+        <span th:text="#{login.username.label}">Usuario</span>
       </span>
       <input type="text"
              id="username"
              name="username"
              required
              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500 focus:border-green-500 text-sm"
-             placeholder="Ingresa tu usuario">
+             th:placeholder="#{login.username.placeholder}">
     </label>
 
     <!-- Password -->
     <label for="password" class="block">
       <span class="block text-xs font-semibold text-gray-700 mb-1 flex items-center gap-1.5">
         <i class="fa-solid fa-lock text-[13px]" aria-hidden="true"></i>
-        Contraseña
+        <span th:text="#{login.password.label}">Contraseña</span>
       </span>
       <input type="password"
              id="password"
              name="password"
              required
              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500 focus:border-green-500 text-sm"
-             placeholder="Ingresa tu contraseña">
+             th:placeholder="#{login.password.placeholder}">
     </label>
 
     <!-- Submit Button (fragmento primaryButtonFull) -->
@@ -41,11 +41,11 @@
   <!-- Links -->
   <footer class="mt-4 space-y-1.5">
     <p class="text-xs text-gray-600">
-      <a href="/auth/forgot-password" class="text-green-600 hover:text-green-700">¿Olvidaste tu contraseña?</a>
+      <a href="/auth/forgot-password" class="text-green-600 hover:text-green-700" th:text="#{login.forgot_password}">¿Olvidaste tu contraseña?</a>
     </p>
     <p class="text-xs text-gray-600">
-      ¿No tienes cuenta?
-      <a href="/auth/register" class="text-green-600 hover:text-green-700 font-medium">Regístrate aquí</a>
+      <span th:text="#{login.no_account}">¿No tienes cuenta?</span>
+      <a href="/auth/register" class="text-green-600 hover:text-green-700 font-medium" th:text="#{login.register_link}">Regístrate aquí</a>
     </p>
   </footer>
 </section>
