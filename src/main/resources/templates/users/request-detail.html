@@ -21,12 +21,13 @@
             </div>
             <div th:if="${request.status}" class="text-right">
                 <span th:class="${'inline-block px-3 py-1 rounded-md text-xs font-medium border ' + 
-                    (#strings.equals(request.status, 'PENDING') ? 'bg-amber-50 text-amber-700 border-amber-200' : 
-                    #strings.equals(request.status, 'ASSIGNED') ? 'bg-blue-50 text-blue-700 border-blue-200' : 
-                    #strings.equals(request.status, 'IN_PROGRESS') ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 
-                    #strings.equals(request.status, 'COMPLETED') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
+                    (request.status.name() == 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                    request.status.name() == 'ACCEPTED' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                    request.status.name() == 'IN_PROGRESS' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                    request.status.name() == 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                    request.status.name() == 'REJECTED' ? 'bg-red-50 text-red-700 border-red-200' :
                     'bg-gray-50 text-gray-700 border-gray-200')}"
-                      th:text="${request.status}">
+                      th:text="${request.status.displayName}">
                 </span>
             </div>
         </div>
