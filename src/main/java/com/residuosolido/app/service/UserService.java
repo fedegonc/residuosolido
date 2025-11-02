@@ -213,7 +213,14 @@ public class UserService {
         Boolean profileCompletedValue = user.getProfileCompleted();
         
         // Copiar propiedades preservando campos críticos
-        BeanUtils.copyProperties(user, existingUser, "id", "password", "createdAt", "lastAccessAt");
+        BeanUtils.copyProperties(user, existingUser,
+                "id",
+                "password",
+                "createdAt",
+                "lastAccessAt",
+                "feedbacks",
+                "requests",
+                "materials");
         
         // Asegurar que profileCompleted se mantenga si fue seteado
         if (profileCompletedValue != null) {

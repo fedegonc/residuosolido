@@ -104,6 +104,7 @@ public class OrganizationAdminController {
     @PostMapping("/admin/organizations")
     public String saveOrganization(@RequestParam(required = false) String action,
                                    @ModelAttribute("organization") User organization,
+                                   @RequestParam(value = "newPassword", required = false) String newPassword,
                                    RedirectAttributes redirectAttributes) {
         if ("delete".equals(action) && organization.getId() != null) {
             return deleteOrganization(organization.getId(), redirectAttributes);
@@ -112,7 +113,7 @@ public class OrganizationAdminController {
             organization.setRole(Role.ORGANIZATION); // Enforce role
             if (organization.getId() != null) {
                 // Converting existing user to organization - don't change password
-                userService.updateUser(organization, null);
+                userService.updateUser(organization, newPassword);
                 redirectAttributes.addFlashAttribute("successMessage", "Usuario convertido a organización exitosamente");
             } else {
                 // Creating new organization - use a default password if none provided
