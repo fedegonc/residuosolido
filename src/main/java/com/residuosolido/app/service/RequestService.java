@@ -22,9 +22,13 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class RequestService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
     @Autowired
     private RequestRepository requestRepository;
@@ -83,7 +87,13 @@ public class RequestService {
             }
             // Inicializar organización si existe
             if (request.getOrganization() != null) {
-                request.getOrganization().getFullName(); // Fuerza la carga del proxy
+                try {
+                    // Forzar carga de propiedades básicas del proxy
+                    request.getOrganization().getId();
+                    request.getOrganization().getUsername();
+                } catch (Exception e) {
+                    logger.warn("Error al inicializar organización para request {}: {}", request.getId(), e.getMessage());
+                }
             }
         });
         return requests;
@@ -270,6 +280,90 @@ public class RequestService {
             statusCounts.put(status, count);
         }
         return statusCounts;
+    }
+
+    @Transactional(readOnly = true)
+    public long countByStatus(RequestStatus status) {
+        return requestRepository.countByStatus(status);
+    }
+
+    @Transactional(readOnly = true)
+    public long countByStatusAndMaterials(RequestStatus status, List<Long> materialIds) {
+        if (materialIds == null || materialIds.isEmpty()) {
+            return countByStatus(status);
+        }
+        // Incluir solicitudes sin materiales asignados
+        return requestRepository.countByStatusWithOptionalMaterials(status, materialIds, true);
+    }
+
+    @Transactional(readOnly = true)
+    public long countByStatusesAndOrganization(List<RequestStatus> statuses, User organization) {
+        if (organization == null || statuses == null || statuses.isEmpty()) {
+            return 0L;
+        }
+        // Usar query nativa para contar sin traer todas las solicitudes
+        return requestRepository.countByStatusesAndOrganization(statuses, organization);
+    }
+
+    @Transactional(readOnly = true)
+    public void logPendingRequestsDebug() {
+        List<Request> pending = requestRepository.findByStatusWithDetails(RequestStatus.PENDING);
+        System.out.println("🔎 DEBUG Pending total con detalles: " + pending.size());
+        for (Request request : pending) {
+            List<Long> materialIds = request.getMaterials() != null
+                    ? request.getMaterials().stream().map(material -> material.getId()).toList()
+                    : java.util.Collections.emptyList();
+            System.out.println("    • Request ID " + request.getId() +
+                    " | Status=" + request.getStatus() +
+                    " | Org=" + (request.getOrganization() != null ? request.getOrganization().getId() : "-") +
+                    " | Materiales=" + materialIds);
+        }
+    }
+
+    /**
+     * Obtiene top N solicitudes pendientes filtradas por materiales (optimizado para dashboard)
+     * Usa estrategia de 2 queries: primero IDs con LIMIT en BD, luego entidades completas
+     */
+    @Transactional(readOnly = true)
+    public List<Request> getTopPendingByMaterials(List<Long> materialIds, int limit) {
+        if (materialIds == null || materialIds.isEmpty()) {
+            System.out.println("  ⚠️ Lista de materiales vacía, retornando 0 solicitudes");
+            return new ArrayList<>();
+        }
+        long start = System.currentTimeMillis();
+        System.out.println("  🔍 Cargando top " + limit + " solicitudes pendientes filtradas por materiales: " + materialIds);
+        
+        // Paso 1: Traer solo IDs con LIMIT aplicado en BD (query nativa rápida)
+        System.out.println("  🔍 Ejecutando query nativa para IDs con status: " + RequestStatus.PENDING.name());
+        List<Object[]> results = requestRepository.findTopIdsByStatusAndMaterials(
+            RequestStatus.PENDING.name(), 
+            materialIds, 
+            limit
+        );
+        System.out.println("  📊 Query de IDs retornó: " + results.size() + " filas");
+        
+        // Extraer solo los IDs (primera columna)
+        List<Long> ids = results.stream()
+            .map(row -> {
+                System.out.println("    - ID: " + row[0] + ", created_at: " + row[1]);
+                return ((Number) row[0]).longValue();
+            })
+            .collect(Collectors.toList());
+        System.out.println("  📋 IDs extraídos: " + ids);
+        
+        // Paso 2: Si hay IDs, traer entidades completas con eager loading
+        List<Request> requests = new ArrayList<>();
+        if (!ids.isEmpty()) {
+            System.out.println("  🔍 Cargando entidades completas para IDs: " + ids);
+            requests = requestRepository.findByIdsWithDetails(ids);
+            System.out.println("  ✅ Entidades cargadas: " + requests.size());
+        } else {
+            System.out.println("  ⚠️ No se encontraron IDs, retornando lista vacía");
+        }
+        
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("  ✅ " + requests.size() + " solicitudes cargadas en: " + elapsed + "ms (2 queries optimizadas)");
+        return requests;
     }
 
     // ====== Organization availability validation ======

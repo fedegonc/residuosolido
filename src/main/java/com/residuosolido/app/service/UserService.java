@@ -160,19 +160,38 @@ public class UserService {
     
     
     /**
-     * Busca un usuario por su nombre de usuario autenticado
+     * Encuentra un usuario autenticado por username y carga sus materiales en una sola query.
+     * Optimizado para evitar N+1 queries.
+     * 
      * @param username Nombre de usuario
-     * @return Usuario encontrado
+     * @return Usuario encontrado con toda la información cargada
      * @throws IllegalArgumentException si el usuario no existe
      */
     @Transactional(readOnly = true)
     public User findAuthenticatedUserByUsername(String username) {
-        User user = findByUsername(username)
+        // Usar método optimizado que carga usuario + materiales en una sola query
+        User user = userRepository.findByUsernameWithMaterials(username)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
         
-        // Forzar inicialización de colecciones lazy para evitar LazyInitializationException
-        if (user.getMaterials() != null) {
-            user.getMaterials().size();
+        // Las propiedades básicas ya están cargadas, solo forzar inicialización de lazy simples
+        user.getUsername();
+        user.getFirstName();
+        user.getLastName();
+        user.getEmail();
+        user.getRole();
+        user.getProfileCompleted();
+        user.getPreferredLanguage();
+        user.getAddress();
+        user.getPhone();
+        user.getProfileImage();
+        
+        // Materials ya están cargados por el JOIN FETCH, no necesita .size()
+        
+        // Si es una organización, inicializar propiedades específicas
+        if (user.getRole() == Role.ORGANIZATION) {
+            user.getLatitude();
+            user.getLongitude();
+            user.getAddressReferences();
         }
         
         return user;

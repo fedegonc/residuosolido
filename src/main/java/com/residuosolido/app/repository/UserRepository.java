@@ -36,4 +36,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // JOIN FETCH para cargar materials junto con el usuario (evita LazyInitializationException)
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.materials WHERE u.id = :id")
     Optional<User> findByIdWithMaterials(@Param("id") Long id);
+    
+    // JOIN FETCH para cargar materials junto con el usuario por username
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.materials WHERE u.username = :username")
+    Optional<User> findByUsernameWithMaterials(@Param("username") String username);
 }

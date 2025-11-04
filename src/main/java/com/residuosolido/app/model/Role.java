@@ -34,15 +34,10 @@ public enum Role {
      * Returns display name for UI. Consider using MessageSource for i18n in the future.
      */
     public String getDisplayName() {
-        switch (this) {
-            case ADMIN:
-                return "Administrador";
-            case ORGANIZATION:
-                return "Organización";
-            case USER:
-                return "Usuario";
-        }
-        // No default case - compiler will warn if new roles are added
-        throw new IllegalStateException("Unexpected role: " + this);
+        return switch (this) {
+            case ADMIN -> "Administrador";
+            case ORGANIZATION -> "Organización";
+            case USER -> "Usuario";
+        };
     }
 }

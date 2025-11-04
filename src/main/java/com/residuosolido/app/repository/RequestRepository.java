@@ -96,6 +96,19 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             WHERE m.id IN :materialIds AND r.status = :status
             """)
     long countDistinctByMaterialsAndStatus(@Param("materialIds") List<Long> materialIds, @Param("status") RequestStatus status);
+    
+    @Query("""
+            SELECT COUNT(DISTINCT r)
+            FROM Request r
+            WHERE r.status = :status AND
+            ((:includeMaterialless = true AND r.materials IS EMPTY) OR
+             EXISTS (SELECT 1 FROM r.materials m WHERE m.id IN :materialIds))
+            """)
+    long countByStatusWithOptionalMaterials(
+        @Param("status") RequestStatus status,
+        @Param("materialIds") List<Long> materialIds,
+        @Param("includeMaterialless") boolean includeMaterialless);
+
 
     @EntityGraph(attributePaths = {"user", "organization", "materials"})
     @Query("SELECT r FROM Request r WHERE r.id = :id")
@@ -126,4 +139,32 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             """)
     List<Request> findByStatusesAndOrganizationWithDetails(@Param("statuses") List<RequestStatus> statuses,
                                                             @Param("organization") User organization);
+
+    @Query("""
+            SELECT COUNT(DISTINCT r)
+            FROM Request r
+            WHERE r.status IN :statuses AND r.organization = :organization
+            """)
+    long countByStatusesAndOrganization(@Param("statuses") List<RequestStatus> statuses,
+                                        @Param("organization") User organization);
+
+    // Paso 1: Traer solo IDs de las top N solicitudes (LIMIT en BD)
+    // Incluye solicitudes sin materiales y solicitudes con materiales específicos
+    @Query(value = """
+            SELECT DISTINCT r.id, r.created_at FROM requests r
+            LEFT JOIN request_materials m ON r.id = m.request_id
+            WHERE r.status = :status AND
+            (m.material_id IN :materialIds OR
+             NOT EXISTS (SELECT 1 FROM request_materials rm WHERE rm.request_id = r.id))
+            ORDER BY r.created_at DESC
+            LIMIT :limit
+            """, nativeQuery = true)
+    List<Object[]> findTopIdsByStatusAndMaterials(@Param("status") String status,
+                                                   @Param("materialIds") List<Long> materialIds,
+                                                   @Param("limit") int limit);
+    
+    // Paso 2: Traer solicitudes completas por IDs (con eager loading)
+    @EntityGraph(attributePaths = {"user", "organization", "materials"})
+    @Query("SELECT r FROM Request r WHERE r.id IN :ids ORDER BY r.createdAt DESC")
+    List<Request> findByIdsWithDetails(@Param("ids") List<Long> ids);
 }

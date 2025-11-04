@@ -174,45 +174,82 @@ public class OrganizationAdminController {
     public String orgDashboard(Authentication authentication, Model model) {
         long startTime = System.currentTimeMillis();
         System.out.println("=== INICIO CARGA DASHBOARD ORGANIZACIÓN ===");
+        int queryCount = 0;
         
         try {
             long beforeAuth = System.currentTimeMillis();
             User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            queryCount++; // Auth query
             System.out.println("⏱️ Tiempo autenticación: " + (System.currentTimeMillis() - beforeAuth) + "ms");
             
             // Obtener IDs de materiales que acepta esta organización
             List<Long> acceptedMaterialIds = currentOrg.getMaterials() != null 
                 ? currentOrg.getMaterials().stream().map(Material::getId).toList()
                 : new ArrayList<>();
+            System.out.println("📦 Materiales aceptados por organización: " + acceptedMaterialIds.size() + " (" + acceptedMaterialIds + ")");
             
-            // Filtrar solicitudes que contengan al menos un material que la organización acepta
-            List<Request> allPendingRequests = requestService.getPendingRequests();
-            List<Request> filteredPendingRequests = allPendingRequests.stream()
-                .filter(request -> request.getMaterials() != null && 
-                    request.getMaterials().stream()
-                        .anyMatch(material -> acceptedMaterialIds.contains(material.getId())))
-                .toList();
+            // DEBUG: Ver cuántas solicitudes pendientes hay en total en el sistema
+            long totalPendingInSystem = requestService.countByStatus(RequestStatus.PENDING);
+            System.out.println("🔍 DEBUG: Total solicitudes PENDING en sistema: " + totalPendingInSystem);
+            requestService.logPendingRequestsDebug();
+
+            // PENDIENTES: Contar directamente sin traer listas
+            long pendingCount;
+            List<Request> pendingRequestsList = new ArrayList<>();
             
-            model.addAttribute("pendingRequests", filteredPendingRequests.size());
-            model.addAttribute("pendingRequestsList", filteredPendingRequests.stream().limit(5).toList());
+            if (acceptedMaterialIds.isEmpty()) {
+                // Si no hay materiales configurados, contar todas las pendientes
+                long countStart = System.currentTimeMillis();
+                pendingCount = requestService.countByStatus(RequestStatus.PENDING);
+                queryCount++;
+                System.out.println("  ⏱️ Conteo pendientes: " + (System.currentTimeMillis() - countStart) + "ms");
+                
+                // Traer solo los primeros 5 para mostrar
+                long listStart = System.currentTimeMillis();
+                pendingRequestsList = requestService.getPendingRequests().stream().limit(5).toList();
+                queryCount++;
+                System.out.println("  ⏱️ Lista pendientes (top 5): " + (System.currentTimeMillis() - listStart) + "ms");
+            } else {
+                // Con materiales configurados, contar solo los que coinciden
+                long countStart = System.currentTimeMillis();
+                pendingCount = requestService.countByStatusAndMaterials(RequestStatus.PENDING, acceptedMaterialIds);
+                queryCount++;
+                System.out.println("  ⏱️ Conteo pendientes (filtrado): " + (System.currentTimeMillis() - countStart) + "ms");
+                System.out.println("  📊 PENDIENTES encontradas: " + pendingCount);
+                
+                // Traer solo los primeros 5 filtrados directamente desde BD (OPTIMIZADO)
+                long listStart = System.currentTimeMillis();
+                pendingRequestsList = requestService.getTopPendingByMaterials(acceptedMaterialIds, 5);
+                queryCount++;
+                System.out.println("  ⏱️ Lista pendientes (filtrado, top 5): " + (System.currentTimeMillis() - listStart) + "ms");
+                System.out.println("  📋 Lista cargada: " + pendingRequestsList.size() + " solicitudes");
+            }
             
-            // Obtener solicitudes en proceso (solo las asignadas a esta organización)
-            // Incluir tanto IN_PROGRESS como ACCEPTED
-            List<Request> filteredInProgressRequests = requestService
-                .getRequestsByStatusesAndOrganization(
-                    java.util.List.of(RequestStatus.IN_PROGRESS, RequestStatus.ACCEPTED),
-                    currentOrg
-                );
+            model.addAttribute("pendingRequests", pendingCount);
+            model.addAttribute("pendingRequestsList", pendingRequestsList);
+            System.out.println("✅ PENDIENTES: " + pendingCount + " (mostrando " + pendingRequestsList.size() + " en lista)");
             
-            model.addAttribute("inProgressRequests", filteredInProgressRequests.size());
+            // EN PROCESO: Contar directamente
+            long inProgressStart = System.currentTimeMillis();
+            long inProgressCount = requestService.countByStatusesAndOrganization(
+                java.util.List.of(RequestStatus.IN_PROGRESS, RequestStatus.ACCEPTED),
+                currentOrg
+            );
+            queryCount++;
+            System.out.println("  ⏱️ Conteo en proceso: " + (System.currentTimeMillis() - inProgressStart) + "ms");
+            System.out.println("✅ EN PROCESO: " + inProgressCount);
+            model.addAttribute("inProgressRequests", inProgressCount);
             
-            // Obtener solicitudes completadas (solo las asignadas a esta organización)
-            List<Request> filteredCompletedRequests = requestService
-                .getRequestsByStatusesAndOrganization(
-                    java.util.List.of(RequestStatus.COMPLETED),
-                    currentOrg
-                );
-            model.addAttribute("completedRequests", filteredCompletedRequests.size());
+            // COMPLETADAS: Contar directamente
+            long completedStart = System.currentTimeMillis();
+            long completedCount = requestService.countByStatusesAndOrganization(
+                java.util.List.of(RequestStatus.COMPLETED),
+                currentOrg
+            );
+            queryCount++;
+            System.out.println("  ⏱️ Conteo completadas: " + (System.currentTimeMillis() - completedStart) + "ms");
+            System.out.println("✅ COMPLETADAS: " + completedCount);
+            model.addAttribute("completedRequests", completedCount);
             
             // Total de kg reciclados (placeholder - se puede implementar después)
             model.addAttribute("totalKgRecycled", 0);
@@ -221,6 +258,10 @@ public class OrganizationAdminController {
             model.addAttribute("managedMaterials", acceptedMaterialIds.size());
             
             long totalTime = System.currentTimeMillis() - startTime;
+            System.out.println("📈 RESUMEN ESTADOS → Pendientes: " + pendingCount
+                    + " | En proceso: " + inProgressCount
+                    + " | Completadas: " + completedCount);
+            System.out.println("📊 TOTAL QUERIES: " + queryCount);
             System.out.println("⏱️ TIEMPO TOTAL DASHBOARD: " + totalTime + "ms");
             System.out.println("=== FIN CARGA DASHBOARD ORGANIZACIÓN ===\n");
             

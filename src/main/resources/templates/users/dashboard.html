@@ -29,44 +29,69 @@
         <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <!-- Barra decorativa superior -->
             <div class="h-1.5 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600"></div>
-            
+
             <div class="p-6">
                 <!-- Saludo -->
-                <div class="mb-5">
-                    <h1 class="text-xl font-semibold text-gray-900 mb-1">
-                        Hola, <span th:text="${#authentication.principal.username}">Usuario</span>
-                    </h1>
-                    <p class="text-xs text-gray-500">
-                        ¿Qué necesitas hacer hoy?
-                    </p>
+                <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-900 mb-1">
+                            Hola, <span th:text="${#authentication.principal.username}">Usuario</span>
+                        </h1>
+                        <p class="text-sm text-gray-500 flex items-center gap-2">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
+                            Seguimiento de tus solicitudes y actividades ambientales en un solo lugar.
+                        </p>
+                    </div>
+                    <div th:if="${nextRequest != null}" class="bg-emerald-50 border border-emerald-100 rounded-lg px-4 py-3 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
+                            <i data-lucide="calendar-check" class="w-5 h-5 text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-emerald-700 font-semibold">Próxima recolección</p>
+                            <p class="text-sm text-gray-700">
+                                <span th:text="${#temporals.format(nextRequest.scheduledDate, 'dd ')}"></span>
+                                <span th:text="${#temporals.format(nextRequest.scheduledDate, 'MMMM')}" class="capitalize"></span>
+                                · <span th:text="${nextRequest.collectionAddress}">Dirección</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <!-- Accesos Rápidos -->
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <a href="/usuarios/solicitudes/nueva" class="group relative bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-lg p-4 border border-emerald-200/50 hover:border-emerald-300 hover:shadow-md transition-all duration-200">
-                        <div class="flex flex-col items-center text-center gap-2">
+                        <div class="flex items-center gap-3">
                             <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-shadow">
                                 <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-700">Nueva Solicitud</span>
+                            <div>
+                                <span class="block text-sm font-semibold text-gray-800">Crear nueva solicitud</span>
+                                <span class="text-xs text-gray-500">Ingresa los materiales que necesitas reciclar</span>
+                            </div>
                         </div>
                     </a>
-                    
+
                     <a href="/usuarios/solicitudes" class="group relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg p-4 border border-blue-200/50 hover:border-blue-300 hover:shadow-md transition-all duration-200">
-                        <div class="flex flex-col items-center text-center gap-2">
+                        <div class="flex items-center gap-3">
                             <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-shadow">
                                 <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-700">Mis Solicitudes</span>
+                            <div>
+                                <span class="block text-sm font-semibold text-gray-800">Ver mis solicitudes</span>
+                                <span class="text-xs text-gray-500">Revisa el estado y detalles en curso</span>
+                            </div>
                         </div>
                     </a>
-                    
-                    <a href="/posts" class="group relative bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-lg p-4 border border-purple-200/50 hover:border-purple-300 hover:shadow-md transition-all duration-200">
-                        <div class="flex flex-col items-center text-center gap-2">
+
+                    <a href="/usuarios/perfil" class="group relative bg-gradient-to-br from-orange-50 to-orange-100/60 rounded-lg p-4 border border-orange-200/50 hover:border-orange-300 hover:shadow-md transition-all duration-200">
+                        <div class="flex items-center gap-3">
                             <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-shadow">
-                                <i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i>
+                                <i data-lucide="settings" class="w-5 h-5 text-orange-500"></i>
                             </div>
-                            <span class="text-xs font-medium text-gray-700">Notas Educativas</span>
+                            <div>
+                                <span class="block text-sm font-semibold text-gray-800">Actualizar mis datos</span>
+                                <span class="text-xs text-gray-500">Mantén tu perfil y direcciones al día</span>
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -75,12 +100,16 @@
 
         <!-- Estadísticas -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-5 py-3 border-b border-gray-100">
-                <h2 class="text-sm font-semibold text-gray-900">Resumen de Actividad</h2>
+            <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-gray-900">Resumen de actividad</h2>
+                <span class="inline-flex items-center gap-1 text-xs text-gray-500">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    Tus números más recientes
+                </span>
             </div>
-            
+
             <div class="p-5">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="relative group">
                         <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
                         <div class="relative bg-white border border-gray-200 rounded-lg p-4 group-hover:border-emerald-300 transition-colors">
@@ -91,24 +120,104 @@
                                 </div>
                             </div>
                             <p class="text-3xl font-bold text-gray-900" th:text="${totalRequests ?: 0}">0</p>
-                            <p class="text-xs text-gray-500 mt-1">Solicitudes</p>
+                            <p class="text-xs text-gray-500 mt-1">Solicitudes registradas</p>
                         </div>
                     </div>
-                    
+
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
+                        <div class="relative bg-white border border-gray-200 rounded-lg p-4 group-hover:border-yellow-300 transition-colors">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Pendientes</span>
+                                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="clock" class="w-4 h-4 text-yellow-600"></i>
+                                </div>
+                            </div>
+                            <p class="text-3xl font-bold text-gray-900" th:text="${pendingRequests ?: 0}">0</p>
+                            <p class="text-xs text-gray-500 mt-1">Esperando confirmación</p>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sky-500 to-indigo-500 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
+                        <div class="relative bg-white border border-gray-200 rounded-lg p-4 group-hover:border-sky-300 transition-colors">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">En proceso</span>
+                                <div class="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="truck" class="w-4 h-4 text-sky-600"></i>
+                                </div>
+                            </div>
+                            <p class="text-3xl font-bold text-gray-900" th:text="${inProgressRequests ?: 0}">0</p>
+                            <p class="text-xs text-gray-500 mt-1">Aceptadas o en camino</p>
+                        </div>
+                    </div>
+
                     <div class="relative group">
                         <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
                         <div class="relative bg-white border border-gray-200 rounded-lg p-4 group-hover:border-blue-300 transition-colors">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Finalizadas</span>
+                                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Completadas</span>
                                 <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                                     <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
                                 </div>
                             </div>
                             <p class="text-3xl font-bold text-gray-900" th:text="${completedRequests ?: 0}">0</p>
-                            <p class="text-xs text-gray-500 mt-1">Completadas</p>
+                            <p class="text-xs text-gray-500 mt-1">Recolectadas con éxito</p>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Próxima recolección o recomendación -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" th:if="${nextRequest != null}">
+            <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                <i data-lucide="map" class="w-4 h-4 text-emerald-500"></i>
+                <h2 class="text-sm font-semibold text-gray-900">Tu próxima recolección programada</h2>
+            </div>
+            <div class="p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex-1 flex items-start gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                        <i data-lucide="calendar-days" class="w-6 h-6 text-emerald-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 mb-1" th:text="${nextRequest.description}">Descripción</p>
+                        <div class="space-y-1 text-sm text-gray-600">
+                            <p class="flex items-center gap-2">
+                                <i data-lucide="clock" class="w-4 h-4 text-emerald-500"></i>
+                                <span th:text="${#temporals.format(nextRequest.scheduledDate, 'EEEE d MMMM')}">Fecha programada</span>
+                            </p>
+                            <p class="flex items-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
+                                <span th:text="${nextRequest.collectionAddress}">Dirección</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <a th:href="@{/usuarios/solicitud/{id}(id=${nextRequest.id})}"
+                       class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700">
+                        Ver detalles
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-dashed border-gray-200 overflow-hidden" th:if="${nextRequest == null}">
+            <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">No tienes recolecciones programadas todavía</p>
+                        <p class="text-xs text-gray-500">Agenda una nueva solicitud para que una organización se ponga en contacto contigo.</p>
+                    </div>
+                </div>
+                <a href="/usuarios/solicitudes/nueva" class="inline-flex items-center px-3 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
+                    Crear solicitud
+                    <i data-lucide="sparkles" class="w-4 h-4 ml-2"></i>
+                </a>
             </div>
         </div>
 

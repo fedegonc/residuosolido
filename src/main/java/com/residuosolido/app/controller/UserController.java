@@ -17,11 +17,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 @Controller
 public class UserController {
@@ -304,44 +307,54 @@ public class UserController {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
-            
+
             // Cargar todas las solicitudes del usuario para estadísticas
             List<Request> allUserRequests = requestService.getRequestsByUser(currentUser);
-            List<Request> recentRequests = allUserRequests.stream().limit(5).toList();
-            
+            List<Request> recentRequests = allUserRequests.stream()
+                    .sorted(Comparator.comparing(Request::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
+                    .limit(5)
+                    .toList();
+
             // Calcular estadísticas reales
             long totalRequests = allUserRequests.size();
             long completedRequests = allUserRequests.stream()
-                .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
-                .count();
-            
-            // Contar tipos únicos de materiales reciclados
-            long materialTypes = allUserRequests.stream()
-                .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
-                .flatMap(r -> r.getMaterials().stream())
-                .map(m -> m.getId())
-                .distinct()
-                .count();
-            
-            // Solicitudes del mes actual
-            LocalDateTime monthStart = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-            long monthRequests = allUserRequests.stream()
-                .filter(r -> r.getCreatedAt() != null && r.getCreatedAt().isAfter(monthStart))
-                .count();
-            
+                    .filter(r -> r.getStatus() == RequestStatus.COMPLETED)
+                    .count();
+            long pendingRequests = allUserRequests.stream()
+                    .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                    .count();
+            long inProgressRequests = allUserRequests.stream()
+                    .filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS || r.getStatus() == RequestStatus.ACCEPTED)
+                    .count();
+
+            // Próxima recolección programada (considerar pendientes/aceptadas/en progreso)
+            Request nextRequest = allUserRequests.stream()
+                    .filter(r -> r.getScheduledDate() != null)
+                    .filter(r -> (r.getStatus() == RequestStatus.PENDING
+                            || r.getStatus() == RequestStatus.ACCEPTED
+                            || r.getStatus() == RequestStatus.IN_PROGRESS))
+                    .filter(r -> !r.getScheduledDate().isBefore(LocalDate.now()))
+                    .sorted(Comparator.comparing(Request::getScheduledDate))
+                    .findFirst()
+                    .orElse(null);
+
+            // Posts educativos
+            List<Post> educationalPosts = postService.findRecentPosts(3);
+            model.addAttribute("educationalPosts", educationalPosts);
+
             model.addAttribute("user", currentUser);
             model.addAttribute("recentRequests", recentRequests);
             model.addAttribute("totalRequests", totalRequests);
             model.addAttribute("completedRequests", completedRequests);
-            model.addAttribute("materialTypes", materialTypes);
-            model.addAttribute("monthRequests", monthRequests);
-            
-            // Si no hay solicitudes, cargar posts recientes para mostrar contenido educativo
+            model.addAttribute("pendingRequests", pendingRequests);
+            model.addAttribute("inProgressRequests", inProgressRequests);
+            model.addAttribute("nextRequest", nextRequest);
+            model.addAttribute("hasRequests", !allUserRequests.isEmpty());
+
+            // Cuando no hay solicitudes, mostrar contenido educativo adicional
             if (recentRequests == null || recentRequests.isEmpty()) {
-                List<Post> recentPosts = postService.findRecentPosts(4);
-                model.addAttribute("recentPosts", recentPosts);
+                model.addAttribute("recentPosts", educationalPosts);
             }
-            
         } catch (Exception e) {
             logger.error("Error al cargar dashboard de usuario: {}", e.getMessage());
             model.addAttribute("errorMessage", "Error al cargar el dashboard");
@@ -615,26 +628,32 @@ public class UserController {
     /**
      * API endpoint to get materials accepted by an organization
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/organizations/{orgId}/materials")
     @ResponseBody
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Material>> getOrganizationMaterials(@PathVariable Long orgId) {
         try {
-            User organization = userService.findById(orgId)
+            logger.info("📋 Solicitando materiales para organización ID: {}", orgId);
+            
+            // Usar findByIdWithMaterials para eager loading de materiales
+            User organization = userService.findByIdWithMaterials(orgId)
                 .orElseThrow(() -> new RuntimeException("Organización no encontrada"));
             
-            // Forzar inicialización de la colección de materiales (lazy loading)
+            logger.info("✅ Organización encontrada: {} (ID: {})", organization.getUsername(), organization.getId());
+            
+            // Los materiales ya están cargados gracias a findByIdWithMaterials
             List<Material> materials = organization.getMaterials();
             if (materials == null) {
+                logger.warn("⚠️ La organización {} no tiene materiales configurados (null)", organization.getUsername());
                 materials = new ArrayList<>();
             }
-            // Forzar la carga accediendo al tamaño
-            materials.size();
+            
+            logger.info("📦 Materiales encontrados: {} materiales para organización {}", materials.size(), organization.getUsername());
             
             return ResponseEntity.ok(materials);
         } catch (Exception e) {
-            logger.error("Error al obtener materiales de organización {}: {}", orgId, e.getMessage(), e);
-            return ResponseEntity.ok(new ArrayList<>());
+            logger.error("❌ Error al obtener materiales de organización {}: {}", orgId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(new ArrayList<>());
         }
     }
 
