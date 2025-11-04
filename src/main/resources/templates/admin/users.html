@@ -71,7 +71,7 @@
                 <!-- (Botón movido debajo de la tabla) -->
             </div>
             
-            <div class="overflow-x-auto px-4 py-3">
+            <div class="overflow-x-auto overflow-y-visible px-4 py-3">
                 <table class="min-w-full divide-y divide-gray-200 text-xs">
                     <thead class="bg-gray-100 border-b border-gray-200 text-[11px]">
                         <tr>
@@ -142,7 +142,7 @@
                                             th:attr="data-actions-trigger=${menuId}">
                                         Acciones
                                     </button>
-                                    <div class="absolute right-0 mt-1 w-32 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-10 hidden"
+                                    <div class="absolute right-0 mt-1 w-32 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-40 hidden"
                                          th:attr="data-actions-menu=${menuId}">
                                         <div class="py-1 text-xs text-gray-700">
                                             <a th:href="${isOrganizations} ? @{/admin/organizations(action='view', id=${user.id})} : @{/admin/users(action='view', id=${user.id})}"

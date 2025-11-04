@@ -96,4 +96,34 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             WHERE m.id IN :materialIds AND r.status = :status
             """)
     long countDistinctByMaterialsAndStatus(@Param("materialIds") List<Long> materialIds, @Param("status") RequestStatus status);
+
+    @EntityGraph(attributePaths = {"user", "organization", "materials"})
+    @Query("SELECT r FROM Request r WHERE r.id = :id")
+    java.util.Optional<Request> findByIdWithDetails(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {"user", "organization", "materials"})
+    @Query("SELECT r FROM Request r WHERE r.organization = :organization ORDER BY r.createdAt DESC")
+    List<Request> findByOrganizationWithDetails(@Param("organization") User organization);
+
+    @EntityGraph(attributePaths = {"user", "organization", "materials"})
+    @Query("SELECT r FROM Request r WHERE r.status = :status ORDER BY r.createdAt DESC")
+    List<Request> findByStatusWithDetails(@Param("status") RequestStatus status);
+
+    @EntityGraph(attributePaths = {"user", "organization", "materials"})
+    @Query("""
+            SELECT DISTINCT r FROM Request r
+            WHERE r.status = :status AND r.organization = :organization
+            ORDER BY r.createdAt DESC
+            """)
+    List<Request> findByStatusAndOrganizationWithDetails(@Param("status") RequestStatus status,
+                                                          @Param("organization") User organization);
+
+    @EntityGraph(attributePaths = {"user", "organization", "materials"})
+    @Query("""
+            SELECT DISTINCT r FROM Request r
+            WHERE r.status IN :statuses AND r.organization = :organization
+            ORDER BY r.createdAt DESC
+            """)
+    List<Request> findByStatusesAndOrganizationWithDetails(@Param("statuses") List<RequestStatus> statuses,
+                                                            @Param("organization") User organization);
 }

@@ -136,6 +136,12 @@ public class BreadcrumbService {
                     // No agregamos "Acopio" al breadcrumb, el segmento "inicio" lo manejará
                     break;
                     
+                case "registro-manual":
+                    if (cleanURI.startsWith("/acopio/")) {
+                        breadcrumbs.add(new BreadcrumbItem("Registro Manual", "/acopio/registro-manual"));
+                    }
+                    break;
+                    
                 case "perfil":
                 case "profile":
                     // No agregamos al breadcrumb, será el título final
@@ -343,6 +349,8 @@ public class BreadcrumbService {
             case "calendario":
             case "calendar":
                 return "Calendario";
+            case "registro-manual":
+                return "Registro Manual de Materiales";
             case "login":
                 return "Iniciar Sesión";
             case "register":

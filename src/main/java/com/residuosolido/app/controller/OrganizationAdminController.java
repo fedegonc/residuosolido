@@ -172,8 +172,13 @@ public class OrganizationAdminController {
     @PreAuthorize("hasRole('ORGANIZATION')")
     @GetMapping("/acopio/inicio")
     public String orgDashboard(Authentication authentication, Model model) {
+        long startTime = System.currentTimeMillis();
+        System.out.println("=== INICIO CARGA DASHBOARD ORGANIZACIÓN ===");
+        
         try {
+            long beforeAuth = System.currentTimeMillis();
             User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            System.out.println("⏱️ Tiempo autenticación: " + (System.currentTimeMillis() - beforeAuth) + "ms");
             
             // Obtener IDs de materiales que acepta esta organización
             List<Long> acceptedMaterialIds = currentOrg.getMaterials() != null 
@@ -192,32 +197,21 @@ public class OrganizationAdminController {
             model.addAttribute("pendingRequestsList", filteredPendingRequests.stream().limit(5).toList());
             
             // Obtener solicitudes en proceso (solo las asignadas a esta organización)
-            // Incluir tanto IN_PROGRESS como ACCEPTED (temporal para compatibilidad)
-            List<Request> allInProgressRequests = requestService.getRequestsByStatus(RequestStatus.IN_PROGRESS);
-            List<Request> allAcceptedRequests = requestService.getRequestsByStatus(RequestStatus.ACCEPTED);
-            
-            List<Request> filteredInProgressRequests = new ArrayList<>();
-            filteredInProgressRequests.addAll(
-                allInProgressRequests.stream()
-                    .filter(request -> request.getOrganization() != null && 
-                        request.getOrganization().getId().equals(currentOrg.getId()))
-                    .toList()
-            );
-            filteredInProgressRequests.addAll(
-                allAcceptedRequests.stream()
-                    .filter(request -> request.getOrganization() != null && 
-                        request.getOrganization().getId().equals(currentOrg.getId()))
-                    .toList()
-            );
+            // Incluir tanto IN_PROGRESS como ACCEPTED
+            List<Request> filteredInProgressRequests = requestService
+                .getRequestsByStatusesAndOrganization(
+                    java.util.List.of(RequestStatus.IN_PROGRESS, RequestStatus.ACCEPTED),
+                    currentOrg
+                );
             
             model.addAttribute("inProgressRequests", filteredInProgressRequests.size());
             
             // Obtener solicitudes completadas (solo las asignadas a esta organización)
-            List<Request> allCompletedRequests = requestService.getRequestsByStatus(RequestStatus.COMPLETED);
-            List<Request> filteredCompletedRequests = allCompletedRequests.stream()
-                .filter(request -> request.getOrganization() != null && 
-                    request.getOrganization().getId().equals(currentOrg.getId()))
-                .toList();
+            List<Request> filteredCompletedRequests = requestService
+                .getRequestsByStatusesAndOrganization(
+                    java.util.List.of(RequestStatus.COMPLETED),
+                    currentOrg
+                );
             model.addAttribute("completedRequests", filteredCompletedRequests.size());
             
             // Total de kg reciclados (placeholder - se puede implementar después)
@@ -226,7 +220,14 @@ public class OrganizationAdminController {
             // Materiales aceptados por la organización
             model.addAttribute("managedMaterials", acceptedMaterialIds.size());
             
+            long totalTime = System.currentTimeMillis() - startTime;
+            System.out.println("⏱️ TIEMPO TOTAL DASHBOARD: " + totalTime + "ms");
+            System.out.println("=== FIN CARGA DASHBOARD ORGANIZACIÓN ===\n");
+            
         } catch (Exception e) {
+            long totalTime = System.currentTimeMillis() - startTime;
+            System.err.println("❌ ERROR en dashboard después de " + totalTime + "ms: " + e.getMessage());
+            e.printStackTrace();
             model.addAttribute("pendingRequests", 0);
             model.addAttribute("inProgressRequests", 0);
             model.addAttribute("completedRequests", 0);

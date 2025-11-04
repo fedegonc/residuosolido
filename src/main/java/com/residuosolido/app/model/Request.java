@@ -57,6 +57,19 @@ public class Request {
 
     private String imageUrl;
 
+    /**
+     * Indica si este registro es un ingreso manual (true) o una solicitud normal (false)
+     * Los registros manuales son creados directamente por la organización
+     */
+    @Column(name = "is_manual_intake")
+    private Boolean isManualIntake = false;
+
+    /**
+     * Cantidad en kilogramos (solo para registros manuales)
+     */
+    @Column(name = "quantity_kg", precision = 10, scale = 2)
+    private java.math.BigDecimal quantityKg;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

@@ -122,27 +122,16 @@ public class RequestService {
 
     @Transactional(readOnly = true)
     public Optional<Request> findById(Long id) {
-        Optional<Request> requestOpt = requestRepository.findById(id);
-        // Forzar la inicialización de propiedades lazy si existe la request
-        if (requestOpt.isPresent()) {
-            Request request = requestOpt.get();
-            if (request.getUser() != null) {
-                request.getUser().getUsername();
-                request.getUser().getFirstName();
-                request.getUser().getLastName();
-                request.getUser().getEmail();
-            }
-            // Forzar la inicialización de la organización
-            if (request.getOrganization() != null) {
-                request.getOrganization().getUsername();
-                request.getOrganization().getFullName();
-            }
-            // Forzar la inicialización de la colección materials
-            if (request.getMaterials() != null) {
-                request.getMaterials().size();
-            }
-        }
-        return requestOpt;
+        long start = System.currentTimeMillis();
+        System.out.println("  🔍 Ejecutando query findByIdWithDetails para ID: " + id);
+        
+        // Usar método optimizado que carga todas las relaciones en una sola consulta SQL
+        Optional<Request> result = requestRepository.findByIdWithDetails(id);
+        
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("  ✅ Query completada en: " + elapsed + "ms");
+        
+        return result;
     }
 
     public Request rejectRequest(Long requestId) {
@@ -156,67 +145,53 @@ public class RequestService {
     
     @Transactional(readOnly = true)
     public List<Request> getPendingRequests() {
-        List<Request> requests = requestRepository.findByStatus(RequestStatus.PENDING);
-        // Forzar la inicialización de propiedades lazy
-        requests.forEach(request -> {
-            if (request.getUser() != null) {
-                request.getUser().getUsername();
-                request.getUser().getFirstName();
-                request.getUser().getLastName();
-                request.getUser().getFullName();
-            }
-            if (request.getOrganization() != null) {
-                request.getOrganization().getUsername();
-                request.getOrganization().getFullName();
-            }
-            if (request.getMaterials() != null) {
-                request.getMaterials().size();
-            }
-        });
+        long start = System.currentTimeMillis();
+        System.out.println("  🔍 Cargando solicitudes pendientes");
+
+        List<Request> requests = requestRepository.findByStatusWithDetails(RequestStatus.PENDING);
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("  ✅ " + requests.size() + " solicitudes pendientes cargadas en: " + elapsed + "ms");
+
         return requests;
     }
 
     @Transactional(readOnly = true)
     public List<Request> getRequestsByStatus(RequestStatus status) {
-        List<Request> requests = requestRepository.findByStatus(status);
-        // Forzar la inicialización de propiedades lazy
-        requests.forEach(request -> {
-            if (request.getUser() != null) {
-                request.getUser().getUsername();
-                request.getUser().getFirstName();
-                request.getUser().getLastName();
-                request.getUser().getFullName();
-            }
-            if (request.getOrganization() != null) {
-                request.getOrganization().getUsername();
-                request.getOrganization().getFullName();
-            }
-            if (request.getMaterials() != null) {
-                request.getMaterials().size();
-            }
-        });
+        long start = System.currentTimeMillis();
+        System.out.println("  🔍 Cargando solicitudes con estado: " + status);
+
+        List<Request> requests = requestRepository.findByStatusWithDetails(status);
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("  ✅ " + requests.size() + " solicitudes cargadas en: " + elapsed + "ms");
+
         return requests;
     }
 
     @Transactional(readOnly = true)
     public List<Request> getRequestsByOrganization(User organization) {
-        List<Request> requests = requestRepository.findByOrganization(organization);
-        // Forzar la inicialización de propiedades lazy
-        requests.forEach(request -> {
-            if (request.getUser() != null) {
-                request.getUser().getUsername();
-                request.getUser().getFirstName();
-                request.getUser().getLastName();
-                request.getUser().getFullName();
-            }
-            if (request.getOrganization() != null) {
-                request.getOrganization().getUsername();
-                request.getOrganization().getFullName();
-            }
-            if (request.getMaterials() != null) {
-                request.getMaterials().size();
-            }
-        });
+        long start = System.currentTimeMillis();
+        System.out.println("  🔍 Cargando solicitudes de organización: " + organization.getUsername());
+
+        List<Request> requests = requestRepository.findByOrganizationWithDetails(organization);
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("  ✅ " + requests.size() + " solicitudes cargadas en: " + elapsed + "ms");
+
+        return requests;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Request> getRequestsByStatusesAndOrganization(List<RequestStatus> statuses, User organization) {
+        long start = System.currentTimeMillis();
+        System.out.println("  🔍 Cargando solicitudes por estados " + statuses + " para organización: " + organization.getUsername());
+
+        List<Request> requests = requestRepository.findByStatusesAndOrganizationWithDetails(statuses, organization);
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("  ✅ " + requests.size() + " solicitudes cargadas en: " + elapsed + "ms");
+
         return requests;
     }
 

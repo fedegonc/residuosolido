@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/org-layout}">
+<head>
+    <title>Registro Manual de Materiales</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Breadcrumbs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Vista de Lista -->
+        <div th:if="${viewType == 'list'}" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200 space-y-3">
+                <!-- Título Principal -->
+                <h2 class="text-lg font-semibold text-gray-900">
+                    Registro Manual de Materiales
+                </h2>
+                
+                <!-- Texto Descriptivo -->
+                <p class="text-sm text-gray-600">
+                    Registra materiales recibidos directamente de vecinos, donaciones o recolecciones independientes de solicitudes formales.
+                    <span class="block mt-1 text-xs text-gray-500">
+                        Usa el buscador para filtrar por material, fuente o notas. Puedes seleccionar la fecha del registro para ingresos de días anteriores.
+                    </span>
+                </p>
+                
+                <!-- Estadística Total -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="weight" class="w-5 h-5 text-emerald-600"></i>
+                        <div>
+                            <p class="text-xs text-emerald-700 font-medium">Total Registrado</p>
+                            <p class="text-xl font-bold text-emerald-900" th:text="${totalKg != null ? totalKg + ' kg' : '0 kg'}">0 kg</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Subtítulo -->
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Lista de Registros
+                </h3>
+                
+                <!-- Buscador -->
+                <form th:action="@{/acopio/registro-manual}" method="get" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                    <input type="text" name="q" th:value="${query}" placeholder="Buscar por material, fuente o notas..."
+                           class="w-full sm:w-96 h-9 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"/>
+                    <div class="flex gap-2">
+                        <button type="submit" class="h-9 px-3 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Buscar</button>
+                        <a th:href="@{/acopio/registro-manual}" class="h-9 px-3 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center">Limpiar</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Tabla -->
+            <div class="overflow-x-auto px-6 py-4">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Material</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad (kg)</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fuente</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notas</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="intakeTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr th:if="${intakes == null or intakes.empty}">
+                            <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">
+                                <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 text-gray-400"></i>
+                                <p>No hay registros. Crea el primero usando el botón "Nuevo Registro".</p>
+                            </td>
+                        </tr>
+                        <tr th:each="intake : ${intakes}" class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900" th:text="${#temporals.format(intake.scheduledDate, 'dd/MM/yyyy')}">01/01/2024</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span th:if="${intake.materials != null and !intake.materials.empty}" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i data-lucide="recycle" class="w-3 h-3 mr-1"></i>
+                                    <span th:text="${intake.materials[0].name}">Material</span>
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-900" th:text="${intake.quantityKg != null ? intake.quantityKg + ' kg' : '0 kg'}">0 kg</td>
+                            <td class="px-4 py-3 text-sm text-gray-600" th:text="${intake.description ?: '-'}">-</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">
+                                <span th:if="${intake.notes != null and !intake.notes.isEmpty()}" 
+                                      th:text="${#strings.length(intake.notes) > 50 ? #strings.substring(intake.notes, 0, 50) + '...' : intake.notes}">
+                                    Notas
+                                </span>
+                                <span th:if="${intake.notes == null or intake.notes.isEmpty()}" class="text-gray-400">-</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex gap-1">
+                                    <a th:href="@{/acopio/registro-manual(action='edit',id=${intake.id})}" 
+                                       class="inline-flex items-center px-2 py-1 text-xs font-medium rounded border text-blue-700 border-blue-200 hover:bg-blue-50">
+                                        <i data-lucide="edit" class="w-3 h-3 mr-1"></i>
+                                        Editar
+                                    </a>
+                                    <form th:action="@{/acopio/registro-manual/delete/{id}(id=${intake.id})}" method="post" class="inline">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button type="submit" 
+                                                onclick="return confirm('¿Estás seguro de eliminar este registro?')"
+                                                class="inline-flex items-center px-2 py-1 text-xs font-medium rounded border text-red-700 border-red-200 hover:bg-red-50">
+                                            <i data-lucide="trash-2" class="w-3 h-3 mr-1"></i>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Controles de paginación -->
+            <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Filas por página:</span>
+                    <select id="intakePageSize" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span id="intakePageInfo" class="ml-2">Mostrando 0–0 de 0</span>
+                </div>
+                <div id="intakePaginationControls" class="flex items-center gap-1"></div>
+            </div>
+            
+            <!-- Botón de Nuevo Registro -->
+            <div class="px-6 pb-4 flex justify-start">
+                <a th:href="@{/acopio/registro-manual(action='new')}"
+                   class="bg-emerald-600 text-white px-3 py-1.5 rounded-md hover:bg-emerald-700 flex items-center space-x-2 text-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Nuevo Registro</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Vista de Formulario -->
+        <div th:if="${viewType == 'form'}" class="bg-white rounded-lg shadow p-6">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-gray-900" th:text="${isCreate ? 'Nuevo Registro Manual' : 'Editar Registro'}">Nuevo Registro Manual</h2>
+                <p class="text-sm text-gray-600 mt-1">Completa los datos del material recibido</p>
+            </div>
+
+            <form th:action="@{/acopio/registro-manual}" method="post" class="space-y-4">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" name="id" th:value="${intake.id}"/>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Material -->
+                    <div>
+                        <label for="materialId" class="block text-sm font-medium text-gray-700 mb-1">
+                            Material <span class="text-red-500">*</span>
+                        </label>
+                        <select id="materialId" name="materialId" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Seleccionar material...</option>
+                            <option th:each="material : ${materials}" 
+                                    th:value="${material.id}" 
+                                    th:text="${material.name}"
+                                    th:selected="${intake.materials != null and !intake.materials.empty and intake.materials[0].id == material.id}">
+                                Material
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div>
+                        <label for="quantityKg" class="block text-sm font-medium text-gray-700 mb-1">
+                            Cantidad (kg) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="quantityKg" name="quantityKg" 
+                               step="0.01" min="0.01" required
+                               th:value="${intake.quantityKg}"
+                               placeholder="Ej: 20.5"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                    </div>
+
+                    <!-- Fecha -->
+                    <div>
+                        <label for="intakeDate" class="block text-sm font-medium text-gray-700 mb-1">
+                            Fecha del Registro <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="intakeDate" name="intakeDate" required
+                               th:value="${intake.scheduledDate != null ? intake.scheduledDate : #temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                        <p class="text-xs text-gray-500 mt-1">Puedes seleccionar una fecha pasada si el registro es retroactivo</p>
+                    </div>
+
+                    <!-- Fuente -->
+                    <div>
+                        <label for="source" class="block text-sm font-medium text-gray-700 mb-1">
+                            Fuente / Origen
+                        </label>
+                        <input type="text" id="source" name="source" 
+                               th:value="${intake.description}"
+                               placeholder="Ej: Vecino, Donación, Recolección directa"
+                               maxlength="200"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                    </div>
+                </div>
+
+                <!-- Notas -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
+                        Notas Adicionales
+                    </label>
+                    <textarea id="notes" name="notes" rows="4"
+                              th:text="${intake.notes}"
+                              placeholder="Información adicional sobre el registro..."
+                              maxlength="1000"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex justify-between pt-4 border-t border-gray-200">
+                    <a th:href="@{/acopio/registro-manual}" 
+                       class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700">
+                        <i data-lucide="save" class="w-4 h-4 inline mr-1"></i>
+                        <span th:text="${isCreate ? 'Crear Registro' : 'Guardar Cambios'}">Crear Registro</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Paginación front-end
+        (function() {
+            const tbody = document.getElementById('intakeTableBody');
+            if (!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const pageSizeSelect = document.getElementById('intakePageSize');
+            const pageInfo = document.getElementById('intakePageInfo');
+            const controls = document.getElementById('intakePaginationControls');
+
+            let pageSize = parseInt(localStorage.getItem('intake_page_size') || '10', 10);
+            if (![10,25,50,100].includes(pageSize)) pageSize = 10;
+            pageSizeSelect.value = String(pageSize);
+            let currentPage = 1;
+
+            function renderPage() {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / pageSize));
+                if (currentPage > totalPages) currentPage = totalPages;
+                const startIdx = (currentPage - 1) * pageSize;
+                const endIdx = Math.min(startIdx + pageSize, total);
+
+                rows.forEach((tr, idx) => {
+                    tr.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+                });
+
+                if (total === 0) {
+                    pageInfo.textContent = 'Mostrando 0–0 de 0';
+                } else {
+                    pageInfo.textContent = `Mostrando ${startIdx + 1}–${endIdx} de ${total}`;
+                }
+
+                buildControls(totalPages);
+            }
+
+            function buildControls(totalPages) {
+                controls.innerHTML = '';
+                const btnClass = 'px-3 py-1 border rounded-md text-sm hover:bg-gray-50';
+                const activeClass = 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700';
+
+                function addButton(label, disabled, onClick, extraClass = '') {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = label;
+                    btn.className = `${btnClass} ${extraClass}`;
+                    btn.disabled = disabled;
+                    btn.onclick = onClick;
+                    controls.appendChild(btn);
+                }
+
+                addButton('«', currentPage === 1, () => { currentPage = 1; renderPage(); });
+                addButton('‹', currentPage === 1, () => { currentPage--; renderPage(); });
+
+                const maxBtns = 7;
+                let start = Math.max(1, currentPage - Math.floor(maxBtns/2));
+                let end = Math.min(totalPages, start + maxBtns - 1);
+                if (end - start + 1 < maxBtns) {
+                    start = Math.max(1, end - maxBtns + 1);
+                }
+                for (let p = start; p <= end; p++) {
+                    addButton(String(p), false, () => { currentPage = p; renderPage(); }, p === currentPage ? activeClass : '');
+                }
+
+                addButton('›', currentPage === totalPages, () => { currentPage++; renderPage(); });
+                addButton('»', currentPage === totalPages, () => { currentPage = totalPages; renderPage(); });
+            }
+
+            pageSizeSelect.addEventListener('change', () => {
+                pageSize = parseInt(pageSizeSelect.value, 10);
+                localStorage.setItem('intake_page_size', String(pageSize));
+                currentPage = 1;
+                renderPage();
+            });
+
+            renderPage();
+        })();
+
+        // Establecer fecha de hoy por defecto en el formulario
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('intakeDate');
+            if (dateInput && !dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        });
+    </script>
+</main>
+</body>
+</html>

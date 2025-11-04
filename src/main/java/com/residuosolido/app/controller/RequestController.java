@@ -493,18 +493,48 @@ public class RequestController {
             @PathVariable Long id,
             Model model,
             RedirectAttributes redirectAttributes) {
+        long startTime = System.currentTimeMillis();
+        System.out.println("=== INICIO CARGA DETALLE SOLICITUD ID: " + id + " ===");
+        
         try {
+            long beforeQuery = System.currentTimeMillis();
             Optional<Request> requestOpt = requestService.findById(id);
+            long afterQuery = System.currentTimeMillis();
+            System.out.println("⏱️ Tiempo consulta DB: " + (afterQuery - beforeQuery) + "ms");
+            
             if (requestOpt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Solicitud no encontrada");
                 return "redirect:/acopio/requests";
             }
             
+            long beforeModel = System.currentTimeMillis();
             Request request = requestOpt.get();
+            
+            // Log de acceso a propiedades lazy
+            if (request.getUser() != null) {
+                System.out.println("✓ Usuario cargado: " + request.getUser().getUsername());
+            }
+            if (request.getOrganization() != null) {
+                System.out.println("✓ Organización cargada: " + request.getOrganization().getUsername());
+            }
+            if (request.getMaterials() != null) {
+                System.out.println("✓ Materiales cargados: " + request.getMaterials().size() + " items");
+            }
+            
             model.addAttribute("request", request);
             model.addAttribute("viewType", "detail");
+            long afterModel = System.currentTimeMillis();
+            System.out.println("⏱️ Tiempo preparación modelo: " + (afterModel - beforeModel) + "ms");
+            
+            long totalTime = System.currentTimeMillis() - startTime;
+            System.out.println("⏱️ TIEMPO TOTAL: " + totalTime + "ms");
+            System.out.println("=== FIN CARGA DETALLE SOLICITUD ===\n");
+            
             return "org/requests";
         } catch (Exception e) {
+            long totalTime = System.currentTimeMillis() - startTime;
+            System.err.println("❌ ERROR después de " + totalTime + "ms: " + e.getMessage());
+            e.printStackTrace();
             handleRequestError(e, redirectAttributes, "Error al cargar solicitud");
             return "redirect:/acopio/requests";
         }

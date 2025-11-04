@@ -191,15 +191,15 @@
         </div>
         
         <!-- Vista de Detalles -->
-        <div th:if="${viewType == 'detail' and request != null}" class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i data-lucide="clipboard-list" class="w-6 h-6 text-blue-600"></i>
+        <div th:if="${viewType == 'detail' and request != null}" class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900">Detalles de la Solicitud</h2>
-                        <p class="text-sm text-gray-600">Información completa de la solicitud de recolección</p>
+                        <h2 class="text-lg font-bold text-gray-900">Detalles de la Solicitud</h2>
+                        <p class="text-xs text-gray-600">Información completa de la solicitud de recolección</p>
                     </div>
                 </div>
                 <a href="/acopio/requests" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors">
@@ -208,16 +208,16 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <!-- Información Principal -->
-                <div class="space-y-4">
+                <div class="space-y-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${request.description}">Descripción de la solicitud</p>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Descripción</label>
+                        <p class="text-sm text-gray-900 bg-gray-50 p-2 rounded-lg" th:text="${request.description}">Descripción de la solicitud</p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Estado</label>
                         <span th:text="${request.status.displayName}"
                               th:classappend="${request.status.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
                                              request.status.name() == 'ACCEPTED' ? 'bg-blue-100 text-blue-800' :
@@ -228,41 +228,41 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Creación</label>
-                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</p>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Fecha de Creación</label>
+                        <p class="text-sm text-gray-900 bg-gray-50 p-2 rounded-lg" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</p>
                     </div>
 
                     <div th:if="${request.scheduledDate}">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Programada</label>
-                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${#temporals.format(request.scheduledDate, 'dd/MM/yyyy')}">Fecha programada</p>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Fecha Programada</label>
+                        <p class="text-sm text-gray-900 bg-gray-50 p-2 rounded-lg" th:text="${#temporals.format(request.scheduledDate, 'dd/MM/yyyy')}">Fecha programada</p>
                     </div>
                 </div>
 
                 <!-- Información del Usuario y Ubicación -->
-                <div class="space-y-4">
+                <div class="space-y-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Usuario Solicitante</label>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="font-medium text-gray-900" th:text="${request.user.fullName}">Nombre del usuario</p>
-                            <p class="text-sm text-gray-600" th:text="${request.user.username}">Usuario</p>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Usuario Solicitante</label>
+                        <div class="bg-gray-50 p-2 rounded-lg">
+                            <p class="text-sm font-medium text-gray-900" th:text="${request.user.fullName}">Nombre del usuario</p>
+                            <p class="text-xs text-gray-600" th:text="${request.user.username}">Usuario</p>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Dirección de Recolección</label>
-                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${request.collectionAddress}">Dirección</p>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Dirección de Recolección</label>
+                        <p class="text-sm text-gray-900 bg-gray-50 p-2 rounded-lg" th:text="${request.collectionAddress}">Dirección</p>
                     </div>
 
                     <div th:if="${request.user.phone}">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono de Contacto</label>
-                        <p class="text-gray-900 bg-gray-50 p-3 rounded-lg" th:text="${request.user.phone}">Teléfono</p>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Teléfono de Contacto</label>
+                        <p class="text-sm text-gray-900 bg-gray-50 p-2 rounded-lg" th:text="${request.user.phone}">Teléfono</p>
                     </div>
                 </div>
             </div>
 
             <!-- Materiales -->
-            <div th:if="${request.materials != null and !request.materials.empty}" class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Materiales Solicitados</label>
+            <div th:if="${request.materials != null and !request.materials.empty}" class="mt-4">
+                <label class="block text-xs font-medium text-gray-700 mb-2">Materiales Solicitados</label>
                 <div class="flex flex-wrap gap-2">
                     <span th:each="material : ${request.materials}"
                           class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
@@ -273,9 +273,9 @@
             </div>
 
             <!-- Organización Asignada -->
-            <div th:if="${request.organization}" class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Organización Asignada</label>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div th:if="${request.organization}" class="mt-4">
+                <label class="block text-xs font-medium text-gray-700 mb-2">Organización Asignada</label>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
                     <p class="text-base font-semibold text-blue-900" th:text="${request.organization.getFullName()}">
                         Nombre de organización
                     </p>
@@ -291,15 +291,15 @@
             </div>
 
             <!-- Notas -->
-            <div th:if="${request.notes}" class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Notas Adicionales</label>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <p class="text-gray-900" th:text="${request.notes}">Notas de la solicitud</p>
+            <div th:if="${request.notes}" class="mt-4">
+                <label class="block text-xs font-medium text-gray-700 mb-2">Notas Adicionales</label>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-sm text-gray-900" th:text="${request.notes}">Notas de la solicitud</p>
                 </div>
             </div>
 
             <!-- Acciones -->
-            <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
+            <div class="mt-4 pt-4 border-t border-gray-200 flex justify-between">
                 <a href="/acopio/requests" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
                     Volver a la Lista
                 </a>
