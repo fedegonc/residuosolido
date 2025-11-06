@@ -25,8 +25,12 @@
     <!-- Chat Widget -->
     <div th:replace="~{fragments/faqs/chat-widget :: chatWidget}"></div>
     
+    <!-- Scripts -->
     <script>
         lucide.createIcons();
     </script>
+    
+    <!-- Script de notificaciones -->
+    <th:block th:replace="~{fragments/components/notification-badge :: script}"></th:block>
 </body>
 </html>

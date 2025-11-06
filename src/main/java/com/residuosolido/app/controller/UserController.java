@@ -3,6 +3,8 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.*;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.service.*;
+import com.residuosolido.app.service.notification.SystemNotificationService;
+import com.residuosolido.app.model.notification.NotificationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,9 @@ public class UserController {
     
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private SystemNotificationService systemNotificationService;
 
     // ========== HOME ==========
     // NOTA: Las rutas "/" y "/index" ahora son manejadas por AuthController
@@ -674,12 +679,13 @@ public class UserController {
             String materialsString = materials != null ? String.join(", ", materials) : "";
             Request request = requestService.createRequest(currentUser, description, materialsString, collectionAddress);
             
+            boolean requestUpdated = false;
             // Subir imagen si se proporcionó
             if (imageFile != null && !imageFile.isEmpty() && cloudinaryService != null) {
                 try {
                     String imageUrl = cloudinaryService.uploadFile(imageFile);
                     request.setImageUrl(imageUrl);
-                    requestService.save(request);
+                    requestUpdated = true;
                 } catch (Exception e) {
                     logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
                     // Continuar sin imagen
@@ -691,9 +697,36 @@ public class UserController {
                 try {
                     User org = userService.getUserOrThrow(organizationId);
                     request.setOrganization(org);
-                    requestService.save(request);
+                    requestUpdated = true;
                 } catch (Exception e) {
                     logger.warn("Error al asignar organización: {}", e.getMessage());
+                }
+            }
+
+            if (requestUpdated) {
+                requestService.save(request);
+            }
+
+            // Notificar al usuario que la solicitud fue registrada
+            try {
+                systemNotificationService.sendCustomNotification(
+                        currentUser,
+                        "Solicitud registrada",
+                        "Tu solicitud de recolección se registró correctamente y está pendiente de procesamiento.",
+                        NotificationType.SUCCESS,
+                        "/usuarios/solicitudes/" + request.getId()
+                );
+            } catch (Exception e) {
+                logger.warn("No se pudo enviar la notificación de registro al usuario {}: {}", currentUser.getId(), e.getMessage());
+            }
+
+            // Notificar a la organización asignada, si corresponde
+            if (request.getOrganization() != null) {
+                try {
+                    systemNotificationService.notifyNewRequestToOrganization(request);
+                } catch (Exception e) {
+                    logger.warn("No se pudo notificar a la organización {} sobre la solicitud {}: {}",
+                            request.getOrganization().getId(), request.getId(), e.getMessage());
                 }
             }
             

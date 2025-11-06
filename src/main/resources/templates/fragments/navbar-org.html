@@ -22,6 +22,10 @@
         <!-- Menu Button (Desktop & Mobile) -->
         <div class="flex items-center gap-3">
           <span class="text-sm text-gray-600 hidden sm:inline" sec:authentication="name">Organización</span>
+          
+          <!-- Badge de notificaciones -->
+          <th:block th:replace="~{fragments/components/notification-badge :: badge}"></th:block>
+          
           <button id="menuBtn" type="button" class="p-2 rounded-md text-gray-600 hover:bg-gray-100 border border-gray-300">
           <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>

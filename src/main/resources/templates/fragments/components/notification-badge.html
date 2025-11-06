@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <!-- Fragmento para mostrar el contador de notificaciones en la barra de navegación -->
+        <div th:fragment="badge" class="relative" id="notification-badge">
+            <button type="button" id="notification-button" class="relative inline-flex items-center p-2 text-gray-600 hover:text-gray-900">
+                <i data-lucide="bell" class="w-6 h-6"></i>
+                <span id="notification-counter" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full" style="display:none"></span>
+            </button>
+
+            <!-- Dropdown de notificaciones -->
+            <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <span class="text-sm font-semibold text-gray-800">Notificaciones</span>
+                    <a href="/notificaciones" class="text-xs text-emerald-600 hover:text-emerald-700">Ver todas</a>
+                </div>
+                <div id="notification-list" class="max-h-80 overflow-auto divide-y divide-gray-100">
+                    <div class="p-4 text-sm text-gray-500">No hay notificaciones.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fragmento para incluir el script de actualización de notificaciones -->
+        <div th:fragment="script">
+            <script>
+                // Función para actualizar el contador de notificaciones
+                function updateNotificationCounter() {
+                    fetch('/api/notificaciones/contador')
+                        .then(response => response.json())
+                        .then(data => {
+                            const counter = document.getElementById('notification-counter');
+                            if (counter) {
+                                if (data.unreadCount > 0) {
+                                    counter.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+                                    counter.style.display = 'inline-flex';
+                                } else {
+                                    counter.style.display = 'none';
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error al actualizar notificaciones:', error));
+                }
+
+                // Cargar últimas notificaciones en el dropdown
+                async function loadLatestNotifications() {
+                    try {
+                        const resp = await fetch('/api/notificaciones/ultimas');
+                        if (!resp.ok) throw new Error('Error al cargar notificaciones');
+                        const items = await resp.json();
+                        const list = document.getElementById('notification-list');
+                        if (!list) return;
+
+                        if (!items || items.length === 0) {
+                            list.innerHTML = '<div class="p-4 text-sm text-gray-500">No hay notificaciones.</div>';
+                            return;
+                        }
+
+                        list.innerHTML = items.map(n => `
+                            <button type="button" data-id="${n.id}" data-action-url="${n.actionUrl || ''}" class="w-full text-left p-3 hover:bg-gray-50 flex gap-3">
+                                <div class="mt-0.5">
+                                    <i data-lucide="bell" class="w-4 h-4 ${n.read ? 'text-gray-400' : 'text-emerald-600'}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">${escapeHtml(n.title || 'Notificación')}</div>
+                                    <div class="text-xs text-gray-600 line-clamp-2">${escapeHtml(n.message || '')}</div>
+                                </div>
+                            </button>
+                        `).join('');
+
+                        if (window.lucide) lucide.createIcons();
+
+                        // Wire click handlers
+                        list.querySelectorAll('button[data-id]')?.forEach(btn => {
+                            btn.addEventListener('click', async () => {
+                                const id = btn.getAttribute('data-id');
+                                const actionUrl = btn.getAttribute('data-action-url');
+                                try {
+                                    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+                                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+                                    await fetch(`/notificaciones/${id}/marcar-leida`, {
+                                        method: 'POST',
+                                        headers: {
+                                            ...(csrfToken && csrfHeader ? { [csrfHeader]: csrfToken } : {})
+                                        }
+                                    });
+                                } catch (e) { /* ignore */ }
+                                // actualizar contador y cerrar dropdown
+                                updateNotificationCounter();
+                                toggleDropdown(false);
+                                // navegar
+                                if (actionUrl && actionUrl !== 'null' && actionUrl !== '') {
+                                    window.location.href = actionUrl;
+                                } else {
+                                    window.location.href = '/notificaciones';
+                                }
+                            });
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+
+                function toggleDropdown(forceOpen) {
+                    const dd = document.getElementById('notification-dropdown');
+                    if (!dd) return;
+                    const isHidden = dd.classList.contains('hidden');
+                    const willOpen = forceOpen === true || (forceOpen === undefined && isHidden);
+                    if (willOpen) {
+                        dd.classList.remove('hidden');
+                        loadLatestNotifications();
+                    } else {
+                        dd.classList.add('hidden');
+                    }
+                }
+
+                function escapeHtml(str) {
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
+
+                // Actualizar al cargar la página
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateNotificationCounter();
+                    
+                    // Actualizar cada 2 minutos
+                    setInterval(updateNotificationCounter, 120000);
+
+                    // Toggle dropdown al hacer clic
+                    const btn = document.getElementById('notification-button');
+                    const dd = document.getElementById('notification-dropdown');
+                    btn?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleDropdown();
+                    });
+
+                    // Cerrar al hacer clic fuera
+                    document.addEventListener('click', (e) => {
+                        if (dd && !dd.contains(e.target) && !btn?.contains(e.target)) {
+                            dd.classList.add('hidden');
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </body>
+</html>

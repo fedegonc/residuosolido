@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.*;
 import com.residuosolido.app.service.*;
+import com.residuosolido.app.service.notification.SystemNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +46,9 @@ public class RequestController {
     
     @Autowired(required = false)
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private SystemNotificationService systemNotificationService;
 
     // ========== MÉTODOS COMUNES ==========
     
@@ -162,13 +166,27 @@ public class RequestController {
                     } catch (Exception ignored) { }
                 }
                 if (request.getStatus() == null) request.setStatus(RequestStatus.PENDING);
-                requestService.save(request);
+                Request savedRequest = requestService.save(request);
+
+                // Notificar al usuario si la solicitud queda asignada a una organización
+                if (savedRequest.getOrganization() != null) {
+                    try {
+                        systemNotificationService.notifyRequestAssigned(savedRequest);
+                        systemNotificationService.notifyRequestStatusChange(savedRequest, RequestStatus.PENDING);
+                    } catch (Exception ex) {
+                        // Registrar pero no interrumpir el flujo del admin
+                        org.slf4j.LoggerFactory.getLogger(RequestController.class)
+                                .warn("No se pudo notificar la creación de solicitud {}: {}", savedRequest.getId(), ex.getMessage());
+                    }
+                }
                 redirectAttributes.addFlashAttribute("successMessage", "Solicitud creada correctamente");
             } else {
                 // Actualizar existente: preservar campos no editables
                 Optional<Request> originalRequest = requestService.findById(request.getId());
                 if (originalRequest.isPresent()) {
                     Request updatedRequest = originalRequest.get();
+                    RequestStatus previousStatus = updatedRequest.getStatus();
+                    User previousOrganization = updatedRequest.getOrganization();
                     
                     // Manejar imagen si se subió
                     if (requestImageFile != null && !requestImageFile.isEmpty() && cloudinaryService != null) {
@@ -179,7 +197,19 @@ public class RequestController {
                     updatedRequest.setStatus(request.getStatus());
                     updatedRequest.setNotes(request.getNotes());
                     updatedRequest.setScheduledDate(request.getScheduledDate());
-                    requestService.save(updatedRequest);
+                    Request savedRequest = requestService.save(updatedRequest);
+
+                    try {
+                        if (previousOrganization == null && savedRequest.getOrganization() != null) {
+                            systemNotificationService.notifyRequestAssigned(savedRequest);
+                        }
+                        if (previousStatus != savedRequest.getStatus()) {
+                            systemNotificationService.notifyRequestStatusChange(savedRequest, previousStatus);
+                        }
+                    } catch (Exception ex) {
+                        org.slf4j.LoggerFactory.getLogger(RequestController.class)
+                                .warn("No se pudieron enviar notificaciones al actualizar solicitud {}: {}", savedRequest.getId(), ex.getMessage());
+                    }
                     redirectAttributes.addFlashAttribute("successMessage", "Solicitud actualizada correctamente");
                 }
             }
@@ -438,9 +468,21 @@ public class RequestController {
             // Asignar la organización actual a la solicitud
             User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
             Request request = requestService.findById(id).orElseThrow();
+            RequestStatus previousStatus = request.getStatus();
+            User previousOrg = request.getOrganization();
             request.setOrganization(organization);
             request.setStatus(RequestStatus.IN_PROGRESS);
-            requestService.save(request);
+            Request savedRequest = requestService.save(request);
+
+            try {
+                if (previousOrg == null && savedRequest.getOrganization() != null) {
+                    systemNotificationService.notifyRequestAssigned(savedRequest);
+                }
+                systemNotificationService.notifyRequestStatusChange(savedRequest, previousStatus);
+            } catch (Exception ex) {
+                org.slf4j.LoggerFactory.getLogger(RequestController.class)
+                        .warn("No se pudo notificar la aceptación de la solicitud {}: {}", id, ex.getMessage());
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud aceptada y en proceso");
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al aceptar solicitud");
@@ -457,7 +499,17 @@ public class RequestController {
             @PathVariable Long id, 
             RedirectAttributes redirectAttributes) {
         try {
-            requestService.rejectRequest(id);
+            Request request = requestService.findById(id).orElseThrow();
+            RequestStatus previousStatus = request.getStatus();
+            request.setStatus(RequestStatus.REJECTED);
+            Request savedRequest = requestService.save(request);
+
+            try {
+                systemNotificationService.notifyRequestStatusChange(savedRequest, previousStatus);
+            } catch (Exception ex) {
+                org.slf4j.LoggerFactory.getLogger(RequestController.class)
+                        .warn("No se pudo notificar el rechazo de la solicitud {}: {}", id, ex.getMessage());
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud rechazada correctamente");
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al rechazar solicitud");
@@ -475,8 +527,16 @@ public class RequestController {
             RedirectAttributes redirectAttributes) {
         try {
             Request request = requestService.findById(id).orElseThrow();
+            RequestStatus previousStatus = request.getStatus();
             request.setStatus(RequestStatus.COMPLETED);
-            requestService.save(request);
+            Request savedRequest = requestService.save(request);
+
+            try {
+                systemNotificationService.notifyRequestStatusChange(savedRequest, previousStatus);
+            } catch (Exception ex) {
+                org.slf4j.LoggerFactory.getLogger(RequestController.class)
+                        .warn("No se pudo notificar la finalización de la solicitud {}: {}", id, ex.getMessage());
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud completada exitosamente");
         } catch (Exception e) {
             handleRequestError(e, redirectAttributes, "Error al completar solicitud");

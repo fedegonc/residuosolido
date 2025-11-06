@@ -148,6 +148,15 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     long countByStatusesAndOrganization(@Param("statuses") List<RequestStatus> statuses,
                                         @Param("organization") User organization);
 
+    @Query("""
+            SELECT r.status, COUNT(DISTINCT r)
+            FROM Request r
+            WHERE r.organization = :organization AND r.status IN :statuses
+            GROUP BY r.status
+            """)
+    List<Object[]> countGroupedByOrganizationAndStatuses(@Param("organization") User organization,
+                                                         @Param("statuses") List<RequestStatus> statuses);
+
     // Paso 1: Traer solo IDs de las top N solicitudes (LIMIT en BD)
     // Incluye solicitudes sin materiales y solicitudes con materiales específicos
     @Query(value = """

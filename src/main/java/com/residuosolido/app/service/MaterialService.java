@@ -3,6 +3,7 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.model.Material;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.MaterialRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,10 @@ public class MaterialService {
         return materialRepository.save(material);
     }
 
+    @Transactional
     public void deleteById(Long id) {
+        materialRepository.deleteMaterialAssociations(id);
+        materialRepository.deleteMaterialUserAssociations(id);
         materialRepository.deleteById(id);
     }
 

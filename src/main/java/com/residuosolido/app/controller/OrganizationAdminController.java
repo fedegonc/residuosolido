@@ -171,7 +171,8 @@ public class OrganizationAdminController {
     // ========== ORG DASHBOARD & PROFILE ==========
     @PreAuthorize("hasRole('ORGANIZATION')")
     @GetMapping("/acopio/inicio")
-    public String orgDashboard(Authentication authentication, Model model) {
+    public String orgDashboard(Authentication authentication, Model model,
+                               @RequestParam(name = "debugAll", required = false, defaultValue = "false") boolean debugAll) {
         long startTime = System.currentTimeMillis();
         System.out.println("=== INICIO CARGA DASHBOARD ORGANIZACIÓN ===");
         int queryCount = 0;
@@ -191,7 +192,10 @@ public class OrganizationAdminController {
             // DEBUG: Ver cuántas solicitudes pendientes hay en total en el sistema
             long totalPendingInSystem = requestService.countByStatus(RequestStatus.PENDING);
             System.out.println("🔍 DEBUG: Total solicitudes PENDING en sistema: " + totalPendingInSystem);
-            requestService.logPendingRequestsDebug();
+            // Evitar consulta pesada en cada carga: sólo si se pide explícitamente
+            if (debugAll) {
+                requestService.logPendingRequestsDebug();
+            }
 
             // PENDIENTES: Contar directamente sin traer listas
             long pendingCount;
@@ -229,26 +233,21 @@ public class OrganizationAdminController {
             model.addAttribute("pendingRequestsList", pendingRequestsList);
             System.out.println("✅ PENDIENTES: " + pendingCount + " (mostrando " + pendingRequestsList.size() + " en lista)");
             
-            // EN PROCESO: Contar directamente
-            long inProgressStart = System.currentTimeMillis();
-            long inProgressCount = requestService.countByStatusesAndOrganization(
-                java.util.List.of(RequestStatus.IN_PROGRESS, RequestStatus.ACCEPTED),
-                currentOrg
+            // EN PROCESO + COMPLETADAS: Consolidar en una sola consulta agrupada
+            long groupedStart = System.currentTimeMillis();
+            java.util.Map<RequestStatus, Long> groupedCounts = requestService.countGroupedByOrganizationAndStatuses(
+                currentOrg,
+                java.util.List.of(RequestStatus.IN_PROGRESS, RequestStatus.ACCEPTED, RequestStatus.COMPLETED)
             );
             queryCount++;
-            System.out.println("  ⏱️ Conteo en proceso: " + (System.currentTimeMillis() - inProgressStart) + "ms");
+            long groupedElapsed = System.currentTimeMillis() - groupedStart;
+            long inProgressCount = groupedCounts.getOrDefault(RequestStatus.IN_PROGRESS, 0L)
+                    + groupedCounts.getOrDefault(RequestStatus.ACCEPTED, 0L);
+            long completedCount = groupedCounts.getOrDefault(RequestStatus.COMPLETED, 0L);
+            System.out.println("  ⏱️ Conteo agrupado en proceso/completadas: " + groupedElapsed + "ms");
             System.out.println("✅ EN PROCESO: " + inProgressCount);
-            model.addAttribute("inProgressRequests", inProgressCount);
-            
-            // COMPLETADAS: Contar directamente
-            long completedStart = System.currentTimeMillis();
-            long completedCount = requestService.countByStatusesAndOrganization(
-                java.util.List.of(RequestStatus.COMPLETED),
-                currentOrg
-            );
-            queryCount++;
-            System.out.println("  ⏱️ Conteo completadas: " + (System.currentTimeMillis() - completedStart) + "ms");
             System.out.println("✅ COMPLETADAS: " + completedCount);
+            model.addAttribute("inProgressRequests", inProgressCount);
             model.addAttribute("completedRequests", completedCount);
             
             // Total de kg reciclados (placeholder - se puede implementar después)

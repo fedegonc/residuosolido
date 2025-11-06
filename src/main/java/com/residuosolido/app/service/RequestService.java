@@ -306,6 +306,21 @@ public class RequestService {
     }
 
     @Transactional(readOnly = true)
+    public Map<RequestStatus, Long> countGroupedByOrganizationAndStatuses(User organization, List<RequestStatus> statuses) {
+        Map<RequestStatus, Long> map = new EnumMap<>(RequestStatus.class);
+        if (organization == null || statuses == null || statuses.isEmpty()) {
+            return map;
+        }
+        List<Object[]> rows = requestRepository.countGroupedByOrganizationAndStatuses(organization, statuses);
+        for (Object[] row : rows) {
+            RequestStatus status = (RequestStatus) row[0];
+            Long count = (Long) row[1];
+            map.put(status, count);
+        }
+        return map;
+    }
+
+    @Transactional(readOnly = true)
     public void logPendingRequestsDebug() {
         List<Request> pending = requestRepository.findByStatusWithDetails(RequestStatus.PENDING);
         System.out.println("🔎 DEBUG Pending total con detalles: " + pending.size());
