@@ -1,4 +1,4 @@
-# 🏗️ Arquitectura a Gran Escala - EcoSolicitud
+# 🏗️ Arquitectura a Gran Escala - Residuo Sólido
 
 ## 📋 Propósito
 Este documento registra decisiones arquitectónicas, patrones de diseño y consideraciones de escalabilidad para el proyecto `residuosolido`.
@@ -70,7 +70,7 @@ Navbar único con lógica `sec:authorize` para mostrar/ocultar opciones según r
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
       layout:decorate="~{fragments/[LAYOUT]}">
 <head>
-    <title>Título - EcoSolicitud</title>
+    <title>Título - Residuo Sólido</title>
 </head>
 <body>
 <main layout:fragment="content">

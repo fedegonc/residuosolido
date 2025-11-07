@@ -1,4 +1,4 @@
-# Sistema de Footers - EcoSolicitud
+# Sistema de Footers - Residuo Sólido
 
 ## 🎯 Principios: KISS, DRY, SOLID
 
@@ -48,7 +48,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <span class="text-xs text-gray-300">EcoSolicitud</span>
+                <span class="text-xs text-gray-300">Residuo Sólido</span>
                 <span class="text-xs text-gray-500">• Rivera - Sant'Ana do Livramento</span>
             </div>
             <nav class="flex items-center space-x-4">
@@ -67,7 +67,7 @@
 <!-- auth/login.html líneas 65-69 -->
 <footer class="bg-gray-800 text-white py-8 mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p>&copy; 2024 EcoSolicitud - Rivera Sant'ana do Livramento</p>
+        <p>&copy; 2024 Residuo Sólido - Rivera Sant'ana do Livramento</p>
     </div>
 </footer>
 ```

@@ -1,4 +1,4 @@
-# Resumen de Refactorización - EcoSolicitud
+# Resumen de Refactorización - Residuo Sólido
 
 **Fecha:** 2025-10-10  
 **Objetivo:** Eliminar código duplicado y mejorar consistencia de templates

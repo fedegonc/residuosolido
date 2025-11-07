@@ -1,4 +1,4 @@
-# Sistema de Headers y Navbars - EcoSolicitud
+# Sistema de Headers y Navbars - Residuo Sólido
 
 ## 🎯 Principios Aplicados: KISS, DRY, SOLID
 
@@ -111,7 +111,7 @@ Cada página HTML puede:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:title-pattern="$CONTENT_TITLE - EcoSolicitud">EcoSolicitud</title>
+    <title layout:title-pattern="$CONTENT_TITLE - Residuo Sólido">Residuo Sólido</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -175,7 +175,7 @@ Cada página HTML puede:
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
       layout:decorate="~{fragments/user-layout}">
 <head>
-    <title>Mi Página - EcoSolicitud</title>
+    <title>Mi Página - Residuo Sólido</title>
 </head>
 <body>
 <main layout:fragment="content">
