@@ -16,7 +16,7 @@
         <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
             <ol class="inline-flex items-center">
                 <li class="inline-flex items-center">
-                    <span class="text-gray-700 font-medium">Inicio</span>
+                    <span class="text-gray-700 font-medium" th:text="#{dashboard.user.breadcrumb}">Inicio</span>
                 </li>
             </ol>
         </nav>
@@ -36,11 +36,12 @@
                     <div class="mb-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                         <div>
                             <h1 class="text-xl font-semibold text-gray-900 mb-1">
-                                Hola, <span th:text="${#authentication.principal.username}">Usuario</span>
+                                <span class="mr-1" th:text="#{dashboard.user.greeting}">Hola,</span>
+                                <span th:text="${#authentication.principal.username}">Usuario</span>
                             </h1>
                             <p class="text-sm text-gray-500 flex items-center gap-2">
                                 <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
-                                Seguimiento de tus solicitudes y actividades ambientales en un solo lugar.
+                                <span th:text="#{dashboard.user.greeting.subtitle}">Seguimiento de tus solicitudes y actividades ambientales en un solo lugar.</span>
                             </p>
                         </div>
                         <div th:if="${nextRequest != null}" class="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 lg:px-4 lg:py-3 flex items-center gap-3">
@@ -48,7 +49,7 @@
                                 <i data-lucide="calendar-check" class="w-5 h-5 text-emerald-600"></i>
                             </div>
                             <div>
-                                <p class="text-xs uppercase tracking-wide text-emerald-700 font-semibold">Próxima recolección</p>
+                                <p class="text-xs uppercase tracking-wide text-emerald-700 font-semibold" th:text="#{dashboard.user.next_request.badge}">Próxima recolección</p>
                                 <p class="text-sm text-gray-700">
                                     <span th:text="${#temporals.format(nextRequest.scheduledDate, 'dd ')}"></span>
                                     <span th:text="${#temporals.format(nextRequest.scheduledDate, 'MMMM')}" class="capitalize"></span>
@@ -66,8 +67,8 @@
                                     <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600"></i>
                                 </div>
                                 <div>
-                                    <span class="block text-sm font-semibold text-gray-800">Crear nueva solicitud</span>
-                                    <span class="text-xs text-gray-500">Ingresa los materiales que necesitas reciclar</span>
+                                    <span class="block text-sm font-semibold text-gray-800" th:text="#{dashboard.user.quick_actions.title}">Crear nueva solicitud</span>
+                                    <span class="text-xs text-gray-500" th:text="#{dashboard.user.quick_actions.subtitle}">Ingresa los materiales que necesitas reciclar</span>
                                 </div>
                             </div>
                         </a>
@@ -78,8 +79,8 @@
                                     <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <span class="block text-sm font-semibold text-gray-800">Ver mis solicitudes</span>
-                                    <span class="text-xs text-gray-500">Revisa el estado y detalles en curso</span>
+                                    <span class="block text-sm font-semibold text-gray-800" th:text="#{dashboard.user.quick_actions.list.title}">Ver mis solicitudes</span>
+                                    <span class="text-xs text-gray-500" th:text="#{dashboard.user.quick_actions.list.subtitle}">Revisa el estado y detalles en curso</span>
                                 </div>
                             </div>
                         </a>
@@ -90,8 +91,8 @@
                                     <i data-lucide="settings" class="w-5 h-5 text-orange-500"></i>
                                 </div>
                                 <div>
-                                    <span class="block text-sm font-semibold text-gray-800">Actualizar mis datos</span>
-                                    <span class="text-xs text-gray-500">Mantén tu perfil y direcciones al día</span>
+                                    <span class="block text-sm font-semibold text-gray-800" th:text="#{dashboard.user.quick_actions.profile.title}">Actualizar mis datos</span>
+                                    <span class="text-xs text-gray-500" th:text="#{dashboard.user.quick_actions.profile.subtitle}">Mantén tu perfil y direcciones al día</span>
                                 </div>
                             </div>
                         </a>
@@ -102,10 +103,10 @@
             <div class="space-y-3">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden h-full">
                     <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                        <h2 class="text-sm font-semibold text-gray-900">Resumen de actividad</h2>
+                        <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.activity.title}">Resumen de actividad</h2>
                         <span class="inline-flex items-center gap-1 text-xs text-gray-500">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                            Tus números más recientes
+                            <span th:text="#{dashboard.user.activity.subtitle}">Tus números más recientes</span>
                         </span>
                     </div>
 
@@ -115,13 +116,13 @@
                                 <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
                                 <div class="relative bg-white border border-gray-200 rounded-lg p-3 group-hover:border-emerald-300 transition-colors">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total</span>
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.total}">Total</span>
                                         <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
                                             <i data-lucide="package" class="w-4 h-4 text-emerald-600"></i>
                                         </div>
                                     </div>
                                     <p class="text-2xl font-bold text-gray-900" th:text="${totalRequests ?: 0}">0</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Solicitudes registradas</p>
+                                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.total.note}">Solicitudes registradas</p>
                                 </div>
                             </div>
 
@@ -129,13 +130,13 @@
                                 <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
                                 <div class="relative bg-white border border-gray-200 rounded-lg p-3 group-hover:border-yellow-300 transition-colors">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Pendientes</span>
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.pending}">Pendientes</span>
                                         <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
                                             <i data-lucide="clock" class="w-4 h-4 text-yellow-600"></i>
                                         </div>
                                     </div>
                                     <p class="text-2xl font-bold text-gray-900" th:text="${pendingRequests ?: 0}">0</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Esperando confirmación</p>
+                                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.pending.note}">Esperando confirmación</p>
                                 </div>
                             </div>
 
@@ -143,13 +144,13 @@
                                 <div class="absolute inset-0 bg-gradient-to-br from-sky-500 to-indigo-500 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
                                 <div class="relative bg-white border border-gray-200 rounded-lg p-3 group-hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">En proceso</span>
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.in_progress}">En proceso</span>
                                         <div class="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
                                             <i data-lucide="truck" class="w-4 h-4 text-sky-600"></i>
                                         </div>
                                     </div>
                                     <p class="text-2xl font-bold text-gray-900" th:text="${inProgressRequests ?: 0}">0</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Aceptadas o en camino</p>
+                                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.in_progress.note}">Aceptadas o en camino</p>
                                 </div>
                             </div>
 
@@ -157,13 +158,13 @@
                                 <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity"></div>
                                 <div class="relative bg-white border border-gray-200 rounded-lg p-3 group-hover:border-blue-300 transición-colors">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Completadas</span>
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.completed}">Completadas</span>
                                         <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                                             <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
                                         </div>
                                     </div>
                                     <p class="text-2xl font-bold text-gray-900" th:text="${completedRequests ?: 0}">0</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Recolectadas con éxito</p>
+                                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.completed.note}">Recolectadas con éxito</p>
                                 </div>
                             </div>
                         </div>
@@ -174,7 +175,7 @@
                     <div th:if="${nextRequest != null}">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
                             <i data-lucide="map" class="w-4 h-4 text-emerald-500"></i>
-                            <h2 class="text-sm font-semibold text-gray-900">Tu próxima recolección programada</h2>
+                            <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.next_request.title}">Tu próxima recolección programada</h2>
                         </div>
                         <div class="p-4 flex flex-col gap-3">
                             <div class="flex items-start gap-3">
@@ -186,18 +187,19 @@
                                     <div class="space-y-1 text-sm text-gray-600">
                                         <p class="flex items-center gap-2">
                                             <i data-lucide="clock" class="w-4 h-4 text-emerald-500"></i>
-                                            <span th:text="${#temporals.format(nextRequest.scheduledDate, 'EEEE d MMMM')}">Fecha programada</span>
+                                            <span th:text="${#temporals.format(nextRequest.scheduledDate, 'EEEE d MMMM')}" th:aria-label="#{dashboard.user.next_request.schedule}">Fecha programada</span>
                                         </p>
                                         <p class="flex items-center gap-2">
                                             <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
-                                            <span th:text="${nextRequest.collectionAddress}">Dirección</span>
+                                            <span th:text="${nextRequest.collectionAddress}" th:aria-label="#{dashboard.user.next_request.address}">Dirección</span>
                                         </p>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex justify-end">
                                 <a th:href="@{/usuarios/solicitud/{id}(id=${nextRequest.id})}"
-                                   class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700">
+                                   class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700"
+                                   th:text="#{dashboard.user.next_request.details}">
                                     Ver detalles
                                     <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                                 </a>
@@ -207,7 +209,7 @@
                     <div th:if="${nextRequest == null}" class="h-full">
                         <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
                             <i data-lucide="alert-circle" class="w-4 h-4 text-emerald-500"></i>
-                            <h2 class="text-sm font-semibold text-gray-900">No tienes recolecciones programadas</h2>
+                            <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.next_request.none.title}">No tienes recolecciones programadas</h2>
                         </div>
                         <div class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div class="flex items-start gap-3">
@@ -215,11 +217,11 @@
                                     <i data-lucide="calendar-plus" class="w-5 h-5 text-emerald-600"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-900">Agenda una nueva solicitud para comenzar</p>
-                                    <p class="text-xs text-gray-500">Una organización se pondrá en contacto contigo para coordinar la recolección.</p>
+                                    <p class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.next_request.none.subtitle}">Agenda una nueva solicitud para comenzar</p>
+                                    <p class="text-xs text-gray-500" th:text="#{dashboard.user.next_request.none.note}">Una organización se pondrá en contacto contigo para coordinar la recolección.</p>
                                 </div>
                             </div>
-                            <a href="/usuarios/solicitudes/nueva" class="inline-flex items-center px-3 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
+                            <a href="/usuarios/solicitudes/nueva" class="inline-flex items-center px-3 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700" th:text="#{dashboard.user.next_request.none.cta}">
                                 Crear solicitud
                                 <i data-lucide="sparkles" class="w-4 h-4 ml-2"></i>
                             </a>
@@ -232,9 +234,9 @@
         <!-- Mis Solicitudes -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-sm font-semibold text-gray-900">Solicitudes Recientes</h2>
+                <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.recent_requests.title}">Solicitudes Recientes</h2>
                 <a href="/usuarios/solicitudes" class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700 gap-1">
-                    Ver todas
+                    <span th:text="#{dashboard.user.recent_requests.link}">Ver todas</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
             </div>
@@ -293,11 +295,11 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <i data-lucide="inbox" class="w-8 h-8 text-gray-400"></i>
                 </div>
-                <p class="text-sm text-gray-600 mb-3">Aún no tienes solicitudes</p>
+                <p class="text-sm text-gray-600 mb-3" th:text="#{dashboard.user.recent_requests.empty}">Aún no tienes solicitudes</p>
                 <a href="/usuarios/solicitudes/nueva" 
                    class="inline-flex items-center px-3 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700">
                     <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
-                    Crear Solicitud
+                    <span th:text="#{dashboard.user.recent_requests.empty.cta}">Crear Solicitud</span>
                 </a>
             </div>
         </div>
