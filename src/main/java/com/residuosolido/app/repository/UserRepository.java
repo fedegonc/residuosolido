@@ -2,16 +2,18 @@ package com.residuosolido.app.repository;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import jakarta.persistence.QueryHint;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -35,9 +37,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     // JOIN FETCH para cargar materials junto con el usuario (evita LazyInitializationException)
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.materials WHERE u.id = :id")
+    @QueryHints(@QueryHint(name = org.hibernate.jpa.QueryHints.HINT_CACHEABLE, value = "false"))
     Optional<User> findByIdWithMaterials(@Param("id") Long id);
     
     // JOIN FETCH para cargar materials junto con el usuario por username
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.materials WHERE u.username = :username")
+    @QueryHints(@QueryHint(name = org.hibernate.jpa.QueryHints.HINT_CACHEABLE, value = "false"))
     Optional<User> findByUsernameWithMaterials(@Param("username") String username);
 }

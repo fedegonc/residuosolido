@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,6 +44,12 @@ public class Request {
 
     @Column(name = "collection_address", length = 500)
     private String collectionAddress;
+
+    @Column(name = "collection_latitude", precision = 10, scale = 7)
+    private BigDecimal collectionLatitude;
+
+    @Column(name = "collection_longitude", precision = 10, scale = 7)
+    private BigDecimal collectionLongitude;
     
     private LocalDate scheduledDate;
     private LocalDateTime createdAt;

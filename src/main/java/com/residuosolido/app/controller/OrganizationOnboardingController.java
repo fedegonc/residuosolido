@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -78,6 +79,8 @@ public class OrganizationOnboardingController {
     public String completeProfile(
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String phone,
+            @RequestParam(required = false) BigDecimal latitude,
+            @RequestParam(required = false) BigDecimal longitude,
             @RequestParam(required = false) List<Long> materialIds,
             Authentication authentication,
             HttpServletRequest request,
@@ -111,6 +114,10 @@ public class OrganizationOnboardingController {
             if (safeMaterialIds.isEmpty()) {
                 errors.add("Debes seleccionar al menos un material que aceptas");
             }
+
+            if (latitude == null || longitude == null) {
+                errors.add("Debes seleccionar una ubicación en el mapa");
+            }
             
             // Si hay errores, retornar al formulario
             if (!errors.isEmpty()) {
@@ -121,6 +128,8 @@ public class OrganizationOnboardingController {
             // Actualizar datos del usuario
             currentUser.setAddress(trimmedAddress);
             currentUser.setPhone(trimmedPhone);
+            currentUser.setLatitude(latitude);
+            currentUser.setLongitude(longitude);
             
             // Actualizar materiales aceptados
             List<Material> selectedMaterials = new ArrayList<>();

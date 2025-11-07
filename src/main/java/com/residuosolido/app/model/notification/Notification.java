@@ -1,5 +1,6 @@
 package com.residuosolido.app.model.notification;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.residuosolido.app.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(name = "created_at", nullable = false)

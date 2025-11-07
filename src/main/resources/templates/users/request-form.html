@@ -8,6 +8,7 @@
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <th:block th:replace="~{fragments/components/map :: leaflet_resources}"></th:block>
 </head>
 <body th:replace="~{fragments/user-layout :: layout(~{::main})}">
 <main>
@@ -81,15 +82,42 @@
                     </div>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
-                        Dirección de recolección
-                    </label>
-                    <input type="text" name="collectionAddress" id="collectionAddress" required
-                           th:value="${request?.collectionAddress}"
-                           class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                           placeholder="Dirección completa donde recoger los residuos">
+                <div class="grid gap-4 lg:grid-cols-2">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
+                            Dirección de recolección
+                        </label>
+                        <input type="text" name="collectionAddress" id="collectionAddress" required
+                               th:value="${request?.collectionAddress}"
+                               class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                               placeholder="Dirección completa donde recoger los residuos">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Latitud</label>
+                                <input type="text" name="collectionLatitude" id="collectionLatitude"
+                                       th:value="${request?.collectionLatitude}"
+                                       class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Longitud</label>
+                                <input type="text" name="collectionLongitude" id="collectionLongitude"
+                                       th:value="${request?.collectionLongitude}"
+                                       class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                            Selecciona un punto en el mapa para guardar las coordenadas exactas de la recolección.
+                        </p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i data-lucide="map" class="w-4 h-4 inline mr-1"></i>
+                            Ubicación en mapa
+                        </label>
+                        <div th:replace="~{fragments/components/map :: leaflet('user-request-map', '#collectionLatitude', '#collectionLongitude', ${request?.collectionLatitude}, ${request?.collectionLongitude}, 14, 'h-64 w-full')}"></div>
+                    </div>
                 </div>
                 
                 <!-- Selector de Organización de Acopio (PRIMERO) -->
