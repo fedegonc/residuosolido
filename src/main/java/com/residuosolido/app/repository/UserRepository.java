@@ -37,11 +37,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     // JOIN FETCH para cargar materials junto con el usuario (evita LazyInitializationException)
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.materials WHERE u.id = :id")
-    @QueryHints(@QueryHint(name = org.hibernate.jpa.QueryHints.HINT_CACHEABLE, value = "false"))
+    @QueryHints(@QueryHint(name = org.hibernate.jpa.HibernateHints.HINT_CACHEABLE, value = "false"))
     Optional<User> findByIdWithMaterials(@Param("id") Long id);
     
     // JOIN FETCH para cargar materials junto con el usuario por username
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.materials WHERE u.username = :username")
-    @QueryHints(@QueryHint(name = org.hibernate.jpa.QueryHints.HINT_CACHEABLE, value = "false"))
+    @QueryHints(@QueryHint(name = org.hibernate.jpa.HibernateHints.HINT_CACHEABLE, value = "false"))
     Optional<User> findByUsernameWithMaterials(@Param("username") String username);
 }
