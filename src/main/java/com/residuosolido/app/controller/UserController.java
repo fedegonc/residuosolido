@@ -1,7 +1,6 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.*;
-import com.residuosolido.app.model.Role;
 import com.residuosolido.app.service.*;
 import com.residuosolido.app.service.notification.SystemNotificationService;
 import com.residuosolido.app.model.notification.NotificationType;
@@ -20,13 +19,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
 @Controller
-public class UserController  
+public class UserController  {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired

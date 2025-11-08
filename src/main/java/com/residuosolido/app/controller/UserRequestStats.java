@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class UserRequestStats {
                     .toList();
         }
         model.addAttribute("users", allUsers);
-        Map<Long, UserRequestStats> userRequestsStats = buildUserRequestStats(allUsers);
+        Map<Long, UserRequestStatsSummary> userRequestsStats = buildUserRequestStats(allUsers);
         model.addAttribute("userRequestsStats", userRequestsStats);
         model.addAttribute("totalUsers", allUsers != null ? allUsers.size() : 0);
         model.addAttribute("query", query);
@@ -120,8 +121,8 @@ public class UserRequestStats {
         return "admin/users";
     }
 
-    private Map<Long, UserRequestStats> buildUserRequestStats(List<User> users) {
-        Map<Long, UserRequestStats> statsMap = new HashMap<>();
+    private Map<Long, UserRequestStatsSummary> buildUserRequestStats(List<User> users) {
+        Map<Long, UserRequestStatsSummary> statsMap = new HashMap<>();
         if (users == null || users.isEmpty()) {
             return statsMap;
         }
@@ -136,7 +137,7 @@ public class UserRequestStats {
             long assigned = statusCounts.getOrDefault(RequestStatus.ACCEPTED, 0L);
             long inProgress = statusCounts.getOrDefault(RequestStatus.PENDING, 0L);
             long total = statusCounts.values().stream().mapToLong(Long::longValue).sum();
-            statsMap.put(userId, new UserRequestStats(assigned, inProgress, total));
+            statsMap.put(userId, new UserRequestStatsSummary(assigned, inProgress, total));
         });
 
         return statsMap;
@@ -736,12 +737,12 @@ public class UserRequestStats {
         return "redirect:/usuarios/solicitudes";
     }
 
-    static class UserRequestStats {
+    static class UserRequestStatsSummary {
         private final long assigned;
         private final long inProgress;
         private final long total;
 
-        public UserRequestStats(long assigned, long inProgress, long total) {
+        public UserRequestStatsSummary(long assigned, long inProgress, long total) {
             this.assigned = assigned;
             this.inProgress = inProgress;
             this.total = total;
