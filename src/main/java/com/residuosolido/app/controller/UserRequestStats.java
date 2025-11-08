@@ -26,7 +26,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 @Controller
-public class UserController  
+public class UserRequestStats {
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired

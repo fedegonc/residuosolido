@@ -599,4 +599,13 @@ public class RequestController {
             return "redirect:/acopio/requests";
         }
     }
+
+    /**
+     * Ruta legacy (plural) para mantener compatibilidad con notificaciones antiguas
+     */
+    @PreAuthorize("hasRole('ORGANIZATION')")
+    @GetMapping("/acopio/solicitudes/{id}")
+    public String legacyOrgRequestDetailRedirect(@PathVariable Long id) {
+        return "redirect:/acopio/requests/" + id;
+    }
 }

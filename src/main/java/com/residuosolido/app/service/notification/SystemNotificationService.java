@@ -34,7 +34,7 @@ public class SystemNotificationService {
         String title = "Solicitud asignada";
         String message = "Tu solicitud de recolección ha sido asignada a la organización " + 
                          request.getOrganization().getFullName() + ". Pronto se pondrán en contacto contigo.";
-        String actionUrl = "/usuarios/solicitudes/" + request.getId();
+        String actionUrl = "/usuarios/solicitud/" + request.getId();
         
         log.info("[SystemNotification/Assigned] requestId={} userId={} orgId={}",
                 request.getId(),
@@ -62,7 +62,7 @@ public class SystemNotificationService {
         String title;
         String message;
         NotificationType type;
-        String actionUrl = "/usuarios/solicitudes/" + request.getId();
+        String actionUrl = "/usuarios/solicitud/" + request.getId();
 
         switch (request.getStatus()) {
             case ACCEPTED:
@@ -114,7 +114,7 @@ public class SystemNotificationService {
         String title = "Nueva solicitud recibida";
         String message = "Has recibido una nueva solicitud de recolección de " + 
                          request.getUser().getFullName() + ". Revisa los detalles para procesarla.";
-        String actionUrl = "/acopio/solicitudes/" + request.getId();
+        String actionUrl = "/acopio/requests/" + request.getId();
 
         log.info("[SystemNotification/NewRequestToOrg] requestId={} orgId={} userId={}",
                 request.getId(),
