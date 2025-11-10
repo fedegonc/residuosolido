@@ -2,6 +2,18 @@
   // Default center (Rivera / Sant'Ana do Livramento approx)
   const DEFAULT_CENTER = { lat: -30.895854, lng: -55.535653, zoom: 14 };
 
+  if (!window.__leafletMapErrorHooked) {
+    window.__leafletMapErrorHooked = true;
+    try {
+      window.addEventListener('error', function (e) {
+        try { console.error('[LeafletMap] window error', e && (e.message || e.error || e)); } catch (_) {}
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        try { console.error('[LeafletMap] unhandledrejection', e && e.reason); } catch (_) {}
+      });
+    } catch (_) {}
+  }
+
   function toNumber(val, fallback) {
     if (val === null || val === undefined) return fallback;
     if (typeof val === 'string' && val.trim() === '') return fallback;
@@ -45,9 +57,51 @@
     // Create map
     const map = L.map(container).setView([lat, lng], zoom);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    try {
+      map.on('load', function () {
+        try { console.log('[LeafletMap] map load event'); } catch (_) {}
+      });
+      map.on('layeradd', function (e) {
+        try { console.log('[LeafletMap] layer added', e && e.layer && e.layer._leaflet_id); } catch (_) {}
+      });
+      tileLayer.on('loading', function () {
+        try { console.log('[LeafletMap] tiles loading'); } catch (_) {}
+      });
+      tileLayer.on('load', function () {
+        try { console.log('[LeafletMap] tiles loaded'); } catch (_) {}
+      });
+      tileLayer.on('tileerror', function (e) {
+        try {
+          const src = e && e.tile && e.tile.src;
+          console.error('[LeafletMap] tileerror', { src: src });
+        } catch (_) {}
+      });
+    } catch (_) {}
+
+    try {
+      let tileLoadStartedAt = Date.now();
+      tileLayer.on('loading', function () { tileLoadStartedAt = Date.now(); });
+      setTimeout(function () {
+        const elapsed = Date.now() - tileLoadStartedAt;
+        if (elapsed > 8000) {
+          try { console.warn('[LeafletMap] tiles not loaded after', elapsed, 'ms'); } catch (_) {}
+        }
+      }, 9000);
+    } catch (_) {}
+
+    try {
+      setTimeout(function () {
+        try { console.log('[LeafletMap] probe OSM tile'); } catch (_) {}
+        const img = new Image();
+        img.onload = function () { try { console.log('[LeafletMap] probe ok'); } catch (_) {} };
+        img.onerror = function (e) { try { console.error('[LeafletMap] probe error', e); } catch (_) {} };
+        img.src = 'https://a.tile.openstreetmap.org/0/0/0.png';
+      }, 0);
+    } catch (_) {}
 
     // Marker
     const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
