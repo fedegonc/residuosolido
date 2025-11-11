@@ -13,13 +13,27 @@
   }
 
   function initOrganizationMaps() {
-    if (typeof L === 'undefined') {
-      console.warn('[index-page] Leaflet no está disponible.');
-      return;
+    const MAX_RETRIES = 6; // ~3s total si interval=500ms
+    const RETRY_INTERVAL = 500;
+
+    function tryInit(attempt = 1) {
+      if (typeof L === 'undefined') {
+        if (attempt === 1) {
+          console.warn('[index-page] Leaflet no está disponible. Reintentando...');
+        }
+        if (attempt < MAX_RETRIES) {
+          setTimeout(() => tryInit(attempt + 1), RETRY_INTERVAL);
+        } else {
+          console.warn('[index-page] Leaflet no se cargó a tiempo. Se mantiene fallback.');
+        }
+        return;
+      }
+
+      const mapElements = document.querySelectorAll('.org-map');
+      mapElements.forEach(createOrganizationMap);
     }
 
-    const mapElements = document.querySelectorAll('.org-map');
-    mapElements.forEach(createOrganizationMap);
+    tryInit();
   }
 
   function createOrganizationMap(element) {
@@ -59,9 +73,11 @@
     setTimeout(() => map.invalidateSize(), 0);
   }
 
+  // Ejecutar tras DOM listo; y si la ventana ya cargó, garantiza que Leaflet esté disponible
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
+  window.addEventListener('load', () => initOrganizationMaps());
 })();

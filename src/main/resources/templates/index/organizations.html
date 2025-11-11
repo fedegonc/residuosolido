@@ -58,6 +58,18 @@
             </div>
           </div>
 
+          <!-- Mapa rápido (hardcodeado) -->
+          <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <iframe
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-55.54412%2C-30.94801%2C-55.52412%2C-30.92801&layer=mapnik&marker=-30.93801%2C-55.53412"
+              width="100%"
+              height="140"
+              style="border:0;"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+
           <!-- Coordenadas en texto -->
           <div th:if="${org.latitude != null and org.longitude != null}" class="text-xs text-gray-500">
             <span><i class="fa-solid fa-compass text-gray-400 mr-1" aria-hidden="true"></i>
