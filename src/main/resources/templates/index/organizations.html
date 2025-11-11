@@ -51,7 +51,18 @@
                   <span th:text="#{organizations.contact}">Contacto</span>
                 </a>
               </div>
+              <div th:if="${org.phone != null and !org.phone.isEmpty()}" class="flex items-center gap-2">
+                <i class="fa-solid fa-phone text-green-600 text-sm" aria-hidden="true"></i>
+                <a th:href="|tel:${org.phone}|" class="text-green-600 hover:text-green-800 text-sm font-medium" th:text="${org.phone}">+598 000 000 000</a>
+              </div>
             </div>
+          </div>
+
+          <!-- Coordenadas en texto -->
+          <div th:if="${org.latitude != null and org.longitude != null}" class="text-xs text-gray-500">
+            <span><i class="fa-solid fa-compass text-gray-400 mr-1" aria-hidden="true"></i>
+              <span th:text="|Lat: ${org.latitude}, Lng: ${org.longitude}|">Lat: -30.000000, Lng: -55.000000</span>
+            </span>
           </div>
 
           <!-- Minimapa -->
