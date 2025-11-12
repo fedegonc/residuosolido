@@ -151,6 +151,43 @@ public class UserService {
     }
 
     /**
+     * Determina si el perfil de una organización está completo en base a campos obligatorios.
+     * Si el usuario no es ORGANIZATION, se considera completo por defecto.
+     */
+    @Transactional(readOnly = true)
+    public boolean isOrganizationProfileComplete(User user) {
+        if (user == null) return false;
+        if (user.getRole() != Role.ORGANIZATION) return true;
+
+        boolean hasAddress = user.getAddress() != null && !user.getAddress().trim().isEmpty() && user.getAddress().trim().length() >= 10;
+        boolean hasPhone = user.getPhone() != null && !user.getPhone().trim().isEmpty() && user.getPhone().trim().length() >= 8;
+        boolean hasCoords = user.getLatitude() != null && user.getLongitude() != null;
+        boolean hasMaterials = user.getMaterials() != null && !user.getMaterials().isEmpty();
+
+        boolean complete = hasAddress && hasPhone && hasCoords && hasMaterials;
+        logger.debug("Eval perfil ORG -> address={}, phone={}, coords={}, materials={} => complete={}", hasAddress, hasPhone, hasCoords, hasMaterials, complete);
+        return complete;
+    }
+
+    /**
+     * Carga el usuario por username, evalúa si su perfil está completo y sincroniza el flag profileCompleted si difiere.
+     * Retorna el estado final (true si completo).
+     */
+    @Transactional
+    public boolean syncOrganizationProfileCompletion(String username) {
+        User user = findAuthenticatedUserByUsername(username);
+        boolean complete = isOrganizationProfileComplete(user);
+        Boolean flag = user.getProfileCompleted();
+        if (flag == null || flag.booleanValue() != complete) {
+            logger.info("Sincronizando profileCompleted (antes: {}, ahora: {}) para usuario {}", flag, complete, username);
+            user.setProfileCompleted(complete);
+            userRepository.save(user);
+            userRepository.flush();
+        }
+        return complete;
+    }
+
+    /**
      * Busca usuarios por texto (username, email, firstName, lastName) de forma paginada
      */
     public Page<User> search(String q, Pageable pageable) {

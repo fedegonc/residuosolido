@@ -110,6 +110,16 @@
                             <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
                             Selecciona un punto en el mapa para guardar las coordenadas exactas de la recolección.
                         </p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <button type="button" id="btnPickOnMap" class="px-3 py-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 flex items-center gap-2">
+                                <i data-lucide="map-pin"></i>
+                                Elegir en mapa
+                            </button>
+                            <button type="button" id="btnUseMyLocation" class="px-3 py-2 text-xs border border-emerald-300 text-emerald-700 rounded-md hover:bg-emerald-50 flex items-center gap-2">
+                                <i data-lucide="crosshair"></i>
+                                Usar mi ubicación
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -335,6 +345,89 @@
                 }
             });
         }
+        // --- Coordenadas: helpers ---
+        function refreshIframe(lat, lng) {
+            const container = document.querySelector('iframe');
+            if (!container) return;
+            const bboxLatDelta = 0.02, bboxLngDelta = 0.02;
+            const minLat = lat - bboxLatDelta, maxLat = lat + bboxLatDelta;
+            const minLng = lng - bboxLngDelta, maxLng = lng + bboxLngDelta;
+            const src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}`;
+            container.src = src;
+        }
+
+        function setCoords(lat, lng) {
+            const latInput = document.getElementById('collectionLatitude');
+            const lngInput = document.getElementById('collectionLongitude');
+            if (latInput) latInput.value = Number(lat).toFixed(6);
+            if (lngInput) lngInput.value = Number(lng).toFixed(6);
+            refreshIframe(Number(lat), Number(lng));
+        }
+
+        // --- Usar mi ubicación ---
+        document.getElementById('btnUseMyLocation')?.addEventListener('click', function() {
+            if (!navigator.geolocation) {
+                alert('Geolocalización no soportada por el navegador');
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(function(pos){
+                setCoords(pos.coords.latitude, pos.coords.longitude);
+            }, function(){
+                alert('No se pudo obtener la ubicación');
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        });
+
+        // --- Modal de selección en mapa (Leaflet) ---
+        const modal = document.getElementById('mapPickerModal');
+        const modalBackdrop = document.getElementById('mapPickerBackdrop');
+        const modalOpenBtn = document.getElementById('btnPickOnMap');
+        const modalCloseBtn = document.getElementById('closeMapPicker');
+        const modalConfirmBtn = document.getElementById('confirmMapPicker');
+        let modalMap, modalMarker;
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+            // Asegurar Leaflet
+            (function ensureLeaflet(){
+                function injectCss(h){ const l=document.createElement('link'); l.rel='stylesheet'; l.href=h; document.head.appendChild(l); }
+                function injectJs(s){ return new Promise(r=>{ const n=document.createElement('script'); n.src=s; n.onload=r; document.head.appendChild(n); }); }
+                if (typeof window.L === 'undefined') {
+                    injectCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+                    injectJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').then(initModalMap);
+                } else {
+                    initModalMap();
+                }
+            })();
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modalBackdrop.classList.add('hidden');
+        }
+
+        function initModalMap(){
+            const latInput = document.getElementById('collectionLatitude');
+            const lngInput = document.getElementById('collectionLongitude');
+            const lat = Number(latInput?.value) || -30.895854;
+            const lng = Number(lngInput?.value) || -55.535653;
+            const el = document.getElementById('mapPickerCanvas');
+            if (!el) return;
+            if (modalMap) { setTimeout(()=> modalMap.invalidateSize(), 0); return; }
+            modalMap = L.map(el).setView([lat, lng], 14);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(modalMap);
+            modalMarker = L.marker([lat, lng], { draggable: true }).addTo(modalMap);
+            modalMap.on('click', function(e){ modalMarker.setLatLng(e.latlng); });
+        }
+
+        modalOpenBtn?.addEventListener('click', openModal);
+        modalCloseBtn?.addEventListener('click', closeModal);
+        modalConfirmBtn?.addEventListener('click', function(){
+            if (!modalMarker) { closeModal(); return; }
+            const pos = modalMarker.getLatLng();
+            setCoords(pos.lat, pos.lng);
+            closeModal();
+        });
         // --- Leaflet resources fallback loader ---
         (function ensureLeaflet(){
             function injectCss(href){

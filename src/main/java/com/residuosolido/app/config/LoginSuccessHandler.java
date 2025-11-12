@@ -48,7 +48,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("Usuario '{}' autenticado. Redirigiendo según rol. Roles: {}", username, userRoles);
 
         try {
-            // Verificar si es una organización con perfil incompleto
+            // Verificar si es una organización y sincronizar estado de perfil
             // IMPORTANTE: Siempre traer desde BD, nunca desde cache
             if (userRoles.contains(ROLE_ORGANIZATION)) {
                 try {
@@ -56,28 +56,23 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                     logger.info("=== LOGIN ORGANIZACIÓN ===");
                     logger.info("========================================");
                     
-                    User user = userService.findAuthenticatedUserByUsername(username);
-                    Boolean profileCompleted = user.getProfileCompleted();
+                    // Sincronizar el flag profileCompleted según datos reales
+                    boolean profileIsComplete = userService.syncOrganizationProfileCompletion(username);
                     
                     logger.info("Username: {}", username);
-                    logger.info("ID en BD: {}", user.getId());
-                    logger.info("Email: {}", user.getEmail());
-                    logger.info("Rol: {}", user.getRole());
-                    logger.info("----------------------------------------");
-                    logger.info("profileCompleted en BD: {}", profileCompleted);
-                    logger.info("Tipo de dato: {}", (profileCompleted != null ? profileCompleted.getClass().getSimpleName() : "NULL"));
+                    logger.info("Perfil completo evaluado: {}", profileIsComplete);
                     logger.info("----------------------------------------");
                     
-                    if (profileCompleted == null || Boolean.FALSE.equals(profileCompleted)) {
+                    if (!profileIsComplete) {
                         logger.warn("⚠️ PERFIL INCOMPLETO DETECTADO ⚠️");
-                        logger.warn("Valor actual: {}", profileCompleted);
+                        logger.warn("Valor actual: {}", profileIsComplete);
                         logger.warn("Acción: Redirigiendo a /acopio/completar-perfil");
                         logger.info("========================================");
                         response.sendRedirect("/acopio/completar-perfil");
                         return;
                     } else {
                         logger.info("✅ PERFIL COMPLETO DETECTADO ✅");
-                        logger.info("Valor: {}", profileCompleted);
+                        logger.info("Valor: {}", profileIsComplete);
                         logger.info("Acción: Permitiendo acceso a /acopio/inicio");
                         logger.info("========================================");
                     }
