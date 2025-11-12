@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Completa tu Perfil - Centro de Acopio</title>
+    <title th:text="#{org.complete.title}">Completa tu Perfil - Centro de Acopio</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,11 +39,9 @@
             <div class="bg-gradient-to-r from-emerald-600 to-green-600 px-6 py-8 text-white">
                 <div class="flex items-center gap-3 mb-3">
                     <i data-lucide="clipboard-check" class="w-8 h-8"></i>
-                    <h1 class="text-2xl font-bold">Completa tu Perfil de Centro de Acopio</h1>
+                    <h1 class="text-2xl font-bold" th:text="#{org.complete.hero.title}">Completa tu Perfil de Centro de Acopio</h1>
                 </div>
-                <p class="text-emerald-50">
-                    ¡Bienvenido! Para comenzar a recibir solicitudes de recolección, necesitamos que completes la siguiente información.
-                </p>
+                <p class="text-emerald-50" th:text="#{org.complete.hero.subtitle}">¡Bienvenido! Para comenzar a recibir solicitudes de recolección, necesitamos que completes la siguiente información.</p>
             </div>
 
             <!-- Formulario -->
@@ -54,14 +52,14 @@
                 <div class="space-y-4">
                     <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i data-lucide="map-pin" class="w-5 h-5 text-emerald-600"></i>
-                        Información de Contacto
+                        <span th:text="#{org.complete.contact.title}">Información de Contacto</span>
                     </h2>
 
                     <!-- Dirección + Mapa -->
                     <div class="grid gap-4 lg:grid-cols-2">
                         <div>
                             <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
-                                Dirección Completa <span class="text-red-500">*</span>
+                                <span th:text="#{org.complete.address.label}">Dirección Completa</span> <span class="text-red-500">*</span>
                             </label>
                             <textarea 
                                 id="address" 
@@ -70,22 +68,20 @@
                                 required
                                 minlength="10"
                                 th:value="${organization?.address}"
-                                placeholder="Ej: Av. Principal 123, entre Calle A y B, Edificio Verde, Local 5"
+                                th:placeholder="#{org.complete.address.placeholder}"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                             ></textarea>
-                            <p class="mt-1 text-xs text-gray-500">
-                                Incluye referencias para que los usuarios puedan encontrarte fácilmente
-                            </p>
+                            <p class="mt-1 text-xs text-gray-500" th:text="#{org.complete.address.help}">Incluye referencias para que los usuarios puedan encontrarte fácilmente</p>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">Latitud</label>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1" th:text="#{org.complete.lat}">Latitud</label>
                                     <input type="text" name="latitude" id="latitude"
                                            th:value="${organization?.latitude}"
                                            class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">Longitud</label>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1" th:text="#{org.complete.lng}">Longitud</label>
                                     <input type="text" name="longitude" id="longitude"
                                            th:value="${organization?.longitude}"
                                            class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
@@ -93,24 +89,22 @@
                             </div>
                             <p class="text-xs text-gray-500 mt-2">
                                 <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                                Haz clic en el mapa para establecer las coordenadas exactas.
+                                <span th:text="#{org.complete.map.help}">Haz clic en el mapa para establecer las coordenadas exactas.</span>
                             </p>
                             <div class="mt-3 flex flex-wrap gap-2">
                                 <button type="button" id="btnPickOnMap" class="px-3 py-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 flex items-center gap-2">
                                     <i data-lucide="map-pin"></i>
-                                    Elegir en mapa
+                                    <span th:text="#{common.choose_on_map}">Elegir en mapa</span>
                                 </button>
                                 <button type="button" id="btnUseMyLocation" class="px-3 py-2 text-xs border border-emerald-300 text-emerald-700 rounded-md hover:bg-emerald-50 flex items-center gap-2">
                                     <i data-lucide="crosshair"></i>
-                                    Usar mi ubicación
+                                    <span th:text="#{common.use_my_location}">Usar mi ubicación</span>
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Ubicación en mapa
-                            </label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" th:text="#{org.complete.map.title}">Ubicación en mapa</label>
                             <div id="staticMapContainer" class="border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
                                 <iframe th:with="
                                            lat=${organization?.latitude} ?: -30.93801,
@@ -132,7 +126,7 @@
                     <!-- Teléfono -->
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                            Teléfono de Contacto <span class="text-red-500">*</span>
+                            <span th:text="#{org.complete.phone.label}">Teléfono de Contacto</span> <span class="text-red-500">*</span>
                         </label>
                         <input 
                             type="tel" 
@@ -141,12 +135,10 @@
                             required
                             minlength="8"
                             th:value="${organization?.phone}"
-                            placeholder="Ej: 099 123 456"
+                            th:placeholder="#{org.complete.phone.placeholder}"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
-                        <p class="mt-1 text-xs text-gray-500">
-                            Los usuarios se comunicarán contigo a este número
-                        </p>
+                        <p class="mt-1 text-xs text-gray-500" th:text="#{org.complete.phone.help}">Los usuarios se comunicarán contigo a este número</p>
                     </div>
                 </div>
 
@@ -154,12 +146,9 @@
                 <div class="space-y-4 border-t border-gray-200 pt-6">
                     <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
-                        Materiales que Aceptas
+                        <span th:text="#{org.complete.materials.title}">Materiales que Aceptas</span>
                     </h2>
-                    <p class="text-sm text-gray-600">
-                        Selecciona todos los materiales reciclables que tu centro puede recibir. 
-                        <span class="font-medium text-emerald-700">Debes seleccionar al menos uno.</span>
-                    </p>
+                    <p class="text-sm text-gray-600" th:utext="#{org.complete.materials.desc}">Selecciona todos los materiales reciclables que tu centro puede recibir. <span class="font-medium text-emerald-700">Debes seleccionar al menos uno.</span></p>
 
                     <!-- Grid de Materiales -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="materialsGrid">
@@ -189,7 +178,7 @@
                     <!-- Mensaje de error si no selecciona ninguno -->
                     <p id="materialsError" class="hidden text-sm text-red-600 flex items-center gap-1">
                         <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                        Debes seleccionar al menos un material
+                        <span th:text="#{org.complete.materials.error}">Debes seleccionar al menos un material</span>
                     </p>
                 </div>
 
@@ -199,7 +188,7 @@
                         type="submit" 
                         class="flex-1 bg-emerald-600 text-white px-6 py-3 rounded-md hover:bg-emerald-700 font-medium flex items-center justify-center gap-2 transition-colors">
                         <i data-lucide="check-circle" class="w-5 h-5"></i>
-                        Completar Perfil
+                        <span th:text="#{org.complete.submit}">Completar Perfil</span>
                     </button>
                 </div>
 
@@ -208,11 +197,8 @@
                     <div class="flex gap-3">
                         <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
                         <div class="text-sm text-blue-800">
-                            <p class="font-medium mb-1">¿Por qué necesitamos esta información?</p>
-                            <p class="text-blue-700">
-                                Esta información será visible para los usuarios que deseen enviar materiales reciclables a tu centro. 
-                                Podrás actualizar estos datos más tarde desde tu perfil.
-                            </p>
+                            <p class="font-medium mb-1" th:text="#{org.complete.info.title}">¿Por qué necesitamos esta información?</p>
+                            <p class="text-blue-700" th:text="#{org.complete.info.body}">Esta información será visible para los usuarios que deseen enviar materiales reciclables a tu centro. Podrás actualizar estos datos más tarde desde tu perfil.</p>
                         </div>
                     </div>
                 </div>
