@@ -70,24 +70,7 @@
             </iframe>
           </div>
 
-          <!-- Coordenadas en texto -->
-          <div th:if="${org.latitude != null and org.longitude != null}" class="text-xs text-gray-500">
-            <span><i class="fa-solid fa-compass text-gray-400 mr-1" aria-hidden="true"></i>
-              <span th:text="|Lat: ${org.latitude}, Lng: ${org.longitude}|">Lat: -30.000000, Lng: -55.000000</span>
-            </span>
-          </div>
-
-          <!-- Minimapa -->
-          <div th:if="${org.latitude != null and org.longitude != null}" class="border border-gray-200 rounded-lg overflow-hidden">
-            <div th:id="'map-' + ${org.id}"
-                 class="w-full h-32 bg-gray-100 flex items-center justify-center org-map"
-                 th:attr="data-lat=${org.latitude}, data-lng=${org.longitude}, data-name=${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}">
-              <div class="text-center text-gray-500">
-                <i class="fa-solid fa-map text-lg mx-auto mb-1" aria-hidden="true"></i>
-                <span class="text-xs">Cargando mapa...</span>
-              </div>
-            </div>
-          </div>
+          
           <div th:if="${org.latitude != null and org.longitude != null}" class="flex justify-end">
             <a th:href="|https://www.google.com/maps?q=${org.latitude},${org.longitude}|" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2">
               <i class="fa-solid fa-arrow-up-right-from-square text-sm mr-1" aria-hidden="true"></i>
