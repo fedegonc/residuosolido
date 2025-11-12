@@ -321,6 +321,22 @@
                 }
             });
         }
+        // --- Leaflet resources fallback loader ---
+        (function ensureLeaflet(){
+            function injectCss(href){
+                if ([...document.styleSheets].some(s=>s.href && s.href.includes('leaflet'))) return;
+                const l=document.createElement('link'); l.rel='stylesheet'; l.href=href; document.head.appendChild(l);
+            }
+            function injectJs(src){
+                return new Promise((resolve)=>{ const s=document.createElement('script'); s.src=src; s.onload=resolve; document.head.appendChild(s); });
+            }
+            if (typeof window.L === 'undefined') {
+                injectCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+                injectJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js')
+                    .then(()=> injectJs('/js/leaflet-map.js'))
+                    .catch(()=>{});
+            }
+        })();
     </script>
 </main>
 </body>
