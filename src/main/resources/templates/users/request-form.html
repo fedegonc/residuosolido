@@ -126,7 +126,7 @@
                             <i data-lucide="map" class="w-4 h-4 inline mr-1"></i>
                             Ubicación en mapa
                         </label>
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <div id="staticMapContainer" class="border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
                             <iframe th:with="
                                        lat=${request?.collectionLatitude} ?: -30.93801,
                                        lng=${request?.collectionLongitude} ?: -55.53412,
@@ -244,6 +244,34 @@
                     </button>
                 </div>
         </form>
+    </div>
+
+    <!-- Backdrop del modal para selector de mapa -->
+    <div id="mapPickerBackdrop" class="fixed inset-0 bg-black/40 hidden"></div>
+
+    <!-- Modal selector de coordenadas Leaflet -->
+    <div id="mapPickerModal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden">
+            <div class="px-4 py-3 border-b flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-emerald-600"></i>
+                    Seleccionar ubicación
+                </h3>
+                <button type="button" id="closeMapPicker" class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <div id="mapPickerCanvas" class="w-full h-80 rounded-md border border-gray-200"></div>
+                <p class="mt-2 text-xs text-gray-500">
+                    Haz clic en el mapa o arrastra el marcador para elegir el punto exacto.
+                </p>
+            </div>
+            <div class="px-4 py-3 border-t flex items-center justify-end gap-2">
+                <button type="button" id="closeMapPicker" class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
+                <button type="button" id="confirmMapPicker" class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Usar estas coordenadas</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -381,7 +409,7 @@
         const modal = document.getElementById('mapPickerModal');
         const modalBackdrop = document.getElementById('mapPickerBackdrop');
         const modalOpenBtn = document.getElementById('btnPickOnMap');
-        const modalCloseBtn = document.getElementById('closeMapPicker');
+        const modalCloseBtns = document.querySelectorAll('#closeMapPicker');
         const modalConfirmBtn = document.getElementById('confirmMapPicker');
         let modalMap, modalMarker;
 
@@ -421,7 +449,12 @@
         }
 
         modalOpenBtn?.addEventListener('click', openModal);
-        modalCloseBtn?.addEventListener('click', closeModal);
+        // Hacer clic en el mapa estático para abrir el selector interactivo
+        const staticMapContainer = document.getElementById('staticMapContainer');
+        staticMapContainer?.addEventListener('click', openModal);
+        if (modalCloseBtns && modalCloseBtns.length) {
+            modalCloseBtns.forEach(btn => btn.addEventListener('click', closeModal));
+        }
         modalConfirmBtn?.addEventListener('click', function(){
             if (!modalMarker) { closeModal(); return; }
             const pos = modalMarker.getLatLng();
