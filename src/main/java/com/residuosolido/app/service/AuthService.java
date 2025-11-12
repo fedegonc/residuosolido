@@ -57,6 +57,13 @@ public class AuthService {
     }
 
     public String validateUserRegistration(User user) {
+        if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            return "El nombre de usuario es obligatorio";
+        }
+        // No permitir espacios en el nombre de usuario
+        if (user.getUsername().matches(".*\\s+.*")) {
+            return "El nombre de usuario no puede contener espacios";
+        }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "El nombre de usuario ya existe";
         }

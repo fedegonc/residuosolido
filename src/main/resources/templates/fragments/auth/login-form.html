@@ -54,7 +54,35 @@
     <p class="text-xs text-gray-600">
       <a href="/auth/forgot-password" class="text-green-600 hover:text-green-700" th:text="#{login.forgot_password}">¿Olvidaste tu contraseña?</a>
     </p>
-    <p class="text-xs text-gray-600">
+  </footer>
+
+  <script>
+    (function(){
+      function togglePassword(btn){
+        const targetId = btn.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if(!input) return;
+        const isPwd = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isPwd ? 'text' : 'password');
+        btn.setAttribute('aria-pressed', String(isPwd));
+        try {
+          const icon = btn.querySelector('i');
+          if (icon) {
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+          }
+        } catch(_){}
+      }
+      document.addEventListener('click', function(e){
+        const btn = e.target.closest('[data-password-toggle]');
+        if(btn) {
+          e.preventDefault();
+          togglePassword(btn);
+        }
+      });
+    })();
+  </script>
+  <p class="text-xs text-gray-600">
       <span th:text="#{login.no_account}">¿No tienes cuenta?</span>
       <a href="/auth/register" class="text-green-600 hover:text-green-700 font-medium" th:text="#{login.register_link}">Regístrate aquí</a>
     </p>

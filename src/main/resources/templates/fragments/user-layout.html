@@ -11,6 +11,8 @@
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <!-- Leaflet resources (for pages that use maps) -->
+    <th:block th:replace="~{fragments/components/map :: leaflet_resources}"></th:block>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50">
     
