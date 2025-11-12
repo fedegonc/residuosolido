@@ -38,7 +38,7 @@
                     </p>
                 </div>
 
-                <div class="grid gap-3 sm:grid-cols-3">
+                <div class="grid gap-3 sm:grid-cols-4">
                     <a href="/usuarios/solicitudes/nueva" class="bg-emerald-50 border border-emerald-100 rounded-lg p-4 hover:border-emerald-200 transition-colors">
                         <div class="flex items-start gap-3">
                             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
@@ -71,6 +71,18 @@
                             <div>
                                 <p class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.quick_actions.profile.title}">Atualizar meus dados</p>
                                 <p class="text-xs text-gray-500 mt-1" th:text="#{dashboard.user.quick_actions.profile.subtitle}">Mantenha seu perfil e endereços atualizados</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="/posts" class="bg-purple-50 border border-purple-100 rounded-lg p-4 hover:border-purple-200 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                                <i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Notas educativas</p>
+                                <p class="text-xs text-gray-500 mt-1">Contenido para aprender y reciclar mejor</p>
                             </div>
                         </div>
                     </a>
