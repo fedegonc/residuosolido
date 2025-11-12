@@ -95,13 +95,37 @@
                                 <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
                                 Haz clic en el mapa para establecer las coordenadas exactas.
                             </p>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button type="button" id="btnPickOnMap" class="px-3 py-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 flex items-center gap-2">
+                                    <i data-lucide="map-pin"></i>
+                                    Elegir en mapa
+                                </button>
+                                <button type="button" id="btnUseMyLocation" class="px-3 py-2 text-xs border border-emerald-300 text-emerald-700 rounded-md hover:bg-emerald-50 flex items-center gap-2">
+                                    <i data-lucide="crosshair"></i>
+                                    Usar mi ubicación
+                                </button>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Ubicación en mapa
                             </label>
-                            <div th:replace="~{fragments/components/map :: leaflet('org-profile-map', '#latitude', '#longitude', ${organization?.latitude}, ${organization?.longitude}, 14, 'h-64 w-full')}"></div>
+                            <div id="staticMapContainer" class="border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
+                                <iframe th:with="
+                                           lat=${organization?.latitude} ?: -30.93801,
+                                           lng=${organization?.longitude} ?: -55.53412,
+                                           bboxLatDelta=${0.02},
+                                           bboxLngDelta=${0.02},
+                                           minLat=${lat - bboxLatDelta},
+                                           minLng=${lng - bboxLngDelta},
+                                           maxLat=${lat + bboxLatDelta},
+                                           maxLng=${lng + bboxLngDelta}
+                                       "
+                                        th:src="|https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}|"
+                                        width="100%" height="256" style="border:0;" loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
                         </div>
                     </div>
 
@@ -227,6 +251,143 @@
                 }
             });
         });
+
+        // --- Coordenadas: helpers ---
+        function refreshIframe(lat, lng) {
+            const container = document.querySelector('#staticMapContainer iframe');
+            if (!container) return;
+            const bboxLatDelta = 0.02, bboxLngDelta = 0.02;
+            const minLat = lat - bboxLatDelta, maxLat = lat + bboxLatDelta;
+            const minLng = lng - bboxLngDelta, maxLng = lng + bboxLngDelta;
+            const src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}`;
+            container.src = src;
+        }
+
+        function setCoords(lat, lng) {
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            if (latInput) latInput.value = Number(lat).toFixed(6);
+            if (lngInput) lngInput.value = Number(lng).toFixed(6);
+            refreshIframe(Number(lat), Number(lng));
+        }
+
+        // --- Usar mi ubicación ---
+        document.getElementById('btnUseMyLocation')?.addEventListener('click', function() {
+            if (!navigator.geolocation) {
+                alert('Geolocalización no soportada por el navegador');
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(function(pos){
+                setCoords(pos.coords.latitude, pos.coords.longitude);
+            }, function(){
+                alert('No se pudo obtener la ubicación');
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        });
+
+        // --- Modal de selección en mapa (Leaflet) ---
+        // Backdrop y modal
+        (function injectModal(){
+            if (document.getElementById('mapPickerModal')) return;
+            const backdrop = document.createElement('div');
+            backdrop.id = 'mapPickerBackdrop';
+            backdrop.className = 'fixed inset-0 bg-black/40 hidden';
+            document.body.appendChild(backdrop);
+
+            const modalWrap = document.createElement('div');
+            modalWrap.id = 'mapPickerModal';
+            modalWrap.className = 'fixed inset-0 hidden z-50 flex items-center justify-center p-4';
+            modalWrap.innerHTML = `
+                <div class="bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden">
+                  <div class="px-4 py-3 border-b flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                      <i data-lucide="map-pin" class="w-4 h-4 text-emerald-600"></i>
+                      Seleccionar ubicación
+                    </h3>
+                    <button type="button" id="closeMapPicker" class="text-gray-500 hover:text-gray-700">
+                      <i data-lucide="x"></i>
+                    </button>
+                  </div>
+                  <div class="p-4">
+                    <div id="mapPickerCanvas" class="w-full h-80 rounded-md border border-gray-200"></div>
+                    <p class="mt-2 text-xs text-gray-500">Haz clic en el mapa o arrastra el marcador para elegir el punto exacto.</p>
+                  </div>
+                  <div class="px-4 py-3 border-t flex items-center justify-end gap-2">
+                    <button type="button" id="closeMapPicker" class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
+                    <button type="button" id="confirmMapPicker" class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Usar estas coordenadas</button>
+                  </div>
+                </div>`;
+            document.body.appendChild(modalWrap);
+            try { lucide.createIcons(); } catch(_){ }
+        })();
+
+        const modal = document.getElementById('mapPickerModal');
+        const modalBackdrop = document.getElementById('mapPickerBackdrop');
+        const modalOpenBtn = document.getElementById('btnPickOnMap');
+        const modalCloseBtns = document.querySelectorAll('#closeMapPicker');
+        const modalConfirmBtn = document.getElementById('confirmMapPicker');
+        let modalMap, modalMarker;
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+            // Asegurar Leaflet
+            (function ensureLeaflet(){
+                function injectCss(h){ const l=document.createElement('link'); l.rel='stylesheet'; l.href=h; document.head.appendChild(l); }
+                function injectJs(s){ return new Promise(r=>{ const n=document.createElement('script'); n.src=s; n.onload=r; document.head.appendChild(n); }); }
+                if (typeof window.L === 'undefined') {
+                    injectCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+                    injectJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').then(initModalMap);
+                } else {
+                    initModalMap();
+                }
+            })();
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modalBackdrop.classList.add('hidden');
+        }
+
+        function initModalMap(){
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            const lat = Number(latInput?.value) || -30.895854;
+            const lng = Number(lngInput?.value) || -55.535653;
+            const el = document.getElementById('mapPickerCanvas');
+            if (!el) return;
+            if (modalMap) { setTimeout(()=> modalMap.invalidateSize(), 0); return; }
+            modalMap = L.map(el).setView([lat, lng], 14);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(modalMap);
+            modalMarker = L.marker([lat, lng], { draggable: true }).addTo(modalMap);
+            modalMap.on('click', function(e){ modalMarker.setLatLng(e.latlng); });
+        }
+
+        modalOpenBtn?.addEventListener('click', openModal);
+        document.getElementById('staticMapContainer')?.addEventListener('click', openModal);
+        if (modalCloseBtns && modalCloseBtns.length) {
+            modalCloseBtns.forEach(btn => btn.addEventListener('click', closeModal));
+        }
+        modalConfirmBtn?.addEventListener('click', function(){
+            if (!modalMarker) { closeModal(); return; }
+            const pos = modalMarker.getLatLng();
+            setCoords(pos.lat, pos.lng);
+            closeModal();
+        });
+
+        // --- Leaflet resources fallback loader ---
+        (function ensureLeaflet(){
+            function injectCss(href){
+                if ([...document.styleSheets].some(s=>s.href && s.href.includes('leaflet'))) return;
+                const l=document.createElement('link'); l.rel='stylesheet'; l.href=href; document.head.appendChild(l);
+            }
+            function injectJs(src){
+                return new Promise((resolve)=>{ const s=document.createElement('script'); s.src=src; s.onload=resolve; document.head.appendChild(s); });
+            }
+            if (typeof window.L === 'undefined') {
+                injectCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+                injectJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').catch(()=>{});
+            }
+        })();
     </script>
 </body>
 </html>
