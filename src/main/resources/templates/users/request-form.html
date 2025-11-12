@@ -116,7 +116,21 @@
                             <i data-lucide="map" class="w-4 h-4 inline mr-1"></i>
                             Ubicación en mapa
                         </label>
-                        <div th:replace="~{fragments/components/map :: leaflet('user-request-map', '#collectionLatitude', '#collectionLongitude', ${request?.collectionLatitude}, ${request?.collectionLongitude}, 14, 'h-64 w-full')}"></div>
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <iframe th:with="
+                                       lat=${request?.collectionLatitude} ?: -30.93801,
+                                       lng=${request?.collectionLongitude} ?: -55.53412,
+                                       bboxLatDelta=${0.02},
+                                       bboxLngDelta=${0.02},
+                                       minLat=${lat - bboxLatDelta},
+                                       minLng=${lng - bboxLngDelta},
+                                       maxLat=${lat + bboxLatDelta},
+                                       maxLng=${lng + bboxLngDelta}
+                                   "
+                                    th:src="|https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}|"
+                                    width="100%" height="256" style="border:0;" loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
                     </div>
                 </div>
                 
