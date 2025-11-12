@@ -26,12 +26,23 @@
         <i class="fa-solid fa-lock text-[13px]" aria-hidden="true"></i>
         <span th:text="#{login.password.label}">Contraseña</span>
       </span>
-      <input type="password"
-             id="password"
-             name="password"
-             required
-             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500 focus:border-green-500 text-sm"
-             th:placeholder="#{login.password.placeholder}">
+      <div class="relative" data-password-container>
+        <input type="password"
+               id="password"
+               name="password"
+               required
+               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500 focus:border-green-500 text-sm"
+               th:placeholder="#{login.password.placeholder}">
+        <button type="button"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+                data-password-toggle
+                data-target="password"
+                aria-label="Alternar visibilidad de la contraseña"
+                aria-pressed="false">
+          <i class="fa-solid fa-eye text-sm" aria-hidden="true"></i>
+          <span class="sr-only" th:text="#{auth.password.toggle}">Mostrar u ocultar contraseña</span>
+        </button>
+      </div>
     </label>
 
     <!-- Submit Button (fragmento primaryButtonFull) -->
