@@ -197,43 +197,31 @@ public class OrganizationAdminController {
                 requestService.logPendingRequestsDebug();
             }
 
-            // PENDIENTES: Contar directamente sin traer listas
+            // PENDIENTES: SIEMPRE solo de la organización autenticada
             long pendingCount;
             List<Request> pendingRequestsList = new ArrayList<>();
-            
-            if (acceptedMaterialIds.isEmpty()) {
-                // Si no hay materiales configurados, contar todas las pendientes
-                long countStart = System.currentTimeMillis();
-                pendingCount = requestService.countByStatus(RequestStatus.PENDING);
-                queryCount++;
-                System.out.println("  ⏱️ Conteo pendientes: " + (System.currentTimeMillis() - countStart) + "ms");
-                
-                // Traer solo los primeros 5 para mostrar
-                long listStart = System.currentTimeMillis();
-                pendingRequestsList = requestService.getPendingRequests().stream().limit(5).toList();
-                queryCount++;
-                System.out.println("  ⏱️ Lista pendientes (top 5): " + (System.currentTimeMillis() - listStart) + "ms");
-            } else {
-                // Con materiales configurados, contar solo los que coinciden
-                long countStart = System.currentTimeMillis();
-                pendingCount = requestService.countByStatusAndMaterials(RequestStatus.PENDING, acceptedMaterialIds);
-                queryCount++;
-                System.out.println("  ⏱️ Conteo pendientes (filtrado): " + (System.currentTimeMillis() - countStart) + "ms");
-                System.out.println("  📊 PENDIENTES encontradas: " + pendingCount);
-                
-                // Traer solo los primeros 5 filtrados directamente desde BD (OPTIMIZADO)
-                long listStart = System.currentTimeMillis();
-                pendingRequestsList = requestService.getTopPendingByMaterials(acceptedMaterialIds, 5);
-                queryCount++;
-                System.out.println("  ⏱️ Lista pendientes (filtrado, top 5): " + (System.currentTimeMillis() - listStart) + "ms");
-                System.out.println("  📋 Lista cargada: " + pendingRequestsList.size() + " solicitudes");
-            }
+            long countStart = System.currentTimeMillis();
+            java.util.Map<RequestStatus, Long> pendingGrouped = requestService.countGroupedByOrganizationAndStatuses(
+                currentOrg,
+                java.util.List.of(RequestStatus.PENDING)
+            );
+            queryCount++;
+            pendingCount = pendingGrouped.getOrDefault(RequestStatus.PENDING, 0L);
+            System.out.println("  ⏱️ Conteo pendientes (ORG): " + (System.currentTimeMillis() - countStart) + "ms");
+
+            long listStart = System.currentTimeMillis();
+            pendingRequestsList = requestService.getRequestsByOrganization(currentOrg).stream()
+                    .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                    .limit(5)
+                    .toList();
+            queryCount++;
+            System.out.println("  ⏱️ Lista pendientes ORG (top 5): " + (System.currentTimeMillis() - listStart) + "ms");
             
             model.addAttribute("pendingRequests", pendingCount);
             model.addAttribute("pendingRequestsList", pendingRequestsList);
             System.out.println("✅ PENDIENTES: " + pendingCount + " (mostrando " + pendingRequestsList.size() + " en lista)");
             
-            // EN PROCESO + COMPLETADAS: Consolidar en una sola consulta agrupada
+            // EN PROCESO + COMPLETADAS: Solo de la organización actual
             long groupedStart = System.currentTimeMillis();
             java.util.Map<RequestStatus, Long> groupedCounts = requestService.countGroupedByOrganizationAndStatuses(
                 currentOrg,

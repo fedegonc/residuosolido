@@ -58,16 +58,21 @@
             </div>
           </div>
 
-          <!-- Mapa rápido (hardcodeado) -->
+          <!-- Mapa rápido (dinámico con fallback) -->
           <div class="border border-gray-200 rounded-lg overflow-hidden">
-            <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=-55.54412%2C-30.94801%2C-55.52412%2C-30.92801&layer=mapnik&marker=-30.93801%2C-55.53412"
-              width="100%"
-              height="140"
-              style="border:0;"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+            <iframe th:with="
+                      lat=${org.latitude} ?: -30.93801,
+                      lng=${org.longitude} ?: -55.53412,
+                      bboxLatDelta=${0.02},
+                      bboxLngDelta=${0.02},
+                      minLat=${lat - bboxLatDelta},
+                      minLng=${lng - bboxLngDelta},
+                      maxLat=${lat + bboxLatDelta},
+                      maxLng=${lng + bboxLngDelta}
+                   "
+                    th:src="|https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}|"
+                    width="100%" height="140" style="border:0;" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
 
           
@@ -76,12 +81,6 @@
               <i class="fa-solid fa-arrow-up-right-from-square text-sm mr-1" aria-hidden="true"></i>
               <span th:text="#{organizations.view_on_maps}">Ver en Google Maps</span>
             </a>
-          </div>
-          <div th:if="${org.latitude == null or org.longitude == null}" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-            <div class="text-center text-gray-500">
-              <i class="fa-solid fa-location-dot text-base mx-auto mb-1" aria-hidden="true"></i>
-              <span class="text-xs">Ubicación no disponible</span>
-            </div>
           </div>
         </div>
         </article>

@@ -14,11 +14,23 @@
     <!-- Header Simple -->
     <div class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                    <i data-lucide="recycle" class="w-6 h-6 text-white"></i>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="recycle" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-lg font-bold text-gray-900">Residuo Sólido</span>
                 </div>
-                <span class="text-lg font-bold text-gray-900">Residuo Sólido</span>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 border border-gray-200 rounded-full px-2 py-1">
+                        <i data-lucide="globe-2" class="w-3 h-3"></i>
+                        <span th:text="${#strings.toUpperCase(#locale.language)}">ES</span>
+                    </span>
+                    <a th:href="@{|/acopio/completar-perfil?lang=es|}"
+                       class="px-2 py-1 text-xs border border-gray-300 rounded-full hover:bg-gray-50">ES</a>
+                    <a th:href="@{|/acopio/completar-perfil?lang=pt|}"
+                       class="px-2 py-1 text-xs border border-gray-300 rounded-full hover:bg-gray-50">PT</a>
+                </div>
             </div>
         </div>
     </div>
@@ -153,7 +165,7 @@
                     <!-- Grid de Materiales -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="materialsGrid">
                         <div th:each="material : ${availableMaterials}" 
-                             class="relative flex items-start p-3 border border-gray-200 rounded-lg hover:border-emerald-300 hover:bg-emerald-50 transition-colors cursor-pointer">
+                             class="material-card relative flex items-start p-3 border border-gray-200 rounded-lg hover:border-emerald-300 hover:bg-emerald-50 transition-colors cursor-pointer">
                             <div class="flex items-center h-5">
                                 <input 
                                     type="checkbox" 
@@ -180,6 +192,59 @@
                         <i data-lucide="alert-circle" class="w-4 h-4"></i>
                         <span th:text="#{org.complete.materials.error}">Debes seleccionar al menos un material</span>
                     </p>
+                </div>
+
+                <!-- Días preferidos de recolección (opcional) -->
+                <div class="space-y-4 border-t border-gray-200 pt-6">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i>
+                        <span th:text="#{org.complete.days.title}">Días preferidos de recolección (opcional)</span>
+                    </h2>
+                    <p class="text-sm text-gray-600" th:text="#{org.complete.days.desc}">Selecciona los días de la semana en los que prefieres recibir solicitudes.</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2">
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="mon"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'mon') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Lun</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="tue"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'tue') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Mar</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="wed"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'wed') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Mié</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="thu"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'thu') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Jue</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="fri"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'fri') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Vie</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="sat"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'sat') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Sáb</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 p-2 border border-gray-200 rounded-md hover:bg-gray-50">
+                            <input type="checkbox" name="preferredDays" value="sun"
+                                   th:checked="${organization != null and organization.preferredCollectionDays != null} ? #strings.contains(organization.preferredCollectionDays, 'sun') : false"
+                                   class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"/>
+                            <span class="text-sm">Dom</span>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Botones -->
@@ -237,6 +302,45 @@
                 }
             });
         });
+
+        // Hacer toda la tarjeta clickeable y accesible con teclado
+        (function enhanceMaterialCards(){
+            const cards = document.querySelectorAll('.material-card');
+            cards.forEach(card => {
+                const cb = card.querySelector('.material-checkbox');
+                if (!cb) return;
+
+                function updateVisual(){
+                    if (cb.checked) {
+                        card.classList.add('border-emerald-300','bg-emerald-50');
+                    } else {
+                        card.classList.remove('border-emerald-300','bg-emerald-50');
+                    }
+                }
+
+                updateVisual();
+
+                card.addEventListener('click', (e) => {
+                    if (e.target === cb) return; // ya maneja el input
+                    if (e.target.closest('a, button, label')) return; // no interferir con otros controles
+                    cb.checked = !cb.checked;
+                    cb.dispatchEvent(new Event('change', { bubbles: true }));
+                    updateVisual();
+                });
+
+                // Accesibilidad por teclado
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        cb.click();
+                        updateVisual();
+                    }
+                });
+
+                cb.addEventListener('change', updateVisual);
+            });
+        })();
 
         // --- Coordenadas: helpers ---
         function refreshIframe(lat, lng) {

@@ -57,6 +57,10 @@ public class User {
     @Column(name = "address_references", length = 300)
     private String addressReferences;
 
+    // Dias preferidos de recolección (csv: mon,tue,wed,thu,fri,sat,sun)
+    @Column(name = "preferred_collection_days", length = 100)
+    private String preferredCollectionDays;
+
     @ManyToMany
     @JoinTable(
         name = "user_materials",

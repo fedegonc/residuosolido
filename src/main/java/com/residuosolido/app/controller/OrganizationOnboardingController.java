@@ -82,6 +82,7 @@ public class OrganizationOnboardingController {
             @RequestParam(required = false) BigDecimal latitude,
             @RequestParam(required = false) BigDecimal longitude,
             @RequestParam(required = false) List<Long> materialIds,
+            @RequestParam(name = "preferredDays", required = false) List<String> preferredDays,
             Authentication authentication,
             HttpServletRequest request,
             HttpServletResponse response,
@@ -95,6 +96,7 @@ public class OrganizationOnboardingController {
             String trimmedAddress = address != null ? address.trim() : null;
             String trimmedPhone = phone != null ? phone.trim() : null;
             List<Long> safeMaterialIds = materialIds != null ? materialIds : List.of();
+            List<String> safePreferredDays = preferredDays != null ? preferredDays : List.of();
 
             // Validaciones
             List<String> errors = new ArrayList<>();
@@ -130,6 +132,13 @@ public class OrganizationOnboardingController {
             currentUser.setPhone(trimmedPhone);
             currentUser.setLatitude(latitude);
             currentUser.setLongitude(longitude);
+            // Guardar días preferidos de recolección (CSV)
+            if (!safePreferredDays.isEmpty()) {
+                String preferredCsv = String.join(",", safePreferredDays);
+                currentUser.setPreferredCollectionDays(preferredCsv);
+            } else {
+                currentUser.setPreferredCollectionDays(null);
+            }
             
             // Actualizar materiales aceptados
             List<Material> selectedMaterials = new ArrayList<>();
