@@ -122,11 +122,8 @@ public class AuthController {
     
     @GetMapping({"/", "/index"})
     public String rootOrIndex(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !isAnonymous(auth)) {
-            // Usuario autenticado: redirigir a su panel correspondiente
-            return "redirect:" + resolvePanel(auth);
-        }
+        // Permitir que usuarios autenticados también vean el contenido público del index
+        // (categorías, posts, organizaciones) sin redirigir automáticamente a su dashboard
         
         // Cargar categorías activas para mostrar en la página de inicio
         List<Category> activeCategories = categoryService.findAllActive();
