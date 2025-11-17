@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${(isEdit ?: false) ? #{request.edit.title} : #{request.new.title}}">Nueva Solicitud - Residuo Sólido</title>
+    <title th:if="${isEdit ?: false}" th:text="#{request.edit.title}">Editar Solicitud - Residuo Sólido</title>
+    <title th:unless="${isEdit ?: false}" th:text="#{request.new.title}">Nueva Solicitud - Residuo Sólido</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,7 +45,8 @@
         </div>
 
         <form th:action="@{${(isEdit ?: false) ? '/usuarios/solicitud/' + request.id + '/editar' : '/usuarios/solicitudes'}}" method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6" th:text="${(isEdit ?: false) ? #{request.edit.heading} : #{request.new.heading}}">Nueva Solicitud de Recolección</h2>
+                <h2 th:if="${isEdit ?: false}" class="text-2xl font-bold text-gray-900 mb-6" th:text="#{request.edit.heading}">Editar Solicitud de Recolección</h2>
+                <h2 th:unless="${isEdit ?: false}" class="text-2xl font-bold text-gray-900 mb-6" th:text="#{request.new.heading}">Nueva Solicitud de Recolección</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
