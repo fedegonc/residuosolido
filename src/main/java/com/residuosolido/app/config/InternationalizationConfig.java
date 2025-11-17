@@ -36,8 +36,8 @@ public class InternationalizationConfig {
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        // Configurar portugués como idioma por defecto
-        localeResolver.setDefaultLocale(new Locale("pt"));
+        // Configurar portugués brasileño como idioma por defecto
+        localeResolver.setDefaultLocale(new Locale("pt", "BR"));
         return localeResolver;
     }
 

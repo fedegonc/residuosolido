@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${(isEdit ?: false) ? 'Editar Solicitud - Residuo Sólido' : 'Nueva Solicitud - Residuo Sólido'}">Nueva Solicitud - Residuo Sólido</title>
+    <title th:text="${(isEdit ?: false) ? #{request.edit.title} : #{request.new.title}}">Nueva Solicitud - Residuo Sólido</title>
     <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,8 +23,8 @@
             <div class="flex items-center">
                 <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
                 <div>
-                    <h3 class="font-medium">No hay organizaciones disponibles</h3>
-                    <p class="text-sm mt-1">Actualmente no hay organizaciones registradas para procesar solicitudes de recolección. Por favor, inténtalo más tarde o contacta al administrador del sistema.</p>
+                    <h3 class="font-medium" th:text="#{request.no_orgs.title}">No hay organizaciones disponibles</h3>
+                    <p class="text-sm mt-1" th:text="#{request.no_orgs.message}">Actualmente no hay organizaciones registradas para procesar solicitudes de recolección. Por favor, inténtalo más tarde o contacta al administrador del sistema.</p>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="flex items-center">
                 <i data-lucide="info" class="w-5 h-5 mr-2"></i>
                 <div>
-                    <h3 class="font-medium">Organizaciones disponibles para recolección</h3>
+                    <h3 class="font-medium" th:text="#{request.available_orgs.title}">Organizaciones disponibles para recolección</h3>
                     <p class="text-sm mt-1">
                         Hay <span th:text="${#lists.size(availableOrganizations)}">0</span> organizaciones disponibles: 
                         <span th:text="${#strings.listJoin(availableOrganizations, ', ')}">organizaciones</span>
@@ -44,25 +44,25 @@
         </div>
 
         <form th:action="@{${(isEdit ?: false) ? '/usuarios/solicitud/' + request.id + '/editar' : '/usuarios/solicitudes'}}" method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6" th:text="${(isEdit ?: false) ? 'Editar Solicitud de Recolección' : 'Nueva Solicitud de Recolección'}">Nueva Solicitud de Recolección</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6" th:text="${(isEdit ?: false) ? #{request.edit.heading} : #{request.new.heading}}">Nueva Solicitud de Recolección</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-700">
                             <i data-lucide="file-text" class="w-4 h-4 inline mr-1"></i>
-                            Descripción de la solicitud
+                            <span th:text="#{request.description.label}">Descripción de la solicitud</span>
                         </label>
                         <textarea name="description" id="description" rows="3" required
                                   th:text="${request?.description}"
                                   class="w-full min-h-[140px] md:min-h-[160px] px-3 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
-                                  placeholder="Describe qué tipo de residuos necesitas que recojan y cualquier detalle importante..."></textarea>
+                                  th:placeholder="#{request.description.placeholder}"></textarea>
                     </div>
 
                     <!-- Campo de imagen -->
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-700">
                             <i data-lucide="image" class="w-4 h-4 inline mr-1"></i>
-                            Foto de los residuos <span class="text-gray-500 text-xs">(opcional)</span>
+                            <span th:text="#{request.image.label}">Foto de los residuos</span> <span class="text-gray-500 text-xs" th:text="#{request.image.optional}">(opcional)</span>
                         </label>
                         <div>
                             <input type="file" 
@@ -73,7 +73,7 @@
                         </div>
                         <p class="text-xs text-gray-500">
                             <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                            Sube una foto de los materiales reciclables para ayudar a la organización a preparar la recolección.
+                            <span th:text="#{request.image.help}">Sube una foto de los materiales reciclables para ayudar a la organización a preparar la recolección.</span>
                         </p>
                         <!-- Preview de la imagen -->
                         <div id="imagePreview" class="hidden">
@@ -86,21 +86,21 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
-                            Dirección de recolección
+                            <span th:text="#{request.address.label}">Dirección de recolección</span>
                         </label>
                         <input type="text" name="collectionAddress" id="collectionAddress" required
                                th:value="${request?.collectionAddress}"
                                class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                               placeholder="Dirección completa donde recoger los residuos">
+                               th:placeholder="#{request.address.placeholder}">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Latitud</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1" th:text="#{request.latitude}">Latitud</label>
                                 <input type="text" name="collectionLatitude" id="collectionLatitude"
                                        th:value="${request?.collectionLatitude}"
                                        class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Longitud</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1" th:text="#{request.longitude}">Longitud</label>
                                 <input type="text" name="collectionLongitude" id="collectionLongitude"
                                        th:value="${request?.collectionLongitude}"
                                        class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
@@ -108,23 +108,23 @@
                         </div>
                         <p class="text-xs text-gray-500 mt-2">
                             <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                            Selecciona un punto en el mapa para guardar las coordenadas exactas de la recolección.
+                            <span th:text="#{request.coords.help}">Selecciona un punto en el mapa para guardar las coordenadas exactas de la recolección.</span>
                         </p>
                         <div class="mt-3 flex flex-wrap gap-2">
                             <button type="button" id="btnPickOnMap" class="px-3 py-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 flex items-center gap-2">
                                 <i data-lucide="map-pin"></i>
-                                Elegir en mapa
+                                <span th:text="#{request.map.choose}">Elegir en mapa</span>
                             </button>
                             <button type="button" id="btnUseMyLocation" class="px-3 py-2 text-xs border border-emerald-300 text-emerald-700 rounded-md hover:bg-emerald-50 flex items-center gap-2">
                                 <i data-lucide="crosshair"></i>
-                                Usar mi ubicación
+                                <span th:text="#{request.map.use_location}">Usar mi ubicación</span>
                             </button>
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i data-lucide="map" class="w-4 h-4 inline mr-1"></i>
-                            Ubicación en mapa
+                            <span th:text="#{request.map.title}">Ubicación en mapa</span>
                         </label>
                         <div id="staticMapContainer" class="border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
                             <iframe th:with="
@@ -148,7 +148,7 @@
                 <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-lg border border-emerald-200">
                     <label class="block text-sm font-semibold text-gray-800 mb-3">
                         <i data-lucide="building-2" class="w-5 h-5 inline mr-2 text-emerald-600"></i>
-                        Organización de acopio <span class="text-red-600">*</span>
+                        <span th:text="#{request.organization.label}">Organización de acopio</span> <span class="text-red-600" th:text="#{request.organization.required}">*</span>
                     </label>
                     
                     <!-- Si hay organizaciones disponibles -->
@@ -157,7 +157,7 @@
                                 id="organizationSelector"
                                 required
                                 class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 font-medium shadow-sm hover:border-emerald-400 transition-colors">
-                            <option value="" disabled th:selected="${!(isEdit ?: false) or request.organization == null}" class="text-gray-500">Selecciona una organización de acopio *</option>
+                            <option value="" disabled th:selected="${!(isEdit ?: false) or request.organization == null}" class="text-gray-500" th:text="#{request.organization.select}">Selecciona una organización de acopio *</option>
                             <option th:each="org : ${organizations}" 
                                     th:value="${org.id}" 
                                     th:text="${org.getFullName()}"
@@ -169,7 +169,7 @@
                         <div class="mt-3 flex items-start space-x-2 text-xs text-emerald-800 bg-emerald-100 p-2 rounded">
                             <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
                             <p>
-                                <strong>Campo obligatorio:</strong> Selecciona primero una organización para ver los materiales que acepta.
+                                <span th:utext="#{request.organization.info}"><strong>Campo obligatorio:</strong> Selecciona primero una organización para ver los materiales que acepta.</span>
                             </p>
                         </div>
                     </div>
@@ -177,12 +177,12 @@
                     <!-- Si NO hay organizaciones disponibles -->
                     <div th:unless="${organizations != null and !organizations.isEmpty()}">
                         <div class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-gray-100 text-gray-500 font-medium">
-                            Asignación automática (no hay organizaciones registradas aún)
+                            <span th:text="#{request.organization.auto}">Asignación automática (no hay organizaciones registradas aún)</span>
                         </div>
                         <div class="mt-3 flex items-start space-x-2 text-xs text-gray-700 bg-gray-100 p-2 rounded">
                             <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
                             <p>
-                                Actualmente no hay organizaciones de acopio registradas en el sistema. Tu solicitud será procesada cuando haya organizaciones disponibles.
+                                <span th:text="#{request.organization.no_orgs}">Actualmente no hay organizaciones de acopio registradas en el sistema. Tu solicitud será procesada cuando haya organizaciones disponibles.</span>
                             </p>
                         </div>
                     </div>
@@ -192,7 +192,7 @@
                 <div id="materialsSection" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-3">
                         <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
-                        Materiales que acepta esta organización <span class="text-red-600">*</span>
+                        <span th:text="#{request.materials.label}">Materiales que acepta esta organización</span> <span class="text-red-600" th:text="#{request.organization.required}">*</span>
                     </label>
                     
                     <!-- Contenedor de materiales dinámico -->
@@ -207,7 +207,7 @@
                     
                     <p class="mt-2 text-xs text-gray-500">
                         <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                        Selecciona al menos un tipo de material para tu solicitud.
+                        <span th:text="#{request.materials.help}">Selecciona al menos un tipo de material para tu solicitud.</span>
                     </p>
                 </div>
                 
@@ -215,8 +215,8 @@
                 <div class="mt-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <i data-lucide="scale" class="w-4 h-4 inline mr-1"></i>
-                        Peso estimado (kg)
-                        <span class="text-gray-500 text-xs">(opcional)</span>
+                        <span th:text="#{request.weight.label}">Peso estimado (kg)</span>
+                        <span class="text-gray-500 text-xs" th:text="#{request.image.optional}">(opcional)</span>
                     </label>
                     <input type="number"
                            name="quantityKg"
@@ -224,23 +224,23 @@
                            th:value="${request?.quantityKg}"
                            step="0.01"
                            min="0"
-                           placeholder="Ej: 12.50"
+                           th:placeholder="#{request.weight.placeholder}"
                            class="w-full max-w-xs px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
                     <p class="mt-2 text-xs text-gray-500">
-                        Indica el peso estimado total de los materiales a recolectar. Puedes dejarlo vacío si no estás seguro.
+                        <span th:text="#{request.weight.help}">Indica el peso estimado total de los materiales a recolectar. Puedes dejarlo vacío si no estás seguro.</span>
                     </p>
                 </div>
 
                 <div class="flex justify-between pt-6 border-t">
                     <a href="/usuarios/solicitudes" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
-                        Cancelar
+                        <span th:text="#{request.button.cancel}">Cancelar</span>
                     </a>
                     <button type="submit" 
                             th:disabled="${noOrganizationsAvailable}"
                             class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
                         <i data-lucide="send" class="w-4 h-4"></i>
-                        <span th:if="${isEdit ?: false}">Actualizar Solicitud</span>
-                        <span th:unless="${isEdit ?: false}">Enviar Solicitud</span>
+                        <span th:if="${isEdit ?: false}" th:text="#{request.button.update}">Actualizar Solicitud</span>
+                        <span th:unless="${isEdit ?: false}" th:text="#{request.button.submit}">Enviar Solicitud</span>
                     </button>
                 </div>
         </form>
@@ -255,7 +255,7 @@
             <div class="px-4 py-3 border-b flex items-center justify-between">
                 <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <i data-lucide="map-pin" class="w-4 h-4 text-emerald-600"></i>
-                    Seleccionar ubicación
+                    <span th:text="#{request.modal.title}">Seleccionar ubicación</span>
                 </h3>
                 <button type="button" id="closeMapPicker" class="text-gray-500 hover:text-gray-700">
                     <i data-lucide="x"></i>
@@ -264,17 +264,27 @@
             <div class="p-4">
                 <div id="mapPickerCanvas" class="w-full h-80 rounded-md border border-gray-200"></div>
                 <p class="mt-2 text-xs text-gray-500">
-                    Haz clic en el mapa o arrastra el marcador para elegir el punto exacto.
+                    <span th:text="#{request.modal.help}">Haz clic en el mapa o arrastra el marcador para elegir el punto exacto.</span>
                 </p>
             </div>
             <div class="px-4 py-3 border-t flex items-center justify-end gap-2">
-                <button type="button" id="closeMapPicker" class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
-                <button type="button" id="confirmMapPicker" class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Usar estas coordenadas</button>
+                <button type="button" id="closeMapPicker" class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50" th:text="#{request.modal.cancel}">Cancelar</button>
+                <button type="button" id="confirmMapPicker" class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700" th:text="#{request.modal.confirm}">Usar estas coordenadas</button>
             </div>
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Mensajes i18n para JavaScript
+        const i18n = {
+            materialsLoading: /*[[#{request.materials.loading}]]*/ 'Cargando materiales...',
+            materialsNoneTitle: /*[[#{request.materials.none.title}]]*/ 'Esta organización aún no ha configurado los materiales que acepta',
+            materialsNoneMessage: /*[[#{request.materials.none.message}]]*/ 'Por favor, selecciona otra organización o contacta al administrador',
+            materialsError: /*[[#{request.materials.error}]]*/ 'Error al cargar materiales. Por favor, intenta de nuevo.'
+        };
+        /*]]>*/
+        
         lucide.createIcons();
         
         // Preview de imagen
@@ -312,7 +322,7 @@
                     <div class="col-span-full text-center py-8 text-gray-500">
                         <div class="animate-pulse">
                             <i data-lucide="loader" class="w-8 h-8 mx-auto mb-2"></i>
-                            <p class="text-sm">Cargando materiales...</p>
+                            <p class="text-sm">${i18n.materialsLoading}</p>
                         </div>
                     </div>
                 `;
@@ -342,8 +352,8 @@
                         materialsContainer.innerHTML = `
                             <div class="col-span-full text-center py-8 text-amber-600 bg-amber-50 rounded-lg border border-amber-200">
                                 <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2"></i>
-                                <p class="text-sm font-medium">Esta organización aún no ha configurado los materiales que acepta</p>
-                                <p class="text-xs mt-1">Por favor, selecciona otra organización o contacta al administrador</p>
+                                <p class="text-sm font-medium">${i18n.materialsNoneTitle}</p>
+                                <p class="text-xs mt-1">${i18n.materialsNoneMessage}</p>
                             </div>
                         `;
                     } else {
@@ -366,7 +376,7 @@
                     materialsContainer.innerHTML = `
                         <div class="col-span-full text-center py-8 text-red-600 bg-red-50 rounded-lg border border-red-200">
                             <i data-lucide="alert-circle" class="w-8 h-8 mx-auto mb-2"></i>
-                            <p class="text-sm">Error al cargar materiales. Por favor, intenta de nuevo.</p>
+                            <p class="text-sm">${i18n.materialsError}</p>
                         </div>
                     `;
                     lucide.createIcons();
