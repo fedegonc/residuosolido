@@ -2,7 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <header th:fragment="navbar">
-  <th:block th:replace="~{fragments/navbar-guest :: navbar}"></th:block>
+  <!-- Navbar para ADMIN -->
+  <th:block sec:authorize="hasRole('ADMIN')" th:replace="~{fragments/navbar-admin :: navbar}"></th:block>
+  
+  <!-- Navbar para ORGANIZATION -->
+  <th:block sec:authorize="hasRole('ORGANIZATION')" th:replace="~{fragments/navbar-org :: navbar}"></th:block>
+  
+  <!-- Navbar para USER -->
+  <th:block sec:authorize="hasRole('USER')" th:replace="~{fragments/navbar-user :: navbar}"></th:block>
+  
+  <!-- Navbar para invitados (no autenticados) -->
+  <th:block sec:authorize="isAnonymous()" th:replace="~{fragments/navbar-guest :: navbar}"></th:block>
 </header>
 </body>
 </html>
