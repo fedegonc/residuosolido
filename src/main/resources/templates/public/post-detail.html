@@ -1,14 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
   <title th:text="${post != null ? post.title : 'Detalle del Post'}">Detalle del Post</title>
 </head>
 <body>
   <main layout:fragment="content">
-    <!-- Breadcrumbs -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-      <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-    </div>
     <!-- Header simple -->
     <section class="bg-gray-50 py-6 border-b border-gray-200">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

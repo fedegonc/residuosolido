@@ -1,21 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - EcoSolicitud</title>
-    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <title>Mi Perfil</title>
 </head>
-<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
-<main>
-    <!-- Breadcrumbs -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-    </div>
-
+<body>
+<main layout:fragment="content">
     <!-- Success/Error Messages -->
     <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">

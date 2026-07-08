@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
   <title>Iniciar Sesión</title>
 </head>
 <body>
 <main layout:fragment="content">
-  <!-- Breadcrumbs -->
-  <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-
   <!-- Contenido principal -->
   <div class="max-w-md mx-auto px-4 py-6">
     <div class="bg-white rounded-lg shadow border border-emerald-100 p-5 space-y-3">

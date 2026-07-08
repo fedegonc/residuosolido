@@ -29,9 +29,6 @@ public class GlobalErrorController implements ErrorController {
     private String resolvePanel(Authentication auth) {
         return auth.getAuthorities().stream()
                 .map(a -> a.getAuthority())
-                .anyMatch(r -> r.equals("ROLE_ADMIN")) ? "/admin/dashboard" :
-               auth.getAuthorities().stream()
-                .map(a -> a.getAuthority())
                 .anyMatch(r -> r.equals("ROLE_ORGANIZATION")) ? "/acopio/inicio" :
                "/usuarios/inicio";
     }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Residuo Sólido">Residuo Sólido</title>
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/6.5.2/css/all.min.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316a34a'%3E%3Cpath d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'/%3E%3C/svg%3E">
+    <!-- Leaflet resources (for pages that use maps) -->
+    <th:block th:replace="~{fragments/components/map :: leaflet_resources}"></th:block>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+
+    <!-- Navbar: authenticated users get navbar-app, guests get navbar-guest -->
+    <th:block sec:authorize="isAuthenticated()" th:replace="~{fragments/navbar-app :: navbar}"></th:block>
+    <th:block sec:authorize="isAnonymous()" th:replace="~{fragments/navbar-guest :: navbar}"></th:block>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col">
+        <th:block layout:fragment="content"></th:block>
+    </main>
+
+    <!-- Footer condicional según autenticación -->
+    <div sec:authorize="isAuthenticated()">
+        <div th:replace="~{fragments/auth/auth-user-footer :: authUserFooter}"></div>
+    </div>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:replace="~{index/footer :: footer}"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

@@ -1,15 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/org-layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
     <title>Materiales Reciclables</title>
 </head>
 <body>
 <main layout:fragment="content">
-    <!-- Breadcrumbs -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-    </div>
-
     <!-- Messages -->
     <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
@@ -129,11 +124,11 @@
                                         <span class="text-sm text-gray-600" th:text="${material.description}">Descripción</span>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <span th:if="${material.category != null and !material.category.isEmpty()}" 
+                                        <span th:if="${material.category != null}" 
                                               class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
-                                            <span th:text="${material.category}">Categoría</span>
+                                            <span th:text="${material.category.displayName}">Categoría</span>
                                         </span>
-                                        <span th:if="${material.category == null or material.category.isEmpty()}" 
+                                        <span th:if="${material.category == null}" 
                                               class="text-xs text-gray-400">Sin categoría</span>
                                     </td>
                                 </tr>

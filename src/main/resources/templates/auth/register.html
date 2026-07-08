@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
   <title>Crear Cuenta</title>
   <!-- Font Awesome para iconos -->
@@ -7,9 +7,6 @@
 </head>
 <body>
 <main layout:fragment="content">
-
-  <!-- Breadcrumbs -->
-  <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
 
   <!-- Contenido principal -->
   <div class="min-h-[calc(100vh-9rem)] flex items-center justify-center px-4 py-6">

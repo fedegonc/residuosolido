@@ -1,35 +1,22 @@
 package com.residuosolido.app.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.*;
 
-/**
- * Entity representing recyclable materials
- */
-@Entity
-@Table(name = "materials")
+@Document(collection = "materials")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Material {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
 
     private String name;
     private String description;
-    private String category;
+
+    private MaterialCategory category;
 
     private Boolean active;
-
-
-
-    @PrePersist
-    public void prePersist() {
-        if (active == null) {
-            active = true;
-        }
-    }
-    
 }

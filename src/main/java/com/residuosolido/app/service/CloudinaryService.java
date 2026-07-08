@@ -37,8 +37,4 @@ public class CloudinaryService {
         Object secureUrl = uploadResult.get("secure_url");
         return secureUrl != null ? secureUrl.toString() : null;
     }
-
-    public String uploadImage(MultipartFile file) throws IOException {
-        return uploadFile(file);
-    }
 }

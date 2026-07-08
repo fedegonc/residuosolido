@@ -1,6 +1,8 @@
 package com.residuosolido.app.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -10,127 +12,46 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-@Entity
-@Table(name = "requests")
+@Document(collection = "requests")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Request {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @DBRef
     private User user;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id")
+
+    @DBRef
     private User organization;
-    
-    @Column(length = 1000)
+
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-        name = "request_materials",
-        joinColumns = @JoinColumn(name = "request_id"),
-        inverseJoinColumns = @JoinColumn(name = "material_id")
-    )
+    @DBRef
     private List<Material> materials = new ArrayList<>();
 
-    @Column(name = "collection_address", length = 500)
     private String collectionAddress;
 
-    @Column(name = "collection_latitude", precision = 10, scale = 7)
     private BigDecimal collectionLatitude;
-
-    @Column(name = "collection_longitude", precision = 10, scale = 7)
     private BigDecimal collectionLongitude;
-    
+
     private LocalDate scheduledDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private RequestStatus status = RequestStatus.PENDING;
 
-    @Column(length = 2000)
     private String notes;
 
     private String imageUrl;
 
-    /**
-     * Indica si este registro es un ingreso manual (true) o una solicitud normal (false)
-     * Los registros manuales son creados directamente por la organización
-     */
-    @Column(name = "is_manual_intake")
     private Boolean isManualIntake = false;
 
-    /**
-     * Cantidad en kilogramos (solo para registros manuales)
-     */
-    @Column(name = "quantity_kg", precision = 10, scale = 2)
-    private java.math.BigDecimal quantityKg;
+    private BigDecimal quantityKg;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = RequestStatus.PENDING;
-        }
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    // Business methods
-    public void addMaterial(Material material) {
-        this.materials.add(material);
-    }
-
-    public void removeMaterial(Material material) {
-        this.materials.remove(material);
-    }
-
-    // Legacy compatibility methods retained until all callers use collectionAddress directly
-    /**
-     * @deprecated Use collectionAddress field directly
-     */
-    @Deprecated
-    public String getAddress() {
-        return collectionAddress;
-    }
-    
-    /**
-     * @deprecated Use collectionAddress field directly  
-     */
-    @Deprecated
-    public void setAddress(String address) {
-        this.collectionAddress = address;
-    }
-
-    /**
-     * @return Materials as comma-separated string for display purposes
-     */
-    @Transient
-    public String getMaterialsAsString() {
-        if (materials == null || materials.isEmpty()) {
-            return "";
-        }
-        return materials.stream()
-                .map(Material::getName)
-                .collect(Collectors.joining(", "));
-    }
-
-    // JPA-safe equals/hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

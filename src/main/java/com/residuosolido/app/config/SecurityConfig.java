@@ -38,12 +38,10 @@ public class SecurityConfig {
             .csrf(Customizer.withDefaults())
             .authorizeHttpRequests(authorize -> authorize
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
-                .requestMatchers("/", "/index", "/invitados", "/guest/**").permitAll()
+                .requestMatchers("/", "/index").permitAll()
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
-                .requestMatchers("/posts/**", "/categories/**").permitAll()
-                .requestMatchers("/sistema-visual", "/grid-test").permitAll()
-                .requestMatchers("/change-language").permitAll() // Cambio de idioma público
-                .requestMatchers("/faq/**").permitAll() // Rutas del chat widget de FAQs
+                .requestMatchers("/posts/**", "/categorias/**", "/materiales/**").permitAll()
+                .requestMatchers("/change-language").permitAll()
                 // Recursos especiales de navegador (evitar guardarlos como destino de login)
                 .requestMatchers("/.well-known/**").permitAll()
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
@@ -51,21 +49,10 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**").permitAll()
                 // API endpoints para usuarios autenticados
                 .requestMatchers("/api/**").authenticated()
-                // Rutas de administrador
-                .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Rutas de usuarios regulares
-                .requestMatchers("/users/**").hasRole("USER")
-                .requestMatchers("/user/**").hasRole("USER")
-                .requestMatchers("/requests/**").hasRole("USER")
+                .requestMatchers("/usuarios/**").hasRole("USER")
                 // Rutas de organización
-                .requestMatchers("/org/**").hasRole("ORGANIZATION")
-                .requestMatchers("/organization/**").hasRole("ORGANIZATION") // Onboarding de organizaciones
                 .requestMatchers("/acopio/**").hasRole("ORGANIZATION")
-                // Notificaciones - acceso autenticado para todos los roles
-                .requestMatchers("/notificaciones/**").authenticated()
-                .requestMatchers("/api/notificaciones/**").authenticated()
-                // Feedback - acceso público para ver formulario, autenticación requerida para enviar (controlada en @PreAuthorize)
-                .requestMatchers("/feedback/**").permitAll()
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )

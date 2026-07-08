@@ -1,6 +1,5 @@
 package com.residuosolido.app.config;
 
-import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +31,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     
     // Prefijo estándar para roles en Spring Security
     private static final String ROLE_PREFIX = "ROLE_";
-    private static final String ROLE_ADMIN = ROLE_PREFIX + "ADMIN";
     private static final String ROLE_ORGANIZATION = ROLE_PREFIX + "ORGANIZATION";
     private static final String ROLE_USER = ROLE_PREFIX + "USER";
     
@@ -48,40 +46,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("Usuario '{}' autenticado. Redirigiendo según rol. Roles: {}", username, userRoles);
 
         try {
-            // Verificar si es una organización y sincronizar estado de perfil
-            // IMPORTANTE: Siempre traer desde BD, nunca desde cache
             if (userRoles.contains(ROLE_ORGANIZATION)) {
                 try {
-                    logger.info("========================================");
-                    logger.info("=== LOGIN ORGANIZACIÓN ===");
-                    logger.info("========================================");
-                    
-                    // Sincronizar el flag profileCompleted según datos reales
                     boolean profileIsComplete = userService.syncOrganizationProfileCompletion(username);
-                    
-                    logger.info("Username: {}", username);
-                    logger.info("Perfil completo evaluado: {}", profileIsComplete);
-                    logger.info("----------------------------------------");
+                    logger.info("Login org '{}': perfil completo={}", username, profileIsComplete);
                     
                     if (!profileIsComplete) {
-                        logger.warn("⚠️ PERFIL INCOMPLETO DETECTADO ⚠️");
-                        logger.warn("Valor actual: {}", profileIsComplete);
-                        logger.warn("Acción: Redirigiendo a /acopio/completar-perfil");
-                        logger.info("========================================");
                         response.sendRedirect("/acopio/completar-perfil");
                         return;
-                    } else {
-                        logger.info("✅ PERFIL COMPLETO DETECTADO ✅");
-                        logger.info("Valor: {}", profileIsComplete);
-                        logger.info("Acción: Permitiendo acceso a /acopio/inicio");
-                        logger.info("========================================");
                     }
                 } catch (Exception e) {
-                    logger.error("========================================");
-                    logger.error("❌ ERROR al verificar perfil de organización '{}'", username);
-                    logger.error("Mensaje: {}", e.getMessage());
-                    logger.error("Stack trace:", e);
-                    logger.error("========================================");
+                    logger.error("Error al verificar perfil de organización '{}': {}", username, e.getMessage(), e);
                 }
             }
             
@@ -131,9 +106,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      * @return URL de destino
      */
     private String getTargetUrlByRoles(Set<String> userRoles) {
-        if (userRoles.contains(ROLE_ADMIN)) {
-            return "/admin/dashboard";
-        } else if (userRoles.contains(ROLE_ORGANIZATION)) {
+        if (userRoles.contains(ROLE_ORGANIZATION)) {
             return "/acopio/inicio";
         } else if (userRoles.contains(ROLE_USER)) {
             return "/usuarios/inicio";

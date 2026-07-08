@@ -1,14 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Solicitud</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
-<main>
+<body>
+<main layout:fragment="content">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Encabezado -->
         <div class="mb-6 flex items-center justify-between">
@@ -20,15 +16,7 @@
                 <h1 class="text-2xl font-bold text-gray-900">Detalle de Solicitud</h1>
             </div>
             <div th:if="${request.status}" class="text-right">
-                <span th:class="${'inline-block px-3 py-1 rounded-md text-xs font-medium border ' + 
-                    (request.status.name() == 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                    request.status.name() == 'ACCEPTED' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                    request.status.name() == 'IN_PROGRESS' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-                    request.status.name() == 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                    request.status.name() == 'REJECTED' ? 'bg-red-50 text-red-700 border-red-200' :
-                    'bg-gray-50 text-gray-700 border-gray-200')}"
-                      th:text="${request.status.displayName}">
-                </span>
+                <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
             </div>
         </div>
 
@@ -106,7 +94,7 @@
                 </div>
 
                 <!-- Fechas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div th:if="${request?.createdAt}">
                         <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
                             <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
@@ -125,6 +113,123 @@
                         <p class="text-base text-gray-900" th:text="${#temporals.format(request.scheduledDate, 'dd/MM/yyyy HH:mm')}">
                             Fecha programada
                         </p>
+                    </div>
+                </div>
+
+                <!-- Timeline de seguimiento -->
+                <div th:with="
+                        currentStep=${request.status.name() == 'PENDING' ? 2 :
+                                     request.status.name() == 'ACCEPTED' ? 3 :
+                                     request.status.name() == 'IN_PROGRESS' ? 4 :
+                                     request.status.name() == 'COMPLETED' ? 5 :
+                                     request.status.name() == 'REJECTED' ? -1 : 1},
+                        isRejected=${request.status.name() == 'REJECTED'}"
+                     class="border-t border-gray-200 pt-6">
+                    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                        Seguimiento de la solicitud
+                    </h2>
+
+                    <!-- Timeline horizontal -->
+                    <div class="flex items-start justify-between relative px-2">
+                        <!-- Línea de fondo -->
+                        <div class="absolute top-5 left-0 right-0 h-0.5 bg-gray-200" style="margin-left: 8%; margin-right: 8%;"></div>
+                        <!-- Línea de progreso (hasta el paso actual) -->
+                        <div th:if="${!isRejected and currentStep > 1}"
+                             class="absolute top-5 left-0 h-0.5 bg-emerald-500 transition-all duration-500"
+                             th:style="${'width: ' + ((currentStep - 1) * 25) + '%; margin-left: 8%;'}"></div>
+
+                        <!-- Paso 1: Creada -->
+                        <div class="flex flex-col items-center relative z-10" style="width: 20%;">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700 mt-2 text-center">Creada</span>
+                        </div>
+
+                        <!-- Paso 2: Pendiente -->
+                        <div class="flex flex-col items-center relative z-10" style="width: 20%;">
+                            <div th:if="${currentStep > 2 or isRejected}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <div th:if="${currentStep == 2}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-400 text-white border-4 border-white shadow-md ring-4 ring-yellow-100">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                            </div>
+                            <div th:if="${currentStep < 2 and !isRejected}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-xs font-medium mt-2 text-center"
+                                  th:classappend="${currentStep == 2 ? 'text-yellow-700' : currentStep > 2 or isRejected ? 'text-gray-700' : 'text-gray-400'}">
+                                Pendiente
+                            </span>
+                        </div>
+
+                        <!-- Paso 3: Aceptada -->
+                        <div class="flex flex-col items-center relative z-10" style="width: 20%;">
+                            <div th:if="${isRejected}">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-500 text-white border-4 border-white shadow-md ring-4 ring-red-100">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </div>
+                                <span class="text-xs font-medium text-red-700 mt-2 text-center">Rechazada</span>
+                            </div>
+                            <div th:unless="${isRejected}">
+                                <div th:if="${currentStep > 3}"
+                                     class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
+                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                </div>
+                                <div th:if="${currentStep == 3}"
+                                     class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-500 text-white border-4 border-white shadow-md ring-4 ring-blue-100">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                </div>
+                                <div th:if="${currentStep < 3}"
+                                     class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                </div>
+                                <span class="text-xs font-medium mt-2 text-center"
+                                      th:classappend="${currentStep == 3 ? 'text-blue-700' : currentStep > 3 ? 'text-gray-700' : 'text-gray-400'}">
+                                    Aceptada
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Paso 4: En Proceso -->
+                        <div class="flex flex-col items-center relative z-10" style="width: 20%;" th:unless="${isRejected}">
+                            <div th:if="${currentStep > 4}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <div th:if="${currentStep == 4}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-500 text-white border-4 border-white shadow-md ring-4 ring-indigo-100">
+                                <i data-lucide="truck" class="w-4 h-4"></i>
+                            </div>
+                            <div th:if="${currentStep < 4}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
+                                <i data-lucide="truck" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-xs font-medium mt-2 text-center"
+                                  th:classappend="${currentStep == 4 ? 'text-indigo-700' : currentStep > 4 ? 'text-gray-700' : 'text-gray-400'}">
+                                En Proceso
+                            </span>
+                        </div>
+
+                        <!-- Paso 5: Completada -->
+                        <div class="flex flex-col items-center relative z-10" style="width: 20%;" th:unless="${isRejected}">
+                            <div th:if="${currentStep == 5}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-green-600 text-white border-4 border-white shadow-md ring-4 ring-green-100">
+                                <i data-lucide="party-popper" class="w-4 h-4"></i>
+                            </div>
+                            <div th:if="${currentStep < 5}"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-xs font-medium mt-2 text-center"
+                                  th:classappend="${currentStep == 5 ? 'text-green-700' : 'text-gray-400'}">
+                                Completada
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

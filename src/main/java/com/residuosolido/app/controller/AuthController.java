@@ -6,20 +6,15 @@ import com.residuosolido.app.model.Post;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Role;
 import com.residuosolido.app.service.CategoryService;
-import com.residuosolido.app.service.PasswordResetRequestService;
-import com.residuosolido.app.service.AuthService;
 import com.residuosolido.app.service.PostService;
-import com.residuosolido.app.service.ConfigService;
 import com.residuosolido.app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,23 +24,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final LoginSuccessHandler successHandler;
-    private final PasswordResetRequestService passwordResetService;
-    private final AuthService authService;
 
-    public AuthController(LoginSuccessHandler successHandler,
-                         PasswordResetRequestService passwordResetService,
-                         AuthService authService) {
+    public AuthController(LoginSuccessHandler successHandler) {
         this.successHandler = successHandler;
-        this.passwordResetService = passwordResetService;
-        this.authService = authService;
     }
 
     @GetMapping("/auth/register")
@@ -67,14 +54,14 @@ public class AuthController {
     public String registerUser(@ModelAttribute User user, 
                                @RequestParam(value = "isOrganization", required = false) String isOrganization,
                                Model model) {
-        String validationError = authService.validateUserRegistration(user);
+        String validationError = userService.validateUserRegistration(user);
         if (validationError != null) {
             model.addAttribute("error", validationError);
             return "auth/register";
         }
         
         // Registrar usuario con el rol apropiado según el checkbox
-        authService.registerUser(user, isOrganization != null);
+        userService.registerUser(user, isOrganization != null);
         return "redirect:/auth/login?success=Registro exitoso. Inicia sesión con tus credenciales.";
     }
     
@@ -88,26 +75,6 @@ public class AuthController {
         return "redirect:/";
     }
     
-    @GetMapping("/auth/forgot-password")
-    public String showForgotPasswordForm(@AuthenticationPrincipal UserDetails userDetails, 
-                                        HttpServletRequest request, 
-                                        HttpServletResponse response) throws Exception {
-        if (userDetails != null) {
-            log.info("[FORGOT-PASSWORD] User already authenticated, redirecting to dashboard");
-            successHandler.redirectToDashboard(request, response, userDetails);
-            return null;
-        }
-        
-        return "auth/forgot-password";
-    }
-    
-    @PostMapping("/auth/forgot-password")
-    public String processForgotPassword(@RequestParam String maskedEmail, 
-                                       @RequestParam String lastKnownPassword) {
-        passwordResetService.createResetRequest(maskedEmail, lastKnownPassword);
-        return "redirect:/auth/login?info=Solicitud enviada al administrador";
-    }
-
     @Autowired
     private CategoryService categoryService;
     
@@ -115,10 +82,10 @@ public class AuthController {
     private PostService postService;
     
     @Autowired
-    private ConfigService configService;
-    
-    @Autowired
     private UserService userService;
+    
+    @Value("${app.hero.image-url:/images/hero-default.jpg}")
+    private String heroImageUrl;
     
     @GetMapping({"/", "/index"})
     public String rootOrIndex(Model model) {
@@ -133,8 +100,6 @@ public class AuthController {
         List<User> organizations = userService.findByRole(Role.ORGANIZATION);
         model.addAttribute("organizations", organizations);
         
-        // Cargar imagen del hero desde configuración
-        String heroImageUrl = configService.getHeroImageUrl();
         model.addAttribute("heroImageUrl", heroImageUrl);
         
         // Cargar posts recientes para mostrar en la página de inicio
@@ -184,24 +149,5 @@ public class AuthController {
         return "index";
     }
 
-
-    private boolean isAnonymous(Authentication auth) {
-        return auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(a -> a.equals("ROLE_ANONYMOUS"));
-    }
-
-    private String resolvePanel(Authentication auth) {
-        Set<String> roles = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-        if (roles.contains("ROLE_ADMIN")) {
-            return "/admin/dashboard";
-        }
-        if (roles.contains("ROLE_ORGANIZATION")) {
-            return "/acopio/inicio";
-        }
-        return "/usuarios/inicio";
-    }
 
 }

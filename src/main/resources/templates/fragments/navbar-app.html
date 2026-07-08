@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <nav th:fragment="navbar" class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo + Brand -->
+        <div class="flex items-center gap-3">
+          <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-lg font-bold text-gray-900">Residuo Sólido</span>
+          </a>
+          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <span class="text-lg font-bold text-gray-900">Residuo Sólido</span>
+          </a>
+        </div>
+
+        <!-- Menu Button (Desktop & Mobile) -->
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-gray-600 hidden sm:inline" sec:authentication="name">Usuario</span>
+
+          <a th:href="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? '?lang=es' : '?lang=pt'"
+             class="hidden sm:inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50">
+            <span th:text="${#locale.language == 'pt' or #locale.language == 'pt_BR' or #locale.language == 'pt-BR'} ? 'ES' : 'PT'">PT</span>
+          </a>
+
+          <button id="menuBtn" type="button" class="p-2 rounded-md text-gray-600 hover:bg-gray-100 border border-gray-300">
+          <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dropdown Menu (Desktop & Mobile) -->
+    <div id="dropdownMenu" class="hidden absolute right-4 top-16 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+      <div class="px-4 py-3 space-y-1">
+        <div class="mb-3 pb-3 border-b border-gray-200">
+          <p class="text-xs text-gray-500 mb-1" sec:authorize="hasRole('USER')" th:text="#{navbar.user.user_label}">Usuario</p>
+          <p class="text-xs text-gray-500 mb-1" sec:authorize="hasRole('ORGANIZATION')">Organización</p>
+          <p class="text-sm font-medium text-gray-900" sec:authentication="name">Usuario</p>
+        </div>
+
+        <!-- USER menu items -->
+        <th:block sec:authorize="hasRole('USER')">
+          <a href="/usuarios/inicio" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md" th:text="#{navbar.user.home}">
+            Área del Usuario
+          </a>
+          <a href="/" class="block px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-md" th:text="#{navbar.user.public_info}">
+            Información Pública
+          </a>
+          <a href="/usuarios/solicitudes/nueva" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md" th:text="#{navbar.user.new_request}">
+            Nueva Solicitud
+          </a>
+          <a href="/usuarios/solicitudes" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md" th:text="#{navbar.user.my_requests}">
+            Mis Solicitudes
+          </a>
+          <a href="/usuarios/perfil" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md" th:text="#{navbar.user.my_profile}">
+            Mi Perfil
+          </a>
+          <a href="/posts" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md" th:text="#{navbar.user.notes}">
+            Notas
+          </a>
+          <div class="pt-2 border-t border-gray-200 mt-2">
+            <a href="/reportes" class="block px-3 py-2 mb-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md text-center" th:text="#{navbar.user.report_problem}">
+              Reportar Problema
+            </a>
+          </div>
+        </th:block>
+
+        <!-- ORGANIZATION menu items -->
+        <th:block sec:authorize="hasRole('ORGANIZATION')">
+          <a href="/acopio/inicio" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+            Inicio
+          </a>
+          <a href="/" class="block px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-md">
+            Información Pública
+          </a>
+          <a href="/acopio/solicitudes" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+            Solicitudes
+          </a>
+          <a href="/acopio/materiales" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+            Materiales
+          </a>
+          <a href="/acopio/estadisticas" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+            Estadísticas
+          </a>
+          <a href="/posts" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+            Notas
+          </a>
+          <a href="/acopio/perfil" class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
+            Perfil
+          </a>
+        </th:block>
+
+        <!-- Logout (common) -->
+        <div class="pt-2 border-t border-gray-200">
+          <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="w-full px-3 py-2 text-sm font-medium border border-blue-600 text-blue-600 rounded-md text-center hover:bg-blue-50" sec:authorize="hasRole('USER')" th:text="#{navbar.user.logout}">
+              Cerrar sesión
+            </button>
+            <button type="submit" class="w-full px-3 py-2 text-sm font-medium border border-blue-600 text-blue-600 rounded-md text-center hover:bg-blue-50" sec:authorize="hasRole('ORGANIZATION')">
+              Cerrar sesión
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const btn = document.getElementById('menuBtn');
+      const menu = document.getElementById('dropdownMenu');
+      const menuIcon = document.getElementById('menuIcon');
+      const closeIcon = document.getElementById('closeIcon');
+
+      btn?.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+        menuIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!btn?.contains(e.target) && !menu?.contains(e.target)) {
+          menu?.classList.add('hidden');
+          menuIcon?.classList.remove('hidden');
+          closeIcon?.classList.add('hidden');
+        }
+      });
+    </script>
+  </nav>
+</body>
+</html>

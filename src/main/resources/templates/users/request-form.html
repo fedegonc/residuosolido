@@ -1,23 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:if="${isEdit ?: false}" th:text="#{request.edit.title}">Editar Solicitud - Residuo Sólido</title>
-    <title th:unless="${isEdit ?: false}" th:text="#{request.new.title}">Nueva Solicitud - Residuo Sólido</title>
-    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <th:block th:replace="~{fragments/components/map :: leaflet_resources}"></th:block>
+    <title th:if="${isEdit ?: false}" th:text="#{request.edit.title}">Editar Solicitud</title>
+    <title th:unless="${isEdit ?: false}" th:text="#{request.new.title}">Nueva Solicitud</title>
 </head>
-<body th:replace="~{fragments/user-layout :: layout(~{::main})}">
-<main>
-    <!-- Breadcrumbs -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <th:block th:replace="~{fragments/components/breadcrumbs :: auto}"></th:block>
-    </div>
-    
+<body>
+<main layout:fragment="content">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Alerta cuando no hay organizaciones disponibles -->
         <div th:if="${noOrganizationsAvailable}" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
@@ -47,7 +35,29 @@
         <form th:action="@{${(isEdit ?: false) ? '/usuarios/solicitud/' + request.id + '/editar' : '/usuarios/solicitudes'}}" method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-6">
                 <h2 th:if="${isEdit ?: false}" class="text-2xl font-bold text-gray-900 mb-6" th:text="#{request.edit.heading}">Editar Solicitud de Recolección</h2>
                 <h2 th:unless="${isEdit ?: false}" class="text-2xl font-bold text-gray-900 mb-6" th:text="#{request.new.heading}">Nueva Solicitud de Recolección</h2>
-                
+
+                <!-- Stepper indicator -->
+                <div class="flex items-center justify-between mb-8 px-2">
+                    <div class="flex items-center w-full">
+                        <div class="flex items-center text-emerald-600 relative" id="stepper-1">
+                            <div class="rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-emerald-600 text-white font-medium text-sm z-10 ring-4 ring-emerald-100">1</div>
+                            <div class="ml-2 text-sm font-medium text-emerald-600 hidden sm:block">Detalles</div>
+                        </div>
+                        <div class="flex-auto border-t-2 transition-all duration-300 border-emerald-600" id="line-1-2"></div>
+                        <div class="flex items-center text-gray-400 relative" id="stepper-2">
+                            <div class="rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-gray-200 text-gray-500 font-medium text-sm z-10">2</div>
+                            <div class="ml-2 text-sm font-medium text-gray-400 hidden sm:block">Materiales</div>
+                        </div>
+                        <div class="flex-auto border-t-2 transition-all duration-300 border-gray-200" id="line-2-3"></div>
+                        <div class="flex items-center text-gray-400 relative" id="stepper-3">
+                            <div class="rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-gray-200 text-gray-500 font-medium text-sm z-10">3</div>
+                            <div class="ml-2 text-sm font-medium text-gray-400 hidden sm:block">Revisión</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Detalles de la solicitud -->
+                <div id="step-1">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-700">
@@ -146,6 +156,21 @@
                     </div>
                 </div>
                 
+                </div><!-- /step-1 -->
+
+                <!-- Step 1 navigation -->
+                <div id="step-1-nav" class="flex justify-between pt-6 border-t">
+                    <a href="/usuarios/solicitudes" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
+                        <span th:text="#{request.button.cancel}">Cancelar</span>
+                    </a>
+                    <button type="button" onclick="goToStep(2)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
+                        <span>Siguiente</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Step 2: Organización y materiales -->
+                <div id="step-2" class="hidden">
                 <!-- Selector de Organización de Acopio (PRIMERO) -->
                 <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-lg border border-emerald-200">
                     <label class="block text-sm font-semibold text-gray-800 mb-3">
@@ -233,11 +258,59 @@
                     </p>
                 </div>
 
-                <div class="flex justify-between pt-6 border-t">
-                    <a href="/usuarios/solicitudes" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
-                        <span th:text="#{request.button.cancel}">Cancelar</span>
-                    </a>
-                    <button type="submit" 
+                </div><!-- /step-2 -->
+
+                <!-- Step 2 navigation -->
+                <div id="step-2-nav" class="flex justify-between pt-6 border-t hidden">
+                    <button type="button" onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Anterior</span>
+                    </button>
+                    <button type="button" onclick="goToStep(3)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
+                        <span>Siguiente</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Step 3: Revisión -->
+                <div id="step-3" class="hidden">
+                    <div class="bg-gray-50 rounded-lg p-6 space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-600"></i>
+                            Revisa tu solicitud
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <span class="font-medium text-gray-700">Descripción: </span>
+                                <span id="review-description" class="text-gray-600">—</span>
+                            </div>
+                            <div>
+                                <span class="font-medium text-gray-700">Dirección: </span>
+                                <span id="review-address" class="text-gray-600">—</span>
+                            </div>
+                            <div>
+                                <span class="font-medium text-gray-700">Organización: </span>
+                                <span id="review-organization" class="text-gray-600">—</span>
+                            </div>
+                            <div>
+                                <span class="font-medium text-gray-700">Materiales: </span>
+                                <span id="review-materials" class="text-gray-600">—</span>
+                            </div>
+                            <div id="review-weight-row">
+                                <span class="font-medium text-gray-700">Peso estimado: </span>
+                                <span id="review-weight" class="text-gray-600">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 navigation -->
+                <div id="step-3-nav" class="flex justify-between pt-6 border-t hidden">
+                    <button type="button" onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Anterior</span>
+                    </button>
+                    <button type="submit"
                             th:disabled="${noOrganizationsAvailable}"
                             class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
                         <i data-lucide="send" class="w-4 h-4"></i>
@@ -288,7 +361,82 @@
         /*]]>*/
         
         lucide.createIcons();
-        
+
+        // --- Stepper logic ---
+        let currentStep = 1;
+        function goToStep(step) {
+            if (step > currentStep) {
+                if (currentStep === 1) {
+                    const desc = document.getElementById('description')?.value?.trim();
+                    const addr = document.getElementById('collectionAddress')?.value?.trim();
+                    if (!desc || !addr) {
+                        alert('Por favor completa la descripción y la dirección antes de continuar.');
+                        return;
+                    }
+                }
+                if (currentStep === 2) {
+                    const orgSelect = document.getElementById('organizationSelector');
+                    if (orgSelect && !orgSelect.value) {
+                        alert('Por favor selecciona una organización antes de continuar.');
+                        return;
+                    }
+                    const checkedMaterials = document.querySelectorAll('#materialsContainer input[type="checkbox"]:checked');
+                    if (checkedMaterials.length === 0 && !document.getElementById('materialsSection').classList.contains('hidden')) {
+                        alert('Por favor selecciona al menos un material antes de continuar.');
+                        return;
+                    }
+                }
+            }
+
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3').classList.add('hidden');
+            document.getElementById('step-1-nav').classList.add('hidden');
+            document.getElementById('step-2-nav').classList.add('hidden');
+            document.getElementById('step-3-nav').classList.add('hidden');
+
+            document.getElementById('step-' + step).classList.remove('hidden');
+            document.getElementById('step-' + step + '-nav').classList.remove('hidden');
+
+            const steps = [1, 2, 3];
+            steps.forEach(s => {
+                const el = document.getElementById('stepper-' + s);
+                const circle = el.querySelector('div:first-child');
+                const label = el.querySelector('div:last-child');
+                if (s < step) {
+                    circle.className = 'rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-emerald-600 text-white font-medium text-sm z-10';
+                    label.className = 'ml-2 text-sm font-medium text-emerald-600 hidden sm:block';
+                } else if (s === step) {
+                    circle.className = 'rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-emerald-600 text-white font-medium text-sm z-10 ring-4 ring-emerald-100';
+                    label.className = 'ml-2 text-sm font-medium text-emerald-600 hidden sm:block';
+                } else {
+                    circle.className = 'rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-gray-200 text-gray-500 font-medium text-sm z-10';
+                    label.className = 'ml-2 text-sm font-medium text-gray-400 hidden sm:block';
+                }
+            });
+
+            const line12 = document.getElementById('line-1-2');
+            const line23 = document.getElementById('line-2-3');
+            line12.className = 'flex-auto border-t-2 transition-all duration-300 ' + (step >= 2 ? 'border-emerald-600' : 'border-gray-200');
+            line23.className = 'flex-auto border-t-2 transition-all duration-300 ' + (step >= 3 ? 'border-emerald-600' : 'border-gray-200');
+
+            currentStep = step;
+
+            if (step === 3) {
+                document.getElementById('review-description').textContent = document.getElementById('description')?.value || '—';
+                document.getElementById('review-address').textContent = document.getElementById('collectionAddress')?.value || '—';
+                const orgSel = document.getElementById('organizationSelector');
+                document.getElementById('review-organization').textContent = orgSel?.selectedOptions[0]?.text || '—';
+                const checked = Array.from(document.querySelectorAll('#materialsContainer input[type="checkbox"]:checked')).map(cb => cb.value);
+                document.getElementById('review-materials').textContent = checked.length ? checked.join(', ') : '—';
+                const weight = document.getElementById('quantityKg')?.value;
+                document.getElementById('review-weight').textContent = weight ? weight + ' kg' : '—';
+            }
+
+            lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         // Preview de imagen
         document.getElementById('imageFile')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
