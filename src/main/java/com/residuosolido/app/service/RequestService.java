@@ -86,26 +86,6 @@ public class RequestService {
         requestRepository.deleteById(id);
     }
 
-    public long countRequestsForMaterials(List<String> materialIds) {
-        if (materialIds == null || materialIds.isEmpty()) {
-            return 0L;
-        }
-        return requestRepository.countByMaterialsIdIn(materialIds);
-    }
-
-    public Map<RequestStatus, Long> getRequestStatusCountsForMaterials(List<String> materialIds) {
-        Map<RequestStatus, Long> statusCounts = new EnumMap<>(RequestStatus.class);
-        if (materialIds == null || materialIds.isEmpty()) {
-            return statusCounts;
-        }
-        List<Request> requests = requestRepository.findByMaterialsIdIn(materialIds);
-        for (Request request : requests) {
-            RequestStatus status = request.getStatus();
-            statusCounts.merge(status, 1L, Long::sum);
-        }
-        return statusCounts;
-    }
-
     public long countByStatusesAndOrganization(List<RequestStatus> statuses, User organization) {
         if (organization == null || statuses == null || statuses.isEmpty()) {
             return 0L;

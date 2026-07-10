@@ -62,13 +62,12 @@ public class UserController {
                     .filter(r -> r.getStatus() == RequestStatus.PENDING)
                     .count();
             long inProgressRequests = allUserRequests.stream()
-                    .filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS || r.getStatus() == RequestStatus.ACCEPTED)
+                    .filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS)
                     .count();
 
             Request nextRequest = allUserRequests.stream()
                     .filter(r -> r.getScheduledDate() != null)
                     .filter(r -> (r.getStatus() == RequestStatus.PENDING
-                            || r.getStatus() == RequestStatus.ACCEPTED
                             || r.getStatus() == RequestStatus.IN_PROGRESS))
                     .filter(r -> !r.getScheduledDate().isBefore(LocalDate.now()))
                     .sorted(Comparator.comparing(Request::getScheduledDate))
@@ -111,7 +110,7 @@ public class UserController {
                 List<Request> userRequests = requestService.getRequestsByUser(currentUser);
                 Map<String, Long> requestStats = new HashMap<>();
                 requestStats.put("pending", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING).count());
-                requestStats.put("inProgress", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.ACCEPTED).count());
+                requestStats.put("inProgress", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).count());
                 requestStats.put("completed", userRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count());
                 requestStats.put("total", (long) userRequests.size());
                 model.addAttribute("requestStats", requestStats);
@@ -231,15 +230,42 @@ public class UserController {
                                    @RequestParam("collectionAddress") String collectionAddress,
                                    @RequestParam(value = "materials", required = false) List<String> materials,
                                    @RequestParam(value = "organizationId", required = false) String organizationId,
+                                   @RequestParam(value = "collectionLatitude", required = false) String collectionLatitude,
+                                   @RequestParam(value = "collectionLongitude", required = false) String collectionLongitude,
+                                   @RequestParam(value = "quantityKg", required = false) String quantityKg,
                                    @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes) {
         try {
             String username = authentication.getName();
             User currentUser = userService.findAuthenticatedUserByUsername(username);
-            String materialsString = materials != null ? String.join(", ", materials) : "";
-            Request request = requestService.createRequest(currentUser, description, materialsString, collectionAddress);
-            boolean requestUpdated = false;
+            Request request = requestService.createRequest(currentUser, description, "", collectionAddress);
+
+            if (materials != null && !materials.isEmpty()) {
+                List<Material> materialList = new ArrayList<>();
+                for (String materialName : materials) {
+                    Material material = materialService.findByName(materialName);
+                    if (material != null) {
+                        materialList.add(material);
+                    }
+                }
+                request.setMaterials(materialList);
+            }
+
+            if (collectionLatitude != null && !collectionLatitude.trim().isEmpty()) {
+                try { request.setCollectionLatitude(new java.math.BigDecimal(collectionLatitude.trim())); } catch (NumberFormatException e) { }
+            }
+            if (collectionLongitude != null && !collectionLongitude.trim().isEmpty()) {
+                try { request.setCollectionLongitude(new java.math.BigDecimal(collectionLongitude.trim())); } catch (NumberFormatException e) { }
+            }
+            if (quantityKg != null && !quantityKg.trim().isEmpty()) {
+                try { request.setQuantityKg(new java.math.BigDecimal(quantityKg.trim())); } catch (NumberFormatException e) { }
+            }
+
+            boolean requestUpdated = (request.getMaterials() != null && !request.getMaterials().isEmpty())
+                || request.getCollectionLatitude() != null || request.getCollectionLongitude() != null
+                || request.getQuantityKg() != null;
+
             if (imageFile != null && !imageFile.isEmpty() && cloudinaryService != null) {
                 try {
                     String imageUrl = cloudinaryService.uploadFile(imageFile);
@@ -299,6 +325,9 @@ public class UserController {
                                @RequestParam("collectionAddress") String collectionAddress,
                                @RequestParam(value = "materials", required = false) List<String> materials,
                                @RequestParam(value = "organizationId", required = false) String organizationId,
+                               @RequestParam(value = "collectionLatitude", required = false) String collectionLatitude,
+                               @RequestParam(value = "collectionLongitude", required = false) String collectionLongitude,
+                               @RequestParam(value = "quantityKg", required = false) String quantityKg,
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                Authentication authentication,
                                RedirectAttributes redirectAttributes) {
@@ -321,6 +350,15 @@ public class UserController {
                     }
                 }
                 request.setMaterials(materialList);
+            }
+            if (collectionLatitude != null && !collectionLatitude.trim().isEmpty()) {
+                try { request.setCollectionLatitude(new java.math.BigDecimal(collectionLatitude.trim())); } catch (NumberFormatException e) { }
+            }
+            if (collectionLongitude != null && !collectionLongitude.trim().isEmpty()) {
+                try { request.setCollectionLongitude(new java.math.BigDecimal(collectionLongitude.trim())); } catch (NumberFormatException e) { }
+            }
+            if (quantityKg != null && !quantityKg.trim().isEmpty()) {
+                try { request.setQuantityKg(new java.math.BigDecimal(quantityKg.trim())); } catch (NumberFormatException e) { }
             }
             if (organizationId != null && !organizationId.trim().isEmpty()) {
                 User org = userService.getUserOrThrow(organizationId);

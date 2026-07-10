@@ -66,9 +66,8 @@ public class OrganizationController {
             model.addAttribute("pendingRequestsList", pendingRequestsList);
 
             Map<RequestStatus, Long> groupedCounts = requestService.countGroupedByOrganizationAndStatuses(
-                currentOrg, List.of(RequestStatus.IN_PROGRESS, RequestStatus.ACCEPTED, RequestStatus.COMPLETED));
-            long inProgressCount = groupedCounts.getOrDefault(RequestStatus.IN_PROGRESS, 0L)
-                    + groupedCounts.getOrDefault(RequestStatus.ACCEPTED, 0L);
+                currentOrg, List.of(RequestStatus.IN_PROGRESS, RequestStatus.COMPLETED));
+            long inProgressCount = groupedCounts.getOrDefault(RequestStatus.IN_PROGRESS, 0L);
             long completedCount = groupedCounts.getOrDefault(RequestStatus.COMPLETED, 0L);
             model.addAttribute("inProgressRequests", inProgressCount);
             model.addAttribute("completedRequests", completedCount);
@@ -203,34 +202,6 @@ public class OrganizationController {
         return "redirect:/acopio/materials";
     }
 
-    // ========== ORG STATISTICS ==========
-
-    @PreAuthorize("hasRole('ORGANIZATION')")
-    @GetMapping("/acopio/estadisticas")
-    public String orgStatistics(Authentication authentication, Model model) {
-        try {
-            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
-            List<String> acceptedMaterialIds = currentOrg.getMaterials() != null
-                ? currentOrg.getMaterials().stream().map(Material::getId).toList()
-                : new ArrayList<>();
-
-            long totalRequests = requestService.countRequestsForMaterials(acceptedMaterialIds);
-            Map<RequestStatus, Long> statusCounts = requestService.getRequestStatusCountsForMaterials(acceptedMaterialIds);
-
-            model.addAttribute("totalRequests", totalRequests);
-            model.addAttribute("pendingRequests", statusCounts.getOrDefault(RequestStatus.PENDING, 0L));
-            model.addAttribute("acceptedRequests", statusCounts.getOrDefault(RequestStatus.ACCEPTED, 0L));
-            model.addAttribute("inProgressRequests", statusCounts.getOrDefault(RequestStatus.IN_PROGRESS, 0L));
-            model.addAttribute("cancelledRequests", statusCounts.getOrDefault(RequestStatus.REJECTED, 0L));
-            model.addAttribute("completedRequests", statusCounts.getOrDefault(RequestStatus.COMPLETED, 0L));
-            model.addAttribute("managedMaterials", acceptedMaterialIds.size());
-            model.addAttribute("totalMaterials", materialService.findAllActive().size());
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error al cargar estadísticas: " + e.getMessage());
-        }
-        return "org/statistics";
-    }
-
     // ========== ORG REQUESTS ==========
 
     @PreAuthorize("hasRole('ORGANIZATION')")
@@ -249,7 +220,7 @@ public class OrganizationController {
                     break;
                 case "IN_PROGRESS":
                     requests = allOrgRequests.stream()
-                        .filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS || r.getStatus() == RequestStatus.ACCEPTED).toList();
+                        .filter(r -> r.getStatus() == RequestStatus.IN_PROGRESS).toList();
                     model.addAttribute("statusFilter", "En Proceso");
                     break;
                 case "COMPLETED":
@@ -298,7 +269,7 @@ public class OrganizationController {
             User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
             Request request = requestService.findById(id).orElseThrow();
             request.setOrganization(organization);
-            request.setStatus(RequestStatus.IN_PROGRESS);
+            request.accept();
             requestService.save(request);
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud aceptada y en proceso");
         } catch (Exception e) {
@@ -312,7 +283,7 @@ public class OrganizationController {
     public String orgRejectRequest(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             Request request = requestService.findById(id).orElseThrow();
-            request.setStatus(RequestStatus.REJECTED);
+            request.reject();
             requestService.save(request);
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud rechazada correctamente");
         } catch (Exception e) {
@@ -326,7 +297,7 @@ public class OrganizationController {
     public String orgCompleteRequest(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             Request request = requestService.findById(id).orElseThrow();
-            request.setStatus(RequestStatus.COMPLETED);
+            request.complete();
             requestService.save(request);
             redirectAttributes.addFlashAttribute("successMessage", "Solicitud completada exitosamente");
         } catch (Exception e) {

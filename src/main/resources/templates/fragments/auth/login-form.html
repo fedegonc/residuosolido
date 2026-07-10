@@ -45,13 +45,19 @@
       </div>
     </label>
 
-    <!-- Submit Button (fragmento primaryButtonFull) -->
-    <div th:replace="~{fragments/components/buttons :: primaryButtonFull(#{nav.login})}"></div>
+    <!-- Submit Button -->
+    <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium text-sm transition-colors">
+      <span th:text="#{nav.login}">Iniciar Sesión</span>
+    </button>
   </form>
 
   <!-- Links -->
-  <footer class="mt-4 space-y-1.5">
-  </footer>
+  <div class="mt-4">
+    <p class="text-xs text-gray-600">
+      <span th:text="#{login.no_account}">¿No tienes cuenta?</span>
+      <a href="/auth/register" class="text-green-600 hover:text-green-700 font-medium" th:text="#{login.register_link}">Regístrate aquí</a>
+    </p>
+  </div>
 
   <script>
     (function(){
@@ -79,9 +85,4 @@
       });
     })();
   </script>
-  <p class="text-xs text-gray-600">
-      <span th:text="#{login.no_account}">¿No tienes cuenta?</span>
-      <a href="/auth/register" class="text-green-600 hover:text-green-700 font-medium" th:text="#{login.register_link}">Regístrate aquí</a>
-    </p>
-  </footer>
 </section>

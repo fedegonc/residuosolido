@@ -9,47 +9,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/6.5.2/css/all.min.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/public.css}">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316a34a'%3E%3Cpath d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'/%3E%3C/svg%3E">
-    <!-- Leaflet resources (for pages that use maps) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="/js/leaflet-map.js"></script>
 </head>
-<body class="min-h-screen flex flex-col bg-gray-50">
+<body>
 
-    <!-- Navbar: authenticated users get navbar-app, guests get navbar-guest -->
     <th:block sec:authorize="isAuthenticated()" th:replace="~{fragments/navbar-app :: navbar}"></th:block>
     <th:block sec:authorize="isAnonymous()" th:replace="~{fragments/navbar-guest :: navbar}"></th:block>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col">
+    <main id="main-content">
         <th:block layout:fragment="content"></th:block>
     </main>
 
-    <!-- Footer condicional según autenticación -->
-    <footer sec:authorize="isAuthenticated()" class="bg-gray-800 text-white mt-auto">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p class="text-sm text-gray-300" th:text="#{footer.copy}">&copy; 2024 EcoSolicitud</p>
-          <div class="flex items-center gap-4 text-sm">
-            <a th:href="@{/posts}" class="text-gray-300 hover:text-white transition">Posts</a>
-          </div>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p class="footer-copy">
+                &copy; <span th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2025</span>
+                <span th:text="#{footer.copy}">Resíduos Sólidos</span>
+            </p>
+            <nav class="footer-nav" aria-label="Footer">
+                <a th:href="@{/posts}" th:text="#{nav.notes}">Notas</a>
+            </nav>
         </div>
-      </div>
-    </footer>
-    <footer sec:authorize="isAnonymous()" class="bg-gray-800 text-white py-6 mt-12">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="text-left">
-          <p>&copy; <span th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2025</span> <span th:text="#{footer.copy}">Resíduos Sólidos</span></p>
-        </div>
-      </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();

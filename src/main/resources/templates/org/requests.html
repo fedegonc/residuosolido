@@ -114,7 +114,9 @@
                                 </p>
                                 <p>
                                     <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
-                                    <strong>Materiales:</strong> <span th:text="${request.materialsAsString}">Materiales</span>
+                                    <strong>Materiales:</strong>
+                                    <span th:if="${request.materials == null or request.materials.empty}">Sin materiales</span>
+                                    <span th:each="material, iter : ${request.materials}" th:text="${iter.index > 0 ? ', ' : ''} + ${material.name}">Material</span>
                                 </p>
                             </div>
                         </div>
@@ -150,8 +152,8 @@
                                 </button>
                             </form>
                             
-                            <!-- Botón para solicitudes EN PROCESO o ACCEPTED -->
-                            <form th:if="${request.status.name() == 'IN_PROGRESS' or request.status.name() == 'ACCEPTED'}" 
+                            <!-- Botón para solicitudes EN PROCESO -->
+                            <form th:if="${request.status.name() == 'IN_PROGRESS'}" 
                                   th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" 
                                   method="post" class="inline">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -280,9 +282,8 @@
             <!-- Timeline de seguimiento -->
             <div th:with="
                     currentStep=${request.status.name() == 'PENDING' ? 2 :
-                                 request.status.name() == 'ACCEPTED' ? 3 :
-                                 request.status.name() == 'IN_PROGRESS' ? 4 :
-                                 request.status.name() == 'COMPLETED' ? 5 :
+                                 request.status.name() == 'IN_PROGRESS' ? 3 :
+                                 request.status.name() == 'COMPLETED' ? 4 :
                                  request.status.name() == 'REJECTED' ? -1 : 1},
                     isRejected=${request.status.name() == 'REJECTED'}"
                  class="mt-6 pt-4 border-t border-gray-200">
@@ -292,16 +293,16 @@
                     <div class="absolute top-5 left-0 right-0 h-0.5 bg-gray-200" style="margin-left: 8%; margin-right: 8%;"></div>
                     <div th:if="${!isRejected and currentStep > 1}"
                          class="absolute top-5 left-0 h-0.5 bg-emerald-500 transition-all duration-500"
-                         th:style="${'width: ' + ((currentStep - 1) * 25) + '%; margin-left: 8%;'}"></div>
+                         th:style="${'width: ' + ((currentStep - 1) * 33.33) + '%; margin-left: 8%;'}"></div>
 
-                    <div class="flex flex-col items-center relative z-10" style="width: 20%;">
+                    <div class="flex flex-col items-center relative z-10" style="width: 25%;">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
                             <i data-lucide="check" class="w-4 h-4"></i>
                         </div>
                         <span class="text-xs font-medium text-gray-700 mt-2 text-center">Creada</span>
                     </div>
 
-                    <div class="flex flex-col items-center relative z-10" style="width: 20%;">
+                    <div class="flex flex-col items-center relative z-10" style="width: 25%;">
                         <div th:if="${currentStep > 2 or isRejected}"
                              class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
                             <i data-lucide="check" class="w-4 h-4"></i>
@@ -320,7 +321,7 @@
                         </span>
                     </div>
 
-                    <div class="flex flex-col items-center relative z-10" style="width: 20%;">
+                    <div class="flex flex-col items-center relative z-10" style="width: 25%;">
                         <div th:if="${isRejected}">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-500 text-white border-4 border-white shadow-md ring-4 ring-red-100">
                                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -333,50 +334,31 @@
                                 <i data-lucide="check" class="w-4 h-4"></i>
                             </div>
                             <div th:if="${currentStep == 3}"
-                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-500 text-white border-4 border-white shadow-md ring-4 ring-blue-100">
-                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                 class="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-500 text-white border-4 border-white shadow-md ring-4 ring-indigo-100">
+                                <i data-lucide="truck" class="w-4 h-4"></i>
                             </div>
                             <div th:if="${currentStep < 3}"
                                  class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
-                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <i data-lucide="truck" class="w-4 h-4"></i>
                             </div>
                             <span class="text-xs font-medium mt-2 text-center"
-                                  th:classappend="${currentStep == 3 ? 'text-blue-700' : currentStep > 3 ? 'text-gray-700' : 'text-gray-400'}">
-                                Aceptada
+                                  th:classappend="${currentStep == 3 ? 'text-indigo-700' : currentStep > 3 ? 'text-gray-700' : 'text-gray-400'}">
+                                En Proceso
                             </span>
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-center relative z-10" style="width: 20%;" th:unless="${isRejected}">
-                        <div th:if="${currentStep > 4}"
-                             class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white border-4 border-white shadow-sm">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                        </div>
+                    <div class="flex flex-col items-center relative z-10" style="width: 25%;" th:unless="${isRejected}">
                         <div th:if="${currentStep == 4}"
-                             class="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-500 text-white border-4 border-white shadow-md ring-4 ring-indigo-100">
-                            <i data-lucide="truck" class="w-4 h-4"></i>
-                        </div>
-                        <div th:if="${currentStep < 4}"
-                             class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
-                            <i data-lucide="truck" class="w-4 h-4"></i>
-                        </div>
-                        <span class="text-xs font-medium mt-2 text-center"
-                              th:classappend="${currentStep == 4 ? 'text-indigo-700' : currentStep > 4 ? 'text-gray-700' : 'text-gray-400'}">
-                            En Proceso
-                        </span>
-                    </div>
-
-                    <div class="flex flex-col items-center relative z-10" style="width: 20%;" th:unless="${isRejected}">
-                        <div th:if="${currentStep == 5}"
                              class="w-10 h-10 rounded-full flex items-center justify-center bg-green-600 text-white border-4 border-white shadow-md ring-4 ring-green-100">
                             <i data-lucide="party-popper" class="w-4 h-4"></i>
                         </div>
-                        <div th:if="${currentStep < 5}"
+                        <div th:if="${currentStep < 4}"
                              class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-4 border-white">
                             <i data-lucide="check-circle" class="w-4 h-4"></i>
                         </div>
                         <span class="text-xs font-medium mt-2 text-center"
-                              th:classappend="${currentStep == 5 ? 'text-green-700' : 'text-gray-400'}">
+                              th:classappend="${currentStep == 4 ? 'text-green-700' : 'text-gray-400'}">
                             Completada
                         </span>
                     </div>
@@ -412,8 +394,8 @@
                         </button>
                     </form>
                     
-                    <!-- Botón para solicitudes EN PROCESO o ACCEPTED -->
-                    <form th:if="${request.status.name() == 'IN_PROGRESS' or request.status.name() == 'ACCEPTED'}"
+                    <!-- Botón para solicitudes EN PROCESO -->
+                    <form th:if="${request.status.name() == 'IN_PROGRESS'}"
                           th:action="@{/acopio/requests/complete/{id}(id=${request.id})}"
                           method="post" class="inline">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

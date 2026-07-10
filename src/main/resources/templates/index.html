@@ -1,31 +1,216 @@
-<html th:lang="${#locale.language + (#locale.country != null ? '-' + #locale.country : '')}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{index/head :: head}"></head>
-<body class="bg-slate-50 min-h-screen">
-  <!-- Navbar -->
-  <th:block th:replace="~{index/navbar :: navbar}"></th:block>
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<head>
+    <title th:text="#{page.title}">Residuo Sólido - Inicio</title>
+</head>
+<body>
+<main layout:fragment="content">
 
   <!-- Hero section -->
-  <th:block th:replace="~{index/hero :: hero}"></th:block>
+  <section class="bg-gradient-to-br from-green-600 to-green-800 text-white py-16 relative overflow-hidden">
+    <div th:if="${heroImageUrl != null and heroImageUrl != '/images/hero-default.jpg'}"
+         class="absolute inset-0 bg-cover bg-center opacity-20"
+         th:style="'background-image: url(' + ${heroImageUrl} + ')'"></div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="mb-6">
+        <form id="language-form-hero" method="get" action="" class="inline-block">
+          <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
+            <div class="flex items-center gap-2 text-gray-800">
+              <a href="?lang=es" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'es' || #locale.language == 'es_ES'} ? 'font-bold text-green-600' : ''">
+                <span class="fi fi-uy w-5 h-3"></span>
+                <span>Español</span>
+              </a>
+              <span class="text-gray-400 text-sm sm:text-base">|</span>
+              <a href="?lang=pt" class="hover:text-green-600 transition text-sm sm:text-base flex items-center gap-1" th:classappend="${#locale.language == 'pt' || #locale.language == 'pt_BR' || #locale.language == 'pt-BR'} ? 'font-bold text-green-600' : ''">
+                <span class="fi fi-br w-5 h-3"></span>
+                <span>Portugués</span>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <h1 class="text-2xl md:text-4xl font-bold mb-3"><span th:text="#{index.hero.title}">Residuo Sólido</span></h1>
+      <p class="text-lg md:text-xl mb-2" th:text="#{index.hero.subtitle}">Plataforma comunitaria para residentes, recicladores y organizaciones.</p>
+      <p class="text-base text-green-100 max-w-2xl mb-5" th:text="#{index.hero.description}">
+        Tu guía para un manejo sostenible de residuos. Encuentra información, puntos de reciclaje y solicita recolección en la región fronteriza.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <a th:href="@{/usuarios/solicitudes/nueva}" class="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition font-semibold text-center flex items-center justify-center gap-2">
+          <i class="fa-solid fa-truck text-base" aria-hidden="true"></i>
+          <span th:text="#{index.hero.button.request}">Solicitar Coleta</span>
+        </a>
+        <a href="/posts" class="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition font-semibold text-center flex items-center justify-center gap-2">
+          <i class="fa-solid fa-book-open text-base" aria-hidden="true"></i>
+          <span th:text="#{index.hero.button.articles}">Ver Artigos</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <!-- Contenido principal -->
-  <main class="max-w-7xl mx-auto px-4 py-10">
+  <div class="max-w-7xl mx-auto px-4 py-10">
+
     <!-- Categorías -->
-    <th:block th:replace="~{index/categories :: categories}"></th:block>
+    <section class="mb-12">
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-table-cells-large text-green-600 text-xl" aria-hidden="true"></i>
+          <span th:text="#{nav.categories}">Categorias</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.categories.description}">Explore todas las categorías disponibles.</p>
+
+        <div th:if="${categories != null and !categories.empty}">
+          <div class="flex flex-wrap gap-3 mb-4">
+            <a th:each="category : ${categories}"
+               th:href="@{/posts(category=${category.id})}"
+               th:text="${category.name}"
+               class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors cursor-pointer"></a>
+          </div>
+          <div class="mt-4">
+            <a href="/posts" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">
+              <i class="fa-solid fa-table-cells-large text-sm" aria-hidden="true"></i>
+              <span th:text="#{index.categories.view_all}">Ver todas</span>
+            </a>
+          </div>
+        </div>
+
+        <div th:if="${categories == null or categories.empty}" class="text-center py-8 text-gray-500">
+          <i class="fa-solid fa-table-cells-large text-2xl text-gray-300" aria-hidden="true"></i>
+          <p class="text-sm" th:text="#{index.categories.empty}">No hay categorías disponibles</p>
+        </div>
+      </div>
+    </section>
 
     <!-- Notas Recientes -->
-    <th:block th:replace="~{index/recent-notes :: recent-notes}"></th:block>
+    <section class="mb-12">
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-file-lines text-green-600 text-xl" aria-hidden="true"></i>
+          <span th:text="#{notes.title}">Notas Recentes</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.notes.description}">Descubre artículos informativos sobre reciclaje y medio ambiente.</p>
+
+        <div th:if="${recentNotes != null and !recentNotes.empty}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <a th:each="note, iterStat : ${recentNotes}" th:if="${iterStat.index < 9}" th:href="${note.url}"
+             class="block bg-white rounded-lg p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex flex-col h-full">
+              <div class="w-full aspect-[4/3] bg-gray-100 rounded-lg flex items-center justify-center" th:if="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+                <span class="text-2xl font-bold text-gray-600" th:text="${#strings.substring(note.title, 0, 1).toUpperCase()}"></span>
+              </div>
+              <div class="w-full aspect-[4/3] rounded-lg overflow-hidden bg-gray-100" th:unless="${note.image == '/images/placeholder.jpg' or #strings.isEmpty(note.image)}">
+                <img th:src="${note.image}" alt="Imagen" class="w-full h-full object-cover">
+              </div>
+              <div class="mt-3 flex-1 flex flex-col">
+                <h4 th:text="${note.title}" class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">Título</h4>
+                <p th:text="${note.excerpt}" class="text-xs text-gray-600 mb-2 line-clamp-2">Extracto...</p>
+                <span class="text-blue-600 font-medium text-xs flex items-center gap-1 mt-auto">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[0.65rem]" aria-hidden="true"></i>
+                  <span th:text="#{button.view}">Ver</span>
+                </span>
+              </div>
+            </div>
+          </a>
+          <a th:href="@{/posts}"
+             class="block bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border-2 border-dashed border-blue-200 hover:border-blue-300 transition-colors">
+            <div class="flex flex-col items-center justify-center h-full text-center">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                <i class="fa-solid fa-plus text-blue-600 text-xl" aria-hidden="true"></i>
+              </div>
+              <h4 class="font-semibold text-blue-800 text-sm mb-1" th:text="#{button.more}">Ver mais</h4>
+              <span class="text-blue-700 font-medium text-xs" th:text="#{index.notes.view_articles}">Ir para artigos</span>
+            </div>
+          </a>
+        </div>
+
+        <div th:if="${recentNotes == null or recentNotes.empty}" class="text-center py-8 text-gray-500">
+          <i class="fa-solid fa-file-lines text-2xl text-gray-300" aria-hidden="true"></i>
+          <p class="text-sm" th:text="#{notes.no_notes_available}">No hay notas disponibles</p>
+        </div>
+      </div>
+    </section>
 
     <!-- Organizaciones -->
-    <th:block th:replace="~{index/organizations :: organizations}"></th:block>
+    <section class="mb-12">
+      <div class="bg-white rounded-2xl border border-emerald-100/60 shadow-sm p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-building text-green-600 text-xl" aria-hidden="true"></i>
+          <span th:text="#{organizations.title}">Organizaciones</span>
+        </h2>
+        <p class="text-sm text-gray-500 mb-6" th:text="#{index.organizations.description}">Explore organizaciones que colaboran en la coleta y reciclaje.</p>
 
-    <!-- Sección de Apoyo -->
-    <th:block th:replace="~{index/support :: support}"></th:block>
-  </main>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 mb-8">
+          <div class="flex items-start gap-3">
+            <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+            <div>
+              <h4 class="font-semibold text-blue-900 mb-1" th:text="#{index.organizations.info.title}">¿Sabías que también puedes llevar tus reciclables directamente?</h4>
+              <p class="text-sm text-blue-800" th:text="#{index.organizations.info.description}">Además de solicitar recolección, puedes acercarte directamente a cualquiera de las organizaciones listadas.</p>
+            </div>
+          </div>
+        </div>
 
-  <!-- Footer -->
-  <th:block th:replace="~{index/footer :: footer}"></th:block>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" th:if="${organizations != null and !organizations.empty}">
+          <article th:each="org : ${organizations}" class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-semibold text-gray-800 mb-3 text-lg"
+                    th:text="${org.firstName != null and org.lastName != null ? org.firstName + ' ' + org.lastName : org.username}"></h3>
+                <div class="flex items-start gap-2 mb-2">
+                  <i class="fa-solid fa-location-dot text-gray-400 text-sm mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+                  <span class="text-sm text-gray-600" th:text="${org.address != null and !org.address.isEmpty()} ? ${org.address} : #{organizations.address_not_specified}">Endereço</span>
+                </div>
+                <div th:if="${org.addressReferences != null and !org.addressReferences.isEmpty()}" class="flex items-start gap-2 mb-2">
+                  <i class="fa-solid fa-location-arrow text-blue-500 text-sm mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+                  <div>
+                    <span class="text-xs font-medium text-blue-700 uppercase tracking-wide" th:text="#{organizations.how_to_get_there}">Cómo llegar</span>
+                    <p class="text-sm text-gray-600 mt-1" th:text="${org.addressReferences}"></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 mt-3">
+                  <div th:if="${org.email != null and !org.email.isEmpty()}" class="flex items-center gap-2">
+                    <i class="fa-solid fa-envelope text-green-600 text-sm" aria-hidden="true"></i>
+                    <a th:href="|mailto:${org.email}|" class="text-green-600 hover:text-green-800 text-sm font-medium" th:text="#{organizations.contact}">Contacto</a>
+                  </div>
+                  <div th:if="${org.phone != null and !org.phone.isEmpty()}" class="flex items-center gap-2">
+                    <i class="fa-solid fa-phone text-green-600 text-sm" aria-hidden="true"></i>
+                    <a th:href="|tel:${org.phone}|" class="text-green-600 hover:text-green-800 text-sm font-medium" th:text="${org.phone}">Tel</a>
+                  </div>
+                </div>
+              </div>
+              <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <iframe th:with="
+                          lat=${org.latitude} ?: -30.93801,
+                          lng=${org.longitude} ?: -55.53412,
+                          bboxLatDelta=${0.02},
+                          bboxLngDelta=${0.02},
+                          minLat=${lat - bboxLatDelta},
+                          minLng=${lng - bboxLngDelta},
+                          maxLat=${lat + bboxLatDelta},
+                          maxLng=${lng + bboxLngDelta}
+                       "
+                        th:src="|https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}|"
+                        width="100%" height="140" style="border:0;" loading="lazy"></iframe>
+              </div>
+              <div th:if="${org.latitude != null and org.longitude != null}" class="flex justify-end">
+                <a th:href="|https://www.google.com/maps?q=${org.latitude},${org.longitude}|" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-sm mr-1" aria-hidden="true"></i>
+                  <span th:text="#{organizations.view_on_maps}">Ver en Google Maps</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
 
-  <!-- Scripts -->
-  <th:block th:replace="~{index/scripts :: scripts}"></th:block>
+        <div th:if="${organizations == null or organizations.empty}" class="text-center py-8 text-gray-500">
+          <i class="fa-solid fa-building text-2xl text-gray-300" aria-hidden="true"></i>
+          <p th:text="#{organizations.empty}">No hay organizaciones disponibles</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
 </body>
 </html>

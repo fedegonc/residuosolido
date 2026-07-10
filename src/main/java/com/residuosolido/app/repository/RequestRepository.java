@@ -14,6 +14,4 @@ public interface RequestRepository extends MongoRepository<Request, String> {
     List<Request> findByOrganizationOrderByCreatedAtDesc(User organization);
     List<Request> findByStatusInAndOrganizationOrderByCreatedAtDesc(List<RequestStatus> statuses, User organization);
     long countByStatusInAndOrganization(List<RequestStatus> statuses, User organization);
-    List<Request> findByMaterialsIdIn(List<String> materialIds);
-    long countByMaterialsIdIn(List<String> materialIds);
 }

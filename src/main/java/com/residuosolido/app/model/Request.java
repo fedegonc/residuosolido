@@ -48,9 +48,25 @@ public class Request {
 
     private String imageUrl;
 
-    private Boolean isManualIntake = false;
-
     private BigDecimal quantityKg;
+
+    public void accept() {
+        if (status != RequestStatus.PENDING)
+            throw new IllegalStateException("Solo se pueden aceptar solicitudes pendientes");
+        this.status = RequestStatus.IN_PROGRESS;
+    }
+
+    public void complete() {
+        if (status != RequestStatus.IN_PROGRESS)
+            throw new IllegalStateException("Solo se pueden completar solicitudes en proceso");
+        this.status = RequestStatus.COMPLETED;
+    }
+
+    public void reject() {
+        if (status != RequestStatus.PENDING)
+            throw new IllegalStateException("Solo se pueden rechazar solicitudes pendientes");
+        this.status = RequestStatus.REJECTED;
+    }
 
     @Override
     public boolean equals(Object o) {
