@@ -1,258 +1,145 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <title>Inicio</title>
+    <title th:text="#{dashboard.user.title}">Inicio</title>
+    <style>
+      .req-item{display:flex;gap:.75rem;padding:1rem;border-bottom:1px solid var(--gray-100);text-decoration:none;}
+      .req-item:hover{background:var(--green-50);}
+      .req-item__icon{width:2.5rem;height:2.5rem;border-radius:var(--radius);background:var(--green-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green-600);}
+      .req-item__title{font-weight:600;font-size:.875rem;color:var(--gray-900);}
+      .req-item__meta{font-size:.75rem;color:var(--gray-600);display:flex;align-items:center;gap:.375rem;margin-top:.25rem;}
+    </style>
 </head>
 <body>
 <main layout:fragment="content">
-    <!-- Botón para volver al inicio público -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
-        <a href="/" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            <span th:text="#{dashboard.user.public_info}">Ver Información Pública</span>
-        </a>
+    <div class="page mt-4">
+        <a href="/" class="btn btn--green btn--sm"><i class="fa-solid fa-arrow-left"></i><span th:text="#{dashboard.user.public_info}">Ver Información Pública</span></a>
     </div>
 
-    <!-- Main Content -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
-        <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="h-1.5 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600"></div>
-            <div class="p-5 space-y-4">
+    <div class="page page--wide" style="padding-top:1rem;padding-bottom:1rem;display:grid;gap:1rem;">
+        <section class="card card--flush">
+            <div class="card__bar"></div>
+            <div class="card__body" style="display:grid;gap:1rem;">
                 <div>
-                    <h1 class="text-2xl font-semibold text-gray-900">
+                    <h1 style="font-size:1.5rem;font-weight:600;color:var(--gray-900);">
                         <span th:text="#{dashboard.user.greeting}">Olá,</span>
                         <span th:text="${#authentication.principal.username}">Usuário</span>
                     </h1>
-                    <p class="mt-1 text-sm text-gray-600 flex items-center gap-2">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
-                        <span th:text="#{dashboard.user.greeting.subtitle}">Acompanhe suas solicitações e atividades ambientais em um só lugar.</span>
+                    <p class="text-sm text-gray-600" style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--green-500)"></i>
+                        <span th:text="#{dashboard.user.greeting.subtitle}">Acompanhe suas solicitações.</span>
                     </p>
                 </div>
-
-                <div class="grid gap-3 sm:grid-cols-4">
-                    <a href="/usuarios/solicitudes/nueva" class="bg-emerald-50 border border-emerald-100 rounded-lg p-4 hover:border-emerald-200 transition-colors">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.quick_actions.title}">Criar nova solicitação</p>
-                                <p class="text-xs text-gray-500 mt-1" th:text="#{dashboard.user.quick_actions.subtitle}">Informe os materiais que deseja reciclar</p>
-                            </div>
-                        </div>
+                <div class="grid grid--4">
+                    <a href="/solicitudes/nueva" class="action-card">
+                        <div class="action-card__icon" style="background:var(--green-50);color:var(--green-600)"><i class="fa-solid fa-plus-circle"></i></div>
+                        <p class="action-card__title" th:text="#{dashboard.user.quick_actions.title}">Criar nova solicitação</p>
+                        <p class="action-card__desc" th:text="#{dashboard.user.quick_actions.subtitle}">Informe os materiais</p>
                     </a>
-
-                    <a href="/usuarios/solicitudes" class="bg-blue-50 border border-blue-100 rounded-lg p-4 hover:border-blue-200 transition-colors">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.quick_actions.list.title}">Ver minhas solicitações</p>
-                                <p class="text-xs text-gray-500 mt-1" th:text="#{dashboard.user.quick_actions.list.subtitle}">Revisar status e detalhes em andamento</p>
-                            </div>
-                        </div>
+                    <a href="/solicitudes" class="action-card">
+                        <div class="action-card__icon" style="background:var(--blue-50);color:var(--blue-600)"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <p class="action-card__title" th:text="#{dashboard.user.quick_actions.list.title}">Ver minhas solicitações</p>
+                        <p class="action-card__desc" th:text="#{dashboard.user.quick_actions.list.subtitle}">Revisar status</p>
                     </a>
-
-                    <a href="/usuarios/perfil" class="bg-orange-50 border border-orange-100 rounded-lg p-4 hover:border-orange-200 transition-colors">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                <i data-lucide="settings" class="w-5 h-5 text-orange-500"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.quick_actions.profile.title}">Atualizar meus dados</p>
-                                <p class="text-xs text-gray-500 mt-1" th:text="#{dashboard.user.quick_actions.profile.subtitle}">Mantenha seu perfil e endereços atualizados</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="/posts" class="bg-purple-50 border border-purple-100 rounded-lg p-4 hover:border-purple-200 transition-colors">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                <i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Notas educativas</p>
-                                <p class="text-xs text-gray-500 mt-1">Contenido para aprender y reciclar mejor</p>
-                            </div>
-                        </div>
+                    <a href="/usuarios/perfil" class="action-card">
+                        <div class="action-card__icon" style="background:var(--orange-50);color:var(--orange-500)"><i class="fa-solid fa-gear"></i></div>
+                        <p class="action-card__title" th:text="#{dashboard.user.quick_actions.profile.title}">Atualizar meus dados</p>
+                        <p class="action-card__desc" th:text="#{dashboard.user.quick_actions.profile.subtitle}">Mantenha seu perfil atualizado</p>
                     </a>
                 </div>
             </div>
         </section>
 
-        <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <header class="px-5 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
+        <section class="card card--flush">
+            <div class="card__header">
                 <div>
-                    <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.activity.title}">Resumo de atividades</h2>
-                    <p class="text-xs text-gray-500 flex items-center gap-1">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                        <span th:text="#{dashboard.user.activity.subtitle}">Seus números mais recentes</span>
-                    </p>
+                    <h2 class="card__title" th:text="#{dashboard.user.activity.title}">Resumo de atividades</h2>
+                    <p class="text-xs text-gray-500" th:text="#{dashboard.user.activity.subtitle}">Seus números mais recentes</p>
                 </div>
-            </header>
-            <div class="p-5 grid gap-3 sm:grid-cols-2">
-                <article class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.total}">Total</span>
-                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="package" class="w-4 h-4 text-emerald-600"></i>
-                        </div>
-                    </div>
-                    <p class="text-2xl font-bold text-gray-900" th:text="${totalRequests ?: 0}">0</p>
-                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.total.note}">Solicitações registradas</p>
-                </article>
-
-                <article class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.pending}">Pendentes</span>
-                        <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="clock" class="w-4 h-4 text-yellow-600"></i>
-                        </div>
-                    </div>
-                    <p class="text-2xl font-bold text-gray-900" th:text="${pendingRequests ?: 0}">0</p>
-                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.pending.note}">Aguardando confirmação</p>
-                </article>
-
-                <article class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.in_progress}">Em andamento</span>
-                        <div class="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="truck" class="w-4 h-4 text-sky-600"></i>
-                        </div>
-                    </div>
-                    <p class="text-2xl font-bold text-gray-900" th:text="${inProgressRequests ?: 0}">0</p>
-                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.in_progress.note}">Aceitas ou em rota</p>
-                </article>
-
-                <article class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide" th:text="#{dashboard.user.activity.completed}">Concluídas</span>
-                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
-                        </div>
-                    </div>
-                    <p class="text-2xl font-bold text-gray-900" th:text="${completedRequests ?: 0}">0</p>
-                    <p class="text-xs text-gray-500 mt-0.5" th:text="#{dashboard.user.activity.completed.note}">Coletas realizadas com sucesso</p>
-                </article>
+            </div>
+            <div class="card__body grid grid--4">
+                <div class="stat">
+                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-box"></i></div>
+                    <p class="stat__value" th:text="${totalRequests ?: 0}">0</p>
+                    <p class="stat__label" th:text="#{dashboard.user.activity.total}">Total</p>
+                </div>
+                <div class="stat">
+                    <div class="stat__icon" style="background:var(--yellow-100);color:var(--yellow-800)"><i class="fa-solid fa-clock"></i></div>
+                    <p class="stat__value" th:text="${pendingRequests ?: 0}">0</p>
+                    <p class="stat__label" th:text="#{dashboard.user.activity.pending}">Pendentes</p>
+                </div>
+                <div class="stat">
+                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-truck"></i></div>
+                    <p class="stat__value" th:text="${inProgressRequests ?: 0}">0</p>
+                    <p class="stat__label" th:text="#{dashboard.user.activity.in_progress}">Em andamento</p>
+                </div>
+                <div class="stat">
+                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-circle-check"></i></div>
+                    <p class="stat__value" th:text="${completedRequests ?: 0}">0</p>
+                    <p class="stat__label" th:text="#{dashboard.user.activity.completed}">Concluídas</p>
+                </div>
             </div>
         </section>
 
-        <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <header class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-                <i data-lucide="calendar-check" class="w-4 h-4 text-emerald-500"></i>
-                <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.next_request.title}">Próxima coleta agendada</h2>
-            </header>
-
-            <div th:if="${nextRequest != null}" class="p-5 space-y-3">
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                        <i data-lucide="calendar-days" class="w-5 h-5 text-emerald-600"></i>
-                    </div>
-                    <div class="space-y-2">
-                        <p class="text-sm font-semibold text-gray-900" th:text="${nextRequest.description}">Descrição</p>
-                        <div class="text-sm text-gray-600 space-y-1">
-                            <p class="flex items-center gap-2">
-                                <i data-lucide="clock" class="w-4 h-4 text-emerald-500"></i>
-                                <span th:text="${#temporals.format(nextRequest.scheduledDate, 'EEEE d MMMM')}" th:aria-label="#{dashboard.user.next_request.schedule}">Data programada</span>
-                            </p>
-                            <p class="flex items-center gap-2">
-                                <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
-                                <span th:text="${nextRequest.collectionAddress}" th:aria-label="#{dashboard.user.next_request.address}">Endereço</span>
-                            </p>
-                        </div>
+        <section class="card card--flush">
+            <div class="card__header">
+                <h2 class="card__title" th:text="#{dashboard.user.next_request.title}">Próxima coleta agendada</h2>
+            </div>
+            <div th:if="${nextRequest != null}" class="card__body">
+                <div style="display:flex;gap:.75rem;align-items:flex-start;">
+                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-calendar-days"></i></div>
+                    <div>
+                        <p class="font-semibold text-sm" th:text="${nextRequest.address}">Dirección</p>
+                        <p class="text-sm text-gray-600" style="margin-top:.5rem;"><i class="fa-solid fa-clock" style="color:var(--green-500)"></i> <span th:text="${nextRequest.confirmedSlot != null ? nextRequest.confirmedSlot : 'Pendiente'}">Horario</span></p>
+                        <p class="text-sm text-gray-600"><i class="fa-solid fa-location-dot" style="color:var(--green-500)"></i> <span th:text="${nextRequest.address}">Dirección</span></p>
                     </div>
                 </div>
-                <div class="flex justify-end">
-                    <a th:href="@{/usuarios/solicitud/{id}(id=${nextRequest.id})}"
-                       class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700"
-                       th:text="#{dashboard.user.next_request.details}">
-                        Ver detalhes
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-                    </a>
+                <div style="display:flex;justify-content:flex-end;margin-top:.75rem;">
+                    <a th:href="@{/solicitud/{id}(id=${nextRequest.id})}" class="btn btn--green btn--sm" th:text="#{dashboard.user.next_request.details}">Ver detalhes</a>
                 </div>
             </div>
-
-            <div th:if="${nextRequest == null}" class="p-5 space-y-3">
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                        <i data-lucide="calendar-plus" class="w-5 h-5 text-emerald-600"></i>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.next_request.none.title}">Você não possui coletas agendadas</p>
-                        <p class="text-sm text-gray-600" th:text="#{dashboard.user.next_request.none.subtitle}">Agende uma nova solicitação para começar</p>
-                        <p class="text-xs text-gray-500" th:text="#{dashboard.user.next_request.none.note}">Uma organização entrará em contato para coordenar a coleta.</p>
+            <div th:if="${nextRequest == null}" class="card__body">
+                <div style="display:flex;gap:.75rem;align-items:flex-start;">
+                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-calendar-plus"></i></div>
+                    <div>
+                        <p class="font-semibold text-sm" th:text="#{dashboard.user.next_request.none.title}">Sem coletas</p>
+                        <p class="text-sm text-gray-600" th:text="#{dashboard.user.next_request.none.subtitle}">Agende uma nova</p>
+                        <p class="text-xs text-gray-500" th:text="#{dashboard.user.next_request.none.note}">Uma organização entrará em contato.</p>
                     </div>
                 </div>
-                <a href="/usuarios/solicitudes/nueva" class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 w-full sm:w-auto" th:text="#{dashboard.user.next_request.none.cta}">
-                    Agendar nova coleta
-                    <i data-lucide="sparkles" class="w-4 h-4 ml-2"></i>
-                </a>
+                <a href="/solicitudes/nueva" class="btn btn--green btn--block" style="margin-top:.75rem;" th:text="#{dashboard.user.next_request.none.cta}">Agendar</a>
             </div>
         </section>
 
-        <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <header class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-sm font-semibold text-gray-900" th:text="#{dashboard.user.recent_requests.title}">Solicitações recentes</h2>
-                <a href="/usuarios/solicitudes" class="inline-flex items-center text-xs font-medium text-emerald-600 hover:text-emerald-700 gap-1">
-                    <span th:text="#{dashboard.user.recent_requests.link}">Ver todas</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                </a>
-            </header>
-
+        <section class="card card--flush">
+            <div class="card__header" style="justify-content:space-between;">
+                <h2 class="card__title" th:text="#{dashboard.user.recent_requests.title}">Solicitações recentes</h2>
+                <a href="/solicitudes" class="link link--green" th:text="#{dashboard.user.recent_requests.link}">Ver todas</a>
+            </div>
             <div th:if="${recentRequests != null and !recentRequests.empty}">
-                <a th:each="request, iterStat : ${recentRequests}"
-                   th:href="@{/usuarios/solicitud/{id}(id=${request.id})}"
-                   class="block px-5 py-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors"
-                   th:classappend="${iterStat.last ? 'border-b-0' : ''}">
-                    <div class="flex items-start gap-3">
-                        <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                            <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
+                <a th:each="request, iterStat : ${recentRequests}" th:href="@{/solicitud/{id}(id=${request.id})}" class="req-item">
+                    <div class="req-item__icon"><i class="fa-solid fa-box"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;justify-content:space-between;gap:.5rem;margin-bottom:.25rem;">
+                            <span class="req-item__title" th:text="${request.address}">Dirección</span>
+                            <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between gap-2 mb-1">
-                                <span class="font-semibold text-sm text-gray-900 line-clamp-1" th:text="${request.description}">Descrição</span>
-                                <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
-                            </div>
-                            <div class="space-y-1 text-xs text-gray-600">
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                                    <span class="truncate" th:text="${request.collectionAddress}">Endereço</span>
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                                    <span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span>
-                                </div>
-                                <div th:if="${request.materials != null and !request.materials.empty}" class="flex items-center gap-1.5">
-                                    <i data-lucide="recycle" class="w-3.5 h-3.5"></i>
-                                    <span class="truncate">
-                                        <span th:each="material, mStat : ${request.materials}">
-                                            <span th:text="${material.name}">Material</span><span th:if="${!mStat.last}">, </span>
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="req-item__meta"><i class="fa-solid fa-location-dot"></i><span th:text="${request.address}">Dirección</span></div>
+                        <div class="req-item__meta"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span></div>
+                        <div th:if="${request.materials != null and !request.materials.empty}" class="req-item__meta">
+                            <i class="fa-solid fa-recycle"></i>
+                            <span th:each="material, mStat : ${request.materials}"><span th:text="${material}">Material</span><span th:if="${!mStat.last}">, </span></span>
                         </div>
                     </div>
                 </a>
             </div>
-
-            <div th:if="${recentRequests == null or recentRequests.empty}" class="px-5 py-10 text-center space-y-3">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                    <i data-lucide="inbox" class="w-8 h-8 text-gray-400"></i>
-                </div>
-                <p class="text-sm text-gray-600" th:text="#{dashboard.user.recent_requests.empty}">Você ainda não possui solicitações</p>
-                <a href="/usuarios/solicitudes/nueva" class="inline-flex items-center px-3 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700">
-                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
-                    <span th:text="#{dashboard.user.recent_requests.empty.cta}">Criar solicitação</span>
-                </a>
+            <div th:if="${recentRequests == null or recentRequests.empty}" class="empty-state">
+                <i class="fa-solid fa-inbox empty-state__icon"></i>
+                <p th:text="#{dashboard.user.recent_requests.empty}">Sem solicitações</p>
+                <a href="/solicitudes/nueva" class="btn btn--green btn--sm" th:text="#{dashboard.user.recent_requests.empty.cta}">Criar solicitação</a>
             </div>
         </section>
     </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
 </main>
 </body>
 </html>

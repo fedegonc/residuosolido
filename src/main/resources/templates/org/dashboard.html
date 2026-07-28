@@ -1,198 +1,135 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <title>Panel de Control - Organización</title>
+    <title th:text="#{org.dashboard.title}">Panel de Control - Organización</title>
+    <style>
+      .metric{display:block;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius);padding:.5rem;transition:border-color .2s,background .2s;}
+      .metric:hover{border-color:var(--gray-300);background:var(--white);text-decoration:none;}
+      .metric__head{display:flex;align-items:center;gap:.25rem;margin-bottom:.25rem;}
+      .metric__label{font-size:.75rem;font-weight:500;color:var(--gray-700);}
+      .metric__value{font-size:1.25rem;font-weight:700;color:var(--gray-900);}
+      .metric__note{font-size:.75rem;color:var(--gray-600);}
+      .pend-item{display:flex;gap:.5rem;padding:.5rem;border-radius:var(--radius);border-left:4px solid var(--yellow-100);background:var(--yellow-50);margin-bottom:.5rem;align-items:flex-start;}
+      .pend-item__icon{width:1.75rem;height:1.75rem;border-radius:9999px;background:var(--yellow-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--yellow-800);}
+      .pend-item__title{font-size:.75rem;font-weight:600;color:var(--gray-900);}
+      .pend-item__meta{font-size:.75rem;color:var(--gray-600);}
+      .pend-item__actions{display:flex;gap:.25rem;margin-top:.25rem;}
+      .quick-card{display:block;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:.5rem;box-shadow:var(--shadow-sm);}
+      .quick-card:hover{box-shadow:var(--shadow);text-decoration:none;}
+      .quick-card__head{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;}
+      .quick-card__icon{width:1.75rem;height:1.75rem;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;}
+      .quick-card__title{font-size:.75rem;font-weight:700;color:var(--gray-900);}
+      .quick-card__desc{font-size:.75rem;color:var(--gray-600);}
+    </style>
 </head>
 <body>
 <main layout:fragment="content">
-    <!-- Messages -->
-    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
-        <div class="bg-green-50 border border-green-200 text-green-800 px-3 py-2 rounded-lg">
-            <div class="flex items-center">
-                <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
-                <span class="text-sm" th:text="${successMessage}"></span>
-            </div>
-        </div>
+    <div th:if="${successMessage}" class="page mt-2">
+        <div th:replace="~{fragments/components/alerts :: success(${successMessage})}"></div>
+    </div>
+    <div th:if="${errorMessage}" class="page mt-2">
+        <div th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
     </div>
 
-    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
-        <div class="bg-red-50 border border-red-200 text-red-800 px-3 py-2 rounded-lg">
-            <div class="flex items-center">
-                <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i>
-                <span class="text-sm" th:text="${errorMessage}"></span>
-            </div>
-        </div>
-    </div>
+    <div class="page page--wide" style="padding-top:.5rem;padding-bottom:.5rem;display:grid;gap:.75rem;">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 space-y-3">
-        
-        <!-- Hero Section Compacto -->
-        <div class="relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div class="h-1 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600"></div>
-            
-            <div class="p-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i>
-                        </div>
+        <section class="card card--flush">
+            <div class="card__bar card__bar--blue"></div>
+            <div class="card__body" style="padding:.75rem;">
+                <div class="flex-between">
+                    <div class="flex" style="gap:.5rem;align-items:center;">
+                        <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-building"></i></div>
                         <div>
-                            <h1 class="text-lg font-bold text-gray-900">Panel de Gestión</h1>
-                            <p class="text-xs text-gray-600">Administra solicitudes de reciclaje</p>
+                            <h1 style="font-size:1.125rem;font-weight:700;color:var(--gray-900);" th:text="#{org.dashboard.heading}">Panel de Gestión</h1>
+                            <p class="text-xs text-gray-600" th:text="#{org.dashboard.subtitle}">Administra solicitudes de reciclaje</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <a href="/acopio/requests" class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
-                            <i data-lucide="clipboard-list" class="w-4 h-4 mr-1"></i>
-                            Solicitudes
-                        </a>
-                        <a href="/acopio/perfil" class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 transition-colors">
-                            <i data-lucide="settings" class="w-4 h-4 mr-1"></i>
-                            Perfil
-                        </a>
+                        <a href="/acopio/requests" class="btn btn--primary btn--sm"><i class="fa-solid fa-clipboard-list"></i><span th:text="#{org.dashboard.requests}">Solicitudes</span></a>
+                        <a href="/acopio/perfil" class="btn btn--ghost btn--sm"><i class="fa-solid fa-gear"></i><span th:text="#{org.dashboard.profile}">Perfil</span></a>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Métricas Clave Compactas -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
-            <div class="mb-2">
-                <h2 class="text-sm font-bold text-gray-900">Resumen de Solicitudes</h2>
-                <p class="text-xs text-gray-600">Rendimiento de tu organización este mes</p>
+        <section class="card">
+            <div style="margin-bottom:.5rem;">
+                <h2 class="font-bold text-sm" style="color:var(--gray-900);" th:text="#{org.dashboard.summary}">Resumen de Solicitudes</h2>
+                <p class="text-xs text-gray-600" th:text="#{org.dashboard.summary.subtitle}">Rendimiento de tu organización este mes</p>
             </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <!-- Métrica: Solicitudes Pendientes -->
-                <a href="/acopio/requests?status=PENDING" class="bg-gray-50 rounded-lg p-2 border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 transition-all cursor-pointer group">
-                    <div class="flex items-center gap-1 mb-1">
-                        <i data-lucide="clock" class="w-4 h-4 text-gray-600 group-hover:text-yellow-600"></i>
-                        <span class="text-xs font-medium text-gray-700 group-hover:text-yellow-700">Pendientes</span>
-                    </div>
-                    <p class="text-xl font-bold text-gray-900 group-hover:text-yellow-700" th:text="${pendingRequests ?: 0}">0</p>
-                    <p class="text-xs text-gray-600 group-hover:text-yellow-600">Requieren atención</p>
+            <div class="grid grid--4">
+                <a href="/acopio/requests?status=PENDING" class="metric">
+                    <div class="metric__head"><i class="fa-solid fa-clock" style="color:var(--gray-600)"></i><span class="metric__label" th:text="#{org.dashboard.pending}">Pendientes</span></div>
+                    <p class="metric__value" th:text="${pendingRequests ?: 0}">0</p>
+                    <p class="metric__note" th:text="#{org.dashboard.pending.note}">Requieren atención</p>
                 </a>
-                
-                <!-- Métrica: Solicitudes En Proceso -->
-                <a href="/acopio/requests?status=IN_PROGRESS" class="bg-gray-50 rounded-lg p-2 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer group">
-                    <div class="flex items-center gap-1 mb-1">
-                        <i data-lucide="truck" class="w-4 h-4 text-gray-600 group-hover:text-blue-600"></i>
-                        <span class="text-xs font-medium text-gray-700 group-hover:text-blue-700">En Proceso</span>
-                    </div>
-                    <p class="text-xl font-bold text-gray-900 group-hover:text-blue-700" th:text="${inProgressRequests ?: 0}">2</p>
-                    <p class="text-xs text-gray-600 group-hover:text-blue-600">En recolección</p>
+                <a href="/acopio/requests?status=IN_PROGRESS" class="metric">
+                    <div class="metric__head"><i class="fa-solid fa-truck" style="color:var(--gray-600)"></i><span class="metric__label" th:text="#{org.dashboard.in_progress}">En Proceso</span></div>
+                    <p class="metric__value" th:text="${inProgressRequests ?: 0}">0</p>
+                    <p class="metric__note" th:text="#{org.dashboard.in_progress.note}">En recolección</p>
                 </a>
-                
-                <!-- Métrica: Solicitudes Completadas -->
-                <a href="/acopio/requests?status=COMPLETED" class="bg-gray-50 rounded-lg p-2 border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all cursor-pointer group">
-                    <div class="flex items-center gap-1 mb-1">
-                        <i data-lucide="check-circle" class="w-4 h-4 text-gray-600 group-hover:text-green-600"></i>
-                        <span class="text-xs font-medium text-gray-700 group-hover:text-green-700">Completadas</span>
-                    </div>
-                    <p class="text-xl font-bold text-gray-900 group-hover:text-green-700" th:text="${completedRequests ?: 0}">1</p>
-                    <p class="text-xs text-gray-600 group-hover:text-green-600">Este mes</p>
+                <a href="/acopio/requests?status=COMPLETED" class="metric">
+                    <div class="metric__head"><i class="fa-solid fa-circle-check" style="color:var(--gray-600)"></i><span class="metric__label" th:text="#{org.dashboard.completed}">Completadas</span></div>
+                    <p class="metric__value" th:text="${completedRequests ?: 0}">0</p>
+                    <p class="metric__note" th:text="#{org.dashboard.completed.note}">Este mes</p>
                 </a>
-                
-                <div class="bg-gray-50 rounded-lg p-2 border border-gray-200">
-                    <div class="flex items-center gap-1 mb-1">
-                        <i data-lucide="recycle" class="w-4 h-4 text-gray-600"></i>
-                        <span class="text-xs font-medium text-gray-700">Kg Reciclados</span>
-                    </div>
-                    <p class="text-xl font-bold text-gray-900" th:text="${totalKgRecycled ?: 0}">0</p>
-                    <p class="text-xs text-gray-600">Total acumulado</p>
-                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Solicitudes Pendientes Compactas -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-1">
-                    <i data-lucide="alert-circle" class="w-4 h-4 text-yellow-600"></i>
-                    Solicitudes Pendientes
+        <section class="card">
+            <div class="flex-between" style="margin-bottom:.5rem;">
+                <h2 class="font-bold text-sm" style="color:var(--gray-900);display:flex;align-items:center;gap:.25rem;">
+                    <i class="fa-solid fa-circle-exclamation" style="color:var(--yellow-800)"></i>
+                    <span th:text="#{org.dashboard.pending_requests}">Solicitudes Pendientes</span>
                 </h2>
-                <a href="/acopio/requests?status=PENDING" class="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                    Ver todas
-                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                </a>
+                <a href="/acopio/requests?status=PENDING" class="link" th:text="#{org.dashboard.view_all}">Ver todas</a>
             </div>
-            
-            <div th:if="${pendingRequestsList != null and !pendingRequestsList.empty}" class="space-y-2">
-                <div th:each="request : ${pendingRequestsList}" 
-                     class="flex items-start gap-2 p-2 rounded-lg border-l-4 border-yellow-400 bg-yellow-50/50 hover:bg-yellow-50 transition-all">
-                    <div class="flex-shrink-0 w-7 h-7 rounded-full bg-yellow-100 flex items-center justify-center">
-                        <i data-lucide="package" class="w-4 h-4 text-yellow-700"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-start justify-between gap-2 mb-1">
+
+            <div th:if="${pendingRequestsList != null and !pendingRequestsList.empty}">
+                <div th:each="request : ${pendingRequestsList}" class="pend-item">
+                    <div class="pend-item__icon"><i class="fa-solid fa-box"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="flex-between" style="margin-bottom:.25rem;">
                             <div>
-                                <p class="text-xs font-semibold text-gray-900" th:text="${request.description}">Descripción</p>
-                                <p class="text-xs text-gray-600">
-                                    <i data-lucide="map-pin" class="w-3 h-3 inline mr-0.5"></i>
-                                    <span th:text="${request.collectionAddress}">Dirección</span>
-                                </p>
+                                <p class="pend-item__title" th:text="${request.address}">Dirección</p>
+                                <p class="pend-item__meta"><i class="fa-solid fa-location-dot"></i> <span th:text="${request.address}">Dirección</span></p>
                             </div>
-                            <span class="flex-shrink-0 px-1.5 py-0.5 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                                Pendiente
-                            </span>
+                            <span class="badge badge--yellow" th:text="#{org.dashboard.pending_badge}">Pendiente</span>
                         </div>
-                        <div class="flex gap-1 mt-1">
-                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" 
-                               class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">
-                                <i data-lucide="eye" class="w-3 h-3 mr-0.5"></i>
-                                Ver
-                            </a>
-                            <form th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" class="inline">
+                        <div class="pend-item__actions">
+                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" class="btn btn--primary btn--sm"><i class="fa-solid fa-eye"></i><span th:text="#{org.dashboard.view}">Ver</span></a>
+                            <form th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" style="display:inline;">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <button type="submit" class="inline-flex items-center px-2 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">
-                                    <i data-lucide="check" class="w-3 h-3 mr-0.5"></i>
-                                    Aceptar
-                                </button>
+                                <button type="submit" class="btn btn--green btn--sm"><i class="fa-solid fa-check"></i><span th:text="#{org.dashboard.accept}">Aceptar</span></button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div th:if="${pendingRequestsList == null or pendingRequestsList.empty}" 
-                 class="text-center py-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-1">
-                    <i data-lucide="check-circle-2" class="w-5 h-5 text-gray-400"></i>
-                </div>
-                <h3 class="text-xs font-medium text-gray-900 mb-0.5">¡Todo al día!</h3>
-                <p class="text-xs text-gray-600">
-                    No hay solicitudes pendientes en este momento.
-                </p>
+
+            <div th:if="${pendingRequestsList == null or pendingRequestsList.empty}" class="empty-state">
+                <i class="fa-solid fa-circle-check empty-state__icon"></i>
+                <p th:text="#{org.dashboard.no_pending}">¡Todo al día! No hay solicitudes pendientes.</p>
             </div>
-        </div>
+        </section>
 
-        <!-- Acciones Rápidas Compactas -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
-            <a href="/acopio/materials" class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-2 mb-1">
-                    <div class="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i data-lucide="recycle" class="w-4 h-4 text-green-600"></i>
-                    </div>
-                    <h3 class="text-xs font-bold text-gray-900">Materiales</h3>
+        <div class="grid grid--4">
+            <a href="/acopio/catadores" class="quick-card">
+                <div class="quick-card__head">
+                    <div class="quick-card__icon" style="background:var(--green-100);color:var(--green-700)"><i class="fa-solid fa-users"></i></div>
+                    <h3 class="quick-card__title" th:text="#{org.dashboard.catadores}">Catadores</h3>
                 </div>
-                <p class="text-xs text-gray-600">Gestiona tipos de materiales reciclables</p>
+                <p class="quick-card__desc" th:text="#{org.dashboard.catadores.desc}">Registra vecinos que entregan materiales</p>
             </a>
-
-            <a href="/acopio/perfil" class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-2 mb-1">
-                    <div class="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <i data-lucide="settings" class="w-4 h-4 text-gray-600"></i>
-                    </div>
-                    <h3 class="text-xs font-bold text-gray-900">Perfil</h3>
+            <a href="/acopio/perfil" class="quick-card">
+                <div class="quick-card__head">
+                    <div class="quick-card__icon" style="background:var(--gray-100);color:var(--gray-600)"><i class="fa-solid fa-gear"></i></div>
+                    <h3 class="quick-card__title" th:text="#{org.dashboard.profile}">Perfil</h3>
                 </div>
-                <p class="text-xs text-gray-600">Actualiza información de contacto</p>
+                <p class="quick-card__desc" th:text="#{org.dashboard.profile_desc}">Actualiza información de contacto</p>
             </a>
         </div>
     </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
 </main>
 </body>
 </html>

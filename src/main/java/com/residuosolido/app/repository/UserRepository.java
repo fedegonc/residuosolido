@@ -1,7 +1,8 @@
 package com.residuosolido.app.repository;
 
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.Role;
+import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.enums.City;
 import java.util.Optional;
 import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -13,4 +14,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByEmail(String email);
     List<User> findByRole(Role role);
     List<User> findByRoleAndActive(Role role, boolean active);
+    List<User> findByRoleAndCity(Role role, City city);
+    List<User> findByRoleAndCityAndActive(Role role, City city, boolean active);
 }

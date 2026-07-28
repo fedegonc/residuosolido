@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-
-    <!--
-        Fragmento reutilizable para badge de estado de solicitud.
-        Uso:
-        <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
-    -->
-    <span th:fragment="badge(status)"
-          th:switch="${status.name()}"
-          class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap"
-          th:classappend="${status.name() == 'PENDING'    ? 'bg-yellow-100 text-yellow-800' :
-                           status.name() == 'IN_PROGRESS' ? 'bg-indigo-100 text-indigo-800' :
-                           status.name() == 'COMPLETED'   ? 'bg-green-100 text-green-800' :
-                           status.name() == 'REJECTED'    ? 'bg-red-100 text-red-800' :
-                                                            'bg-gray-100 text-gray-800'}">
-        <span th:case="'PENDING'">Pendiente</span>
-        <span th:case="'IN_PROGRESS'">En Proceso</span>
-        <span th:case="'COMPLETED'">Completada</span>
-        <span th:case="'REJECTED'">Rechazada</span>
-        <span th:case="*" th:text="${status.displayName}">Estado</span>
+  <th:block th:fragment="badge(status)">
+    <span th:switch="${status}">
+      <span th:case="'PENDING'" class="badge badge--warning">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+        <span th:text="#{request.status.pending}">Pendiente</span>
+      </span>
+      <span th:case="'IN_PROGRESS'" class="badge badge--info">
+        <i class="fa-solid fa-truck" aria-hidden="true"></i>
+        <span th:text="#{request.status.in_progress}">En proceso</span>
+      </span>
+      <span th:case="'COMPLETED'" class="badge badge--success">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <span th:text="#{request.status.completed}">Completado</span>
+      </span>
+      <span th:case="'REJECTED'" class="badge badge--danger">
+        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+        <span th:text="#{request.status.rejected}">Rechazado</span>
+      </span>
+      <span th:case="*" class="badge">
+        <span th:text="${status}">—</span>
+      </span>
     </span>
-
+  </th:block>
 </body>
 </html>

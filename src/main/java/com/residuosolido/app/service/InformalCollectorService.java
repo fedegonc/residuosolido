@@ -1,0 +1,91 @@
+package com.residuosolido.app.service;
+
+import com.residuosolido.app.enums.City;
+import com.residuosolido.app.model.InformalCollector;
+import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.InformalCollectorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class InformalCollectorService {
+
+    private static final int MIN_PHONE_LENGTH = 8;
+
+    private final InformalCollectorRepository repository;
+
+    @Autowired
+    public InformalCollectorService(InformalCollectorRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<InformalCollector> findByOrganization(User organization) {
+        return repository.findByOrganizationIdOrderByNameAsc(organization.getId());
+    }
+
+    public List<InformalCollector> findActiveByOrganization(User organization) {
+        return repository.findByOrganizationIdAndActiveOrderByNameAsc(organization.getId(), true);
+    }
+
+    public Optional<InformalCollector> findById(String id) {
+        return repository.findById(id);
+    }
+
+    public InformalCollector findOwnedById(String id, User organization) {
+        InformalCollector collector = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("error.catador.not_found"));
+        if (!collector.belongsTo(organization)) {
+            throw new SecurityException("error.catador.no_permission");
+        }
+        return collector;
+    }
+
+    public InformalCollector create(User organization, String name, String phone, City city,
+                                    List<MaterialCategory> materials, String notes) {
+        validateNameAndPhone(name, phone);
+        return repository.save(InformalCollector.create(
+                organization.getId(), name, phone, city, materials, notes));
+    }
+
+    public InformalCollector update(String id, User organization, String name, String phone, City city,
+                                    List<MaterialCategory> materials, String notes, boolean active) {
+        validateNameAndPhone(name, phone);
+        InformalCollector collector = findOwnedById(id, organization);
+        collector.updateDetails(name, phone, city, materials, notes, active);
+        return repository.save(collector);
+    }
+
+    public void delete(String id, User organization) {
+        InformalCollector collector = findOwnedById(id, organization);
+        repository.delete(collector);
+    }
+
+    public InformalCollector saveOrUpdate(String id, User organization, String name, String phone, City city,
+                                          List<MaterialCategory> materials, String notes, boolean active) {
+        if (id != null && !id.isBlank()) {
+            return update(id, organization, name, phone, city, materials, notes, active);
+        }
+        return create(organization, name, phone, city, materials, notes);
+    }
+
+    public long countByCity(City city) {
+        return repository.countByCityAndActive(city, true);
+    }
+
+    public long countActive() {
+        return repository.countByActive(true);
+    }
+
+    private void validateNameAndPhone(String name, String phone) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("catadores.error.name_required");
+        }
+        if (phone == null || phone.trim().length() < MIN_PHONE_LENGTH) {
+            throw new IllegalArgumentException("catadores.error.phone_min_length");
+        }
+    }
+}

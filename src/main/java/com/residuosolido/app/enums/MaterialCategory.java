@@ -1,4 +1,4 @@
-package com.residuosolido.app.model;
+package com.residuosolido.app.enums;
 
 /**
  * Categorías fijas de materiales reciclables.
@@ -6,11 +6,7 @@ package com.residuosolido.app.model;
  */
 public enum MaterialCategory {
     PLASTICO,
-    PAPEL_CARTON,
+    PAPEL,
     VIDRIO,
-    METAL,
-    ORGANICO,
-    ELECTRONICO,
-    TEXTIL,
-    OTROS
+    METAL
 }

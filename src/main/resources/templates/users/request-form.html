@@ -1,642 +1,222 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <title th:if="${isEdit ?: false}" th:text="#{request.edit.title}">Editar Solicitud</title>
-    <title th:unless="${isEdit ?: false}" th:text="#{request.new.title}">Nueva Solicitud</title>
+    <title th:text="${isEdit ?: false} ? #{request.form.title.edit} : #{request.form.title.new}">Solicitud</title>
 </head>
 <body>
 <main layout:fragment="content">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Alerta cuando no hay organizaciones disponibles -->
-        <div th:if="${noOrganizationsAvailable}" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
-            <div class="flex items-center">
-                <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
-                <div>
-                    <h3 class="font-medium" th:text="#{request.no_orgs.title}">No hay organizaciones disponibles</h3>
-                    <p class="text-sm mt-1" th:text="#{request.no_orgs.message}">Actualmente no hay organizaciones registradas para procesar solicitudes de recolección. Por favor, inténtalo más tarde o contacta al administrador del sistema.</p>
-                </div>
+    <div class="page" style="max-width:42rem;padding-top:2rem;padding-bottom:2rem;">
+
+        <div th:if="${param.success}" class="alert alert--success" style="margin-bottom:1.5rem;">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+                <h3 class="font-medium" th:text="#{request.form.success.title}">Solicitud enviada!</h3>
+                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.success.text}">Tu solicitud fue enviada. La cooperativa va a contactarte al telefono indicado.</p>
+                <a href="/" class="btn btn--green btn--sm" style="margin-top:.75rem;" th:text="#{button.home}">Volver al inicio</a>
             </div>
         </div>
 
-        <!-- Información sobre organizaciones disponibles -->
-        <div th:if="${availableOrganizations != null and #lists.size(availableOrganizations) > 0}" class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-6">
-            <div class="flex items-center">
-                <i data-lucide="info" class="w-5 h-5 mr-2"></i>
-                <div>
-                    <h3 class="font-medium" th:text="#{request.available_orgs.title}">Organizaciones disponibles para recolección</h3>
-                    <p class="text-sm mt-1">
-                        Hay <span th:text="${#lists.size(availableOrganizations)}">0</span> organizaciones disponibles: 
-                        <span th:text="${#strings.listJoin(availableOrganizations, ', ')}">organizaciones</span>
-                    </p>
-                </div>
+        <div th:if="${param.error}" class="alert alert--error" style="margin-bottom:1.5rem;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <div>
+                <h3 class="font-medium" th:text="#{request.form.error.title}">Error</h3>
+                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.error.text}">Hubo un error al procesar tu solicitud. Intentelo de nuevo.</p>
             </div>
         </div>
 
-        <form th:action="@{${(isEdit ?: false) ? '/usuarios/solicitud/' + request.id + '/editar' : '/usuarios/solicitudes'}}" method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-6">
-                <h2 th:if="${isEdit ?: false}" class="text-2xl font-bold text-gray-900 mb-6" th:text="#{request.edit.heading}">Editar Solicitud de Recolección</h2>
-                <h2 th:unless="${isEdit ?: false}" class="text-2xl font-bold text-gray-900 mb-6" th:text="#{request.new.heading}">Nueva Solicitud de Recolección</h2>
-
-                <!-- Stepper indicator -->
-                <div class="flex items-center justify-between mb-8 px-2">
-                    <div class="flex items-center w-full">
-                        <div class="flex items-center text-emerald-600 relative" id="stepper-1">
-                            <div class="rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-emerald-600 text-white font-medium text-sm z-10 ring-4 ring-emerald-100">1</div>
-                            <div class="ml-2 text-sm font-medium text-emerald-600 hidden sm:block">Detalles</div>
-                        </div>
-                        <div class="flex-auto border-t-2 transition-all duration-300 border-emerald-600" id="line-1-2"></div>
-                        <div class="flex items-center text-gray-400 relative" id="stepper-2">
-                            <div class="rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-gray-200 text-gray-500 font-medium text-sm z-10">2</div>
-                            <div class="ml-2 text-sm font-medium text-gray-400 hidden sm:block">Materiales</div>
-                        </div>
-                        <div class="flex-auto border-t-2 transition-all duration-300 border-gray-200" id="line-2-3"></div>
-                        <div class="flex items-center text-gray-400 relative" id="stepper-3">
-                            <div class="rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-gray-200 text-gray-500 font-medium text-sm z-10">3</div>
-                            <div class="ml-2 text-sm font-medium text-gray-400 hidden sm:block">Revisión</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 1: Detalles de la solicitud -->
-                <div id="step-1">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">
-                            <i data-lucide="file-text" class="w-4 h-4 inline mr-1"></i>
-                            <span th:text="#{request.description.label}">Descripción de la solicitud</span>
-                        </label>
-                        <textarea name="description" id="description" rows="3" required
-                                  th:text="${request?.description}"
-                                  class="w-full min-h-[140px] md:min-h-[160px] px-3 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
-                                  th:placeholder="#{request.description.placeholder}"></textarea>
-                    </div>
-
-                    <!-- Campo de imagen -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">
-                            <i data-lucide="image" class="w-4 h-4 inline mr-1"></i>
-                            <span th:text="#{request.image.label}">Foto de los residuos</span> <span class="text-gray-500 text-xs" th:text="#{request.image.optional}">(opcional)</span>
-                        </label>
-                        <div>
-                            <input type="file" 
-                                   name="imageFile" 
-                                   id="imageFile"
-                                   accept="image/*"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 text-sm file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                        </div>
-                        <p class="text-xs text-gray-500">
-                            <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                            <span th:text="#{request.image.help}">Sube una foto de los materiales reciclables para ayudar a la organización a preparar la recolección.</span>
-                        </p>
-                        <!-- Preview de la imagen -->
-                        <div id="imagePreview" class="hidden">
-                            <img id="previewImg" src="" alt="Preview" class="max-w-xs rounded-lg border border-gray-300 shadow-sm">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid gap-4 lg:grid-cols-2">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
-                            <span th:text="#{request.address.label}">Dirección de recolección</span>
-                        </label>
-                        <input type="text" name="collectionAddress" id="collectionAddress" required
-                               th:value="${request?.collectionAddress}"
-                               class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                               th:placeholder="#{request.address.placeholder}">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1" th:text="#{request.latitude}">Latitud</label>
-                                <input type="text" name="collectionLatitude" id="collectionLatitude"
-                                       th:value="${request?.collectionLatitude}"
-                                       class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1" th:text="#{request.longitude}">Longitud</label>
-                                <input type="text" name="collectionLongitude" id="collectionLongitude"
-                                       th:value="${request?.collectionLongitude}"
-                                       class="w-full px-3 py-2 border border-emerald-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500" readonly>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                            <span th:text="#{request.coords.help}">Selecciona un punto en el mapa para guardar las coordenadas exactas de la recolección.</span>
-                        </p>
-                        <div class="mt-3 flex flex-wrap gap-2">
-                            <button type="button" id="btnPickOnMap" class="px-3 py-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 flex items-center gap-2">
-                                <i data-lucide="map-pin"></i>
-                                <span th:text="#{request.map.choose}">Elegir en mapa</span>
-                            </button>
-                            <button type="button" id="btnUseMyLocation" class="px-3 py-2 text-xs border border-emerald-300 text-emerald-700 rounded-md hover:bg-emerald-50 flex items-center gap-2">
-                                <i data-lucide="crosshair"></i>
-                                <span th:text="#{request.map.use_location}">Usar mi ubicación</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i data-lucide="map" class="w-4 h-4 inline mr-1"></i>
-                            <span th:text="#{request.map.title}">Ubicación en mapa</span>
-                        </label>
-                        <div id="staticMapContainer" class="border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
-                            <iframe th:with="
-                                       lat=${request?.collectionLatitude} ?: -30.93801,
-                                       lng=${request?.collectionLongitude} ?: -55.53412,
-                                       bboxLatDelta=${0.02},
-                                       bboxLngDelta=${0.02},
-                                       minLat=${lat - bboxLatDelta},
-                                       minLng=${lng - bboxLngDelta},
-                                       maxLat=${lat + bboxLatDelta},
-                                       maxLng=${lng + bboxLngDelta}
-                                   "
-                                    th:src="|https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}|"
-                                    width="100%" height="256" style="border:0;" loading="lazy"
-                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        </div>
-                    </div>
-                </div>
-                
-                </div><!-- /step-1 -->
-
-                <!-- Step 1 navigation -->
-                <div id="step-1-nav" class="flex justify-between pt-6 border-t">
-                    <a href="/usuarios/solicitudes" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors">
-                        <span th:text="#{request.button.cancel}">Cancelar</span>
-                    </a>
-                    <button type="button" onclick="goToStep(2)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
-                        <span>Siguiente</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <!-- Step 2: Organización y materiales -->
-                <div id="step-2" class="hidden">
-                <!-- Selector de Organización de Acopio (PRIMERO) -->
-                <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-lg border border-emerald-200">
-                    <label class="block text-sm font-semibold text-gray-800 mb-3">
-                        <i data-lucide="building-2" class="w-5 h-5 inline mr-2 text-emerald-600"></i>
-                        <span th:text="#{request.organization.label}">Organización de acopio</span> <span class="text-red-600" th:text="#{request.organization.required}">*</span>
-                    </label>
-                    
-                    <!-- Si hay organizaciones disponibles -->
-                    <div th:if="${organizations != null and !organizations.isEmpty()}">
-                        <select name="organizationId" 
-                                id="organizationSelector"
-                                required
-                                class="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 font-medium shadow-sm hover:border-emerald-400 transition-colors">
-                            <option value="" disabled th:selected="${!(isEdit ?: false) or request.organization == null}" class="text-gray-500" th:text="#{request.organization.select}">Selecciona una organización de acopio *</option>
-                            <option th:each="org : ${organizations}" 
-                                    th:value="${org.id}" 
-                                    th:text="${org.getFullName()}"
-                                    th:selected="${(isEdit ?: false) and request.organization != null and request.organization.id == org.id}"
-                                    class="text-gray-900">
-                                Organización
-                            </option>
-                        </select>
-                        <div class="mt-3 flex items-start space-x-2 text-xs text-emerald-800 bg-emerald-100 p-2 rounded">
-                            <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-                            <p>
-                                <span th:utext="#{request.organization.info}"><strong>Campo obligatorio:</strong> Selecciona primero una organización para ver los materiales que acepta.</span>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Si NO hay organizaciones disponibles -->
-                    <div th:unless="${organizations != null and !organizations.isEmpty()}">
-                        <div class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-gray-100 text-gray-500 font-medium">
-                            <span th:text="#{request.organization.auto}">Asignación automática (no hay organizaciones registradas aún)</span>
-                        </div>
-                        <div class="mt-3 flex items-start space-x-2 text-xs text-gray-700 bg-gray-100 p-2 rounded">
-                            <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-                            <p>
-                                <span th:text="#{request.organization.no_orgs}">Actualmente no hay organizaciones de acopio registradas en el sistema. Tu solicitud será procesada cuando haya organizaciones disponibles.</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Materiales (SE CARGAN DINÁMICAMENTE) -->
-                <div id="materialsSection" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
-                        <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
-                        <span th:text="#{request.materials.label}">Materiales que acepta esta organización</span> <span class="text-red-600" th:text="#{request.organization.required}">*</span>
-                    </label>
-                    
-                    <!-- Contenedor de materiales dinámico -->
-                    <div id="materialsContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        <div class="col-span-full text-center py-8 text-gray-500">
-                            <div class="animate-pulse">
-                                <i data-lucide="loader" class="w-8 h-8 mx-auto mb-2"></i>
-                                <p class="text-sm">Cargando materiales...</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p class="mt-2 text-xs text-gray-500">
-                        <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                        <span th:text="#{request.materials.help}">Selecciona al menos un tipo de material para tu solicitud.</span>
-                    </p>
-                </div>
-                
-                <!-- Peso estimado (kg) -->
-                <div class="mt-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="scale" class="w-4 h-4 inline mr-1"></i>
-                        <span th:text="#{request.weight.label}">Peso estimado (kg)</span>
-                        <span class="text-gray-500 text-xs" th:text="#{request.image.optional}">(opcional)</span>
-                    </label>
-                    <input type="number"
-                           name="quantityKg"
-                           id="quantityKg"
-                           th:value="${request?.quantityKg}"
-                           step="0.01"
-                           min="0"
-                           th:placeholder="#{request.weight.placeholder}"
-                           class="w-full max-w-xs px-4 py-3 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
-                    <p class="mt-2 text-xs text-gray-500">
-                        <span th:text="#{request.weight.help}">Indica el peso estimado total de los materiales a recolectar. Puedes dejarlo vacío si no estás seguro.</span>
-                    </p>
-                </div>
-
-                </div><!-- /step-2 -->
-
-                <!-- Step 2 navigation -->
-                <div id="step-2-nav" class="flex justify-between pt-6 border-t hidden">
-                    <button type="button" onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors flex items-center gap-2">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        <span>Anterior</span>
-                    </button>
-                    <button type="button" onclick="goToStep(3)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
-                        <span>Siguiente</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <!-- Step 3: Revisión -->
-                <div id="step-3" class="hidden">
-                    <div class="bg-gray-50 rounded-lg p-6 space-y-4">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                            <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-600"></i>
-                            Revisa tu solicitud
-                        </h3>
-                        <div class="space-y-3 text-sm">
-                            <div>
-                                <span class="font-medium text-gray-700">Descripción: </span>
-                                <span id="review-description" class="text-gray-600">—</span>
-                            </div>
-                            <div>
-                                <span class="font-medium text-gray-700">Dirección: </span>
-                                <span id="review-address" class="text-gray-600">—</span>
-                            </div>
-                            <div>
-                                <span class="font-medium text-gray-700">Organización: </span>
-                                <span id="review-organization" class="text-gray-600">—</span>
-                            </div>
-                            <div>
-                                <span class="font-medium text-gray-700">Materiales: </span>
-                                <span id="review-materials" class="text-gray-600">—</span>
-                            </div>
-                            <div id="review-weight-row">
-                                <span class="font-medium text-gray-700">Peso estimado: </span>
-                                <span id="review-weight" class="text-gray-600">—</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3 navigation -->
-                <div id="step-3-nav" class="flex justify-between pt-6 border-t hidden">
-                    <button type="button" onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition-colors flex items-center gap-2">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        <span>Anterior</span>
-                    </button>
-                    <button type="submit"
-                            th:disabled="${noOrganizationsAvailable}"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2">
-                        <i data-lucide="send" class="w-4 h-4"></i>
-                        <span th:if="${isEdit ?: false}" th:text="#{request.button.update}">Actualizar Solicitud</span>
-                        <span th:unless="${isEdit ?: false}" th:text="#{request.button.submit}">Enviar Solicitud</span>
-                    </button>
-                </div>
-        </form>
-    </div>
-
-    <!-- Backdrop del modal para selector de mapa -->
-    <div id="mapPickerBackdrop" class="fixed inset-0 bg-black/40 hidden"></div>
-
-    <!-- Modal selector de coordenadas Leaflet -->
-    <div id="mapPickerModal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden">
-            <div class="px-4 py-3 border-b flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                    <i data-lucide="map-pin" class="w-4 h-4 text-emerald-600"></i>
-                    <span th:text="#{request.modal.title}">Seleccionar ubicación</span>
-                </h3>
-                <button type="button" id="closeMapPicker" class="text-gray-500 hover:text-gray-700">
-                    <i data-lucide="x"></i>
-                </button>
+        <div th:if="${cities != null and cities.isEmpty()}" class="alert alert--warning" style="margin-bottom:1.5rem;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <div>
+                <h3 class="font-medium" th:text="#{request.form.noOrgs.title}">No hay cooperativas disponibles</h3>
+                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.noOrgs.text}">Aun no hay organizaciones registradas. Vuelve mas tarde.</p>
             </div>
-            <div class="p-4">
-                <div id="mapPickerCanvas" class="w-full h-80 rounded-md border border-gray-200"></div>
-                <p class="mt-2 text-xs text-gray-500">
-                    <span th:text="#{request.modal.help}">Haz clic en el mapa o arrastra el marcador para elegir el punto exacto.</span>
+        </div>
+
+        <div th:unless="${param.success}" th:if="${cities != null and !cities.isEmpty()}">
+        <form id="requestForm" th:action="@{${(isEdit ?: false) ? '/solicitud/' + request.id + '/editar' : '/solicitudes'}}" method="post" enctype="multipart/form-data" class="card" style="padding:1.5rem;display:grid;gap:1.25rem;"
+              th:data-org-placeholder="#{request.form.organization.placeholder}"
+              th:data-org-hint="#{request.form.organization.hint}"
+              th:data-org-choose="#{request.form.org.choose}"
+              th:data-org-loading="#{request.form.org.loading}"
+              th:data-org-none="#{request.form.org.none}"
+              th:data-org-error="#{request.form.org.error}"
+              th:data-org-hint-empty="#{request.form.org.hint.empty}"
+              th:data-org-suffix="#{request.form.org.suffix}">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <h2 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);" th:text="${isEdit ?: false} ? #{request.form.edit.heading} : #{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
+
+            <div th:if="${isGuest}" style="background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:.75rem;display:flex;gap:.5rem;align-items:flex-start;">
+                <i class="fa-solid fa-circle-info" style="color:var(--green-600);flex-shrink:0;margin-top:.125rem;"></i>
+                <p style="font-size:.8125rem;color:var(--gray-700);" th:text="#{request.form.guest.info}">Estas enviando como invitado. Si queres seguir tus solicitudes, podes registrarte despues.</p>
+            </div>
+
+            <div th:unless="${isGuest}" style="background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:.75rem;display:flex;gap:.5rem;align-items:flex-start;">
+                <i class="fa-solid fa-circle-check" style="color:var(--green-600);flex-shrink:0;margin-top:.125rem;"></i>
+                <p style="font-size:.8125rem;color:var(--gray-700);" th:text="#{request.form.authenticated.info}">Estas autenticado. Tu solicitud se asociara a tu cuenta.</p>
+            </div>
+
+            <div>
+                <label class="field__label">
+                    <i class="fa-solid fa-image"></i>
+                    <span th:text="#{request.form.photo.label}">Foto de los residuos</span>
+                </label>
+                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="input" style="padding:.375rem .5rem;" th:unless="${isEdit}" required>
+                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="input" style="padding:.375rem .5rem;" th:if="${isEdit}">
+                <p class="field__hint" style="margin-top:.25rem;"><i class="fa-solid fa-camera"></i> <span th:text="#{request.form.photo.hint}">Sacale foto a los reciclables para que la cooperativa sepa que recolectar.</span></p>
+                <div id="imagePreview" style="display:none;margin-top:.5rem;">
+                    <img id="previewImg" src="" alt="Preview" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--gray-300);">
+                </div>
+            </div>
+
+            <div>
+                <label class="field__label">
+                    <i class="fa-solid fa-city"></i>
+                    <span th:text="#{request.form.city}">Ciudad</span> <span style="color:var(--red-600)">*</span>
+                </label>
+                <select name="city" id="citySelect" class="input" required>
+                    <option value="" th:text="#{request.form.city.placeholder}">Selecciona tu ciudad</option>
+                    <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}" th:selected="${isEdit and request?.city != null and request.city.name() == c.name()}">Ciudad</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="field__label">
+                    <i class="fa-solid fa-building"></i>
+                    <span th:text="#{request.form.organization}">Cooperativa de reciclaje</span> <span style="color:var(--red-600)">*</span>
+                </label>
+                <select name="organizationId" id="orgSelect" class="input" required disabled>
+                    <option value="" th:text="#{request.form.organization.placeholder}">Primero selecciona una ciudad</option>
+                </select>
+                <p class="field__hint" style="margin-top:.25rem;" id="orgHint" th:text="#{request.form.organization.hint}">Las cooperativas se cargan segun tu ciudad.</p>
+            </div>
+
+            <div>
+                <label class="field__label">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span th:text="#{request.form.address}">Direccion de recoleccion</span> <span style="color:var(--red-600)">*</span>
+                </label>
+                <input type="text" name="address" id="address" required
+                       th:value="${request?.address}"
+                       class="input"
+                       th:placeholder="#{request.form.address.placeholder}" placeholder="Ej: Calle 123, barrio Centro">
+            </div>
+
+            <div>
+                <label class="field__label">
+                    <i class="fa-solid fa-map"></i>
+                    <span th:text="#{request.form.addressReference}">Referencia de ubicacion (opcional)</span>
+                </label>
+                <input type="text" name="addressReference" id="addressReference"
+                       th:value="${request?.addressReference}"
+                       class="input"
+                       th:placeholder="#{request.form.addressReference.placeholder}" placeholder="Ej: Frente a la plaza, casa azul">
+            </div>
+
+            <div>
+                <label class="field__label" style="margin-bottom:.5rem;">
+                    <i class="fa-solid fa-recycle"></i>
+                    <span th:text="#{request.form.materials}">Que materiales reciclables tenes?</span>
+                </label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:.5rem;">
+                    <label th:each="material : ${materials}" class="material-card" style="cursor:pointer;display:flex;align-items:center;gap:.5rem;padding:.75rem;border:1px solid var(--gray-200);border-radius:var(--radius);">
+                        <input type="checkbox" name="materials" th:value="${material.name()}"
+                               th:checked="${isEdit and request?.materials != null and request.materials.contains(material)}">
+                        <span th:text="${material.name()}">Material</span>
+                    </label>
+                </div>
+            </div>
+
+            <div th:if="${isGuest}">
+                <div style="display:grid;gap:.75rem;">
+                    <div>
+                        <label class="field__label">
+                            <i class="fa-solid fa-user"></i>
+                            <span th:text="#{request.form.guestName}">Nombre</span> <span style="color:var(--red-600)">*</span>
+                        </label>
+                        <input type="text" name="guestName" id="guestName" class="input" required th:placeholder="#{request.form.guestName.placeholder}" placeholder="Tu nombre">
+                    </div>
+                    <div>
+                        <label class="field__label">
+                            <i class="fa-solid fa-phone"></i>
+                            <span th:text="#{request.form.guestPhone}">Telefono</span> <span style="color:var(--red-600)">*</span>
+                        </label>
+                        <input type="tel" name="guestPhone" id="guestPhone" class="input" required th:placeholder="#{request.form.guestPhone.placeholder}" placeholder="Ej: 099123456">
+                    </div>
+                </div>
+            </div>
+
+            <div th:unless="${isEdit}" style="background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:.75rem;">
+                <p style="font-size:.8125rem;color:var(--gray-700);display:flex;gap:.5rem;align-items:flex-start;">
+                    <i class="fa-solid fa-clock" style="color:var(--blue-600);flex-shrink:0;margin-top:.125rem;"></i>
+                    <span th:utext="#{request.form.timeslots}">El sistema propondra los siguientes horarios: <strong>Manana (9-12)</strong>, <strong>Tarde (14-18)</strong>, <strong>Noche (18-20)</strong>. La cooperativa confirmara cual corresponde.</span>
                 </p>
             </div>
-            <div class="px-4 py-3 border-t flex items-center justify-end gap-2">
-                <button type="button" id="closeMapPicker" class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50" th:text="#{request.modal.cancel}">Cancelar</button>
-                <button type="button" id="confirmMapPicker" class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700" th:text="#{request.modal.confirm}">Usar estas coordenadas</button>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid var(--gray-200);">
+                <a href="/" class="btn btn--ghost btn--sm" th:text="#{button.cancel}">Cancelar</a>
+                <button type="submit" class="btn btn--green btn--sm">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span th:text="${isEdit ?: false} ? #{request.form.update} : #{request.form.send}">Enviar</span>
+                </button>
             </div>
+        </form>
         </div>
     </div>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        // Mensajes i18n para JavaScript
-        const i18n = {
-            materialsLoading: /*[[#{request.materials.loading}]]*/ 'Cargando materiales...',
-            materialsNoneTitle: /*[[#{request.materials.none.title}]]*/ 'Esta organización aún no ha configurado los materiales que acepta',
-            materialsNoneMessage: /*[[#{request.materials.none.message}]]*/ 'Por favor, selecciona otra organización o contacta al administrador',
-            materialsError: /*[[#{request.materials.error}]]*/ 'Error al cargar materiales. Por favor, intenta de nuevo.'
-        };
-        /*]]>*/
-        
-        lucide.createIcons();
-
-        // --- Stepper logic ---
-        let currentStep = 1;
-        function goToStep(step) {
-            if (step > currentStep) {
-                if (currentStep === 1) {
-                    const desc = document.getElementById('description')?.value?.trim();
-                    const addr = document.getElementById('collectionAddress')?.value?.trim();
-                    if (!desc || !addr) {
-                        alert('Por favor completa la descripción y la dirección antes de continuar.');
-                        return;
-                    }
-                }
-                if (currentStep === 2) {
-                    const orgSelect = document.getElementById('organizationSelector');
-                    if (orgSelect && !orgSelect.value) {
-                        alert('Por favor selecciona una organización antes de continuar.');
-                        return;
-                    }
-                    const checkedMaterials = document.querySelectorAll('#materialsContainer input[type="checkbox"]:checked');
-                    if (checkedMaterials.length === 0 && !document.getElementById('materialsSection').classList.contains('hidden')) {
-                        alert('Por favor selecciona al menos un material antes de continuar.');
-                        return;
-                    }
-                }
-            }
-
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.add('hidden');
-            document.getElementById('step-3').classList.add('hidden');
-            document.getElementById('step-1-nav').classList.add('hidden');
-            document.getElementById('step-2-nav').classList.add('hidden');
-            document.getElementById('step-3-nav').classList.add('hidden');
-
-            document.getElementById('step-' + step).classList.remove('hidden');
-            document.getElementById('step-' + step + '-nav').classList.remove('hidden');
-
-            const steps = [1, 2, 3];
-            steps.forEach(s => {
-                const el = document.getElementById('stepper-' + s);
-                const circle = el.querySelector('div:first-child');
-                const label = el.querySelector('div:last-child');
-                if (s < step) {
-                    circle.className = 'rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-emerald-600 text-white font-medium text-sm z-10';
-                    label.className = 'ml-2 text-sm font-medium text-emerald-600 hidden sm:block';
-                } else if (s === step) {
-                    circle.className = 'rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-emerald-600 text-white font-medium text-sm z-10 ring-4 ring-emerald-100';
-                    label.className = 'ml-2 text-sm font-medium text-emerald-600 hidden sm:block';
-                } else {
-                    circle.className = 'rounded-full transition-all duration-300 w-9 h-9 flex items-center justify-center bg-gray-200 text-gray-500 font-medium text-sm z-10';
-                    label.className = 'ml-2 text-sm font-medium text-gray-400 hidden sm:block';
-                }
-            });
-
-            const line12 = document.getElementById('line-1-2');
-            const line23 = document.getElementById('line-2-3');
-            line12.className = 'flex-auto border-t-2 transition-all duration-300 ' + (step >= 2 ? 'border-emerald-600' : 'border-gray-200');
-            line23.className = 'flex-auto border-t-2 transition-all duration-300 ' + (step >= 3 ? 'border-emerald-600' : 'border-gray-200');
-
-            currentStep = step;
-
-            if (step === 3) {
-                document.getElementById('review-description').textContent = document.getElementById('description')?.value || '—';
-                document.getElementById('review-address').textContent = document.getElementById('collectionAddress')?.value || '—';
-                const orgSel = document.getElementById('organizationSelector');
-                document.getElementById('review-organization').textContent = orgSel?.selectedOptions[0]?.text || '—';
-                const checked = Array.from(document.querySelectorAll('#materialsContainer input[type="checkbox"]:checked')).map(cb => cb.value);
-                document.getElementById('review-materials').textContent = checked.length ? checked.join(', ') : '—';
-                const weight = document.getElementById('quantityKg')?.value;
-                document.getElementById('review-weight').textContent = weight ? weight + ' kg' : '—';
-            }
-
-            lucide.createIcons();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Preview de imagen
         document.getElementById('imageFile')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function(ev) {
                     const preview = document.getElementById('imagePreview');
                     const img = document.getElementById('previewImg');
-                    img.src = e.target.result;
-                    preview.classList.remove('hidden');
+                    img.src = ev.target.result;
+                    preview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
         });
-        
-        // Cargar materiales cuando se selecciona una organización
-        const orgSelector = document.getElementById('organizationSelector');
-        const materialsSection = document.getElementById('materialsSection');
-        const materialsContainer = document.getElementById('materialsContainer');
-        
-        if (orgSelector) {
-            orgSelector.addEventListener('change', async function() {
-                const orgId = this.value;
-                
-                if (!orgId) {
-                    materialsSection.classList.add('hidden');
-                    return;
-                }
-                
-                // Mostrar sección de materiales con loading
-                materialsSection.classList.remove('hidden');
-                materialsContainer.innerHTML = `
-                    <div class="col-span-full text-center py-8 text-gray-500">
-                        <div class="animate-pulse">
-                            <i data-lucide="loader" class="w-8 h-8 mx-auto mb-2"></i>
-                            <p class="text-sm">${i18n.materialsLoading}</p>
-                        </div>
-                    </div>
-                `;
-                lucide.createIcons();
-                
-                try {
-                    // Obtener CSRF token
-                    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
-                    
-                    // Llamar al endpoint para obtener materiales de la organización
-                    const response = await fetch(`/api/organizations/${orgId}/materials`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(csrfToken && csrfHeader ? { [csrfHeader]: csrfToken } : {})
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Error al cargar materiales');
-                    }
-                    
-                    const materials = await response.json();
-                    
-                    if (materials.length === 0) {
-                        materialsContainer.innerHTML = `
-                            <div class="col-span-full text-center py-8 text-amber-600 bg-amber-50 rounded-lg border border-amber-200">
-                                <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2"></i>
-                                <p class="text-sm font-medium">${i18n.materialsNoneTitle}</p>
-                                <p class="text-xs mt-1">${i18n.materialsNoneMessage}</p>
-                            </div>
-                        `;
-                    } else {
-                        materialsContainer.innerHTML = materials.map(material => `
-                            <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer material-checkbox transition-colors">
-                                <input type="checkbox" 
-                                       name="materials" 
-                                       value="${material.name}" 
-                                       data-material-id="${material.id}"
-                                       class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                <span class="ml-2 text-sm">${material.name}</span>
-                            </label>
-                        `).join('');
-                    }
-                    
-                    lucide.createIcons();
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    materialsContainer.innerHTML = `
-                        <div class="col-span-full text-center py-8 text-red-600 bg-red-50 rounded-lg border border-red-200">
-                            <i data-lucide="alert-circle" class="w-8 h-8 mx-auto mb-2"></i>
-                            <p class="text-sm">${i18n.materialsError}</p>
-                        </div>
-                    `;
-                    lucide.createIcons();
-                }
-            });
-        }
-        // --- Coordenadas: helpers ---
-        function refreshIframe(lat, lng) {
-            const container = document.querySelector('iframe');
-            if (!container) return;
-            const bboxLatDelta = 0.02, bboxLngDelta = 0.02;
-            const minLat = lat - bboxLatDelta, maxLat = lat + bboxLatDelta;
-            const minLng = lng - bboxLngDelta, maxLng = lng + bboxLngDelta;
-            const src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lng}`;
-            container.src = src;
-        }
 
-        function setCoords(lat, lng) {
-            const latInput = document.getElementById('collectionLatitude');
-            const lngInput = document.getElementById('collectionLongitude');
-            if (latInput) latInput.value = Number(lat).toFixed(6);
-            if (lngInput) lngInput.value = Number(lng).toFixed(6);
-            refreshIframe(Number(lat), Number(lng));
-        }
+        const citySelect = document.getElementById('citySelect');
+        const orgSelect = document.getElementById('orgSelect');
+        const orgHint = document.getElementById('orgHint');
+        const form = document.getElementById('requestForm');
 
-        // --- Usar mi ubicación ---
-        document.getElementById('btnUseMyLocation')?.addEventListener('click', function() {
-            if (!navigator.geolocation) {
-                alert('Geolocalización no soportada por el navegador');
+        citySelect?.addEventListener('change', function() {
+            const city = this.value;
+            if (!city) {
+                orgSelect.innerHTML = '<option value="">' + form.dataset.orgPlaceholder + '</option>';
+                orgSelect.disabled = true;
                 return;
             }
-            navigator.geolocation.getCurrentPosition(function(pos){
-                setCoords(pos.coords.latitude, pos.coords.longitude);
-            }, function(){
-                alert('No se pudo obtener la ubicación');
-            }, { enableHighAccuracy: true, timeout: 10000 });
+            orgSelect.innerHTML = '<option value="">' + form.dataset.orgLoading + '</option>';
+            orgSelect.disabled = true;
+
+            fetch('/api/organizations/by-city?city=' + city)
+                .then(r => r.json())
+                .then(orgs => {
+                    if (orgs.length === 0) {
+                        orgSelect.innerHTML = '<option value="">' + form.dataset.orgNone + '</option>';
+                        orgHint.textContent = form.dataset.orgHintEmpty;
+                    } else {
+                        orgSelect.innerHTML = '<option value="">' + form.dataset.orgChoose + '</option>';
+                        orgs.forEach(org => {
+                            const opt = document.createElement('option');
+                            opt.value = org.id;
+                            opt.textContent = org.displayName || org.username;
+                            orgSelect.appendChild(opt);
+                        });
+                        orgHint.textContent = orgs.length + ' ' + form.dataset.orgSuffix;
+                    }
+                    orgSelect.disabled = false;
+                })
+                .catch(() => {
+                    orgSelect.innerHTML = '<option value="">' + form.dataset.orgError + '</option>';
+                    orgSelect.disabled = true;
+                });
         });
-
-        // --- Modal de selección en mapa (Leaflet) ---
-        const modal = document.getElementById('mapPickerModal');
-        const modalBackdrop = document.getElementById('mapPickerBackdrop');
-        const modalOpenBtn = document.getElementById('btnPickOnMap');
-        const modalCloseBtns = document.querySelectorAll('#closeMapPicker');
-        const modalConfirmBtn = document.getElementById('confirmMapPicker');
-        let modalMap, modalMarker;
-
-        function openModal() {
-            modal.classList.remove('hidden');
-            modalBackdrop.classList.remove('hidden');
-            // Asegurar Leaflet
-            (function ensureLeaflet(){
-                function injectCss(h){ const l=document.createElement('link'); l.rel='stylesheet'; l.href=h; document.head.appendChild(l); }
-                function injectJs(s){ return new Promise(r=>{ const n=document.createElement('script'); n.src=s; n.onload=r; document.head.appendChild(n); }); }
-                if (typeof window.L === 'undefined') {
-                    injectCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
-                    injectJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').then(initModalMap);
-                } else {
-                    initModalMap();
-                }
-            })();
-        }
-
-        function closeModal() {
-            modal.classList.add('hidden');
-            modalBackdrop.classList.add('hidden');
-        }
-
-        function initModalMap(){
-            const latInput = document.getElementById('collectionLatitude');
-            const lngInput = document.getElementById('collectionLongitude');
-            const lat = Number(latInput?.value) || -30.895854;
-            const lng = Number(lngInput?.value) || -55.535653;
-            const el = document.getElementById('mapPickerCanvas');
-            if (!el) return;
-            if (modalMap) { setTimeout(()=> modalMap.invalidateSize(), 0); return; }
-            modalMap = L.map(el).setView([lat, lng], 14);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(modalMap);
-            modalMarker = L.marker([lat, lng], { draggable: true }).addTo(modalMap);
-            modalMap.on('click', function(e){ modalMarker.setLatLng(e.latlng); });
-        }
-
-        modalOpenBtn?.addEventListener('click', openModal);
-        // Hacer clic en el mapa estático para abrir el selector interactivo
-        const staticMapContainer = document.getElementById('staticMapContainer');
-        staticMapContainer?.addEventListener('click', openModal);
-        if (modalCloseBtns && modalCloseBtns.length) {
-            modalCloseBtns.forEach(btn => btn.addEventListener('click', closeModal));
-        }
-        modalConfirmBtn?.addEventListener('click', function(){
-            if (!modalMarker) { closeModal(); return; }
-            const pos = modalMarker.getLatLng();
-            setCoords(pos.lat, pos.lng);
-            closeModal();
-        });
-        // --- Leaflet resources fallback loader ---
-        (function ensureLeaflet(){
-            function injectCss(href){
-                if ([...document.styleSheets].some(s=>s.href && s.href.includes('leaflet'))) return;
-                const l=document.createElement('link'); l.rel='stylesheet'; l.href=href; document.head.appendChild(l);
-            }
-            function injectJs(src){
-                return new Promise((resolve)=>{ const s=document.createElement('script'); s.src=src; s.onload=resolve; document.head.appendChild(s); });
-            }
-            if (typeof window.L === 'undefined') {
-                injectCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
-                injectJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js')
-                    .then(()=> injectJs('/js/leaflet-map.js'))
-                    .catch(()=>{});
-            }
-        })();
     </script>
 </main>
 </body>

@@ -3,6 +3,8 @@ package com.residuosolido.app.config;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
@@ -40,13 +43,17 @@ public class SecurityConfig {
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
                 .requestMatchers("/", "/index").permitAll()
                 .requestMatchers("/auth/**", "/login", "/register").permitAll()
-                .requestMatchers("/posts/**", "/categorias/**", "/materiales/**").permitAll()
                 .requestMatchers("/change-language").permitAll()
                 // Recursos especiales de navegador (evitar guardarlos como destino de login)
                 .requestMatchers("/.well-known/**").permitAll()
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**").permitAll()
+                // Formulario público de nueva solicitud (invitado o autenticado)
+                .requestMatchers(HttpMethod.GET, "/solicitudes/nueva").permitAll()
+                .requestMatchers(HttpMethod.POST, "/solicitudes").permitAll()
+                .requestMatchers("/rastrear").permitAll()
+                .requestMatchers("/metricas").permitAll()
                 // API endpoints para usuarios autenticados
                 .requestMatchers("/api/**").authenticated()
                 // Rutas de usuarios regulares
@@ -115,7 +122,7 @@ public class SecurityConfig {
                 // Logging de diagnóstico
                 log.info("[AUTH][LOAD] username='{}' | id={} | role={} | active={} | passHashLen={}",
                         user.getUsername(), user.getId(), user.getRole(), user.isActive(),
-                        (user.getPassword() != null ? user.getPassword().length() : -1));
+                        user.getPassword() != null ? user.getPassword().length() : -1);
                 return new org.springframework.security.core.userdetails.User(
                     user.getUsername(),
                     user.getPassword(),

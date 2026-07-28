@@ -1,4 +1,4 @@
-package com.residuosolido.app.model;
+package com.residuosolido.app.enums;
 
 /**
  * Enum that defines the possible user roles in the system

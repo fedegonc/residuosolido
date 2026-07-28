@@ -1,352 +1,105 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <title>Perfil de Organización</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <title th:text="#{profile.title}">Perfil de Organización</title>
 </head>
 <body>
 <main layout:fragment="content">
-    <!-- Messages -->
-    <div th:if="${successMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-            <div class="flex items-center">
-                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
-                <span th:text="${successMessage}"></span>
-            </div>
-        </div>
+    <div th:if="${successMessage}" class="page mt-2">
+        <div th:replace="~{fragments/components/alerts :: success(${successMessage})}"></div>
+    </div>
+    <div th:if="${errorMessage}" class="page mt-2">
+        <div th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
     </div>
 
-    <div th:if="${errorMessage}" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-            <div class="flex items-center">
-                <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
-                <span th:text="${errorMessage}"></span>
-            </div>
-        </div>
-    </div>
+    <div class="page" style="max-width:42rem;padding-top:1.5rem;padding-bottom:1.5rem;">
 
-    <!-- Content -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <i data-lucide="building-2" class="w-8 h-8 text-white"></i>
+        <section class="card card--flush" style="background:linear-gradient(to right,var(--blue-600),var(--indigo-600));color:var(--white);margin-bottom:1.5rem;">
+            <div class="card__body" style="padding:1.5rem;display:flex;align-items:center;gap:1rem;">
+                <div style="width:4rem;height:4rem;border-radius:9999px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                    <i class="fa-solid fa-building"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-white">Perfil de Organización</h1>
-                    <p class="text-blue-100">Gestiona la información de tu organización</p>
+                    <h1 style="font-size:1.5rem;font-weight:700;" th:text="#{profile.title}">Perfil de Organización</h1>
+                    <p style="color:var(--blue-100);" th:text="#{profile.subtitle}">Gestiona la información de tu cooperativa</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Profile Form -->
-        <div class="bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900">Información de la Organización</h2>
-                <p class="text-sm text-gray-600 mt-1">Actualiza los datos de contacto y ubicación de tu organización</p>
-            </div>
-
-            <form th:action="@{/acopio/perfil}" method="post" class="p-6 space-y-6">
-                <!-- CSRF Token -->
+        <div class="card">
+            <form th:action="@{/acopio/perfil}" method="post" style="padding:1.5rem;display:grid;gap:1.25rem;">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-                <!-- Nombre de Usuario -->
                 <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="user" class="w-4 h-4 inline mr-1"></i>
-                        Nombre de Usuario
+                    <label class="field__label">
+                        <i class="fa-solid fa-user"></i>
+                        <span th:text="#{profile.username}">Nombre de usuario</span>
                     </label>
-                    <input type="text" id="username" name="username" 
-                           th:value="${organization?.username}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                           readonly>
-                    <p class="text-xs text-gray-500 mt-1">El nombre de usuario no se puede modificar</p>
+                    <input type="text" th:value="${organization?.username}" class="input" readonly style="background:var(--gray-50);">
+                    <p class="field__hint" th:text="#{profile.username.hint}">No se puede modificar</p>
                 </div>
 
-                <!-- Email -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="mail" class="w-4 h-4 inline mr-1"></i>
-                        Correo Electrónico
+                    <label class="field__label">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span th:text="#{profile.email}">Correo electrónico</span>
                     </label>
-                    <input type="email" id="email" name="email" 
-                           th:value="${organization?.email}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           required>
+                    <input type="email" name="email" th:value="${organization?.email}" class="input" required>
                 </div>
 
-                <!-- Nombre Completo -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nombre
-                        </label>
-                        <input type="text" id="firstName" name="firstName" 
-                               th:value="${organization?.firstName}"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">
-                            Apellido
-                        </label>
-                        <input type="text" id="lastName" name="lastName" 
-                               th:value="${organization?.lastName}"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                </div>
-
-                <!-- Teléfono -->
                 <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="phone" class="w-4 h-4 inline mr-1"></i>
-                        Teléfono de Contacto
+                    <label class="field__label">
+                        <i class="fa-solid fa-id-card"></i>
+                        <span th:text="#{profile.organizationName}">Nombre de la cooperativa</span>
                     </label>
-                    <input type="tel" id="phone" name="phone" 
-                           th:value="${organization?.phone}"
-                           placeholder="Ej: 098 123 456"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           required>
+                    <input type="text" name="firstName" th:value="${organization?.firstName}" class="input" th:placeholder="#{profile.organizationName.placeholder}" placeholder="Ej: Cooperativa Recicla Rivera">
                 </div>
 
-                <!-- Dirección -->
                 <div>
-                    <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
-                        Dirección
+                    <label class="field__label">
+                        <i class="fa-solid fa-phone"></i>
+                        <span th:text="#{profile.phone}">Teléfono de contacto</span>
                     </label>
-                    <input type="text" id="address" name="address" 
-                           th:value="${organization?.address}"
-                           placeholder="Ej: Av. Principal 123, Rivera"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           required>
+                    <input type="tel" name="phone" th:value="${organization?.phone}" class="input" th:placeholder="#{profile.phone.placeholder}" placeholder="Ej: 098 123 456">
                 </div>
 
-                <!-- Referencias de Dirección -->
                 <div>
-                    <label for="addressReferences" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i data-lucide="map" class="w-4 h-4 inline mr-1"></i>
-                        Referencias de Ubicación
+                    <label class="field__label">
+                        <i class="fa-solid fa-city"></i>
+                        <span th:text="#{profile.city}">Ciudad</span>
                     </label>
-                    <textarea id="addressReferences" name="addressReferences" rows="3"
-                              th:text="${organization?.addressReferences}"
-                              placeholder="Ej: Frente a la plaza principal, edificio azul"
-                              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    <select name="city" class="input" required>
+                        <option value="" th:text="#{profile.city.placeholder}">Selecciona tu ciudad</option>
+                        <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}" th:selected="${organization?.city != null and organization.city.name() == c.name()}">Ciudad</option>
+                    </select>
+                    <p class="field__hint" th:text="#{profile.city.hint}">Las solicitudes se asignan segun tu ciudad</p>
                 </div>
 
-                <!-- Selector de Ubicación con Mapa -->
-                <div class="border-t border-gray-200 pt-6">
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            <i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i>
-                            Ubicación en el Mapa
-                        </label>
-                        <p class="text-xs text-gray-600 mb-3">
-                            Haz clic en el mapa para seleccionar la ubicación exacta de tu organización. Las coordenadas se actualizarán automáticamente.
-                        </p>
-                    </div>
-                    
-                    <!-- Mapa -->
-                    <div id="map" class="w-full h-80 rounded-lg border border-gray-300 mb-4"></div>
-                    
-                    <!-- Coordenadas -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="latitude" class="block text-sm font-medium text-gray-700 mb-2">
-                                Latitud
-                            </label>
-                            <input type="number" step="0.000001" id="latitude" name="latitude" 
-                                   th:value="${organization?.latitude}"
-                                   placeholder="-30.9000"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   readonly>
-                        </div>
-                        <div>
-                            <label for="longitude" class="block text-sm font-medium text-gray-700 mb-2">
-                                Longitud
-                            </label>
-                            <input type="number" step="0.000001" id="longitude" name="longitude" 
-                                   th:value="${organization?.longitude}"
-                                   placeholder="-55.5500"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Materiales que Acepta -->
-                <div class="border-t border-gray-200 pt-6">
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            <i data-lucide="recycle" class="w-4 h-4 inline mr-1"></i>
-                            Materiales que Acepta tu Organización
-                        </label>
-                        <p class="text-xs text-gray-600 mb-3">
-                            Selecciona los tipos de materiales reciclables que tu organización puede procesar.
-                        </p>
-                    </div>
-
-                    <div th:if="${availableMaterials != null and !availableMaterials.empty}">
-                        <!-- Botón desplegable -->
-                        <button type="button" id="materialsToggle"
-                                class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="package" class="w-4 h-4 text-gray-600"></i>
-                                <span id="materialsSelectedText" class="text-sm text-gray-700 font-medium">
-                                    <span th:text="${selectedMaterialIds.size()}">0</span> materiales seleccionados
-                                </span>
-                            </div>
-                            <i data-lucide="chevron-down" id="materialsChevron" class="w-5 h-5 text-gray-400 transition-transform"></i>
-                        </button>
-
-                        <!-- Lista desplegable de checkboxes -->
-                        <div id="materialsDropdown" class="hidden mt-2 border border-gray-200 rounded-md bg-white shadow-sm max-h-64 overflow-y-auto">
-                            <div class="p-3 space-y-1">
-                                <label th:each="material : ${availableMaterials}" 
-                                       th:for="'material_' + ${material.id}"
-                                       class="flex items-center p-2 rounded hover:bg-blue-50 cursor-pointer group">
-                                    <input 
-                                        type="checkbox" 
-                                        th:id="'material_' + ${material.id}"
-                                        name="materialIds" 
-                                        th:value="${material.id}"
-                                        th:checked="${selectedMaterialIds.contains(material.id)}"
-                                        class="material-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
-                                    />
-                                    <span class="ml-3 text-sm text-gray-900 group-hover:text-blue-700" th:text="${material.name}"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div th:if="${availableMaterials == null or availableMaterials.empty}" 
-                         class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                        <i data-lucide="inbox" class="w-10 h-10 text-gray-400 mx-auto mb-2"></i>
-                        <p class="text-sm text-gray-600">
-                            No hay materiales disponibles. Contacta al administrador.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div class="flex gap-3 pt-4 border-t border-gray-200">
-                    <button type="submit" 
-                            class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i>
-                        Guardar Cambios
+                <div style="display:flex;gap:.75rem;padding-top:1rem;border-top:1px solid var(--gray-200);">
+                    <button type="submit" class="btn btn--primary btn--sm">
+                        <i class="fa-solid fa-save"></i><span th:text="#{button.save}">Guardar Cambios</span>
                     </button>
-                    <a th:href="@{/acopio/inicio}" 
-                       class="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-md hover:bg-gray-300 transition-colors flex items-center gap-2">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                        Cancelar
+                    <a th:href="@{/acopio/inicio}" class="btn btn--ghost btn--sm">
+                        <i class="fa-solid fa-xmark"></i><span th:text="#{button.cancel}">Cancelar</span>
                     </a>
                 </div>
             </form>
         </div>
 
-        <!-- Información Adicional -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start gap-3">
-                <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
-                <div class="text-sm text-blue-800">
-                    <p class="font-medium mb-1">Información importante:</p>
-                    <ul class="list-disc list-inside space-y-1 text-blue-700">
-                        <li>Mantén actualizada tu información de contacto para que los usuarios puedan comunicarse contigo</li>
-                        <li>Las coordenadas GPS ayudan a los usuarios a encontrar tu ubicación en el mapa</li>
-                        <li>Los cambios se aplicarán inmediatamente después de guardar</li>
+        <div style="margin-top:1.5rem;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:1rem;">
+            <div style="display:flex;gap:.5rem;align-items:flex-start;">
+                <i class="fa-solid fa-circle-info" style="color:var(--blue-600);flex-shrink:0;margin-top:.125rem;"></i>
+                <div style="font-size:.8125rem;color:var(--blue-800);">
+                    <p class="font-medium" th:text="#{profile.info.title}">Informacion importante:</p>
+                    <ul style="list-style:disc;padding-left:1.25rem;margin-top:.25rem;">
+                        <li th:text="#{profile.info.bullet1}">Mantene actualizada tu informacion de contacto</li>
+                        <li th:text="#{profile.info.bullet2}">Las solicitudes se asignan automaticamente segun tu ciudad</li>
+                        <li th:text="#{profile.info.bullet3}">Los cambios se aplican inmediatamente</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-
-    <script th:inline="javascript">
-        lucide.createIcons();
-        
-        // ========== MAPA ==========
-        // Inicializar mapa con coordenadas de Rivera/Sant'Ana do Livramento por defecto
-        let orgLat = /*[[${organization?.latitude}]]*/ null;
-        let orgLng = /*[[${organization?.longitude}]]*/ null;
-        
-        const defaultLat = orgLat || -30.93801;
-        const defaultLng = orgLng || -55.53412;
-        
-        // Crear mapa centrado en Rivera/Sant'Ana do Livramento
-        const map = L.map('map').setView([defaultLat, defaultLng], 13);
-        
-        // Agregar capa de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
-        }).addTo(map);
-        
-        // Marcador inicial
-        let marker = L.marker([defaultLat, defaultLng], {
-            draggable: true
-        }).addTo(map);
-        
-        // Actualizar coordenadas cuando se mueve el marcador
-        function updateCoordinates(lat, lng) {
-            document.getElementById('latitude').value = lat.toFixed(8);
-            document.getElementById('longitude').value = lng.toFixed(8);
-        }
-        
-        // Evento: clic en el mapa
-        map.on('click', function(e) {
-            const lat = e.latlng.lat;
-            const lng = e.latlng.lng;
-            marker.setLatLng([lat, lng]);
-            updateCoordinates(lat, lng);
-        });
-        
-        // Evento: arrastrar marcador
-        marker.on('dragend', function(e) {
-            const position = marker.getLatLng();
-            updateCoordinates(position.lat, position.lng);
-        });
-        
-        // Inicializar coordenadas en los campos
-        updateCoordinates(defaultLat, defaultLng);
-        
-        // ========== SELECTOR DE MATERIALES ==========
-        const materialsToggle = document.getElementById('materialsToggle');
-        const materialsDropdown = document.getElementById('materialsDropdown');
-        const materialsChevron = document.getElementById('materialsChevron');
-        const materialsSelectedText = document.getElementById('materialsSelectedText');
-        const materialCheckboxes = document.querySelectorAll('.material-checkbox');
-        
-        // Toggle del desplegable
-        if (materialsToggle) {
-            materialsToggle.addEventListener('click', function() {
-                materialsDropdown.classList.toggle('hidden');
-                materialsChevron.classList.toggle('rotate-180');
-            });
-        }
-        
-        // Actualizar contador de materiales seleccionados
-        function updateMaterialsCount() {
-            const checkedCount = document.querySelectorAll('.material-checkbox:checked').length;
-            materialsSelectedText.innerHTML = `${checkedCount} material${checkedCount !== 1 ? 'es' : ''} seleccionado${checkedCount !== 1 ? 's' : ''}`;
-        }
-        
-        // Escuchar cambios en los checkboxes
-        materialCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateMaterialsCount);
-        });
-        
-        // Cerrar dropdown al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            if (materialsToggle && !materialsToggle.contains(e.target) && !materialsDropdown.contains(e.target)) {
-                materialsDropdown.classList.add('hidden');
-                materialsChevron.classList.remove('rotate-180');
-            }
-        });
-        
-        // Inicializar contador
-        updateMaterialsCount();
-    </script>
 </main>
 </body>
 </html>

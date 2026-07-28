@@ -1,4 +1,4 @@
-package com.residuosolido.app.model;
+package com.residuosolido.app.enums;
 
 /**
  * Status enum for waste collection requests
