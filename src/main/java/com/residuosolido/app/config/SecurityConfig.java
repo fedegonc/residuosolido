@@ -75,16 +75,17 @@ public class SecurityConfig {
                     "img-src 'self' data: https: https://tile.openstreetmap.org; " +
                     "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com; " +
                     "font-src 'self' data: https://fonts.gstatic.com; " +
-                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; " +
+                    "script-src 'self' 'nonce-{cspNonce}' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; " +
                     "connect-src 'self' https://unpkg.com https://cdn.jsdelivr.net; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.google.com https://maps.google.com"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
                 .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
             )
-            // Desactivamos la protección de sesión para depuración
+            // Protección de sesión: cambiar ID en autenticación
             .sessionManagement(session -> session
                 .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
+                .sessionFixation(fixation -> fixation.changeSessionId())
             );
         
         return http.build();

@@ -87,6 +87,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>fortawesome__fontawesome-free</artifactId>
+      <version>6.5.2</version>
+    </dependency>
+
   </dependencies>
 
   <build>

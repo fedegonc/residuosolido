@@ -58,7 +58,7 @@ public class UserService {
 
         if (newPassword != null && !newPassword.trim().isEmpty()) {
             if (newPassword.length() < 8) {
-                throw new IllegalArgumentException("register.error.password_min_length");
+                throw new IllegalArgumentException("error.register.password_min_length");
             }
             existing.setPassword(passwordEncoder.encode(newPassword));
         }
@@ -91,19 +91,22 @@ public class UserService {
 
     public String validateUserRegistration(User user) {
         if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            return "register.error.username_required";
+            return "error.register.username_required";
         }
         if (user.getUsername().matches(".*\\s+.*")) {
-            return "register.error.username_no_spaces";
+            return "error.register.username_no_spaces";
         }
         if (user.getPassword() == null || user.getPassword().length() < 8) {
-            return "register.error.password_min_length";
+            return "error.register.password_min_length";
+        }
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty() || !user.getEmail().contains("@")) {
+            return "error.register.email_invalid";
         }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return "register.error.username_exists";
+            return "error.register.username_exists";
         }
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return "register.error.email_exists";
+            return "error.register.email_exists";
         }
         return null;
     }

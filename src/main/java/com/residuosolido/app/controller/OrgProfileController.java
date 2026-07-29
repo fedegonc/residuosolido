@@ -55,47 +55,4 @@ public class OrgProfileController {
         }
         return "redirect:/acopio/perfil";
     }
-
-    @GetMapping("/acopio/completar-perfil")
-    public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
-
-            if (currentUser.isProfileComplete()) {
-                redirectAttributes.addFlashAttribute("infoMessage", messageSource.getMessage("flash.org.profile_already_complete", null, LocaleContextHolder.getLocale()));
-                return "redirect:/acopio/inicio";
-            }
-
-            model.addAttribute("organization", currentUser);
-            model.addAttribute("cities", City.values());
-            return "org/complete-profile";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.profile_form_error", null, LocaleContextHolder.getLocale()));
-            return "redirect:/auth/login";
-        }
-    }
-
-    @PostMapping("/acopio/completar-perfil")
-    public String completeProfile(
-            @RequestParam(required = false) String phone,
-            @RequestParam(required = false) City city,
-            Authentication authentication,
-            RedirectAttributes redirectAttributes) {
-
-        try {
-            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
-            userService.completeOrgProfile(currentUser, phone, city);
-            redirectAttributes.addFlashAttribute("successMessage",
-                messageSource.getMessage("flash.org.profile_completed", null, LocaleContextHolder.getLocale()));
-            return "redirect:/acopio/inicio";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/acopio/completar-perfil";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                messageSource.getMessage("flash.org.profile_complete_error", null, LocaleContextHolder.getLocale()));
-            return "redirect:/acopio/completar-perfil";
-        }
-    }
 }

@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
+import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.RequestOrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,14 @@ public class OrgDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(OrgDashboardController.class);
 
     private final UserService userService;
+    private final DashboardService dashboardService;
     private final RequestOrganizationService requestOrganizationService;
 
     @Autowired
-    public OrgDashboardController(UserService userService, RequestOrganizationService requestOrganizationService) {
+    public OrgDashboardController(UserService userService, DashboardService dashboardService,
+                                   RequestOrganizationService requestOrganizationService) {
         this.userService = userService;
+        this.dashboardService = dashboardService;
         this.requestOrganizationService = requestOrganizationService;
     }
 
@@ -38,7 +42,7 @@ public class OrgDashboardController {
         }
 
         try {
-            Map<String, Long> data = requestOrganizationService.getOrgDashboardData(currentOrg);
+            Map<String, Long> data = dashboardService.getOrgDashboardData(currentOrg);
             model.addAttribute("pendingRequests", data.get("pending"));
             model.addAttribute("inProgressRequests", data.get("inProgress"));
             model.addAttribute("completedRequests", data.get("completed"));

@@ -21,34 +21,20 @@ public class CityOrganizationService {
 
     public User findOrganizationByIdAndCity(String organizationId, City city) {
         if (organizationId == null || organizationId.isBlank()) {
-            throw new IllegalArgumentException("request.error.organization_required");
+            throw new IllegalArgumentException("error.request.organization_required");
         }
         if (city == null) {
-            throw new IllegalArgumentException("request.error.city_required");
+            throw new IllegalArgumentException("error.request.city_required");
         }
         User org = userRepository.findById(organizationId)
-                .orElseThrow(() -> new IllegalArgumentException("request.error.organization_not_found"));
+                .orElseThrow(() -> new IllegalArgumentException("error.request.organization_not_found"));
         if (!org.isOrganization()) {
-            throw new IllegalArgumentException("request.error.assign_not_organization");
+            throw new IllegalArgumentException("error.request.assign_not_organization");
         }
         if (org.getCity() == null || org.getCity() != city) {
-            throw new IllegalArgumentException("request.error.organization_not_in_city");
+            throw new IllegalArgumentException("error.request.organization_not_in_city");
         }
         return org;
-    }
-
-    public User assignOrganization(City city) {
-        if (city == null) {
-            throw new IllegalArgumentException("request.error.city_required");
-        }
-        List<User> orgs = userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true);
-        if (orgs == null || orgs.isEmpty()) {
-            orgs = userRepository.findByRoleAndCity(Role.ORGANIZATION, city);
-        }
-        if (orgs == null || orgs.isEmpty()) {
-            throw new IllegalStateException("request.error.no_org_in_city");
-        }
-        return orgs.get(0);
     }
 
     public List<User> getOrganizationsByCity(City city) {

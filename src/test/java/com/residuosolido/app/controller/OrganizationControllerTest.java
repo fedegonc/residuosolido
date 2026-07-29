@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,7 +54,7 @@ class OrganizationControllerTest {
         mockOrg.setPhone("12345678");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(mockOrg);
-        when(requestOrganizationService.getRequestsByOrganization(any(User.class))).thenReturn(List.of());
+        when(requestOrganizationService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
     }
 
     @Test

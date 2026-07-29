@@ -21,8 +21,8 @@ class I18nMessageResolutionTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "es|register.error.password_min_length|8 caracteres",
-            "pt|register.error.password_min_length|8 caracteres",
+            "es|error.register.password_min_length|8 caracteres",
+            "pt|error.register.password_min_length|8 caracteres",
             "es|error.image.invalid_type|Tipo de archivo no permitido",
             "pt|error.image.invalid_type|Tipo de arquivo não permitido",
             "es|error.image.invalid_extension|Extensión de archivo no permitida",

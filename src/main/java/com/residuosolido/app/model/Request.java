@@ -5,7 +5,7 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,10 +28,10 @@ public class Request {
     @Id
     private String id;
 
-    @DBRef
+    @DocumentReference(lazy = true)
     private User user;
 
-    @DBRef
+    @DocumentReference(lazy = true)
     private User organization;
 
     private String guestName;
@@ -54,10 +54,10 @@ public class Request {
 
     public void accept(TimeSlot slot) {
         if (status != RequestStatus.PENDING) {
-            throw new IllegalStateException("request.error.accept_not_pending");
+            throw new IllegalStateException("error.request.accept_not_pending");
         }
         if (slot == null) {
-            throw new IllegalArgumentException("request.error.slot_required");
+            throw new IllegalArgumentException("error.request.slot_required");
         }
         this.confirmedSlot = slot;
         this.status = RequestStatus.IN_PROGRESS;
@@ -65,14 +65,14 @@ public class Request {
 
     public void complete() {
         if (status != RequestStatus.IN_PROGRESS) {
-            throw new IllegalStateException("request.error.complete_not_in_progress");
+            throw new IllegalStateException("error.request.complete_not_in_progress");
         }
         this.status = RequestStatus.COMPLETED;
     }
 
     public void reject() {
         if (status != RequestStatus.PENDING && status != RequestStatus.IN_PROGRESS) {
-            throw new IllegalStateException("request.error.reject_invalid_state");
+            throw new IllegalStateException("error.request.reject_invalid_state");
         }
         this.status = RequestStatus.REJECTED;
     }
@@ -124,10 +124,10 @@ public class Request {
 
     public void assignOrganization(User org) {
         if (org == null) {
-            throw new IllegalArgumentException("request.error.organization_required");
+            throw new IllegalArgumentException("error.request.organization_required");
         }
         if (!org.isOrganization()) {
-            throw new IllegalArgumentException("request.error.assign_not_organization");
+            throw new IllegalArgumentException("error.request.assign_not_organization");
         }
         this.organization = org;
     }
@@ -153,10 +153,5 @@ public class Request {
 
     public String getContactPhone() {
         return user != null ? user.getPhone() : guestPhone;
-    }
-
-    public boolean hasValidContact() {
-        return getContactName() != null && !getContactName().isBlank()
-            && getContactPhone() != null && !getContactPhone().isBlank();
     }
 }

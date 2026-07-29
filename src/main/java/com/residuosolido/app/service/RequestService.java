@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RequestService {
@@ -75,12 +74,12 @@ public class RequestService {
         return request;
     }
 
-    public List<Request> getRequestsByUser(User user) {
-        return requestRepository.findByUser(user);
+    public List<Request> getRequestsByUser(User user, int page, int size) {
+        return requestRepository.findByUser(user, org.springframework.data.domain.PageRequest.of(page, size));
     }
 
     public List<Request> getRecentRequestsByUser(User user, int limit) {
-        return requestRepository.findByUser(user).stream().limit(limit).toList();
+        return requestRepository.findByUser(user, org.springframework.data.domain.PageRequest.of(0, limit));
     }
 
     public Request getOwnedRequest(String id, User user) {
@@ -130,17 +129,5 @@ public class RequestService {
             return List.of();
         }
         return requestRepository.findByGuestPhoneOrderByCreatedAtDesc(phone.trim());
-    }
-
-    public Optional<Request> findById(String id) {
-        return requestRepository.findById(id);
-    }
-
-    public Request save(Request request) {
-        return requestRepository.save(request);
-    }
-
-    public void deleteById(String id) {
-        requestRepository.deleteById(id);
     }
 }

@@ -5,6 +5,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.config.GuestRateLimiter;
 import com.residuosolido.app.service.CityOrganizationService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
@@ -21,6 +22,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -32,14 +34,17 @@ public class RequestController {
     private final UserService userService;
     private final CityOrganizationService cityOrganizationService;
     private final MessageSource messageSource;
+    private final GuestRateLimiter guestRateLimiter;
 
     @Autowired
     public RequestController(RequestService requestService, UserService userService,
-                             CityOrganizationService cityOrganizationService, MessageSource messageSource) {
+                             CityOrganizationService cityOrganizationService, MessageSource messageSource,
+                             GuestRateLimiter guestRateLimiter) {
         this.requestService = requestService;
         this.userService = userService;
         this.cityOrganizationService = cityOrganizationService;
         this.messageSource = messageSource;
+        this.guestRateLimiter = guestRateLimiter;
     }
 
     @GetMapping("/solicitudes/nueva")
@@ -68,9 +73,14 @@ public class RequestController {
                                 @RequestParam(value = "guestPhone", required = false) String guestPhone,
                                 @RequestParam("organizationId") String organizationId,
                                 Authentication authentication,
+                                HttpServletRequest httpRequest,
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = userService.resolveUser(authentication);
+            if (user == null && !guestRateLimiter.isAllowed(httpRequest)) {
+                redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.rate_limited", null, LocaleContextHolder.getLocale()));
+                return "redirect:/solicitudes/nueva?error";
+            }
             requestService.createRequestWithImage(user, city, address, addressReference,
                     materials, guestName, guestPhone, organizationId, imageFile);
 
@@ -90,9 +100,13 @@ public class RequestController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/solicitudes")
-    public String listUserRequests(Authentication authentication, Model model) {
+    public String listUserRequests(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "20") int size,
+                                    Authentication authentication, Model model) {
         User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-        model.addAttribute("requests", requestService.getRequestsByUser(user));
+        model.addAttribute("requests", requestService.getRequestsByUser(user, page, size));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
         return "users/requests";
     }
 

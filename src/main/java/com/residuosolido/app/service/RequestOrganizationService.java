@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class RequestOrganizationService {
@@ -55,8 +54,9 @@ public class RequestOrganizationService {
         notifyRequestCompleted(request);
     }
 
-    public List<Request> getRequestsByOrganization(User organization) {
-        return requestRepository.findByOrganizationOrderByCreatedAtDesc(organization);
+    public List<Request> getRequestsByOrganization(User organization, int page, int size) {
+        return requestRepository.findByOrganizationOrderByCreatedAtDesc(organization,
+                org.springframework.data.domain.PageRequest.of(page, size));
     }
 
     public List<Request> getRequestsByOrganizationAndStatus(User organization, RequestStatus status) {
@@ -67,24 +67,16 @@ public class RequestOrganizationService {
         return requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, RequestStatus.PENDING, PageRequest.of(0, limit));
     }
 
-    public List<Request> getOrgRequestsByStatusFilter(User organization, String status) {
+    public List<Request> getOrgRequestsByStatusFilter(User organization, String status, int page, int size) {
         if (status == null || status.trim().isEmpty()) {
-            return getRequestsByOrganization(organization);
+            return getRequestsByOrganization(organization, page, size);
         }
         try {
             RequestStatus filterStatus = RequestStatus.valueOf(status.trim().toUpperCase(java.util.Locale.ROOT));
             return getRequestsByOrganizationAndStatus(organization, filterStatus);
         } catch (IllegalArgumentException ex) {
-            return getRequestsByOrganization(organization);
+            return getRequestsByOrganization(organization, page, size);
         }
-    }
-
-    public Map<String, Long> getOrgDashboardData(User organization) {
-        Map<String, Long> data = new java.util.HashMap<>();
-        data.put("pending", requestRepository.countByOrganizationAndStatus(organization, RequestStatus.PENDING));
-        data.put("inProgress", requestRepository.countByOrganizationAndStatus(organization, RequestStatus.IN_PROGRESS));
-        data.put("completed", requestRepository.countByOrganizationAndStatus(organization, RequestStatus.COMPLETED));
-        return data;
     }
 
     private void notifyRequestAccepted(Request request, TimeSlot slot) {

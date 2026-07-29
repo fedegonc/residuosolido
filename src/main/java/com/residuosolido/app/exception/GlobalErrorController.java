@@ -14,8 +14,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class GlobalErrorController implements ErrorController {
 
+    private final MessageSource messageSource;
+
     @Autowired
-    private MessageSource messageSource;
+    public GlobalErrorController(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, RedirectAttributes redirectAttributes) {

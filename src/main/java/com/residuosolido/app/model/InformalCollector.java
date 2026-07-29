@@ -73,49 +73,4 @@ public class InformalCollector {
         return organization != null && belongsTo(organization.getId());
     }
 
-    public boolean hasMaterials() {
-        return materials != null && !materials.isEmpty();
-    }
-
-    public boolean hasMaterial(MaterialCategory category) {
-        return materials != null && materials.contains(category);
-    }
-
-    public void addMaterial(MaterialCategory category) {
-        if (category == null) {
-            throw new IllegalArgumentException("catadores.error.material_required");
-        }
-        if (materials == null) {
-            materials = new ArrayList<>();
-        }
-        if (!materials.contains(category)) {
-            materials.add(category);
-        }
-    }
-
-    public void removeMaterial(MaterialCategory category) {
-        if (materials != null && category != null) {
-            materials.remove(category);
-        }
-    }
-
-    public void activate() {
-        this.active = true;
-    }
-
-    public void deactivate() {
-        this.active = false;
-    }
-
-    public void toggleActive() {
-        this.active = !this.active;
-    }
-
-    public boolean hasValidPhone() {
-        return phone != null && phone.trim().length() >= 8;
-    }
-
-    public boolean isValid() {
-        return name != null && !name.isBlank() && hasValidPhone();
-    }
 }

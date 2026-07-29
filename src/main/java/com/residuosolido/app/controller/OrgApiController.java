@@ -1,5 +1,6 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.dto.OrganizationDto;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.service.CityOrganizationService;
@@ -21,7 +22,9 @@ public class OrgApiController {
     }
 
     @GetMapping("/api/organizations/by-city")
-    public List<User> getOrganizationsByCity(@RequestParam City city) {
-        return cityOrganizationService.getOrganizationsByCity(city);
+    public List<OrganizationDto> getOrganizationsByCity(@RequestParam City city) {
+        return cityOrganizationService.getOrganizationsByCity(city).stream()
+                .map(org -> new OrganizationDto(org.getId(), org.getDisplayName()))
+                .toList();
     }
 }

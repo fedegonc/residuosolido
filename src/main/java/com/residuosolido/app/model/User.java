@@ -62,24 +62,12 @@ public class User {
         return city != null;
     }
 
-    public boolean hasValidEmail() {
-        return email != null && !email.isBlank() && email.contains("@");
-    }
-
-    public void activate() {
-        this.active = true;
-    }
-
-    public void deactivate() {
-        this.active = false;
-    }
-
     public void completeProfile() {
         if (!hasPhone()) {
-            throw new IllegalStateException("completeProfile.error.phone_required");
+            throw new IllegalStateException("error.profile.phone_required");
         }
         if (!hasCity()) {
-            throw new IllegalStateException("completeProfile.error.city_required");
+            throw new IllegalStateException("error.profile.city_required");
         }
         this.profileCompleted = true;
     }

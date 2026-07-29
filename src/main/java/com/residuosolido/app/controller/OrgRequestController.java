@@ -38,14 +38,18 @@ public class OrgRequestController {
 
     @GetMapping("/acopio/requests")
     public String orgRequests(@RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
         User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
-        List<Request> requests = requestOrganizationService.getOrgRequestsByStatusFilter(currentOrg, status);
+        List<Request> requests = requestOrganizationService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
         model.addAttribute("viewType", "list");
         model.addAttribute("currentStatus", status);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
         return "org/requests";
     }
 

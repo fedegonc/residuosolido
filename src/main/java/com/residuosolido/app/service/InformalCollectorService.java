@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class InformalCollectorService {
@@ -25,14 +24,6 @@ public class InformalCollectorService {
 
     public List<InformalCollector> findByOrganization(User organization) {
         return repository.findByOrganizationIdOrderByNameAsc(organization.getId());
-    }
-
-    public List<InformalCollector> findActiveByOrganization(User organization) {
-        return repository.findByOrganizationIdAndActiveOrderByNameAsc(organization.getId(), true);
-    }
-
-    public Optional<InformalCollector> findById(String id) {
-        return repository.findById(id);
     }
 
     public InformalCollector findOwnedById(String id, User organization) {
@@ -72,20 +63,12 @@ public class InformalCollectorService {
         return create(organization, name, phone, city, materials, notes);
     }
 
-    public long countByCity(City city) {
-        return repository.countByCityAndActive(city, true);
-    }
-
-    public long countActive() {
-        return repository.countByActive(true);
-    }
-
     private void validateNameAndPhone(String name, String phone) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("catadores.error.name_required");
+            throw new IllegalArgumentException("error.collector.name_required");
         }
         if (phone == null || phone.trim().length() < MIN_PHONE_LENGTH) {
-            throw new IllegalArgumentException("catadores.error.phone_min_length");
+            throw new IllegalArgumentException("error.collector.phone_min_length");
         }
     }
 }
