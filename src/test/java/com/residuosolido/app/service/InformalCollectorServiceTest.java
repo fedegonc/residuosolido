@@ -93,7 +93,7 @@ class InformalCollectorServiceTest {
         when(repository.save(any(InformalCollector.class))).thenAnswer(inv -> inv.getArgument(0));
 
         InformalCollector result = service.update("id-1", organization, "Pedro", "099654321",
-                City.LIVRAMENTO, List.of(MaterialCategory.PLASTIC), "nueva nota", false);
+                City.LIVRAMENTO, List.of(MaterialCategory.PLASTICO), "nueva nota", false);
 
         assertEquals("Pedro", result.getName());
         assertEquals("099654321", result.getPhone());

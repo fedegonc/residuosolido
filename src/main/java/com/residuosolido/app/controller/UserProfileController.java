@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
+import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,15 @@ public class UserProfileController {
 
     private final UserService userService;
     private final RequestService requestService;
+    private final RequestMetricsService requestMetricsService;
     private final MessageSource messageSource;
 
     @Autowired
-    public UserProfileController(UserService userService, RequestService requestService, MessageSource messageSource) {
+    public UserProfileController(UserService userService, RequestService requestService,
+                                 RequestMetricsService requestMetricsService, MessageSource messageSource) {
         this.userService = userService;
         this.requestService = requestService;
+        this.requestMetricsService = requestMetricsService;
         this.messageSource = messageSource;
     }
 
@@ -42,7 +46,7 @@ public class UserProfileController {
         User user = userService.findAuthenticatedUserByUsername(authentication.getName());
         model.addAttribute("user", user);
         model.addAttribute("userForm", user);
-        model.addAttribute("requestStats", requestService.getDashboardStats(user));
+        model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
         return "users/profile";
     }
 

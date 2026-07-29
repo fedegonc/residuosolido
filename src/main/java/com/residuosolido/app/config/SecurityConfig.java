@@ -1,6 +1,5 @@
 package com.residuosolido.app.config;
 
-import com.residuosolido.app.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,27 +7,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
-    
     private final LoginSuccessHandler successHandler;
 
     public SecurityConfig(LoginSuccessHandler successHandler) {
@@ -53,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/solicitudes/nueva").permitAll()
                 .requestMatchers(HttpMethod.POST, "/solicitudes").permitAll()
                 .requestMatchers("/rastrear").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/organizations/by-city").permitAll()
                 .requestMatchers("/metricas").permitAll()
                 // API endpoints para usuarios autenticados
                 .requestMatchers("/api/**").authenticated()
@@ -100,40 +88,5 @@ public class SecurityConfig {
             );
         
         return http.build();
-    }
-
-    // Sin AuthenticationEntryPoint específico para API: app HTML simple
-
-    // Sin CORS: aplicación strictly same-origin
-
-    // Exponer AuthenticationManager sin depender de AuthenticationConfiguration
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(provider);
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
-        return username -> userRepository.findByUsername(username)
-            .map(user -> {
-                // Logging de diagnóstico
-                log.info("[AUTH][LOAD] username='{}' | id={} | role={} | active={} | passHashLen={}",
-                        user.getUsername(), user.getId(), user.getRole(), user.isActive(),
-                        user.getPassword() != null ? user.getPassword().length() : -1);
-                return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(),
-                    user.getPassword(),
-                    java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                );
-            })
-            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
-    
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

@@ -4,7 +4,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.UserService;
-import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.service.RequestOrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,13 @@ public class OrgRequestController {
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
     private final UserService userService;
-    private final RequestService requestService;
+    private final RequestOrganizationService requestOrganizationService;
     private final MessageSource messageSource;
 
     @Autowired
-    public OrgRequestController(UserService userService, RequestService requestService, MessageSource messageSource) {
+    public OrgRequestController(UserService userService, RequestOrganizationService requestOrganizationService, MessageSource messageSource) {
         this.userService = userService;
-        this.requestService = requestService;
+        this.requestOrganizationService = requestOrganizationService;
         this.messageSource = messageSource;
     }
 
@@ -40,7 +40,7 @@ public class OrgRequestController {
     public String orgRequests(@RequestParam(required = false) String status,
             Authentication authentication, Model model) {
         User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
-        List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, status);
+        List<Request> requests = requestOrganizationService.getOrgRequestsByStatusFilter(currentOrg, status);
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
@@ -54,7 +54,7 @@ public class OrgRequestController {
                                     Model model, RedirectAttributes redirectAttributes) {
         try {
             User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            Request request = requestService.getOwnedOrgRequest(id, org);
+            Request request = requestOrganizationService.getOwnedOrgRequest(id, org);
             model.addAttribute("request", request);
             model.addAttribute("viewType", "detail");
             model.addAttribute("timeSlots", TimeSlot.values());
@@ -76,7 +76,7 @@ public class OrgRequestController {
                                    RedirectAttributes redirectAttributes) {
         try {
             User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.acceptRequest(id, org, confirmedSlot);
+            requestOrganizationService.acceptRequest(id, org, confirmedSlot);
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.org.request_accepted", null, LocaleContextHolder.getLocale()));
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
@@ -92,7 +92,7 @@ public class OrgRequestController {
                                     RedirectAttributes redirectAttributes) {
         try {
             User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.rejectRequest(id, org);
+            requestOrganizationService.rejectRequest(id, org);
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.org.request_rejected", null, LocaleContextHolder.getLocale()));
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
@@ -107,7 +107,7 @@ public class OrgRequestController {
                                       RedirectAttributes redirectAttributes) {
         try {
             User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.completeRequest(id, org);
+            requestOrganizationService.completeRequest(id, org);
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.org.request_completed", null, LocaleContextHolder.getLocale()));
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));

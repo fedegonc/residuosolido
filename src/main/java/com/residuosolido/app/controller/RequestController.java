@@ -5,7 +5,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.TimeSlot;
-import com.residuosolido.app.service.LocalImageService;
+import com.residuosolido.app.service.CityOrganizationService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
@@ -30,26 +30,31 @@ public class RequestController {
 
     private final RequestService requestService;
     private final UserService userService;
-    private final LocalImageService imageService;
+    private final CityOrganizationService cityOrganizationService;
     private final MessageSource messageSource;
 
     @Autowired
     public RequestController(RequestService requestService, UserService userService,
-                             LocalImageService imageService, MessageSource messageSource) {
+                             CityOrganizationService cityOrganizationService, MessageSource messageSource) {
         this.requestService = requestService;
         this.userService = userService;
-        this.imageService = imageService;
+        this.cityOrganizationService = cityOrganizationService;
         this.messageSource = messageSource;
     }
 
     @GetMapping("/solicitudes/nueva")
-    public String newRequestForm(Model model, Authentication authentication) {
+    public String newRequestForm(@RequestParam(value = "city", required = false) City city,
+                                  Model model, Authentication authentication) {
         model.addAttribute("request", new Request());
         model.addAttribute("isEdit", false);
         model.addAttribute("isGuest", userService.isAnonymous(authentication));
-        model.addAttribute("cities", requestService.getAvailableCities());
+        model.addAttribute("cities", cityOrganizationService.getAvailableCities());
         model.addAttribute("materials", MaterialCategory.values());
         model.addAttribute("timeSlots", TimeSlot.values());
+        if (city != null) {
+            model.addAttribute("organizations", cityOrganizationService.getOrganizationsByCity(city));
+            model.addAttribute("selectedCity", city);
+        }
         return "users/request-form";
     }
 
@@ -61,12 +66,13 @@ public class RequestController {
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(value = "guestName", required = false) String guestName,
                                 @RequestParam(value = "guestPhone", required = false) String guestPhone,
+                                @RequestParam("organizationId") String organizationId,
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = userService.resolveUser(authentication);
             requestService.createRequestWithImage(user, city, address, addressReference,
-                    materials, guestName, guestPhone, imageFile, imageService);
+                    materials, guestName, guestPhone, organizationId, imageFile);
 
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.request.created", null, LocaleContextHolder.getLocale()));
             if (user == null) {
@@ -117,7 +123,7 @@ public class RequestController {
             Request request = requestService.getEditableOwnedRequest(id, user);
             model.addAttribute("request", request);
             model.addAttribute("isEdit", true);
-            model.addAttribute("cities", requestService.getAvailableCities());
+            model.addAttribute("cities", cityOrganizationService.getAvailableCities());
             model.addAttribute("materials", MaterialCategory.values());
             model.addAttribute("timeSlots", TimeSlot.values());
             return "users/request-form";
@@ -146,7 +152,7 @@ public class RequestController {
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.updateRequest(id, user, city, address, addressReference, materials, imageFile, imageService);
+            requestService.updateRequest(id, user, city, address, addressReference, materials, imageFile);
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.request.updated", null, LocaleContextHolder.getLocale()));
             return "redirect:/solicitud/" + id;
         } catch (SecurityException e) {

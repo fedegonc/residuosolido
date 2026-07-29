@@ -24,6 +24,7 @@
             </div>
         </div>
 
+        <!-- No cities available at all -->
         <div th:if="${cities != null and cities.isEmpty()}" class="alert alert--warning" style="margin-bottom:1.5rem;">
             <i class="fa-solid fa-circle-exclamation"></i>
             <div>
@@ -32,16 +33,42 @@
             </div>
         </div>
 
-        <div th:unless="${param.success}" th:if="${cities != null and !cities.isEmpty()}">
-        <form id="requestForm" th:action="@{${(isEdit ?: false) ? '/solicitud/' + request.id + '/editar' : '/solicitudes'}}" method="post" enctype="multipart/form-data" class="card" style="padding:1.5rem;display:grid;gap:1.25rem;"
-              th:data-org-placeholder="#{request.form.organization.placeholder}"
-              th:data-org-hint="#{request.form.organization.hint}"
-              th:data-org-choose="#{request.form.org.choose}"
-              th:data-org-loading="#{request.form.org.loading}"
-              th:data-org-none="#{request.form.org.none}"
-              th:data-org-error="#{request.form.org.error}"
-              th:data-org-hint-empty="#{request.form.org.hint.empty}"
-              th:data-org-suffix="#{request.form.org.suffix}">
+        <!-- Step 1: City selection (new requests, no city chosen yet) -->
+        <div th:unless="${param.success}" th:if="${!isEdit and selectedCity == null and cities != null and !cities.isEmpty()}">
+            <form method="get" action="/solicitudes/nueva" class="card" style="padding:1.5rem;display:grid;gap:1.25rem;">
+                <h2 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);" th:text="#{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
+                <div>
+                    <label class="field__label">
+                        <i class="fa-solid fa-city"></i>
+                        <span th:text="#{request.form.city}">Ciudad</span> <span style="color:var(--red-600)">*</span>
+                    </label>
+                    <select name="city" class="input" required>
+                        <option value="" th:text="#{request.form.city.placeholder}">Selecciona tu ciudad</option>
+                        <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}">Ciudad</option>
+                    </select>
+                </div>
+                <div style="display:flex;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--gray-200);">
+                    <button type="submit" class="btn btn--green btn--sm">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span th:text="#{request.form.continue}">Continuar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- No orgs in selected city -->
+        <div th:unless="${param.success}" th:if="${!isEdit and selectedCity != null and organizations != null and organizations.isEmpty()}" class="alert alert--warning" style="margin-bottom:1.5rem;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <div>
+                <h3 class="font-medium" th:text="#{request.form.noOrgs.title}">No hay cooperativas disponibles</h3>
+                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.noOrgs.text}">Aun no hay organizaciones registradas. Vuelve mas tarde.</p>
+                <a href="/solicitudes/nueva" class="btn btn--ghost btn--sm" style="margin-top:.75rem;" th:text="#{request.form.changeCity}">Cambiar ciudad</a>
+            </div>
+        </div>
+
+        <!-- Step 2: Full form (new with orgs loaded, or edit) -->
+        <div th:unless="${param.success}" th:if="${(isEdit ?: false) or (selectedCity != null and organizations != null and !organizations.isEmpty())}">
+        <form th:action="@{${(isEdit ?: false) ? '/solicitud/' + request.id + '/editar' : '/solicitudes'}}" method="post" enctype="multipart/form-data" class="card" style="padding:1.5rem;display:grid;gap:1.25rem;">
             <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
             <h2 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);" th:text="${isEdit ?: false} ? #{request.form.edit.heading} : #{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
@@ -69,26 +96,34 @@
                 </div>
             </div>
 
-            <div>
+            <!-- City: editable select for edit, hidden + display for new -->
+            <input type="hidden" th:unless="${isEdit}" name="city" th:value="${selectedCity.name()}">
+            <div th:if="${isEdit}">
                 <label class="field__label">
                     <i class="fa-solid fa-city"></i>
                     <span th:text="#{request.form.city}">Ciudad</span> <span style="color:var(--red-600)">*</span>
                 </label>
-                <select name="city" id="citySelect" class="input" required>
-                    <option value="" th:text="#{request.form.city.placeholder}">Selecciona tu ciudad</option>
-                    <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}" th:selected="${isEdit and request?.city != null and request.city.name() == c.name()}">Ciudad</option>
+                <select name="city" class="input" required>
+                    <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}" th:selected="${request?.city != null and request.city.name() == c.name()}">Ciudad</option>
                 </select>
             </div>
+            <div th:unless="${isEdit}" style="display:flex;align-items:center;gap:.5rem;background:var(--gray-50);border-radius:var(--radius);padding:.5rem .75rem;">
+                <i class="fa-solid fa-city" style="color:var(--gray-500);"></i>
+                <span style="font-size:.875rem;color:var(--gray-700);" th:text="#{request.form.city.selected} + ': ' + ${selectedCity.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}">Ciudad: Rivera</span>
+                <a href="/solicitudes/nueva" style="margin-left:auto;font-size:.8125rem;color:var(--green-600);" th:text="#{request.form.changeCity}">Cambiar ciudad</a>
+            </div>
 
-            <div>
+            <!-- Organization selector (new requests only, server-driven) -->
+            <div th:unless="${isEdit}">
                 <label class="field__label">
                     <i class="fa-solid fa-building"></i>
                     <span th:text="#{request.form.organization}">Cooperativa de reciclaje</span> <span style="color:var(--red-600)">*</span>
                 </label>
-                <select name="organizationId" id="orgSelect" class="input" required disabled>
-                    <option value="" th:text="#{request.form.organization.placeholder}">Primero selecciona una ciudad</option>
+                <select name="organizationId" class="input" required>
+                    <option value="" th:text="#{request.form.org.choose}">Selecciona una cooperativa</option>
+                    <option th:each="org : ${organizations}" th:value="${org.id}" th:text="${org.displayName}">Organizacion</option>
                 </select>
-                <p class="field__hint" style="margin-top:.25rem;" id="orgHint" th:text="#{request.form.organization.hint}">Las cooperativas se cargan segun tu ciudad.</p>
+                <p class="field__hint" style="margin-top:.25rem;" th:text="${organizations.size()} + ' ' + #{request.form.org.suffix}">Las cooperativas se cargan segun tu ciudad.</p>
             </div>
 
             <div>
@@ -177,45 +212,6 @@
                 };
                 reader.readAsDataURL(file);
             }
-        });
-
-        const citySelect = document.getElementById('citySelect');
-        const orgSelect = document.getElementById('orgSelect');
-        const orgHint = document.getElementById('orgHint');
-        const form = document.getElementById('requestForm');
-
-        citySelect?.addEventListener('change', function() {
-            const city = this.value;
-            if (!city) {
-                orgSelect.innerHTML = '<option value="">' + form.dataset.orgPlaceholder + '</option>';
-                orgSelect.disabled = true;
-                return;
-            }
-            orgSelect.innerHTML = '<option value="">' + form.dataset.orgLoading + '</option>';
-            orgSelect.disabled = true;
-
-            fetch('/api/organizations/by-city?city=' + city)
-                .then(r => r.json())
-                .then(orgs => {
-                    if (orgs.length === 0) {
-                        orgSelect.innerHTML = '<option value="">' + form.dataset.orgNone + '</option>';
-                        orgHint.textContent = form.dataset.orgHintEmpty;
-                    } else {
-                        orgSelect.innerHTML = '<option value="">' + form.dataset.orgChoose + '</option>';
-                        orgs.forEach(org => {
-                            const opt = document.createElement('option');
-                            opt.value = org.id;
-                            opt.textContent = org.displayName || org.username;
-                            orgSelect.appendChild(opt);
-                        });
-                        orgHint.textContent = orgs.length + ' ' + form.dataset.orgSuffix;
-                    }
-                    orgSelect.disabled = false;
-                })
-                .catch(() => {
-                    orgSelect.innerHTML = '<option value="">' + form.dataset.orgError + '</option>';
-                    orgSelect.disabled = true;
-                });
         });
     </script>
 </main>

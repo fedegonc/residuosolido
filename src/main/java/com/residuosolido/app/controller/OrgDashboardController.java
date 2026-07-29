@@ -2,7 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
-import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.service.RequestOrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,12 @@ public class OrgDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(OrgDashboardController.class);
 
     private final UserService userService;
-    private final RequestService requestService;
+    private final RequestOrganizationService requestOrganizationService;
 
     @Autowired
-    public OrgDashboardController(UserService userService, RequestService requestService) {
+    public OrgDashboardController(UserService userService, RequestOrganizationService requestOrganizationService) {
         this.userService = userService;
-        this.requestService = requestService;
+        this.requestOrganizationService = requestOrganizationService;
     }
 
     @GetMapping("/acopio/inicio")
@@ -38,11 +38,11 @@ public class OrgDashboardController {
         }
 
         try {
-            Map<String, Long> data = requestService.getOrgDashboardData(currentOrg);
+            Map<String, Long> data = requestOrganizationService.getOrgDashboardData(currentOrg);
             model.addAttribute("pendingRequests", data.get("pending"));
             model.addAttribute("inProgressRequests", data.get("inProgress"));
             model.addAttribute("completedRequests", data.get("completed"));
-            model.addAttribute("pendingRequestsList", requestService.getRecentPendingRequestsByOrganization(currentOrg, 5));
+            model.addAttribute("pendingRequestsList", requestOrganizationService.getRecentPendingRequestsByOrganization(currentOrg, 5));
         } catch (Exception e) {
             logger.error("Error en dashboard de organización: {}", e.getMessage(), e);
             model.addAttribute("pendingRequests", 0);

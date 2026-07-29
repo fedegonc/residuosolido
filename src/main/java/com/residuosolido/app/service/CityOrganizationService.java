@@ -1,0 +1,70 @@
+package com.residuosolido.app.service;
+
+import com.residuosolido.app.enums.City;
+import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CityOrganizationService {
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public CityOrganizationService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User findOrganizationByIdAndCity(String organizationId, City city) {
+        if (organizationId == null || organizationId.isBlank()) {
+            throw new IllegalArgumentException("request.error.organization_required");
+        }
+        if (city == null) {
+            throw new IllegalArgumentException("request.error.city_required");
+        }
+        User org = userRepository.findById(organizationId)
+                .orElseThrow(() -> new IllegalArgumentException("request.error.organization_not_found"));
+        if (!org.isOrganization()) {
+            throw new IllegalArgumentException("request.error.assign_not_organization");
+        }
+        if (org.getCity() == null || org.getCity() != city) {
+            throw new IllegalArgumentException("request.error.organization_not_in_city");
+        }
+        return org;
+    }
+
+    public User assignOrganization(City city) {
+        if (city == null) {
+            throw new IllegalArgumentException("request.error.city_required");
+        }
+        List<User> orgs = userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true);
+        if (orgs == null || orgs.isEmpty()) {
+            orgs = userRepository.findByRoleAndCity(Role.ORGANIZATION, city);
+        }
+        if (orgs == null || orgs.isEmpty()) {
+            throw new IllegalStateException("request.error.no_org_in_city");
+        }
+        return orgs.get(0);
+    }
+
+    public List<User> getOrganizationsByCity(City city) {
+        List<User> orgs = userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true);
+        if (orgs == null || orgs.isEmpty()) {
+            orgs = userRepository.findByRoleAndCity(Role.ORGANIZATION, city);
+        }
+        return orgs;
+    }
+
+    public List<City> getAvailableCities() {
+        return List.of(City.values()).stream()
+                .filter(c -> {
+                    List<User> orgs = getOrganizationsByCity(c);
+                    return orgs != null && !orgs.isEmpty();
+                })
+                .toList();
+    }
+}

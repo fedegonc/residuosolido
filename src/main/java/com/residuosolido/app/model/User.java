@@ -51,9 +51,7 @@ public class User {
     }
 
     public boolean isProfileComplete() {
-        if (role != Role.ORGANIZATION) return true;
-        return hasPhone() && city != null
-            && profileCompleted != null && profileCompleted;
+        return role == null || role.isProfileComplete(this);
     }
 
     public boolean hasPhone() {
@@ -87,7 +85,7 @@ public class User {
     }
 
     public boolean needsProfileCompletion() {
-        return isOrganization() && !isProfileComplete();
+        return !isProfileComplete();
     }
 
     public void updateProfileDetails(String email, String firstName, String phone, City city) {

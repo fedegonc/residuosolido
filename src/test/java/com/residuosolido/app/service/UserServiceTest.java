@@ -43,7 +43,7 @@ class UserServiceTest {
 
         String error = userService.validateUserRegistration(user);
         assertNotNull(error);
-        assertTrue(error.contains("8 caracteres"));
+        assertTrue(error.contains("register.error.password_min_length"));
     }
 
     @Test
@@ -55,7 +55,7 @@ class UserServiceTest {
 
         String error = userService.validateUserRegistration(user);
         assertNotNull(error);
-        assertTrue(error.contains("8 caracteres"));
+        assertTrue(error.contains("register.error.password_min_length"));
     }
 
     @Test
@@ -103,7 +103,7 @@ class UserServiceTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> userService.updateUser(update, "12345"));
-        assertTrue(ex.getMessage().contains("8 caracteres"));
+        assertTrue(ex.getMessage().contains("register.error.password_min_length"));
     }
 
     @Test

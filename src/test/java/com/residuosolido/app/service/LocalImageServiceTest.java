@@ -51,7 +51,7 @@ class LocalImageServiceTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.uploadFile(html));
-        assertTrue(ex.getMessage().contains("Tipo de archivo no permitido"));
+        assertTrue(ex.getMessage().contains("error.image.invalid_type"));
     }
 
     @Test
@@ -61,7 +61,7 @@ class LocalImageServiceTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.uploadFile(exe));
-        assertTrue(ex.getMessage().contains("Extensión de archivo no permitida"));
+        assertTrue(ex.getMessage().contains("error.image.invalid_extension"));
     }
 
     @Test
@@ -80,7 +80,7 @@ class LocalImageServiceTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.uploadFile(huge));
-        assertTrue(ex.getMessage().contains("tamaño máximo"));
+        assertTrue(ex.getMessage().contains("error.image.too_large"));
     }
 
     @Test
