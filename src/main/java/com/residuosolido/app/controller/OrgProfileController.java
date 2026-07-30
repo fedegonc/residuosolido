@@ -3,6 +3,8 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -16,6 +18,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgProfileController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrgProfileController.class);
 
     private final UserService userService;
     private final MessageSource messageSource;
@@ -33,6 +37,7 @@ public class OrgProfileController {
             model.addAttribute("organization", currentOrg);
             model.addAttribute("cities", City.values());
         } catch (Exception e) {
+            logger.error("Error al cargar perfil de organización: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", messageSource.getMessage("flash.org.profile_load_error", null, LocaleContextHolder.getLocale()));
         }
         return "org/profile";
@@ -51,6 +56,7 @@ public class OrgProfileController {
             userService.updateProfile(currentOrg, email, firstName, phone, city);
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.profile.updated", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
+            logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.profile.update_error", null, LocaleContextHolder.getLocale()));
         }
         return "redirect:/acopio/perfil";

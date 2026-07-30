@@ -5,11 +5,11 @@
   <nav th:fragment="navbar" class="navbar" th:aria-label="#{aria.navbar.label}">
     <div class="navbar__inner">
       <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="navbar__brand">
-        <span class="navbar__logo"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></span>
+        <span class="navbar__logo"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></span>
         Residuo Sólido
       </a>
       <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="navbar__brand">
-        <span class="navbar__logo"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></span>
+        <span class="navbar__logo"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></span>
         Residuo Sólido
       </a>
       <button id="menuBtn" type="button" class="navbar__toggle" th:aria-label="#{aria.menu.toggle}" aria-expanded="false">

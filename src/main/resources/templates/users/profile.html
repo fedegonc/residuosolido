@@ -12,36 +12,34 @@
         <div th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
     </div>
 
-    <div class="page" style="max-width:42rem;padding-top:1.5rem;padding-bottom:1.5rem;">
+    <div class="page page--narrow page--padded">
 
-        <section class="card card--flush" style="background:linear-gradient(to right,var(--green-600),var(--green-800));color:var(--white);margin-bottom:1.5rem;">
-            <div class="card__body" style="padding:1.5rem;display:flex;align-items:center;gap:1rem;">
-                <div style="width:4rem;height:4rem;border-radius:9999px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <div>
-                    <h1 style="font-size:1.5rem;font-weight:700;" th:text="#{user.profile.title}">Mi Perfil</h1>
-                    <p style="color:var(--green-50);" th:text="#{user.profile.subtitle}">Gestiona tu informacion personal</p>
-                </div>
+        <nav th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></nav>
+
+        <section class="hero-header hero-header--green">
+            <div class="hero-header__icon"><i aria-hidden="true" class="fa-solid fa-user"></i></div>
+            <div class="hero-header__body">
+                <h1 class="hero-header__title" th:text="#{user.profile.title}">Mi Perfil</h1>
+                <p class="hero-header__subtitle" th:text="#{user.profile.subtitle}">Gestiona tu informacion personal</p>
             </div>
         </section>
 
         <div class="card">
-            <form th:action="@{/usuarios/perfil}" method="post" style="padding:1.5rem;display:grid;gap:1.25rem;">
+            <form th:action="@{/usuarios/perfil}" method="post" class="card__body content-grid content-grid--md">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-user"></i>
+                        <i aria-hidden="true" class="fa-solid fa-user"></i>
                         <span th:text="#{user.profile.username}">Nombre de usuario</span>
                     </label>
-                    <input type="text" th:value="${user?.username}" class="input" readonly style="background:var(--gray-50);">
+                    <input type="text" th:value="${user?.username}" class="input input--readonly" readonly>
                     <p class="field__hint" th:text="#{user.profile.username.hint}">No se puede modificar</p>
                 </div>
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-envelope"></i>
+                        <i aria-hidden="true" class="fa-solid fa-envelope"></i>
                         <span th:text="#{user.profile.email}">Correo electronico</span>
                     </label>
                     <input type="email" name="email" th:value="${user?.email}" class="input" required>
@@ -49,7 +47,7 @@
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-id-card"></i>
+                        <i aria-hidden="true" class="fa-solid fa-id-card"></i>
                         <span th:text="#{user.profile.name}">Nombre</span>
                     </label>
                     <input type="text" name="firstName" th:value="${user?.firstName}" class="input" required>
@@ -57,7 +55,7 @@
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-phone"></i>
+                        <i aria-hidden="true" class="fa-solid fa-phone"></i>
                         <span th:text="#{user.profile.phone}">Telefono</span>
                     </label>
                     <input type="tel" name="phone" th:value="${user?.phone}" class="input" th:placeholder="#{user.profile.phone.placeholder}" placeholder="Ej: 099 123 456" required>
@@ -66,7 +64,7 @@
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-city"></i>
+                        <i aria-hidden="true" class="fa-solid fa-city"></i>
                         <span th:text="#{user.profile.city}">Ciudad</span>
                     </label>
                     <select name="city" class="input">
@@ -76,55 +74,53 @@
                     </select>
                 </div>
 
-                <div style="display:flex;gap:.75rem;padding-top:1rem;border-top:1px solid var(--gray-200);">
+                <div class="form-actions">
                     <button type="submit" class="btn btn--green btn--sm">
-                        <i class="fa-solid fa-save"></i><span th:text="#{user.profile.save}">Guardar Cambios</span>
+                        <i aria-hidden="true" class="fa-solid fa-save"></i><span th:text="#{user.profile.save}">Guardar Cambios</span>
                     </button>
                     <a th:href="@{/usuarios/inicio}" class="btn btn--ghost btn--sm">
-                        <i class="fa-solid fa-xmark"></i><span th:text="#{user.profile.cancel}">Cancelar</span>
+                        <i aria-hidden="true" class="fa-solid fa-xmark"></i><span th:text="#{user.profile.cancel}">Cancelar</span>
                     </a>
                 </div>
             </form>
         </div>
 
-        <div th:if="${requestStats != null}" class="card" style="margin-top:1.5rem;">
+        <div th:if="${requestStats != null}" class="card mt-6">
             <div class="card__header">
-                <h2 class="card__title"><i class="fa-solid fa-recycle" style="color:var(--green-600)"></i> <span th:text="#{user.profile.my_requests}">Mis Solicitudes</span></h2>
+                <h2 class="card__title"><i aria-hidden="true" class="fa-solid fa-recycle icon-green-dark"></i> <span th:text="#{user.profile.my_requests}">Mis Solicitudes</span></h2>
             </div>
             <div class="card__body grid grid--4">
                 <div class="stat">
-                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-box"></i></div>
+                    <div class="stat__icon stat__icon--green"><i aria-hidden="true" class="fa-solid fa-box"></i></div>
                     <p class="stat__value" th:text="${requestStats.total ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.total}">Total</p>
                 </div>
                 <div class="stat">
-                    <div class="stat__icon" style="background:var(--yellow-100);color:var(--yellow-800)"><i class="fa-solid fa-clock"></i></div>
+                    <div class="stat__icon stat__icon--yellow"><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
                     <p class="stat__value" th:text="${requestStats.pending ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.pending}">Pendientes</p>
                 </div>
                 <div class="stat">
-                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-truck"></i></div>
+                    <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-truck"></i></div>
                     <p class="stat__value" th:text="${requestStats.inProgress ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.in_progress}">En proceso</p>
                 </div>
                 <div class="stat">
-                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-circle-check"></i></div>
                     <p class="stat__value" th:text="${requestStats.completed ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.completed}">Completadas</p>
                 </div>
             </div>
         </div>
 
-        <div style="margin-top:1.5rem;background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:1rem;">
-            <div style="display:flex;gap:.5rem;align-items:flex-start;">
-                <i class="fa-solid fa-circle-info" style="color:var(--green-600);flex-shrink:0;margin-top:.125rem;"></i>
-                <div style="font-size:.8125rem;color:var(--green-800);">
-                    <p class="font-medium" th:text="#{user.profile.info_title}">Informacion importante:</p>
-                    <ul style="list-style:disc;padding-left:1.25rem;margin-top:.25rem;">
-                        <li th:text="#{user.profile.info_bullet1}">Mantene actualizado tu telefono para que la cooperativa pueda contactarte</li>
-                        <li th:text="#{user.profile.info_bullet2}">Los cambios se aplican inmediatamente</li>
-                    </ul>
-                </div>
+        <div class="info-box info-box--green mt-6">
+            <i aria-hidden="true" class="fa-solid fa-circle-info info-box__icon"></i>
+            <div class="info-box__content">
+                <p class="info-box__title" th:text="#{user.profile.info_title}">Informacion importante:</p>
+                <ul class="info-box__list">
+                    <li th:text="#{user.profile.info_bullet1}">Mantene actualizado tu telefono para que la cooperativa pueda contactarte</li>
+                    <li th:text="#{user.profile.info_bullet2}">Los cambios se aplican inmediatamente</li>
+                </ul>
             </div>
         </div>
     </div>

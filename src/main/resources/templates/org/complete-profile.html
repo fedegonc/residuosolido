@@ -2,45 +2,38 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
     <title th:text="#{completeProfile.title}">Completa tu Perfil - Centro de Acopio</title>
-    <style>
-      .hero-gradient{background:linear-gradient(to right,var(--green-600),var(--green-800));color:var(--white);padding:2rem 1.5rem;}
-      .hero-gradient h1{font-size:1.5rem;font-weight:700;}
-      .hero-gradient p{color:var(--green-50);margin-top:.5rem;}
-      .info-box{background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:1rem;color:var(--blue-800);font-size:.875rem;display:flex;gap:.5rem;}
-      .info-box i{color:var(--blue-600);}
-    </style>
 </head>
 <body>
 <main layout:fragment="content">
-    <div class="page" style="max-width:42rem;padding-top:2rem;padding-bottom:2rem;">
+    <div class="page page--narrow page--padded">
         <div th:if="${errorMessage}" class="alert alert--error">
-            <i class="fa-solid fa-circle-xmark"></i>
+            <i aria-hidden="true" class="fa-solid fa-circle-xmark"></i>
             <span th:text="${errorMessage}"></span>
         </div>
 
-        <div class="card card--flush" style="box-shadow:var(--shadow-lg);">
-            <div class="hero-gradient">
-                <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
-                    <i class="fa-solid fa-clipboard-check" style="font-size:1.5rem;"></i>
-                    <h1 th:text="#{completeProfile.heading}">Completa tu Perfil de Centro de Acopio</h1>
+        <div class="card card--flush card--shadow-lg">
+            <div class="hero-header hero-header--green hero-header--flush">
+                <div class="flex gap-3 items-center mb-2">
+                    <i aria-hidden="true" class="fa-solid fa-clipboard-check text-2xl"></i>
+                    <h1 class="hero-header__title" th:text="#{completeProfile.heading}">Completa tu Perfil de Centro de Acopio</h1>
                 </div>
-                <p th:text="#{completeProfile.intro}">Para comenzar a recibir solicitudes, necesitamos que completes la siguiente informacion.</p>
+                <p class="hero-header__subtitle" th:text="#{completeProfile.intro}">Para comenzar a recibir solicitudes, necesitamos que completes la siguiente informacion.</p>
             </div>
 
-            <form th:action="@{/acopio/completar-perfil}" method="post" style="padding:1.5rem;display:grid;gap:1.5rem;">
+            <form th:action="@{/acopio/completar-perfil}" method="post" class="card__body content-grid content-grid--md">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                 <div>
-                    <h2 style="font-size:1.125rem;font-weight:600;color:var(--gray-900);display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
-                        <i class="fa-solid fa-location-dot" style="color:var(--green-600)"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 flex gap-2 items-center mb-2">
+                        <i aria-hidden="true" class="fa-solid fa-location-dot icon-green-dark"></i>
                         <span th:text="#{completeProfile.contactInfo}">Informacion de Contacto</span>
                     </h2>
 
-                    <div style="display:grid;gap:1rem;">
+                    <div class="content-grid">
                         <div>
                             <label class="field__label">
-                                <i class="fa-solid fa-phone"></i>
-                                <span th:text="#{completeProfile.phone}">Telefono de contacto</span> <span style="color:var(--red-500)">*</span>
+                                <i aria-hidden="true" class="fa-solid fa-phone"></i>
+                                <span th:text="#{completeProfile.phone}">Telefono de contacto</span> <span class="req">*</span>
                             </label>
                             <input type="tel" name="phone" required minlength="8"
                                 th:value="${organization?.phone}"
@@ -51,8 +44,8 @@
 
                         <div>
                             <label class="field__label">
-                                <i class="fa-solid fa-city"></i>
-                                <span th:text="#{completeProfile.city}">Ciudad</span> <span style="color:var(--red-500)">*</span>
+                                <i aria-hidden="true" class="fa-solid fa-city"></i>
+                                <span th:text="#{completeProfile.city}">Ciudad</span> <span class="req">*</span>
                             </label>
                             <select name="city" class="input" required>
                                 <option value="" th:text="#{completeProfile.city.placeholder}">Selecciona tu ciudad</option>
@@ -65,15 +58,15 @@
 
                 <div>
                     <button type="submit" class="btn btn--green btn--block">
-                        <i class="fa-solid fa-circle-check"></i>
+                        <i aria-hidden="true" class="fa-solid fa-circle-check"></i>
                         <span th:text="#{completeProfile.submit}">Completar Perfil</span>
                     </button>
                 </div>
 
-                <div class="info-box">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <div>
-                        <p class="font-medium" th:text="#{completeProfile.info.title}">¿Por que necesitamos esta informacion?</p>
+                <div class="info-box info-box--blue">
+                    <i aria-hidden="true" class="fa-solid fa-circle-info info-box__icon"></i>
+                    <div class="info-box__content">
+                        <p class="info-box__title" th:text="#{completeProfile.info.title}">¿Por que necesitamos esta informacion?</p>
                         <p th:text="#{completeProfile.info.text}">Esta informacion sera visible para los usuarios que deseen enviar materiales reciclables a tu centro. Podras actualizar estos datos despues desde tu perfil.</p>
                     </div>
                 </div>

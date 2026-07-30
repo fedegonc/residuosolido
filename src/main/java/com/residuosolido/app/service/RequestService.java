@@ -69,6 +69,7 @@ public class RequestService {
                 request = requestRepository.save(request);
             } catch (Exception e) {
                 logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
+                throw new IllegalStateException("flash.request.image_upload_failed", e);
             }
         }
         return request;
@@ -114,14 +115,17 @@ public class RequestService {
         request.setAddress(address);
         request.setAddressReference(addressReference);
         request.setMaterials(materials != null ? materials : List.of());
+        request = requestRepository.save(request);
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 request.setImageUrl(imageService.uploadFile(imageFile));
+                request = requestRepository.save(request);
             } catch (Exception e) {
                 logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
+                throw new IllegalStateException("flash.request.image_upload_failed", e);
             }
         }
-        return requestRepository.save(request);
+        return request;
     }
 
     public List<Request> getGuestRequestsByPhone(String phone) {

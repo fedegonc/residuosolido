@@ -92,6 +92,9 @@ public class RequestController {
                 return "redirect:/solicitudes/nueva?success";
             }
             return "redirect:/solicitudes";
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
+            return "redirect:/solicitudes";
         } catch (Exception e) {
             logger.error("Error al crear solicitud: {}", e.getMessage());
             return "redirect:/solicitudes/nueva?error";
@@ -172,6 +175,9 @@ public class RequestController {
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.not_owned", null, LocaleContextHolder.getLocale()));
             return "redirect:/solicitudes";
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
+            return "redirect:/solicitud/" + id;
         } catch (Exception e) {
             logger.error("Error al actualizar solicitud: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.update_error", null, LocaleContextHolder.getLocale()));

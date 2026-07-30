@@ -15,6 +15,8 @@ import java.util.List;
 @Service
 public class RequestOrganizationService {
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RequestOrganizationService.class);
+
     private final RequestRepository requestRepository;
     private final NotificationService notificationService;
 
@@ -75,6 +77,7 @@ public class RequestOrganizationService {
             RequestStatus filterStatus = RequestStatus.valueOf(status.trim().toUpperCase(java.util.Locale.ROOT));
             return getRequestsByOrganizationAndStatus(organization, filterStatus);
         } catch (IllegalArgumentException ex) {
+            logger.warn("Filtro de status inválido ignorado: {}", status);
             return getRequestsByOrganization(organization, page, size);
         }
     }

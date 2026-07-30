@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="header(title, subtitle)" class="page-header">
+    <h1 class="page-header__title" th:text="${title}">Title</h1>
+    <p th:if="${subtitle != null}" class="page-header__subtitle" th:text="${subtitle}">Subtitle</p>
+  </div>
+</body>
+</html>

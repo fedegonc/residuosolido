@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class UserService {
         return findAuthenticatedUserByUsername(authentication.getName());
     }
 
+    @Transactional
     public User updateUser(User user, String newPassword) {
         User existing = userRepository.findById(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
@@ -78,6 +80,7 @@ public class UserService {
         return updateUser(user, null);
     }
 
+    @Transactional
     public void completeOrgProfile(User org, String phone, City city) {
         if (phone != null) org.setPhone(phone.trim());
         if (city != null) org.setCity(city);

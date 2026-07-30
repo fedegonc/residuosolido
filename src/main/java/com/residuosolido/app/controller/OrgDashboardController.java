@@ -1,6 +1,7 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.UserService;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.RequestOrganizationService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,13 +26,16 @@ public class OrgDashboardController {
     private final UserService userService;
     private final DashboardService dashboardService;
     private final RequestOrganizationService requestOrganizationService;
+    private final BreadcrumbService breadcrumbService;
 
     @Autowired
     public OrgDashboardController(UserService userService, DashboardService dashboardService,
-                                   RequestOrganizationService requestOrganizationService) {
+                                   RequestOrganizationService requestOrganizationService,
+                                   BreadcrumbService breadcrumbService) {
         this.userService = userService;
         this.dashboardService = dashboardService;
         this.requestOrganizationService = requestOrganizationService;
+        this.breadcrumbService = breadcrumbService;
     }
 
     @GetMapping("/acopio/inicio")
@@ -52,7 +57,9 @@ public class OrgDashboardController {
             model.addAttribute("pendingRequests", 0);
             model.addAttribute("inProgressRequests", 0);
             model.addAttribute("completedRequests", 0);
+            model.addAttribute("pendingRequestsList", List.of());
         }
+        model.addAttribute("breadcrumbs", breadcrumbService.addCurrent(breadcrumbService.home(), "Panel de acopio"));
         return "org/dashboard";
     }
 }

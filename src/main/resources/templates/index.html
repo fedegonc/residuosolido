@@ -5,23 +5,23 @@
 </head>
 <body>
 <main layout:fragment="content">
-    <div class="page" style="max-width:48rem;padding-top:3rem;padding-bottom:3rem;text-align:center;">
-        <div style="display:flex;justify-content:center;margin-bottom:1.5rem;">
-            <div style="width:5rem;height:5rem;border-radius:var(--radius-lg);background:var(--green-600);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--white);">
-                <i class="fa-solid fa-recycle"></i>
+    <div class="page page--wide page--center">
+        <div class="flex mb-6">
+            <div class="index-hero__icon">
+                <i aria-hidden="true" class="fa-solid fa-recycle"></i>
             </div>
         </div>
-        <h1 style="font-size:2rem;font-weight:800;color:var(--gray-900);margin-bottom:.75rem;" th:text="#{index.welcome}">Residuo Sólido</h1>
-        <p style="font-size:1.125rem;color:var(--gray-600);margin-bottom:2rem;" th:text="#{index.subtitle}">Solicitá la recolección de tus reciclables. Una cooperativa de tu ciudad los pasa a buscar.</p>
-        <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
-            <a href="/solicitudes/nueva" class="btn btn--green btn--md">
-                <i class="fa-solid fa-paper-plane"></i><span th:text="#{index.send_request}">Enviar solicitud</span>
+        <h1 class="index-hero__title" th:text="#{index.welcome}">Residuo Sólido</h1>
+        <p class="index-hero__subtitle" th:text="#{index.subtitle}">Solicitá la recolección de tus reciclables. Una cooperativa de tu ciudad los pasa a buscar.</p>
+        <div class="flex flex-wrap gap-3">
+            <a href="/solicitudes/nueva" class="btn btn--green btn--lg">
+                <i aria-hidden="true" class="fa-solid fa-paper-plane"></i><span th:text="#{index.send_request}">Enviar solicitud</span>
             </a>
-            <a href="/rastrear" class="btn btn--ghost btn--md">
-                <i class="fa-solid fa-magnifying-glass"></i><span th:text="#{track.title}">Rastrear solicitud</span>
+            <a href="/rastrear" class="btn btn--ghost btn--lg">
+                <i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i><span th:text="#{index.track}">Rastrear solicitud</span>
             </a>
-            <a href="/auth/login" class="btn btn--ghost btn--md">
-                <i class="fa-solid fa-right-to-bracket"></i><span th:text="#{index.login}">Iniciar sesión</span>
+            <a href="/auth/login" class="btn btn--ghost btn--lg">
+                <i aria-hidden="true" class="fa-solid fa-right-to-bracket"></i><span th:text="#{index.login}">Entrar</span>
             </a>
         </div>
     </div>

@@ -12,41 +12,35 @@
         <div th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
     </div>
 
-    <div class="page" style="padding-top:1.5rem;padding-bottom:1.5rem;">
+    <div class="page page--padded">
 
         <div th:if="${viewType != 'detail'}">
-            <section class="card card--flush" style="background:linear-gradient(to right,var(--blue-600),var(--indigo-600));color:var(--white);margin-bottom:1.5rem;">
-                <div class="card__body" style="padding:1.5rem;display:flex;align-items:center;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:1rem;">
-                        <div style="width:4rem;height:4rem;border-radius:9999px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                        </div>
-                        <div>
-                            <h1 style="font-size:1.5rem;font-weight:700;" th:text="#{org.requests.title}">Solicitudes de Recolección</h1>
-                            <p style="color:var(--blue-100);" th:text="#{org.requests.subtitle}">Gestiona las solicitudes de reciclaje de los usuarios</p>
-                        </div>
-                    </div>
-                    <div style="text-align:right;">
-                        <p style="font-size:.875rem;color:var(--blue-100);" th:text="#{org.requests.total}">Total de solicitudes</p>
-                        <p style="font-size:1.875rem;font-weight:700;" th:text="${requests != null ? requests.size() : 0}">0</p>
-                    </div>
+            <section class="hero-header hero-header--blue">
+                <div class="hero-header__icon"><i aria-hidden="true" class="fa-solid fa-clipboard-list"></i></div>
+                <div class="hero-header__body">
+                    <h1 class="hero-header__title" th:text="#{org.requests.title}">Solicitudes de Recolección</h1>
+                    <p class="hero-header__subtitle" th:text="#{org.requests.subtitle}">Gestiona las solicitudes de reciclaje de los usuarios</p>
+                </div>
+                <div class="hero-header__stats">
+                    <p class="hero-header__stat-label" th:text="#{org.requests.total}">Total de solicitudes</p>
+                    <p class="hero-header__stat-value" th:text="${requests != null ? requests.size() : 0}">0</p>
                 </div>
             </section>
 
-            <div class="card" style="margin-bottom:1.5rem;">
-                <div class="card__body" style="padding:1rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;">
+            <div class="card mb-6">
+                <div class="card__body filter-bar">
                     <a href="/acopio/requests" class="btn btn--sm" th:classappend="${currentStatus == null ? 'btn--primary' : 'btn--ghost'}" th:text="#{org.requests.all}">Todas</a>
-                    <a href="/acopio/requests?status=PENDING" class="btn btn--sm" th:classappend="${currentStatus == 'PENDING' ? 'btn--primary' : 'btn--ghost'}"><i class="fa-solid fa-clock"></i><span th:text="#{org.dashboard.pending}">Pendientes</span></a>
-                    <a href="/acopio/requests?status=IN_PROGRESS" class="btn btn--sm" th:classappend="${currentStatus == 'IN_PROGRESS' ? 'btn--primary' : 'btn--ghost'}"><i class="fa-solid fa-truck"></i><span th:text="#{org.dashboard.in_progress}">En Proceso</span></a>
-                    <a href="/acopio/requests?status=COMPLETED" class="btn btn--sm" th:classappend="${currentStatus == 'COMPLETED' ? 'btn--primary' : 'btn--ghost'}"><i class="fa-solid fa-circle-check"></i><span th:text="#{org.dashboard.completed}">Completadas</span></a>
+                    <a href="/acopio/requests?status=PENDING" class="btn btn--sm" th:classappend="${currentStatus == 'PENDING' ? 'btn--primary' : 'btn--ghost'}"><i aria-hidden="true" class="fa-solid fa-clock"></i><span th:text="#{org.dashboard.pending}">Pendientes</span></a>
+                    <a href="/acopio/requests?status=IN_PROGRESS" class="btn btn--sm" th:classappend="${currentStatus == 'IN_PROGRESS' ? 'btn--primary' : 'btn--ghost'}"><i aria-hidden="true" class="fa-solid fa-truck"></i><span th:text="#{org.dashboard.in_progress}">En Proceso</span></a>
+                    <a href="/acopio/requests?status=COMPLETED" class="btn btn--sm" th:classappend="${currentStatus == 'COMPLETED' ? 'btn--primary' : 'btn--ghost'}"><i aria-hidden="true" class="fa-solid fa-circle-check"></i><span th:text="#{org.dashboard.completed}">Completadas</span></a>
                 </div>
             </div>
 
-        <div id="requestsList" style="display:grid;gap:1rem;">
+        <div id="requestsList" class="content-grid">
             <div th:if="${requests == null or requests.empty}" class="card">
-                <div class="card__body empty-state" style="padding:3rem;">
-                    <i class="fa-solid fa-inbox empty-state__icon"></i>
-                    <h3 style="font-size:1.125rem;font-weight:500;color:var(--gray-900);" th:text="#{org.requests.empty}">No hay solicitudes</h3>
+                <div class="card__body empty-state empty-state--lg">
+                    <i aria-hidden="true" class="fa-solid fa-inbox empty-state__icon"></i>
+                    <h3 class="text-lg font-medium text-gray-900" th:text="#{org.requests.empty}">No hay solicitudes</h3>
                     <p th:text="#{org.requests.empty.desc}">No se encontraron solicitudes de recolección en este momento.</p>
                 </div>
             </div>
@@ -54,51 +48,51 @@
             <div th:each="request : ${requests}"
                  th:attr="data-status=${request.status}"
                  class="card card--flush">
-                <div class="card__body" style="padding:1.5rem;">
-                    <div class="flex-between" style="align-items:flex-start;gap:1rem;margin-bottom:1rem;">
-                        <div style="flex:1;">
-                            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">
-                                <h3 style="font-size:1.125rem;font-weight:600;color:var(--gray-900);" th:text="${request.address}">Dirección</h3>
+                <div class="card__body card__body--lg">
+                    <div class="flex-between items-start gap-3 mb-2">
+                        <div class="flex-1">
+                            <div class="flex gap-2 items-center mb-2">
+                                <h3 class="text-lg font-semibold text-gray-900" th:text="${request.address}">Dirección</h3>
                                 <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
                             </div>
 
-                            <div style="display:grid;gap:.5rem;font-size:.875rem;color:var(--gray-600);">
-                                <p><i class="fa-solid fa-user"></i> <strong th:text="#{org.requests.user}">Usuario:</strong> <span th:text="${request.contactName}">Usuario</span></p>
-                                <p><i class="fa-solid fa-phone"></i> <strong th:text="#{org.requests.phone}">Teléfono:</strong> <span th:text="${request.contactPhone}">Teléfono</span></p>
-                                <p><i class="fa-solid fa-city"></i> <strong th:text="#{org.requests.city}">Ciudad:</strong> <span th:text="${request.city}">Ciudad</span></p>
-                                <p th:if="${request.addressReference}"><i class="fa-solid fa-map"></i> <strong th:text="#{org.requests.reference}">Referencia:</strong> <span th:text="${request.addressReference}">Referencia</span></p>
-                                <p><i class="fa-solid fa-clock"></i> <strong th:text="#{org.requests.proposed_slots}">Horarios propuestos:</strong>
+                            <div class="content-grid text-sm text-gray-600 content-grid--sm">
+                                <p><i aria-hidden="true" class="fa-solid fa-user"></i> <strong th:text="#{org.requests.user}">Usuario:</strong> <span th:text="${request.contactName}">Usuario</span></p>
+                                <p><i aria-hidden="true" class="fa-solid fa-phone"></i> <strong th:text="#{org.requests.phone}">Teléfono:</strong> <span th:text="${request.contactPhone}">Teléfono</span></p>
+                                <p><i aria-hidden="true" class="fa-solid fa-city"></i> <strong th:text="#{org.requests.city}">Ciudad:</strong> <span th:text="${request.city}">Ciudad</span></p>
+                                <p th:if="${request.addressReference}"><i aria-hidden="true" class="fa-solid fa-map"></i> <strong th:text="#{org.requests.reference}">Referencia:</strong> <span th:text="${request.addressReference}">Referencia</span></p>
+                                <p><i aria-hidden="true" class="fa-solid fa-clock"></i> <strong th:text="#{org.requests.proposed_slots}">Horarios propuestos:</strong>
                                     <span th:if="${request.proposedSlots == null or request.proposedSlots.empty}" th:text="#{org.requests.no_slots}">Sin horarios</span>
                                     <span th:each="slot, iter : ${request.proposedSlots}" th:text="${iter.index > 0 ? ', ' : ''} + ${slot}">Slot</span>
                                 </p>
-                                <p th:if="${request.confirmedSlot}"><i class="fa-solid fa-check-circle"></i> <strong th:text="#{org.requests.confirmed_slot}">Horario confirmado:</strong> <span th:text="${request.confirmedSlot}">Slot</span></p>
-                                <p><i class="fa-solid fa-recycle"></i> <strong th:text="#{org.requests.materials}">Materiales:</strong>
+                                <p th:if="${request.confirmedSlot}"><i aria-hidden="true" class="fa-solid fa-check-circle"></i> <strong th:text="#{org.requests.confirmed_slot}">Horario confirmado:</strong> <span th:text="${request.confirmedSlot}">Slot</span></p>
+                                <p><i aria-hidden="true" class="fa-solid fa-recycle"></i> <strong th:text="#{org.requests.materials}">Materiales:</strong>
                                     <span th:if="${request.materials == null or request.materials.empty}" th:text="#{org.requests.no_materials}">Sin materiales</span>
                                     <span th:each="material, iter : ${request.materials}" th:text="${iter.index > 0 ? ', ' : ''} + ${material}">Material</span>
                                 </p>
                             </div>
                         </div>
 
-                        <div style="display:flex;flex-direction:column;gap:.5rem;">
-                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" class="btn btn--primary btn--sm"><i class="fa-solid fa-eye"></i><span th:text="#{org.requests.view_details}">Ver Detalles</span></a>
+                        <div class="flex flex-col gap-1">
+                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" class="btn btn--primary btn--sm"><i aria-hidden="true" class="fa-solid fa-eye"></i><span th:text="#{org.requests.view_details}">Ver Detalles</span></a>
 
-                            <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" style="display:inline;">
+                            <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" class="flex flex-col gap-1">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <select name="confirmedSlot" class="input input--sm" style="margin-bottom:.5rem;" required>
+                                <select name="confirmedSlot" class="input input--sm" required>
                                     <option value="" th:text="#{org.requests.choose_slot}">Elegir horario</option>
                                     <option th:each="slot : ${request.proposedSlots}" th:value="${slot.name()}" th:text="${slot}">Slot</option>
                                 </select>
-                                <button type="submit" class="btn btn--green btn--sm btn--block"><i class="fa-solid fa-check"></i><span th:text="#{org.dashboard.accept}">Aceptar</span></button>
+                                <button type="submit" class="btn btn--green btn--sm btn--block"><i aria-hidden="true" class="fa-solid fa-check"></i><span th:text="#{org.dashboard.accept}">Aceptar</span></button>
                             </form>
 
-                            <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/reject/{id}(id=${request.id})}" method="post" style="display:inline;">
+                            <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/reject/{id}(id=${request.id})}" method="post" class="flex">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <button type="submit" th:onclick="|return confirm('#{org.requests.confirm_reject}')|" class="btn btn--danger btn--sm btn--block"><i class="fa-solid fa-xmark"></i><span th:text="#{org.requests.reject}">Rechazar</span></button>
+                                <button type="submit" th:onclick="|return confirm('#{org.requests.confirm_reject}')|" class="btn btn--danger btn--sm btn--block"><i aria-hidden="true" class="fa-solid fa-xmark"></i><span th:text="#{org.requests.reject}">Rechazar</span></button>
                             </form>
 
-                            <form th:if="${request.status.name() == 'IN_PROGRESS'}" th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" method="post" style="display:inline;">
+                            <form th:if="${request.status.name() == 'IN_PROGRESS'}" th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" method="post" class="flex">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn--green btn--sm btn--block"><i class="fa-solid fa-circle-check"></i><span th:text="#{org.requests.complete}">Completar</span></button>
+                                <button type="submit" class="btn btn--green btn--sm btn--block"><i aria-hidden="true" class="fa-solid fa-circle-check"></i><span th:text="#{org.requests.complete}">Completar</span></button>
                             </form>
                         </div>
                     </div>
@@ -109,71 +103,71 @@
         </div>
         
         <div th:if="${viewType == 'detail' and request != null}" class="card">
-            <div class="card__body" style="padding:1rem;">
-            <div class="flex-between" style="margin-bottom:1rem;">
-                <div class="flex" style="gap:.5rem;align-items:center;">
-                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-clipboard-list"></i></div>
+            <div class="card__body">
+            <div class="flex-between mb-2">
+                <div class="flex gap-2 items-center">
+                    <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-clipboard-list"></i></div>
                     <div>
-                        <h2 style="font-size:1.125rem;font-weight:700;color:var(--gray-900);" th:text="#{org.requests.detail_title}">Detalles de la Solicitud</h2>
+                        <h2 class="text-lg font-bold text-gray-900" th:text="#{org.requests.detail_title}">Detalles de la Solicitud</h2>
                         <p class="text-xs text-gray-600" th:text="#{org.requests.detail_subtitle}">Información completa de la solicitud de recolección</p>
                     </div>
                 </div>
-                <a href="/acopio/requests" class="btn btn--ghost btn--sm"><i class="fa-solid fa-arrow-left"></i><span th:text="#{org.requests.back_list}">Volver a la Lista</span></a>
+                <a href="/acopio/requests" class="btn btn--ghost btn--sm"><i aria-hidden="true" class="fa-solid fa-arrow-left"></i><span th:text="#{org.requests.back_list}">Volver a la Lista</span></a>
             </div>
 
-            <div class="grid grid--2" style="gap:1rem;">
-                <div style="display:grid;gap:.75rem;">
+            <div class="grid grid--2 grid--gap-md">
+                <div class="content-grid content-grid--sm">
                     <div>
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.description}">Descripción</label>
-                        <p class="text-sm" style="color:var(--gray-900);background:var(--gray-50);padding:.5rem;border-radius:var(--radius);" th:text="${request.address}">Dirección</p>
+                        <label class="detail-field__label" th:text="#{org.requests.description}">Descripción</label>
+                        <p class="detail-field__value" th:text="${request.address}">Dirección</p>
                     </div>
 
                     <div>
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.status}">Estado</label>
+                        <label class="detail-field__label" th:text="#{org.requests.status}">Estado</label>
                         <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
                     </div>
 
                     <div>
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.created_at}">Fecha de Creación</label>
-                        <p class="text-sm" style="color:var(--gray-900);background:var(--gray-50);padding:.5rem;border-radius:var(--radius);" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</p>
+                        <label class="detail-field__label" th:text="#{org.requests.created_at}">Fecha de Creación</label>
+                        <p class="detail-field__value" th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</p>
                     </div>
 
                     <div th:if="${request.confirmedSlot}">
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.confirmed_slot_label}">Horario Confirmado</label>
-                        <p class="text-sm" style="color:var(--gray-900);background:var(--gray-50);padding:.5rem;border-radius:var(--radius);" th:text="${request.confirmedSlot}">Horario</p>
+                        <label class="detail-field__label" th:text="#{org.requests.confirmed_slot_label}">Horario Confirmado</label>
+                        <p class="detail-field__value" th:text="${request.confirmedSlot}">Horario</p>
                     </div>
                 </div>
 
-                <div style="display:grid;gap:.75rem;">
+                <div class="content-grid content-grid--sm">
                     <div>
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.requester}">Solicitante</label>
-                        <div style="background:var(--gray-50);padding:.5rem;border-radius:var(--radius);">
-                            <p class="text-sm font-medium" style="color:var(--gray-900);" th:text="${request.contactName}">Nombre</p>
+                        <label class="detail-field__label" th:text="#{org.requests.requester}">Solicitante</label>
+                        <div class="detail-field__value">
+                            <p class="text-sm font-medium text-gray-900" th:text="${request.contactName}">Nombre</p>
                             <p class="text-xs text-gray-600" th:if="${request.contactPhone}" th:text="${request.contactPhone}">Teléfono</p>
                         </div>
                     </div>
 
                     <div>
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.city}">Ciudad</label>
-                        <p class="text-sm" style="color:var(--gray-900);background:var(--gray-50);padding:.5rem;border-radius:var(--radius);" th:text="${request.city}">Ciudad</p>
+                        <label class="detail-field__label" th:text="#{org.requests.city}">Ciudad</label>
+                        <p class="detail-field__value" th:text="${request.city}">Ciudad</p>
                     </div>
 
                     <div>
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.collection_address}">Dirección de Recolección</label>
-                        <p class="text-sm" style="color:var(--gray-900);background:var(--gray-50);padding:.5rem;border-radius:var(--radius);" th:text="${request.address}">Dirección</p>
+                        <label class="detail-field__label" th:text="#{org.requests.collection_address}">Dirección de Recolección</label>
+                        <p class="detail-field__value" th:text="${request.address}">Dirección</p>
                     </div>
 
                     <div th:if="${request.addressReference}">
-                        <label class="field__label" style="font-size:.75rem;" th:text="#{org.requests.reference}">Referencia</label>
-                        <p class="text-sm" style="color:var(--gray-900);background:var(--gray-50);padding:.5rem;border-radius:var(--radius);" th:text="${request.addressReference}">Referencia</p>
+                        <label class="detail-field__label" th:text="#{org.requests.reference}">Referencia</label>
+                        <p class="detail-field__value" th:text="${request.addressReference}">Referencia</p>
                     </div>
                 </div>
             </div>
 
-            <div th:if="${request.materials != null and !request.materials.empty}" style="margin-top:1rem;">
-                <label class="field__label" style="font-size:.75rem;margin-bottom:.5rem;" th:text="#{org.requests.materials_label}">Materiales Solicitados</label>
-                <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
-                    <span th:each="material : ${request.materials}" class="badge badge--green"><i class="fa-solid fa-recycle"></i><span th:text="${material}">Material</span></span>
+            <div th:if="${request.materials != null and !request.materials.empty}" class="mt-1">
+                <label class="detail-field__label mb-2" th:text="#{org.requests.materials_label}">Materiales Solicitados</label>
+                <div class="flex flex-wrap gap-1">
+                    <span th:each="material : ${request.materials}" class="badge badge--green"><i aria-hidden="true" class="fa-solid fa-recycle"></i><span th:text="${material}">Material</span></span>
                 </div>
             </div>
 
@@ -185,66 +179,66 @@
                                  request.status.name() == 'COMPLETED' ? 4 :
                                  request.status.name() == 'REJECTED' ? -1 : 1},
                     isRejected=${request.status.name() == 'REJECTED'}"
-                 style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--gray-200);">
-                <label class="field__label" style="font-size:.75rem;margin-bottom:1rem;" th:text="#{org.requests.tracking}">Seguimiento de la solicitud</label>
+                 class="section-divider section-divider--lg">
+                <label class="detail-field__label mb-2" th:text="#{org.requests.tracking}">Seguimiento de la solicitud</label>
 
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;position:relative;padding:0 .5rem;">
-                    <div style="position:absolute;top:1.25rem;left:0;right:0;height:2px;background:var(--gray-200);margin-left:8%;margin-right:8%;"></div>
+                <div class="timeline">
+                    <div class="timeline__track"></div>
                     <div th:if="${!isRejected and currentStep > 1}"
-                         style="position:absolute;top:1.25rem;left:0;height:2px;background:var(--green-500);"
+                         class="timeline__progress"
                          th:style="${'width: ' + ((currentStep - 1) * 33.33) + '%; margin-left: 8%;'}"></div>
 
-                    <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;width:25%;">
-                        <div class="timeline-dot timeline-dot--done"><i class="fa-solid fa-check"></i></div>
-                        <span class="timeline-label" th:text="#{org.requests.step.created}">Creada</span>
+                    <div class="timeline__step">
+                        <div class="timeline__step-dot timeline__step-dot--done"><i aria-hidden="true" class="fa-solid fa-check"></i></div>
+                        <span class="timeline__step-label" th:text="#{org.requests.step.created}">Creada</span>
                     </div>
 
-                    <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;width:25%;">
-                        <div th:if="${currentStep > 2 or isRejected}" class="timeline-dot timeline-dot--done"><i class="fa-solid fa-check"></i></div>
-                        <div th:if="${currentStep == 2}" class="timeline-dot timeline-dot--active" style="background:var(--yellow-400);"><i class="fa-solid fa-clock"></i></div>
-                        <div th:if="${currentStep < 2 and !isRejected}" class="timeline-dot timeline-dot--pending"><i class="fa-solid fa-clock"></i></div>
-                        <span class="timeline-label" th:style="${currentStep == 2 ? 'color:var(--yellow-700)' : (currentStep > 2 or isRejected) ? 'color:var(--gray-700)' : 'color:var(--gray-400)'}" th:text="#{org.requests.step.pending}">Pendiente</span>
+                    <div class="timeline__step">
+                        <div th:if="${currentStep > 2 or isRejected}" class="timeline__step-dot timeline__step-dot--done"><i aria-hidden="true" class="fa-solid fa-check"></i></div>
+                        <div th:if="${currentStep == 2}" class="timeline__step-dot timeline__step-dot--active timeline__step-dot--yellow"><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
+                        <div th:if="${currentStep < 2 and !isRejected}" class="timeline__step-dot timeline__step-dot--pending"><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
+                        <span class="timeline__step-label" th:style="${currentStep == 2 ? 'color:var(--yellow-700)' : (currentStep > 2 or isRejected) ? 'color:var(--gray-700)' : 'color:var(--gray-400)'}" th:text="#{org.requests.step.pending}">Pendiente</span>
                     </div>
 
-                    <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;width:25%;">
+                    <div class="timeline__step">
                         <div th:if="${isRejected}">
-                            <div class="timeline-dot timeline-dot--active" style="background:var(--red-500);"><i class="fa-solid fa-xmark"></i></div>
-                            <span class="timeline-label" style="color:var(--red-700);" th:text="#{org.requests.step.rejected}">Rechazada</span>
+                            <div class="timeline__step-dot timeline__step-dot--active timeline__step-dot--red"><i aria-hidden="true" class="fa-solid fa-xmark"></i></div>
+                            <span class="timeline__step-label timeline__step-label--red" th:text="#{org.requests.step.rejected}">Rechazada</span>
                         </div>
                         <div th:unless="${isRejected}">
-                            <div th:if="${currentStep > 3}" class="timeline-dot timeline-dot--done"><i class="fa-solid fa-check"></i></div>
-                            <div th:if="${currentStep == 3}" class="timeline-dot timeline-dot--active" style="background:var(--indigo-500);"><i class="fa-solid fa-truck"></i></div>
-                            <div th:if="${currentStep < 3}" class="timeline-dot timeline-dot--pending"><i class="fa-solid fa-truck"></i></div>
-                            <span class="timeline-label" th:style="${currentStep == 3 ? 'color:var(--indigo-700)' : currentStep > 3 ? 'color:var(--gray-700)' : 'color:var(--gray-400)'}" th:text="#{org.requests.step.in_progress}">En Proceso</span>
+                            <div th:if="${currentStep > 3}" class="timeline__step-dot timeline__step-dot--done"><i aria-hidden="true" class="fa-solid fa-check"></i></div>
+                            <div th:if="${currentStep == 3}" class="timeline__step-dot timeline__step-dot--active timeline__step-dot--indigo"><i aria-hidden="true" class="fa-solid fa-truck"></i></div>
+                            <div th:if="${currentStep < 3}" class="timeline__step-dot timeline__step-dot--pending"><i aria-hidden="true" class="fa-solid fa-truck"></i></div>
+                            <span class="timeline__step-label" th:style="${currentStep == 3 ? 'color:var(--indigo-700)' : currentStep > 3 ? 'color:var(--gray-700)' : 'color:var(--gray-400)'}" th:text="#{org.requests.step.in_progress}">En Proceso</span>
                         </div>
                     </div>
 
-                    <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;width:25%;" th:unless="${isRejected}">
-                        <div th:if="${currentStep == 4}" class="timeline-dot timeline-dot--active" style="background:var(--green-600);"><i class="fa-solid fa-graduation-cap"></i></div>
-                        <div th:if="${currentStep < 4}" class="timeline-dot timeline-dot--pending"><i class="fa-solid fa-circle-check"></i></div>
-                        <span class="timeline-label" th:style="${currentStep == 4 ? 'color:var(--green-700)' : 'color:var(--gray-400)'}" th:text="#{org.requests.step.completed}">Completada</span>
+                    <div class="timeline__step" th:unless="${isRejected}">
+                        <div th:if="${currentStep == 4}" class="timeline__step-dot timeline__step-dot--active timeline__step-dot--green"><i aria-hidden="true" class="fa-solid fa-graduation-cap"></i></div>
+                        <div th:if="${currentStep < 4}" class="timeline__step-dot timeline__step-dot--pending"><i aria-hidden="true" class="fa-solid fa-circle-check"></i></div>
+                        <span class="timeline__step-label" th:style="${currentStep == 4 ? 'color:var(--green-700)' : 'color:var(--gray-400)'}" th:text="#{org.requests.step.completed}">Completada</span>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-200);display:flex;justify-content:space-between;">
+            <div class="section-divider flex flex-between">
                 <a href="/acopio/requests" class="btn btn--ghost btn--sm" th:text="#{org.requests.back_list}">Volver a la Lista</a>
                 <div class="flex gap-2">
-                    <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" style="display:inline;">
+                    <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" class="flex items-center gap-1">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <select name="confirmedSlot" class="input input--sm" style="margin-right:.5rem;" required>
+                        <select name="confirmedSlot" class="input input--sm" required>
                             <option value="" th:text="#{org.requests.choose_slot}">Elegir horario</option>
                             <option th:each="slot : ${request.proposedSlots}" th:value="${slot.name()}" th:text="${slot}">Slot</option>
                         </select>
-                        <button type="submit" class="btn btn--green btn--sm"><i class="fa-solid fa-check"></i><span th:text="#{org.requests.accept_solicitation}">Aceptar Solicitud</span></button>
+                        <button type="submit" class="btn btn--green btn--sm"><i aria-hidden="true" class="fa-solid fa-check"></i><span th:text="#{org.requests.accept_solicitation}">Aceptar Solicitud</span></button>
                     </form>
-                    <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/reject/{id}(id=${request.id})}" method="post" style="display:inline;">
+                    <form th:if="${request.status.name() == 'PENDING'}" th:action="@{/acopio/requests/reject/{id}(id=${request.id})}" method="post" class="flex">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" th:onclick="|return confirm('#{org.requests.confirm_reject}')|" class="btn btn--danger btn--sm"><i class="fa-solid fa-xmark"></i><span th:text="#{org.requests.reject_solicitation}">Rechazar Solicitud</span></button>
+                        <button type="submit" th:onclick="|return confirm('#{org.requests.confirm_reject}')|" class="btn btn--danger btn--sm"><i aria-hidden="true" class="fa-solid fa-xmark"></i><span th:text="#{org.requests.reject_solicitation}">Rechazar Solicitud</span></button>
                     </form>
-                    <form th:if="${request.status.name() == 'IN_PROGRESS'}" th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" method="post" style="display:inline;">
+                    <form th:if="${request.status.name() == 'IN_PROGRESS'}" th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" method="post" class="flex">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" class="btn btn--green btn--sm"><i class="fa-solid fa-circle-check"></i><span th:text="#{org.requests.complete_solicitation}">Completar Solicitud</span></button>
+                        <button type="submit" class="btn btn--green btn--sm"><i aria-hidden="true" class="fa-solid fa-circle-check"></i><span th:text="#{org.requests.complete_solicitation}">Completar Solicitud</span></button>
                     </form>
                 </div>
             </div>

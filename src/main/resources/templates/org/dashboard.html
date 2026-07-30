@@ -2,25 +2,6 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
     <title th:text="#{org.dashboard.title}">Panel de Control - Organización</title>
-    <style>
-      .metric{display:block;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius);padding:.5rem;transition:border-color .2s,background .2s;}
-      .metric:hover{border-color:var(--gray-300);background:var(--white);text-decoration:none;}
-      .metric__head{display:flex;align-items:center;gap:.25rem;margin-bottom:.25rem;}
-      .metric__label{font-size:.75rem;font-weight:500;color:var(--gray-700);}
-      .metric__value{font-size:1.25rem;font-weight:700;color:var(--gray-900);}
-      .metric__note{font-size:.75rem;color:var(--gray-600);}
-      .pend-item{display:flex;gap:.5rem;padding:.5rem;border-radius:var(--radius);border-left:4px solid var(--yellow-100);background:var(--yellow-50);margin-bottom:.5rem;align-items:flex-start;}
-      .pend-item__icon{width:1.75rem;height:1.75rem;border-radius:9999px;background:var(--yellow-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--yellow-800);}
-      .pend-item__title{font-size:.75rem;font-weight:600;color:var(--gray-900);}
-      .pend-item__meta{font-size:.75rem;color:var(--gray-600);}
-      .pend-item__actions{display:flex;gap:.25rem;margin-top:.25rem;}
-      .quick-card{display:block;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:.5rem;box-shadow:var(--shadow-sm);}
-      .quick-card:hover{box-shadow:var(--shadow);text-decoration:none;}
-      .quick-card__head{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;}
-      .quick-card__icon{width:1.75rem;height:1.75rem;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;}
-      .quick-card__title{font-size:.75rem;font-weight:700;color:var(--gray-900);}
-      .quick-card__desc{font-size:.75rem;color:var(--gray-600);}
-    </style>
 </head>
 <body>
 <main layout:fragment="content">
@@ -31,45 +12,49 @@
         <div th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
     </div>
 
-    <div class="page page--wide" style="padding-top:.5rem;padding-bottom:.5rem;display:grid;gap:.75rem;">
+    <div class="page mt-2">
+        <nav th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></nav>
+    </div>
+
+    <div class="page page--wide content-grid page--padded page--gap-sm">
 
         <section class="card card--flush">
             <div class="card__bar card__bar--blue"></div>
-            <div class="card__body" style="padding:.75rem;">
+            <div class="card__body">
                 <div class="flex-between">
-                    <div class="flex" style="gap:.5rem;align-items:center;">
-                        <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-building"></i></div>
+                    <div class="flex gap-2 items-center">
+                        <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-building"></i></div>
                         <div>
-                            <h1 style="font-size:1.125rem;font-weight:700;color:var(--gray-900);" th:text="#{org.dashboard.heading}">Panel de Gestión</h1>
+                            <h1 class="text-lg font-bold text-gray-900" th:text="#{org.dashboard.heading}">Panel de Gestión</h1>
                             <p class="text-xs text-gray-600" th:text="#{org.dashboard.subtitle}">Administra solicitudes de reciclaje</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <a href="/acopio/requests" class="btn btn--primary btn--sm"><i class="fa-solid fa-clipboard-list"></i><span th:text="#{org.dashboard.requests}">Solicitudes</span></a>
-                        <a href="/acopio/perfil" class="btn btn--ghost btn--sm"><i class="fa-solid fa-gear"></i><span th:text="#{org.dashboard.profile}">Perfil</span></a>
+                        <a href="/acopio/requests" class="btn btn--primary btn--sm"><i aria-hidden="true" class="fa-solid fa-clipboard-list"></i><span th:text="#{org.dashboard.requests}">Solicitudes</span></a>
+                        <a href="/acopio/perfil" class="btn btn--ghost btn--sm"><i aria-hidden="true" class="fa-solid fa-gear"></i><span th:text="#{org.dashboard.profile}">Perfil</span></a>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="card">
-            <div style="margin-bottom:.5rem;">
-                <h2 class="font-bold text-sm" style="color:var(--gray-900);" th:text="#{org.dashboard.summary}">Resumen de Solicitudes</h2>
+            <div class="mb-2">
+                <h2 class="font-bold text-sm text-gray-900" th:text="#{org.dashboard.summary}">Resumen de Solicitudes</h2>
                 <p class="text-xs text-gray-600" th:text="#{org.dashboard.summary.subtitle}">Rendimiento de tu organización este mes</p>
             </div>
             <div class="grid grid--4">
                 <a href="/acopio/requests?status=PENDING" class="metric">
-                    <div class="metric__head"><i class="fa-solid fa-clock" style="color:var(--gray-600)"></i><span class="metric__label" th:text="#{org.dashboard.pending}">Pendientes</span></div>
+                    <div class="metric__head"><i aria-hidden="true" class="fa-solid fa-clock text-gray-600"></i><span class="metric__label" th:text="#{org.dashboard.pending}">Pendientes</span></div>
                     <p class="metric__value" th:text="${pendingRequests ?: 0}">0</p>
                     <p class="metric__note" th:text="#{org.dashboard.pending.note}">Requieren atención</p>
                 </a>
                 <a href="/acopio/requests?status=IN_PROGRESS" class="metric">
-                    <div class="metric__head"><i class="fa-solid fa-truck" style="color:var(--gray-600)"></i><span class="metric__label" th:text="#{org.dashboard.in_progress}">En Proceso</span></div>
+                    <div class="metric__head"><i aria-hidden="true" class="fa-solid fa-truck text-gray-600"></i><span class="metric__label" th:text="#{org.dashboard.in_progress}">En Proceso</span></div>
                     <p class="metric__value" th:text="${inProgressRequests ?: 0}">0</p>
                     <p class="metric__note" th:text="#{org.dashboard.in_progress.note}">En recolección</p>
                 </a>
                 <a href="/acopio/requests?status=COMPLETED" class="metric">
-                    <div class="metric__head"><i class="fa-solid fa-circle-check" style="color:var(--gray-600)"></i><span class="metric__label" th:text="#{org.dashboard.completed}">Completadas</span></div>
+                    <div class="metric__head"><i aria-hidden="true" class="fa-solid fa-circle-check text-gray-600"></i><span class="metric__label" th:text="#{org.dashboard.completed}">Completadas</span></div>
                     <p class="metric__value" th:text="${completedRequests ?: 0}">0</p>
                     <p class="metric__note" th:text="#{org.dashboard.completed.note}">Este mes</p>
                 </a>
@@ -77,9 +62,9 @@
         </section>
 
         <section class="card">
-            <div class="flex-between" style="margin-bottom:.5rem;">
-                <h2 class="font-bold text-sm" style="color:var(--gray-900);display:flex;align-items:center;gap:.25rem;">
-                    <i class="fa-solid fa-circle-exclamation" style="color:var(--yellow-800)"></i>
+            <div class="flex-between mb-2">
+                <h2 class="font-bold text-sm text-gray-900 flex gap-1 items-center">
+                    <i aria-hidden="true" class="fa-solid fa-circle-exclamation icon-amber"></i>
                     <span th:text="#{org.dashboard.pending_requests}">Solicitudes Pendientes</span>
                 </h2>
                 <a href="/acopio/requests?status=PENDING" class="link" th:text="#{org.dashboard.view_all}">Ver todas</a>
@@ -87,20 +72,20 @@
 
             <div th:if="${pendingRequestsList != null and !pendingRequestsList.empty}">
                 <div th:each="request : ${pendingRequestsList}" class="pend-item">
-                    <div class="pend-item__icon"><i class="fa-solid fa-box"></i></div>
-                    <div style="flex:1;min-width:0;">
-                        <div class="flex-between" style="margin-bottom:.25rem;">
+                    <div class="pend-item__icon"><i aria-hidden="true" class="fa-solid fa-box"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex-between mb-2">
                             <div>
                                 <p class="pend-item__title" th:text="${request.address}">Dirección</p>
-                                <p class="pend-item__meta"><i class="fa-solid fa-location-dot"></i> <span th:text="${request.address}">Dirección</span></p>
+                                <p class="pend-item__meta"><i aria-hidden="true" class="fa-solid fa-location-dot"></i> <span th:text="${request.address}">Dirección</span></p>
                             </div>
                             <span class="badge badge--yellow" th:text="#{org.dashboard.pending_badge}">Pendiente</span>
                         </div>
                         <div class="pend-item__actions">
-                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" class="btn btn--primary btn--sm"><i class="fa-solid fa-eye"></i><span th:text="#{org.dashboard.view}">Ver</span></a>
-                            <form th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" style="display:inline;">
+                            <a th:href="@{/acopio/requests/{id}(id=${request.id})}" class="btn btn--primary btn--sm"><i aria-hidden="true" class="fa-solid fa-eye"></i><span th:text="#{org.dashboard.view}">Ver</span></a>
+                            <form th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" class="flex">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn--green btn--sm"><i class="fa-solid fa-check"></i><span th:text="#{org.dashboard.accept}">Aceptar</span></button>
+                                <button type="submit" class="btn btn--green btn--sm"><i aria-hidden="true" class="fa-solid fa-check"></i><span th:text="#{org.dashboard.accept}">Aceptar</span></button>
                             </form>
                         </div>
                     </div>
@@ -108,7 +93,7 @@
             </div>
 
             <div th:if="${pendingRequestsList == null or pendingRequestsList.empty}" class="empty-state">
-                <i class="fa-solid fa-circle-check empty-state__icon"></i>
+                <i aria-hidden="true" class="fa-solid fa-circle-check empty-state__icon"></i>
                 <p th:text="#{org.dashboard.no_pending}">¡Todo al día! No hay solicitudes pendientes.</p>
             </div>
         </section>
@@ -116,14 +101,14 @@
         <div class="grid grid--4">
             <a href="/acopio/catadores" class="quick-card">
                 <div class="quick-card__head">
-                    <div class="quick-card__icon" style="background:var(--green-100);color:var(--green-700)"><i class="fa-solid fa-users"></i></div>
+                    <div class="quick-card__icon quick-card__icon--green"><i aria-hidden="true" class="fa-solid fa-users"></i></div>
                     <h3 class="quick-card__title" th:text="#{org.dashboard.catadores}">Catadores</h3>
                 </div>
                 <p class="quick-card__desc" th:text="#{org.dashboard.catadores.desc}">Registra vecinos que entregan materiales</p>
             </a>
             <a href="/acopio/perfil" class="quick-card">
                 <div class="quick-card__head">
-                    <div class="quick-card__icon" style="background:var(--gray-100);color:var(--gray-600)"><i class="fa-solid fa-gear"></i></div>
+                    <div class="quick-card__icon quick-card__icon--gray"><i aria-hidden="true" class="fa-solid fa-gear"></i></div>
                     <h3 class="quick-card__title" th:text="#{org.dashboard.profile}">Perfil</h3>
                 </div>
                 <p class="quick-card__desc" th:text="#{org.dashboard.profile_desc}">Actualiza información de contacto</p>

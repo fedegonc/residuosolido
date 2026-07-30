@@ -1,59 +1,23 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{catadores.title}">Catadores Informales</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<nav class="navbar navbar--app">
-    <div class="navbar__inner container">
-        <a class="navbar__brand" href="/">
-            <div class="navbar__logo"><i class="fa-solid fa-recycle"></i></div>
-            <span>ReciActiva</span>
-        </a>
-        <div class="navbar__nav">
-            <a class="navbar__link" href="/acopio/inicio" th:text="#{nav.home}">Inicio</a>
-            <a class="navbar__link" href="/acopio/requests" th:text="#{nav.requests}">Solicitudes</a>
-            <a class="navbar__link navbar__link--active" href="/acopio/catadores" th:text="#{nav.catadores}">Catadores</a>
-        </div>
-        <div class="navbar__actions">
-            <span class="navbar__user">
-                <i class="fa-solid fa-user"></i>
-                <span sec:authentication="name">Usuario</span>
-            </span>
-            <form th:action="@{/auth/logout}" method="post" class="d-inline">
-                <button type="submit" class="navbar__logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span th:text="#{nav.logout}">Salir</span>
-                </button>
-            </form>
-        </div>
-    </div>
-</nav>
-
-<main class="main">
-    <div class="container container--narrow">
+<main layout:fragment="content">
+    <div class="page page--narrow page--padded">
         <div class="page-header">
             <h1 class="page-header__title" th:text="#{catadores.title}">Catadores Informales</h1>
             <p class="page-header__subtitle" th:text="#{catadores.subtitle}">Registro de vecinos que entregan materiales directamente</p>
         </div>
 
-        <div th:if="${successMessage}" class="alert alert--success mb-4">
-            <i class="fa-solid fa-check-circle"></i>
-            <span th:text="${successMessage}"></span>
-        </div>
-        <div th:if="${errorMessage}" class="alert alert--error mb-4">
-            <i class="fa-solid fa-exclamation-circle"></i>
-            <span th:text="${errorMessage}"></span>
-        </div>
+        <div th:if="${successMessage}" th:replace="~{fragments/components/alerts :: success(${successMessage})}"></div>
+        <div th:if="${errorMessage}" th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
 
         <!-- Formulario crear/editar -->
         <div class="card mb-6">
             <div class="card__body">
-                <h2 class="card__title mb-4" th:text="${catador != null} ? 'Editar' : 'Registrar'">Registrar</h2>
+                <h2 class="card__title mb-2" th:text="${catador != null} ? 'Editar' : 'Registrar'">Registrar</h2>
                 <form th:action="@{/acopio/catadores}" method="post" class="form">
                     <input type="hidden" name="id" th:value="${catador != null} ? ${catador.id} : ''"/>
                     <div class="form__row">
@@ -79,8 +43,8 @@
                         </div>
                         <div class="form__group">
                             <label class="form__label" th:text="#{catadores.materials}">Materiales que acopia</label>
-                            <div class="d-flex" style="gap:var(--space-3);flex-wrap:wrap">
-                                <label th:each="m : ${materialCategories}" class="d-flex align-center" style="gap:4px;font-weight:400">
+                            <div class="flex flex-wrap gap-3">
+                                <label th:each="m : ${materialCategories}" class="flex gap-1 items-center font-normal">
                                     <input type="checkbox" name="materials" th:value="${m}"
                                            th:checked="${catador != null && catador.materials != null && catador.materials.contains(m)}"/>
                                     <span th:text="${m.displayName}"></span>
@@ -94,12 +58,12 @@
                                   th:text="${catador != null} ? ${catador.notes} : ''"></textarea>
                     </div>
                     <div class="form__group" th:if="${catador != null}">
-                        <label class="d-flex align-center" style="gap:6px;font-weight:400">
+                        <label class="flex gap-1 items-center font-normal">
                             <input type="checkbox" name="active" value="true" th:checked="${catador.active}"/>
                             <span th:text="#{catadores.active}">Activo</span>
                         </label>
                     </div>
-                    <div class="d-flex" style="gap:var(--space-3)">
+                    <div class="flex gap-3">
                         <button type="submit" class="btn btn--primary" th:text="#{catadores.save}">Guardar</button>
                         <a th:if="${catador != null}" href="/acopio/catadores" class="btn btn--ghost" th:text="#{catadores.cancel}">Cancelar</a>
                     </div>
@@ -110,10 +74,10 @@
         <!-- Lista -->
         <div class="card">
             <div class="card__body">
-                <h2 class="card__title mb-4" th:text="#{catadores.registered}">Registrados</h2>
-                <div th:if="${#lists.isEmpty(catadores)}" class="empty">
-                    <div class="empty__icon"><i class="fa-solid fa-users"></i></div>
-                    <p class="empty__text" th:text="#{catadores.empty}">No hay catadores informales registrados.</p>
+                <h2 class="card__title mb-2" th:text="#{catadores.registered}">Registrados</h2>
+                <div th:if="${#lists.isEmpty(catadores)}" class="empty-state">
+                    <i aria-hidden="true" class="fa-solid fa-users empty-state__icon"></i>
+                    <p th:text="#{catadores.empty}">No hay catadores informales registrados.</p>
                 </div>
                 <div th:if="${!#lists.isEmpty(catadores)}" class="table-wrapper">
                     <table class="table">
@@ -141,14 +105,14 @@
                                     <span class="badge" th:classappend="${c.active} ? ' badge--success' : ' badge--error'"
                                           th:text="${c.active} ? 'Activo' : 'Inactivo'">Activo</span>
                                 </td>
-                                <td class="d-flex" style="gap:var(--space-2)">
+                                <td class="flex gap-1">
                                     <a th:href="@{/acopio/catadores/edit/{id}(id=${c.id})}" class="btn btn--ghost btn--sm">
-                                        <i class="fa-solid fa-pen"></i>
+                                        <i aria-hidden="true" class="fa-solid fa-pen"></i>
                                     </a>
                                     <form th:action="@{/acopio/catadores/{id}/delete(id=${c.id})}" method="post"
                                           onsubmit="return confirm('¿Eliminar catador?');">
-                                        <button type="submit" class="btn btn--ghost btn--sm" style="color:var(--error)">
-                                            <i class="fa-solid fa-trash"></i>
+                                        <button type="submit" class="btn btn--ghost btn--sm btn--danger">
+                                            <i aria-hidden="true" class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
                                 </td>

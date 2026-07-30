@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<head>
+    <title>UI Showcase</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="page">
+
+        <!-- Page Header -->
+        <div class="page-header mb-6">
+            <h1 class="page-header__title">UI Showcase</h1>
+            <p class="page-header__subtitle">Catálogo visual de todos los componentes del sistema de diseño.</p>
+        </div>
+
+        <!-- Alerts -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Alerts</h2>
+            </div>
+            <div class="card__body">
+                <div th:replace="~{fragments/components/alerts :: success('Operación completada correctamente.')}"></div>
+                <div th:replace="~{fragments/components/alerts :: error('Se produjo un error inesperado.')}"></div>
+                <div th:replace="~{fragments/components/alerts :: warning('Esto es una advertencia.')}"></div>
+                <div th:replace="~{fragments/components/alerts :: info('Información complementaria.')}"></div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Buttons</h2>
+            </div>
+            <div class="card__body">
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="btn btn--primary">Primary</button>
+                    <button class="btn btn--green">Green</button>
+                    <button class="btn btn--amber">Amber</button>
+                    <button class="btn btn--danger">Danger</button>
+                    <button class="btn btn--ghost">Ghost</button>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="btn btn--green btn--sm">Small</button>
+                    <button class="btn btn--green">Default</button>
+                    <button class="btn btn--green btn--lg">Large</button>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="btn btn--green">
+                        <i aria-hidden="true" class="fa-solid fa-floppy-disk"></i>
+                        <span>Guardar</span>
+                    </button>
+                    <button class="btn btn--ghost btn--sm">
+                        <i aria-hidden="true" class="fa-solid fa-xmark"></i>
+                        <span>Cancelar</span>
+                    </button>
+                    <button class="btn btn--danger btn--sm">
+                        <i aria-hidden="true" class="fa-solid fa-trash"></i>
+                        <span>Eliminar</span>
+                    </button>
+                </div>
+                <button class="btn btn--green btn--block">Block (full width)</button>
+            </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Badges</h2>
+            </div>
+            <div class="card__body">
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="badge badge--green">Green</span>
+                    <span class="badge badge--blue">Blue</span>
+                    <span class="badge badge--yellow">Yellow</span>
+                    <span class="badge badge--red">Red</span>
+                    <span class="badge badge--gray">Gray</span>
+                    <span class="badge badge--indigo">Indigo</span>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="badge badge--success">Success</span>
+                    <span class="badge badge--info">Info</span>
+                    <span class="badge badge--warning">Warning</span>
+                    <span class="badge badge--danger">Danger</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="badge badge--green">
+                        <i aria-hidden="true" class="fa-solid fa-check"></i>
+                        <span>Con icono</span>
+                    </span>
+                    <span class="badge badge--red">
+                        <i aria-hidden="true" class="fa-solid fa-xmark"></i>
+                        <span>Rechazado</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Badge Fragment -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Status Badge (fragmento)</h2>
+            </div>
+            <div class="card__body">
+                <div class="flex flex-wrap gap-3">
+                    <th:block th:replace="~{fragments/components/status-badge :: badge('PENDING')}"></th:block>
+                    <th:block th:replace="~{fragments/components/status-badge :: badge('IN_PROGRESS')}"></th:block>
+                    <th:block th:replace="~{fragments/components/status-badge :: badge('COMPLETED')}"></th:block>
+                    <th:block th:replace="~{fragments/components/status-badge :: badge('REJECTED')}"></th:block>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Cards</h2>
+            </div>
+            <div class="card__body">
+                <div class="grid grid--3 gap-4">
+                    <div class="card">
+                        <p class="text-sm text-gray-600">.card — padding 1rem</p>
+                    </div>
+                    <div class="card card--lg">
+                        <p class="text-sm text-gray-600">.card--lg — padding 1.5rem</p>
+                    </div>
+                    <div class="card card--flush">
+                        <div class="card__bar"></div>
+                        <div class="card__body">
+                            <p class="text-sm text-gray-600">.card--flush + .card__bar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Stat Cards</h2>
+            </div>
+            <div class="card__body">
+                <div class="grid grid--4 gap-4">
+                    <div class="stat">
+                        <div class="stat__icon stat__icon--green"><i aria-hidden="true" class="fa-solid fa-recycle"></i></div>
+                        <p class="stat__value">42</p>
+                        <p class="stat__label">Solicitudes</p>
+                    </div>
+                    <div class="stat">
+                        <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-users"></i></div>
+                        <p class="stat__value">128</p>
+                        <p class="stat__label">Usuarios</p>
+                    </div>
+                    <div class="stat">
+                        <div class="stat__icon stat__icon--amber"><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
+                        <p class="stat__value">7</p>
+                        <p class="stat__label">Pendientes</p>
+                    </div>
+                    <div class="stat">
+                        <div class="stat__icon stat__icon--red"><i aria-hidden="true" class="fa-solid fa-xmark"></i></div>
+                        <p class="stat__value">3</p>
+                        <p class="stat__label">Rechazadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forms -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Forms</h2>
+            </div>
+            <div class="card__body">
+                <form class="form">
+                    <div class="field">
+                        <label class="field__label">Nombre <span class="req">*</span></label>
+                        <input class="input" type="text" placeholder="Tu nombre" />
+                        <p class="field__hint">Tu nombre completo.</p>
+                    </div>
+                    <div class="form__row form__row--2">
+                        <div class="field">
+                            <label class="field__label">Email</label>
+                            <input class="input" type="email" placeholder="ejemplo@correo.com" />
+                        </div>
+                        <div class="field">
+                            <label class="field__label">Teléfono</label>
+                            <input class="input input--readonly" type="tel" value="+598 99 123 456" readonly />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field__label">Categoría</label>
+                        <select class="select">
+                            <option>Opción 1</option>
+                            <option>Opción 2</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="field__label">Descripción</label>
+                        <textarea class="textarea" placeholder="Escribe aquí..."></textarea>
+                    </div>
+                    <div class="field">
+                        <label class="field__label">Archivo</label>
+                        <input class="input input--file" type="file" />
+                    </div>
+                    <div class="field">
+                        <label class="field__label">Con error</label>
+                        <input class="input input--invalid" type="text" value="valor inválido" />
+                        <p class="field__error">Este campo es obligatorio.</p>
+                    </div>
+                    <div th:replace="~{fragments/components/form-actions :: actions('Guardar', 'floppy-disk', '#', 'Cancelar')}"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card card--flush mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Table</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Categoría</th>
+                            <th class="text-right">Cantidad</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Plástico PET</td>
+                            <td>Plásticos</td>
+                            <td class="text-right">120 kg</td>
+                            <td><span class="badge badge--green">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cartón</td>
+                            <td>Papel</td>
+                            <td class="text-right">85 kg</td>
+                            <td><span class="badge badge--green">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td>Vidrio</td>
+                            <td>Vidrios</td>
+                            <td class="text-right">0 kg</td>
+                            <td><span class="badge badge--gray">Inactivo</span></td>
+                        </tr>
+                        <tr class="table__row--total">
+                            <td>Total</td>
+                            <td></td>
+                            <td class="text-right">205 kg</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Info Box (fragmento)</h2>
+            </div>
+            <div class="card__body">
+                <div class="grid grid--2 gap-4">
+                    <div th:replace="~{fragments/components/info-box :: box('circle-info', 'Información', 'Los datos se guardan automáticamente.', 'blue')}"></div>
+                    <div th:replace="~{fragments/components/info-box :: box('circle-check', 'Listo', 'Tu perfil está completo.', 'green')}"></div>
+                    <div th:replace="~{fragments/components/info-box :: box('triangle-exclamation', 'Atención', 'Faltan datos por completar.', 'amber')}"></div>
+                    <div th:replace="~{fragments/components/info-box :: box('clock', 'Sin asignar', 'No hay organización asignada aún.', 'gray')}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Empty State (fragmento)</h2>
+            </div>
+            <div class="card__body">
+                <div th:replace="~{fragments/components/empty-state :: state('inbox', 'Sin solicitudes', 'No hay solicitudes para mostrar. Crea una nueva para comenzar.')}"></div>
+            </div>
+        </div>
+
+        <!-- Hero Header -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Hero Header</h2>
+            </div>
+            <div class="card__body">
+                <div class="hero-header hero-header--green mb-4">
+                    <div class="hero-header__icon"><i aria-hidden="true" class="fa-solid fa-leaf"></i></div>
+                    <div class="hero-header__body">
+                        <h3 class="hero-header__title">Organización Verde</h3>
+                        <p class="hero-header__subtitle">Punto de acopio comunitario</p>
+                    </div>
+                    <div class="hero-header__stats">
+                        <p class="hero-header__stat-value">42</p>
+                        <p class="hero-header__stat-label">Solicitudes</p>
+                    </div>
+                </div>
+                <div class="hero-header hero-header--blue">
+                    <div class="hero-header__icon"><i aria-hidden="true" class="fa-solid fa-building"></i></div>
+                    <div class="hero-header__body">
+                        <h3 class="hero-header__title">Panel de Administración</h3>
+                        <p class="hero-header__subtitle">Gestión del sistema</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Timeline</h2>
+            </div>
+            <div class="card__body">
+                <div class="timeline">
+                    <div class="timeline__track"></div>
+                    <div class="timeline__progress timeline__progress--demo"></div>
+                    <div class="timeline__step">
+                        <div class="timeline__step-dot timeline__step-dot--done"><i aria-hidden="true" class="fa-solid fa-check"></i></div>
+                        <span class="timeline__step-label">Creada</span>
+                    </div>
+                    <div class="timeline__step">
+                        <div class="timeline__step-dot timeline__step-dot--active timeline__step-dot--yellow"><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
+                        <span class="timeline__step-label timeline__step-label--yellow">Pendiente</span>
+                    </div>
+                    <div class="timeline__step">
+                        <div class="timeline__step-dot timeline__step-dot--pending"><i aria-hidden="true" class="fa-solid fa-truck"></i></div>
+                        <span class="timeline__step-label timeline__step-label--gray">En Proceso</span>
+                    </div>
+                    <div class="timeline__step">
+                        <div class="timeline__step-dot timeline__step-dot--pending"><i aria-hidden="true" class="fa-solid fa-circle-check"></i></div>
+                        <span class="timeline__step-label timeline__step-label--gray">Completada</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Action Cards</h2>
+            </div>
+            <div class="card__body">
+                <div class="grid grid--3 gap-4">
+                    <a class="action-card" href="#">
+                        <div class="action-card__icon action-card__icon--green"><i aria-hidden="true" class="fa-solid fa-plus"></i></div>
+                        <p class="action-card__title">Nueva Solicitud</p>
+                        <p class="action-card__desc">Crea una recolección</p>
+                    </a>
+                    <a class="action-card" href="#">
+                        <div class="action-card__icon action-card__icon--blue"><i aria-hidden="true" class="fa-solid fa-list"></i></div>
+                        <p class="action-card__title">Mis Solicitudes</p>
+                        <p class="action-card__desc">Ver historial</p>
+                    </a>
+                    <a class="action-card" href="#">
+                        <div class="action-card__icon action-card__icon--orange"><i aria-hidden="true" class="fa-solid fa-user"></i></div>
+                        <p class="action-card__title">Mi Perfil</p>
+                        <p class="action-card__desc">Editar datos</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Avatars</h2>
+            </div>
+            <div class="card__body">
+                <div class="flex gap-4 items-start">
+                    <div class="avatar avatar--sm">AB</div>
+                    <div class="avatar">CD</div>
+                    <div class="avatar avatar--lg">EF</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Modal</h2>
+            </div>
+            <div class="card__body">
+                <button class="btn btn--danger" onclick="document.getElementById('demoModal').classList.add('is-open')">
+                    <i aria-hidden="true" class="fa-solid fa-trash"></i>
+                    <span>Abrir modal</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Confirm Modal</h2>
+            </div>
+            <div class="card__body">
+                <button class="btn btn--danger" onclick="document.getElementById('demoConfirmModal').classList.remove('is-hidden')">
+                    <i aria-hidden="true" class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Abrir confirm</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Grids</h2>
+            </div>
+            <div class="card__body">
+                <div class="grid grid--2 gap-4 mb-4">
+                    <div class="card"><p class="text-sm text-center">grid--2 (1)</p></div>
+                    <div class="card"><p class="text-sm text-center">grid--2 (2)</p></div>
+                </div>
+                <div class="grid grid--3 gap-4 mb-4">
+                    <div class="card"><p class="text-sm text-center">grid--3 (1)</p></div>
+                    <div class="card"><p class="text-sm text-center">grid--3 (2)</p></div>
+                    <div class="card"><p class="text-sm text-center">grid--3 (3)</p></div>
+                </div>
+                <div class="grid grid--4 gap-4">
+                    <div class="card"><p class="text-sm text-center">grid--4 (1)</p></div>
+                    <div class="card"><p class="text-sm text-center">grid--4 (2)</p></div>
+                    <div class="card"><p class="text-sm text-center">grid--4 (3)</p></div>
+                    <div class="card"><p class="text-sm text-center">grid--4 (4)</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Links</h2>
+            </div>
+            <div class="card__body">
+                <div class="flex gap-4">
+                    <a class="link" href="#">Link azul</a>
+                    <a class="link link--green" href="#">Link verde</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Typography</h2>
+            </div>
+            <div class="card__body">
+                <p class="text-2xl font-bold mb-2">text-2xl font-bold</p>
+                <p class="text-xl font-semibold mb-2">text-xl font-semibold</p>
+                <p class="text-lg font-medium mb-2">text-lg font-medium</p>
+                <p class="text-sm mb-2">text-sm (default body)</p>
+                <p class="text-xs text-gray-500">text-xs text-gray-500</p>
+            </div>
+        </div>
+
+        <!-- Stepper -->
+        <div class="card mb-6">
+            <div class="card__header">
+                <h2 class="card__title">Stepper</h2>
+            </div>
+            <div class="card__body">
+                <div class="stepper">
+                    <div class="stepper__item">
+                        <div class="stepper__circle">1</div>
+                        <span class="stepper__label">Cuenta</span>
+                    </div>
+                    <div class="stepper__line"></div>
+                    <div class="stepper__item">
+                        <div class="stepper__circle stepper__circle--active">2</div>
+                        <span class="stepper__label">Perfil</span>
+                    </div>
+                    <div class="stepper__line stepper__line--pending"></div>
+                    <div class="stepper__item">
+                        <div class="stepper__circle stepper__circle--pending">3</div>
+                        <span class="stepper__label stepper__label--pending">Confirmar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Demo Modal -->
+    <div id="demoModal" class="modal">
+        <div class="modal__overlay" onclick="document.getElementById('demoModal').classList.remove('is-open')"></div>
+        <div class="modal__dialog">
+            <div class="modal__header">
+                <h3 class="modal__title">Demo Modal</h3>
+                <button class="modal__close" onclick="document.getElementById('demoModal').classList.remove('is-open')">&times;</button>
+            </div>
+            <div class="modal__body">
+                <p class="text-sm text-gray-600">Este es un modal con el sistema de diseño.</p>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--ghost btn--sm" onclick="document.getElementById('demoModal').classList.remove('is-open')">Cerrar</button>
+                <button class="btn btn--green btn--sm">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Confirm Modal -->
+    <div id="demoConfirmModal" class="modal-overlay is-hidden">
+        <div class="modal-box">
+            <div class="modal-body">
+                <div class="modal-icon modal-icon--danger">
+                    <i aria-hidden="true" class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 class="text-lg font-medium mb-2">¿Eliminar elemento?</h3>
+                <p class="text-sm text-gray-600 mb-4">Esta acción no se puede deshacer.</p>
+                <div class="flex gap-3 justify-center">
+                    <button class="btn btn--ghost btn--sm" onclick="document.getElementById('demoConfirmModal').classList.add('is-hidden')">Cancelar</button>
+                    <button class="btn btn--danger btn--sm" onclick="document.getElementById('demoConfirmModal').classList.add('is-hidden')">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

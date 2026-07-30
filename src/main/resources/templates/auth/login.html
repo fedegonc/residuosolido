@@ -5,21 +5,13 @@
 </head>
 <body>
 <main layout:fragment="content">
-  <!-- Contenido principal -->
-  <div class="max-w-md mx-auto px-4 py-6">
-    <div class="bg-white rounded-lg shadow border border-emerald-100 p-5 space-y-3">
-      <div th:if="${param.success}" class="p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm" th:text="#{login.success}">
-        Registro exitoso. Inicia sesión con tus credenciales.
-      </div>
-      <div th:if="${param.logout}" class="p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm" th:text="#{login.logout}">
-        Has cerrado sesión correctamente.
-      </div>
-      <div th:if="${param.error}" class="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm" th:text="#{login.error}">
-        Usuario o contraseña incorrectos.
-      </div>
+  <div class="auth-page">
+    <div class="auth-card auth-card--narrow">
+      <div th:if="${param.success}" th:replace="~{fragments/components/alerts :: success(#{login.success})}"></div>
+      <div th:if="${param.logout}" th:replace="~{fragments/components/alerts :: success(#{login.logout})}"></div>
+      <div th:if="${param.error}" th:replace="~{fragments/components/alerts :: error(#{login.error})}"></div>
 
       <div th:replace="~{fragments/auth/login-form :: loginForm}"></div>
-
     </div>
   </div>
 </main>

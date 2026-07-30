@@ -5,51 +5,51 @@
 </head>
 <body>
 <main layout:fragment="content">
-    <div class="page" style="max-width:42rem;padding-top:2rem;padding-bottom:2rem;">
+    <div class="page page--narrow page--padded">
 
-        <div th:if="${param.success}" class="alert alert--success" style="margin-bottom:1.5rem;">
-            <i class="fa-solid fa-circle-check"></i>
+        <div th:if="${param.success}" class="alert alert--success mb-6">
+            <i aria-hidden="true" class="fa-solid fa-circle-check"></i>
             <div>
                 <h3 class="font-medium" th:text="#{request.form.success.title}">Solicitud enviada!</h3>
-                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.success.text}">Tu solicitud fue enviada. La cooperativa va a contactarte al telefono indicado.</p>
-                <a href="/" class="btn btn--green btn--sm" style="margin-top:.75rem;" th:text="#{button.home}">Volver al inicio</a>
+                <p class="text-sm mt-1" th:text="#{request.form.success.text}">Tu solicitud fue enviada. La cooperativa va a contactarte al telefono indicado.</p>
+                <a href="/" class="btn btn--green btn--sm mt-1" th:text="#{button.home}">Volver al inicio</a>
             </div>
         </div>
 
-        <div th:if="${param.error}" class="alert alert--error" style="margin-bottom:1.5rem;">
-            <i class="fa-solid fa-triangle-exclamation"></i>
+        <div th:if="${param.error}" class="alert alert--error mb-6">
+            <i aria-hidden="true" class="fa-solid fa-triangle-exclamation"></i>
             <div>
                 <h3 class="font-medium" th:text="#{request.form.error.title}">Error</h3>
-                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.error.text}">Hubo un error al procesar tu solicitud. Intentelo de nuevo.</p>
+                <p class="text-sm mt-1" th:text="#{request.form.error.text}">Hubo un error al procesar tu solicitud. Intentelo de nuevo.</p>
             </div>
         </div>
 
         <!-- No cities available at all -->
-        <div th:if="${cities != null and cities.isEmpty()}" class="alert alert--warning" style="margin-bottom:1.5rem;">
-            <i class="fa-solid fa-circle-exclamation"></i>
+        <div th:if="${cities != null and cities.isEmpty()}" class="alert alert--warning mb-6">
+            <i aria-hidden="true" class="fa-solid fa-circle-exclamation"></i>
             <div>
                 <h3 class="font-medium" th:text="#{request.form.noOrgs.title}">No hay cooperativas disponibles</h3>
-                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.noOrgs.text}">Aun no hay organizaciones registradas. Vuelve mas tarde.</p>
+                <p class="text-sm mt-1" th:text="#{request.form.noOrgs.text}">Aun no hay organizaciones registradas. Vuelve mas tarde.</p>
             </div>
         </div>
 
         <!-- Step 1: City selection (new requests, no city chosen yet) -->
         <div th:unless="${param.success}" th:if="${!isEdit and selectedCity == null and cities != null and !cities.isEmpty()}">
-            <form method="get" action="/solicitudes/nueva" class="card" style="padding:1.5rem;display:grid;gap:1.25rem;">
-                <h2 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);" th:text="#{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
+            <form method="get" action="/solicitudes/nueva" class="card card--lg content-grid content-grid--md">
+                <h2 class="text-2xl font-bold text-gray-900" th:text="#{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-city"></i>
-                        <span th:text="#{request.form.city}">Ciudad</span> <span style="color:var(--red-600)">*</span>
+                        <i aria-hidden="true" class="fa-solid fa-city"></i>
+                        <span th:text="#{request.form.city}">Ciudad</span> <span class="req">*</span>
                     </label>
                     <select name="city" class="input" required>
                         <option value="" th:text="#{request.form.city.placeholder}">Selecciona tu ciudad</option>
                         <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}">Ciudad</option>
                     </select>
                 </div>
-                <div style="display:flex;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--gray-200);">
+                <div class="form-actions form-actions--end">
                     <button type="submit" class="btn btn--green btn--sm">
-                        <i class="fa-solid fa-arrow-right"></i>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right"></i>
                         <span th:text="#{request.form.continue}">Continuar</span>
                     </button>
                 </div>
@@ -57,42 +57,42 @@
         </div>
 
         <!-- No orgs in selected city -->
-        <div th:unless="${param.success}" th:if="${!isEdit and selectedCity != null and organizations != null and organizations.isEmpty()}" class="alert alert--warning" style="margin-bottom:1.5rem;">
-            <i class="fa-solid fa-circle-exclamation"></i>
+        <div th:unless="${param.success}" th:if="${!isEdit and selectedCity != null and organizations != null and organizations.isEmpty()}" class="alert alert--warning mb-6">
+            <i aria-hidden="true" class="fa-solid fa-circle-exclamation"></i>
             <div>
                 <h3 class="font-medium" th:text="#{request.form.noOrgs.title}">No hay cooperativas disponibles</h3>
-                <p class="text-sm" style="margin-top:.25rem;" th:text="#{request.form.noOrgs.text}">Aun no hay organizaciones registradas. Vuelve mas tarde.</p>
-                <a href="/solicitudes/nueva" class="btn btn--ghost btn--sm" style="margin-top:.75rem;" th:text="#{request.form.changeCity}">Cambiar ciudad</a>
+                <p class="text-sm mt-1" th:text="#{request.form.noOrgs.text}">Aun no hay organizaciones registradas. Vuelve mas tarde.</p>
+                <a href="/solicitudes/nueva" class="btn btn--ghost btn--sm mt-1" th:text="#{request.form.changeCity}">Cambiar ciudad</a>
             </div>
         </div>
 
         <!-- Step 2: Full form (new with orgs loaded, or edit) -->
         <div th:unless="${param.success}" th:if="${(isEdit ?: false) or (selectedCity != null and organizations != null and !organizations.isEmpty())}">
-        <form th:action="@{${(isEdit ?: false) ? '/solicitud/' + request.id + '/editar' : '/solicitudes'}}" method="post" enctype="multipart/form-data" class="card" style="padding:1.5rem;display:grid;gap:1.25rem;">
+        <form th:action="@{${(isEdit ?: false) ? '/solicitud/' + request.id + '/editar' : '/solicitudes'}}" method="post" enctype="multipart/form-data" class="card card--lg content-grid content-grid--md">
             <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <h2 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);" th:text="${isEdit ?: false} ? #{request.form.edit.heading} : #{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
+            <h2 class="text-2xl font-bold text-gray-900" th:text="${isEdit ?: false} ? #{request.form.edit.heading} : #{request.form.new.heading}">Nueva Solicitud de Recoleccion</h2>
 
-            <div th:if="${isGuest}" style="background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:.75rem;display:flex;gap:.5rem;align-items:flex-start;">
-                <i class="fa-solid fa-circle-info" style="color:var(--green-600);flex-shrink:0;margin-top:.125rem;"></i>
-                <p style="font-size:.8125rem;color:var(--gray-700);" th:text="#{request.form.guest.info}">Estas enviando como invitado. Si queres seguir tus solicitudes, podes registrarte despues.</p>
+            <div th:if="${isGuest}" class="guest-info guest-info--green">
+                <i aria-hidden="true" class="fa-solid fa-circle-info guest-info__icon"></i>
+                <p class="guest-info__text" th:text="#{request.form.guest.info}">Estas enviando como invitado. Si queres seguir tus solicitudes, podes registrarte despues.</p>
             </div>
 
-            <div th:unless="${isGuest}" style="background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:.75rem;display:flex;gap:.5rem;align-items:flex-start;">
-                <i class="fa-solid fa-circle-check" style="color:var(--green-600);flex-shrink:0;margin-top:.125rem;"></i>
-                <p style="font-size:.8125rem;color:var(--gray-700);" th:text="#{request.form.authenticated.info}">Estas autenticado. Tu solicitud se asociara a tu cuenta.</p>
+            <div th:unless="${isGuest}" class="guest-info guest-info--green">
+                <i aria-hidden="true" class="fa-solid fa-circle-check guest-info__icon"></i>
+                <p class="guest-info__text" th:text="#{request.form.authenticated.info}">Estas autenticado. Tu solicitud se asociara a tu cuenta.</p>
             </div>
 
             <div>
                 <label class="field__label">
-                    <i class="fa-solid fa-image"></i>
+                    <i aria-hidden="true" class="fa-solid fa-image"></i>
                     <span th:text="#{request.form.photo.label}">Foto de los residuos</span>
                 </label>
-                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="input" style="padding:.375rem .5rem;" th:unless="${isEdit}" required>
-                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="input" style="padding:.375rem .5rem;" th:if="${isEdit}">
-                <p class="field__hint" style="margin-top:.25rem;"><i class="fa-solid fa-camera"></i> <span th:text="#{request.form.photo.hint}">Sacale foto a los reciclables para que la cooperativa sepa que recolectar.</span></p>
-                <div id="imagePreview" style="display:none;margin-top:.5rem;">
-                    <img id="previewImg" src="" alt="Preview" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--gray-300);">
+                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="input input--file" th:unless="${isEdit}" required>
+                <input type="file" name="imageFile" id="imageFile" accept="image/*" class="input input--file" th:if="${isEdit}">
+                <p class="field__hint mt-1"><i aria-hidden="true" class="fa-solid fa-camera"></i> <span th:text="#{request.form.photo.hint}">Sacale foto a los reciclables para que la cooperativa sepa que recolectar.</span></p>
+                <div id="imagePreview" class="image-preview is-hidden">
+                    <img id="previewImg" src="" alt="Preview">
                 </div>
             </div>
 
@@ -100,36 +100,36 @@
             <input type="hidden" th:unless="${isEdit}" name="city" th:value="${selectedCity.name()}">
             <div th:if="${isEdit}">
                 <label class="field__label">
-                    <i class="fa-solid fa-city"></i>
-                    <span th:text="#{request.form.city}">Ciudad</span> <span style="color:var(--red-600)">*</span>
+                    <i aria-hidden="true" class="fa-solid fa-city"></i>
+                    <span th:text="#{request.form.city}">Ciudad</span> <span class="req">*</span>
                 </label>
                 <select name="city" class="input" required>
                     <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}" th:selected="${request?.city != null and request.city.name() == c.name()}">Ciudad</option>
                 </select>
             </div>
-            <div th:unless="${isEdit}" style="display:flex;align-items:center;gap:.5rem;background:var(--gray-50);border-radius:var(--radius);padding:.5rem .75rem;">
-                <i class="fa-solid fa-city" style="color:var(--gray-500);"></i>
-                <span style="font-size:.875rem;color:var(--gray-700);" th:text="#{request.form.city.selected} + ': ' + ${selectedCity.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}">Ciudad: Rivera</span>
-                <a href="/solicitudes/nueva" style="margin-left:auto;font-size:.8125rem;color:var(--green-600);" th:text="#{request.form.changeCity}">Cambiar ciudad</a>
+            <div th:unless="${isEdit}" class="city-banner">
+                <i aria-hidden="true" class="fa-solid fa-city city-banner__icon"></i>
+                <span class="city-banner__text" th:text="#{request.form.city.selected} + ': ' + ${selectedCity.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}">Ciudad: Rivera</span>
+                <a href="/solicitudes/nueva" class="city-banner__link" th:text="#{request.form.changeCity}">Cambiar ciudad</a>
             </div>
 
             <!-- Organization selector (new requests only, server-driven) -->
             <div th:unless="${isEdit}">
                 <label class="field__label">
-                    <i class="fa-solid fa-building"></i>
-                    <span th:text="#{request.form.organization}">Cooperativa de reciclaje</span> <span style="color:var(--red-600)">*</span>
+                    <i aria-hidden="true" class="fa-solid fa-building"></i>
+                    <span th:text="#{request.form.organization}">Cooperativa de reciclaje</span> <span class="req">*</span>
                 </label>
                 <select name="organizationId" class="input" required>
                     <option value="" th:text="#{request.form.org.choose}">Selecciona una cooperativa</option>
                     <option th:each="org : ${organizations}" th:value="${org.id}" th:text="${org.displayName}">Organizacion</option>
                 </select>
-                <p class="field__hint" style="margin-top:.25rem;" th:text="${organizations.size()} + ' ' + #{request.form.org.suffix}">Las cooperativas se cargan segun tu ciudad.</p>
+                <p class="field__hint mt-1" th:text="${organizations.size()} + ' ' + #{request.form.org.suffix}">Las cooperativas se cargan segun tu ciudad.</p>
             </div>
 
             <div>
                 <label class="field__label">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span th:text="#{request.form.address}">Direccion de recoleccion</span> <span style="color:var(--red-600)">*</span>
+                    <i aria-hidden="true" class="fa-solid fa-location-dot"></i>
+                    <span th:text="#{request.form.address}">Direccion de recoleccion</span> <span class="req">*</span>
                 </label>
                 <input type="text" name="address" id="address" required
                        th:value="${request?.address}"
@@ -139,7 +139,7 @@
 
             <div>
                 <label class="field__label">
-                    <i class="fa-solid fa-map"></i>
+                    <i aria-hidden="true" class="fa-solid fa-map"></i>
                     <span th:text="#{request.form.addressReference}">Referencia de ubicacion (opcional)</span>
                 </label>
                 <input type="text" name="addressReference" id="addressReference"
@@ -149,12 +149,12 @@
             </div>
 
             <div>
-                <label class="field__label" style="margin-bottom:.5rem;">
-                    <i class="fa-solid fa-recycle"></i>
+                <label class="field__label mb-2">
+                    <i aria-hidden="true" class="fa-solid fa-recycle"></i>
                     <span th:text="#{request.form.materials}">Que materiales reciclables tenes?</span>
                 </label>
-                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:.5rem;">
-                    <label th:each="material : ${materials}" class="material-card" style="cursor:pointer;display:flex;align-items:center;gap:.5rem;padding:.75rem;border:1px solid var(--gray-200);border-radius:var(--radius);">
+                <div class="materials-grid">
+                    <label th:each="material : ${materials}" class="material-card">
                         <input type="checkbox" name="materials" th:value="${material.name()}"
                                th:checked="${isEdit and request?.materials != null and request.materials.contains(material)}">
                         <span th:text="${material.name()}">Material</span>
@@ -163,35 +163,35 @@
             </div>
 
             <div th:if="${isGuest}">
-                <div style="display:grid;gap:.75rem;">
+                <div class="content-grid content-grid--sm">
                     <div>
                         <label class="field__label">
-                            <i class="fa-solid fa-user"></i>
-                            <span th:text="#{request.form.guestName}">Nombre</span> <span style="color:var(--red-600)">*</span>
+                            <i aria-hidden="true" class="fa-solid fa-user"></i>
+                            <span th:text="#{request.form.guestName}">Nombre</span> <span class="req">*</span>
                         </label>
                         <input type="text" name="guestName" id="guestName" class="input" required th:placeholder="#{request.form.guestName.placeholder}" placeholder="Tu nombre">
                     </div>
                     <div>
                         <label class="field__label">
-                            <i class="fa-solid fa-phone"></i>
-                            <span th:text="#{request.form.guestPhone}">Telefono</span> <span style="color:var(--red-600)">*</span>
+                            <i aria-hidden="true" class="fa-solid fa-phone"></i>
+                            <span th:text="#{request.form.guestPhone}">Telefono</span> <span class="req">*</span>
                         </label>
                         <input type="tel" name="guestPhone" id="guestPhone" class="input" required th:placeholder="#{request.form.guestPhone.placeholder}" placeholder="Ej: 099123456">
                     </div>
                 </div>
             </div>
 
-            <div th:unless="${isEdit}" style="background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:.75rem;">
-                <p style="font-size:.8125rem;color:var(--gray-700);display:flex;gap:.5rem;align-items:flex-start;">
-                    <i class="fa-solid fa-clock" style="color:var(--blue-600);flex-shrink:0;margin-top:.125rem;"></i>
+            <div th:unless="${isEdit}" class="timeslot-info">
+                <p class="timeslot-info__text">
+                    <i aria-hidden="true" class="fa-solid fa-clock timeslot-info__icon"></i>
                     <span th:utext="#{request.form.timeslots}">El sistema propondra los siguientes horarios: <strong>Manana (9-12)</strong>, <strong>Tarde (14-18)</strong>, <strong>Noche (18-20)</strong>. La cooperativa confirmara cual corresponde.</span>
                 </p>
             </div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid var(--gray-200);">
+            <div class="form-actions form-actions--between">
                 <a href="/" class="btn btn--ghost btn--sm" th:text="#{button.cancel}">Cancelar</a>
                 <button type="submit" class="btn btn--green btn--sm">
-                    <i class="fa-solid fa-paper-plane"></i>
+                    <i aria-hidden="true" class="fa-solid fa-paper-plane"></i>
                     <span th:text="${isEdit ?: false} ? #{request.form.update} : #{request.form.send}">Enviar</span>
                 </button>
             </div>
@@ -208,7 +208,7 @@
                     const preview = document.getElementById('imagePreview');
                     const img = document.getElementById('previewImg');
                     img.src = ev.target.result;
-                    preview.style.display = 'block';
+                    preview.classList.remove('is-hidden');
                 };
                 reader.readAsDataURL(file);
             }

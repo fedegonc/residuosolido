@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="box(icon, title, text, variant)" class="info-box" th:classappend="${variant != null ? ' info-box--' + variant : ' info-box--blue'}">
+    <i th:class="${'fa-solid ' + icon + ' info-box__icon'}"></i>
+    <div class="info-box__content">
+      <p th:if="${title != null}" class="info-box__title" th:text="${title}">Title</p>
+      <p th:if="${text != null}" th:text="${text}">Text</p>
+    </div>
+  </div>
+
+  <div th:fragment="list(icon, title, items, variant)" class="info-box" th:classappend="${variant != null ? ' info-box--' + variant : ' info-box--blue'}">
+    <i th:class="${'fa-solid ' + icon + ' info-box__icon'}"></i>
+    <div class="info-box__content">
+      <p th:if="${title != null}" class="info-box__title" th:text="${title}">Title</p>
+      <ul class="info-box__list">
+        <li th:each="item : ${items}" th:text="${item}">Item</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

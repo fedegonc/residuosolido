@@ -86,9 +86,10 @@ public class OrgRequestController {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
             return "redirect:/acopio/requests";
         } catch (Exception e) {
+            logger.error("Error al aceptar solicitud {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_accept_error", null, LocaleContextHolder.getLocale()));
         }
-        return "redirect:/acopio/inicio";
+        return "redirect:/acopio/requests";
     }
 
     @PostMapping("/acopio/requests/reject/{id}")
@@ -101,6 +102,7 @@ public class OrgRequestController {
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
+            logger.error("Error al rechazar solicitud {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_reject_error", null, LocaleContextHolder.getLocale()));
         }
         return "redirect:/acopio/requests";
@@ -116,6 +118,7 @@ public class OrgRequestController {
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
+            logger.error("Error al completar solicitud {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_complete_error", null, LocaleContextHolder.getLocale()));
         }
         return "redirect:/acopio/inicio";

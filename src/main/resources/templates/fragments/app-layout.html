@@ -14,12 +14,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.1.0/css/flag-icons.min.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316a34a'%3E%3Cpath d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'/%3E%3C/svg%3E">
 </head>
-<body style="display:flex;flex-direction:column;min-height:100vh;">
+<body class="app-body">
+
+    <a href="#main-content" class="skip-link" th:text="#{accessibility.skip_to_content}">Saltar al contenido</a>
 
     <th:block sec:authorize="isAuthenticated()" th:replace="~{fragments/navbar-app :: navbar}"></th:block>
     <th:block sec:authorize="isAnonymous()" th:replace="~{fragments/navbar-guest :: navbar}"></th:block>
 
-    <main style="flex:1;display:flex;flex-direction:column;">
+    <main class="app-main" id="main-content">
         <th:block layout:fragment="content"></th:block>
     </main>
 

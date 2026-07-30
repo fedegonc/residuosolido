@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/*
+  Breadcrumbs fragment
+  Usage:
+  <nav th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></nav>
+
+  Model: List of maps with keys: label (i18n key or text), href (optional)
+  Last item is rendered as current (no link).
+*/-->
+<nav th:fragment="breadcrumbs(items)" class="breadcrumbs" aria-label="Breadcrumb">
+    <th:block th:each="crumb, iter : ${items}">
+        <span class="breadcrumbs__item">
+            <a th:if="${crumb.href != null and !iter.last}"
+               th:href="${crumb.href}"
+               class="breadcrumbs__link"
+               th:text="${crumb.label}">Link</a>
+            <span th:if="${crumb.href == null or iter.last}"
+                  class="breadcrumbs__current"
+                  th:text="${crumb.label}"
+                  aria-current="page">Current</span>
+            <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumbs__separator"></i>
+        </span>
+    </th:block>
+</nav>
+
+</body>
+</html>

@@ -2,47 +2,41 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
     <title th:text="#{dashboard.user.title}">Inicio</title>
-    <style>
-      .req-item{display:flex;gap:.75rem;padding:1rem;border-bottom:1px solid var(--gray-100);text-decoration:none;}
-      .req-item:hover{background:var(--green-50);}
-      .req-item__icon{width:2.5rem;height:2.5rem;border-radius:var(--radius);background:var(--green-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green-600);}
-      .req-item__title{font-weight:600;font-size:.875rem;color:var(--gray-900);}
-      .req-item__meta{font-size:.75rem;color:var(--gray-600);display:flex;align-items:center;gap:.375rem;margin-top:.25rem;}
-    </style>
 </head>
 <body>
 <main layout:fragment="content">
     <div class="page mt-4">
-        <a href="/" class="btn btn--green btn--sm"><i class="fa-solid fa-arrow-left"></i><span th:text="#{dashboard.user.public_info}">Ver Información Pública</span></a>
+        <nav th:replace="~{fragments/components/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></nav>
+        <a href="/" class="btn btn--green btn--sm"><i aria-hidden="true" class="fa-solid fa-arrow-left"></i><span th:text="#{dashboard.user.public_info}">Ver Información Pública</span></a>
     </div>
 
-    <div class="page page--wide" style="padding-top:1rem;padding-bottom:1rem;display:grid;gap:1rem;">
+    <div class="page page--wide content-grid page--padded">
         <section class="card card--flush">
             <div class="card__bar"></div>
-            <div class="card__body" style="display:grid;gap:1rem;">
+            <div class="card__body content-grid">
                 <div>
-                    <h1 style="font-size:1.5rem;font-weight:600;color:var(--gray-900);">
+                    <h1 class="text-2xl font-semibold text-gray-900">
                         <span th:text="#{dashboard.user.greeting}">Olá,</span>
                         <span th:text="${#authentication.principal.username}">Usuário</span>
                     </h1>
-                    <p class="text-sm text-gray-600" style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;">
-                        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--green-500)"></i>
+                    <p class="text-sm text-gray-600 flex gap-2 items-center mt-1">
+                        <i aria-hidden="true" class="fa-solid fa-wand-magic-sparkles icon-green"></i>
                         <span th:text="#{dashboard.user.greeting.subtitle}">Acompanhe suas solicitações.</span>
                     </p>
                 </div>
                 <div class="grid grid--4">
                     <a href="/solicitudes/nueva" class="action-card">
-                        <div class="action-card__icon" style="background:var(--green-50);color:var(--green-600)"><i class="fa-solid fa-plus-circle"></i></div>
+                        <div class="action-card__icon action-card__icon--green"><i aria-hidden="true" class="fa-solid fa-plus-circle"></i></div>
                         <p class="action-card__title" th:text="#{dashboard.user.quick_actions.title}">Criar nova solicitação</p>
                         <p class="action-card__desc" th:text="#{dashboard.user.quick_actions.subtitle}">Informe os materiais</p>
                     </a>
                     <a href="/solicitudes" class="action-card">
-                        <div class="action-card__icon" style="background:var(--blue-50);color:var(--blue-600)"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <div class="action-card__icon action-card__icon--blue"><i aria-hidden="true" class="fa-solid fa-clipboard-list"></i></div>
                         <p class="action-card__title" th:text="#{dashboard.user.quick_actions.list.title}">Ver minhas solicitações</p>
                         <p class="action-card__desc" th:text="#{dashboard.user.quick_actions.list.subtitle}">Revisar status</p>
                     </a>
                     <a href="/usuarios/perfil" class="action-card">
-                        <div class="action-card__icon" style="background:var(--orange-50);color:var(--orange-500)"><i class="fa-solid fa-gear"></i></div>
+                        <div class="action-card__icon action-card__icon--orange"><i aria-hidden="true" class="fa-solid fa-gear"></i></div>
                         <p class="action-card__title" th:text="#{dashboard.user.quick_actions.profile.title}">Atualizar meus dados</p>
                         <p class="action-card__desc" th:text="#{dashboard.user.quick_actions.profile.subtitle}">Mantenha seu perfil atualizado</p>
                     </a>
@@ -59,22 +53,22 @@
             </div>
             <div class="card__body grid grid--4">
                 <div class="stat">
-                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-box"></i></div>
+                    <div class="stat__icon stat__icon--green"><i aria-hidden="true" class="fa-solid fa-box"></i></div>
                     <p class="stat__value" th:text="${totalRequests ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.total}">Total</p>
                 </div>
                 <div class="stat">
-                    <div class="stat__icon" style="background:var(--yellow-100);color:var(--yellow-800)"><i class="fa-solid fa-clock"></i></div>
+                    <div class="stat__icon stat__icon--yellow"><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
                     <p class="stat__value" th:text="${pendingRequests ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.pending}">Pendentes</p>
                 </div>
                 <div class="stat">
-                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-truck"></i></div>
+                    <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-truck"></i></div>
                     <p class="stat__value" th:text="${inProgressRequests ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.in_progress}">Em andamento</p>
                 </div>
                 <div class="stat">
-                    <div class="stat__icon stat__icon--blue"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="stat__icon stat__icon--blue"><i aria-hidden="true" class="fa-solid fa-circle-check"></i></div>
                     <p class="stat__value" th:text="${completedRequests ?: 0}">0</p>
                     <p class="stat__label" th:text="#{dashboard.user.activity.completed}">Concluídas</p>
                 </div>
@@ -86,57 +80,57 @@
                 <h2 class="card__title" th:text="#{dashboard.user.next_request.title}">Próxima coleta agendada</h2>
             </div>
             <div th:if="${nextRequest != null}" class="card__body">
-                <div style="display:flex;gap:.75rem;align-items:flex-start;">
-                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-calendar-days"></i></div>
+                <div class="flex gap-3 items-start">
+                    <div class="stat__icon stat__icon--green"><i aria-hidden="true" class="fa-solid fa-calendar-days"></i></div>
                     <div>
                         <p class="font-semibold text-sm" th:text="${nextRequest.address}">Dirección</p>
-                        <p class="text-sm text-gray-600" style="margin-top:.5rem;"><i class="fa-solid fa-clock" style="color:var(--green-500)"></i> <span th:text="${nextRequest.confirmedSlot != null ? nextRequest.confirmedSlot : 'Pendiente'}">Horario</span></p>
-                        <p class="text-sm text-gray-600"><i class="fa-solid fa-location-dot" style="color:var(--green-500)"></i> <span th:text="${nextRequest.address}">Dirección</span></p>
+                        <p class="text-sm text-gray-600 mt-1"><i aria-hidden="true" class="fa-solid fa-clock icon-green"></i> <span th:text="${nextRequest.confirmedSlot != null ? nextRequest.confirmedSlot : 'Pendiente'}">Horario</span></p>
+                        <p class="text-sm text-gray-600"><i aria-hidden="true" class="fa-solid fa-location-dot icon-green"></i> <span th:text="${nextRequest.address}">Dirección</span></p>
                     </div>
                 </div>
-                <div style="display:flex;justify-content:flex-end;margin-top:.75rem;">
+                <div class="flex form-actions--end mt-1">
                     <a th:href="@{/solicitud/{id}(id=${nextRequest.id})}" class="btn btn--green btn--sm" th:text="#{dashboard.user.next_request.details}">Ver detalhes</a>
                 </div>
             </div>
             <div th:if="${nextRequest == null}" class="card__body">
-                <div style="display:flex;gap:.75rem;align-items:flex-start;">
-                    <div class="stat__icon stat__icon--green"><i class="fa-solid fa-calendar-plus"></i></div>
+                <div class="flex gap-3 items-start">
+                    <div class="stat__icon stat__icon--green"><i aria-hidden="true" class="fa-solid fa-calendar-plus"></i></div>
                     <div>
                         <p class="font-semibold text-sm" th:text="#{dashboard.user.next_request.none.title}">Sem coletas</p>
                         <p class="text-sm text-gray-600" th:text="#{dashboard.user.next_request.none.subtitle}">Agende uma nova</p>
                         <p class="text-xs text-gray-500" th:text="#{dashboard.user.next_request.none.note}">Uma organização entrará em contato.</p>
                     </div>
                 </div>
-                <a href="/solicitudes/nueva" class="btn btn--green btn--block" style="margin-top:.75rem;" th:text="#{dashboard.user.next_request.none.cta}">Agendar</a>
+                <a href="/solicitudes/nova" class="btn btn--green btn--block mt-1" th:text="#{dashboard.user.next_request.none.cta}">Agendar</a>
             </div>
         </section>
 
         <section class="card card--flush">
-            <div class="card__header" style="justify-content:space-between;">
+            <div class="card__header flex-between">
                 <h2 class="card__title" th:text="#{dashboard.user.recent_requests.title}">Solicitações recentes</h2>
                 <a href="/solicitudes" class="link link--green" th:text="#{dashboard.user.recent_requests.link}">Ver todas</a>
             </div>
             <div th:if="${recentRequests != null and !recentRequests.empty}">
                 <a th:each="request, iterStat : ${recentRequests}" th:href="@{/solicitud/{id}(id=${request.id})}" class="req-item">
-                    <div class="req-item__icon"><i class="fa-solid fa-box"></i></div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;justify-content:space-between;gap:.5rem;margin-bottom:.25rem;">
+                    <div class="req-item__icon"><i aria-hidden="true" class="fa-solid fa-box"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-between gap-2 mb-2">
                             <span class="req-item__title" th:text="${request.address}">Dirección</span>
                             <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
                         </div>
-                        <div class="req-item__meta"><i class="fa-solid fa-location-dot"></i><span th:text="${request.address}">Dirección</span></div>
-                        <div class="req-item__meta"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span></div>
+                        <div class="req-item__meta"><i aria-hidden="true" class="fa-solid fa-location-dot"></i><span th:text="${request.address}">Dirección</span></div>
+                        <div class="req-item__meta"><i aria-hidden="true" class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span></div>
                         <div th:if="${request.materials != null and !request.materials.empty}" class="req-item__meta">
-                            <i class="fa-solid fa-recycle"></i>
+                            <i aria-hidden="true" class="fa-solid fa-recycle"></i>
                             <span th:each="material, mStat : ${request.materials}"><span th:text="${material}">Material</span><span th:if="${!mStat.last}">, </span></span>
                         </div>
                     </div>
                 </a>
             </div>
             <div th:if="${recentRequests == null or recentRequests.empty}" class="empty-state">
-                <i class="fa-solid fa-inbox empty-state__icon"></i>
+                <i aria-hidden="true" class="fa-solid fa-inbox empty-state__icon"></i>
                 <p th:text="#{dashboard.user.recent_requests.empty}">Sem solicitações</p>
-                <a href="/solicitudes/nueva" class="btn btn--green btn--sm" th:text="#{dashboard.user.recent_requests.empty.cta}">Criar solicitação</a>
+                <a href="/solicitudes/nova" class="btn btn--green btn--sm" th:text="#{dashboard.user.recent_requests.empty.cta}">Criar solicitação</a>
             </div>
         </section>
     </div>

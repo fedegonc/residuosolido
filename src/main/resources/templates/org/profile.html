@@ -12,36 +12,32 @@
         <div th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
     </div>
 
-    <div class="page" style="max-width:42rem;padding-top:1.5rem;padding-bottom:1.5rem;">
+    <div class="page page--narrow page--padded">
 
-        <section class="card card--flush" style="background:linear-gradient(to right,var(--blue-600),var(--indigo-600));color:var(--white);margin-bottom:1.5rem;">
-            <div class="card__body" style="padding:1.5rem;display:flex;align-items:center;gap:1rem;">
-                <div style="width:4rem;height:4rem;border-radius:9999px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
-                    <i class="fa-solid fa-building"></i>
-                </div>
-                <div>
-                    <h1 style="font-size:1.5rem;font-weight:700;" th:text="#{profile.title}">Perfil de Organización</h1>
-                    <p style="color:var(--blue-100);" th:text="#{profile.subtitle}">Gestiona la información de tu cooperativa</p>
-                </div>
+        <section class="hero-header hero-header--blue">
+            <div class="hero-header__icon"><i aria-hidden="true" class="fa-solid fa-building"></i></div>
+            <div class="hero-header__body">
+                <h1 class="hero-header__title" th:text="#{profile.title}">Perfil de Organización</h1>
+                <p class="hero-header__subtitle" th:text="#{profile.subtitle}">Gestiona la información de tu cooperativa</p>
             </div>
         </section>
 
         <div class="card">
-            <form th:action="@{/acopio/perfil}" method="post" style="padding:1.5rem;display:grid;gap:1.25rem;">
+            <form th:action="@{/acopio/perfil}" method="post" class="card__body content-grid content-grid--md">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-user"></i>
+                        <i aria-hidden="true" class="fa-solid fa-user"></i>
                         <span th:text="#{profile.username}">Nombre de usuario</span>
                     </label>
-                    <input type="text" th:value="${organization?.username}" class="input" readonly style="background:var(--gray-50);">
+                    <input type="text" th:value="${organization?.username}" class="input input--readonly" readonly>
                     <p class="field__hint" th:text="#{profile.username.hint}">No se puede modificar</p>
                 </div>
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-envelope"></i>
+                        <i aria-hidden="true" class="fa-solid fa-envelope"></i>
                         <span th:text="#{profile.email}">Correo electrónico</span>
                     </label>
                     <input type="email" name="email" th:value="${organization?.email}" class="input" required>
@@ -49,7 +45,7 @@
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-id-card"></i>
+                        <i aria-hidden="true" class="fa-solid fa-id-card"></i>
                         <span th:text="#{profile.organizationName}">Nombre de la cooperativa</span>
                     </label>
                     <input type="text" name="firstName" th:value="${organization?.firstName}" class="input" th:placeholder="#{profile.organizationName.placeholder}" placeholder="Ej: Cooperativa Recicla Rivera">
@@ -57,7 +53,7 @@
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-phone"></i>
+                        <i aria-hidden="true" class="fa-solid fa-phone"></i>
                         <span th:text="#{profile.phone}">Teléfono de contacto</span>
                     </label>
                     <input type="tel" name="phone" th:value="${organization?.phone}" class="input" th:placeholder="#{profile.phone.placeholder}" placeholder="Ej: 098 123 456">
@@ -65,7 +61,7 @@
 
                 <div>
                     <label class="field__label">
-                        <i class="fa-solid fa-city"></i>
+                        <i aria-hidden="true" class="fa-solid fa-city"></i>
                         <span th:text="#{profile.city}">Ciudad</span>
                     </label>
                     <select name="city" class="input" required>
@@ -75,28 +71,26 @@
                     <p class="field__hint" th:text="#{profile.city.hint}">Las solicitudes se asignan segun tu ciudad</p>
                 </div>
 
-                <div style="display:flex;gap:.75rem;padding-top:1rem;border-top:1px solid var(--gray-200);">
+                <div class="form-actions">
                     <button type="submit" class="btn btn--primary btn--sm">
-                        <i class="fa-solid fa-save"></i><span th:text="#{button.save}">Guardar Cambios</span>
+                        <i aria-hidden="true" class="fa-solid fa-save"></i><span th:text="#{button.save}">Guardar Cambios</span>
                     </button>
                     <a th:href="@{/acopio/inicio}" class="btn btn--ghost btn--sm">
-                        <i class="fa-solid fa-xmark"></i><span th:text="#{button.cancel}">Cancelar</span>
+                        <i aria-hidden="true" class="fa-solid fa-xmark"></i><span th:text="#{button.cancel}">Cancelar</span>
                     </a>
                 </div>
             </form>
         </div>
 
-        <div style="margin-top:1.5rem;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius);padding:1rem;">
-            <div style="display:flex;gap:.5rem;align-items:flex-start;">
-                <i class="fa-solid fa-circle-info" style="color:var(--blue-600);flex-shrink:0;margin-top:.125rem;"></i>
-                <div style="font-size:.8125rem;color:var(--blue-800);">
-                    <p class="font-medium" th:text="#{profile.info.title}">Informacion importante:</p>
-                    <ul style="list-style:disc;padding-left:1.25rem;margin-top:.25rem;">
-                        <li th:text="#{profile.info.bullet1}">Mantene actualizada tu informacion de contacto</li>
-                        <li th:text="#{profile.info.bullet2}">Las solicitudes se asignan automaticamente segun tu ciudad</li>
-                        <li th:text="#{profile.info.bullet3}">Los cambios se aplican inmediatamente</li>
-                    </ul>
-                </div>
+        <div class="info-box info-box--blue mt-6">
+            <i aria-hidden="true" class="fa-solid fa-circle-info info-box__icon"></i>
+            <div class="info-box__content">
+                <p class="info-box__title" th:text="#{profile.info.title}">Informacion importante:</p>
+                <ul class="info-box__list">
+                    <li th:text="#{profile.info.bullet1}">Mantene actualizada tu informacion de contacto</li>
+                    <li th:text="#{profile.info.bullet2}">Las solicitudes se asignan automaticamente segun tu ciudad</li>
+                    <li th:text="#{profile.info.bullet3}">Los cambios se aplican inmediatamente</li>
+                </ul>
             </div>
         </div>
     </div>

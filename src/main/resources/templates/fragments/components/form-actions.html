@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="actions(submitText, submitIcon, cancelUrl, cancelText)" class="form-actions form-actions--between">
+    <a th:href="${cancelUrl}" class="btn btn--ghost btn--sm">
+      <i aria-hidden="true" class="fa-solid fa-xmark"></i>
+      <span th:text="${cancelText}">Cancelar</span>
+    </a>
+    <button type="submit" class="btn btn--green btn--sm">
+      <i th:class="${'fa-solid ' + submitIcon}"></i>
+      <span th:text="${submitText}">Guardar</span>
+    </button>
+  </div>
+</body>
+</html>

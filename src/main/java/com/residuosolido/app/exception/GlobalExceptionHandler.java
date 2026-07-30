@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
 
     @Autowired
     private MessageSource messageSource;
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handleNotFound(HttpServletRequest request) {
+        logger.debug("Recurso no encontrado: {}", request.getRequestURI());
+        return "error/404";
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public String handleAccessDenied(HttpServletRequest request, RedirectAttributes redirectAttributes) {
