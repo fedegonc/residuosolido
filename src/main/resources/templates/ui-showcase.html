@@ -206,7 +206,10 @@
                         <input class="input input--invalid" type="text" value="valor inválido" />
                         <p class="field__error">Este campo es obligatorio.</p>
                     </div>
-                    <div th:replace="~{fragments/components/form-actions :: actions('Guardar', 'floppy-disk', '#', 'Cancelar')}"></div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn--green"><i aria-hidden="true" class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
+                        <a href="#" class="btn btn--ghost">Cancelar</a>
+                    </div>
                 </form>
             </div>
         </div>
@@ -259,14 +262,38 @@
         <!-- Info Box -->
         <div class="card mb-6">
             <div class="card__header">
-                <h2 class="card__title">Info Box (fragmento)</h2>
+                <h2 class="card__title">Info Box</h2>
             </div>
             <div class="card__body">
                 <div class="grid grid--2 gap-4">
-                    <div th:replace="~{fragments/components/info-box :: box('circle-info', 'Información', 'Los datos se guardan automáticamente.', 'blue')}"></div>
-                    <div th:replace="~{fragments/components/info-box :: box('circle-check', 'Listo', 'Tu perfil está completo.', 'green')}"></div>
-                    <div th:replace="~{fragments/components/info-box :: box('triangle-exclamation', 'Atención', 'Faltan datos por completar.', 'amber')}"></div>
-                    <div th:replace="~{fragments/components/info-box :: box('clock', 'Sin asignar', 'No hay organización asignada aún.', 'gray')}"></div>
+                    <div class="info-box info-box--blue">
+                        <i aria-hidden="true" class="fa-solid fa-circle-info"></i>
+                        <div>
+                            <p class="info-box__title">Información</p>
+                            <p>Los datos se guardan automáticamente.</p>
+                        </div>
+                    </div>
+                    <div class="info-box info-box--green">
+                        <i aria-hidden="true" class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <p class="info-box__title">Listo</p>
+                            <p>Tu perfil está completo.</p>
+                        </div>
+                    </div>
+                    <div class="info-box info-box--amber">
+                        <i aria-hidden="true" class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <p class="info-box__title">Atención</p>
+                            <p>Faltan datos por completar.</p>
+                        </div>
+                    </div>
+                    <div class="info-box info-box--gray">
+                        <i aria-hidden="true" class="fa-solid fa-clock"></i>
+                        <div>
+                            <p class="info-box__title">Sin asignar</p>
+                            <p>No hay organización asignada aún.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -274,10 +301,15 @@
         <!-- Empty State -->
         <div class="card mb-6">
             <div class="card__header">
-                <h2 class="card__title">Empty State (fragmento)</h2>
+                <h2 class="card__title">Empty State</h2>
             </div>
             <div class="card__body">
-                <div th:replace="~{fragments/components/empty-state :: state('inbox', 'Sin solicitudes', 'No hay solicitudes para mostrar. Crea una nueva para comenzar.')}"></div>
+                <div class="empty-state empty-state--xl">
+                    <i aria-hidden="true" class="fa-solid fa-inbox empty-state__icon"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sin solicitudes</h3>
+                    <p class="text-sm text-gray-600 mb-4">No hay solicitudes para mostrar. Crea una nueva para comenzar.</p>
+                    <a href="#" class="btn btn--green btn--sm"><i aria-hidden="true" class="fa-solid fa-plus"></i><span>Crear nueva</span></a>
+                </div>
             </div>
         </div>
 

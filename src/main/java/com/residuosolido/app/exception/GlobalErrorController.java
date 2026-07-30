@@ -23,9 +23,13 @@ public class GlobalErrorController implements ErrorController {
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        Object status = request.getAttribute("jakarta.servlet.error.status_code");
+        if (status != null && Integer.valueOf(404).equals(status)) {
+            return "error/404";
+        }
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        // Mensaje simple para pruebas
+
         if (auth != null && auth.isAuthenticated() && !(auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
             String target = resolvePanel(auth);
             redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage("flash.error.not_found_auth", null, LocaleContextHolder.getLocale()));

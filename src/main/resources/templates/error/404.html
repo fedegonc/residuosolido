@@ -1,16 +1,21 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Recurso no encontrado</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <title>404 — Recurso no encontrado</title>
 </head>
-<body class="error-page">
-    <div class="error-container">
-        <h1>404</h1>
-        <p>El recurso solicitado no fue encontrado.</p>
-        <a href="/" class="btn btn-primary">Volver al inicio</a>
+<body>
+<main layout:fragment="content">
+    <div class="page page--center">
+        <div class="empty-state empty-state--xl">
+            <i aria-hidden="true" class="fa-solid fa-compass empty-state__icon"></i>
+            <h1 class="text-2xl font-bold text-gray-900">404</h1>
+            <p class="text-sm text-gray-600 mb-4" th:text="#{error.404.message}">El recurso solicitado no fue encontrado.</p>
+            <a href="/" class="btn btn--green">
+                <i aria-hidden="true" class="fa-solid fa-arrow-left"></i>
+                <span th:text="#{error.404.back}">Volver al inicio</span>
+            </a>
+        </div>
     </div>
+</main>
 </body>
 </html>

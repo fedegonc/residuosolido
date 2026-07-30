@@ -2,26 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
   <th:block th:fragment="badge(status)">
-    <span th:switch="${status}">
-      <span th:case="'PENDING'" class="badge badge--warning">
-        <i class="fa-solid fa-clock" aria-hidden="true"></i>
-        <span th:text="#{request.status.pending}">Pendiente</span>
-      </span>
-      <span th:case="'IN_PROGRESS'" class="badge badge--info">
-        <i class="fa-solid fa-truck" aria-hidden="true"></i>
-        <span th:text="#{request.status.in_progress}">En proceso</span>
-      </span>
-      <span th:case="'COMPLETED'" class="badge badge--success">
-        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-        <span th:text="#{request.status.completed}">Completado</span>
-      </span>
-      <span th:case="'REJECTED'" class="badge badge--danger">
-        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
-        <span th:text="#{request.status.rejected}">Rechazado</span>
-      </span>
-      <span th:case="*" class="badge">
-        <span th:text="${status}">—</span>
-      </span>
+    <span th:if="${status == T(com.residuosolido.app.enums.RequestStatus).PENDING}" class="badge badge--warning">
+      <i class="fa-solid fa-clock" aria-hidden="true"></i>
+      <span th:text="#{request.status.pending}">Pendiente</span>
+    </span>
+    <span th:if="${status == T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS}" class="badge badge--info">
+      <i class="fa-solid fa-truck" aria-hidden="true"></i>
+      <span th:text="#{request.status.in_progress}">En proceso</span>
+    </span>
+    <span th:if="${status == T(com.residuosolido.app.enums.RequestStatus).COMPLETED}" class="badge badge--success">
+      <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+      <span th:text="#{request.status.completed}">Completado</span>
+    </span>
+    <span th:if="${status == T(com.residuosolido.app.enums.RequestStatus).REJECTED}" class="badge badge--danger">
+      <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+      <span th:text="#{request.status.rejected}">Rechazado</span>
     </span>
   </th:block>
 </body>

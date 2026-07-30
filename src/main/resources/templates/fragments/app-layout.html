@@ -36,5 +36,25 @@
         <span class="footer-copy">&copy; <span th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2025</span> <span th:text="#{footer.copy}">Resíduos Sólidos</span></span>
       </div>
     </footer>
+    <script>
+    (function(){
+      document.addEventListener('click', function(e){
+        var btn = e.target.closest('[data-password-toggle]');
+        if(!btn) return;
+        e.preventDefault();
+        var targetId = btn.getAttribute('data-target');
+        var input = document.getElementById(targetId);
+        if(!input) return;
+        var isPwd = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isPwd ? 'text' : 'password');
+        btn.setAttribute('aria-pressed', String(isPwd));
+        var icon = btn.querySelector('i');
+        if(icon){
+          icon.classList.toggle('fa-eye');
+          icon.classList.toggle('fa-eye-slash');
+        }
+      });
+    })();
+    </script>
 </body>
 </html>

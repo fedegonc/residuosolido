@@ -69,16 +69,16 @@ public class SecurityConfig {
             )
             // No usar SavedRequest para decidir redirecciones tras login
             .requestCache(rc -> rc.disable())
-            // Cabeceras de seguridad razonables sin romper Tailwind CDN ni Cloudinary
+            // Cabeceras de seguridad
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
                     "img-src 'self' data: https: https://tile.openstreetmap.org; " +
-                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com; " +
+                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
                     "font-src 'self' data: https://fonts.gstatic.com; " +
-                    "script-src 'self' 'nonce-{cspNonce}' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; " +
-                    "connect-src 'self' https://unpkg.com https://cdn.jsdelivr.net; " +
-                    "frame-src 'self' https://www.openstreetmap.org https://www.google.com https://maps.google.com"
+                    "script-src 'self' 'unsafe-inline'; " +
+                    "connect-src 'self'; " +
+                    "frame-src 'self' https://www.openstreetmap.org"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
                 .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
