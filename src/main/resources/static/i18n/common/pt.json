@@ -21,5 +21,14 @@
   "nav_org_profile": "Perfil",
   "nav_user_panel": "Meu painel",
   "nav_user_profile": "Meu perfil",
-  "nav_user_requests": "Minhas solicitações"
+  "nav_user_requests": "Minhas solicitações",
+  "city_rivera": "Rivera",
+  "city_livramento": "Sant'Ana do Livramento",
+  "mat_plastico": "Plástico",
+  "mat_papel": "Papel",
+  "mat_carton": "Papelão",
+  "mat_vidrio": "Vidro",
+  "mat_metal": "Metal",
+  "mat_madera": "Madeira",
+  "mat_escombros": "Entulho"
 }

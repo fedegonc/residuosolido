@@ -1,7 +1,7 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Request;
-import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.service.RequestQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,16 +14,16 @@ import java.util.List;
 @Controller
 public class GuestTrackingController {
 
-    private final RequestService requestService;
+    private final RequestQueryService requestQueryService;
 
     @Autowired
-    public GuestTrackingController(RequestService requestService) {
-        this.requestService = requestService;
+    public GuestTrackingController(RequestQueryService requestQueryService) {
+        this.requestQueryService = requestQueryService;
     }
 
     @GetMapping("/rastrear")
     public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone, Model model) {
-        List<Request> requests = requestService.getGuestRequestsByPhone(phone);
+        List<Request> requests = requestQueryService.getGuestRequestsByPhone(phone);
         boolean searched = phone != null && !phone.trim().isEmpty();
         model.addAttribute("phone", searched ? phone : "");
         model.addAttribute("requests", requests);
@@ -33,7 +33,7 @@ public class GuestTrackingController {
 
     @PostMapping("/rastrear")
     public String trackGuestSubmit(@RequestParam("phone") String phone, Model model) {
-        List<Request> requests = requestService.getGuestRequestsByPhone(phone);
+        List<Request> requests = requestQueryService.getGuestRequestsByPhone(phone);
         model.addAttribute("phone", phone);
         model.addAttribute("requests", requests);
         model.addAttribute("searched", true);

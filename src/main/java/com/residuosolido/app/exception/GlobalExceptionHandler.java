@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -31,7 +33,7 @@ public class GlobalExceptionHandler {
     public String handleAccessDenied(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         logger.warn("Acceso denegado a: {}", request.getRequestURI());
         redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.error.access_denied", null, LocaleContextHolder.getLocale()));
-        return "redirect:/";
+        return "redirect:" + resolveTarget();
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -39,13 +41,25 @@ public class GlobalExceptionHandler {
                                         RedirectAttributes redirectAttributes) {
         logger.warn("Argumento inválido en {}: {}", request.getRequestURI(), e.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
-        return "redirect:/";
+        return "redirect:" + resolveTarget();
     }
 
     @ExceptionHandler(Exception.class)
     public String handleGeneric(HttpServletRequest request, Exception e, RedirectAttributes redirectAttributes) {
         logger.error("Error no manejado en {}: {}", request.getRequestURI(), e.getMessage(), e);
         redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.error.generic", null, LocaleContextHolder.getLocale()));
-        return "redirect:/";
+        return "redirect:" + resolveTarget();
+    }
+
+    private String resolveTarget() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()
+                || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
+            return "/auth/login";
+        }
+        return auth.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .anyMatch(r -> "ROLE_ORGANIZATION".equals(r)) ? "/acopio/inicio"
+                : "/usuarios/inicio";
     }
 }

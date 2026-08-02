@@ -72,6 +72,7 @@
                 <th:block th:if="${isEdit and organizations != null}">
                   <option th:each="org : ${organizations}"
                           th:value="${org.id}"
+                          th:attr="data-materials=${org.acceptedMaterialsCsv}"
                           th:text="${org.displayName}"
                           th:selected="${request.organization != null and request.organization.id == org.id}"></option>
                 </th:block>
@@ -103,7 +104,7 @@
               <label data-i18n="req_form_materials">Materiales a reciclar <span class="req">*</span></label>
               <div class="check-grid">
                 <th:block th:each="mat : ${materials}">
-                  <label class="check-card">
+                  <label class="check-card" th:attr="data-material=${mat.name()}">
                     <input type="checkbox" name="materials" th:value="${mat.name()}"
                            th:checked="${request.hasMaterials() and request.materials.contains(mat)}">
                     <span th:attr="data-i18n=${'req_mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
@@ -220,23 +221,42 @@
                 orgs.forEach(function (org) {
                   var mats = org.acceptedMaterials || [];
                   var matLabels = mats.length > 0 ? ' (' + mats.join(', ') + ')' : '';
-                  html += '<option value="' + org.id + '">' + (org.displayName || org.name || 'Organización') + matLabels + '</option>';
+                  html += '<option value="' + org.id + '" data-materials="' + mats.join(',') + '">' +
+                          (org.displayName || org.name || 'Organización') + matLabels + '</option>';
                 });
                 orgSelect.innerHTML = html;
               }
+              filterMaterialsByOrg();
             })
             .catch(function () {
               orgSelect.innerHTML = '<option value="" data-i18n="req_form_org_none">No hay organizaciones en esta ciudad</option>';
+              filterMaterialsByOrg();
             });
         });
       }
 
-      // Checkbox card visual state
-      document.querySelectorAll('.check-card input[type="checkbox"]').forEach(function (cb) {
-        function update() { cb.closest('.check-card').classList.toggle('check-card--checked', cb.checked); }
-        cb.addEventListener('change', update);
-        update();
-      });
+      // Dynamically show only the materials the selected organization accepts.
+      // Purely a UX filter (no server-side duplicate validation is added for this).
+      function filterMaterialsByOrg() {
+        var selected = orgSelect ? orgSelect.options[orgSelect.selectedIndex] : null;
+        var csv = selected ? selected.getAttribute('data-materials') : null;
+        var allowed = csv ? csv.split(',').filter(Boolean) : null;
+        document.querySelectorAll('.check-card').forEach(function (card) {
+          var input = card.querySelector('input[type="checkbox"]');
+          if (!input) return;
+          var isAllowed = !allowed || allowed.length === 0 || allowed.indexOf(card.getAttribute('data-material')) !== -1;
+          card.classList.toggle('is-hidden', !isAllowed);
+          input.disabled = !isAllowed;
+          if (!isAllowed && input.checked) {
+            input.checked = false;
+            card.classList.remove('check-card--checked');
+          }
+        });
+      }
+      if (orgSelect) {
+        orgSelect.addEventListener('change', filterMaterialsByOrg);
+        filterMaterialsByOrg();
+      }
 
       // Radio card visual state
       document.querySelectorAll('.radio-card input[type="radio"]').forEach(function (rb) {

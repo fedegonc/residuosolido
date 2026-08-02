@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Fragment: request-item-card
+     Reusable request card for list views.
+     Variables: req (Request object) -->
+<body>
+
+  <div th:fragment="request-item-card(req)" class="request-item">
+    <div class="request-item__header">
+      <span class="request-item__id">
+        <span data-i18n="track_request_id">Solicitud</span>
+        #<span th:text="${req.id}"></span>
+      </span>
+      <span class="status-badge"
+            th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
+                             (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
+                             (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
+                             'status-badge--rejected'))"
+            th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
+                     (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
+                     (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
+        Pendiente
+      </span>
+    </div>
+    <div class="request-item__body">
+      <div class="request-item__row" th:if="${req.createdAt != null}">
+        <i class="fa-solid fa-calendar"></i>
+        <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+      </div>
+      <div class="request-item__row" th:if="${req.contactName != null}">
+        <i class="fa-solid fa-user"></i>
+        <span th:text="${req.contactName}"></span>
+      </div>
+      <div class="request-item__row" th:if="${req.contactPhone != null}">
+        <i class="fa-solid fa-phone"></i>
+        <span th:text="${req.contactPhone}"></span>
+      </div>
+      <div class="request-item__row" th:if="${req.city != null}">
+        <i class="fa-solid fa-location-dot"></i>
+        <span th:text="${req.city}"></span>
+      </div>
+      <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
+        <i class="fa-solid fa-route"></i>
+        <span th:text="${req.address}"></span>
+      </div>
+      <div th:if="${req.hasMaterials()}" class="request-item__materials">
+        <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+      </div>
+      <div class="request-item__row" th:if="${req.organization != null}">
+        <i class="fa-solid fa-building"></i>
+        <span th:text="${req.organization.displayName}"></span>
+      </div>
+      <div class="request-item__row" th:if="${req.organization == null}">
+        <i class="fa-solid fa-building"></i>
+        <span data-i18n="track_no_org">Sin asignar</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fragment: empty-state
+       Reusable empty state for request lists.
+       Variables: messageKey (i18n key), icon (FontAwesome class) -->
+  <div th:fragment="empty-state(messageKey, icon)" class="info-card">
+    <div class="track-empty">
+      <div class="track-empty__illustration">
+        <i th:class="${icon}" class="fa-solid fa-inbox"></i>
+      </div>
+      <p class="track-empty__text" th:text="${messageKey}">No hay solicitudes</p>
+    </div>
+  </div>
+
+</body>
+</html>

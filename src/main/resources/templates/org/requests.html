@@ -7,7 +7,9 @@
 </head>
 <body>
   <main layout:fragment="content">
-    <div class="page panel-section">
+    <div class="org-layout">
+      <div th:replace="~{fragments/org-sidebar :: sidebar('requests')}"></div>
+      <div class="org-layout__main panel-section">
 
       <!-- Breadcrumbs -->
       <nav class="breadcrumb" aria-label="breadcrumb">
@@ -58,47 +60,7 @@
         <div th:if="${requests != null and !requests.isEmpty()}">
           <div class="request-list">
             <div th:each="req : ${requests}" class="request-item">
-              <div class="request-item__header">
-                <span class="request-item__id">
-                  <span data-i18n="track_request_id">Solicitud</span>
-                  #<span th:text="${req.id}"></span>
-                </span>
-                <span class="status-badge"
-                      th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
-                                       (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
-                                       (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
-                                       'status-badge--rejected'))"
-                      th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
-                               (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
-                               (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
-                  Pendiente
-                </span>
-              </div>
-              <div class="request-item__body">
-                <div class="request-item__row" th:if="${req.createdAt != null}">
-                  <i class="fa-solid fa-calendar"></i>
-                  <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.contactName != null}">
-                  <i class="fa-solid fa-user"></i>
-                  <span th:text="${req.contactName}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.contactPhone != null}">
-                  <i class="fa-solid fa-phone"></i>
-                  <span th:text="${req.contactPhone}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.city != null}">
-                  <i class="fa-solid fa-location-dot"></i>
-                  <span th:text="${req.city}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
-                  <i class="fa-solid fa-route"></i>
-                  <span th:text="${req.address}"></span>
-                </div>
-                <div th:if="${req.hasMaterials()}" class="request-item__materials">
-                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
-                </div>
-              </div>
+              <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
               <div class="form-actions">
                 <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
                   <i class="fa-solid fa-eye"></i>
@@ -110,12 +72,7 @@
         </div>
 
         <!-- Empty state -->
-        <div th:if="${requests == null or requests.isEmpty()}" class="info-card">
-          <div class="track-empty">
-            <i class="fa-solid fa-inbox track-empty__icon"></i>
-            <p class="track-empty__text" data-i18n="org_req_empty">No hay solicitudes</p>
-          </div>
-        </div>
+        <th:block th:replace="~{fragments/request-list :: empty-state(messageKey='No hay solicitudes', icon='fa-solid fa-inbox')}"></th:block>
       </th:block>
 
       <!-- ═══ DETAIL VIEW ═══ -->
@@ -219,7 +176,8 @@
         <!-- Accept form (PENDING only) -->
         <div th:if="${request.isPending()}" class="info-card">
           <h2 class="info-card__title" data-i18n="org_req_accept_title">Aceptar solicitud</h2>
-          <form th:action="@{/acopio/requests/accept/{id}(id=${request.id})}" method="post" class="auth-form">
+          <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="auth-form">
+            <input type="hidden" name="action" value="accept" />
             <div class="form-group">
               <label for="confirmedSlot" data-i18n="org_req_select_slot">Confirmar franja horaria</label>
               <select id="confirmedSlot" name="confirmedSlot" class="form-select" required>
@@ -239,8 +197,9 @@
             </div>
           </form>
           <!-- Reject form (hidden) -->
-          <form id="rejectForm" th:action="@{/acopio/requests/reject/{id}(id=${request.id})}" method="post"
+          <form id="rejectForm" th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post"
                 style="display:none;margin-top:1rem;">
+            <input type="hidden" name="action" value="reject" />
             <p style="font-size:.8125rem;color:var(--gray-text);margin-bottom:.5rem;" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
             <div class="form-actions">
               <button type="submit" class="btn btn--outline" style="color:#b91c1c;border-color:#fecaca;">
@@ -257,7 +216,8 @@
         <!-- Complete button (IN_PROGRESS only) -->
         <div th:if="${request.isInProgress()}" class="info-card">
           <h2 class="info-card__title" data-i18n="org_req_complete_title">Finalizar recolección</h2>
-          <form th:action="@{/acopio/requests/complete/{id}(id=${request.id})}" method="post">
+          <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post">
+            <input type="hidden" name="action" value="complete" />
             <button type="submit" class="btn btn--primary">
               <i class="fa-solid fa-circle-check"></i>
               <span data-i18n="org_req_complete">Marcar como completada</span>
@@ -267,6 +227,7 @@
 
       </th:block>
 
+      </div>
     </div>
   </main>
 </body>

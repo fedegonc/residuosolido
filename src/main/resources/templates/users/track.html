@@ -14,7 +14,7 @@
         <h1 class="track-card__title" data-i18n="track_title">Rastrear solicitud</h1>
         <p class="track-card__subtitle" data-i18n="track_subtitle">Ingresá tu teléfono para ver el estado de tus solicitudes</p>
 
-        <form action="/rastrear" method="post" class="track-form">
+        <form th:action="@{/rastrear}" method="post" class="track-form">
           <div class="form-group">
             <label for="phone" data-i18n="track_phone_label">Teléfono</label>
             <input type="tel" id="phone" name="phone" class="form-input"
@@ -80,7 +80,7 @@
                 </div>
                 <div class="request-item__row" th:if="${req.city != null}">
                   <i class="fa-solid fa-location-dot"></i>
-                  <span th:text="${req.city}"></span>
+                  <span th:attr="data-i18n=${'city_' + #strings.toLowerCase(req.city.name())}" th:text="${req.city}"></span>
                 </div>
                 <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
                   <i class="fa-solid fa-route"></i>

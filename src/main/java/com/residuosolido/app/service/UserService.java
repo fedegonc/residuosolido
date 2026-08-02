@@ -1,17 +1,18 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,9 @@ public class UserService {
         return findAuthenticatedUserByUsername(authentication.getName());
     }
 
-    @Transactional
+    // NOTE: MongoDB standalone does not support multi-document transactions (requires replica set).
+    // These operations are NOT atomic. If a failure occurs mid-operation, data may be left inconsistent.
+    // To enable real transactions, configure a single-node replica set in MongoDB.
     public User updateUser(User user, String newPassword) {
         User existing = userRepository.findById(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
@@ -54,12 +57,13 @@ public class UserService {
         existing.setFirstName(user.getFirstName());
         existing.setPhone(user.getPhone());
         existing.setCity(user.getCity());
+        existing.setAcceptedMaterials(user.getAcceptedMaterials());
         if (user.getProfileCompleted() != null) {
             existing.setProfileCompleted(user.getProfileCompleted());
         }
 
         if (newPassword != null && !newPassword.trim().isEmpty()) {
-            if (newPassword.length() < 8) {
+            if (newPassword.length() < 3) {
                 throw new IllegalArgumentException("error.register.password_min_length");
             }
             existing.setPassword(passwordEncoder.encode(newPassword));
@@ -73,16 +77,28 @@ public class UserService {
     }
 
     public User updateProfile(User user, String email, String firstName, String phone, City city) {
+        return updateProfile(user, email, firstName, phone, city, null);
+    }
+
+    public User updateProfile(User user, String email, String firstName, String phone, City city,
+                               List<MaterialCategory> acceptedMaterials) {
         if (email != null) user.setEmail(email.trim());
         if (firstName != null) user.setFirstName(firstName.trim());
-        if (phone != null) user.setPhone(phone.trim());
+        if (phone != null) {
+            PhoneNumber.of(phone);
+            user.setPhone(phone.trim());
+        }
         if (city != null) user.setCity(city);
+        if (acceptedMaterials != null) user.setAcceptedMaterials(acceptedMaterials);
         return updateUser(user, null);
     }
 
-    @Transactional
+    // NOTE: Not @Transactional — MongoDB standalone has no transaction support.
     public void completeOrgProfile(User org, String phone, City city) {
-        if (phone != null) org.setPhone(phone.trim());
+        if (phone != null) {
+            PhoneNumber.of(phone);
+            org.setPhone(phone.trim());
+        }
         if (city != null) org.setCity(city);
         try {
             org.completeProfile();
@@ -90,40 +106,5 @@ public class UserService {
             throw new IllegalArgumentException(e.getMessage());
         }
         userRepository.save(org);
-    }
-
-    public String validateUserRegistration(User user) {
-        if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            return "error.register.username_required";
-        }
-        if (user.getUsername().matches(".*\\s+.*")) {
-            return "error.register.username_no_spaces";
-        }
-        if (user.getPassword() == null || user.getPassword().length() < 8) {
-            return "error.register.password_min_length";
-        }
-        if (user.getEmail() == null || user.getEmail().trim().isEmpty() || !user.getEmail().contains("@")) {
-            return "error.register.email_invalid";
-        }
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return "error.register.username_exists";
-        }
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return "error.register.email_exists";
-        }
-        return null;
-    }
-
-    public User registerUser(User user, String isOrganization) {
-        boolean org = isOrganization != null;
-        return registerUser(user, org);
-    }
-
-    public User registerUser(User user, boolean isOrganization) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
-        user.setActive(true);
-        user.setCreatedAt(LocalDateTime.now());
-        return userRepository.save(user);
     }
 }

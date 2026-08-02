@@ -11,8 +11,9 @@
 
       <div class="navbar__links">
         <a href="/" class="navbar__link" data-i18n="nav_home">Inicio</a>
-        <a href="/solicitudes/nueva" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
-        <a href="/rastrear" class="navbar__link" data-i18n="nav_track">Rastrear solicitud</a>
+        <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
+        <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
+        <a sec:authorize="!hasRole('ORGANIZATION')" href="/rastrear" class="navbar__link" data-i18n="nav_track">Rastrear solicitud</a>
         <a href="/metricas" class="navbar__link" data-i18n="nav_metrics">Métricas públicas</a>
       </div>
 
@@ -55,8 +56,9 @@
 
     <div id="dropdownMenu" class="dropdown is-hidden">
       <a href="/" class="dropdown__link" data-i18n="nav_home">Inicio</a>
-      <a href="/solicitudes/nueva" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
-      <a href="/rastrear" class="dropdown__link" data-i18n="nav_track">Rastrear solicitud</a>
+      <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
+      <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
+      <a sec:authorize="!hasRole('ORGANIZATION')" href="/rastrear" class="dropdown__link" data-i18n="nav_track">Rastrear solicitud</a>
       <a href="/metricas" class="dropdown__link" data-i18n="nav_metrics">Métricas públicas</a>
       <div class="dropdown__divider">
         <div class="dropdown__lang-row">

@@ -92,7 +92,12 @@
       var chosen = btn.getAttribute('data-lang');
       if (chosen !== lang) {
         localStorage.setItem('lang', chosen);
-        window.location.reload();
+        // Sync server-side session locale (Spring's LocaleChangeInterceptor,
+        // param "lang") so server-rendered messages (flash/validation errors)
+        // match the chosen language, not just the client-side i18n texts.
+        var url = new URL(window.location.href);
+        url.searchParams.set('lang', chosen);
+        window.location.href = url.toString();
       }
     });
   });
@@ -121,4 +126,27 @@
       }
     });
   }
+
+  /* ─── Check-card visual state (reusable across all checkbox-card forms) ─── */
+  document.querySelectorAll('.check-card input[type="checkbox"]').forEach(function (cb) {
+    function update() { cb.closest('.check-card').classList.toggle('check-card--checked', cb.checked); }
+    cb.addEventListener('change', update);
+    update();
+  });
+
+  /* ─── Password visibility toggle (reusable) ─── */
+  document.querySelectorAll('[data-toggle-target]').forEach(function (toggleBtn) {
+    toggleBtn.addEventListener('click', function () {
+      var input = document.getElementById(toggleBtn.getAttribute('data-toggle-target'));
+      if (!input) return;
+      var icon = toggleBtn.querySelector('i');
+      var willShow = input.type === 'password';
+      input.type = willShow ? 'text' : 'password';
+      if (icon) {
+        icon.classList.toggle('fa-eye', !willShow);
+        icon.classList.toggle('fa-eye-slash', willShow);
+      }
+      toggleBtn.setAttribute('aria-pressed', String(willShow));
+    });
+  });
 })();

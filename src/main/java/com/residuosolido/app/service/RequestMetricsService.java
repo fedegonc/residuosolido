@@ -9,8 +9,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -43,7 +42,7 @@ public class RequestMetricsService {
                 ).as("total")
         );
         AggregationResults<Map> results = mongoTemplate.aggregate(agg, "requests", Map.class);
-        Map<String, Long> stats = new java.util.HashMap<>();
+        Map<String, Long> stats = new HashMap<>();
         stats.put("total", 0L);
         stats.put("pending", 0L);
         stats.put("inProgress", 0L);
@@ -66,38 +65,5 @@ public class RequestMetricsService {
             return count instanceof Number ? ((Number) count).longValue() : 0L;
         }
         return 0L;
-    }
-
-    public long getPublicTotalCompleted() {
-        Aggregation agg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("status").is(RequestStatus.COMPLETED)),
-                Aggregation.count().as("total")
-        );
-        AggregationResults<Map> results = mongoTemplate.aggregate(agg, "requests", Map.class);
-        List<Map> mappedResults = results.getMappedResults();
-        if (mappedResults.isEmpty()) {
-            return 0;
-        }
-        Object total = mappedResults.get(0).get("total");
-        return total instanceof Number ? ((Number) total).longValue() : 0;
-    }
-
-    public Map<String, Long> getPublicMetricsByCity() {
-        Aggregation agg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("status").is(RequestStatus.COMPLETED)
-                        .and("city").ne(null)),
-                Aggregation.group("city").count().as("count"),
-                Aggregation.sort(org.springframework.data.domain.Sort.by(
-                        org.springframework.data.domain.Sort.Order.desc("count"),
-                        org.springframework.data.domain.Sort.Order.asc("_id")))
-        );
-        AggregationResults<Map> results = mongoTemplate.aggregate(agg, "requests", Map.class);
-        Map<String, Long> metrics = new LinkedHashMap<>();
-        for (Map result : results.getMappedResults()) {
-            String city = result.get("_id").toString();
-            Long count = ((Number) result.get("count")).longValue();
-            metrics.put(city, count);
-        }
-        return metrics;
     }
 }

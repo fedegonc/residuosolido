@@ -2,12 +2,10 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.service.UserService;
+import com.residuosolido.app.enums.MaterialCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -15,30 +13,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class OrgProfileController {
+public class OrgProfileController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgProfileController.class);
 
-    private final UserService userService;
-    private final MessageSource messageSource;
-
     @Autowired
-    public OrgProfileController(UserService userService, MessageSource messageSource) {
-        this.userService = userService;
-        this.messageSource = messageSource;
+    public OrgProfileController() {
     }
 
     @GetMapping("/acopio/perfil")
     public String orgProfile(Authentication authentication, Model model) {
         try {
-            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User currentOrg = getCurrentUser(authentication);
             model.addAttribute("organization", currentOrg);
             model.addAttribute("cities", City.values());
+            model.addAttribute("materials", MaterialCategory.values());
         } catch (Exception e) {
             logger.error("Error al cargar perfil de organización: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", messageSource.getMessage("flash.org.profile_load_error", null, LocaleContextHolder.getLocale()));
+            model.addAttribute("errorMessage", msg("flash.org.profile_load_error"));
         }
         return "org/profile";
     }
@@ -49,15 +45,17 @@ public class OrgProfileController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) City city,
+            @RequestParam(required = false) List<MaterialCategory> materials,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
-            User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
-            userService.updateProfile(currentOrg, email, firstName, phone, city);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.profile.updated", null, LocaleContextHolder.getLocale()));
+            User currentOrg = getCurrentUser(authentication);
+            userService.updateProfile(currentOrg, email, firstName, phone, city,
+                    materials != null ? materials : List.of());
+            flashSuccess(redirectAttributes, "flash.profile.updated");
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.profile.update_error", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.profile.update_error");
         }
         return "redirect:/acopio/perfil";
     }

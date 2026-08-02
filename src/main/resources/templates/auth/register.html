@@ -7,45 +7,62 @@
 </head>
 <body>
   <main layout:fragment="content">
-    <div class="page page--narrow auth-section">
-      <div class="auth-card">
-        <h1 class="auth-card__title" data-i18n="auth_register_title">Crear cuenta</h1>
-        <p class="auth-card__subtitle" data-i18n="auth_register_subtitle">Registrate para empezar a usar Residuo Sólido</p>
-
-        <div th:if="${error != null}" class="alert alert--error" role="alert">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          <span th:text="${error}"></span>
+    <div class="auth-split">
+      <div class="auth-split__intro">
+        <span class="auth-split__badge">
+          <i class="fa-solid fa-leaf"></i>
+          <span data-i18n="auth_welcome_badge">Juntos por una ciudad más limpia y sustentable</span>
+        </span>
+        <h1 class="auth-split__title" data-i18n="auth_join_title">Sumate a la comunidad</h1>
+        <p class="auth-split__subtitle" data-i18n="auth_join_subtitle">Creá tu cuenta y ayudanos a construir un futuro más limpio para todos.</p>
+        <div class="auth-split__illustration">
+          <div class="icon-circle"><i class="fa-solid fa-recycle"></i></div>
         </div>
+      </div>
 
-        <form th:action="@{/auth/register}" th:object="${user}" method="post" class="auth-form">
-          <div class="form-group">
-            <label for="username" data-i18n="auth_username">Usuario</label>
-            <input type="text" id="username" th:field="*{username}" required
-                   placeholder="Ej: juan_perez" class="form-input">
-          </div>
-          <div class="form-group">
-            <label for="email" data-i18n="auth_email">Email</label>
-            <input type="email" id="email" th:field="*{email}" required
-                   placeholder="tu@email.com" class="form-input">
-          </div>
-          <div class="form-group">
-            <label for="password" data-i18n="auth_password">Contraseña</label>
-            <input type="password" id="password" th:field="*{password}" required
-                   placeholder="••••••••" class="form-input">
-            <small class="form-hint" data-i18n="auth_password_hint">Mínimo 8 caracteres</small>
-          </div>
-          <div class="form-check">
-            <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
-            <label for="isOrganization" data-i18n="auth_is_organization">Soy una cooperativa o reciclador</label>
-          </div>
-          <p class="form-hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección. Podés gestionar tu perfil de organización después.</p>
-          <button type="submit" class="btn btn--primary btn--block btn--lg" data-i18n="auth_register_button">Registrarse</button>
-        </form>
+      <div class="auth-split__form">
+        <div class="auth-card">
+          <div class="auth-card__icon"><i class="fa-solid fa-user-plus"></i></div>
+          <h1 class="auth-card__title" data-i18n="auth_register_title">Crear cuenta</h1>
+          <p class="auth-card__subtitle" data-i18n="auth_register_subtitle">Registrate para empezar a usar Residuo Sólido</p>
 
-        <p class="auth-card__footer">
-          <span data-i18n="auth_have_account">¿Ya tenés cuenta?</span>
-          <a th:href="@{/auth/login}" data-i18n="auth_login_link">Iniciar sesión</a>
-        </p>
+          <form th:action="@{/auth/register}" th:object="${user}" method="post" class="auth-form">
+            <div class="form-group">
+              <label for="username" data-i18n="auth_username">Usuario</label>
+              <div class="input-icon">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                <input type="text" id="username" th:field="*{username}" required placeholder=" " class="form-input">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email" data-i18n="auth_email">Email</label>
+              <div class="input-icon">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                <input type="email" id="email" th:field="*{email}" required
+                       placeholder="tu@email.com" class="form-input">
+              </div>
+            </div>
+            <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_password_hint', 'Mínimo 3 caracteres')}"></div>
+            <div class="form-check">
+              <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
+              <label for="isOrganization" data-i18n="auth_is_organization">Soy una cooperativa o reciclador</label>
+            </div>
+            <p class="form-hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección. Podés gestionar tu perfil de organización después.</p>
+            <button type="submit" class="btn btn--primary btn--block btn--lg" data-i18n="auth_register_button">Registrarse</button>
+
+            <div class="auth-divider" data-i18n="auth_or">o</div>
+
+            <a th:href="@{/auth/login}" class="btn btn--outline btn--block btn--lg">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span data-i18n="auth_login_link">Iniciar sesión</span>
+            </a>
+          </form>
+
+          <p class="auth-card__footer">
+            <span data-i18n="auth_have_account">¿Ya tenés cuenta?</span>
+            <a th:href="@{/auth/login}" data-i18n="auth_login_link">Iniciar sesión</a>
+          </p>
+        </div>
       </div>
     </div>
   </main>

@@ -11,8 +11,11 @@ import com.residuosolido.app.service.CityOrganizationService;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestOrganizationService;
+import com.residuosolido.app.service.RequestTransitionService;
 import com.residuosolido.app.service.InformalCollectorService;
 import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.service.RequestUpdateService;
+import com.residuosolido.app.service.RequestQueryService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,10 @@ class EndToEndFlowsTest {
     @MockBean
     private RequestService requestService;
     @MockBean
+    private RequestUpdateService requestUpdateService;
+    @MockBean
+    private RequestQueryService requestQueryService;
+    @MockBean
     private UserService userService;
     @MockBean
     private RequestMetricsService requestMetricsService;
@@ -64,6 +71,8 @@ class EndToEndFlowsTest {
     @MockBean
     private RequestOrganizationService requestOrganizationService;
     @MockBean
+    private RequestTransitionService requestTransitionService;
+    @MockBean
     private InformalCollectorService informalCollectorService;
 
     // ═══════════════════════════════════════════════════════
@@ -72,7 +81,7 @@ class EndToEndFlowsTest {
 
     @Test
     void flujo6_guestTracking_pageLoadsAndShowsForm() throws Exception {
-        when(requestService.getGuestRequestsByPhone(null)).thenReturn(Collections.emptyList());
+        when(requestQueryService.getGuestRequestsByPhone(null)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/rastrear"))
                 .andExpect(status().isOk())
@@ -91,7 +100,7 @@ class EndToEndFlowsTest {
         req.setCity(City.RIVERA);
         req.setMaterials(List.of(MaterialCategory.PLASTICO));
 
-        when(requestService.getGuestRequestsByPhone("+59899123456")).thenReturn(List.of(req));
+        when(requestQueryService.getGuestRequestsByPhone("+59899123456")).thenReturn(List.of(req));
 
         mockMvc.perform(post("/rastrear").with(csrf()).param("phone", "+59899123456"))
                 .andExpect(status().isOk())
@@ -130,7 +139,7 @@ class EndToEndFlowsTest {
         user.setFirstName("Vecino");
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
-        when(requestService.getRecentRequestsByUser(user, 5)).thenReturn(Collections.emptyList());
+        when(requestQueryService.getRecentRequestsByUser(user, 5)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/usuarios/inicio"))
                 .andExpect(status().isOk())
@@ -169,7 +178,7 @@ class EndToEndFlowsTest {
         user.setUsername("vecino");
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
-        when(requestService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(requestQueryService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/solicitudes"))
                 .andExpect(status().isOk())
@@ -292,7 +301,8 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
 
-        mockMvc.perform(post("/acopio/requests/accept/req1").with(csrf())
+        mockMvc.perform(post("/acopio/requests/req1/transition").with(csrf())
+                        .param("action", "accept")
                         .param("confirmedSlot", "MANANA"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/acopio/requests"));

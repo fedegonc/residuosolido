@@ -13,7 +13,7 @@
         <h1 class="form-card__title" data-i18n="onboard_title">Completá tu perfil</h1>
         <p class="form-card__subtitle" data-i18n="onboard_subtitle">Necesitamos estos datos para que los ciudadanos puedan contactarte</p>
 
-        <form action="/acopio/completar-perfil" method="post" class="auth-form">
+        <form th:action="@{/acopio/completar-perfil}" method="post" class="auth-form">
 
           <!-- Organization name (read-only, already set at registration) -->
           <div class="form-group">
@@ -35,7 +35,9 @@
             <label for="city" data-i18n="onboard_city">Ciudad</label>
             <select id="city" name="city" class="form-select" required>
               <option value="" data-i18n="onboard_city_select">Seleccioná una ciudad</option>
-              <option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+              <option th:each="c : ${cities}" th:value="${c}"
+                      th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}"
+                      th:text="${c.name()}"
                       th:selected="${organization.city != null and organization.city == c}"></option>
             </select>
           </div>

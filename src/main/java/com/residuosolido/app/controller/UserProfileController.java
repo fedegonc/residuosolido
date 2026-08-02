@@ -4,13 +4,10 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.RequestMetricsService;
-import com.residuosolido.app.service.RequestService;
-import com.residuosolido.app.service.UserService;
+import com.residuosolido.app.service.RequestQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,39 +17,36 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @PreAuthorize("hasRole('USER')")
-public class UserProfileController {
+public class UserProfileController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
-    private final UserService userService;
-    private final RequestService requestService;
+    private final RequestQueryService requestQueryService;
     private final RequestMetricsService requestMetricsService;
-    private final MessageSource messageSource;
     private final BreadcrumbService breadcrumbService;
 
     @Autowired
-    public UserProfileController(UserService userService, RequestService requestService,
-                                 RequestMetricsService requestMetricsService, MessageSource messageSource,
+    public UserProfileController(RequestQueryService requestQueryService,
+                                 RequestMetricsService requestMetricsService,
                                  BreadcrumbService breadcrumbService) {
-        this.userService = userService;
-        this.requestService = requestService;
+        this.requestQueryService = requestQueryService;
         this.requestMetricsService = requestMetricsService;
-        this.messageSource = messageSource;
         this.breadcrumbService = breadcrumbService;
     }
 
     @GetMapping("/usuarios/inicio")
     public String dashboard(Authentication authentication, Model model) {
-        User user = userService.findAuthenticatedUserByUsername(authentication.getName());
+        User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
-        model.addAttribute("recentRequests", requestService.getRecentRequestsByUser(user, 5));
+        model.addAttribute("recentRequests", requestQueryService.getRecentRequestsByUser(user, 5));
+        model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
         model.addAttribute("breadcrumbs", breadcrumbService.addCurrent(breadcrumbService.home(), "Mi panel"));
         return "users/dashboard";
     }
 
     @GetMapping("/usuarios/perfil")
     public String profile(Authentication authentication, Model model) {
-        User user = userService.findAuthenticatedUserByUsername(authentication.getName());
+        User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
         model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
         model.addAttribute("cities", City.values());
@@ -68,12 +62,12 @@ public class UserProfileController {
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User user = getCurrentUser(authentication);
             userService.updateProfile(user, email, firstName, phone, city);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.profile.updated", null, LocaleContextHolder.getLocale()));
+            flashSuccess(redirectAttributes, "flash.profile.updated");
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de usuario: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.profile.update_error", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.profile.update_error");
         }
         return "redirect:/usuarios/perfil";
     }

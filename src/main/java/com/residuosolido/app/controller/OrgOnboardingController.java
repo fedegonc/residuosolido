@@ -2,12 +2,9 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,26 +14,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class OrgOnboardingController {
+public class OrgOnboardingController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgOnboardingController.class);
 
-    private final UserService userService;
-    private final MessageSource messageSource;
-
     @Autowired
-    public OrgOnboardingController(UserService userService, MessageSource messageSource) {
-        this.userService = userService;
-        this.messageSource = messageSource;
+    public OrgOnboardingController() {
     }
 
     @GetMapping("/acopio/completar-perfil")
     public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
         try {
-            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User currentUser = getCurrentUser(authentication);
 
             if (currentUser.isProfileComplete()) {
-                redirectAttributes.addFlashAttribute("infoMessage", messageSource.getMessage("flash.org.profile_already_complete", null, LocaleContextHolder.getLocale()));
+                redirectAttributes.addFlashAttribute("infoMessage", msg("flash.org.profile_already_complete"));
                 return "redirect:/acopio/inicio";
             }
 
@@ -46,7 +38,7 @@ public class OrgOnboardingController {
 
         } catch (Exception e) {
             logger.error("Error al cargar formulario de completar perfil: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.profile_form_error", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.org.profile_form_error");
             return "redirect:/auth/login";
         }
     }
@@ -59,18 +51,16 @@ public class OrgOnboardingController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            User currentUser = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User currentUser = getCurrentUser(authentication);
             userService.completeOrgProfile(currentUser, phone, city);
-            redirectAttributes.addFlashAttribute("successMessage",
-                messageSource.getMessage("flash.org.profile_completed", null, LocaleContextHolder.getLocale()));
+            flashSuccess(redirectAttributes, "flash.org.profile_completed");
             return "redirect:/acopio/inicio";
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, e.getMessage());
             return "redirect:/acopio/completar-perfil";
         } catch (Exception e) {
             logger.error("Error al completar perfil de organización: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage",
-                messageSource.getMessage("flash.org.profile_complete_error", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.org.profile_complete_error");
             return "redirect:/acopio/completar-perfil";
         }
     }

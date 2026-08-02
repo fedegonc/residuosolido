@@ -31,47 +31,7 @@
       <div th:if="${requests != null and !requests.isEmpty()}">
         <div class="request-list">
           <div th:each="req : ${requests}" class="request-item">
-            <div class="request-item__header">
-              <span class="request-item__id">
-                <span data-i18n="track_request_id">Solicitud</span>
-                #<span th:text="${req.id}"></span>
-              </span>
-              <span class="status-badge"
-                    th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
-                                     (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
-                                     (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
-                                     'status-badge--rejected'))"
-                    th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
-                             (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
-                             (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
-                Pendiente
-              </span>
-            </div>
-            <div class="request-item__body">
-              <div class="request-item__row" th:if="${req.createdAt != null}">
-                <i class="fa-solid fa-calendar"></i>
-                <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.city != null}">
-                <i class="fa-solid fa-location-dot"></i>
-                <span th:text="${req.city}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
-                <i class="fa-solid fa-route"></i>
-                <span th:text="${req.address}"></span>
-              </div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials">
-                <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.organization != null}">
-                <i class="fa-solid fa-building"></i>
-                <span th:text="${req.organization.displayName}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.organization == null}">
-                <i class="fa-solid fa-building"></i>
-                <span data-i18n="track_no_org">Sin asignar</span>
-              </div>
-            </div>
+            <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
             <!-- Actions -->
             <div class="form-actions">
               <a th:href="@{/solicitud/{id}(id=${req.id})}" class="btn btn--outline btn--sm">

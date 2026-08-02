@@ -35,12 +35,12 @@ class InformalCollectorServiceTest {
     void create_validData_savesCollector() {
         when(repository.save(any(InformalCollector.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        InformalCollector result = service.create(organization, "Juan", "099123456", City.RIVERA,
+        InformalCollector result = service.create(organization, "Juan", "+598 99 123 456", City.RIVERA,
                 List.of(MaterialCategory.PAPEL), "nota");
 
         assertEquals("org-1", result.getOrganizationId());
         assertEquals("Juan", result.getName());
-        assertEquals("099123456", result.getPhone());
+        assertEquals("+598 99 123 456", result.getPhone());
         assertEquals(City.RIVERA, result.getCity());
         assertTrue(result.isActive());
         assertNotNull(result.getCreatedAt());
@@ -50,7 +50,7 @@ class InformalCollectorServiceTest {
     @Test
     void create_nullName_throwsException() {
         assertThrows(IllegalArgumentException.class,
-                () -> service.create(organization, null, "099123456", City.RIVERA, List.of(), null));
+                () -> service.create(organization, null, "+598 99 123 456", City.RIVERA, List.of(), null));
     }
 
     @Test
@@ -61,7 +61,7 @@ class InformalCollectorServiceTest {
 
     @Test
     void findOwnedById_correctOwner_returnsCollector() {
-        InformalCollector collector = InformalCollector.create("org-1", "Juan", "099123456", City.RIVERA, List.of(), null);
+        InformalCollector collector = InformalCollector.create("org-1", "Juan", "+598 99 123 456", City.RIVERA, List.of(), null);
         when(repository.findById("id-1")).thenReturn(Optional.of(collector));
 
         InformalCollector result = service.findOwnedById("id-1", organization);
@@ -79,7 +79,7 @@ class InformalCollectorServiceTest {
 
     @Test
     void findOwnedById_wrongOwner_throwsSecurity() {
-        InformalCollector collector = InformalCollector.create("org-otra", "Juan", "099123456", City.RIVERA, List.of(), null);
+        InformalCollector collector = InformalCollector.create("org-otra", "Juan", "+598 99 123 456", City.RIVERA, List.of(), null);
         when(repository.findById("id-1")).thenReturn(Optional.of(collector));
 
         assertThrows(SecurityException.class,
@@ -88,15 +88,15 @@ class InformalCollectorServiceTest {
 
     @Test
     void update_correctOwner_updatesAndSaves() {
-        InformalCollector collector = InformalCollector.create("org-1", "Juan", "099123456", City.RIVERA, List.of(), null);
+        InformalCollector collector = InformalCollector.create("org-1", "Juan", "+598 99 123 456", City.RIVERA, List.of(), null);
         when(repository.findById("id-1")).thenReturn(Optional.of(collector));
         when(repository.save(any(InformalCollector.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        InformalCollector result = service.update("id-1", organization, "Pedro", "099654321",
+        InformalCollector result = service.update("id-1", organization, "Pedro", "+598 99 654 321",
                 City.LIVRAMENTO, List.of(MaterialCategory.PLASTICO), "nueva nota", false);
 
         assertEquals("Pedro", result.getName());
-        assertEquals("099654321", result.getPhone());
+        assertEquals("+598 99 654 321", result.getPhone());
         assertEquals(City.LIVRAMENTO, result.getCity());
         assertFalse(result.isActive());
         verify(repository).save(collector);
@@ -104,7 +104,7 @@ class InformalCollectorServiceTest {
 
     @Test
     void delete_correctOwner_deletesCollector() {
-        InformalCollector collector = InformalCollector.create("org-1", "Juan", "099123456", City.RIVERA, List.of(), null);
+        InformalCollector collector = InformalCollector.create("org-1", "Juan", "+598 99 123 456", City.RIVERA, List.of(), null);
         when(repository.findById("id-1")).thenReturn(Optional.of(collector));
 
         service.delete("id-1", organization);
@@ -114,7 +114,7 @@ class InformalCollectorServiceTest {
 
     @Test
     void delete_wrongOwner_throwsSecurity() {
-        InformalCollector collector = InformalCollector.create("org-otra", "Juan", "099123456", City.RIVERA, List.of(), null);
+        InformalCollector collector = InformalCollector.create("org-otra", "Juan", "+598 99 123 456", City.RIVERA, List.of(), null);
         when(repository.findById("id-1")).thenReturn(Optional.of(collector));
 
         assertThrows(SecurityException.class, () -> service.delete("id-1", organization));

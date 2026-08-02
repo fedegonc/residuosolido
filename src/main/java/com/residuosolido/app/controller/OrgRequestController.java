@@ -3,13 +3,11 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.TimeSlot;
-import com.residuosolido.app.service.UserService;
 import com.residuosolido.app.service.RequestOrganizationService;
+import com.residuosolido.app.service.RequestTransitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,19 +19,18 @@ import java.util.List;
 
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class OrgRequestController {
+public class OrgRequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
-    private final UserService userService;
     private final RequestOrganizationService requestOrganizationService;
-    private final MessageSource messageSource;
+    private final RequestTransitionService requestTransitionService;
 
     @Autowired
-    public OrgRequestController(UserService userService, RequestOrganizationService requestOrganizationService, MessageSource messageSource) {
-        this.userService = userService;
+    public OrgRequestController(RequestOrganizationService requestOrganizationService,
+                               RequestTransitionService requestTransitionService) {
         this.requestOrganizationService = requestOrganizationService;
-        this.messageSource = messageSource;
+        this.requestTransitionService = requestTransitionService;
     }
 
     @GetMapping("/acopio/requests")
@@ -41,7 +38,7 @@ public class OrgRequestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
-        User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+        User currentOrg = getCurrentUser(authentication);
         List<Request> requests = requestOrganizationService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
 
         model.addAttribute("requests", requests);
@@ -53,74 +50,36 @@ public class OrgRequestController {
         return "org/requests";
     }
 
-    @GetMapping("/acopio/requests/{id}")
-    public String orgRequestDetail(@PathVariable String id, Authentication authentication,
-                                    Model model, RedirectAttributes redirectAttributes) {
+    @PostMapping("/acopio/requests/{id}/transition")
+    public String orgTransitionRequest(@PathVariable String id,
+                                       @RequestParam("action") String action,
+                                       @RequestParam(value = "confirmedSlot", required = false) TimeSlot confirmedSlot,
+                                       Authentication authentication,
+                                       RedirectAttributes redirectAttributes) {
         try {
-            User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            Request request = requestOrganizationService.getOwnedOrgRequest(id, org);
-            model.addAttribute("request", request);
-            model.addAttribute("viewType", "detail");
-            model.addAttribute("timeSlots", TimeSlot.values());
-            return "org/requests";
+            User org = getCurrentUser(authentication);
+            switch (action) {
+                case "accept" -> {
+                    requestTransitionService.acceptRequest(id, org, confirmedSlot);
+                    flashSuccess(redirectAttributes, "flash.org.request_accepted");
+                }
+                case "reject" -> {
+                    requestTransitionService.rejectRequest(id, org);
+                    flashSuccess(redirectAttributes, "flash.org.request_rejected");
+                }
+                case "complete" -> {
+                    requestTransitionService.completeRequest(id, org);
+                    flashSuccess(redirectAttributes, "flash.org.request_completed");
+                    return "redirect:/acopio/inicio";
+                }
+                default -> flashError(redirectAttributes, "flash.org.request_invalid_action");
+            }
         } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
-            return "redirect:/acopio/requests";
+            flashError(redirectAttributes, "flash.org.request_not_owned");
         } catch (Exception e) {
-            logger.error("Error al cargar solicitud {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_load_error", null, LocaleContextHolder.getLocale()));
-            return "redirect:/acopio/requests";
-        }
-    }
-
-    @PostMapping("/acopio/requests/accept/{id}")
-    public String orgAcceptRequest(@PathVariable String id,
-                                   @RequestParam("confirmedSlot") TimeSlot confirmedSlot,
-                                   Authentication authentication,
-                                   RedirectAttributes redirectAttributes) {
-        try {
-            User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestOrganizationService.acceptRequest(id, org, confirmedSlot);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.org.request_accepted", null, LocaleContextHolder.getLocale()));
-        } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
-            return "redirect:/acopio/requests";
-        } catch (Exception e) {
-            logger.error("Error al aceptar solicitud {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_accept_error", null, LocaleContextHolder.getLocale()));
+            logger.error("Error en transición '{}' para solicitud {}: {}", action, id, e.getMessage(), e);
+            flashError(redirectAttributes, "flash.org.request_transition_error");
         }
         return "redirect:/acopio/requests";
-    }
-
-    @PostMapping("/acopio/requests/reject/{id}")
-    public String orgRejectRequest(@PathVariable String id, Authentication authentication,
-                                    RedirectAttributes redirectAttributes) {
-        try {
-            User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestOrganizationService.rejectRequest(id, org);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.org.request_rejected", null, LocaleContextHolder.getLocale()));
-        } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
-        } catch (Exception e) {
-            logger.error("Error al rechazar solicitud {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_reject_error", null, LocaleContextHolder.getLocale()));
-        }
-        return "redirect:/acopio/requests";
-    }
-
-    @PostMapping("/acopio/requests/complete/{id}")
-    public String orgCompleteRequest(@PathVariable String id, Authentication authentication,
-                                      RedirectAttributes redirectAttributes) {
-        try {
-            User org = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestOrganizationService.completeRequest(id, org);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.org.request_completed", null, LocaleContextHolder.getLocale()));
-        } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_not_owned", null, LocaleContextHolder.getLocale()));
-        } catch (Exception e) {
-            logger.error("Error al completar solicitud {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.org.request_complete_error", null, LocaleContextHolder.getLocale()));
-        }
-        return "redirect:/acopio/inicio";
     }
 }

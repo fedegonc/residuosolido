@@ -2,13 +2,8 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.enums.TimeSlot;
-import com.residuosolido.app.config.GuestRateLimiter;
-import com.residuosolido.app.service.CityOrganizationService;
-import com.residuosolido.app.service.RequestService;
-import com.residuosolido.app.service.UserService;
+import com.residuosolido.app.service.RequestQueryService;
+import com.residuosolido.app.service.RequestUpdateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,94 +12,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Controller
-public class RequestController {
+public class RequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
-    private final RequestService requestService;
-    private final UserService userService;
-    private final CityOrganizationService cityOrganizationService;
-    private final MessageSource messageSource;
-    private final GuestRateLimiter guestRateLimiter;
+    private final RequestUpdateService requestUpdateService;
+    private final RequestQueryService requestQueryService;
 
     @Autowired
-    public RequestController(RequestService requestService, UserService userService,
-                             CityOrganizationService cityOrganizationService, MessageSource messageSource,
-                             GuestRateLimiter guestRateLimiter) {
-        this.requestService = requestService;
-        this.userService = userService;
-        this.cityOrganizationService = cityOrganizationService;
-        this.messageSource = messageSource;
-        this.guestRateLimiter = guestRateLimiter;
-    }
-
-    @GetMapping("/solicitudes/nueva")
-    public String newRequestForm(@RequestParam(value = "city", required = false) City city,
-                                  Model model, Authentication authentication) {
-        model.addAttribute("request", new Request());
-        model.addAttribute("isEdit", false);
-        model.addAttribute("isGuest", userService.isAnonymous(authentication));
-        model.addAttribute("cities", cityOrganizationService.getAvailableCities());
-        model.addAttribute("materials", MaterialCategory.values());
-        model.addAttribute("timeSlots", TimeSlot.values());
-        if (city != null) {
-            model.addAttribute("organizations", cityOrganizationService.getOrganizationsByCity(city));
-            model.addAttribute("selectedCity", city);
-        }
-        return "users/request-form";
-    }
-
-    @PostMapping("/solicitudes")
-    public String createRequest(@RequestParam("city") City city,
-                                @RequestParam("address") String address,
-                                @RequestParam(value = "addressReference", required = false) String addressReference,
-                                @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
-                                @RequestParam(value = "estimatedWeight", required = false) String estimatedWeight,
-                                @RequestParam(value = "estimatedVolume", required = false) String estimatedVolume,
-                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                                @RequestParam(value = "guestName", required = false) String guestName,
-                                @RequestParam(value = "guestPhone", required = false) String guestPhone,
-                                @RequestParam(value = "organizationId", required = false) String organizationId,
-                                Authentication authentication,
-                                HttpServletRequest httpRequest,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            User user = userService.resolveUser(authentication);
-            if (user == null && !guestRateLimiter.isAllowed(httpRequest)) {
-                redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.rate_limited", null, LocaleContextHolder.getLocale()));
-                return "redirect:/solicitudes/nueva?error";
-            }
-            Request created = requestService.createRequestWithImage(user, city, address, addressReference,
-                    materials, guestName, guestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
-
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.request.created", null, LocaleContextHolder.getLocale()));
-            redirectAttributes.addFlashAttribute("createdRequestId", created.getId());
-            redirectAttributes.addFlashAttribute("createdRequestStatus", created.getStatus().name());
-            redirectAttributes.addFlashAttribute("isGuest", user == null);
-            if (user == null) {
-                redirectAttributes.addFlashAttribute("guestPhone", guestPhone);
-            }
-            return "redirect:/solicitudes/exito";
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes/nueva";
-        } catch (Exception e) {
-            logger.error("Error al crear solicitud: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.create_error", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes/nueva";
-        }
+    public RequestController(RequestUpdateService requestUpdateService,
+                             RequestQueryService requestQueryService) {
+        this.requestUpdateService = requestUpdateService;
+        this.requestQueryService = requestQueryService;
     }
 
     @GetMapping("/solicitudes/exito")
@@ -122,8 +44,8 @@ public class RequestController {
     public String listUserRequests(@RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "20") int size,
                                     Authentication authentication, Model model) {
-        User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-        model.addAttribute("requests", requestService.getRequestsByUser(user, page, size));
+        User user = getCurrentUser(authentication);
+        model.addAttribute("requests", requestQueryService.getRequestsByUser(user, page, size));
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         return "users/requests";
@@ -134,70 +56,16 @@ public class RequestController {
     public String requestDetail(@PathVariable String id, Authentication authentication, Model model,
                                  RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-            Request request = requestService.getOwnedRequest(id, user);
+            User user = getCurrentUser(authentication);
+            Request request = requestQueryService.getOwnedRequest(id, user);
             model.addAttribute("request", request);
             return "users/request-detail";
         } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.not_owned", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.request.not_owned");
             return "redirect:/solicitudes";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.load_error", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.request.load_error");
             return "redirect:/solicitudes";
-        }
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/solicitud/{id}/editar")
-    public String editRequestForm(@PathVariable String id, Authentication authentication, Model model,
-                                  RedirectAttributes redirectAttributes) {
-        try {
-            User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-            Request request = requestService.getEditableOwnedRequest(id, user);
-            model.addAttribute("request", request);
-            model.addAttribute("isEdit", true);
-            model.addAttribute("cities", cityOrganizationService.getAvailableCities());
-            model.addAttribute("materials", MaterialCategory.values());
-            model.addAttribute("timeSlots", TimeSlot.values());
-            return "users/request-form";
-        } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.not_owned", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes";
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.edit.pending_only", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes";
-        } catch (Exception e) {
-            logger.error("Error al cargar formulario de edición: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.load_error", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes";
-        }
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/solicitud/{id}/editar")
-    public String updateRequest(@PathVariable String id,
-                                @RequestParam("city") City city,
-                                @RequestParam("address") String address,
-                                @RequestParam(value = "addressReference", required = false) String addressReference,
-                                @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
-                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                                Authentication authentication,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.updateRequest(id, user, city, address, addressReference, materials, imageFile);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.request.updated", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitud/" + id;
-        } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.not_owned", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitudes";
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
-            return "redirect:/solicitud/" + id;
-        } catch (Exception e) {
-            logger.error("Error al actualizar solicitud: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.update_error", null, LocaleContextHolder.getLocale()));
-            return "redirect:/solicitud/" + id;
         }
     }
 
@@ -206,16 +74,15 @@ public class RequestController {
     public String deleteRequest(@PathVariable String id, Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.findAuthenticatedUserByUsername(authentication.getName());
-            requestService.deleteOwnedRequest(id, user);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.request.deleted", null, LocaleContextHolder.getLocale()));
+            User user = getCurrentUser(authentication);
+            requestUpdateService.deleteOwnedRequest(id, user);
+            flashSuccess(redirectAttributes, "flash.request.deleted");
         } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.not_owned", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.request.not_owned");
         } catch (Exception e) {
             logger.error("Error al eliminar solicitud: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.delete_error", null, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.request.delete_error");
         }
         return "redirect:/solicitudes";
     }
-
 }

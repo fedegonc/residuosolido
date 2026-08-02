@@ -7,7 +7,9 @@
 </head>
 <body>
   <main layout:fragment="content">
-    <div class="page panel-section">
+    <div class="org-layout">
+      <div th:replace="~{fragments/org-sidebar :: sidebar('catadores')}"></div>
+      <div class="org-layout__main panel-section">
 
       <!-- Breadcrumbs -->
       <nav class="breadcrumb" aria-label="breadcrumb">
@@ -52,7 +54,9 @@
               <label for="city" data-i18n="profile_city">Ciudad</label>
               <select id="city" name="city" class="form-select" required>
                 <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
-                <option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+                <option th:each="c : ${cities}" th:value="${c}"
+                        th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}"
+                        th:text="${c.name()}"
                         th:selected="${catador != null and catador.city != null and catador.city == c}"></option>
               </select>
             </div>
@@ -147,6 +151,7 @@
         </div>
       </div>
 
+      </div>
     </div>
 
     <script>

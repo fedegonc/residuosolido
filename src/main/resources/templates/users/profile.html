@@ -57,7 +57,7 @@
           <div class="info-row">
             <i class="fa-solid fa-location-dot"></i>
             <span class="info-row__label" data-i18n="profile_city">Ciudad</span>
-            <span class="info-row__value" th:if="${user.hasCity()}" th:text="${user.city}"></span>
+            <span class="info-row__value" th:if="${user.hasCity()}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(user.city.name())}" th:text="${user.city}"></span>
             <span class="info-row__empty" th:unless="${user.hasCity()}" data-i18n="profile_no_city">Sin ciudad</span>
           </div>
         </div>
@@ -65,7 +65,7 @@
         <!-- Edit card (hidden by default) -->
         <div class="info-card is-hidden" id="editCard">
           <h2 class="info-card__title" data-i18n="profile_edit_title">Editar datos</h2>
-          <form action="/usuarios/perfil" method="post" class="auth-form">
+          <form th:action="@{/usuarios/perfil}" method="post" class="auth-form">
             <div class="form-group">
               <label for="firstName" data-i18n="profile_name_label">Nombre</label>
               <input type="text" id="firstName" name="firstName" class="form-input" th:value="${user.firstName}">
@@ -82,7 +82,9 @@
               <label for="city" data-i18n="profile_city_label">Ciudad</label>
               <select id="city" name="city" class="form-select">
                 <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
-                <option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+                <option th:each="c : ${cities}" th:value="${c}"
+                        th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}"
+                        th:text="${c.name()}"
                         th:selected="${user.city != null and user.city == c}"></option>
               </select>
             </div>

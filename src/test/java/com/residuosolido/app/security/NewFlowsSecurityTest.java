@@ -1,5 +1,6 @@
 package com.residuosolido.app.security;
 
+import com.residuosolido.app.service.PublicMetricsService;
 import com.residuosolido.app.service.RequestMetricsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ class NewFlowsSecurityTest {
 
     @MockBean
     private RequestMetricsService requestMetricsService;
+    @MockBean
+    private PublicMetricsService publicMetricsService;
 
     @Test
     void orgProfile_anonymous_redirectsToLogin() throws Exception {
@@ -72,8 +75,8 @@ class NewFlowsSecurityTest {
 
     @Test
     void metricsPage_isPublic() throws Exception {
-        when(requestMetricsService.getPublicMetricsByCity()).thenReturn(Collections.emptyMap());
-        when(requestMetricsService.getPublicTotalCompleted()).thenReturn(0L);
+        when(publicMetricsService.getPublicMetricsByCity()).thenReturn(Collections.emptyMap());
+        when(publicMetricsService.getPublicTotalCompleted()).thenReturn(0L);
 
         mockMvc.perform(get("/metricas"))
                 .andExpect(status().isOk());
@@ -82,8 +85,8 @@ class NewFlowsSecurityTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void metricsPage_isPublic_forAuthenticatedUser() throws Exception {
-        when(requestMetricsService.getPublicMetricsByCity()).thenReturn(Collections.emptyMap());
-        when(requestMetricsService.getPublicTotalCompleted()).thenReturn(0L);
+        when(publicMetricsService.getPublicMetricsByCity()).thenReturn(Collections.emptyMap());
+        when(publicMetricsService.getPublicTotalCompleted()).thenReturn(0L);
 
         mockMvc.perform(get("/metricas"))
                 .andExpect(status().isOk());

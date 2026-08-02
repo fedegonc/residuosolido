@@ -7,106 +7,96 @@
 </head>
 <body>
   <main layout:fragment="content">
-    <div class="page panel-section">
+    <div class="org-layout">
+      <div th:replace="~{fragments/org-sidebar :: sidebar('dashboard')}"></div>
 
-      <!-- Breadcrumbs -->
-      <nav class="breadcrumb" aria-label="breadcrumb">
-        <th:block th:each="crumb, iter : ${breadcrumbs}">
-          <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
-          <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Panel de acopio</span>
-          <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        </th:block>
-      </nav>
+      <div class="org-layout__main panel-section">
 
-      <!-- Header -->
-      <div class="panel-header">
-        <div>
-          <h1 class="panel-header__title" data-i18n="org_dash_title">Panel de acopio</h1>
-        </div>
-        <div class="panel-actions">
-          <a href="/acopio/requests" class="btn btn--primary">
-            <i class="fa-solid fa-list"></i>
-            <span data-i18n="org_dash_requests">Solicitudes</span>
-          </a>
-          <a href="/acopio/perfil" class="btn btn--outline">
-            <i class="fa-solid fa-building"></i>
-            <span data-i18n="org_profile_title">Perfil de organización</span>
-          </a>
-        </div>
-      </div>
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumb" aria-label="breadcrumb">
+          <th:block th:each="crumb, iter : ${breadcrumbs}">
+            <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
+            <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Panel de acopio</span>
+            <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+          </th:block>
+        </nav>
 
-      <!-- Stats -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-card__icon stat-card__icon--pending">
-            <i class="fa-solid fa-clock"></i>
+        <!-- Header -->
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-header__title">
+              <span data-i18n="org_dash_greeting">¡Hola</span>, <span th:text="${user.displayName}"></span>!
+              <span aria-hidden="true">👋</span>
+            </h1>
+            <p class="panel-header__subtitle" data-i18n="org_dash_subtitle">Este es el resumen de la actividad en tu organización.</p>
           </div>
-          <span class="stat-card__value" th:text="${pendingRequests}">0</span>
-          <span class="stat-card__label" data-i18n="dash_stat_pending">Pendientes</span>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card__icon stat-card__icon--progress">
-            <i class="fa-solid fa-truck"></i>
+          <div class="panel-actions">
+            <a href="/acopio/requests" class="btn btn--primary">
+              <i class="fa-solid fa-list"></i>
+              <span data-i18n="org_dash_requests">Solicitudes</span>
+            </a>
+            <a href="/acopio/perfil" class="btn btn--outline">
+              <i class="fa-solid fa-building"></i>
+              <span data-i18n="org_profile_title">Perfil de organización</span>
+            </a>
           </div>
-          <span class="stat-card__value" th:text="${inProgressRequests}">0</span>
-          <span class="stat-card__label" data-i18n="dash_stat_progress">En curso</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-card__icon stat-card__icon--completed">
-            <i class="fa-solid fa-circle-check"></i>
-          </div>
-          <span class="stat-card__value" th:text="${completedRequests}">0</span>
-          <span class="stat-card__label" data-i18n="dash_stat_completed">Completadas</span>
-        </div>
-      </div>
 
-      <!-- Recent pending requests -->
-      <div th:if="${pendingRequestsList != null and !pendingRequestsList.isEmpty()}">
-        <h2 class="panel-header__subtitle" style="margin-bottom:1rem;" data-i18n="org_dash_pending">Solicitudes pendientes recientes</h2>
-        <div class="request-list">
-          <div th:each="req : ${pendingRequestsList}" class="request-item">
-            <div class="request-item__header">
-              <span class="request-item__id">
-                <span data-i18n="track_request_id">Solicitud</span>
-                #<span th:text="${req.id}"></span>
-              </span>
-              <span class="status-badge status-badge--pending" data-i18n="req_status_pending">Pendiente</span>
-            </div>
-            <div class="request-item__body">
-              <div class="request-item__row" th:if="${req.createdAt != null}">
-                <i class="fa-solid fa-calendar"></i>
-                <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.contactName != null}">
-                <i class="fa-solid fa-user"></i>
-                <span th:text="${req.contactName}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.city != null}">
-                <i class="fa-solid fa-location-dot"></i>
-                <span th:text="${req.city}"></span>
-              </div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials">
-                <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
-              </div>
-            </div>
-            <div class="form-actions">
-              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
-                <i class="fa-solid fa-eye"></i>
-                <span data-i18n="req_list_view">Ver</span>
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card stat-card--pending">
+            <div class="stat-card__icon stat-card__icon--pending"><i class="fa-solid fa-clock"></i></div>
+            <span class="stat-card__value" th:text="${pendingRequests}">0</span>
+            <span class="stat-card__label" data-i18n="dash_stat_pending">Pendientes</span>
+          </div>
+          <div class="stat-card stat-card--progress">
+            <div class="stat-card__icon stat-card__icon--progress"><i class="fa-solid fa-truck"></i></div>
+            <span class="stat-card__value" th:text="${inProgressRequests}">0</span>
+            <span class="stat-card__label" data-i18n="dash_stat_progress">En curso</span>
+          </div>
+          <div class="stat-card stat-card--completed">
+            <div class="stat-card__icon stat-card__icon--completed"><i class="fa-solid fa-circle-check"></i></div>
+            <span class="stat-card__value" th:text="${completedRequests}">0</span>
+            <span class="stat-card__label" data-i18n="dash_stat_completed">Completadas</span>
+          </div>
+        </div>
+
+        <!-- Recent pending requests -->
+        <div th:if="${pendingRequestsList != null and !pendingRequestsList.isEmpty()}">
+          <div class="panel-header" style="margin-bottom:.5rem;">
+            <h2 class="panel-section__title" style="margin-bottom:0;" data-i18n="org_dash_pending">Solicitudes pendientes recientes</h2>
+            <a href="/acopio/requests" class="form-hint" data-i18n="dash_view_all">Ver todas</a>
+          </div>
+          <div class="info-card">
+            <div class="contact-list">
+              <a th:each="req, iter : ${pendingRequestsList}" th:href="@{/acopio/requests/{id}(id=${req.id})}" class="contact-item">
+                <div class="contact-item__avatar" th:classappend="'contact-item__avatar--' + ${iter.index % 4}"
+                     th:text="${req.getContactInitials()}">JG</div>
+                <div class="contact-item__body">
+                  <div class="contact-item__name" th:text="${req.contactName}">Contacto</div>
+                  <div class="contact-item__sub" th:if="${req.hasMaterials()}"
+                       th:text="${#strings.listJoin(req.materials, ', ')}">Materiales</div>
+                </div>
+                <div class="contact-item__meta">
+                  <span class="status-badge status-badge--pending" data-i18n="req_status_pending">Pendiente</span>
+                  <span class="contact-item__time" th:if="${req.createdAt != null}"
+                        th:text="${#temporals.format(req.createdAt, 'dd/MM HH:mm')}"></span>
+                </div>
+                <i class="fa-solid fa-chevron-right contact-item__arrow"></i>
               </a>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Empty state -->
-      <div th:if="${pendingRequestsList == null or pendingRequestsList.isEmpty()}" class="info-card">
-        <div class="track-empty">
-          <i class="fa-solid fa-inbox track-empty__icon"></i>
-          <p class="track-empty__text" data-i18n="org_dash_no_pending">No hay solicitudes pendientes</p>
+        <!-- Empty state -->
+        <div th:if="${pendingRequestsList == null or pendingRequestsList.isEmpty()}" class="info-card">
+          <div class="track-empty">
+            <i class="fa-solid fa-inbox track-empty__icon"></i>
+            <p class="track-empty__text" data-i18n="org_dash_no_pending">No hay solicitudes pendientes</p>
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </main>
 </body>

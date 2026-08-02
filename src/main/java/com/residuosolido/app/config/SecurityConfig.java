@@ -17,9 +17,11 @@ import org.springframework.security.config.Customizer;
 public class SecurityConfig {
 
     private final LoginSuccessHandler successHandler;
+    private final LoginFailureHandler failureHandler;
 
-    public SecurityConfig(LoginSuccessHandler successHandler) {
+    public SecurityConfig(LoginSuccessHandler successHandler, LoginFailureHandler failureHandler) {
         this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
     }
 
     @Bean
@@ -57,6 +59,7 @@ public class SecurityConfig {
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
                 .successHandler(successHandler)
+                .failureHandler(failureHandler)
                 .permitAll()
             )
             .logout(logout -> logout

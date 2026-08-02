@@ -7,7 +7,9 @@
 </head>
 <body>
   <main layout:fragment="content">
-    <div class="page panel-section">
+    <div class="org-layout">
+      <div th:replace="~{fragments/org-sidebar :: sidebar('profile')}"></div>
+      <div class="org-layout__main panel-section">
 
       <!-- Breadcrumbs -->
       <nav class="breadcrumb" aria-label="breadcrumb">
@@ -56,15 +58,25 @@
           <div class="info-row">
             <i class="fa-solid fa-location-dot"></i>
             <span class="info-row__label" data-i18n="profile_city">Ciudad</span>
-            <span class="info-row__value" th:if="${organization.hasCity()}" th:text="${organization.city}"></span>
+            <span class="info-row__value" th:if="${organization.hasCity()}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(organization.city.name())}" th:text="${organization.city}"></span>
             <span class="info-row__empty" th:unless="${organization.hasCity()}" data-i18n="profile_no_city">Sin ciudad</span>
+          </div>
+          <div class="info-row">
+            <i class="fa-solid fa-recycle"></i>
+            <span class="info-row__label" data-i18n="org_profile_materials">Materiales que acepta</span>
+            <span class="info-row__value" th:if="${!organization.acceptedMaterials.isEmpty()}">
+              <span th:each="mat, iter : ${organization.acceptedMaterials}"
+                    th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}"
+                    th:text="${mat.name() + (iter.last ? '' : ', ')}"></span>
+            </span>
+            <span class="info-row__empty" th:if="${organization.acceptedMaterials.isEmpty()}" data-i18n="org_profile_no_materials">Sin materiales seleccionados</span>
           </div>
         </div>
 
         <!-- Edit card -->
         <div class="info-card is-hidden" id="editCard">
           <h2 class="info-card__title" data-i18n="org_profile_edit_title">Editar datos</h2>
-          <form action="/acopio/perfil" method="post" class="auth-form">
+          <form th:action="@{/acopio/perfil}" method="post" class="auth-form">
             <div class="form-group">
               <label for="firstName" data-i18n="org_profile_name_label">Nombre de la organización</label>
               <input type="text" id="firstName" name="firstName" class="form-input" th:value="${organization.firstName}">
@@ -81,9 +93,23 @@
               <label for="city" data-i18n="profile_city_label">Ciudad</label>
               <select id="city" name="city" class="form-select">
                 <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
-                <option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+                <option th:each="c : ${cities}" th:value="${c}"
+                        th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}"
+                        th:text="${c.name()}"
                         th:selected="${organization.city != null and organization.city == c}"></option>
               </select>
+            </div>
+            <div class="form-group">
+              <label data-i18n="org_profile_materials">Materiales que acepta</label>
+              <div class="check-grid">
+                <th:block th:each="mat : ${materials}">
+                  <label class="check-card">
+                    <input type="checkbox" name="materials" th:value="${mat.name()}"
+                           th:checked="${organization.acceptedMaterials.contains(mat)}">
+                    <span th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
+                  </label>
+                </th:block>
+              </div>
             </div>
             <div class="form-actions">
               <button type="submit" class="btn btn--primary">
@@ -97,6 +123,8 @@
             </div>
           </form>
         </div>
+
+      </div>
 
       </div>
     </div>

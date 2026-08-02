@@ -2,6 +2,7 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.model.InformalCollector;
+import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.InformalCollectorRepository;
@@ -12,8 +13,6 @@ import java.util.List;
 
 @Service
 public class InformalCollectorService {
-
-    private static final int MIN_PHONE_LENGTH = 8;
 
     private final InformalCollectorRepository repository;
 
@@ -67,8 +66,6 @@ public class InformalCollectorService {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("error.collector.name_required");
         }
-        if (phone == null || phone.trim().length() < MIN_PHONE_LENGTH) {
-            throw new IllegalArgumentException("error.collector.phone_min_length");
-        }
+        PhoneNumber.of(phone);
     }
 }

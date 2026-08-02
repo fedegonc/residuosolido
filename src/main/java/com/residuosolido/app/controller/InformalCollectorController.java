@@ -5,12 +5,9 @@ import com.residuosolido.app.model.InformalCollector;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.InformalCollectorService;
-import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -22,24 +19,20 @@ import java.util.List;
 
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class InformalCollectorController {
+public class InformalCollectorController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(InformalCollectorController.class);
 
     private final InformalCollectorService informalCollectorService;
-    private final UserService userService;
-    private final MessageSource messageSource;
 
     @Autowired
-    public InformalCollectorController(InformalCollectorService informalCollectorService, UserService userService, MessageSource messageSource) {
+    public InformalCollectorController(InformalCollectorService informalCollectorService) {
         this.informalCollectorService = informalCollectorService;
-        this.userService = userService;
-        this.messageSource = messageSource;
     }
 
     @GetMapping("/acopio/catadores")
     public String list(Authentication authentication, Model model) {
-        User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
+        User organization = getCurrentUser(authentication);
         List<InformalCollector> collectors = informalCollectorService.findByOrganization(organization);
         model.addAttribute("catadores", collectors);
         model.addAttribute("cities", City.values());
@@ -50,7 +43,7 @@ public class InformalCollectorController {
     @GetMapping("/acopio/catadores/edit/{id}")
     public String edit(@PathVariable String id, Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
         try {
-            User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User organization = getCurrentUser(authentication);
             InformalCollector collector = informalCollectorService.findOwnedById(id, organization);
 
             model.addAttribute("catador", collector);
@@ -60,7 +53,7 @@ public class InformalCollectorController {
             return "org/catadores";
         } catch (Exception e) {
             logger.error("Error al cargar catador: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.catador.load_error", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.catador.load_error", e.getMessage());
             return "redirect:/acopio/catadores";
         }
     }
@@ -76,13 +69,13 @@ public class InformalCollectorController {
                        Authentication authentication,
                        RedirectAttributes redirectAttributes) {
         try {
-            User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User organization = getCurrentUser(authentication);
             informalCollectorService.saveOrUpdate(id, organization, name, phone, city, materials, notes, active);
             String messageKey = (id != null && !id.isBlank()) ? "flash.catador.updated" : "flash.catador.created";
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage(messageKey, null, LocaleContextHolder.getLocale()));
+            flashSuccess(redirectAttributes, messageKey);
         } catch (Exception e) {
             logger.error("Error al guardar catador: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.catador.save_error", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.catador.save_error", e.getMessage());
         }
         return "redirect:/acopio/catadores";
     }
@@ -90,12 +83,12 @@ public class InformalCollectorController {
     @PostMapping("/acopio/catadores/{id}/delete")
     public String delete(@PathVariable String id, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
-            User organization = userService.findAuthenticatedUserByUsername(authentication.getName());
+            User organization = getCurrentUser(authentication);
             informalCollectorService.delete(id, organization);
-            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.catador.deleted", null, LocaleContextHolder.getLocale()));
+            flashSuccess(redirectAttributes, "flash.catador.deleted");
         } catch (Exception e) {
             logger.error("Error al eliminar catador: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.catador.delete_error", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
+            flashError(redirectAttributes, "flash.catador.delete_error", e.getMessage());
         }
         return "redirect:/acopio/catadores";
     }

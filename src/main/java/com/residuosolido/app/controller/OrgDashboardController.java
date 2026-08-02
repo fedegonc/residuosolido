@@ -2,7 +2,6 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.BreadcrumbService;
-import com.residuosolido.app.service.UserService;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.RequestOrganizationService;
 import org.slf4j.Logger;
@@ -19,20 +18,18 @@ import java.util.Map;
 
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class OrgDashboardController {
+public class OrgDashboardController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgDashboardController.class);
 
-    private final UserService userService;
     private final DashboardService dashboardService;
     private final RequestOrganizationService requestOrganizationService;
     private final BreadcrumbService breadcrumbService;
 
     @Autowired
-    public OrgDashboardController(UserService userService, DashboardService dashboardService,
+    public OrgDashboardController(DashboardService dashboardService,
                                    RequestOrganizationService requestOrganizationService,
                                    BreadcrumbService breadcrumbService) {
-        this.userService = userService;
         this.dashboardService = dashboardService;
         this.requestOrganizationService = requestOrganizationService;
         this.breadcrumbService = breadcrumbService;
@@ -40,12 +37,13 @@ public class OrgDashboardController {
 
     @GetMapping("/acopio/inicio")
     public String orgDashboard(Authentication authentication, Model model) {
-        User currentOrg = userService.findAuthenticatedUserByUsername(authentication.getName());
+        User currentOrg = getCurrentUser(authentication);
 
         if (currentOrg.needsProfileCompletion()) {
             return "redirect:/acopio/completar-perfil";
         }
 
+        model.addAttribute("user", currentOrg);
         try {
             Map<String, Long> data = dashboardService.getOrgDashboardData(currentOrg);
             model.addAttribute("pendingRequests", data.get("pending"));

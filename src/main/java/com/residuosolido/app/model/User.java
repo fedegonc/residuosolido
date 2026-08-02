@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -65,6 +66,10 @@ public class User {
 
     public boolean hasCity() {
         return city != null;
+    }
+
+    public String getAcceptedMaterialsCsv() {
+        return acceptedMaterials.stream().map(Enum::name).collect(Collectors.joining(","));
     }
 
     public void completeProfile() {

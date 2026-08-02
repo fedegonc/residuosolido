@@ -25,14 +25,20 @@ class RequestServiceValidationTest {
     private RequestRepository requestRepository;
     private CityOrganizationService cityOrganizationService;
     private LocalImageService imageService;
+    private RequestValidator validator;
+    private OrganizationResolver orgResolver;
     private RequestService requestService;
+    private RequestUpdateService requestUpdateService;
 
     @BeforeEach
     void setUp() {
         requestRepository = mock(RequestRepository.class);
         cityOrganizationService = mock(CityOrganizationService.class);
         imageService = mock(LocalImageService.class);
-        requestService = new RequestService(requestRepository, cityOrganizationService, imageService);
+        validator = new RequestValidator();
+        orgResolver = new OrganizationResolver(cityOrganizationService);
+        requestService = new RequestService(requestRepository, imageService, validator, orgResolver);
+        requestUpdateService = new RequestUpdateService(requestRepository, validator, orgResolver, imageService);
     }
 
     // ─── materials null ───
@@ -84,7 +90,7 @@ class RequestServiceValidationTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> requestService.updateRequest(
+                () -> requestUpdateService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
                         null, null)
         );
@@ -108,7 +114,7 @@ class RequestServiceValidationTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> requestService.updateRequest(
+                () -> requestUpdateService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
                         Collections.emptyList(), null)
         );
@@ -170,7 +176,7 @@ class RequestServiceValidationTest {
                         null, City.RIVERA, "Calle 123", null,
                         List.of(MaterialCategory.PLASTICO), "Juan", "", "org1", null, null)
         );
-        assertEquals("error.request.guest_phone_required", ex.getMessage());
+        assertEquals("error.phone.required", ex.getMessage());
     }
 
     // ─── materials válidos NO lanzan excepción ───

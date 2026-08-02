@@ -20,12 +20,16 @@
 
       <!-- Header -->
       <div class="panel-header">
-        <div>
-          <h1 class="panel-header__title">
-            <span data-i18n="dash_welcome">Hola</span>,
-            <span th:text="${user.displayName}"></span>
-          </h1>
-          <p class="panel-header__subtitle" data-i18n="dash_recent">Solicitudes recientes</p>
+        <div class="panel-header__main">
+          <div class="panel-header__illustration"><i class="fa-solid fa-recycle"></i></div>
+          <div>
+            <h1 class="panel-header__title">
+              <span data-i18n="dash_welcome">Hola</span>,
+              <span th:text="${user.displayName}"></span>
+              <span aria-hidden="true">👋</span>
+            </h1>
+            <p class="panel-header__subtitle" data-i18n="dash_subtitle">Acompañá tus solicitudes y contribuí a una ciudad más limpia y sustentable.</p>
+          </div>
         </div>
         <div class="panel-actions">
           <a href="/solicitudes/nueva" class="btn btn--primary">
@@ -39,44 +43,38 @@
         </div>
       </div>
 
+      <!-- Stats -->
+      <div class="stats-grid" th:if="${requestStats != null}">
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--total"><i class="fa-solid fa-list"></i></div>
+          <span class="stat-card__value" th:text="${requestStats.get('total')}">0</span>
+          <span class="stat-card__label" data-i18n="dash_stat_total">Solicitudes realizadas</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--pending"><i class="fa-solid fa-clock"></i></div>
+          <span class="stat-card__value" th:text="${requestStats.get('pending')}">0</span>
+          <span class="stat-card__label" data-i18n="dash_stat_pending">Pendientes</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--completed"><i class="fa-solid fa-circle-check"></i></div>
+          <span class="stat-card__value" th:text="${requestStats.get('completed')}">0</span>
+          <span class="stat-card__label" data-i18n="dash_stat_completed">Completadas</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--progress"><i class="fa-solid fa-truck"></i></div>
+          <span class="stat-card__value" th:text="${requestStats.get('inProgress')}">0</span>
+          <span class="stat-card__label" data-i18n="dash_stat_progress">En curso</span>
+        </div>
+      </div>
+
       <!-- Recent requests -->
       <div th:if="${recentRequests != null and !recentRequests.isEmpty()}">
+        <h2 class="panel-section__title" data-i18n="dash_recent">Solicitudes recientes</h2>
         <div class="request-list">
-          <div th:each="req : ${recentRequests}" class="request-item">
-            <div class="request-item__header">
-              <span class="request-item__id">
-                <span data-i18n="track_request_id">Solicitud</span>
-                #<span th:text="${req.id}"></span>
-              </span>
-              <span class="status-badge"
-                    th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
-                                     (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
-                                     (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
-                                     'status-badge--rejected'))"
-                    th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
-                             (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
-                             (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
-                Pendiente
-              </span>
-            </div>
-            <div class="request-item__body">
-              <div class="request-item__row" th:if="${req.createdAt != null}">
-                <i class="fa-solid fa-calendar"></i>
-                <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.city != null}">
-                <i class="fa-solid fa-location-dot"></i>
-                <span th:text="${req.city}"></span>
-              </div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials">
-                <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
-              </div>
-              <div class="request-item__row" th:if="${req.organization != null}">
-                <i class="fa-solid fa-building"></i>
-                <span th:text="${req.organization.displayName}"></span>
-              </div>
-            </div>
-          </div>
+          <a th:each="req : ${recentRequests}" th:href="@{/solicitud/{id}(id=${req.id})}" class="request-item-link">
+            <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
+            <i class="fa-solid fa-chevron-right request-item-link__arrow"></i>
+          </a>
         </div>
       </div>
 
@@ -94,6 +92,11 @@
           </a>
         </div>
       </div>
+
+      <p class="panel-footer-quote">
+        <i class="fa-solid fa-leaf"></i>
+        <span data-i18n="dash_footer_quote">Pequeñas acciones, grandes cambios.</span>
+      </p>
 
     </div>
   </main>

@@ -7,6 +7,9 @@ package com.residuosolido.app.enums;
 public enum MaterialCategory {
     PLASTICO,
     PAPEL,
+    CARTON,
     VIDRIO,
-    METAL
+    METAL,
+    MADERA,
+    ESCOMBROS
 }
