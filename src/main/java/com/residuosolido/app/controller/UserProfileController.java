@@ -54,8 +54,8 @@ public class UserProfileController {
     public String profile(Authentication authentication, Model model) {
         User user = userService.findAuthenticatedUserByUsername(authentication.getName());
         model.addAttribute("user", user);
-        model.addAttribute("userForm", user);
         model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
+        model.addAttribute("cities", City.values());
         model.addAttribute("breadcrumbs", breadcrumbService.addCurrent(breadcrumbService.add(breadcrumbService.home(), "Mi panel", "/usuarios/inicio"), "Mi perfil"));
         return "users/profile";
     }

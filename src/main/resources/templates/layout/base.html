@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title layout:title-pattern="$LAYOUT_TITLE — $CONTENT_TITLE">Residuo Sólido</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+</head>
+<body class="app-body">
+  <a href="#main-content" class="skip-link" data-i18n="skip_content">Saltar al contenido</a>
+
+  <div th:replace="~{fragments/navbar :: nav}"></div>
+
+  <div th:replace="~{fragments/feedback :: msg('success', ${successMessage})}" th:if="${successMessage != null}"></div>
+  <div th:replace="~{fragments/feedback :: msg('error', ${errorMessage})}" th:if="${errorMessage != null}"></div>
+  <div th:replace="~{fragments/feedback :: msg('warning', ${warningMessage})}" th:if="${warningMessage != null}"></div>
+  <div th:replace="~{fragments/feedback :: msg('info', ${infoMessage})}" th:if="${infoMessage != null}"></div>
+  <main id="main-content" class="app-main" layout:fragment="content"></main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-min__brand"><i class="fa-solid fa-recycle"></i> Residuo Sólido</span>
+      <span class="footer-min__copy">&copy; <span th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</span> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
+    </div>
+  </footer>
+
+  <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

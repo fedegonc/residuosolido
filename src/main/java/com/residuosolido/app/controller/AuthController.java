@@ -12,9 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -46,7 +48,8 @@ public class AuthController {
     @PostMapping("/auth/register")
     public String registerUser(@ModelAttribute User user,
                                @RequestParam(value = "isOrganization", required = false) String isOrganization,
-                               Model model) {
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         String validationError = userService.validateUserRegistration(user);
         if (validationError != null) {
             model.addAttribute("error", messageSource.getMessage(validationError, null, LocaleContextHolder.getLocale()));
@@ -54,16 +57,20 @@ public class AuthController {
         }
 
         userService.registerUser(user, isOrganization);
-        return "redirect:/auth/login?success";
+        redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("login.success", null, LocaleContextHolder.getLocale()));
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/auth/login")
-    public String showLoginPage() {
+    public String showLoginPage(HttpServletRequest request, Model model) {
+        if (request.getParameter("error") != null) {
+            model.addAttribute("errorMessage", messageSource.getMessage("login.error", null, LocaleContextHolder.getLocale()));
+        }
         return "auth/login";
     }
 
     @GetMapping({"/", "/index"})
     public String rootOrIndex() {
-        return "index";
+        return "public/index";
     }
 }

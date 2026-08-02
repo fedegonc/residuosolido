@@ -1,80 +1,115 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-    <title th:text="#{track.title}">Rastrear solicitud</title>
+  <title>Residuo Sólido — Rastrear</title>
 </head>
 <body>
-<main layout:fragment="content">
-    <div class="page page--narrow page--padded">
+  <main layout:fragment="content">
+    <div class="page track-section">
 
-        <div class="page-header">
-            <h1 class="page-header__title" th:text="#{track.title}">Rastrear solicitud</h1>
-            <p class="page-header__subtitle" th:text="#{track.subtitle}">Ingresá tu teléfono para ver tus solicitudes</p>
-        </div>
+      <!-- Search card -->
+      <div class="track-card page--narrow">
+        <h1 class="track-card__title" data-i18n="track_title">Rastrear solicitud</h1>
+        <p class="track-card__subtitle" data-i18n="track_subtitle">Ingresá tu teléfono para ver el estado de tus solicitudes</p>
 
-        <div class="card mb-6">
-            <div class="card__body">
-                <form th:action="@{/rastrear}" method="post" class="flex flex-col gap-3">
-                    <div class="flex flex-wrap gap-3">
-                        <input type="tel" name="phone" th:value="${phone}"
-                               th:placeholder="#{track.phone_placeholder}"
-                               class="form__input flex-1" required />
-                        <button type="submit" class="btn btn--green">
-                            <i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i><span th:text="#{track.search}">Buscar</span>
-                        </button>
-                    </div>
-                </form>
+        <form action="/rastrear" method="post" class="track-form">
+          <div class="form-group">
+            <label for="phone" data-i18n="track_phone_label">Teléfono</label>
+            <input type="tel" id="phone" name="phone" class="form-input"
+                   th:value="${phone}"
+                   data-i18n-attr="placeholder:track_phone_placeholder"
+                   placeholder="Ej: +598 99 123 456"
+                   required>
+          </div>
+          <button type="submit" class="btn btn--primary btn--block">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span data-i18n="track_search_btn">Buscar</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Results -->
+      <div th:if="${searched}" class="page">
+
+        <!-- Empty state -->
+        <div th:if="${requests != null and requests.isEmpty()}" class="track-card">
+          <div class="track-empty">
+            <div class="track-empty__illustration">
+              <i class="fa-solid fa-magnifying-glass-minus"></i>
             </div>
-        </div>
-
-        <div th:if="${searched}">
-            <div th:if="${requests.isEmpty()}" class="empty-state">
-                <i aria-hidden="true" class="fa-solid fa-box-open empty-state__icon"></i>
-                <p th:text="#{track.no_results}">No se encontraron solicitudes con ese teléfono</p>
-            </div>
-
-            <div th:if="${!requests.isEmpty()}">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">
-                    <span th:text="#{track.results}">Solicitudes encontradas</span>:
-                    <span class="icon-green-dark" th:text="${requests.size()}"></span>
-                </h2>
-
-                <div th:each="req : ${requests}" class="card mb-2">
-                    <div class="card__body flex flex-between items-start gap-3">
-                        <div class="flex-1">
-                            <span class="text-xs text-gray-500" th:text="#{track.request_id} + ': ' + ${req.id}">ID</span>
-                            <p class="text-sm text-gray-700 mt-1">
-                                <i aria-hidden="true" class="fa-solid fa-location-dot text-gray-400"></i>
-                                <span th:text="${req.address}"></span>,
-                                <span th:text="${req.city != null ? req.city.name() : ''}"></span>
-                            </p>
-                            <p class="text-sm text-gray-600 mt-1">
-                                <i aria-hidden="true" class="fa-solid fa-calendar text-gray-400"></i>
-                                <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                            </p>
-                            <div th:if="${req.hasMaterials()}" class="flex flex-wrap gap-1 mt-1">
-                                <span th:each="mat : ${req.materials}" class="badge"
-                                      th:text="${#messages.msgOrNull('material.' + mat.name().toLowerCase()) ?: mat.name()}">Material</span>
-                            </div>
-                            <div th:if="${req.confirmedSlot != null}" class="text-sm text-gray-600 mt-1">
-                                <i aria-hidden="true" class="fa-solid fa-clock text-gray-400"></i>
-                                <span th:text="#{track.confirmed_slot} + ': '"></span>
-                                <span class="font-medium" th:text="${#messages.msgOrNull('timeslot.' + req.confirmedSlot.name().toLowerCase()) ?: req.confirmedSlot.name()}"></span>
-                            </div>
-                        </div>
-                        <span class="badge" th:classappend="${req.isPending()} ? ' badge--warning' : (${req.isInProgress()} ? ' badge--info' : (${req.isCompleted()} ? ' badge--success' : ' badge--error'))"
-                              th:text="${#messages.msgOrNull('request.status.' + req.status.name().toLowerCase()) ?: req.status.name()}">Status</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center pt-6">
-            <a th:href="@{/}" class="btn btn--ghost btn--sm">
-                <i aria-hidden="true" class="fa-solid fa-arrow-left"></i><span th:text="#{track.back_home}">Volver al inicio</span>
+            <h2 class="track-empty__title" data-i18n="track_no_results">No se encontraron solicitudes para este teléfono</h2>
+            <p class="track-empty__text" data-i18n="track_no_results_desc">Verificá que el número sea correcto</p>
+            <a href="/solicitudes/nueva" class="btn btn--primary btn--lg" style="margin-top:.75rem;">
+              <i class="fa-solid fa-plus"></i>
+              <span data-i18n="track_empty_cta">Crear una solicitud</span>
             </a>
+          </div>
         </div>
+
+        <!-- Request list -->
+        <div th:if="${requests != null and !requests.isEmpty()}">
+          <h2 class="track-card__subtitle" style="margin-bottom:1rem;" data-i18n="track_results_title">Tus solicitudes</h2>
+          <div class="request-list">
+            <div th:each="req : ${requests}" class="request-item">
+
+              <!-- Header: ID + status badge -->
+              <div class="request-item__header">
+                <span class="request-item__id">
+                  <span data-i18n="track_request_id">Solicitud</span>
+                  #<span th:text="${req.id}"></span>
+                </span>
+                <span class="status-badge"
+                      th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
+                                       (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
+                                       (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
+                                       'status-badge--rejected'))"
+                      th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
+                               (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
+                               (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
+                  Pendiente
+                </span>
+              </div>
+
+              <!-- Body: date, city, address, materials, org -->
+              <div class="request-item__body">
+                <div class="request-item__row" th:if="${req.createdAt != null}">
+                  <i class="fa-solid fa-calendar"></i>
+                  <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+                <div class="request-item__row" th:if="${req.city != null}">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span th:text="${req.city}"></span>
+                </div>
+                <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
+                  <i class="fa-solid fa-route"></i>
+                  <span th:text="${req.address}"></span>
+                </div>
+
+                <!-- Materials -->
+                <div th:if="${req.hasMaterials()}" class="request-item__materials">
+                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+                </div>
+
+                <!-- Organization -->
+                <div class="request-item__row" th:if="${req.organization != null}">
+                  <i class="fa-solid fa-building"></i>
+                  <span th:text="${req.organization.displayName}"></span>
+                </div>
+                <div class="request-item__row" th:if="${req.organization == null}">
+                  <i class="fa-solid fa-building"></i>
+                  <span data-i18n="track_no_org">Sin asignar</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
-</main>
+  </main>
 </body>
 </html>

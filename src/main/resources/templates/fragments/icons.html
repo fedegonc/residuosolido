@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"></head>
+<body>
+  <!--
+    Uso: <i th:replace="~{fragments/icons :: icon('recycle')}"></i>
+    Catálogo centralizado de iconos (Font Awesome 6).
+    Para agregar uno nuevo, sumar una línea al th:class.
+  -->
+  <i th:fragment="icon(name)" aria-hidden="true"
+     th:class="${'fa-solid ' + (
+       name == 'recycle'        ? 'fa-recycle' :
+       name == 'paper-plane'    ? 'fa-paper-plane' :
+       name == 'magnifying-glass'? 'fa-magnifying-glass' :
+       name == 'login'          ? 'fa-right-to-bracket' :
+       name == 'leaf'           ? 'fa-leaf' :
+       name == 'handshake'      ? 'fa-handshake' :
+       name == 'shield'         ? 'fa-shield-halved' :
+       name == 'chart'          ? 'fa-chart-line' :
+       name == 'location'       ? 'fa-location-dot' :
+       name == 'checklist'      ? 'fa-list-check' :
+       name == 'users'          ? 'fa-users' :
+       name == 'truck'          ? 'fa-truck' :
+       name == 'building'       ? 'fa-building' :
+       name == 'arrow-right'    ? 'fa-arrow-right' :
+       name == 'circle-check'   ? 'fa-circle-check' :
+       name == 'circle-exclamation' ? 'fa-circle-exclamation' :
+       name == 'triangle-exclamation' ? 'fa-triangle-exclamation' :
+       name == 'circle-info'    ? 'fa-circle-info' :
+       'fa-question'
+     )}"></i>
+</body>
+</html>

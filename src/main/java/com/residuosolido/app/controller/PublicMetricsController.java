@@ -20,6 +20,6 @@ public class PublicMetricsController {
     public String publicMetrics(Model model) {
         model.addAttribute("metrics", requestMetricsService.getPublicMetricsByCity());
         model.addAttribute("total", requestMetricsService.getPublicTotalCompleted());
-        return "metrics";
+        return "public/metrics";
     }
 }

@@ -1,101 +1,53 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-  <title th:text="#{register.title}">Crear Cuenta</title>
+  <title>Residuo Sólido — Registro</title>
 </head>
 <body>
-<main layout:fragment="content">
+  <main layout:fragment="content">
+    <div class="page page--narrow auth-section">
+      <div class="auth-card">
+        <h1 class="auth-card__title" data-i18n="auth_register_title">Crear cuenta</h1>
+        <p class="auth-card__subtitle" data-i18n="auth_register_subtitle">Registrate para empezar a usar Residuo Sólido</p>
 
-  <div class="auth-page">
-    <div class="auth-card">
-      <header class="auth-card__header">
-        <h2 class="auth-card__title" th:text="#{register.title}">Crear Cuenta</h2>
-        <p class="auth-card__subtitle" th:text="#{register.subtitle}">Registra tus datos para empezar.</p>
-      </header>
-
-      <div th:if="${error}" th:replace="~{fragments/components/alerts :: error(${error})}"></div>
-      <div th:if="${success}" th:replace="~{fragments/components/alerts :: success(${success})}"></div>
-
-      <form th:action="@{/auth/register}" method="post" class="form">
-        <div class="content-grid">
-          <h3 class="text-xs font-semibold text-gray-500" th:text="#{register.account_section}">Datos de la cuenta</h3>
-          <div class="form__row form__row--2">
-            <div class="field">
-              <label class="field__label" for="username" th:text="#{register.username}">Usuario</label>
-              <input type="text" id="username" name="username" required class="input">
-            </div>
-            <div class="field">
-              <label class="field__label" for="email" th:text="#{register.email}">Email</label>
-              <input type="email" id="email" name="email" required class="input">
-            </div>
-            <div class="field">
-              <label class="field__label" for="firstName" th:text="#{register.first_name}">Nombre</label>
-              <input type="text" id="firstName" name="firstName" required class="input">
-            </div>
-            <div class="field">
-              <label class="field__label" for="lastName" th:text="#{register.last_name}">Apellido</label>
-              <input type="text" id="lastName" name="lastName" required class="input">
-            </div>
-          </div>
+        <div th:if="${error != null}" class="alert alert--error" role="alert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span th:text="${error}"></span>
         </div>
 
-        <div class="content-grid">
-          <h3 class="text-xs font-semibold text-gray-500" th:text="#{register.security_section}">Seguridad</h3>
-          <div class="form__row form__row--2">
-            <div class="field">
-              <label class="field__label" for="password" th:text="#{register.password}">Contraseña</label>
-              <div class="password-field" data-password-container>
-                <input type="password" id="password" name="password" minlength="3" required
-                       class="input" th:placeholder="#{register.password_placeholder}">
-                <button type="button" class="password-field__toggle"
-                        data-password-toggle data-target="password"
-                        th:aria-label="#{aria.password.toggle}" aria-pressed="false">
-                  <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                  <span class="sr-only" th:text="#{auth.password.toggle}">Mostrar u ocultar contraseña</span>
-                </button>
-              </div>
-            </div>
-            <div class="field">
-              <label class="field__label" for="confirmPassword" th:text="#{register.confirm_password}">Confirmar</label>
-              <div class="password-field" data-password-container>
-                <input type="password" id="confirmPassword" name="confirmPassword" required
-                       class="input" th:placeholder="#{register.confirm_password_placeholder}">
-                <button type="button" class="password-field__toggle"
-                        data-password-toggle data-target="confirmPassword"
-                        th:aria-label="#{aria.password.toggle}" aria-pressed="false">
-                  <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                  <span class="sr-only" th:text="#{auth.password.toggle}">Mostrar u ocultar contraseña</span>
-                </button>
-              </div>
-            </div>
+        <form th:action="@{/auth/register}" th:object="${user}" method="post" class="auth-form">
+          <div class="form-group">
+            <label for="username" data-i18n="auth_username">Usuario</label>
+            <input type="text" id="username" th:field="*{username}" required
+                   placeholder="Ej: juan_perez" class="form-input">
           </div>
-        </div>
-
-        <div class="content-grid">
-          <h3 class="text-xs font-semibold text-gray-500" th:text="#{register.account_type_section}">Tipo de cuenta</h3>
-          <div class="info-box info-box--blue">
-            <label class="flex gap-3 items-start">
-              <input type="checkbox" id="isOrganization" name="isOrganization" value="true"
-                     onchange="document.getElementById('orgHint').classList.toggle('is-hidden', !this.checked)">
-              <div>
-                <span class="text-sm font-semibold text-gray-900" th:text="#{register.organization_label}">Registro de organización</span>
-                <span class="text-xs text-gray-600 block mt-1" th:text="#{register.organization_hint}">Actívalo si eres un centro de acopio.</span>
-                <p id="orgHint" class="is-hidden text-xs text-blue-700 mt-1" th:text="#{register.organization_description}">Completa la información de contacto de tu organización después del registro.</p>
-              </div>
-            </label>
+          <div class="form-group">
+            <label for="email" data-i18n="auth_email">Email</label>
+            <input type="email" id="email" th:field="*{email}" required
+                   placeholder="tu@email.com" class="form-input">
           </div>
-        </div>
+          <div class="form-group">
+            <label for="password" data-i18n="auth_password">Contraseña</label>
+            <input type="password" id="password" th:field="*{password}" required
+                   placeholder="••••••••" class="form-input">
+            <small class="form-hint" data-i18n="auth_password_hint">Mínimo 8 caracteres</small>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
+            <label for="isOrganization" data-i18n="auth_is_organization">Soy una cooperativa o reciclador</label>
+          </div>
+          <p class="form-hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección. Podés gestionar tu perfil de organización después.</p>
+          <button type="submit" class="btn btn--primary btn--block btn--lg" data-i18n="auth_register_button">Registrarse</button>
+        </form>
 
-        <button type="submit" class="btn btn--green btn--block" th:text="#{register.submit}">Crear Cuenta</button>
-      </form>
-
-      <div class="mt-4 text-center text-sm text-gray-600">
-        <span th:text="#{register.has_account}">¿Ya tienes cuenta?</span>
-        <a href="/auth/login" class="link link--green" th:text="#{register.login_link}">Iniciar Sesión</a>
+        <p class="auth-card__footer">
+          <span data-i18n="auth_have_account">¿Ya tenés cuenta?</span>
+          <a th:href="@{/auth/login}" data-i18n="auth_login_link">Iniciar sesión</a>
+        </p>
       </div>
     </div>
-  </div>
-
-</main>
+  </main>
 </body>
 </html>

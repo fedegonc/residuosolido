@@ -1,128 +1,169 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-    <title th:text="#{catadores.title}">Catadores Informales</title>
+  <title>Residuo Sólido — Catadores</title>
 </head>
 <body>
-<main layout:fragment="content">
-    <div class="page page--narrow page--padded">
-        <div class="page-header">
-            <h1 class="page-header__title" th:text="#{catadores.title}">Catadores Informales</h1>
-            <p class="page-header__subtitle" th:text="#{catadores.subtitle}">Registro de vecinos que entregan materiales directamente</p>
-        </div>
+  <main layout:fragment="content">
+    <div class="page panel-section">
 
-        <div th:if="${successMessage}" th:replace="~{fragments/components/alerts :: success(${successMessage})}"></div>
-        <div th:if="${errorMessage}" th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="/">Inicio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <a href="/acopio/inicio" data-i18n="org_dash_title">Panel de acopio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <span data-i18n="cat_title">Catadores</span>
+      </nav>
 
-        <!-- Formulario crear/editar -->
-        <div class="card mb-6">
-            <div class="card__body">
-                <h2 class="card__title mb-2" th:text="${catador != null} ? 'Editar' : 'Registrar'">Registrar</h2>
-                <form th:action="@{/acopio/catadores}" method="post" class="form">
-                    <input type="hidden" name="id" th:value="${catador != null} ? ${catador.id} : ''"/>
-                    <div class="form__row">
-                        <div class="form__group">
-                            <label class="form__label" th:text="#{catadores.name}">Nombre</label>
-                            <input type="text" name="name" class="form__input" required maxlength="100"
-                                   th:value="${catador != null} ? ${catador.name} : ''"/>
-                        </div>
-                        <div class="form__group">
-                            <label class="form__label" th:text="#{catadores.phone}">Teléfono</label>
-                            <input type="tel" name="phone" class="form__input" required minlength="8" maxlength="20"
-                                   th:value="${catador != null} ? ${catador.phone} : ''"/>
-                        </div>
-                    </div>
-                    <div class="form__row">
-                        <div class="form__group">
-                            <label class="form__label" th:text="#{catadores.city}">Ciudad</label>
-                            <select name="city" class="form__select" required>
-                                <option value="" th:text="#{catadores.select_city}">Selecciona una ciudad</option>
-                                <option th:each="c : ${cities}" th:value="${c}" th:text="${c.displayName}"
-                                        th:selected="${catador != null && catador.city == c}"></option>
-                            </select>
-                        </div>
-                        <div class="form__group">
-                            <label class="form__label" th:text="#{catadores.materials}">Materiales que acopia</label>
-                            <div class="flex flex-wrap gap-3">
-                                <label th:each="m : ${materialCategories}" class="flex gap-1 items-center font-normal">
-                                    <input type="checkbox" name="materials" th:value="${m}"
-                                           th:checked="${catador != null && catador.materials != null && catador.materials.contains(m)}"/>
-                                    <span th:text="${m.displayName}"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form__group">
-                        <label class="form__label" th:text="#{catadores.notes}">Notas</label>
-                        <textarea name="notes" class="form__textarea" rows="2" maxlength="500"
-                                  th:text="${catador != null} ? ${catador.notes} : ''"></textarea>
-                    </div>
-                    <div class="form__group" th:if="${catador != null}">
-                        <label class="flex gap-1 items-center font-normal">
-                            <input type="checkbox" name="active" value="true" th:checked="${catador.active}"/>
-                            <span th:text="#{catadores.active}">Activo</span>
-                        </label>
-                    </div>
-                    <div class="flex gap-3">
-                        <button type="submit" class="btn btn--primary" th:text="#{catadores.save}">Guardar</button>
-                        <a th:if="${catador != null}" href="/acopio/catadores" class="btn btn--ghost" th:text="#{catadores.cancel}">Cancelar</a>
-                    </div>
-                </form>
+      <!-- Header -->
+      <div class="panel-header">
+        <h1 class="panel-header__title" data-i18n="cat_title">Catadores</h1>
+        <button type="button" class="btn btn--primary" id="addToggle">
+          <i class="fa-solid fa-plus"></i>
+          <span data-i18n="cat_add">Agregar catador</span>
+        </button>
+      </div>
+
+      <!-- Add/Edit form (hidden by default) -->
+      <div class="info-card is-hidden" id="formCard">
+        <h2 class="info-card__title">
+          <span th:if="${catador == null}" data-i18n="cat_add_title">Nuevo catador</span>
+          <span th:if="${catador != null}" data-i18n="cat_edit_title">Editar catador</span>
+        </h2>
+        <form th:action="@{/acopio/catadores}" method="post" class="auth-form">
+          <input type="hidden" name="id" th:value="${catador != null ? catador.id : ''}">
+          <div class="form-grid--2">
+            <div class="form-group">
+              <label for="name" data-i18n="cat_name">Nombre</label>
+              <input type="text" id="name" name="name" class="form-input" required
+                     th:value="${catador != null ? catador.name : ''}">
             </div>
-        </div>
-
-        <!-- Lista -->
-        <div class="card">
-            <div class="card__body">
-                <h2 class="card__title mb-2" th:text="#{catadores.registered}">Registrados</h2>
-                <div th:if="${#lists.isEmpty(catadores)}" class="empty-state">
-                    <i aria-hidden="true" class="fa-solid fa-users empty-state__icon"></i>
-                    <p th:text="#{catadores.empty}">No hay catadores informales registrados.</p>
-                </div>
-                <div th:if="${!#lists.isEmpty(catadores)}" class="table-wrapper">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th th:text="#{catadores.name}">Nombre</th>
-                                <th th:text="#{catadores.phone}">Teléfono</th>
-                                <th th:text="#{catadores.city}">Ciudad</th>
-                                <th th:text="#{catadores.materials}">Materiales</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="c : ${catadores}">
-                                <td th:text="${c.name}">Nombre</td>
-                                <td th:text="${c.phone}">Teléfono</td>
-                                <td th:text="${c.city != null ? c.city.displayName : '-'}">Ciudad</td>
-                                <td>
-                                    <span th:each="m,iter : ${c.materials}">
-                                        <span class="badge" th:text="${m.displayName}">Material</span><span th:if="${!iter.last}"> </span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge" th:classappend="${c.active} ? ' badge--success' : ' badge--error'"
-                                          th:text="${c.active} ? 'Activo' : 'Inactivo'">Activo</span>
-                                </td>
-                                <td class="flex gap-1">
-                                    <a th:href="@{/acopio/catadores/edit/{id}(id=${c.id})}" class="btn btn--ghost btn--sm">
-                                        <i aria-hidden="true" class="fa-solid fa-pen"></i>
-                                    </a>
-                                    <form th:action="@{/acopio/catadores/{id}/delete(id=${c.id})}" method="post"
-                                          onsubmit="return confirm('¿Eliminar catador?');">
-                                        <button type="submit" class="btn btn--ghost btn--sm btn--danger">
-                                            <i aria-hidden="true" class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="form-group">
+              <label for="phone" data-i18n="profile_phone">Teléfono</label>
+              <input type="tel" id="phone" name="phone" class="form-input" required
+                     th:value="${catador != null ? catador.phone : ''}">
             </div>
+          </div>
+          <div class="form-grid--2">
+            <div class="form-group">
+              <label for="city" data-i18n="profile_city">Ciudad</label>
+              <select id="city" name="city" class="form-select" required>
+                <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
+                <option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+                        th:selected="${catador != null and catador.city != null and catador.city == c}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="active" data-i18n="cat_active">Activo</label>
+              <select id="active" name="active" class="form-select">
+                <option value="true" th:selected="${catador == null or catador.active}" data-i18n="cat_active_yes">Sí</option>
+                <option value="false" th:selected="${catador != null and !catador.active}" data-i18n="cat_active_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n="req_form_materials">Materiales</label>
+            <div class="check-grid">
+              <label th:each="mat : ${materialCategories}" class="check-card">
+                <input type="checkbox" name="materials" th:value="${mat}"
+                       th:checked="${catador != null and catador.materials != null and catador.materials.contains(mat)}">
+                <span th:text="${mat.name()}"></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="notes" data-i18n="cat_notes">Notas (opcional)</label>
+            <textarea id="notes" name="notes" class="form-input" rows="2"
+                      style="resize:vertical;" th:text="${catador != null ? catador.notes : ''}"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary">
+              <i class="fa-solid fa-check"></i>
+              <span data-i18n="profile_save">Guardar</span>
+            </button>
+            <a href="/acopio/catadores" class="btn btn--outline">
+              <i class="fa-solid fa-xmark"></i>
+              <span data-i18n="profile_cancel">Cancelar</span>
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Collector list -->
+      <div th:if="${catadores != null and !catadores.isEmpty()}">
+        <div class="request-list">
+          <div th:each="c : ${catadores}" class="request-item">
+            <div class="request-item__header">
+              <span class="request-item__id" th:text="${c.name}"></span>
+              <span class="status-badge"
+                    th:classappend="${c.active} ? 'status-badge--completed' : 'status-badge--rejected'"
+                    th:text="${c.active} ? 'Activo' : 'Inactivo'">
+                Activo
+              </span>
+            </div>
+            <div class="request-item__body">
+              <div class="request-item__row" th:if="${c.phone != null}">
+                <i class="fa-solid fa-phone"></i>
+                <span th:text="${c.phone}"></span>
+              </div>
+              <div class="request-item__row" th:if="${c.city != null}">
+                <i class="fa-solid fa-location-dot"></i>
+                <span th:text="${c.city}"></span>
+              </div>
+              <div th:if="${c.materials != null and !c.materials.isEmpty()}" class="request-item__materials">
+                <span th:each="mat : ${c.materials}" class="material-tag" th:text="${mat.name()}"></span>
+              </div>
+              <div class="request-item__row" th:if="${c.notes != null and !c.notes.isBlank()}">
+                <i class="fa-solid fa-sticky-note"></i>
+                <span th:text="${c.notes}"></span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <a th:href="@{/acopio/catadores/edit/{id}(id=${c.id})}" class="btn btn--outline btn--sm">
+                <i class="fa-solid fa-pen"></i>
+                <span data-i18n="req_list_edit">Editar</span>
+              </a>
+              <form th:action="@{/acopio/catadores/{id}/delete(id=${c.id})}" method="post"
+                    onsubmit="return confirm('¿Eliminar este catador?');" style="display:inline;">
+                <button type="submit" class="btn btn--outline btn--sm" style="color:#b91c1c;border-color:#fecaca;">
+                  <i class="fa-solid fa-trash"></i>
+                  <span data-i18n="req_list_delete">Eliminar</span>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Empty state -->
+      <div th:if="${catadores == null or catadores.isEmpty()}" class="info-card">
+        <div class="track-empty">
+          <i class="fa-solid fa-users track-empty__icon"></i>
+          <p class="track-empty__text" data-i18n="cat_empty">No hay catadores registrados</p>
+          <p class="track-empty__text" data-i18n="cat_empty_desc">Agregá catadores para gestionarlos</p>
+        </div>
+      </div>
+
     </div>
-</main>
+
+    <script>
+    (function () {
+      var addToggle = document.getElementById('addToggle');
+      var formCard = document.getElementById('formCard');
+      var editing = document.querySelector('[data-editing]');
+      if (addToggle && formCard) {
+        addToggle.addEventListener('click', function () {
+          formCard.classList.toggle('is-hidden');
+        });
+      }
+      if (editing && formCard) {
+        formCard.classList.remove('is-hidden');
+      }
+    })();
+    </script>
+  </main>
 </body>
 </html>

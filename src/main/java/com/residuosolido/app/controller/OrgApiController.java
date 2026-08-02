@@ -24,7 +24,7 @@ public class OrgApiController {
     @GetMapping("/api/organizations/by-city")
     public List<OrganizationDto> getOrganizationsByCity(@RequestParam City city) {
         return cityOrganizationService.getOrganizationsByCity(city).stream()
-                .map(org -> new OrganizationDto(org.getId(), org.getDisplayName()))
+                .map(org -> new OrganizationDto(org.getId(), org.getDisplayName(), org.getAcceptedMaterials()))
                 .toList();
     }
 }

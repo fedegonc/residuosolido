@@ -1,0 +1,34 @@
+{
+  "badge": "Cuidemos nuestra ciudad",
+  "title": "Juntos por un futuro más limpio y sostenible",
+  "subtitle": "Conectamos a tu comunidad con cooperativas y recicladores para que tus reciclables tengan un mejor destino.",
+  "cta_request": "Enviar solicitud",
+  "cta_track": "Rastrear solicitud",
+  "cta_metrics": "Ver métricas",
+  "hero_img_placeholder": "Ilustración camión de reciclaje",
+
+  "benefit_impact_title": "Impacto ambiental",
+  "benefit_impact_desc": "Reducí la contaminación y cuidá nuestro planeta.",
+  "benefit_local_title": "Apoyo local",
+  "benefit_local_desc": "Fortalecemos el trabajo de cooperativas y recicladores.",
+  "benefit_easy_title": "Fácil y seguro",
+  "benefit_easy_desc": "Proceso simple, rápido y transparente.",
+  "benefit_open_title": "Datos abiertos",
+  "benefit_open_desc": "Métricas públicas para una ciudad más transparente.",
+
+  "how_title": "¿Cómo funciona?",
+  "how_subtitle": "En 4 pasos simples",
+  "how_step1": "Solicitá",
+  "how_step1_desc": "Completá el formulario con los reciclables que querés entregar.",
+  "how_step2": "Asignamos",
+  "how_step2_desc": "Tu solicitud es enviada a la cooperativa más cercana.",
+  "how_step3": "Retiran",
+  "how_step3_desc": "Coordinan contigo el retiro de tus reciclables.",
+  "how_step4": "Impactamos",
+  "how_step4_desc": "Tus reciclables se transforman en recursos y generan impacto positivo.",
+
+  "org_cta_title": "¿Sos una cooperativa o reciclador?",
+  "org_cta_desc": "Sumate a la red y recibí solicitudes en tu zona.",
+  "org_cta_button": "Registrarme como cooperativa",
+  "qr_share": "Compartí esta página"
+}

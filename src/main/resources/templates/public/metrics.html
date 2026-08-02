@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title>Residuo Sólido — Métricas</title>
+</head>
+<body>
+  <main layout:fragment="content">
+    <div class="page panel-section">
+
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="/">Inicio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <span data-i18n="metrics_title">Métricas públicas</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="panel-header">
+        <h1 class="panel-header__title" data-i18n="metrics_title">Métricas públicas</h1>
+      </div>
+
+      <!-- Total -->
+      <div class="stats-grid" style="grid-template-columns:1fr;margin-bottom:1.5rem;">
+        <div class="stat-card" style="text-align:center;align-items:center;">
+          <div class="stat-card__icon stat-card__icon--completed" style="margin:0 auto .5rem;">
+            <i class="fa-solid fa-recycle"></i>
+          </div>
+          <span class="stat-card__value" style="font-size:2.5rem;" th:text="${total}">0</span>
+          <span class="stat-card__label" data-i18n="metrics_total">Recolecciones completadas</span>
+        </div>
+      </div>
+
+      <!-- By city -->
+      <div th:if="${metrics != null and !metrics.isEmpty()}">
+        <h2 class="panel-header__subtitle" style="margin-bottom:1rem;" data-i18n="metrics_by_city">Por ciudad</h2>
+        <div class="stats-grid">
+          <div th:each="entry : ${metrics}" class="stat-card">
+            <div class="stat-card__icon stat-card__icon--total">
+              <i class="fa-solid fa-city"></i>
+            </div>
+            <span class="stat-card__value" th:text="${entry.value}">0</span>
+            <span class="stat-card__label" th:text="${entry.key}"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div th:if="${metrics == null or metrics.isEmpty()}" class="info-card">
+        <div class="track-empty">
+          <i class="fa-solid fa-chart-bar track-empty__icon"></i>
+          <p class="track-empty__text" data-i18n="metrics_empty">Aún no hay datos disponibles</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

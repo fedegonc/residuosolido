@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title>Residuo Sólido</title>
+</head>
+<body>
+  <main layout:fragment="content">
+
+    <!-- Hero: 2 columnas -->
+    <section class="hero">
+      <div class="page">
+        <div class="hero__grid">
+          <div>
+            <span class="hero__badge" data-i18n="badge">Cuidemos nuestra ciudad</span>
+            <h1 class="hero__title" data-i18n="title">Juntos por un futuro más limpio y sostenible</h1>
+            <p class="hero__subtitle" data-i18n="subtitle">Conectamos a tu comunidad con cooperativas y recicladores para que tus reciclables tengan un mejor destino.</p>
+            <div class="hero__cta">
+              <a href="/solicitudes/nueva" class="btn btn--primary btn--lg">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span data-i18n="cta_request">Enviar solicitud</span>
+              </a>
+              <a href="/rastrear" class="btn btn--outline btn--lg">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span data-i18n="cta_track">Rastrear solicitud</span>
+              </a>
+              <a href="/metricas" class="btn btn--outline btn--lg">
+                <i class="fa-solid fa-chart-column"></i>
+                <span data-i18n="cta_metrics">Ver métricas</span>
+              </a>
+            </div>
+          </div>
+          <div class="hero__qr">
+            <div id="qrcode"></div>
+            <p class="hero__qr-text" data-i18n="qr_share">Compartí esta página</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beneficios: 4 cards -->
+    <section class="benefits">
+      <div class="page">
+        <div class="benefits__grid">
+          <div class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-recycle"></i></div>
+            <h3 data-i18n="benefit_impact_title">Impacto ambiental</h3>
+            <p data-i18n="benefit_impact_desc">Reducí la contaminación y cuidá nuestro planeta.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-people-group"></i></div>
+            <h3 data-i18n="benefit_local_title">Apoyo local</h3>
+            <p data-i18n="benefit_local_desc">Fortalecemos el trabajo de cooperativas y recicladores.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-circle-check"></i></div>
+            <h3 data-i18n="benefit_easy_title">Fácil y seguro</h3>
+            <p data-i18n="benefit_easy_desc">Proceso simple, rápido y transparente.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-chart-column"></i></div>
+            <h3 data-i18n="benefit_open_title">Datos abiertos</h3>
+            <p data-i18n="benefit_open_desc">Métricas públicas para una ciudad más transparente.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo funciona: 4 pasos -->
+    <section class="how">
+      <div class="page">
+        <h2 class="how__title" data-i18n="how_title">¿Cómo funciona?</h2>
+        <p class="how__subtitle" data-i18n="how_subtitle">En 4 pasos simples</p>
+        <div class="how__grid">
+          <div class="how__step">
+            <div class="how__number">1</div>
+            <h3 data-i18n="how_step1">Solicitá</h3>
+            <p data-i18n="how_step1_desc">Completá el formulario con los reciclables que querés entregar.</p>
+          </div>
+          <div class="how__step">
+            <div class="how__number">2</div>
+            <h3 data-i18n="how_step2">Asignamos</h3>
+            <p data-i18n="how_step2_desc">Tu solicitud es enviada a la cooperativa más cercana.</p>
+          </div>
+          <div class="how__step">
+            <div class="how__number">3</div>
+            <h3 data-i18n="how_step3">Retiran</h3>
+            <p data-i18n="how_step3_desc">Coordinan contigo el retiro de tus reciclables.</p>
+          </div>
+          <div class="how__step">
+            <div class="how__number">4</div>
+            <h3 data-i18n="how_step4">Impactamos</h3>
+            <p data-i18n="how_step4_desc">Tus reciclables se transforman en recursos y generan impacto positivo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner cooperativas -->
+    <section class="coop-banner">
+      <div class="coop-banner__inner">
+        <div class="coop-banner__content">
+          <div class="coop-banner__icon"><i class="fa-solid fa-hand-holding-droplet"></i></div>
+          <div class="coop-banner__text">
+            <h2 data-i18n="org_cta_title">¿Sos una cooperativa o reciclador?</h2>
+            <p data-i18n="org_cta_desc">Sumate a la red y recibí solicitudes en tu zona.</p>
+          </div>
+        </div>
+        <div class="coop-banner__action">
+          <a href="/auth/register" class="btn btn--white btn--lg" data-i18n="org_cta_button">Registrarme como cooperativa</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+    (function() {
+      var qrEl = document.getElementById('qrcode');
+      if (qrEl && typeof QRCode !== 'undefined') {
+        new QRCode(qrEl, { text: window.location.href, width: 120, height: 120 });
+      }
+    })();
+  </script>
+</body>
+</html>

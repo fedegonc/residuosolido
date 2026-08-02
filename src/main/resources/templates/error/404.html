@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-    <title>404 — Recurso no encontrado</title>
+  <title>Residuo Sólido — 404</title>
 </head>
 <body>
-<main layout:fragment="content">
-    <div class="page page--center">
-        <div class="empty-state empty-state--xl">
-            <i aria-hidden="true" class="fa-solid fa-compass empty-state__icon"></i>
-            <h1 class="text-2xl font-bold text-gray-900">404</h1>
-            <p class="text-sm text-gray-600 mb-4" th:text="#{error.404.message}">El recurso solicitado no fue encontrado.</p>
-            <a href="/" class="btn btn--green">
-                <i aria-hidden="true" class="fa-solid fa-arrow-left"></i>
-                <span th:text="#{error.404.back}">Volver al inicio</span>
-            </a>
-        </div>
+  <main layout:fragment="content">
+    <div class="page page--narrow" style="padding-top:4rem;padding-bottom:4rem;text-align:center;">
+      <div class="error-page">
+        <div class="error-page__icon"><i class="fa-solid fa-compass"></i></div>
+        <h1 class="error-page__title">404</h1>
+        <p class="error-page__desc" data-i18n="error_404_desc">La página que buscás no existe o fue movida.</p>
+        <a href="/" class="btn btn--primary btn--lg" data-i18n="error_404_back">Volver al inicio</a>
+      </div>
     </div>
-</main>
+  </main>
 </body>
 </html>

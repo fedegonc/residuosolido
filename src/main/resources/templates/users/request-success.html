@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title>Residuo Sólido — Solicitud creada</title>
+</head>
+<body>
+  <main layout:fragment="content">
+    <div class="page page--narrow">
+      <div class="success-card">
+
+        <div class="success-card__icon">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h1 class="success-card__title" data-i18n="req_success_title">¡Solicitud creada!</h1>
+
+        <div class="success-card__id" th:if="${createdRequestId != null}">
+          <span class="success-card__id-label" data-i18n="req_success_id">Solicitud</span>
+          <span class="success-card__id-value" th:text="'#' + ${createdRequestId}">#RS-000</span>
+        </div>
+
+        <div class="success-card__status" th:if="${createdRequestStatus != null}">
+          <span class="status-badge status-badge--pending"
+                th:text="${createdRequestStatus == 'PENDING'} ? 'Pendiente' :
+                         (${createdRequestStatus == 'IN_PROGRESS'} ? 'En curso' :
+                         (${createdRequestStatus == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
+            Pendiente
+          </span>
+        </div>
+
+        <p class="success-card__desc" data-i18n="req_success_desc">Nos encargamos de asignar tu solicitud a la cooperativa más cercana. Te contactaremos para coordinar la recolección.</p>
+
+        <div th:if="${isGuest}" class="success-card__upsell">
+          <h2 class="success-card__upsell-title" data-i18n="req_success_upsell_title">¿Querés hacer más fácil tus próximas solicitudes?</h2>
+          <ul class="success-card__upsell-list">
+            <li><i class="fa-solid fa-check"></i> <span data-i18n="req_success_upsell_history">Historial de solicitudes</span></li>
+            <li><i class="fa-solid fa-check"></i> <span data-i18n="req_success_upsell_tracking">Seguimiento en tiempo real</span></li>
+            <li><i class="fa-solid fa-check"></i> <span data-i18n="req_success_upsell_prefill">Datos precargados</span></li>
+          </ul>
+          <div class="success-card__upsell-actions">
+            <a href="/auth/register" class="btn btn--primary btn--lg">
+              <i class="fa-solid fa-user-plus"></i>
+              <span data-i18n="req_success_create_account">Crear cuenta</span>
+            </a>
+            <a href="/" class="btn btn--outline">
+              <span data-i18n="req_success_not_now">Ahora no</span>
+            </a>
+          </div>
+        </div>
+
+        <div th:if="${!isGuest}" class="success-card__actions">
+          <a href="/solicitudes" class="btn btn--primary">
+            <i class="fa-solid fa-list"></i>
+            <span data-i18n="req_success_my_requests">Mis solicitudes</span>
+          </a>
+          <a href="/solicitudes/nueva" class="btn btn--outline">
+            <i class="fa-solid fa-plus"></i>
+            <span data-i18n="req_success_new_request">Nueva solicitud</span>
+          </a>
+        </div>
+
+        <div th:if="${isGuest}" class="success-card__track-link">
+          <a th:href="${guestPhone != null ? '/rastrear?phone=' + guestPhone : '/rastrear'}" class="btn btn--outline">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span data-i18n="req_success_track">Rastrear mi solicitud</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "auth_login_title": "Iniciar sessão",
+  "auth_login_subtitle": "Entre com sua conta para continuar",
+  "auth_username": "Usuário",
+  "auth_password": "Senha",
+  "auth_login_button": "Entrar",
+  "auth_no_account": "Não tem conta?",
+  "auth_register_link": "Cadastrar-se",
+  "auth_register_title": "Criar conta",
+  "auth_register_subtitle": "Registre-se para começar a usar Resíduos Sólidos",
+  "auth_email": "Email",
+  "auth_password_hint": "Mínimo 8 caracteres",
+  "auth_is_organization": "Sou uma cooperativa ou reciclador",
+  "auth_is_organization_hint": "Marque esta op\u00e7\u00e3o se quiser receber solicita\u00e7\u00f5es de coleta. Voc\u00ea pode gerenciar seu perfil de organiza\u00e7\u00e3o depois.",
+  "auth_register_button": "Cadastrar-se",
+  "auth_have_account": "Já tem conta?",
+  "auth_login_link": "Iniciar sessão",
+  "error_404_desc": "A página que você procura não existe ou foi movida.",
+  "error_404_back": "Voltar ao início"
+}

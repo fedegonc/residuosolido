@@ -1,78 +1,55 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-    <title th:text="#{completeProfile.title}">Completa tu Perfil - Centro de Acopio</title>
+  <title>Residuo Sólido — Completar perfil</title>
 </head>
 <body>
-<main layout:fragment="content">
-    <div class="page page--narrow page--padded">
-        <div th:if="${errorMessage}" class="alert alert--error">
-            <i aria-hidden="true" class="fa-solid fa-circle-xmark"></i>
-            <span th:text="${errorMessage}"></span>
-        </div>
+  <main layout:fragment="content">
+    <div class="page form-section">
+      <div class="form-card page--narrow">
 
-        <div class="card card--flush card--shadow-lg">
-            <div class="hero-header hero-header--green hero-header--flush">
-                <div class="flex gap-3 items-center mb-2">
-                    <i aria-hidden="true" class="fa-solid fa-clipboard-check text-2xl"></i>
-                    <h1 class="hero-header__title" th:text="#{completeProfile.heading}">Completa tu Perfil de Centro de Acopio</h1>
-                </div>
-                <p class="hero-header__subtitle" th:text="#{completeProfile.intro}">Para comenzar a recibir solicitudes, necesitamos que completes la siguiente informacion.</p>
-            </div>
+        <h1 class="form-card__title" data-i18n="onboard_title">Completá tu perfil</h1>
+        <p class="form-card__subtitle" data-i18n="onboard_subtitle">Necesitamos estos datos para que los ciudadanos puedan contactarte</p>
 
-            <form th:action="@{/acopio/completar-perfil}" method="post" class="card__body content-grid content-grid--md">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <form action="/acopio/completar-perfil" method="post" class="auth-form">
 
-                <div>
-                    <h2 class="text-lg font-semibold text-gray-900 flex gap-2 items-center mb-2">
-                        <i aria-hidden="true" class="fa-solid fa-location-dot icon-green-dark"></i>
-                        <span th:text="#{completeProfile.contactInfo}">Informacion de Contacto</span>
-                    </h2>
+          <!-- Organization name (read-only, already set at registration) -->
+          <div class="form-group">
+            <label data-i18n="onboard_org_name">Organización</label>
+            <input type="text" class="form-input" th:value="${organization.displayName}" disabled>
+          </div>
 
-                    <div class="content-grid">
-                        <div>
-                            <label class="field__label">
-                                <i aria-hidden="true" class="fa-solid fa-phone"></i>
-                                <span th:text="#{completeProfile.phone}">Telefono de contacto</span> <span class="req">*</span>
-                            </label>
-                            <input type="tel" name="phone" required minlength="8"
-                                th:value="${organization?.phone}"
-                                class="input"
-                                th:placeholder="#{completeProfile.phone.placeholder}" placeholder="Ej: 098 123 456"/>
-                            <p class="field__hint" th:text="#{completeProfile.phone.hint}">Los usuarios se comunicaran contigo a este numero</p>
-                        </div>
+          <!-- Phone -->
+          <div class="form-group">
+            <label for="phone" data-i18n="onboard_phone">Teléfono de contacto</label>
+            <input type="tel" id="phone" name="phone" class="form-input"
+                   th:value="${organization.phone}"
+                   data-i18n-attr="placeholder:onboard_phone_placeholder"
+                   placeholder="Ej: +598 99 123 456" required>
+          </div>
 
-                        <div>
-                            <label class="field__label">
-                                <i aria-hidden="true" class="fa-solid fa-city"></i>
-                                <span th:text="#{completeProfile.city}">Ciudad</span> <span class="req">*</span>
-                            </label>
-                            <select name="city" class="input" required>
-                                <option value="" th:text="#{completeProfile.city.placeholder}">Selecciona tu ciudad</option>
-                                <option th:each="c : ${cities}" th:value="${c.name()}" th:text="${c.name() == 'RIVERA' ? 'Rivera' : 'Livramento'}" th:selected="${organization?.city != null and organization.city.name() == c.name()}">Ciudad</option>
-                            </select>
-                            <p class="field__hint" th:text="#{completeProfile.city.hint}">Las solicitudes se asignan automaticamente segun tu ciudad</p>
-                        </div>
-                    </div>
-                </div>
+          <!-- City -->
+          <div class="form-group">
+            <label for="city" data-i18n="onboard_city">Ciudad</label>
+            <select id="city" name="city" class="form-select" required>
+              <option value="" data-i18n="onboard_city_select">Seleccioná una ciudad</option>
+              <option th:each="c : ${cities}" th:value="${c}" th:text="${c.name()}"
+                      th:selected="${organization.city != null and organization.city == c}"></option>
+            </select>
+          </div>
 
-                <div>
-                    <button type="submit" class="btn btn--green btn--block">
-                        <i aria-hidden="true" class="fa-solid fa-circle-check"></i>
-                        <span th:text="#{completeProfile.submit}">Completar Perfil</span>
-                    </button>
-                </div>
+          <div class="form-divider"></div>
 
-                <div class="info-box info-box--blue">
-                    <i aria-hidden="true" class="fa-solid fa-circle-info info-box__icon"></i>
-                    <div class="info-box__content">
-                        <p class="info-box__title" th:text="#{completeProfile.info.title}">¿Por que necesitamos esta informacion?</p>
-                        <p th:text="#{completeProfile.info.text}">Esta informacion sera visible para los usuarios que deseen enviar materiales reciclables a tu centro. Podras actualizar estos datos despues desde tu perfil.</p>
-                    </div>
-                </div>
-            </form>
-        </div>
+          <button type="submit" class="btn btn--primary btn--block">
+            <i class="fa-solid fa-check"></i>
+            <span data-i18n="onboard_submit">Completar perfil</span>
+          </button>
+
+        </form>
+      </div>
     </div>
-</main>
+  </main>
 </body>
 </html>

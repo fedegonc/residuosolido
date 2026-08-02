@@ -1,0 +1,10 @@
+{
+  "onboard_title": "Completá tu perfil",
+  "onboard_subtitle": "Necesitamos estos datos para que los ciudadanos puedan contactarte",
+  "onboard_org_name": "Organización",
+  "onboard_phone": "Teléfono de contacto",
+  "onboard_phone_placeholder": "Ej: +598 99 123 456",
+  "onboard_city": "Ciudad",
+  "onboard_city_select": "Seleccioná una ciudad",
+  "onboard_submit": "Completar perfil"
+}

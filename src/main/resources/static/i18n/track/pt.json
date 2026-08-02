@@ -1,0 +1,22 @@
+{
+  "track_title": "Rastrear solicitação",
+  "track_subtitle": "Digite seu telefone para ver o status das suas solicitações",
+  "track_phone_label": "Telefone",
+  "track_phone_placeholder": "Ex: +55 55 123 456",
+  "track_search_btn": "Buscar",
+  "track_no_results": "Nenhuma solicitação encontrada para este telefone",
+  "track_no_results_desc": "Verifique se o número está correto",
+  "track_results_title": "Suas solicitações",
+  "track_request_id": "Solicitação",
+  "track_request_date": "Data",
+  "track_request_city": "Cidade",
+  "track_request_address": "Endereço",
+  "track_request_materials": "Materiais",
+  "track_request_org": "Organização",
+  "track_status_pending": "Pendente",
+  "track_status_in_progress": "Em andamento",
+  "track_status_completed": "Concluído",
+  "track_status_rejected": "Rejeitado",
+  "track_no_org": "Não atribuído",
+  "track_empty_cta": "Criar uma solicitação"
+}

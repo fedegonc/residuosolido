@@ -1,6 +1,7 @@
 package com.residuosolido.app.model;
 
 import com.residuosolido.app.enums.City;
+import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,8 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,6 +40,8 @@ public class User {
     private boolean active = true;
 
     private Boolean profileCompleted = false;
+
+    private List<MaterialCategory> acceptedMaterials = new ArrayList<>();
 
     public String getDisplayName() {
         return firstName != null && !firstName.isBlank() ? firstName : username;

@@ -44,6 +44,9 @@ public class Request {
 
     private List<MaterialCategory> materials = new ArrayList<>();
 
+    private String estimatedWeight;
+    private String estimatedVolume;
+
     private String imageUrl;
 
     private TimeSlot confirmedSlot;

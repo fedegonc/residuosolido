@@ -68,10 +68,12 @@ public class RequestController {
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
+                                @RequestParam(value = "estimatedWeight", required = false) String estimatedWeight,
+                                @RequestParam(value = "estimatedVolume", required = false) String estimatedVolume,
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(value = "guestName", required = false) String guestName,
                                 @RequestParam(value = "guestPhone", required = false) String guestPhone,
-                                @RequestParam("organizationId") String organizationId,
+                                @RequestParam(value = "organizationId", required = false) String organizationId,
                                 Authentication authentication,
                                 HttpServletRequest httpRequest,
                                 RedirectAttributes redirectAttributes) {
@@ -81,24 +83,38 @@ public class RequestController {
                 redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.rate_limited", null, LocaleContextHolder.getLocale()));
                 return "redirect:/solicitudes/nueva?error";
             }
-            requestService.createRequestWithImage(user, city, address, addressReference,
-                    materials, guestName, guestPhone, organizationId, imageFile);
+            Request created = requestService.createRequestWithImage(user, city, address, addressReference,
+                    materials, guestName, guestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
 
             redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("flash.request.created", null, LocaleContextHolder.getLocale()));
+            redirectAttributes.addFlashAttribute("createdRequestId", created.getId());
+            redirectAttributes.addFlashAttribute("createdRequestStatus", created.getStatus().name());
+            redirectAttributes.addFlashAttribute("isGuest", user == null);
             if (user == null) {
-                if (guestPhone != null && !guestPhone.trim().isEmpty()) {
-                    return "redirect:/rastrear?phone=" + guestPhone.trim();
-                }
-                return "redirect:/solicitudes/nueva?success";
+                redirectAttributes.addFlashAttribute("guestPhone", guestPhone);
             }
-            return "redirect:/solicitudes";
+            return "redirect:/solicitudes/exito";
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
             return "redirect:/solicitudes";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
+            return "redirect:/solicitudes/nueva";
         } catch (Exception e) {
             logger.error("Error al crear solicitud: {}", e.getMessage());
-            return "redirect:/solicitudes/nueva?error";
+            redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("flash.request.create_error", null, LocaleContextHolder.getLocale()));
+            return "redirect:/solicitudes/nueva";
         }
+    }
+
+    @GetMapping("/solicitudes/exito")
+    public String requestSuccess(@RequestParam(value = "id", required = false) String id,
+                                  Model model) {
+        if (id != null && !id.isBlank()) {
+            model.addAttribute("createdRequestId", id);
+            model.addAttribute("createdRequestStatus", "PENDING");
+        }
+        return "users/request-success";
     }
 
     @PreAuthorize("hasRole('USER')")

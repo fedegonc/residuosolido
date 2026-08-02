@@ -1,174 +1,118 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/app-layout}">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-    <title th:text="#{user.requests.title}">Mis Solicitudes</title>
+  <title>Residuo Sólido — Solicitudes</title>
 </head>
 <body>
-<main layout:fragment="content">
-    <div class="page page--wide page--padded">
-        <!-- Mensajes -->
-        <div th:if="${successMessage}" th:replace="~{fragments/components/alerts :: success(${successMessage})}"></div>
-        <div th:if="${errorMessage}" th:replace="~{fragments/components/alerts :: error(${errorMessage})}"></div>
+  <main layout:fragment="content">
+    <div class="page panel-section">
 
-        <!-- Header -->
-        <div class="flex-between mb-4">
-            <div>
-                <h1 class="text-xl font-bold text-gray-900" th:text="#{user.requests.title}">Mis Solicitudes</h1>
-                <p class="text-xs text-gray-600 mt-1" th:text="#{user.requests.subtitle}">Gestiona todas tus solicitudes de recolección</p>
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="/" class="breadcrumb__link">Inicio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <a href="/usuarios/inicio" class="breadcrumb__link">Mi panel</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <span data-i18n="req_list_title">Mis solicitudes</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="panel-header">
+        <h1 class="panel-header__title" data-i18n="req_list_title">Mis solicitudes</h1>
+        <a href="/solicitudes/nueva" class="btn btn--primary">
+          <i class="fa-solid fa-plus"></i>
+          <span data-i18n="req_list_new">Nueva solicitud</span>
+        </a>
+      </div>
+
+      <!-- Request list -->
+      <div th:if="${requests != null and !requests.isEmpty()}">
+        <div class="request-list">
+          <div th:each="req : ${requests}" class="request-item">
+            <div class="request-item__header">
+              <span class="request-item__id">
+                <span data-i18n="track_request_id">Solicitud</span>
+                #<span th:text="${req.id}"></span>
+              </span>
+              <span class="status-badge"
+                    th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
+                                     (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
+                                     (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
+                                     'status-badge--rejected'))"
+                    th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
+                             (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
+                             (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
+                Pendiente
+              </span>
             </div>
-            <a href="/solicitudes/nueva" class="btn btn--green btn--sm">
-                <i aria-hidden="true" class="fa-solid fa-plus"></i>
-                <span th:text="#{user.requests.new}">Nueva Solicitud</span>
-            </a>
+            <div class="request-item__body">
+              <div class="request-item__row" th:if="${req.createdAt != null}">
+                <i class="fa-solid fa-calendar"></i>
+                <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+              </div>
+              <div class="request-item__row" th:if="${req.city != null}">
+                <i class="fa-solid fa-location-dot"></i>
+                <span th:text="${req.city}"></span>
+              </div>
+              <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
+                <i class="fa-solid fa-route"></i>
+                <span th:text="${req.address}"></span>
+              </div>
+              <div th:if="${req.hasMaterials()}" class="request-item__materials">
+                <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+              </div>
+              <div class="request-item__row" th:if="${req.organization != null}">
+                <i class="fa-solid fa-building"></i>
+                <span th:text="${req.organization.displayName}"></span>
+              </div>
+              <div class="request-item__row" th:if="${req.organization == null}">
+                <i class="fa-solid fa-building"></i>
+                <span data-i18n="track_no_org">Sin asignar</span>
+              </div>
+            </div>
+            <!-- Actions -->
+            <div class="form-actions">
+              <a th:href="@{/solicitud/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
+                <i class="fa-solid fa-eye"></i>
+                <span data-i18n="req_list_view">Ver</span>
+              </a>
+              <a th:if="${req.canBeEdited()}"
+                 th:href="@{/solicitud/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
+                <i class="fa-solid fa-pen"></i>
+                <span data-i18n="req_list_edit">Editar</span>
+              </a>
+              <form th:if="${req.canBeDeleted()}"
+                    th:action="@{/solicitud/{id}/eliminar(id=${req.id})}" method="post"
+                    onsubmit="return confirm('¿Eliminar esta solicitud?');"
+                    style="display:inline;">
+                <button type="submit" class="btn btn--outline btn--sm" style="color:#b91c1c;border-color:#fecaca;">
+                  <i class="fa-solid fa-trash"></i>
+                  <span data-i18n="req_list_delete">Eliminar</span>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Requests List -->
-        <div class="card card--flush">
-            <div th:if="${requests != null and !requests.empty}">
-                <div th:each="request : ${requests}" class="req-item" th:onclick="|window.location.href='/solicitud/' + ${request.id}|">
-                    <div class="flex items-start gap-3">
-                        <!-- Icono -->
-                        <div class="req-item__icon">
-                            <i aria-hidden="true" class="fa-solid fa-box"></i>
-                        </div>
-
-                        <!-- Contenido -->
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between gap-2 mb-2">
-                                <h3 class="text-base font-semibold text-gray-900" th:text="${request.address}">Dirección</h3>
-                                <th:block th:replace="~{fragments/components/status-badge :: badge(${request.status})}"></th:block>
-                            </div>
-
-                            <!-- Detalles con iconos -->
-                            <div class="grid grid--2 mb-2 grid--gap-sm">
-                                <div class="req-item__meta">
-                                    <i aria-hidden="true" class="fa-solid fa-location-dot"></i>
-                                    <span th:text="${request.address}">Dirección</span>
-                                </div>
-                                <div class="req-item__meta">
-                                    <i aria-hidden="true" class="fa-solid fa-calendar"></i>
-                                    <span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
-                                </div>
-                                <div th:if="${request.city}" class="req-item__meta">
-                                    <i aria-hidden="true" class="fa-solid fa-building"></i>
-                                    <span th:text="${request.city}">Ciudad</span>
-                                </div>
-                                <div th:if="${request.confirmedSlot}" class="req-item__meta">
-                                    <i aria-hidden="true" class="fa-solid fa-clock"></i>
-                                    <span th:text="${request.confirmedSlot}">Horario</span>
-                                </div>
-                            </div>
-
-                            <!-- Organización asignada -->
-                            <div th:if="${request.organization != null}" class="req-item__meta mb-2">
-                                <i aria-hidden="true" class="fa-solid fa-building icon-green-dark"></i>
-                                <span class="text-gray-700">
-                                    <span class="font-medium text-green-dark" th:text="#{user.requests.organization}">Organización:</span>
-                                    <span th:text="${request.organization.displayName != null ? request.organization.displayName : request.organization.username}">Organización</span>
-                                </span>
-                            </div>
-
-                            <!-- Materiales -->
-                            <div th:if="${request.materials != null and !request.materials.empty}" class="flex flex-wrap gap-1 mb-2">
-                                <span th:each="material : ${request.materials}" class="badge badge--green" th:text="${material}">Material</span>
-                            </div>
-
-                            <!-- Botones de acción -->
-                            <div class="flex gap-3">
-                                <a th:href="@{/solicitud/{id}(id=${request.id})}"
-                                   class="link link--green text-xs font-medium"
-                                   onclick="event.stopPropagation()">
-                                    <i aria-hidden="true" class="fa-solid fa-eye"></i>
-                                    <span th:text="#{user.requests.view_details}">Ver detalles</span>
-                                </a>
-                                <a th:href="@{/solicitud/{id}/editar(id=${request.id})}"
-                                   class="link link--blue text-xs font-medium"
-                                   onclick="event.stopPropagation()">
-                                    <i aria-hidden="true" class="fa-solid fa-pen"></i>
-                                    <span th:text="#{user.requests.edit}">Editar</span>
-                                </a>
-                                <button type="button"
-                                        th:onclick="|event.stopPropagation(); confirmDelete(${request.id}, '${request.address}')|"
-                                        class="link link--danger text-xs font-medium">
-                                    <i aria-hidden="true" class="fa-solid fa-trash"></i>
-                                    <span th:text="#{user.requests.delete}">Eliminar</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Empty State -->
-            <div th:if="${requests == null or requests.empty}" class="empty-state empty-state--xl">
-                <i aria-hidden="true" class="fa-solid fa-inbox empty-state__icon"></i>
-                <h3 class="text-lg font-medium text-gray-900 mb-2" th:text="#{user.requests.empty}">No tienes solicitudes</h3>
-                <p class="text-sm text-gray-600 mb-6" th:text="#{user.requests.empty.desc}">
-                    Aún no has creado ninguna solicitud de recolección. Comienza tu viaje de reciclaje ahora.
-                </p>
-                <a href="/solicitudes/nueva" class="btn btn--green">
-                    <i aria-hidden="true" class="fa-solid fa-plus-circle"></i>
-                    <span th:text="#{user.requests.create_first}">Crear Primera Solicitud</span>
-                </a>
-            </div>
+      <!-- Empty state -->
+      <div th:if="${requests == null or requests.isEmpty()}" class="info-card">
+        <div class="track-empty">
+          <div class="track-empty__illustration">
+            <i class="fa-solid fa-clipboard-list"></i>
+          </div>
+          <h2 class="track-empty__title" data-i18n="req_list_empty">No tenés solicitudes todavía</h2>
+          <p class="track-empty__text" data-i18n="req_list_empty_desc">Creá tu primera solicitud de recolección</p>
+          <a href="/solicitudes/nueva" class="btn btn--primary btn--lg" style="margin-top:.75rem;">
+            <i class="fa-solid fa-plus"></i>
+            <span data-i18n="req_list_new">Nueva solicitud</span>
+          </a>
         </div>
+      </div>
+
     </div>
-
-    <!-- Modal de confirmación de eliminación -->
-    <div id="deleteModal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
-        <div class="modal-box">
-            <div class="modal-body">
-                <div class="modal-icon modal-icon--danger">
-                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                </div>
-                <h3 id="deleteModalTitle" class="text-lg font-medium text-gray-900 text-center mb-2" th:text="#{user.requests.confirm_delete}">¿Eliminar solicitud?</h3>
-                <p class="text-sm text-gray-600 text-center mb-4" th:text="#{user.requests.confirm_delete_desc}">
-                    ¿Estás seguro de que deseas eliminar la solicitud?
-                </p>
-                <form id="deleteForm" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <div class="flex gap-3 justify-center">
-                        <button type="button" onclick="closeDeleteModal()" class="btn btn--ghost btn--sm" aria-label="Cancelar">
-                            <span th:text="#{user.requests.cancel}">Cancelar</span>
-                        </button>
-                        <button type="submit" class="btn btn--danger btn--sm" aria-label="Eliminar">
-                            <span th:text="#{user.requests.delete_btn}">Eliminar</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function confirmDelete(id, description) {
-            document.getElementById('deleteRequestName').textContent = description;
-            const form = document.getElementById('deleteForm');
-            form.action = '/solicitud/' + id + '/eliminar';
-            const modal = document.getElementById('deleteModal');
-            modal.classList.remove('is-hidden');
-            modal.querySelector('button[type="submit"]').focus();
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('is-hidden');
-        }
-
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDeleteModal();
-            }
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('deleteModal');
-                if (modal && !modal.classList.contains('is-hidden')) {
-                    closeDeleteModal();
-                }
-            }
-        });
-    </script>
-</main>
+  </main>
 </body>
 </html>

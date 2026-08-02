@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"></head>
+<body>
+  <nav th:fragment="nav" class="navbar" aria-label="Navegación principal">
+    <div class="navbar__inner">
+      <a href="/" class="navbar__brand">
+        <span class="navbar__logo"><i class="fa-solid fa-recycle"></i></span>
+        <span>Residuo Sólido</span>
+      </a>
+
+      <div class="navbar__links">
+        <a href="/" class="navbar__link" data-i18n="nav_home">Inicio</a>
+        <a href="/solicitudes/nueva" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
+        <a href="/rastrear" class="navbar__link" data-i18n="nav_track">Rastrear solicitud</a>
+        <a href="/metricas" class="navbar__link" data-i18n="nav_metrics">Métricas públicas</a>
+      </div>
+
+      <div class="navbar__actions">
+        <div class="navbar__lang">
+          <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
+          <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
+        </div>
+
+        <!-- Anonymous: login + register -->
+        <span sec:authorize="!isAuthenticated()">
+          <a href="/auth/login" class="btn btn--outline" data-i18n="nav_login">Entrar</a>
+          <a href="/auth/register" class="btn btn--outline" data-i18n="nav_register">Registrarse</a>
+        </span>
+
+        <!-- Authenticated: user menu -->
+        <div sec:authorize="isAuthenticated()" class="navbar__user">
+          <div class="navbar__user-info">
+            <span class="navbar__user-avatar"><i class="fa-solid fa-user"></i></span>
+            <span class="navbar__user-name" sec:authentication="name">federico</span>
+          </div>
+          <div class="navbar__user-links">
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="navbar__user-link" data-i18n="nav_org_panel">Panel acopio</a>
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" class="navbar__user-link" data-i18n="nav_org_profile">Perfil</a>
+            <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="navbar__user-link" data-i18n="nav_user_panel">Mi panel</a>
+            <a sec:authorize="hasRole('USER')" href="/usuarios/perfil" class="navbar__user-link" data-i18n="nav_user_profile">Mi perfil</a>
+            <a sec:authorize="hasRole('USER')" href="/solicitudes" class="navbar__user-link" data-i18n="nav_user_requests">Mis solicitudes</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+              <button type="submit" class="navbar__user-logout" data-i18n="nav_logout">Cerrar sesión</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <button id="menuBtn" type="button" class="navbar__toggle" aria-label="Menú" aria-expanded="false">
+        <svg id="menuIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <svg id="closeIcon" class="is-hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <div id="dropdownMenu" class="dropdown is-hidden">
+      <a href="/" class="dropdown__link" data-i18n="nav_home">Inicio</a>
+      <a href="/solicitudes/nueva" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
+      <a href="/rastrear" class="dropdown__link" data-i18n="nav_track">Rastrear solicitud</a>
+      <a href="/metricas" class="dropdown__link" data-i18n="nav_metrics">Métricas públicas</a>
+      <div class="dropdown__divider">
+        <div class="dropdown__lang-row">
+          <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
+          <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
+        </div>
+        <span sec:authorize="!isAuthenticated()">
+          <a href="/auth/login" class="btn btn--outline btn--block" data-i18n="nav_login">Entrar</a>
+          <a href="/auth/register" class="btn btn--outline btn--block" data-i18n="nav_register">Registrarse</a>
+        </span>
+        <div sec:authorize="isAuthenticated()" class="dropdown__auth-links">
+          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
+          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" class="dropdown__link" data-i18n="nav_org_profile">Perfil</a>
+          <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="dropdown__link" data-i18n="nav_user_panel">Mi panel</a>
+          <a sec:authorize="hasRole('USER')" href="/usuarios/perfil" class="dropdown__link" data-i18n="nav_user_profile">Mi perfil</a>
+          <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_user_requests">Mis solicitudes</a>
+          <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn--outline btn--block" data-i18n="nav_logout">Cerrar sesión</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+</body>
+</html>

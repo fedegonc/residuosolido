@@ -35,7 +35,27 @@ public class RequestService {
 
     public Request createRequest(User user, City city, String address, String addressReference,
                                   List<MaterialCategory> materials, String guestName, String guestPhone,
-                                  String organizationId) {
+                                  String organizationId, String estimatedWeight, String estimatedVolume) {
+        if (city == null) {
+            throw new IllegalArgumentException("error.request.city_required");
+        }
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException("error.request.address_required");
+        }
+        if (materials == null || materials.isEmpty()) {
+            throw new IllegalArgumentException("error.request.materials_required");
+        }
+        if (user == null) {
+            if (guestName == null || guestName.trim().isEmpty()) {
+                throw new IllegalArgumentException("error.request.guest_name_required");
+            }
+            if (guestPhone == null || guestPhone.trim().isEmpty()) {
+                throw new IllegalArgumentException("error.request.guest_phone_required");
+            }
+            if (!guestPhone.matches("^[+][0-9]{1,3}[\\s0-9]{6,15}$")) {
+                throw new IllegalArgumentException("error.request.invalid_phone");
+            }
+        }
         Request request = new Request();
         if (user != null) {
             request.setUser(user);
@@ -47,10 +67,21 @@ public class RequestService {
         request.setAddress(address);
         request.setAddressReference(addressReference);
         request.setMaterials(materials != null ? materials : List.of());
+        request.setEstimatedWeight(estimatedWeight);
+        request.setEstimatedVolume(estimatedVolume);
         request.setStatus(RequestStatus.PENDING);
         request.setCreatedAt(LocalDateTime.now());
 
-        User org = cityOrganizationService.findOrganizationByIdAndCity(organizationId, city);
+        User org;
+        if (organizationId != null && !organizationId.isBlank()) {
+            org = cityOrganizationService.findOrganizationByIdAndCity(organizationId, city);
+        } else {
+            List<User> orgs = cityOrganizationService.getOrganizationsByCity(city);
+            if (orgs == null || orgs.isEmpty()) {
+                throw new IllegalArgumentException("error.request.no_organization");
+            }
+            org = orgs.get(0);
+        }
         request.assignOrganization(org);
         logger.info("Organización auto-asignada: {} para ciudad: {}", org.getDisplayName(), city);
 
@@ -59,9 +90,9 @@ public class RequestService {
 
     public Request createRequestWithImage(User user, City city, String address, String addressReference,
                                             List<MaterialCategory> materials, String guestName, String guestPhone,
-                                            String organizationId,
+                                            String organizationId, String estimatedWeight, String estimatedVolume,
                                             MultipartFile imageFile) {
-        Request request = createRequest(user, city, address, addressReference, materials, guestName, guestPhone, organizationId);
+        Request request = createRequest(user, city, address, addressReference, materials, guestName, guestPhone, organizationId, estimatedWeight, estimatedVolume);
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 String imageUrl = imageService.uploadFile(imageFile);
@@ -110,6 +141,15 @@ public class RequestService {
         Request request = getOwnedRequest(id, user);
         if (!request.canBeEdited()) {
             throw new IllegalStateException("flash.request.edit.pending_only");
+        }
+        if (city == null) {
+            throw new IllegalArgumentException("error.request.city_required");
+        }
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException("error.request.address_required");
+        }
+        if (materials == null || materials.isEmpty()) {
+            throw new IllegalArgumentException("error.request.materials_required");
         }
         request.setCity(city);
         request.setAddress(address);

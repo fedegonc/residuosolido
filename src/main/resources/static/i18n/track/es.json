@@ -1,0 +1,22 @@
+{
+  "track_title": "Rastrear solicitud",
+  "track_subtitle": "Ingresá tu teléfono para ver el estado de tus solicitudes",
+  "track_phone_label": "Teléfono",
+  "track_phone_placeholder": "Ej: +598 99 123 456",
+  "track_search_btn": "Buscar",
+  "track_no_results": "No se encontraron solicitudes para este teléfono",
+  "track_no_results_desc": "Verificá que el número sea correcto",
+  "track_results_title": "Tus solicitudes",
+  "track_request_id": "Solicitud",
+  "track_request_date": "Fecha",
+  "track_request_city": "Ciudad",
+  "track_request_address": "Dirección",
+  "track_request_materials": "Materiales",
+  "track_request_org": "Organización",
+  "track_status_pending": "Pendiente",
+  "track_status_in_progress": "En curso",
+  "track_status_completed": "Completado",
+  "track_status_rejected": "Rechazado",
+  "track_no_org": "Sin asignar",
+  "track_empty_cta": "Crear una solicitud"
+}

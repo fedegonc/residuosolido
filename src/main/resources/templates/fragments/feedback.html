@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"></head>
+<body>
+  <div th:fragment="msg(type, text)" th:if="${type != null and text != null}"
+       class="alert"
+       th:classappend="${type == 'success' ? 'alert--success' : (type == 'error' ? 'alert--error' : (type == 'warning' ? 'alert--warning' : 'alert--info'))}"
+       role="alert">
+    <i aria-hidden="true" th:class="${type == 'success' ? 'fa-solid fa-circle-check' : (type == 'error' ? 'fa-solid fa-circle-exclamation' : (type == 'warning' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-info'))}"></i>
+    <span th:text="${text}"></span>
+  </div>
+</body>
+</html>
