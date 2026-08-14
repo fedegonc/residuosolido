@@ -6,8 +6,6 @@ import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,17 +15,15 @@ import java.util.List;
 @Service
 public class RequestService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestService.class);
-
     private final RequestRepository requestRepository;
     private final LocalImageService imageService;
     private final RequestValidator validator;
-    private final OrganizationResolver orgResolver;
+    private final OrgResolver orgResolver;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
                           RequestValidator validator,
-                          OrganizationResolver orgResolver) {
+                          OrgResolver orgResolver) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.validator = validator;
@@ -66,19 +62,6 @@ public class RequestService {
                                             MultipartFile imageFile) {
         Request request = createRequest(user, city, address, addressReference, materials,
                 guestName, guestPhone, organizationId, estimatedWeight, estimatedVolume);
-        return attachImage(request, imageFile);
-    }
-
-    private Request attachImage(Request request, MultipartFile imageFile) {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                request.setImageUrl(imageService.uploadFile(imageFile));
-                return requestRepository.save(request);
-            } catch (Exception e) {
-                logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
-                throw new IllegalStateException("flash.request.image_upload_failed", e);
-            }
-        }
-        return request;
+        return imageService.attachImageToRequest(request, imageFile);
     }
 }

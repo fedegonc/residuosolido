@@ -4,7 +4,7 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.CityOrganizationService;
+import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestQueryService;
 import com.residuosolido.app.service.RequestUpdateService;
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/** Edición de solicitudes existentes (solo pendientes, solo del dueño). */
 @Controller
 public class RequestEditController extends BaseController {
 
@@ -27,17 +28,18 @@ public class RequestEditController extends BaseController {
 
     private final RequestUpdateService requestUpdateService;
     private final RequestQueryService requestQueryService;
-    private final CityOrganizationService cityOrganizationService;
+    private final CityOrgService cityOrgService;
 
     @Autowired
     public RequestEditController(RequestUpdateService requestUpdateService,
                                  RequestQueryService requestQueryService,
-                                 CityOrganizationService cityOrganizationService) {
+                                 CityOrgService cityOrgService) {
         this.requestUpdateService = requestUpdateService;
         this.requestQueryService = requestQueryService;
-        this.cityOrganizationService = cityOrganizationService;
+        this.cityOrgService = cityOrgService;
     }
 
+    /** Muestra el formulario de edición con los datos actuales. */
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/solicitud/{id}/editar")
     public String editRequestForm(@PathVariable String id, Authentication authentication, Model model,
@@ -47,7 +49,7 @@ public class RequestEditController extends BaseController {
             Request request = requestQueryService.getEditableOwnedRequest(id, user);
             model.addAttribute("request", request);
             model.addAttribute("isEdit", true);
-            model.addAttribute("cities", cityOrganizationService.getAvailableCities());
+            model.addAttribute("cities", cityOrgService.getAvailableCities());
             addFormAttributes(model);
             return "users/request-form";
         } catch (SecurityException e) {
@@ -63,6 +65,7 @@ public class RequestEditController extends BaseController {
         }
     }
 
+    /** Actualiza una solicitud existente (ciudad, dirección, materiales, imagen). */
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/solicitud/{id}/editar")
     public String updateRequest(@PathVariable String id,

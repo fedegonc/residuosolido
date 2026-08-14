@@ -7,15 +7,16 @@ import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CityOrganizationService {
+public class CityOrgService {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public CityOrganizationService(UserRepository userRepository) {
+    public CityOrgService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -46,7 +47,7 @@ public class CityOrganizationService {
     }
 
     public List<City> getAvailableCities() {
-        return List.of(City.values()).stream()
+        return Arrays.stream(City.values())
                 .filter(c -> {
                     List<User> orgs = getOrganizationsByCity(c);
                     return orgs != null && !orgs.isEmpty();

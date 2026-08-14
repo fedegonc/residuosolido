@@ -3,7 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.DashboardService;
-import com.residuosolido.app.service.RequestOrganizationService;
+import com.residuosolido.app.service.RequestOrgService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import java.util.Map;
 
+/** Dashboard de organización: muestra estadísticas y solicitudes pendientes recientes. */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgDashboardController extends BaseController {
@@ -23,18 +24,19 @@ public class OrgDashboardController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(OrgDashboardController.class);
 
     private final DashboardService dashboardService;
-    private final RequestOrganizationService requestOrganizationService;
+    private final RequestOrgService requestOrgService;
     private final BreadcrumbService breadcrumbService;
 
     @Autowired
     public OrgDashboardController(DashboardService dashboardService,
-                                   RequestOrganizationService requestOrganizationService,
+                                   RequestOrgService requestOrgService,
                                    BreadcrumbService breadcrumbService) {
         this.dashboardService = dashboardService;
-        this.requestOrganizationService = requestOrganizationService;
+        this.requestOrgService = requestOrgService;
         this.breadcrumbService = breadcrumbService;
     }
 
+    /** Página principal de la organización. Redirige a completar perfil si falta. */
     @GetMapping("/acopio/inicio")
     public String orgDashboard(Authentication authentication, Model model) {
         User currentOrg = getCurrentUser(authentication);
@@ -49,7 +51,7 @@ public class OrgDashboardController extends BaseController {
             model.addAttribute("pendingRequests", data.get("pending"));
             model.addAttribute("inProgressRequests", data.get("inProgress"));
             model.addAttribute("completedRequests", data.get("completed"));
-            model.addAttribute("pendingRequestsList", requestOrganizationService.getRecentPendingRequestsByOrganization(currentOrg, 5));
+            model.addAttribute("pendingRequestsList", requestOrgService.getRecentPendingRequestsByOrganization(currentOrg, 5));
         } catch (Exception e) {
             logger.error("Error en dashboard de organización: {}", e.getMessage(), e);
             model.addAttribute("pendingRequests", 0);

@@ -5,7 +5,7 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.CityOrganizationService;
+import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -20,39 +20,42 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/** Crea nuevas solicitudes de recolección (ciudadano o invitado con rate limiting). */
 @Controller
 public class RequestCreateController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestCreateController.class);
 
     private final RequestService requestService;
-    private final CityOrganizationService cityOrganizationService;
+    private final CityOrgService cityOrgService;
     private final GuestRateLimiter guestRateLimiter;
 
     @Autowired
     public RequestCreateController(RequestService requestService,
-                                   CityOrganizationService cityOrganizationService,
+                                   CityOrgService cityOrgService,
                                    GuestRateLimiter guestRateLimiter) {
         this.requestService = requestService;
-        this.cityOrganizationService = cityOrganizationService;
+        this.cityOrgService = cityOrgService;
         this.guestRateLimiter = guestRateLimiter;
     }
 
+    /** Muestra el formulario para crear una solicitud. */
     @GetMapping("/solicitudes/nueva")
     public String newRequestForm(@RequestParam(value = "city", required = false) City city,
                                   Model model, Authentication authentication) {
         model.addAttribute("request", new Request());
         model.addAttribute("isEdit", false);
         model.addAttribute("isGuest", userService.isAnonymous(authentication));
-        model.addAttribute("cities", cityOrganizationService.getAvailableCities());
+        model.addAttribute("cities", cityOrgService.getAvailableCities());
         addFormAttributes(model);
         if (city != null) {
-            model.addAttribute("organizations", cityOrganizationService.getOrganizationsByCity(city));
+            model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(city));
             model.addAttribute("selectedCity", city);
         }
         return "users/request-form";
     }
 
+    /** Procesa la creación de una solicitud (con imagen opcional y rate limit para invitados). */
     @PostMapping("/solicitudes")
     public String createRequest(@RequestParam("city") City city,
                                 @RequestParam("address") String address,

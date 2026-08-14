@@ -9,19 +9,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class OrganizationResolver {
+public class OrgResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrganizationResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrgResolver.class);
 
-    private final CityOrganizationService cityOrganizationService;
+    private final CityOrgService cityOrgService;
 
-    public OrganizationResolver(CityOrganizationService cityOrganizationService) {
-        this.cityOrganizationService = cityOrganizationService;
+    public OrgResolver(CityOrgService cityOrgService) {
+        this.cityOrgService = cityOrgService;
     }
 
     public User resolve(String organizationId, City city) {
         if (organizationId != null && !organizationId.isBlank()) {
-            return cityOrganizationService.findOrganizationByIdAndCity(organizationId, city);
+            return cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         }
         return firstOrgForCity(city);
     }
@@ -34,7 +34,7 @@ public class OrganizationResolver {
     }
 
     private User firstOrgForCity(City city) {
-        List<User> orgs = cityOrganizationService.getOrganizationsByCity(city);
+        List<User> orgs = cityOrgService.getOrganizationsByCity(city);
         if (orgs == null || orgs.isEmpty()) {
             throw new IllegalArgumentException("error.request.no_organization");
         }

@@ -15,12 +15,12 @@ public class RequestUpdateService {
 
     private final RequestRepository requestRepository;
     private final RequestValidator validator;
-    private final OrganizationResolver orgResolver;
+    private final OrgResolver orgResolver;
     private final LocalImageService imageService;
 
     public RequestUpdateService(RequestRepository requestRepository,
                                 RequestValidator validator,
-                                OrganizationResolver orgResolver,
+                                OrgResolver orgResolver,
                                 LocalImageService imageService) {
         this.requestRepository = requestRepository;
         this.validator = validator;
@@ -49,7 +49,7 @@ public class RequestUpdateService {
             request.assignOrganization(newOrg);
         }
         request = requestRepository.save(request);
-        return attachImage(request, imageFile);
+        return imageService.attachImageToRequest(request, imageFile);
     }
 
     public void deleteOwnedRequest(String id, User user) {
@@ -59,17 +59,5 @@ public class RequestUpdateService {
             throw new SecurityException("flash.request.not_owned");
         }
         requestRepository.deleteById(id);
-    }
-
-    private Request attachImage(Request request, MultipartFile imageFile) {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                request.setImageUrl(imageService.uploadFile(imageFile));
-                return requestRepository.save(request);
-            } catch (Exception e) {
-                throw new IllegalStateException("flash.request.image_upload_failed", e);
-            }
-        }
-        return request;
     }
 }

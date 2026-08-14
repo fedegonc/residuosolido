@@ -3,7 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.RequestOrganizationService;
+import com.residuosolido.app.service.RequestOrgService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class OrganizationControllerTest {
     private UserService userService;
 
     @MockBean
-    private RequestOrganizationService requestOrganizationService;
+    private RequestOrgService requestOrgService;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class OrganizationControllerTest {
         mockOrg.setPhone("12345678");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(mockOrg);
-        when(requestOrganizationService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
+        when(requestOrgService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
     }
 
     @Test

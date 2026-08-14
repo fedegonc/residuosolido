@@ -4,6 +4,7 @@ import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,35 +12,43 @@ public class RequestTransitionService {
 
     private final RequestRepository requestRepository;
     private final NotificationService notificationService;
-    private final RequestOrganizationService requestOrganizationService;
+    private final RequestOrgService requestOrgService;
 
     public RequestTransitionService(RequestRepository requestRepository,
                                     NotificationService notificationService,
-                                    RequestOrganizationService requestOrganizationService) {
+                                    RequestOrgService requestOrgService) {
         this.requestRepository = requestRepository;
         this.notificationService = notificationService;
-        this.requestOrganizationService = requestOrganizationService;
+        this.requestOrgService = requestOrgService;
     }
 
     public void acceptRequest(String id, User org, TimeSlot slot) {
-        Request request = requestOrganizationService.getOwnedOrgRequest(id, org);
+        Request request = requestOrgService.getOwnedOrgRequest(id, org);
         request.accept(slot);
-        requestRepository.save(request);
+        saveWithOptimisticLock(request);
         notifyRequestAccepted(request, slot);
     }
 
     public void rejectRequest(String id, User org) {
-        Request request = requestOrganizationService.getOwnedOrgRequest(id, org);
+        Request request = requestOrgService.getOwnedOrgRequest(id, org);
         request.reject();
-        requestRepository.save(request);
+        saveWithOptimisticLock(request);
         notifyRequestRejected(request);
     }
 
     public void completeRequest(String id, User org) {
-        Request request = requestOrganizationService.getOwnedOrgRequest(id, org);
+        Request request = requestOrgService.getOwnedOrgRequest(id, org);
         request.complete();
-        requestRepository.save(request);
+        saveWithOptimisticLock(request);
         notifyRequestCompleted(request);
+    }
+
+    private void saveWithOptimisticLock(Request request) {
+        try {
+            requestRepository.save(request);
+        } catch (OptimisticLockingFailureException e) {
+            throw new IllegalStateException("flash.request.concurrent_modification", e);
+        }
     }
 
     private void notifyRequestAccepted(Request request, TimeSlot slot) {

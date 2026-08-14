@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RequestOrganizationService {
+public class RequestOrgService {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RequestOrganizationService.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RequestOrgService.class);
 
     private final RequestRepository requestRepository;
 
     @Autowired
-    public RequestOrganizationService(RequestRepository requestRepository) {
+    public RequestOrgService(RequestRepository requestRepository) {
         this.requestRepository = requestRepository;
     }
 

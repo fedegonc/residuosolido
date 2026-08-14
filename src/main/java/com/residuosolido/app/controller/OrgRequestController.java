@@ -3,7 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.TimeSlot;
-import com.residuosolido.app.service.RequestOrganizationService;
+import com.residuosolido.app.service.RequestOrgService;
 import com.residuosolido.app.service.RequestTransitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,29 +17,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/** Lista y gestiona las solicitudes recibidas por una organización (aceptar, rechazar, completar). */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgRequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
-    private final RequestOrganizationService requestOrganizationService;
+    private final RequestOrgService requestOrgService;
     private final RequestTransitionService requestTransitionService;
 
     @Autowired
-    public OrgRequestController(RequestOrganizationService requestOrganizationService,
+    public OrgRequestController(RequestOrgService requestOrgService,
                                RequestTransitionService requestTransitionService) {
-        this.requestOrganizationService = requestOrganizationService;
+        this.requestOrgService = requestOrgService;
         this.requestTransitionService = requestTransitionService;
     }
 
+    /** Lista las solicitudes de la organización, con filtro opcional por estado. */
     @GetMapping("/acopio/requests")
     public String orgRequests(@RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
         User currentOrg = getCurrentUser(authentication);
-        List<Request> requests = requestOrganizationService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
+        List<Request> requests = requestOrgService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
@@ -50,6 +52,7 @@ public class OrgRequestController extends BaseController {
         return "org/requests";
     }
 
+    /** Cambia el estado de una solicitud: aceptar, rechazar o completar. */
     @PostMapping("/acopio/requests/{id}/transition")
     public String orgTransitionRequest(@PathVariable String id,
                                        @RequestParam("action") String action,
@@ -76,6 +79,8 @@ public class OrgRequestController extends BaseController {
             }
         } catch (SecurityException e) {
             flashError(redirectAttributes, "flash.org.request_not_owned");
+        } catch (IllegalStateException e) {
+            flashError(redirectAttributes, e.getMessage());
         } catch (Exception e) {
             logger.error("Error en transición '{}' para solicitud {}: {}", action, id, e.getMessage(), e);
             flashError(redirectAttributes, "flash.org.request_transition_error");

@@ -7,10 +7,10 @@ import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.service.BreadcrumbService;
-import com.residuosolido.app.service.CityOrganizationService;
+import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.RequestMetricsService;
-import com.residuosolido.app.service.RequestOrganizationService;
+import com.residuosolido.app.service.RequestOrgService;
 import com.residuosolido.app.service.RequestTransitionService;
 import com.residuosolido.app.service.InformalCollectorService;
 import com.residuosolido.app.service.RequestService;
@@ -65,11 +65,11 @@ class EndToEndFlowsTest {
     @MockBean
     private RequestMetricsService requestMetricsService;
     @MockBean
-    private CityOrganizationService cityOrganizationService;
+    private CityOrgService cityOrgService;
     @MockBean
     private DashboardService dashboardService;
     @MockBean
-    private RequestOrganizationService requestOrganizationService;
+    private RequestOrgService requestOrgService;
     @MockBean
     private RequestTransitionService requestTransitionService;
     @MockBean
@@ -116,8 +116,8 @@ class EndToEndFlowsTest {
     @Test
     void flujo3_requestForm_guestCanAccess() throws Exception {
         when(userService.isAnonymous(any())).thenReturn(true);
-        when(cityOrganizationService.getAvailableCities()).thenReturn(List.of(City.RIVERA));
-        when(cityOrganizationService.getOrganizationsByCity(any())).thenReturn(Collections.emptyList());
+        when(cityOrgService.getAvailableCities()).thenReturn(List.of(City.RIVERA));
+        when(cityOrgService.getOrganizationsByCity(any())).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/solicitudes/nueva"))
                 .andExpect(status().isOk())
@@ -202,7 +202,7 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(dashboardService.getOrgDashboardData(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
-        when(requestOrganizationService.getRecentPendingRequestsByOrganization(org, 5))
+        when(requestOrgService.getRecentPendingRequestsByOrganization(org, 5))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/acopio/inicio"))
@@ -254,7 +254,7 @@ class EndToEndFlowsTest {
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestOrganizationService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
+        when(requestOrgService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/acopio/requests"))
@@ -282,7 +282,7 @@ class EndToEndFlowsTest {
         req.setGuestPhone("+59899123456");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestOrganizationService.getOwnedOrgRequest("req1", org)).thenReturn(req);
+        when(requestOrgService.getOwnedOrgRequest("req1", org)).thenReturn(req);
 
         mockMvc.perform(get("/acopio/requests/req1"))
                 .andExpect(status().isOk())
