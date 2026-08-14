@@ -2,6 +2,7 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.model.Name;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.User;
 
@@ -37,9 +38,7 @@ public class RequestValidator {
     }
 
     private void validateGuest(String guestName, String guestPhone) {
-        if (guestName == null || guestName.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.request.guest_name_required");
-        }
+        Name.of(guestName);
         PhoneNumber.of(guestPhone);
     }
 }

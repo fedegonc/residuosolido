@@ -2,6 +2,7 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.model.InformalCollector;
+import com.residuosolido.app.model.Name;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.User;
@@ -63,9 +64,7 @@ public class InformalCollectorService {
     }
 
     private void validateNameAndPhone(String name, String phone) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.collector.name_required");
-        }
+        Name.of(name);
         PhoneNumber.of(phone);
     }
 }

@@ -2,6 +2,7 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.model.Name;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
@@ -83,7 +84,10 @@ public class UserService {
     public User updateProfile(User user, String email, String firstName, String phone, City city,
                                List<MaterialCategory> acceptedMaterials) {
         if (email != null) user.setEmail(email.trim());
-        if (firstName != null) user.setFirstName(firstName.trim());
+        if (firstName != null) {
+            Name.of(firstName);
+            user.setFirstName(firstName.trim());
+        }
         if (phone != null) {
             PhoneNumber.of(phone);
             user.setPhone(phone.trim());

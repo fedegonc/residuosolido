@@ -23,20 +23,20 @@ import static org.mockito.Mockito.when;
 class RequestServiceValidationTest {
 
     private RequestRepository requestRepository;
-    private CityOrganizationService cityOrganizationService;
+    private CityOrgService cityOrgService;
     private LocalImageService imageService;
     private RequestValidator validator;
-    private OrganizationResolver orgResolver;
+    private OrgResolver orgResolver;
     private RequestService requestService;
     private RequestUpdateService requestUpdateService;
 
     @BeforeEach
     void setUp() {
         requestRepository = mock(RequestRepository.class);
-        cityOrganizationService = mock(CityOrganizationService.class);
+        cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
         validator = new RequestValidator();
-        orgResolver = new OrganizationResolver(cityOrganizationService);
+        orgResolver = new OrgResolver(cityOrgService);
         requestService = new RequestService(requestRepository, imageService, validator, orgResolver);
         requestUpdateService = new RequestUpdateService(requestRepository, validator, orgResolver, imageService);
     }
@@ -163,7 +163,7 @@ class RequestServiceValidationTest {
                         null, City.RIVERA, "Calle 123", null,
                         List.of(MaterialCategory.PLASTICO), "", "+59899123456", "org1", null, null)
         );
-        assertEquals("error.request.guest_name_required", ex.getMessage());
+        assertEquals("error.name.required", ex.getMessage());
     }
 
     // ─── guest sin teléfono ───
@@ -191,7 +191,7 @@ class RequestServiceValidationTest {
         org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
         org.setCity(City.RIVERA);
 
-        when(cityOrganizationService.findOrganizationByIdAndCity("org1", City.RIVERA))
+        when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA))
                 .thenReturn(org);
         when(requestRepository.save(any()))
                 .thenAnswer(inv -> inv.getArgument(0));
