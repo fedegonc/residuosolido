@@ -1,7 +1,10 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.model.Request;
+import com.residuosolido.app.repository.RequestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,8 +30,13 @@ public class LocalImageService {
 
     private final String uploadDir;
 
-    public LocalImageService(@Value("${app.upload.dir:uploads}") String uploadDir) {
+    private final RequestRepository requestRepository;
+
+    @Autowired
+    public LocalImageService(@Value("${app.upload.dir:uploads}") String uploadDir,
+                             RequestRepository requestRepository) {
         this.uploadDir = uploadDir;
+        this.requestRepository = requestRepository;
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
@@ -65,5 +73,18 @@ public class LocalImageService {
 
         logger.info("Imagen guardada localmente: {}", filename);
         return "/uploads/" + filename;
+    }
+
+    public Request attachImageToRequest(Request request, MultipartFile imageFile) {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                request.setImageUrl(uploadFile(imageFile));
+                return requestRepository.save(request);
+            } catch (Exception e) {
+                logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
+                throw new IllegalStateException("flash.request.image_upload_failed", e);
+            }
+        }
+        return request;
     }
 }

@@ -32,8 +32,7 @@ public class PublicMetricsService {
         if (mappedResults.isEmpty()) {
             return 0;
         }
-        Object total = mappedResults.get(0).get("total");
-        return total instanceof Number ? ((Number) total).longValue() : 0;
+        return MongoAggregationUtils.extractSimpleCount(mappedResults.get(0), "total");
     }
 
     public Map<String, Long> getPublicMetricsByCity() {
@@ -49,8 +48,7 @@ public class PublicMetricsService {
         Map<String, Long> metrics = new LinkedHashMap<>();
         for (Map result : results.getMappedResults()) {
             String city = result.get("_id").toString();
-            Long count = ((Number) result.get("count")).longValue();
-            metrics.put(city, count);
+            metrics.put(city, MongoAggregationUtils.extractSimpleCount(result, "count"));
         }
         return metrics;
     }

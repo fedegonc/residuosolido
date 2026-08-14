@@ -44,20 +44,11 @@ public class DashboardService {
         data.put("completed", 0L);
         if (!results.getMappedResults().isEmpty()) {
             Map result = results.getMappedResults().get(0);
-            data.put("pending", extractCount(result, "pending"));
-            data.put("inProgress", extractCount(result, "inProgress"));
-            data.put("completed", extractCount(result, "completed"));
+            data.put("pending", MongoAggregationUtils.extractCount(result, "pending"));
+            data.put("inProgress", MongoAggregationUtils.extractCount(result, "inProgress"));
+            data.put("completed", MongoAggregationUtils.extractCount(result, "completed"));
         }
         return data;
     }
 
-    @SuppressWarnings("unchecked")
-    private long extractCount(Map result, String facetName) {
-        Object facet = result.get(facetName);
-        if (facet instanceof java.util.List<?> list && !list.isEmpty()) {
-            Object count = ((Map<String, Object>) list.get(0)).get("count");
-            return count instanceof Number ? ((Number) count).longValue() : 0L;
-        }
-        return 0L;
-    }
 }

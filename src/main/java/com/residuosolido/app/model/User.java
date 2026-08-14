@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -52,10 +51,6 @@ public class User {
         return role == Role.ORGANIZATION;
     }
 
-    public boolean isUser() {
-        return role == Role.USER;
-    }
-
     public boolean isProfileComplete() {
         return role == null || role.isProfileComplete(this);
     }
@@ -66,10 +61,6 @@ public class User {
 
     public boolean hasCity() {
         return city != null;
-    }
-
-    public String getAcceptedMaterialsCsv() {
-        return acceptedMaterials.stream().map(Enum::name).collect(Collectors.joining(","));
     }
 
     public void completeProfile() {
@@ -86,10 +77,4 @@ public class User {
         return !isProfileComplete();
     }
 
-    public void updateProfileDetails(String email, String firstName, String phone, City city) {
-        if (email != null) this.email = email.trim();
-        if (firstName != null) this.firstName = firstName.trim();
-        if (phone != null) this.phone = phone.trim();
-        if (city != null) this.city = city;
-    }
 }
