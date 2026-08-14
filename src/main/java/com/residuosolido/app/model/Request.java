@@ -5,6 +5,8 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
@@ -14,7 +16,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Document(collection = "requests")
@@ -28,10 +29,14 @@ public class Request {
     @Id
     private String id;
 
+    @Version
+    private Long version;
+
     @DocumentReference(lazy = true)
     private User user;
 
     @DocumentReference(lazy = true)
+    @Indexed
     private User organization;
 
     private String guestName;
@@ -44,6 +49,7 @@ public class Request {
     private String estimatedVolume;
     private String imageUrl;
     private TimeSlot confirmedSlot;
+    @Indexed
     private RequestStatus status = RequestStatus.PENDING;
     private LocalDateTime createdAt;
 
@@ -65,16 +71,12 @@ public class Request {
         this.status = RequestStatus.REJECTED;
     }
 
+    public boolean canBeEdited() { return status == RequestStatus.PENDING; }
+    public boolean isGuest() { return user == null; }
+    public boolean hasMaterials() { return materials != null && !materials.isEmpty(); }
+    public boolean hasImage() { return imageUrl != null && !imageUrl.isBlank(); }
     public boolean isPending() { return status == RequestStatus.PENDING; }
     public boolean isInProgress() { return status == RequestStatus.IN_PROGRESS; }
-    public boolean isCompleted() { return status == RequestStatus.COMPLETED; }
-    public boolean isRejected() { return status == RequestStatus.REJECTED; }
-    public boolean canBeEdited() { return status == RequestStatus.PENDING; }
-    public boolean canBeDeleted() { return status == RequestStatus.PENDING; }
-    public boolean isGuest() { return user == null; }
-    public boolean hasImage() { return imageUrl != null && !imageUrl.isBlank(); }
-    public boolean hasMaterials() { return materials != null && !materials.isEmpty(); }
-    public List<TimeSlot> getProposedSlots() { return Arrays.asList(TimeSlot.values()); }
     public String getContactName() { return user != null ? user.getDisplayName() : guestName; }
     public String getContactPhone() { return user != null ? user.getPhone() : guestPhone; }
 
@@ -87,22 +89,10 @@ public class Request {
         return initials.toUpperCase();
     }
 
-    public void setRequester(User user, String guestName, String guestPhone) {
-        if (user != null) { this.user = user; }
-        else { this.guestName = guestName; this.guestPhone = guestPhone; }
-    }
-
     public void assignOrganization(User org) {
         if (org == null) throw new IllegalArgumentException("error.request.organization_required");
         if (!org.isOrganization()) throw new IllegalArgumentException("error.request.assign_not_organization");
         this.organization = org;
     }
 
-    public void updateDetails(City city, String address, String addressReference, List<MaterialCategory> materials) {
-        if (!canBeEdited()) throw new IllegalStateException("flash.request.edit.pending_only");
-        this.city = city;
-        this.address = address;
-        this.addressReference = addressReference;
-        this.materials = materials != null ? materials : List.of();
-    }
 }
