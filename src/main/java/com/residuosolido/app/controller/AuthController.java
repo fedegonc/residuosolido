@@ -5,18 +5,14 @@ import com.residuosolido.app.service.UserRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
+/** Controller de autenticación: registro, login y página de inicio pública. */
 @Controller
 public class AuthController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
@@ -28,19 +24,14 @@ public class AuthController extends BaseController {
         this.userRegistrationService = userRegistrationService;
     }
 
+    /** Muestra el formulario de registro (ciudadano u organización). */
     @GetMapping("/auth/register")
-    public String showRegistrationForm(@AuthenticationPrincipal UserDetails userDetails,
-                                     HttpServletResponse response,
-                                     Model model) throws IOException {
-        if (userDetails != null) {
-            response.sendRedirect("/");
-            return null;
-        }
-
+    public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
         return "auth/register";
     }
 
+    /** Procesa el registro de un nuevo usuario. */
     @PostMapping("/auth/register")
     public String registerUser(@ModelAttribute User user,
                                @RequestParam(value = "isOrganization", required = false) String isOrganization,
@@ -57,6 +48,7 @@ public class AuthController extends BaseController {
         return "redirect:/auth/login";
     }
 
+    /** Muestra la página de login. Soporta params ?error y ?blocked. */
     @GetMapping("/auth/login")
     public String showLoginPage(HttpServletRequest request, Model model) {
         if (request.getParameter("blocked") != null) {
@@ -67,6 +59,7 @@ public class AuthController extends BaseController {
         return "auth/login";
     }
 
+    /** Página de inicio pública (landing page). */
     @GetMapping({"/", "/index"})
     public String rootOrIndex() {
         return "public/index";

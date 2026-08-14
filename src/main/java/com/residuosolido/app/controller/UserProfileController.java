@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/** Dashboard y perfil del ciudadano: estadísticas, datos personales y edición. */
 @Controller
 @PreAuthorize("hasRole('USER')")
 public class UserProfileController extends BaseController {
@@ -34,6 +35,7 @@ public class UserProfileController extends BaseController {
         this.breadcrumbService = breadcrumbService;
     }
 
+    /** Dashboard del ciudadano con estadísticas y solicitudes recientes. */
     @GetMapping("/usuarios/inicio")
     public String dashboard(Authentication authentication, Model model) {
         User user = getCurrentUser(authentication);
@@ -44,6 +46,7 @@ public class UserProfileController extends BaseController {
         return "users/dashboard";
     }
 
+    /** Muestra el perfil del ciudadano con sus datos. */
     @GetMapping("/usuarios/perfil")
     public String profile(Authentication authentication, Model model) {
         User user = getCurrentUser(authentication);
@@ -54,6 +57,7 @@ public class UserProfileController extends BaseController {
         return "users/profile";
     }
 
+    /** Actualiza los datos del perfil del ciudadano. */
     @PostMapping("/usuarios/perfil")
     public String updateProfile(@RequestParam(required = false) String email,
                                 @RequestParam(required = false) String firstName,

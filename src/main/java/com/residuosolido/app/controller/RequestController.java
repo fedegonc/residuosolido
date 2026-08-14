@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/** Operaciones del ciudadano: listar, ver detalle y eliminar sus solicitudes. */
 @Controller
 public class RequestController extends BaseController {
 
@@ -29,6 +30,7 @@ public class RequestController extends BaseController {
         this.requestQueryService = requestQueryService;
     }
 
+    /** Página de confirmación tras crear una solicitud. */
     @GetMapping("/solicitudes/exito")
     public String requestSuccess(@RequestParam(value = "id", required = false) String id,
                                   Model model) {
@@ -39,6 +41,7 @@ public class RequestController extends BaseController {
         return "users/request-success";
     }
 
+    /** Lista las solicitudes del usuario autenticado (paginado). */
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/solicitudes")
     public String listUserRequests(@RequestParam(defaultValue = "0") int page,
@@ -51,6 +54,7 @@ public class RequestController extends BaseController {
         return "users/requests";
     }
 
+    /** Muestra el detalle de una solicitud del usuario. */
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/solicitud/{id}")
     public String requestDetail(@PathVariable String id, Authentication authentication, Model model,
@@ -69,6 +73,7 @@ public class RequestController extends BaseController {
         }
     }
 
+    /** Elimina una solicitud del usuario (solo si está pendiente). */
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/solicitud/{id}/eliminar")
     public String deleteRequest(@PathVariable String id, Authentication authentication,

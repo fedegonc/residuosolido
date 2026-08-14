@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+/** Permite a invitados (sin cuenta) rastrear sus solicitudes por teléfono. */
 @Controller
 public class GuestTrackingController {
 
@@ -21,6 +22,7 @@ public class GuestTrackingController {
         this.requestQueryService = requestQueryService;
     }
 
+    /** Muestra el formulario de rastreo con resultados opcionales. */
     @GetMapping("/rastrear")
     public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone, Model model) {
         List<Request> requests = requestQueryService.getGuestRequestsByPhone(phone);
@@ -31,6 +33,7 @@ public class GuestTrackingController {
         return "users/track";
     }
 
+    /** Busca solicitudes por teléfono (POST desde el formulario). */
     @PostMapping("/rastrear")
     public String trackGuestSubmit(@RequestParam("phone") String phone, Model model) {
         List<Request> requests = requestQueryService.getGuestRequestsByPhone(phone);

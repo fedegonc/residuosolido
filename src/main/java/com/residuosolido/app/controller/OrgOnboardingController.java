@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/** Onboarding: primera configuración de perfil para organizaciones recién registradas. */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgOnboardingController extends BaseController {
@@ -22,6 +23,7 @@ public class OrgOnboardingController extends BaseController {
     public OrgOnboardingController() {
     }
 
+    /** Muestra el formulario para completar perfil (teléfono y ciudad). */
     @GetMapping("/acopio/completar-perfil")
     public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -43,6 +45,7 @@ public class OrgOnboardingController extends BaseController {
         }
     }
 
+    /** Guarda el perfil inicial de la organización. */
     @PostMapping("/acopio/completar-perfil")
     public String completeProfile(
             @RequestParam(required = false) String phone,

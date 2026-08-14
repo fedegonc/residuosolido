@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/** CRUD de catadores informales vinculados a una organización de acopio. */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class InformalCollectorController extends BaseController {
@@ -30,6 +31,7 @@ public class InformalCollectorController extends BaseController {
         this.informalCollectorService = informalCollectorService;
     }
 
+    /** Lista todos los catadores de la organización actual. */
     @GetMapping("/acopio/catadores")
     public String list(Authentication authentication, Model model) {
         User organization = getCurrentUser(authentication);
@@ -40,6 +42,7 @@ public class InformalCollectorController extends BaseController {
         return "org/catadores";
     }
 
+    /** Carga un catador específico para editarlo dentro del mismo listado. */
     @GetMapping("/acopio/catadores/edit/{id}")
     public String edit(@PathVariable String id, Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -58,6 +61,7 @@ public class InformalCollectorController extends BaseController {
         }
     }
 
+    /** Crea o actualiza un catador (según si llega ID o no). */
     @PostMapping("/acopio/catadores")
     public String save(@RequestParam(required = false) String id,
                        @RequestParam String name,
@@ -80,6 +84,7 @@ public class InformalCollectorController extends BaseController {
         return "redirect:/acopio/catadores";
     }
 
+    /** Elimina un catador de la organización. */
     @PostMapping("/acopio/catadores/{id}/delete")
     public String delete(@PathVariable String id, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {

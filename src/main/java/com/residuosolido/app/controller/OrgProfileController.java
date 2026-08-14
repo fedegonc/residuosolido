@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/** Gestión del perfil de la organización: datos de contacto, ciudad y materiales aceptados. */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgProfileController extends BaseController {
@@ -25,6 +26,7 @@ public class OrgProfileController extends BaseController {
     public OrgProfileController() {
     }
 
+    /** Muestra el formulario de edición del perfil. */
     @GetMapping("/acopio/perfil")
     public String orgProfile(Authentication authentication, Model model) {
         try {
@@ -39,6 +41,7 @@ public class OrgProfileController extends BaseController {
         return "org/profile";
     }
 
+    /** Actualiza los datos del perfil de la organización. */
     @PostMapping("/acopio/perfil")
     public String updateOrgProfile(
             @RequestParam(required = false) String email,
