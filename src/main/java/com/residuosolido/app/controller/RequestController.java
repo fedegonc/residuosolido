@@ -33,10 +33,16 @@ public class RequestController extends BaseController {
     /** Página de confirmación tras crear una solicitud. */
     @GetMapping("/solicitudes/exito")
     public String requestSuccess(@RequestParam(value = "id", required = false) String id,
-                                  Model model) {
+                                  Model model, Authentication authentication) {
         if (id != null && !id.isBlank()) {
             model.addAttribute("createdRequestId", id);
             model.addAttribute("createdRequestStatus", "PENDING");
+        }
+        // isGuest normalmente llega como flash attribute desde RequestCreateController,
+        // pero ese flash solo sobrevive un redirect: si el usuario refresca la página,
+        // cambia de idioma o navega directo, hay que recalcularlo desde la sesión actual.
+        if (!model.containsAttribute("isGuest")) {
+            model.addAttribute("isGuest", userService.isAnonymous(authentication));
         }
         return "users/request-success";
     }
