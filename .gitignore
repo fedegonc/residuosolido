@@ -140,8 +140,6 @@ application.log
 # CONFIGURACIONES SENSIBLES
 # ========================================
 application-local.properties
-application-dev.properties
-application-prod.properties
 .env
 .env.local
 .env.development.local
