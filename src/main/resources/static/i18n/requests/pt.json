@@ -82,7 +82,7 @@
   "req_delete_confirm": "Excluir esta solicitação?",
   "req_success_title": "Solicitação criada!",
   "req_success_id": "Solicitação",
-  "req_success_desc": "Nos encarregamos de atribuir sua solicitação à cooperativa mais próxima. Entraremos em contato para coordenar a coleta.",
+  "req_success_desc": "Sua solicitação foi enviada para a organização que você escolheu. Entraremos em contato para coordenar a coleta.",
   "req_success_upsell_title": "Quer facilitar suas próximas solicitações?",
   "req_success_upsell_history": "Histórico de solicitações",
   "req_success_upsell_tracking": "Acompanhamento em tempo real",
