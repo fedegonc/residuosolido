@@ -94,7 +94,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestUpdateService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
-                        null, null)
+                        null, "org1", null)
         );
         assertEquals("error.request.materials_required", ex.getMessage());
     }
@@ -118,9 +118,47 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestUpdateService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
-                        Collections.emptyList(), null)
+                        Collections.emptyList(), "org1", null)
         );
         assertEquals("error.request.materials_required", ex.getMessage());
+    }
+
+    // ─── organización faltante (asignación no es automática) ───
+
+    @Test
+    void rn_createRequest_missingOrganization_throwsIllegalArgumentException() {
+        User user = new User();
+        user.setId("u1");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> requestService.createRequest(
+                        user, City.RIVERA, "Calle 123", null,
+                        List.of(MaterialCategory.PLASTICO), null, null, null, null, null)
+        );
+        assertEquals("error.request.organization_required", ex.getMessage());
+    }
+
+    @Test
+    void rn_updateRequest_missingOrganization_throwsIllegalArgumentException() {
+        User user = new User();
+        user.setId("u1");
+
+        com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
+        existing.setId("req1");
+        existing.setUser(user);
+        existing.setStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
+
+        when(requestRepository.findById("req1"))
+                .thenReturn(java.util.Optional.of(existing));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> requestUpdateService.updateRequest(
+                        "req1", user, City.RIVERA, "Calle 123", null,
+                        List.of(MaterialCategory.PLASTICO), null, null)
+        );
+        assertEquals("error.request.organization_required", ex.getMessage());
     }
 
     // ─── address vacío también (cobertura adicional) ───

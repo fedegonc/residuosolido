@@ -14,18 +14,19 @@ import org.springframework.stereotype.Component;
 public class RequestValidator {
 
     public void validateCreate(User user, City city, String address,
-                                List<MaterialCategory> materials, String guestName, String guestPhone) {
-        validateCoreFields(city, address, materials);
+                                List<MaterialCategory> materials, String guestName, String guestPhone,
+                                String organizationId) {
+        validateCoreFields(city, address, materials, organizationId);
         if (user == null) {
             validateGuest(guestName, guestPhone);
         }
     }
 
-    public void validateUpdate(City city, String address, List<MaterialCategory> materials) {
-        validateCoreFields(city, address, materials);
+    public void validateUpdate(City city, String address, List<MaterialCategory> materials, String organizationId) {
+        validateCoreFields(city, address, materials, organizationId);
     }
 
-    private void validateCoreFields(City city, String address, List<MaterialCategory> materials) {
+    private void validateCoreFields(City city, String address, List<MaterialCategory> materials, String organizationId) {
         if (city == null) {
             throw new IllegalArgumentException("error.request.city_required");
         }
@@ -34,6 +35,9 @@ public class RequestValidator {
         }
         if (materials == null || materials.isEmpty()) {
             throw new IllegalArgumentException("error.request.materials_required");
+        }
+        if (organizationId == null || organizationId.isBlank()) {
+            throw new IllegalArgumentException("error.request.organization_required");
         }
     }
 

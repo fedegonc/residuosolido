@@ -67,7 +67,7 @@
             </div>
             <div class="form-group">
               <label for="organizationId" data-i18n="req_form_org">Organización de acopio <span class="req">*</span></label>
-              <select id="organizationId" name="organizationId" class="form-select" required disabled>
+              <select id="organizationId" name="organizationId" class="form-select" required th:disabled="${!isEdit}">
                 <option value="" data-i18n="req_form_org_select">Primero seleccioná una ciudad</option>
                 <th:block th:if="${isEdit and organizations != null}">
                   <option th:each="org : ${organizations}"

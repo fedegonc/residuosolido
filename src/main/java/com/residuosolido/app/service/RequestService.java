@@ -33,7 +33,7 @@ public class RequestService {
     public Request createRequest(User user, City city, String address, String addressReference,
                                   List<MaterialCategory> materials, String guestName, String guestPhone,
                                   String organizationId, String estimatedWeight, String estimatedVolume) {
-        validator.validateCreate(user, city, address, materials, guestName, guestPhone);
+        validator.validateCreate(user, city, address, materials, guestName, guestPhone, organizationId);
         Request request = new Request();
         if (user != null) {
             request.setUser(user);

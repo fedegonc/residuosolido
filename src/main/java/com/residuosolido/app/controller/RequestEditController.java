@@ -50,6 +50,7 @@ public class RequestEditController extends BaseController {
             model.addAttribute("request", request);
             model.addAttribute("isEdit", true);
             model.addAttribute("cities", cityOrgService.getAvailableCities());
+            model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(request.getCity()));
             addFormAttributes(model);
             return "users/request-form";
         } catch (SecurityException e) {
@@ -73,12 +74,13 @@ public class RequestEditController extends BaseController {
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
+                                @RequestParam(value = "organizationId", required = false) String organizationId,
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser(authentication);
-            requestUpdateService.updateRequest(id, user, city, address, addressReference, materials, imageFile);
+            requestUpdateService.updateRequest(id, user, city, address, addressReference, materials, organizationId, imageFile);
             flashSuccess(redirectAttributes, "flash.request.updated");
             return "redirect:/solicitud/" + id;
         } catch (SecurityException e) {

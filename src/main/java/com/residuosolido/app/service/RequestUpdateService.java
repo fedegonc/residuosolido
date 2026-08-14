@@ -33,17 +33,14 @@ public class RequestUpdateService {
 
     public Request updateRequest(String id, User user, City city, String address,
                                   String addressReference, List<MaterialCategory> materials,
-                                  MultipartFile imageFile) {
+                                  String organizationId, MultipartFile imageFile) {
         Request request = requestQueryService.getEditableOwnedRequest(id, user);
-        validator.validateUpdate(city, address, materials);
+        validator.validateUpdate(city, address, materials, organizationId);
         request.setCity(city);
         request.setAddress(address);
         request.setAddressReference(addressReference);
         request.setMaterials(materials != null ? materials : List.of());
-        User newOrg = orgResolver.reassignIfNeeded(request.getOrganization(), city);
-        if (!newOrg.equals(request.getOrganization())) {
-            request.assignOrganization(newOrg);
-        }
+        request.assignOrganization(orgResolver.resolve(organizationId, city));
         request = requestRepository.save(request);
         return imageService.attachImageToRequest(request, imageFile);
     }
