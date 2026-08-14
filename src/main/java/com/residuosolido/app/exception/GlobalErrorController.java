@@ -1,5 +1,6 @@
 package com.residuosolido.app.exception;
 
+import com.residuosolido.app.config.RoleBasedLoginTargetUrlResolver;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,10 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class GlobalErrorController implements ErrorController {
 
     private final MessageSource messageSource;
+    private final RoleBasedLoginTargetUrlResolver targetUrlResolver;
 
     @Autowired
-    public GlobalErrorController(MessageSource messageSource) {
+    public GlobalErrorController(MessageSource messageSource, RoleBasedLoginTargetUrlResolver targetUrlResolver) {
         this.messageSource = messageSource;
+        this.targetUrlResolver = targetUrlResolver;
     }
 
     @RequestMapping("/error")
@@ -31,19 +34,12 @@ public class GlobalErrorController implements ErrorController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null && auth.isAuthenticated() && !(auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
-            String target = resolvePanel(auth);
+            String target = targetUrlResolver.resolveTargetUrl(auth);
             redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage("flash.error.not_found_auth", null, LocaleContextHolder.getLocale()));
             return "redirect:" + target;
         }
 
         redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage("flash.error.not_found_guest", null, LocaleContextHolder.getLocale()));
         return "redirect:/auth/login";
-    }
-
-    private String resolvePanel(Authentication auth) {
-        return auth.getAuthorities().stream()
-                .map(a -> a.getAuthority())
-                .anyMatch(r -> "ROLE_ORGANIZATION".equals(r)) ? "/acopio/inicio" :
-               "/usuarios/inicio";
     }
 }

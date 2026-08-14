@@ -1,5 +1,6 @@
 package com.residuosolido.app.exception;
 
+import com.residuosolido.app.config.RoleBasedLoginTargetUrlResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class GlobalExceptionHandler {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private RoleBasedLoginTargetUrlResolver targetUrlResolver;
 
     @ExceptionHandler(NoResourceFoundException.class)
     public String handleNotFound(HttpServletRequest request) {
@@ -53,13 +57,7 @@ public class GlobalExceptionHandler {
 
     private String resolveTarget() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()
-                || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
-            return "/auth/login";
-        }
-        return auth.getAuthorities().stream()
-                .map(a -> a.getAuthority())
-                .anyMatch(r -> "ROLE_ORGANIZATION".equals(r)) ? "/acopio/inicio"
-                : "/usuarios/inicio";
+        String url = targetUrlResolver.resolveTargetUrl(auth);
+        return url.equals("/") ? "/auth/login" : url;
     }
 }

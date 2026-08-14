@@ -1,6 +1,6 @@
-package com.residuosolido.app.config;
-
+package com.residuosolido.app.config; 
 import com.residuosolido.app.enums.Role;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -43,5 +43,13 @@ public class RoleBasedLoginTargetUrlResolver {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    public String resolveTargetUrl(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()
+                || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
+            return DEFAULT_TARGET;
+        }
+        return resolveTargetUrl(auth.getAuthorities());
     }
 }

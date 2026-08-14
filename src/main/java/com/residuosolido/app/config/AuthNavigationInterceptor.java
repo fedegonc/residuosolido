@@ -3,20 +3,22 @@ package com.residuosolido.app.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Collection;
-import java.util.Set;
-
 @Component
 public class AuthNavigationInterceptor implements HandlerInterceptor {
 
-    private static final Set<String> GUEST_ONLY_PATHS = Set.of(
+    private static final java.util.Set<String> GUEST_ONLY_PATHS = java.util.Set.of(
             "/auth/login", "/auth/register", "/", "/index"
     );
+
+    private final RoleBasedLoginTargetUrlResolver targetUrlResolver;
+
+    public AuthNavigationInterceptor(RoleBasedLoginTargetUrlResolver targetUrlResolver) {
+        this.targetUrlResolver = targetUrlResolver;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -30,17 +32,8 @@ public class AuthNavigationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String targetUrl = resolveTargetUrl(auth.getAuthorities());
+        String targetUrl = targetUrlResolver.resolveTargetUrl(auth.getAuthorities());
         response.sendRedirect(targetUrl);
         return false;
-    }
-
-    private String resolveTargetUrl(Collection<? extends GrantedAuthority> authorities) {
-        boolean isOrg = authorities.stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ORGANIZATION"));
-        if (isOrg) {
-            return "/acopio/inicio";
-        }
-        return "/usuarios/inicio";
     }
 }
