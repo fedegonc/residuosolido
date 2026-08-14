@@ -14,15 +14,18 @@ import java.util.List;
 public class RequestUpdateService {
 
     private final RequestRepository requestRepository;
+    private final RequestQueryService requestQueryService;
     private final RequestValidator validator;
     private final OrgResolver orgResolver;
     private final LocalImageService imageService;
 
     public RequestUpdateService(RequestRepository requestRepository,
+                                RequestQueryService requestQueryService,
                                 RequestValidator validator,
                                 OrgResolver orgResolver,
                                 LocalImageService imageService) {
         this.requestRepository = requestRepository;
+        this.requestQueryService = requestQueryService;
         this.validator = validator;
         this.orgResolver = orgResolver;
         this.imageService = imageService;
@@ -31,14 +34,7 @@ public class RequestUpdateService {
     public Request updateRequest(String id, User user, City city, String address,
                                   String addressReference, List<MaterialCategory> materials,
                                   MultipartFile imageFile) {
-        Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("flash.request.not_found"));
-        if (request.getUser() == null || !request.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("flash.request.not_owned");
-        }
-        if (!request.canBeEdited()) {
-            throw new IllegalStateException("flash.request.edit.pending_only");
-        }
+        Request request = requestQueryService.getEditableOwnedRequest(id, user);
         validator.validateUpdate(city, address, materials);
         request.setCity(city);
         request.setAddress(address);
@@ -53,11 +49,7 @@ public class RequestUpdateService {
     }
 
     public void deleteOwnedRequest(String id, User user) {
-        Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("flash.request.not_found"));
-        if (request.getUser() == null || !request.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("flash.request.not_owned");
-        }
+        requestQueryService.getOwnedRequest(id, user);
         requestRepository.deleteById(id);
     }
 }

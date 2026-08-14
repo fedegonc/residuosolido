@@ -29,6 +29,7 @@ class RequestServiceValidationTest {
     private OrgResolver orgResolver;
     private RequestService requestService;
     private RequestUpdateService requestUpdateService;
+    private RequestQueryService requestQueryService;
 
     @BeforeEach
     void setUp() {
@@ -37,8 +38,9 @@ class RequestServiceValidationTest {
         imageService = mock(LocalImageService.class);
         validator = new RequestValidator();
         orgResolver = new OrgResolver(cityOrgService);
+        requestQueryService = new RequestQueryService(requestRepository);
         requestService = new RequestService(requestRepository, imageService, validator, orgResolver);
-        requestUpdateService = new RequestUpdateService(requestRepository, validator, orgResolver, imageService);
+        requestUpdateService = new RequestUpdateService(requestRepository, requestQueryService, validator, orgResolver, imageService);
     }
 
     // ─── materials null ───
