@@ -99,22 +99,22 @@
 
 ## 3. Reglas de Negocio (RN)
 
-### RN-01: Password mínimo 8 caracteres
+### RN-01: Password mínimo 3 caracteres
 - **Aplica a:** RF-1, RF-2
-- **Regla:** La contraseña debe tener al menos 8 caracteres.
-- **Validación:** Ambos — client-side (`minlength="8"` en `register.html`) y server-side (`UserService.validateUserRegistration()` y `UserService.updateUser()`)
+- **Regla:** La contraseña debe tener al menos 3 caracteres.
+- **Validación:** Ambos — client-side (hint "Mínimo 3 caracteres" en `register.html`, sin `minlength` HTML) y server-side (`UserRegistrationService.validateUserRegistration()` y `UserService.updateUser()`)
 - **Excepciones:** Ninguna
 
 ### RN-02: Username sin espacios y único
 - **Aplica a:** RF-1
 - **Regla:** El username no puede contener espacios y no debe existir previamente en la base de datos.
-- **Validación:** Server-side (`UserService.validateUserRegistration()`)
+- **Validación:** Server-side (`UserRegistrationService.validateUserRegistration()`)
 - **Excepciones:** Ninguna
 
 ### RN-03: Email válido y único
 - **Aplica a:** RF-1
 - **Regla:** El email debe contener `@` y no existir previamente en la base de datos.
-- **Validación:** Server-side (`UserService.validateUserRegistration()`)
+- **Validación:** Server-side (`UserRegistrationService.validateUserRegistration()`)
 - **Excepciones:** Ninguna
 
 ### RN-04: Ciudad obligatoria para organizaciones
