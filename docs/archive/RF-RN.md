@@ -51,7 +51,7 @@
 - **Actor(es):** Invitado, Usuario
 - **Descripción:** Permite crear una solicitud de recolección de residuos reciclables, seleccionando ciudad, organización, materiales, dirección y (opcional) foto. Los invitados deben proveer nombre y teléfono.
 - **Precondición:** Que exista al menos una organización activa en la ciudad seleccionada. El invitado está sujeto a rate limiting.
-- **Postcondición / resultado esperado:** `Request` persistida con `status=PENDING`, organización asignada, materiales seleccionados. Si es invitado, redirección a `/rastrear?phone=...`. Si es usuario, redirección a `/solicitudes`.
+- **Postcondición / resultado esperado:** `Request` persistida con `status=PENDING`, organización asignada, materiales seleccionados. En ambos casos (invitado o usuario), redirección a `/solicitudes/exito`, cuya vista muestra contenido condicional según `isGuest` (invitado ve el link de rastreo por teléfono; usuario ve el link a `/solicitudes`).
 - **Reglas de negocio asociadas:** RN-06, RN-07, RN-08, RN-09, RN-10
 - **Pantalla(s) relacionada(s):** `users/request-form.html`
 
@@ -132,7 +132,7 @@
 ### RN-06: Organización debe pertenecer a la ciudad seleccionada
 - **Aplica a:** RF-3
 - **Regla:** La organización elegida en la solicitud debe estar registrada en la misma ciudad que la solicitud. No se confía en el `organizationId` del form.
-- **Validación:** Server-side (`CityOrganizationService.findOrganizationByIdAndCity()` valida que el org pertenezca a la ciudad)
+- **Validación:** Server-side (`CityOrgService.findOrganizationByIdAndCity()` valida que el org pertenezca a la ciudad)
 - **Excepciones:** Ninguna
 
 ### RN-07: Ciclo de estados de solicitud
@@ -156,9 +156,8 @@
 ### RN-10: Mínimo 1 material en la solicitud
 - **Aplica a:** RF-3
 - **Regla:** La solicitud debe incluir al menos un material reciclable seleccionado.
-- **Validación:** Client-side únicamente (`validateMaterials()` en `request-form.html`). **Falta validación server-side** — `RequestService.createRequest()` acepta `materials=null` o lista vacía sin error.
+- **Validación:** Ambos — client-side (`validateMaterials()` en `request-form.html`) y server-side (`RequestValidator.validateCoreFields()` lanza `IllegalArgumentException` si `materials` es `null` o vacío).
 - **Excepciones:** Ninguna
-- **⚠️ DEUDA TÉCNICA:** Agregar validación server-side (Bean Validation en el modelo o check explícito en `RequestService`).
 
 ### RN-11: Solo solicitudes propias y pendientes pueden editarse/eliminarse
 - **Aplica a:** RF-5
@@ -192,7 +191,7 @@
 |----|----------|-------|--------|
 | RF-1 | `auth/register.html` | Invitado | Implementado |
 | RF-2 | `auth/login.html` | Usuario, Organización | Implementado |
-| RF-3 | `users/request-form.html` | Invitado, Usuario | Implementado (falta validación server-side de materiales) |
+| RF-3 | `users/request-form.html` | Invitado, Usuario | Implementado |
 | RF-4 | `users/track.html` | Invitado, Usuario | Implementado |
 | RF-5 | `users/requests.html`, `users/request-detail.html`, `users/request-form.html` | Usuario | Implementado |
 | RF-6 | `org/requests.html`, `org/dashboard.html` | Organización | Implementado |
