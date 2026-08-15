@@ -162,13 +162,13 @@
 ### RN-11: Solo solicitudes propias y pendientes pueden editarse/eliminarse
 - **Aplica a:** RF-5
 - **Regla:** Un usuario solo puede editar o eliminar solicitudes donde `request.user == user` y `request.status == PENDING`.
-- **Validación:** Server-side (`RequestService.getOwnedRequest()` verifica propiedad, `RequestService.getEditableOwnedRequest()` verifica estado)
+- **Validación:** Server-side (`RequestQueryService.getOwnedRequest()` verifica propiedad; `RequestQueryService.getEditableOwnedRequest()` verifica propiedad + estado. `RequestUpdateService.updateRequest()` y `RequestUpdateService.deleteOwnedRequest()` usan `getEditableOwnedRequest()`, por lo que ambas operaciones exigen PENDING)
 - **Excepciones:** Ninguna
 
 ### RN-12: Notificación WhatsApp en transiciones de estado
 - **Aplica a:** RF-6
 - **Regla:** Se envía notificación por WhatsApp al teléfono de contacto del solicitante cuando la organización acepta, rechaza o completa una solicitud.
-- **Validación:** Server-side (`RequestOrganizationService` llama a `NotificationService.sendWhatsApp()` en cada transición)
+- **Validación:** Server-side (`RequestTransitionService` llama a `NotificationService.sendWhatsApp()` en cada transición: `acceptRequest()`, `rejectRequest()`, `completeRequest()`)
 - **Excepciones:** Si no hay teléfono de contacto (`getContactPhone()` retorna null), no se envía notificación.
 
 ### RN-13: Horario confirmado al aceptar
