@@ -244,4 +244,41 @@ class RequestServiceValidationTest {
         assertNotNull(result);
         assertEquals(2, result.getMaterials().size());
     }
+
+    // ─── RN-11: solo solicitudes PENDING pueden eliminarse ───
+
+    @Test
+    void rn11_deleteOwnedRequest_notPending_throwsIllegalStateException() {
+        User user = new User();
+        user.setId("u1");
+
+        com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
+        existing.setId("req1");
+        existing.setUser(user);
+        existing.setStatus(com.residuosolido.app.enums.RequestStatus.IN_PROGRESS);
+
+        when(requestRepository.findById("req1"))
+                .thenReturn(java.util.Optional.of(existing));
+
+        assertThrows(IllegalStateException.class,
+                () -> requestUpdateService.deleteOwnedRequest("req1", user));
+    }
+
+    @Test
+    void rn11_deleteOwnedRequest_pending_deletesSuccessfully() {
+        User user = new User();
+        user.setId("u1");
+
+        com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
+        existing.setId("req1");
+        existing.setUser(user);
+        existing.setStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
+
+        when(requestRepository.findById("req1"))
+                .thenReturn(java.util.Optional.of(existing));
+
+        requestUpdateService.deleteOwnedRequest("req1", user);
+
+        org.mockito.Mockito.verify(requestRepository).deleteById("req1");
+    }
 }

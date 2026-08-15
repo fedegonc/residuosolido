@@ -46,7 +46,7 @@ public class RequestUpdateService {
     }
 
     public void deleteOwnedRequest(String id, User user) {
-        requestQueryService.getOwnedRequest(id, user);
+        requestQueryService.getEditableOwnedRequest(id, user);
         requestRepository.deleteById(id);
     }
 }
