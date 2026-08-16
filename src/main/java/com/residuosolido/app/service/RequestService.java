@@ -18,16 +18,16 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final LocalImageService imageService;
     private final RequestValidator validator;
-    private final OrgResolver orgResolver;
+    private final CityOrgService cityOrgService;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
                           RequestValidator validator,
-                          OrgResolver orgResolver) {
+                          CityOrgService cityOrgService) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.validator = validator;
-        this.orgResolver = orgResolver;
+        this.cityOrgService = cityOrgService;
     }
 
     public Request createRequest(User user, City city, String address, String addressReference,
@@ -50,7 +50,7 @@ public class RequestService {
         request.setStatus(RequestStatus.PENDING);
         request.setCreatedAt(LocalDateTime.now());
 
-        User org = orgResolver.resolve(organizationId, city);
+        User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         request.assignOrganization(org);
 
         return requestRepository.save(request);

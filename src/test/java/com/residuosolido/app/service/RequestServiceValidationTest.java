@@ -26,7 +26,6 @@ class RequestServiceValidationTest {
     private CityOrgService cityOrgService;
     private LocalImageService imageService;
     private RequestValidator validator;
-    private OrgResolver orgResolver;
     private RequestService requestService;
     private RequestUpdateService requestUpdateService;
     private RequestQueryService requestQueryService;
@@ -37,10 +36,9 @@ class RequestServiceValidationTest {
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
         validator = new RequestValidator();
-        orgResolver = new OrgResolver(cityOrgService);
         requestQueryService = new RequestQueryService(requestRepository);
-        requestService = new RequestService(requestRepository, imageService, validator, orgResolver);
-        requestUpdateService = new RequestUpdateService(requestRepository, requestQueryService, validator, orgResolver, imageService);
+        requestService = new RequestService(requestRepository, imageService, validator, cityOrgService);
+        requestUpdateService = new RequestUpdateService(requestRepository, requestQueryService, validator, cityOrgService, imageService);
     }
 
     // ─── materials null ───

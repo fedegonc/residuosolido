@@ -16,18 +16,18 @@ public class RequestUpdateService {
     private final RequestRepository requestRepository;
     private final RequestQueryService requestQueryService;
     private final RequestValidator validator;
-    private final OrgResolver orgResolver;
+    private final CityOrgService cityOrgService;
     private final LocalImageService imageService;
 
     public RequestUpdateService(RequestRepository requestRepository,
                                 RequestQueryService requestQueryService,
                                 RequestValidator validator,
-                                OrgResolver orgResolver,
+                                CityOrgService cityOrgService,
                                 LocalImageService imageService) {
         this.requestRepository = requestRepository;
         this.requestQueryService = requestQueryService;
         this.validator = validator;
-        this.orgResolver = orgResolver;
+        this.cityOrgService = cityOrgService;
         this.imageService = imageService;
     }
 
@@ -40,7 +40,7 @@ public class RequestUpdateService {
         request.setAddress(address);
         request.setAddressReference(addressReference);
         request.setMaterials(materials != null ? materials : List.of());
-        request.assignOrganization(orgResolver.resolve(organizationId, city));
+        request.assignOrganization(cityOrgService.findOrganizationByIdAndCity(organizationId, city));
         request = requestRepository.save(request);
         return imageService.attachImageToRequest(request, imageFile);
     }

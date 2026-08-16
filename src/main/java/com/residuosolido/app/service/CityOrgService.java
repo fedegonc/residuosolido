@@ -20,6 +20,12 @@ public class CityOrgService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Resuelve la organización de una solicitud a partir de la elección explícita
+     * del usuario. No existe asignación automática por proximidad ni por "primera
+     * organización disponible": si no se eligió organización, se rechaza (ver
+     * RequestValidator).
+     */
     public User findOrganizationByIdAndCity(String organizationId, City city) {
         if (organizationId == null || organizationId.isBlank()) {
             throw new IllegalArgumentException("error.request.organization_required");
