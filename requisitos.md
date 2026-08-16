@@ -29,25 +29,19 @@ Fuera de alcance — responsabilidad no digitalizable, no del software
 
 Nota para la defensa de tesis: estos puntos no son omisiones — son decisiones de alcance conscientes, justificadas porque exceden lo que una herramienta de software puede o debe resolver. Documentar esto explícitamente en la sección de limitaciones.
 
-2. Backlog inmediato (funcionalidades chicas, sin rediseño de arquitectura)
-🟢 Notificaciones WhatsApp al Usuario
- Definir proveedor (API de WhatsApp Business / Twilio / similar)
- Servicio nuevo: NotificationService (o WhatsAppNotificationService)
- Disparar notificación en cada transición de estado: Request.accept(), complete(), reject()
- Mensaje debe indicar: nuevo estado + qué necesita preparar el usuario (si aplica)
- Usar el teléfono ya existente en User/Request (getContactPhone())
-🟢 Métricas privadas por organización + descarga PDF
- Renombrar PublicMetricsController → OrgMetricsController (ya no es público)
+2. Backlog pendiente (funcionalidades chicas, sin rediseño de arquitectura)
+
+Nota: la notificación WhatsApp ya implementada se documenta como regla de negocio en `docs/archive/RF-RN.md` (RN-12) y no se repite acá. El conteo de solicitudes completadas está implementado (`PublicMetricsService.getPublicTotalCompleted()`) pero no tiene una RN formal asociada todavía.
+
+🟡 Métricas privadas por organización + descarga PDF (pendiente)
+ Renombrar PublicMetricsController → OrgMetricsController (sigue siendo público en `/metricas`, sin `@PreAuthorize`)
  Nueva ruta protegida bajo /acopio/** (rol ORGANIZATION), ej. /acopio/metricas
  Nuevo método en RequestMetricsService: getMetricsByOrganization(User org) — cantidades por estado, por período
- Endpoint de descarga: GET /acopio/metricas/pdf (librería sugerida: OpenPDF o iText community)
+ Endpoint de descarga: GET /acopio/metricas/pdf (librería sugerida: OpenPDF o iText community) — no implementado
  Retirar o restringir el endpoint público de métricas generales si ya no aplica
-🟢 Métrica de cantidad recolectada
- Confirmar si ya existe conteo por estado COMPLETED en RequestMetricsService
- Si no existe: agregar conteo simple por organización/ciudad/período — sin desglose de comercialización, solo cantidad de solicitudes completadas (mantenido deliberadamente simple)
 🟡 Consistencia de nombres (limpieza técnica, baja prioridad)
  Revisar y alinear nombres de controllers/servicios que ya no reflejan su alcance real (ej. el caso de PublicMetricsController de arriba)
- Confirmar que la separación por sub-dominio (RequestService / RequestOrganizationService / RequestMetricsService / CityOrganizationService) está reflejada consistentemente en los nombres de sus métodos
+ Confirmar que la separación por sub-dominio (RequestQueryService / RequestOrgService / RequestMetricsService / CityOrgService) está reflejada consistentemente en los nombres de sus métodos
 3. Criterio para decidir si algo entra al alcance
 
 Antes de agregar cualquier funcionalidad nueva, chequear en este orden:
