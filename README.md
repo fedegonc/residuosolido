@@ -14,16 +14,16 @@ Sistema web para la gestión y coordinación de recolección de residuos recicla
 ## 🛠️ Stack Tecnológico
 
 - **Backend:** Java 17, Spring Boot 3.2
-- **Frontend:** Thymeleaf, TailwindCSS, Lucide Icons
-- **Base de Datos:** PostgreSQL
-- **Seguridad:** Spring Security
-- **Almacenamiento:** Cloudinary (opcional)
+- **Frontend:** Thymeleaf (SSR) + thymeleaf-layout-dialect, FontAwesome
+- **Base de Datos:** MongoDB
+- **Seguridad:** Spring Security (login con bloqueo por intentos fallidos, CSRF)
+- **Almacenamiento de imágenes:** Local en disco (carpeta configurable vía `UPLOAD_DIR`, servida en `/uploads/**`)
 
 ## 📋 Requisitos
 
 - Java 17 o superior
 - Maven 3.8+
-- PostgreSQL 12+
+- MongoDB (local o Atlas)
 
 ## 🚀 Instalación y Ejecución
 
@@ -34,13 +34,12 @@ Sistema web para la gestión y coordinación de recolección de residuos recicla
    ```
 
 2. **Configurar variables de entorno**
-   
-   Crear archivo `.env` o configurar las siguientes variables:
+
+   Crear archivo `.env` en la raíz (o exportarlas en el entorno) con las siguientes variables:
    ```properties
-   SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/residuosolido
-   SPRING_DATASOURCE_USERNAME=tu_usuario
-   SPRING_DATASOURCE_PASSWORD=tu_contraseña
-   CLOUDINARY_URL=cloudinary://<key>:<secret>@<cloud_name>  # opcional
+   SPRING_DATA_MONGODB_URI=mongodb://localhost:27017
+   MONGODB_DATABASE=residuosolido        # opcional, default: fedelabs
+   UPLOAD_DIR=uploads                    # opcional, carpeta local para imágenes de solicitudes
    ```
 
 3. **Ejecutar la aplicación**
@@ -48,9 +47,16 @@ Sistema web para la gestión y coordinación de recolección de residuos recicla
    mvn spring-boot:run
    ```
 
+   El perfil activo por defecto es `dev` (`spring.profiles.active` en `application.properties`). Para producción, usar `-Dspring-boot.run.profiles=prod` o `SPRING_PROFILES_ACTIVE=prod`.
+
 4. **Acceder a la aplicación**
-   
+
    Abrir navegador en `http://localhost:8080`
+
+5. **Correr los tests**
+   ```bash
+   mvn test
+   ```
 
 ## 📦 Despliegue
 
