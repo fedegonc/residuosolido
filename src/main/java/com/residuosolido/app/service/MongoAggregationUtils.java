@@ -34,7 +34,7 @@ public final class MongoAggregationUtils {
     /**
      * Cuenta solicitudes por estado (PENDING/IN_PROGRESS/COMPLETED) filtradas por un
      * criterio base (ej. organization.$id o user.$id), usando un facet aggregation.
-     * Compartido por DashboardService (organización) y RequestMetricsService (usuario)
+     * Compartido por los dos métodos de RequestMetricsService (organización y usuario)
      * para evitar duplicar la construcción del pipeline.
      */
     @SuppressWarnings("rawtypes")

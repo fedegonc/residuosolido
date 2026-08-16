@@ -8,7 +8,6 @@ import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.CityOrgService;
-import com.residuosolido.app.service.DashboardService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestOrgService;
 import com.residuosolido.app.service.RequestTransitionService;
@@ -66,8 +65,6 @@ class EndToEndFlowsTest {
     private RequestMetricsService requestMetricsService;
     @MockBean
     private CityOrgService cityOrgService;
-    @MockBean
-    private DashboardService dashboardService;
     @MockBean
     private RequestOrgService requestOrgService;
     @MockBean
@@ -200,7 +197,7 @@ class EndToEndFlowsTest {
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(dashboardService.getOrgDashboardData(org))
+        when(requestMetricsService.getOrgDashboardData(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
         when(requestOrgService.getRecentPendingRequestsByOrganization(org, 5))
                 .thenReturn(Collections.emptyList());

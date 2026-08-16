@@ -23,4 +23,9 @@ public class RequestMetricsService {
                 mongoTemplate, Criteria.where("user.$id").is(user.getId()), true);
     }
 
+    public Map<String, Long> getOrgDashboardData(User organization) {
+        return MongoAggregationUtils.countByStatusFaceted(
+                mongoTemplate, Criteria.where("organization.$id").is(organization.getId()), false);
+    }
+
 }
