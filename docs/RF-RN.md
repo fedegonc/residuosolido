@@ -233,5 +233,5 @@
 Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si no, se documenta como limitación consciente (sección 5).
 
 **Backlog pendiente (no implementado):**
-- 🟡 **Métricas privadas por organización + descarga PDF.** Renombrar `PublicMetricsController` → `OrgMetricsController` (sigue siendo público en `/metricas`, sin `@PreAuthorize`); nueva ruta protegida `/acopio/metricas`; endpoint `GET /acopio/metricas/pdf` (sugerido: OpenPDF o iText community) — ninguna de estas tres cosas está implementada.
+- 🟡 **Métricas privadas por organización + descarga PDF.** Nueva ruta protegida `/acopio/metricas` con `@PreAuthorize("hasRole('ORGANIZATION')")` y endpoint `GET /acopio/metricas/pdf` (sugerido: OpenPDF o iText community). La ruta pública `/metricas` (totales agregados, sin datos personales) es una decisión consciente de diseño, no un bug — está explícitamente en `permitAll()` en `SecurityConfig`.
 - 🟡 **Consistencia de nombres** (baja prioridad): revisar que los nombres de métodos de `RequestQueryService`/`RequestOrgService`/`RequestMetricsService`/`CityOrgService` reflejen consistentemente su sub-dominio.
