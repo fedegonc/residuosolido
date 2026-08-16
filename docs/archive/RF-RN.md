@@ -199,7 +199,7 @@
 | — | `index.html` | Invitado, Usuario, Organización | Implementado (landing, no mapea a un RF específico) |
 | — | `metrics.html` | Público | Implementado (métricas públicas, no mapea a un RF específico) |
 | — | `users/dashboard.html` | Usuario | Implementado (dashboard, sub-función de RF-5) |
-| — | `users/profile.html` | Usuario | Implementado (perfil read-only, sub-función de RF-5) |
+| — | `users/profile.html` | Usuario | Implementado (perfil editable, sub-función de RF-5) |
 | — | `error/404.html` | Todos | Implementado |
 
 ---
@@ -216,3 +216,22 @@
 - **No hay gestión de vehículos, EPP, uniformes, combustible.** Eso es logística física de la organización.
 - **No hay capacitación de catadores.** Es un proceso humano/pedagógico, no digitalizable en este sistema.
 - **No hay multi-tenant ni multi-organización jerárquica.** Cada organización es independiente.
+
+**Origen de estas decisiones:** basadas en el Oficio n° 044/2023 (Proyecto Frontera de la Paz Sustentable) y en la auditoría de dominio realizada con stakeholders.
+
+**Nota para la defensa de tesis:** estos puntos no son omisiones — son decisiones de alcance conscientes, justificadas porque exceden lo que una herramienta de software puede o debe resolver.
+
+---
+
+## 6. Criterio de alcance y backlog pendiente
+
+**Criterio para decidir si algo nuevo entra al alcance** (chequear en este orden):
+1. ¿Está en el oficio o surge de una necesidad real confirmada por el stakeholder (organización/usuario)?
+2. ¿Es responsabilidad de un sistema de software, o es logística/inversión física/proceso humano?
+3. ¿Se puede resolver con un campo o servicio simple, o requiere una entidad/módulo nuevo?
+
+Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si no, se documenta como limitación consciente (sección 5).
+
+**Backlog pendiente (no implementado):**
+- 🟡 **Métricas privadas por organización + descarga PDF.** Renombrar `PublicMetricsController` → `OrgMetricsController` (sigue siendo público en `/metricas`, sin `@PreAuthorize`); nueva ruta protegida `/acopio/metricas`; endpoint `GET /acopio/metricas/pdf` (sugerido: OpenPDF o iText community) — ninguna de estas tres cosas está implementada.
+- 🟡 **Consistencia de nombres** (baja prioridad): revisar que los nombres de métodos de `RequestQueryService`/`RequestOrgService`/`RequestMetricsService`/`CityOrgService` reflejen consistentemente su sub-dominio.
