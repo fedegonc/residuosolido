@@ -143,7 +143,7 @@
 ### RN-08: Cobertura binacional
 - **Aplica a:** RF-3, RF-4, RF-8
 - **Regla:** El sistema opera en Rivera (Uruguay) y Sant'Ana do Livramento (Brasil). Los nombres de ciudad se muestran localizados según idioma del navegador.
-- **Validación:** Server-side (enum `City` con `RIVERA` y `LIVRAMENTO`). i18n con keys `city.RIVERA` y `city.LIVRAMENTO`.
+- **Validación:** Server-side (enum `City` con `RIVERA` y `LIVRAMENTO`). i18n client-side vía JSON (`static/i18n/common/{es,pt}.json`, keys `city_rivera`/`city_livramento`), cargado por `static/js/app.js` y aplicado a atributos `data-i18n` en los templates (no es el `MessageSource` de Spring).
 - **Excepciones:** Ninguna
 
 ### RN-09: Rate limiting para invitados
@@ -172,8 +172,8 @@
 
 ### RN-13: Horario confirmado al aceptar
 - **Aplica a:** RF-6
-- **Regla:** Al aceptar una solicitud, la organización debe seleccionar un horario confirmado (`TimeSlot`: MAÑANA, TARDE, NOCHE).
-- **Validación:** Server-side (`OrgRequestController` recibe `@RequestParam("confirmedSlot") TimeSlot confirmedSlot` como obligatorio)
+- **Regla:** Al aceptar una solicitud, la organización debe seleccionar un horario confirmado (`TimeSlot`: `MANANA`, `TARDE`, `NOCHE`).
+- **Validación:** Server-side — el parámetro `confirmedSlot` en `OrgRequestController` es opcional a nivel Spring (`required = false`), pero `Request.accept(TimeSlot slot)` lanza `IllegalArgumentException("error.request.slot_required")` si `slot == null`. La obligatoriedad real está en el modelo de dominio, no en la anotación del controller.
 - **Excepciones:** Ninguna
 
 ### RN-14: Perfil de usuario y organización son editables
