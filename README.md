@@ -1,15 +1,18 @@
 # 🌱 Plataforma de Gestión de Residuos Sólidos
 
-Sistema web para la gestión y coordinación de recolección de residuos reciclables, facilitando la comunicación entre ciudadanos, organizaciones recolectoras y administradores.
+Sistema web para la gestión y coordinación de recolección de residuos reciclables, facilitando la comunicación entre ciudadanos y organizaciones recolectoras.
 
 ## ✨ Características
 
-- Sistema de autenticación con roles diferenciados (Admin, Usuario, Organización)
-- Gestión de solicitudes de recolección de residuos
-- Catálogo de materiales reciclables
-- Panel de estadísticas y métricas
-- Contenido educativo sobre reciclaje
-- Interfaz responsive adaptada a dispositivos móviles
+- Autenticación con roles diferenciados (Usuario, Organización) y onboarding forzado de perfil de organización
+- Solicitudes de recolección por usuario registrado o invitado (sin cuenta), con rastreo por teléfono
+- Selección de organización por ciudad y materiales reciclables a entregar
+- Flujo de estados de solicitud (pendiente → en progreso/rechazada → completada) gestionado por la organización
+- Notificación por WhatsApp en cambios de estado (configurable)
+- Gestión de recolectores informales por organización
+- Panel de estadísticas (dashboard de usuario y de organización)
+- Rate limiting para solicitudes de invitados y bloqueo de cuenta tras intentos de login fallidos
+- Internacionalización (es/pt)
 
 ## 🛠️ Stack Tecnológico
 
@@ -72,10 +75,6 @@ docker build -t residuosolido:latest .
 docker run -p 8080:8080 --env-file .env residuosolido:latest
 ```
 
-## 📄 Licencia
-
-Este proyecto está bajo licencia MIT.
-
-## 👥 Contribución
+##  Contribución
 
 Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para sugerencias y mejoras.
