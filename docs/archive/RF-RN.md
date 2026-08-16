@@ -17,7 +17,6 @@
   - Acceder al panel de organización (`/acopio/**`)
   - Gestionar recolectores informales
   - Ver métricas privadas de organizaciones
-  - Modificar su perfil (la página es READ-ONLY — no hay POST en `/usuarios/perfil`)
 
 ### Organización
 - **Descripción:** Cooperativa o centro de acopio registrado que recibe solicitudes, gestiona el ciclo de vida de las mismas y administra recolectores informales.
@@ -177,11 +176,11 @@
 - **Validación:** Server-side (`OrgRequestController` recibe `@RequestParam("confirmedSlot") TimeSlot confirmedSlot` como obligatorio)
 - **Excepciones:** Ninguna
 
-### RN-14: Perfil de usuario es READ-ONLY
+### RN-14: Perfil de usuario y organización son editables
 - **Aplica a:** RF-7
-- **Regla:** El perfil del Usuario (rol USER) es de solo lectura. No hay endpoint POST para actualizarlo. El perfil de Organización sí es editable.
-- **Validación:** Server-side (no existe POST en `/usuarios/perfil`; el template `users/profile.html` no tiene `<form>`)
-- **Excepciones:** El perfil de Organización (`/acopio/perfil`) sí es editable vía POST.
+- **Regla:** Tanto el Usuario (rol USER) como la Organización pueden editar sus datos de contacto (email, nombre, teléfono, ciudad).
+- **Validación:** Server-side — `UserProfileController.updateProfile()` maneja `POST /usuarios/perfil` (rol USER), `OrgProfileController` maneja la edición de organización. Ambos templates (`users/profile.html`, `org/profile.html`) tienen `<form>` real.
+- **Excepciones:** Ninguna
 
 ---
 
