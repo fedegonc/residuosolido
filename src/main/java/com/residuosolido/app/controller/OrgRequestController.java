@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 /** Lista y gestiona las solicitudes recibidas por una organización (aceptar, rechazar, completar). */
 @Controller
@@ -49,6 +50,11 @@ public class OrgRequestController extends BaseController {
         model.addAttribute("currentStatus", status);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
+        model.addAttribute("breadcrumbs", List.of(
+                Map.of("label", "Inicio", "href", "/"),
+                Map.of("label", "Panel de acopio", "href", "/acopio/inicio"),
+                Map.of("label", "Solicitudes", "href", "")
+        ));
         return "org/requests";
     }
 
