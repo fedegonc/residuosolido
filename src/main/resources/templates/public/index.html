@@ -25,21 +25,13 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <span data-i18n="cta_track">Rastrear solicitud</span>
               </a>
-              <a href="/metricas" class="btn btn--outline btn--lg">
-                <i class="fa-solid fa-chart-column"></i>
-                <span data-i18n="cta_metrics">Ver métricas</span>
-              </a>
             </div>
-          </div>
-          <div class="hero__qr">
-            <div id="qrcode"></div>
-            <p class="hero__qr-text" data-i18n="qr_share">Compartí esta página</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Beneficios: 4 cards -->
+    <!-- Beneficios: 3 cards -->
     <section class="benefits">
       <div class="page">
         <div class="benefits__grid">
@@ -57,11 +49,6 @@
             <div class="benefit-card__icon"><i class="fa-solid fa-circle-check"></i></div>
             <h3 data-i18n="benefit_easy_title">Fácil y seguro</h3>
             <p data-i18n="benefit_easy_desc">Proceso simple, rápido y transparente.</p>
-          </div>
-          <div class="benefit-card">
-            <div class="benefit-card__icon"><i class="fa-solid fa-chart-column"></i></div>
-            <h3 data-i18n="benefit_open_title">Datos abiertos</h3>
-            <p data-i18n="benefit_open_desc">Métricas públicas para una ciudad más transparente.</p>
           </div>
         </div>
       </div>
@@ -114,14 +101,5 @@
     </section>
 
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script>
-    (function() {
-      var qrEl = document.getElementById('qrcode');
-      if (qrEl && typeof QRCode !== 'undefined') {
-        new QRCode(qrEl, { text: window.location.href, width: 120, height: 120 });
-      }
-    })();
-  </script>
 </body>
 </html>
