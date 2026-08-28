@@ -2,7 +2,6 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestQueryService;
 import org.slf4j.Logger;
@@ -13,6 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /** Dashboard y perfil del ciudadano: estadísticas, datos personales y edición. */
@@ -24,15 +26,12 @@ public class UserProfileController extends BaseController {
 
     private final RequestQueryService requestQueryService;
     private final RequestMetricsService requestMetricsService;
-    private final BreadcrumbService breadcrumbService;
 
     @Autowired
     public UserProfileController(RequestQueryService requestQueryService,
-                                 RequestMetricsService requestMetricsService,
-                                 BreadcrumbService breadcrumbService) {
+                                 RequestMetricsService requestMetricsService) {
         this.requestQueryService = requestQueryService;
         this.requestMetricsService = requestMetricsService;
-        this.breadcrumbService = breadcrumbService;
     }
 
     /** Dashboard del ciudadano con estadísticas y solicitudes recientes. */
@@ -42,7 +41,10 @@ public class UserProfileController extends BaseController {
         model.addAttribute("user", user);
         model.addAttribute("recentRequests", requestQueryService.getRecentRequestsByUser(user, 5));
         model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
-        model.addAttribute("breadcrumbs", breadcrumbService.addCurrent(breadcrumbService.home(), "Mi panel"));
+        model.addAttribute("breadcrumbs", List.of(
+                Map.of("label", "Inicio", "href", "/"),
+                Map.of("label", "Mi panel", "href", "")
+        ));
         return "users/dashboard";
     }
 
@@ -53,7 +55,11 @@ public class UserProfileController extends BaseController {
         model.addAttribute("user", user);
         model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
         model.addAttribute("cities", City.values());
-        model.addAttribute("breadcrumbs", breadcrumbService.addCurrent(breadcrumbService.add(breadcrumbService.home(), "Mi panel", "/usuarios/inicio"), "Mi perfil"));
+        model.addAttribute("breadcrumbs", List.of(
+                Map.of("label", "Inicio", "href", "/"),
+                Map.of("label", "Mi panel", "href", "/usuarios/inicio"),
+                Map.of("label", "Mi perfil", "href", "")
+        ));
         return "users/profile";
     }
 

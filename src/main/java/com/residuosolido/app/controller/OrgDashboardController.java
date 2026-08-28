@@ -1,7 +1,6 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestOrgService;
 import org.slf4j.Logger;
@@ -25,15 +24,12 @@ public class OrgDashboardController extends BaseController {
 
     private final RequestMetricsService requestMetricsService;
     private final RequestOrgService requestOrgService;
-    private final BreadcrumbService breadcrumbService;
 
     @Autowired
     public OrgDashboardController(RequestMetricsService requestMetricsService,
-                                   RequestOrgService requestOrgService,
-                                   BreadcrumbService breadcrumbService) {
+                                   RequestOrgService requestOrgService) {
         this.requestMetricsService = requestMetricsService;
         this.requestOrgService = requestOrgService;
-        this.breadcrumbService = breadcrumbService;
     }
 
     /** Página principal de la organización. Redirige a completar perfil si falta. */
@@ -59,7 +55,10 @@ public class OrgDashboardController extends BaseController {
             model.addAttribute("completedRequests", 0);
             model.addAttribute("pendingRequestsList", List.of());
         }
-        model.addAttribute("breadcrumbs", breadcrumbService.addCurrent(breadcrumbService.home(), "Panel de acopio"));
+        model.addAttribute("breadcrumbs", List.of(
+                Map.of("label", "Inicio", "href", "/"),
+                Map.of("label", "Panel de acopio", "href", "")
+        ));
         return "org/dashboard";
     }
 }

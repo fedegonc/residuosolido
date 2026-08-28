@@ -6,7 +6,6 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
-import com.residuosolido.app.service.BreadcrumbService;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestOrgService;
