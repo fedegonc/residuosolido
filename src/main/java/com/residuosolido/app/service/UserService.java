@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Gestiona la identidad, autenticación y perfiles de usuario y organizaciones.
+ * Provee resolución del usuario autenticado y actualización de datos de contacto.
+ * Nota: MongoDB standalone no soporta transacciones multi-documento.
+ */
 @Service
 public class UserService {
 

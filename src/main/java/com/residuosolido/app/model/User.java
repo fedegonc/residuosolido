@@ -14,6 +14,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entidad de usuario. Modela tanto ciudadanos (USER) como organizaciones (ORGANIZATION)
+ * en una misma tabla/colección, diferenciados por el campo {@link #role}.
+ * Usuarios y organizaciones comparten atributos básicos; acceptedMaterials y city
+ * son relevantes principalmente para organizaciones.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

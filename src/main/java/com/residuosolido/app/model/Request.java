@@ -18,6 +18,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entidad central: solicitud de recolección de residuos reciclables.
+ * Encapsula el ciclo de vida (PENDING → IN_PROGRESS/COMPLETED/REJECTED),
+ * datos de contacto (usuario o invitado), materiales, dirección y horario confirmado.
+ */
 @Document(collection = "requests")
 @Getter
 @Setter

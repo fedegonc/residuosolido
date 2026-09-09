@@ -12,6 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Orquesta la creación de solicitudes de recolección.
+ * Valida campos, asigna la organización correspondiente a la ciudad seleccionada
+ * y persista la solicitud en estado PENDING.
+ */
 @Service
 public class RequestService {
 

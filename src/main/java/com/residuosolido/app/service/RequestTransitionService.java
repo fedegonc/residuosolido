@@ -7,6 +7,12 @@ import com.residuosolido.app.repository.RequestRepository;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Orquesta las transiciones de estado de las solicitudes:
+ * PENDING → IN_PROGRESS (aceptar), PENDING → REJECTED (rechazar),
+ * IN_PROGRESS → COMPLETED (completar).
+ * Incluye notificación por WhatsApp al contacto de la solicitud.
+ */
 @Service
 public class RequestTransitionService {
 
