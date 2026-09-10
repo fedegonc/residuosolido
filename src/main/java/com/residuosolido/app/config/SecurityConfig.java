@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/rastrear").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/organizations/by-city").permitAll()
                 .requestMatchers("/metricas").permitAll()
+                .requestMatchers("/blog").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 // API endpoints para usuarios autenticados
                 .requestMatchers("/api/**").authenticated()
