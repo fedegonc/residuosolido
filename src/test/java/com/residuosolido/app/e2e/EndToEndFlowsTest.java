@@ -207,6 +207,12 @@ class EndToEndFlowsTest {
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
         when(requestOrgService.getRecentPendingRequestsByOrganization(org, 5))
                 .thenReturn(Collections.emptyList());
+        when(requestOrgService.getRequestsByOrganizationGroupedByStatus(org))
+                .thenReturn(Map.of(
+                        RequestStatus.PENDING, Collections.emptyList(),
+                        RequestStatus.IN_PROGRESS, Collections.emptyList(),
+                        RequestStatus.COMPLETED, Collections.emptyList(),
+                        RequestStatus.REJECTED, Collections.emptyList()));
 
         mockMvc.perform(get("/acopio/inicio"))
                 .andExpect(status().isOk())

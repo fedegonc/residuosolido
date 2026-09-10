@@ -31,13 +31,13 @@
             <p class="panel-header__subtitle" data-i18n="org_dash_subtitle">Este es el resumen de la actividad en tu organización.</p>
           </div>
           <div class="panel-actions">
-            <a href="/acopio/requests" class="btn btn--primary">
+            <a href="/acopio/requests" class="btn btn--outline">
               <i class="fa-solid fa-list"></i>
-              <span data-i18n="org_dash_requests">Solicitudes</span>
+              <span data-i18n="org_dash_requests">Lista de solicitudes</span>
             </a>
             <a href="/acopio/perfil" class="btn btn--outline">
               <i class="fa-solid fa-building"></i>
-              <span data-i18n="org_profile_title">Perfil de organización</span>
+              <span data-i18n="org_profile_title">Perfil</span>
             </a>
           </div>
         </div>
@@ -61,38 +61,120 @@
           </div>
         </div>
 
-        <!-- Recent pending requests -->
-        <div th:if="${pendingRequestsList != null and !pendingRequestsList.isEmpty()}">
-          <div class="panel-header mb-1">
-            <h2 class="panel-section__title mb-0" data-i18n="org_dash_pending">Solicitudes pendientes recientes</h2>
-            <a href="/acopio/requests" class="form-hint" data-i18n="dash_view_all">Ver todas</a>
-          </div>
-          <div class="info-card">
-            <div class="contact-list">
-              <a th:each="req, iter : ${pendingRequestsList}" th:href="@{/acopio/requests/{id}(id=${req.id})}" class="contact-item">
-                <div class="contact-item__avatar" th:classappend="'contact-item__avatar--' + ${iter.index % 4}"
-                     th:text="${req.getContactInitials()}">JG</div>
-                <div class="contact-item__body">
-                  <div class="contact-item__name" th:text="${req.contactName}">Contacto</div>
-                  <div class="contact-item__sub" th:if="${req.hasMaterials()}"
-                       th:text="${#strings.listJoin(req.materials, ', ')}">Materiales</div>
-                </div>
-                <div class="contact-item__meta">
-                  <span class="status-badge status-badge--pending" data-i18n="req_status_pending">Pendiente</span>
-                  <span class="contact-item__time" th:if="${req.createdAt != null}"
-                        th:text="${#temporals.format(req.createdAt, 'dd/MM HH:mm')}"></span>
-                </div>
-                <i class="fa-solid fa-chevron-right contact-item__arrow"></i>
-              </a>
-            </div>
-          </div>
+        <!-- Kanban board -->
+        <div class="panel-header">
+          <h2 class="panel-section__title mb-0" data-i18n="org_kanban_title">Tablero de solicitudes</h2>
+          <a href="/acopio/requests" class="form-hint" data-i18n="dash_view_all">Ver lista completa</a>
         </div>
 
-        <!-- Empty state -->
-        <div th:if="${pendingRequestsList == null or pendingRequestsList.isEmpty()}" class="info-card">
-          <div class="track-empty">
-            <i class="fa-solid fa-inbox track-empty__icon"></i>
-            <p class="track-empty__text" data-i18n="org_dash_no_pending">No hay solicitudes pendientes</p>
+        <div class="kanban-board">
+          <!-- PENDING -->
+          <div class="kanban-column kanban-column--pending">
+            <div class="kanban-column__header">
+              <i class="fa-solid fa-clock"></i>
+              <span data-i18n="req_status_pending">Pendientes</span>
+              <span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING).size()}">0</span>
+            </div>
+            <div class="kanban-column__body">
+              <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING)}" class="kanban-card kanban-card--pending">
+                <div class="kanban-card__city"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}">Ciudad</span></div>
+                <div class="kanban-card__materials" th:if="${req.hasMaterials()}">
+                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+                </div>
+                <div class="kanban-card__contact"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}">Solicitante</span></div>
+                <div class="kanban-card__date"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}">Fecha</span></div>
+                <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="kanban-card__actions">
+                  <input type="hidden" name="action" value="accept" />
+                  <select name="confirmedSlot" class="form-select form-select--small" required>
+                    <option th:each="slot : ${timeSlots}" th:value="${slot.name()}"
+                            th:text="${slot.name() == 'MANANA' ? 'Mañana' : (slot.name() == 'TARDE' ? 'Tarde' : 'Noche')}">Franja</option>
+                  </select>
+                  <button type="submit" class="btn btn--primary btn--sm"><i class="fa-solid fa-check"></i><span data-i18n="org_req_accept">Aceptar</span></button>
+                </form>
+                <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="kanban-card__actions">
+                  <input type="hidden" name="action" value="reject" />
+                  <button type="submit" class="btn btn--outline btn--sm btn--danger"><i class="fa-solid fa-xmark"></i><span data-i18n="org_req_reject">Rechazar</span></button>
+                </form>
+                <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
+              </div>
+              <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING).isEmpty()}" class="kanban-column__empty">
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- IN_PROGRESS -->
+          <div class="kanban-column kanban-column--in_progress">
+            <div class="kanban-column__header">
+              <i class="fa-solid fa-truck"></i>
+              <span data-i18n="req_status_in_progress">En curso</span>
+              <span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS).size()}">0</span>
+            </div>
+            <div class="kanban-column__body">
+              <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS)}" class="kanban-card kanban-card--in_progress">
+                <div class="kanban-card__city"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}">Ciudad</span></div>
+                <div class="kanban-card__materials" th:if="${req.hasMaterials()}">
+                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+                </div>
+                <div class="kanban-card__contact"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}">Solicitante</span></div>
+                <div class="kanban-card__date"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}">Fecha</span></div>
+                <div class="kanban-card__slot" th:if="${req.confirmedSlot != null}"><i class="fa-solid fa-clock"></i><span th:text="${req.confirmedSlot.name() == 'MANANA' ? 'Mañana' : (req.confirmedSlot.name() == 'TARDE' ? 'Tarde' : 'Noche')}">Franja</span></div>
+                <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="kanban-card__actions">
+                  <input type="hidden" name="action" value="complete" />
+                  <button type="submit" class="btn btn--primary btn--sm"><i class="fa-solid fa-circle-check"></i><span data-i18n="org_req_complete">Completar</span></button>
+                </form>
+                <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
+              </div>
+              <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS).isEmpty()}" class="kanban-column__empty">
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPLETED -->
+          <div class="kanban-column kanban-column--completed">
+            <div class="kanban-column__header">
+              <i class="fa-solid fa-circle-check"></i>
+              <span data-i18n="req_status_completed">Completadas</span>
+              <span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED).size()}">0</span>
+            </div>
+            <div class="kanban-column__body">
+              <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED)}" class="kanban-card kanban-card--completed">
+                <div class="kanban-card__city"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}">Ciudad</span></div>
+                <div class="kanban-card__materials" th:if="${req.hasMaterials()}">
+                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+                </div>
+                <div class="kanban-card__contact"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}">Solicitante</span></div>
+                <div class="kanban-card__date"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}">Fecha</span></div>
+                <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
+              </div>
+              <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED).isEmpty()}" class="kanban-column__empty">
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- REJECTED -->
+          <div class="kanban-column kanban-column--rejected">
+            <div class="kanban-column__header">
+              <i class="fa-solid fa-ban"></i>
+              <span data-i18n="req_status_rejected">Rechazadas</span>
+              <span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED).size()}">0</span>
+            </div>
+            <div class="kanban-column__body">
+              <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED)}" class="kanban-card kanban-card--rejected">
+                <div class="kanban-card__city"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}">Ciudad</span></div>
+                <div class="kanban-card__materials" th:if="${req.hasMaterials()}">
+                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
+                </div>
+                <div class="kanban-card__contact"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}">Solicitante</span></div>
+                <div class="kanban-card__date"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}">Fecha</span></div>
+                <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
+              </div>
+              <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED).isEmpty()}" class="kanban-column__empty">
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+              </div>
+            </div>
           </div>
         </div>
 

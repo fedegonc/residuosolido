@@ -1,6 +1,9 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Request;
+import com.residuosolido.app.enums.RequestStatus;
+import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestOrgService;
 import org.slf4j.Logger;
@@ -48,6 +51,8 @@ public class OrgDashboardController extends BaseController {
             model.addAttribute("inProgressRequests", data.get("inProgress"));
             model.addAttribute("completedRequests", data.get("completed"));
             model.addAttribute("pendingRequestsList", requestOrgService.getRecentPendingRequestsByOrganization(currentOrg, 5));
+            model.addAttribute("kanban", requestOrgService.getRequestsByOrganizationGroupedByStatus(currentOrg));
+            model.addAttribute("timeSlots", TimeSlot.values());
         } catch (Exception e) {
             logger.error("Error en dashboard de organización: {}", e.getMessage(), e);
             model.addAttribute("pendingRequests", 0);

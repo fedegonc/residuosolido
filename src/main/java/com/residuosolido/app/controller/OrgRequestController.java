@@ -59,22 +59,6 @@ public class OrgRequestController extends BaseController {
         return "org/requests";
     }
 
-    /** Vista Kanban: solicitudes agrupadas por estado en columnas. */
-    @GetMapping("/acopio/kanban")
-    public String orgRequestsKanban(Authentication authentication, Model model) {
-        User currentOrg = getCurrentUser(authentication);
-        Map<RequestStatus, List<Request>> grouped = requestOrgService.getRequestsByOrganizationGroupedByStatus(currentOrg);
-
-        model.addAttribute("kanban", grouped);
-        model.addAttribute("timeSlots", TimeSlot.values());
-        model.addAttribute("breadcrumbs", List.of(
-                Map.of("label", "Inicio", "href", "/"),
-                Map.of("label", "Panel de acopio", "href", "/acopio/inicio"),
-                Map.of("label", "Tablero", "href", "")
-        ));
-        return "org/requests-kanban";
-    }
-
     /** Cambia el estado de una solicitud: aceptar, rechazar o completar. */
     @PostMapping("/acopio/requests/{id}/transition")
     public String orgTransitionRequest(@PathVariable String id,
