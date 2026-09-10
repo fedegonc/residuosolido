@@ -42,10 +42,20 @@ public class RequestQueryService {
         return request;
     }
 
-    public List<Request> getGuestRequestsByPhone(String phone) {
+    /**
+     * Busca solicitudes de invitado por teléfono + código privado de rastreo.
+     * El teléfono solo NO es suficiente: cualquier persona podría conocerlo.
+     * El código se entrega al invitado al crear la solicitud.
+     */
+    public List<Request> getGuestRequests(String phone, String trackingCode) {
         if (phone == null || phone.trim().isEmpty()) {
             return List.of();
         }
-        return requestRepository.findByGuestPhoneOrderByCreatedAtDesc(phone.trim());
+        if (trackingCode == null || trackingCode.isBlank()) {
+            return List.of();
+        }
+        String canonicalPhone = com.residuosolido.app.model.PhoneNumber.of(phone).value();
+        return requestRepository
+                .findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(canonicalPhone, trackingCode.trim());
     }
 }

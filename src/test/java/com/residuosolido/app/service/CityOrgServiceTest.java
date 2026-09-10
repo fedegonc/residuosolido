@@ -1,6 +1,7 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
+import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
@@ -30,6 +31,10 @@ class CityOrgServiceTest {
         u.setId(id);
         u.setRole(Role.ORGANIZATION);
         u.setCity(city);
+        u.setActive(true);
+        u.setPhone("+59899123456");
+        u.setProfileCompleted(true);
+        u.setAcceptedMaterials(List.of(MaterialCategory.PAPEL));
         return u;
     }
 
@@ -78,25 +83,36 @@ class CityOrgServiceTest {
     }
 
     @Test
-    void getOrganizationsByCity_prefersActiveOrgs() {
-        User activeOrg = org("org1", City.RIVERA);
+    void getOrganizationsByCity_returnsOnlyAvailableOrgs() {
+        User available = org("org1", City.RIVERA);
         when(userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, City.RIVERA, true))
-                .thenReturn(List.of(activeOrg));
+                .thenReturn(List.of(available));
         List<User> result = service.getOrganizationsByCity(City.RIVERA);
         assertEquals(1, result.size());
-        assertEquals(activeOrg, result.get(0));
+        assertEquals(available, result.get(0));
     }
 
     @Test
-    void getOrganizationsByCity_fallsBackToAllOrgs_whenNoActive() {
+    void getOrganizationsByCity_emptyWhenNoActiveOrgs_doesNotFallBack() {
+        // Regla de negocio: si no hay organizaciones activas y disponibles,
+        // el resultado debe quedar vacío. NUNCA debe volver a organizaciones
+        // inactivas o incompletas.
         User inactiveOrg = org("org2", City.RIVERA);
+        inactiveOrg.setActive(false);
         when(userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, City.RIVERA, true))
                 .thenReturn(List.of());
-        when(userRepository.findByRoleAndCity(Role.ORGANIZATION, City.RIVERA))
-                .thenReturn(List.of(inactiveOrg));
         List<User> result = service.getOrganizationsByCity(City.RIVERA);
-        assertEquals(1, result.size());
-        assertEquals(inactiveOrg, result.get(0));
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getOrganizationsByCity_filtersOutIncompleteOrgs() {
+        User incomplete = org("org3", City.RIVERA);
+        incomplete.setProfileCompleted(false);
+        when(userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, City.RIVERA, true))
+                .thenReturn(List.of(incomplete));
+        List<User> result = service.getOrganizationsByCity(City.RIVERA);
+        assertTrue(result.isEmpty());
     }
 
     @Test

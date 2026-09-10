@@ -12,7 +12,7 @@
       <!-- Search card -->
       <div class="track-card page--narrow">
         <h1 class="track-card__title" data-i18n="track_title">Rastrear solicitud</h1>
-        <p class="track-card__subtitle" data-i18n="track_subtitle">Ingresá tu teléfono para ver el estado de tus solicitudes</p>
+        <p class="track-card__subtitle" data-i18n="track_subtitle">Ingresá tu teléfono y el código de rastreo que recibiste al crear la solicitud</p>
 
         <form th:action="@{/rastrear}" method="post" class="track-form">
           <div class="form-group">
@@ -21,6 +21,15 @@
                    th:value="${phone}"
                    data-i18n-attr="placeholder:track_phone_placeholder"
                    placeholder="Ej: +598 99 123 456"
+                   required>
+          </div>
+          <div class="form-group">
+            <label for="code" data-i18n="track_code_label">Código de rastreo</label>
+            <input type="text" id="code" name="code" class="form-input"
+                   th:value="${code}"
+                   data-i18n-attr="placeholder:track_code_placeholder"
+                   placeholder="Ej: AB12CD34"
+                   autocomplete="off"
                    required>
           </div>
           <button type="submit" class="btn btn--primary btn--block">

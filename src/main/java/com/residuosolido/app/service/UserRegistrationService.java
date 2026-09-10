@@ -26,31 +26,37 @@ public class UserRegistrationService {
         if (user.getUsername().matches(".*\\s+.*")) {
             return "error.register.username_no_spaces";
         }
-        if (user.getPassword() == null || user.getPassword().length() < 3) {
-            return "error.register.password_min_length";
-        }
-        if (user.getEmail() == null || user.getEmail().trim().isEmpty() || !user.getEmail().contains("@")) {
-            return "error.register.email_invalid";
+        if (user.getUsername().length() > 64) return "error.register.username_too_long";
+        try {
+            AccountInput.password(user.getPassword());
+            AccountInput.email(user.getEmail());
+        } catch (IllegalArgumentException e) {
+            return e.getMessage();
         }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "error.register.username_exists";
         }
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByEmailIgnoreCase(AccountInput.email(user.getEmail())).isPresent()) {
             return "error.register.email_exists";
         }
         return null;
     }
 
     public User registerUser(User user, String isOrganization) {
-        boolean org = isOrganization != null;
+        boolean org = Boolean.parseBoolean(isOrganization);
         return registerUser(user, org);
     }
 
     public User registerUser(User user, boolean isOrganization) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
-        user.setActive(true);
-        user.setCreatedAt(LocalDateTime.now());
-        return userRepository.save(user);
+        String error = validateUserRegistration(user);
+        if (error != null) throw new IllegalArgumentException(error);
+        User created = new User();
+        created.setUsername(user.getUsername());
+        created.setEmail(AccountInput.email(user.getEmail()));
+        created.setPassword(passwordEncoder.encode(user.getPassword()));
+        created.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
+        created.setActive(true);
+        created.setCreatedAt(LocalDateTime.now());
+        return userRepository.insert(created);
     }
 }

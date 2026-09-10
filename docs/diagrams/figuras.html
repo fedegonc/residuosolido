@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figuras — Residuo Sólido</title>
+  <link rel="icon" href="data:,">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; max-width: 1200px; padding: 2rem 1rem; font-family: system-ui, sans-serif; background: #f0f7f2; color: #1b2a1f; }
+    h1, h2, a { color: #2d6a4f; }
+    nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+    section { background: white; border: 1px solid #dce5de; border-radius: .75rem; margin-bottom: 2rem; padding: 1rem; }
+    h2 { font-size: 1.25rem; }
+    .viewer { min-height: 200px; overflow: auto; }
+    .mxgraph { max-width: 100%; }
+    .status { color: #52796f; }
+    .error { color: #a12622; }
+  </style>
+</head>
+<body>
+  <h1>Figuras — Residuo Sólido</h1>
+  <p>Figuras de la tesis: alcance funcional, modelo lógico y clases de dominio. Elaboración propia contrastada con el código del MVP.</p>
+  <p>La organización se representa como una cuenta con rol ORGANIZATION, no como una clase o colección independiente. El visor necesita conexión a Internet.</p>
+  <nav aria-label="Figuras">
+    <a href="#fig1">Casos de uso</a>
+    <a href="#fig2">Modelo lógico</a>
+    <a href="#fig3">Clases</a>
+  </nav>
+  <noscript>Activá JavaScript para visualizar los diagramas.</noscript>
+  <section id="fig1" data-file="figura1-casos-uso.drawio">
+    <h2>Figura 1 — Diagrama de Casos de Uso</h2>
+    <p>Sección 4.1. Ocho objetivos funcionales y tres actores. Las asociaciones no expresan secuencia temporal ni flujo de datos.</p>
+    <a href="figura1-casos-uso.drawio" download>Descargar .drawio</a>
+    <p class="status" role="status">Cargando diagrama…</p>
+    <div class="viewer"></div>
+  </section>
+  <section id="fig2" data-file="figura2-modelo-logico.drawio">
+    <h2>Figura 2 — Modelo Lógico de la Base de Datos</h2>
+    <p>Sección 4.2. Entidades y asociaciones con multiplicidades mínimas y máximas. El invitado no tiene cuenta; su nombre y teléfono sí se guardan en la solicitud. Las cardinalidades describen registros válidos del flujo de aplicación, no restricciones nativas de MongoDB.</p>
+    <a href="figura2-modelo-logico.drawio" download>Descargar .drawio</a>
+    <p class="status" role="status">Cargando diagrama…</p>
+    <div class="viewer"></div>
+  </section>
+  <section id="fig3" data-file="figura3-clases.drawio">
+    <h2>Figura 3 — Diagrama de Clases</h2>
+    <p>Sección 4.3. Vista simplificada de las clases implementadas: User, Request e InformalCollector. Se conservan nombres, tipos y operaciones reales. Role expresa la distinción ciudadano/organización; no se introduce herencia ficticia.</p>
+    <a href="figura3-clases.drawio" download>Descargar .drawio</a>
+    <p class="status" role="status">Cargando diagrama…</p>
+    <div class="viewer"></div>
+  </section>
+  <script>
+    async function init() {
+      const sections = [...document.querySelectorAll('[data-file]')];
+      const ready = await Promise.all(sections.map(async section => {
+        const status = section.querySelector('.status');
+        try {
+          if (location.protocol === 'file:') {
+            throw new Error('Abrí http://localhost:8888/figuras.html en lugar del archivo local.');
+          }
+          const response = await fetch(section.dataset.file, { cache: 'no-store' });
+          if (!response.ok) throw new Error('No se pudo cargar el archivo: HTTP ' + response.status);
+          const xml = await response.text();
+          const doc = new DOMParser().parseFromString(xml, 'application/xml');
+          if (doc.querySelector('parsererror') || doc.documentElement.tagName !== 'mxfile') {
+            throw new Error('El archivo no contiene un diagrama XML válido.');
+          }
+          const viewer = section.querySelector('.viewer');
+          viewer.classList.add('mxgraph');
+          viewer.setAttribute('data-mxgraph', JSON.stringify({
+            highlight: '#2d6a4f', nav: true, resize: true,
+            toolbar: 'zoom lightbox', xml: xml
+          }));
+          return section;
+        } catch (error) {
+          status.textContent = error.message;
+          status.classList.add('error');
+          return null;
+        }
+      }));
+      const loaded = ready.filter(Boolean);
+      if (!loaded.length) return;
+      const script = document.createElement('script');
+      script.src = 'https://www.draw.io/js/viewer-static.min.js';
+      script.onload = () => {
+        loaded.forEach(section => {
+          const status = section.querySelector('.status');
+          if (section.querySelector('svg')) {
+            status.textContent = 'Diagrama cargado. Usá la barra del visor para ampliar.';
+          } else {
+            status.textContent = 'El visor no pudo dibujar la figura. Compartí los errores de la consola.';
+            status.classList.add('error');
+          }
+        });
+      };
+      script.onerror = () => loaded.forEach(section => {
+        const status = section.querySelector('.status');
+        status.textContent = 'No se pudo cargar el visor de diagrams.net. Revisá la conexión o descargá el .drawio.';
+        status.classList.add('error');
+      });
+      document.body.appendChild(script);
+    }
+    init();
+  </script>
+</body>
+</html>

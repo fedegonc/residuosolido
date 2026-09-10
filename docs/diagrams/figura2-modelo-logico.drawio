@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio-mcp" modified="2026-09-10T17:50:55.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram name="Modelo lógico" id="figura2">
+    <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1260" pageHeight="1010" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Figura 2. Modelo lógico de datos" style="text;html=0;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#173d2b;align=left;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="25.0" width="1180.0" height="38.0" />
+        </mxCell>
+        <mxCell id="subtitle" value="Entidades y asociaciones · Cardinalidades mínimas y máximas · Sección 4.2" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="65.0" width="1180.0" height="25.0" />
+        </mxCell>
+        <mxCell id="account" value="USUARIO / CUENTA" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60.0" y="150.0" width="330.0" height="310.0" />
+        </mxCell>
+        <mxCell id="account-data" value="id {identificador}&#10;nombre (firstName)&#10;nombre de acceso (username)&#10;correo (email)&#10;teléfono&#10;rol: USER | ORGANIZATION&#10;ciudad&#10;materiales aceptados [colección]&#10;activo; perfil completado" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="account" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="42.0" width="330.0" height="268.0" />
+        </mxCell>
+        <mxCell id="request" value="SOLICITUD" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="810.0" y="150.0" width="380.0" height="370.0" />
+        </mxCell>
+        <mxCell id="request-data" value="id {identificador}&#10;estado&#10;dirección; referencia de dirección&#10;ciudad&#10;materiales [colección]&#10;peso estimado; volumen estimado&#10;nombre y teléfono del invitado&#10;franja horaria confirmada&#10;imagen [opcional]&#10;fecha de creación" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="request" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="42.0" width="380.0" height="328.0" />
+        </mxCell>
+        <mxCell id="collector" value="RECOLECTOR INFORMAL" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="810.0" y="625.0" width="380.0" height="240.0" />
+        </mxCell>
+        <mxCell id="collector-data" value="id {identificador}&#10;nombre&#10;teléfono; ciudad&#10;materiales [colección]&#10;notas; activo&#10;fecha de creación" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="collector" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="42.0" width="380.0" height="198.0" />
+        </mxCell>
+        <mxCell id="creates" value="crea" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=14;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.27;entryX=0;entryY=0.226;exitX=1.0;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.226;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="account" target="request">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="creates-a" value="0..1&#10;solicitante" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="creates" vertex="1">
+          <mxGeometry as="geometry" x="-1" y="0" width="150" height="40" relative="1">
+            <mxPoint x="12" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="creates-b" value="0..*&#10;solicitudes propias" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="creates" vertex="1">
+          <mxGeometry as="geometry" x="1" y="0" width="170" height="40" relative="1">
+            <mxPoint x="-182" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="receives" value="recibe" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=14;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.64;entryX=0;entryY=0.536;exitX=1.0;exitY=0.64;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.536;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="account" target="request">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="receives-a" value="1&#10;organización" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="receives" vertex="1">
+          <mxGeometry as="geometry" x="-1" y="0" width="150" height="40" relative="1">
+            <mxPoint x="12" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="receives-b" value="0..*&#10;solicitudes asignadas" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="receives" vertex="1">
+          <mxGeometry as="geometry" x="1" y="0" width="180" height="40" relative="1">
+            <mxPoint x="-192" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="manages" value="registra / gestiona" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=14;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.92;entryX=0;entryY=0.25;exitX=1.0;exitY=0.92;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="account" target="collector">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="590.0" y="435.0" />
+              <mxPoint x="590.0" y="685.0" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="manages-a" value="1&#10;organización" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="manages" vertex="1">
+          <mxGeometry as="geometry" x="-1" y="0" width="150" height="40" relative="1">
+            <mxPoint x="12" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="manages-b" value="0..*&#10;recolectores" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="manages" vertex="1">
+          <mxGeometry as="geometry" x="1" y="0" width="135" height="40" relative="1">
+            <mxPoint x="-147" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="roles" value="RESTRICCIÓN DE ROLES&#10;Cada cuenta válida tiene un único rol.&#10;Ciudadano: USER. Organización: ORGANIZATION.&#10;Son alternativas excluyentes, no entidades&#10;ni colecciones independientes.&#10;Las relaciones «recibe» y «gestiona»&#10;corresponden al rol ORGANIZATION." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fillColor=#fafbf9;strokeColor=#87948a;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60.0" y="510.0" width="440.0" height="185.0" />
+        </mxCell>
+        <mxCell id="guest-note" value="SOLICITUD SIN CUENTA&#10;Invitado no es una entidad independiente.&#10;Si no existe solicitante registrado (0), se&#10;guardan guestName y guestPhone en Solicitud.&#10;Estos datos sí persisten; no representan&#10;una cuenta ni un identificador único personal." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fillColor=#fafbf9;strokeColor=#87948a;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60.0" y="720.0" width="440.0" height="155.0" />
+        </mxCell>
+        <mxCell id="legend" value="Lectura: una solicitud tiene 0..1 solicitante registrado y 1 organización; una organización puede tener 0..* solicitudes y 0..* recolectores.&#10;Las cardinalidades describen registros válidos creados por la aplicación; MongoDB no impone claves foráneas.&#10;No se modelan coordenadas de la organización ni cantidades por material: el código guarda ciudad y estimaciones globales de peso/volumen." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=13;fontColor=#344239;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="900.0" width="1180.0" height="65.0" />
+        </mxCell>
+        <mxCell id="source" value="Fuente: elaboración propia a partir de User, Request, InformalCollector, RequestService e InformalCollectorService. Se omiten detalles físicos de MongoDB." style="text;html=0;whiteSpace=wrap;align=left;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="970.0" width="1180.0" height="28.0" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

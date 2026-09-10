@@ -59,9 +59,15 @@ public class UserService {
         User existing = userRepository.findById(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
 
-        existing.setEmail(user.getEmail());
+        if (user.getEmail() != null) {
+            String email = AccountInput.email(user.getEmail());
+            if (userRepository.findByEmailIgnoreCase(email).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
+                throw new IllegalArgumentException("error.register.email_exists");
+            }
+            existing.setEmail(email);
+        }
         existing.setFirstName(user.getFirstName());
-        existing.setPhone(user.getPhone());
+        existing.setPhone(user.getPhone() == null ? null : PhoneNumber.of(user.getPhone()).value());
         existing.setCity(user.getCity());
         existing.setAcceptedMaterials(user.getAcceptedMaterials());
         if (user.getProfileCompleted() != null) {
@@ -69,9 +75,7 @@ public class UserService {
         }
 
         if (newPassword != null && !newPassword.trim().isEmpty()) {
-            if (newPassword.length() < 3) {
-                throw new IllegalArgumentException("error.register.password_min_length");
-            }
+            AccountInput.password(newPassword);
             existing.setPassword(passwordEncoder.encode(newPassword));
         }
 
@@ -94,8 +98,7 @@ public class UserService {
             user.setFirstName(firstName.trim());
         }
         if (phone != null) {
-            PhoneNumber.of(phone);
-            user.setPhone(phone.trim());
+            user.setPhone(PhoneNumber.of(phone).value());
         }
         if (city != null) user.setCity(city);
         if (acceptedMaterials != null) user.setAcceptedMaterials(acceptedMaterials);
@@ -105,8 +108,7 @@ public class UserService {
     // NOTE: Not @Transactional — MongoDB standalone has no transaction support.
     public void completeOrgProfile(User org, String phone, City city) {
         if (phone != null) {
-            PhoneNumber.of(phone);
-            org.setPhone(phone.trim());
+            org.setPhone(PhoneNumber.of(phone).value());
         }
         if (city != null) org.setCity(city);
         try {

@@ -14,5 +14,6 @@ public interface RequestRepository extends MongoRepository<Request, String> {
     List<Request> findByUser(User user, Pageable pageable);
     List<Request> findByOrganizationOrderByCreatedAtDesc(User organization, Pageable pageable);
     List<Request> findByGuestPhoneOrderByCreatedAtDesc(String guestPhone);
+    List<Request> findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(String guestPhone, String trackingCode);
     List<Request> findByOrganizationAndStatusOrderByCreatedAtDesc(User organization, RequestStatus status, Pageable pageable);
 }

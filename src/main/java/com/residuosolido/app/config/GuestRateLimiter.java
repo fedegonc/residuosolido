@@ -21,8 +21,12 @@ public class GuestRateLimiter {
     private final ConcurrentHashMap<String, Deque<Long>> ipTimestamps = new ConcurrentHashMap<>();
 
     public boolean isAllowed(HttpServletRequest request) {
+        return isAllowed(request, "requests");
+    }
+
+    public boolean isAllowed(HttpServletRequest request, String scope) {
         cleanupStaleEntries();
-        String ip = extractIp(request);
+        String ip = scope + ":" + extractIp(request);
         long now = System.currentTimeMillis();
         Deque<Long> timestamps = ipTimestamps.computeIfAbsent(ip, k -> new ConcurrentLinkedDeque<>());
 
@@ -61,10 +65,6 @@ public class GuestRateLimiter {
     }
 
     private String extractIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
         return request.getRemoteAddr();
     }
 }

@@ -57,6 +57,7 @@ public class Request {
     @Indexed
     private RequestStatus status = RequestStatus.PENDING;
     private LocalDateTime createdAt;
+    private String trackingCode;
 
     public void accept(TimeSlot slot) {
         if (status != RequestStatus.PENDING) throw new IllegalStateException("error.request.accept_not_pending");

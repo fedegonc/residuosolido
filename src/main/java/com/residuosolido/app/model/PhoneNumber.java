@@ -4,32 +4,30 @@ import java.util.regex.Pattern;
 
 public record PhoneNumber(String value) {
 
-    private static final Pattern PHONE_PATTERN =
-            Pattern.compile("^[+][0-9]{1,3}[\\s0-9]{6,15}$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^[+][1-9][0-9]{6,14}$");
 
     public PhoneNumber {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("error.phone.required");
         }
-        String normalized = value.trim();
-        if (!PHONE_PATTERN.matcher(normalized).matches()) {
+        String normalized = value.replaceAll("\\s+", "");
+        if (value.length() > 32 || !PHONE_PATTERN.matcher(normalized).matches()) {
             throw new IllegalArgumentException("error.phone.invalid");
         }
         value = normalized;
     }
 
     public static PhoneNumber of(String raw) {
-        if (raw == null || raw.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.phone.required");
-        }
         return new PhoneNumber(raw);
     }
 
     public static boolean isValid(String raw) {
-        if (raw == null || raw.trim().isEmpty()) {
+        try {
+            of(raw);
+            return true;
+        } catch (IllegalArgumentException e) {
             return false;
         }
-        return PHONE_PATTERN.matcher(raw.trim()).matches();
     }
 
     @Override

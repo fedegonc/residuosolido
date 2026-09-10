@@ -41,13 +41,32 @@ class RequestServiceValidationTest {
         requestUpdateService = new RequestUpdateService(requestRepository, requestQueryService, validator, cityOrgService, imageService);
     }
 
+    private User citizen() {
+        User user = new User();
+        user.setId("u1");
+        user.setRole(com.residuosolido.app.enums.Role.USER);
+        user.setActive(true);
+        user.setPhone("+59899123456");
+        return user;
+    }
+
+    private User org() {
+        User org = new User();
+        org.setId("org1");
+        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
+        org.setCity(City.RIVERA);
+        org.setActive(true);
+        org.setPhone("+59899123456");
+        org.setProfileCompleted(true);
+        org.setAcceptedMaterials(List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL));
+        return org;
+    }
+
     // ─── materials null ───
 
     @Test
     void rn10_createRequest_nullMaterials_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
-
+        User user = citizen();
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
@@ -61,9 +80,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn10_createRequest_emptyMaterials_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
-
+        User user = citizen();
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
@@ -77,8 +94,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn10_updateRequest_nullMaterials_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
+        User user = citizen();
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
@@ -101,8 +117,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn10_updateRequest_emptyMaterials_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
+        User user = citizen();
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
@@ -125,9 +140,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn_createRequest_missingOrganization_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
-
+        User user = citizen();
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
@@ -139,8 +152,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn_updateRequest_missingOrganization_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
+        User user = citizen();
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
@@ -163,9 +175,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn10_createRequest_emptyAddress_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
-
+        User user = citizen();
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
@@ -179,9 +189,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn10_createRequest_nullCity_throwsIllegalArgumentException() {
-        User user = new User();
-        user.setId("u1");
-
+        User user = citizen();
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
@@ -221,13 +229,8 @@ class RequestServiceValidationTest {
 
     @Test
     void rn10_createRequest_validMaterials_doesNotThrowOnValidation() {
-        User user = new User();
-        user.setId("u1");
-
-        User org = new User();
-        org.setId("org1");
-        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        org.setCity(City.RIVERA);
+        User user = citizen();
+        User org = org();
 
         when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA))
                 .thenReturn(org);
@@ -247,8 +250,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn11_deleteOwnedRequest_notPending_throwsIllegalStateException() {
-        User user = new User();
-        user.setId("u1");
+        User user = citizen();
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
@@ -264,8 +266,7 @@ class RequestServiceValidationTest {
 
     @Test
     void rn11_deleteOwnedRequest_pending_deletesSuccessfully() {
-        User user = new User();
-        user.setId("u1");
+        User user = citizen();
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
@@ -277,6 +278,6 @@ class RequestServiceValidationTest {
 
         requestUpdateService.deleteOwnedRequest("req1", user);
 
-        org.mockito.Mockito.verify(requestRepository).deleteById("req1");
+        org.mockito.Mockito.verify(requestRepository).delete(existing);
     }
 }

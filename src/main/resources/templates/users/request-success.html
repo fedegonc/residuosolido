@@ -61,8 +61,14 @@
           </a>
         </div>
 
+        <div th:if="${isGuest}" class="success-card__track-code">
+          <div class="success-card__track-code-label" data-i18n="req_success_track_code_label">Guardá este código para rastrear tu solicitud:</div>
+          <div class="success-card__track-code-value" th:text="${trackingCode}">XXXXXXXX</div>
+          <p class="success-card__track-code-hint" data-i18n="req_success_track_code_hint">Lo vas a necesitar junto con tu teléfono para consultar el estado. Si lo perdés, contactá a la organización.</p>
+        </div>
+
         <div th:if="${isGuest}" class="success-card__track-link">
-          <a th:href="${guestPhone != null ? '/rastrear?phone=' + guestPhone : '/rastrear'}" class="btn btn--outline">
+          <a th:href="${(guestPhone != null and trackingCode != null) ? '/rastrear?phone=' + guestPhone + '&code=' + trackingCode : '/rastrear'}" class="btn btn--outline">
             <i class="fa-solid fa-magnifying-glass"></i>
             <span data-i18n="req_success_track">Rastrear mi solicitud</span>
           </a>

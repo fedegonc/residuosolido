@@ -77,32 +77,36 @@ class EndToEndFlowsTest {
 
     @Test
     void flujo6_guestTracking_pageLoadsAndShowsForm() throws Exception {
-        when(requestQueryService.getGuestRequestsByPhone(null)).thenReturn(Collections.emptyList());
+        when(requestQueryService.getGuestRequests(null, null)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/rastrear"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/track"))
-                .andExpect(model().attributeExists("phone", "requests", "searched"));
+                .andExpect(model().attributeExists("phone", "code", "requests", "searched"));
     }
 
     @Test
-    void flujo6_guestTracking_searchByPhone_returnsResults() throws Exception {
+    void flujo6_guestTracking_searchByPhoneAndCode_returnsResults() throws Exception {
         Request req = new Request();
         req.setId("abc123");
         req.setGuestName("Juan");
         req.setGuestPhone("+59899123456");
+        req.setTrackingCode("AB12CD34");
         req.setStatus(RequestStatus.PENDING);
         req.setCreatedAt(LocalDateTime.now());
         req.setCity(City.RIVERA);
         req.setMaterials(List.of(MaterialCategory.PLASTICO));
 
-        when(requestQueryService.getGuestRequestsByPhone("+59899123456")).thenReturn(List.of(req));
+        when(requestQueryService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
 
-        mockMvc.perform(post("/rastrear").with(csrf()).param("phone", "+59899123456"))
+        mockMvc.perform(post("/rastrear").with(csrf())
+                        .param("phone", "+59899123456")
+                        .param("code", "AB12CD34"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/track"))
                 .andExpect(model().attribute("searched", true))
-                .andExpect(model().attribute("phone", "+59899123456"));
+                .andExpect(model().attribute("phone", "+59899123456"))
+                .andExpect(model().attribute("code", "AB12CD34"));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -193,6 +197,9 @@ class EndToEndFlowsTest {
         org.setId("o1");
         org.setUsername("coop");
         org.setFirstName("Cooperativa");
+        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
+        org.setPhone("+59899123456");
+        org.setCity(City.RIVERA);
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);

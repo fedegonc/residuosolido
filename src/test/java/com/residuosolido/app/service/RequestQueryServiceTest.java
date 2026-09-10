@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class RequestQueryServiceTest {
@@ -95,16 +96,26 @@ class RequestQueryServiceTest {
     }
 
     @Test
-    void getGuestRequestsByPhone_blankPhone_returnsEmptyList() {
-        assertTrue(service.getGuestRequestsByPhone("  ").isEmpty());
-        assertTrue(service.getGuestRequestsByPhone(null).isEmpty());
+    void getGuestRequests_blankPhoneOrCode_returnsEmptyList() {
+        assertTrue(service.getGuestRequests("  ", "AB12CD34").isEmpty());
+        assertTrue(service.getGuestRequests(null, "AB12CD34").isEmpty());
+        assertTrue(service.getGuestRequests("+59899123456", "  ").isEmpty());
+        assertTrue(service.getGuestRequests("+59899123456", null).isEmpty());
     }
 
     @Test
-    void getGuestRequestsByPhone_delegatesToRepository() {
+    void getGuestRequests_delegatesToRepositoryWithCanonicalPhoneAndCode() {
         Request r = request("r1", null, RequestStatus.PENDING);
-        when(requestRepository.findByGuestPhoneOrderByCreatedAtDesc("+59899123456"))
+        when(requestRepository.findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "AB12CD34"))
                 .thenReturn(List.of(r));
-        assertEquals(List.of(r), service.getGuestRequestsByPhone(" +59899123456 "));
+        assertEquals(List.of(r), service.getGuestRequests(" +59899123456 ", "AB12CD34"));
+    }
+
+    @Test
+    void getGuestRequests_phoneOnlyWithoutCode_returnsEmptyList() {
+        // Privacidad: el teléfono solo no debe exponer solicitudes.
+        assertTrue(service.getGuestRequests("+59899123456", null).isEmpty());
+        assertTrue(service.getGuestRequests("+59899123456", "  ").isEmpty());
+        verifyNoInteractions(requestRepository);
     }
 }

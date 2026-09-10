@@ -9,14 +9,16 @@
   <link rel="stylesheet" th:href="@{/css/app.css}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
   <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
 </head>
 <body class="app-body">
   <a href="#main-content" class="skip-link" data-i18n="skip_content">Saltar al contenido</a>
 
-  <div th:replace="~{fragments/navbar :: nav}"></div>
+  <header class="site-header">
+    <div th:replace="~{fragments/navbar :: nav}"></div>
+  </header>
 
   <div th:replace="~{fragments/feedback :: msg('success', ${successMessage})}" th:if="${successMessage != null}"></div>
   <div th:replace="~{fragments/feedback :: msg('error', ${errorMessage})}" th:if="${errorMessage != null}"></div>
@@ -27,7 +29,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span class="footer-min__brand"><i class="fa-solid fa-recycle"></i> Residuo Sólido</span>
-      <span class="footer-min__copy">&copy; <span th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</span> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
+      <span class="footer-min__copy">&copy; <time th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</time> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
     </div>
   </footer>
 

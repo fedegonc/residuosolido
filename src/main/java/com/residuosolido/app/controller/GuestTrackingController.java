@@ -11,7 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-/** Permite a invitados (sin cuenta) rastrear sus solicitudes por teléfono. */
+/**
+ * Permite a invitados (sin cuenta) rastrear sus solicitudes mediante
+ * teléfono + código privado de rastreo. El teléfono solo no es suficiente,
+ * porque cualquier persona podría conocerlo. El código se entrega al
+ * invitado en la pantalla de confirmación al crear la solicitud.
+ */
 @Controller
 public class GuestTrackingController {
 
@@ -24,20 +29,29 @@ public class GuestTrackingController {
 
     /** Muestra el formulario de rastreo con resultados opcionales. */
     @GetMapping("/rastrear")
-    public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone, Model model) {
-        List<Request> requests = requestQueryService.getGuestRequestsByPhone(phone);
-        boolean searched = phone != null && !phone.trim().isEmpty();
-        model.addAttribute("phone", searched ? phone : "");
+    public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone,
+                                @RequestParam(value = "code", required = false) String code,
+                                Model model) {
+        boolean searched = phone != null && !phone.trim().isEmpty()
+                && code != null && !code.trim().isEmpty();
+        List<Request> requests = searched
+                ? requestQueryService.getGuestRequests(phone, code)
+                : List.of();
+        model.addAttribute("phone", phone != null ? phone : "");
+        model.addAttribute("code", code != null ? code : "");
         model.addAttribute("requests", requests);
         model.addAttribute("searched", searched);
         return "users/track";
     }
 
-    /** Busca solicitudes por teléfono (POST desde el formulario). */
+    /** Busca solicitudes por teléfono + código (POST desde el formulario). */
     @PostMapping("/rastrear")
-    public String trackGuestSubmit(@RequestParam("phone") String phone, Model model) {
-        List<Request> requests = requestQueryService.getGuestRequestsByPhone(phone);
+    public String trackGuestSubmit(@RequestParam("phone") String phone,
+                                   @RequestParam("code") String code,
+                                   Model model) {
+        List<Request> requests = requestQueryService.getGuestRequests(phone, code);
         model.addAttribute("phone", phone);
+        model.addAttribute("code", code);
         model.addAttribute("requests", requests);
         model.addAttribute("searched", true);
         return "users/track";

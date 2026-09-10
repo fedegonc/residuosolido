@@ -85,6 +85,7 @@ public class RequestCreateController extends BaseController {
             redirectAttributes.addFlashAttribute("isGuest", user == null);
             if (user == null) {
                 redirectAttributes.addFlashAttribute("guestPhone", guestPhone);
+                redirectAttributes.addFlashAttribute("trackingCode", created.getTrackingCode());
             }
             return "redirect:/solicitudes/exito";
         } catch (IllegalStateException e) {

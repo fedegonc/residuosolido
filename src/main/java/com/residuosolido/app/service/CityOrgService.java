@@ -41,15 +41,21 @@ public class CityOrgService {
         if (org.getCity() == null || org.getCity() != city) {
             throw new IllegalArgumentException("error.request.organization_not_in_city");
         }
+        if (!isAvailable(org)) {
+            throw new IllegalArgumentException("error.request.organization_unavailable");
+        }
         return org;
     }
 
     public List<User> getOrganizationsByCity(City city) {
-        List<User> orgs = userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true);
-        if (orgs == null || orgs.isEmpty()) {
-            orgs = userRepository.findByRoleAndCity(Role.ORGANIZATION, city);
-        }
-        return orgs;
+        return userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true)
+                .stream().filter(this::isAvailable).toList();
+    }
+
+    private boolean isAvailable(User org) {
+        return org.isActive() && org.isOrganization() && org.isProfileComplete()
+                && com.residuosolido.app.model.PhoneNumber.isValid(org.getPhone())
+                && org.getAcceptedMaterials() != null && !org.getAcceptedMaterials().isEmpty();
     }
 
     public List<City> getAvailableCities() {

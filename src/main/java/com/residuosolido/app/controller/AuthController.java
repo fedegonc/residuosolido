@@ -1,6 +1,9 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.dto.RegistrationForm;
+import com.residuosolido.app.config.GuestRateLimiter;
+import org.springframework.dao.DuplicateKeyException;
 import com.residuosolido.app.service.UserRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,34 +21,41 @@ public class AuthController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final UserRegistrationService userRegistrationService;
+    private final GuestRateLimiter rateLimiter;
 
     @Autowired
-    public AuthController(UserRegistrationService userRegistrationService) {
+    public AuthController(UserRegistrationService userRegistrationService, GuestRateLimiter rateLimiter) {
         this.userRegistrationService = userRegistrationService;
+        this.rateLimiter = rateLimiter;
     }
 
     /** Muestra el formulario de registro (ciudadano u organización). */
     @GetMapping("/auth/register")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new RegistrationForm());
         return "auth/register";
     }
 
     /** Procesa el registro de un nuevo usuario. */
     @PostMapping("/auth/register")
-    public String registerUser(@ModelAttribute User user,
-                               @RequestParam(value = "isOrganization", required = false) String isOrganization,
-                               Model model,
+    public String registerUser(@ModelAttribute("user") RegistrationForm form,
+                               @RequestParam(defaultValue = "false") boolean isOrganization,
+                               Model model, HttpServletRequest request,
                                RedirectAttributes redirectAttributes) {
-        String validationError = userRegistrationService.validateUserRegistration(user);
-        if (validationError != null) {
-            model.addAttribute("errorMessage", msg(validationError));
-            return "auth/register";
+        try {
+            if (!rateLimiter.isAllowed(request, "registration")) {
+                throw new IllegalArgumentException("flash.request.rate_limited");
+            }
+            userRegistrationService.registerUser(form.toUser(), isOrganization);
+            flashSuccess(redirectAttributes, "login.success");
+            return "redirect:/auth/login";
+        } catch (DuplicateKeyException e) {
+            model.addAttribute("errorMessage", msg("error.register.identity_exists"));
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", msg(e.getMessage()));
         }
-
-        userRegistrationService.registerUser(user, isOrganization);
-        flashSuccess(redirectAttributes, "login.success");
-        return "redirect:/auth/login";
+        form.setPassword(null);
+        return "auth/register";
     }
 
     /** Muestra la página de login. Soporta params ?error y ?blocked. */

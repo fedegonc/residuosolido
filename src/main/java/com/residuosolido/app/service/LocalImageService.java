@@ -44,14 +44,7 @@ public class LocalImageService {
             return null;
         }
 
-        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
-            throw new IllegalArgumentException("error.image.too_large");
-        }
-
-        String contentType = file.getContentType();
-        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase(Locale.ROOT))) {
-            throw new IllegalArgumentException("error.image.invalid_type");
-        }
+        validateImage(file);
 
         String originalName = file.getOriginalFilename();
         String extension = "";
@@ -73,6 +66,27 @@ public class LocalImageService {
 
         logger.info("Imagen guardada localmente: {}", filename);
         return "/uploads/" + filename;
+    }
+
+    public void validateImage(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return;
+        }
+        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
+            throw new IllegalArgumentException("error.image.too_large");
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase(Locale.ROOT))) {
+            throw new IllegalArgumentException("error.image.invalid_type");
+        }
+        String originalName = file.getOriginalFilename();
+        String extension = "";
+        if (originalName != null && originalName.contains(".")) {
+            extension = originalName.substring(originalName.lastIndexOf(".")).toLowerCase(Locale.ROOT);
+        }
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new IllegalArgumentException("error.image.invalid_extension");
+        }
     }
 
     public Request attachImageToRequest(Request request, MultipartFile imageFile) {

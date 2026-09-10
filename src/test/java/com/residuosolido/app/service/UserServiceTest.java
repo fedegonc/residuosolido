@@ -79,7 +79,7 @@ class UserServiceTest {
         User user = new User();
         user.setUsername("nuevo");
         user.setEmail("nuevo@test.com");
-        user.setPassword("123");
+        user.setPassword("12345678");
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
@@ -182,10 +182,11 @@ class UserServiceTest {
     void registerUser_encodesPasswordAndSetsDefaults() {
         User user = new User();
         user.setUsername("newuser");
+        user.setEmail("newuser@test.com");
         user.setPassword("password123");
 
         when(passwordEncoder.encode("password123")).thenReturn("encoded");
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         User result = userRegistrationService.registerUser(user, false);
         assertEquals("encoded", result.getPassword());
@@ -198,10 +199,11 @@ class UserServiceTest {
     void registerUser_asOrganization_setsOrganizationRole() {
         User user = new User();
         user.setUsername("org1");
+        user.setEmail("org1@test.com");
         user.setPassword("password123");
 
         when(passwordEncoder.encode("password123")).thenReturn("encoded");
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         User result = userRegistrationService.registerUser(user, true);
         assertEquals(Role.ORGANIZATION, result.getRole());

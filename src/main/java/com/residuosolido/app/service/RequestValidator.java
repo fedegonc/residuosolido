@@ -19,6 +19,13 @@ public class RequestValidator {
         validateCoreFields(city, address, materials, organizationId);
         if (user == null) {
             validateGuest(guestName, guestPhone);
+        } else {
+            if (!user.isActive() || user.getRole() != com.residuosolido.app.enums.Role.USER) {
+                throw new IllegalArgumentException("error.request.citizen_required");
+            }
+            if (!PhoneNumber.isValid(user.getPhone())) {
+                throw new IllegalArgumentException("error.profile.phone_required");
+            }
         }
     }
 
@@ -38,6 +45,22 @@ public class RequestValidator {
         }
         if (organizationId == null || organizationId.isBlank()) {
             throw new IllegalArgumentException("error.request.organization_required");
+        }
+    }
+
+    public void validateMaterials(User organization, List<MaterialCategory> materials) {
+        if (organization.getAcceptedMaterials() == null || materials == null || materials.isEmpty()
+                || materials.stream().anyMatch(m -> m == null || !organization.getAcceptedMaterials().contains(m))) {
+            throw new IllegalArgumentException("error.request.materials_not_accepted");
+        }
+    }
+
+    public void validateEstimates(String weight, String volume) {
+        if (weight != null && !weight.isBlank() && !List.of("0-5", "5-20", "20-50", "50+").contains(weight)) {
+            throw new IllegalArgumentException("error.request.invalid_weight");
+        }
+        if (volume != null && !volume.isBlank() && !List.of("bag", "box", "trunk", "pickup").contains(volume)) {
+            throw new IllegalArgumentException("error.request.invalid_volume");
         }
     }
 

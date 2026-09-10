@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,7 +32,9 @@ public class User {
     @Id
     private String id;
 
+    @Indexed(unique = true)
     private String username;
+    @Indexed(unique = true, collation = "{'locale':'en','strength':2}")
     private String email;
     private String password;
 
@@ -58,7 +61,7 @@ public class User {
     }
 
     public boolean isProfileComplete() {
-        return role == null || role.isProfileComplete(this);
+        return role != null && role.isProfileComplete(this);
     }
 
     public boolean hasPhone() {
