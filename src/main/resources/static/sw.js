@@ -1,9 +1,9 @@
 // Service Worker — EcoSolicitud PWA
-// Estrategia: cache-first para estáticos, network-first para todo lo demás.
+// Estrategia: cache-first para CSS/JS/imágenes, network-first para HTML.
+// Las páginas HTML nunca se pre-cachean para evitar contenido stale.
 
-const CACHE_NAME = 'ecosolicitud-v14';
+const CACHE_NAME = 'ecosolicitud-v15';
 const STATIC_ASSETS = [
-  '/',
   '/css/app.css',
   '/js/app.js',
   '/manifest.json',
@@ -33,7 +33,6 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
-  // Solo cachear recursos del mismo origen
   if (url.origin !== self.location.origin) return;
 
   // CSS, JS, imágenes: cache-first
@@ -50,14 +49,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Todo lo demás (páginas HTML, API): network-first con fallback a cache
+  // Páginas HTML y API: siempre network-first, sin guardar en cache
   event.respondWith(
     fetch(req)
-      .then((resp) => {
-        const copy = resp.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-        return resp;
-      })
+      .then((resp) => resp)
       .catch(() => caches.match(req).then((cached) => cached || caches.match('/')))
   );
 });

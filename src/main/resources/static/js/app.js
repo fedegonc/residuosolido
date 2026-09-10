@@ -153,7 +153,10 @@
   /* ─── PWA: Service Worker registration ─── */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function () {});
+      navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function (reg) {
+        // Forzar chequeo de updates en cada carga
+        reg.update();
+      }).catch(function () {});
     });
   }
 
