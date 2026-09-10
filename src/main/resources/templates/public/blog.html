@@ -25,8 +25,8 @@
         <a th:each="article : ${articles}"
            th:href="@{/blog/{slug}(slug=${article.slug})}"
            class="blog-card">
-          <div class="blog-card__icon">
-            <i th:class="${article.icon}"></i>
+          <div class="blog-card__header">
+            <div class="blog-card__icon"><i th:class="${article.icon}"></i></div>
           </div>
           <div class="blog-card__body">
             <div class="blog-card__meta">
