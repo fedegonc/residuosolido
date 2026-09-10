@@ -43,7 +43,7 @@
 **Público:**
 - `PublicMetricsController` — Métricas abiertas de reciclaje por ciudad
 - `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
-- `BlogController` — Blog estático con historias del reciclaje
+- `BlogController` — Blog estático en una sola página (`/blog`)
 
 **API:**
 - `OrgApiController` — Listado de organizaciones por ciudad (JSON)

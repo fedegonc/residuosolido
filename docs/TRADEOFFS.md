@@ -196,3 +196,65 @@ agregados).
 **Para producción:** mantener público si es decisión de diseño, o
 proteger si se agregan métricas con más detalle. Documentado en el
 backlog (`RF-RN.md` sección 6).
+
+---
+
+## 13. Compactación del sistema — aplicada
+
+**Decisión:** compactar el sistema para reducir área y carga
+cognitiva, priorizando las mejoras de bajo costo y alto impacto.
+
+**Aplicado:**
+
+- **Index fusionado (4 secciones → 2):** hero + cómo funciona en una
+  sola sección; blog + CTA cooperativas en otra. El banner de
+  cooperativas se integró como `.coop-cta` inline dentro de la sección
+  de blog, no como sección separada.
+- **Blog en una sola página (3 templates → 1):** `/blog` muestra los
+  3 artículos expandidos uno debajo del otro. La ruta `/blog/{slug}`
+  se eliminó. Las cards del index linkean a `/blog#slug` (anchor).
+- **Padding reducido:** el hero pasó de `2.5rem` a `1.5rem` de
+  padding, uniformando con el resto de las secciones.
+
+**A favor:** menos scroll, menos secciones, menos templates, menos
+rutas. El visitante ve el contenido completo en menos espacio.
+
+**En contra:** el index tiene menos respiración visual; el blog no
+tiene páginas individuales (no se puede compartir un link a un solo
+artículo).
+
+---
+
+## 14. Compactación del sistema — diferida
+
+**Decisión:** las siguientes fusiones fueron evaluadas pero
+**diferidas** por riesgo de regresión a una semana de la defensa.
+
+**Diferido:**
+
+- **Fusionar request-form + request-edit:** dos controllers
+  (`RequestCreateController`, `RequestEditController`) con rutas y
+  model attributes distintos. Merging requiere cambiar controllers,
+  rutas y tests. Riesgo: alto. Ahorro: ~100 líneas.
+- **Fusionar perfiles (user + org + onboarding):** tres controllers
+  (`UserProfileController`, `OrgProfileController`,
+  `OrgOnboardingController`) con lógica de validación distinta.
+  Riesgo: alto. Ahorro: ~150 líneas.
+- **Fusionar dashboards (user + org):** el dashboard de organización
+  ya tiene Kanban integrado; el de usuario es un subset. Merging
+  requiere condicionales por rol y cambios en ambos controllers.
+  Riesgo: medio. Ahorro: ~80 líneas.
+- **Reducir clases CSS con utilities:** 292 clases únicas, muchas
+  reemplazables por utilities (`text-sm`, `mt-1`). Pero implica
+  cambiar múltiples templates. Riesgo: bajo pero tedioso. Ahorro:
+  ~40 clases.
+
+**Justificación de la postergación:** el sistema está estable con
+193 tests pasando. Un refactor de controllers a una semana de la
+defensa puede introducir regresiones difíciles de detectar. Las
+compactaciones aplicadas (sección 13) ya redujeron el área visible
+del sistema sin tocar controllers ni rutas.
+
+**Para después de la defensa:** estas fusiones son el próximo paso
+natural de compactación. Cada una se puede hacer de forma aislada
+con su propio set de tests.

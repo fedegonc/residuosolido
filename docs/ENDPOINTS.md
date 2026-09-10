@@ -15,8 +15,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/rastrear` | `GuestTrackingController` | Formulario de rastreo por teléfono + código privado |
 | POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono + código |
 | GET | `/metricas` | `PublicMetricsController` | Métricas públicas (total completadas, por ciudad) — **sin protección**, ver backlog en `RF-RN.md` |
-| GET | `/blog` | `BlogController` | Índice del blog estático (historias del reciclaje) |
-| GET | `/blog/{slug}` | `BlogController` | Artículo individual del blog |
+| GET | `/blog` | `BlogController` | Blog estático con los 3 artículos expandidos (historias del reciclaje) |
 | GET | `/api/organizations/by-city?city={City}` | `OrgApiController` | JSON de organizaciones activas en una ciudad (usado por el selector del formulario) |
 
 ## Usuario (rol `USER`)
