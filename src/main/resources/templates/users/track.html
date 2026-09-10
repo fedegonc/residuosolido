@@ -46,10 +46,10 @@
         <div th:if="${requests != null and requests.isEmpty()}" class="track-card">
           <div class="track-empty">
             <div class="track-empty__illustration">
-              <i class="fa-solid fa-magnifying-glass-minus"></i>
+              <i class="fa-solid fa-magnifying-glass"></i>
             </div>
-            <h2 class="track-empty__title" data-i18n="track_no_results">No encontramos solicitudes con ese teléfono</h2>
-            <p class="track-empty__text" data-i18n="track_no_results_desc">Revisá que el número y el código estén bien</p>
+            <h2 class="track-empty__title" data-i18n="track_no_results">No encontramos solicitudes con esos datos</h2>
+            <p class="track-empty__text" data-i18n="track_no_results_desc">Revisá que el teléfono y el código de rastreo estén bien.</p>
             <a href="/solicitudes/nueva" class="btn btn--primary btn--lg mt-2">
               <i class="fa-solid fa-plus"></i>
               <span data-i18n="track_empty_cta">Crear una solicitud</span>

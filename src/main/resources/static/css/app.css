@@ -133,6 +133,9 @@ button{cursor:pointer;font-family:inherit;}
 .hero__title span{color:var(--primary);}
 .hero__subtitle{font-size:1.0625rem;color:var(--gray-text);max-width:32rem;margin-bottom:1.5rem;line-height:1.6;}
 .hero__cta{display:flex;flex-wrap:wrap;gap:.5rem;}
+.hero__art{display:none;}
+.hero__svg{width:14rem;height:14rem;display:block;margin:0 auto;}
+@media(min-width:768px){.hero__art{display:block;}}
 .hero__qr{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:1rem;background:var(--surface);
   border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);justify-self:center;}
 .hero__qr img{display:block;}

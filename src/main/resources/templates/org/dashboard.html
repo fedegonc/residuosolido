@@ -98,7 +98,7 @@
                 <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
               </div>
               <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING).isEmpty()}" class="kanban-column__empty">
-                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes por ahora</span>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@
                 <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
               </div>
               <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS).isEmpty()}" class="kanban-column__empty">
-                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes por ahora</span>
               </div>
             </div>
           </div>
@@ -149,7 +149,7 @@
                 <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
               </div>
               <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED).isEmpty()}" class="kanban-column__empty">
-                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes por ahora</span>
               </div>
             </div>
           </div>
@@ -172,7 +172,7 @@
                 <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="kanban-card__detail"><i class="fa-solid fa-eye"></i><span data-i18n="req_list_view">Ver detalle</span></a>
               </div>
               <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED).isEmpty()}" class="kanban-column__empty">
-                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes</span>
+                <i class="fa-solid fa-inbox"></i><span data-i18n="org_kanban_empty">Sin solicitudes por ahora</span>
               </div>
             </div>
           </div>
