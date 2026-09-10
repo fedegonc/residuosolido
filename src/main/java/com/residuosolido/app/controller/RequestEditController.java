@@ -49,6 +49,7 @@ public class RequestEditController extends BaseController {
             Request request = requestQueryService.getEditableOwnedRequest(id, user);
             model.addAttribute("request", request);
             model.addAttribute("isEdit", true);
+            model.addAttribute("isGuest", false);
             model.addAttribute("cities", cityOrgService.getAvailableCities());
             model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(request.getCity()));
             addFormAttributes(model);
