@@ -83,4 +83,12 @@ public class User {
         return !isProfileComplete();
     }
 
+    public String getAcceptedMaterialsCsv() {
+        if (acceptedMaterials == null || acceptedMaterials.isEmpty()) return "";
+        return acceptedMaterials.stream()
+                .map(Enum::name)
+                .reduce((a, b) -> a + "," + b)
+                .orElse("");
+    }
+
 }

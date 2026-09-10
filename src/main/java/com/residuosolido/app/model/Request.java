@@ -77,6 +77,7 @@ public class Request {
     }
 
     public boolean canBeEdited() { return status == RequestStatus.PENDING; }
+    public boolean canBeDeleted() { return status == RequestStatus.PENDING; }
     public boolean isGuest() { return user == null; }
     public boolean hasMaterials() { return materials != null && !materials.isEmpty(); }
     public boolean hasImage() { return imageUrl != null && !imageUrl.isBlank(); }

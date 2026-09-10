@@ -32,6 +32,10 @@ public class SecurityBeansConfig {
                     return new org.springframework.security.core.userdetails.User(
                         user.getUsername(),
                         user.getPassword(),
+                        user.isActive(),
+                        true,
+                        true,
+                        true,
                         java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
                     );
                 })
