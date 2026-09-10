@@ -66,6 +66,8 @@ button{cursor:pointer;font-family:inherit;}
 .navbar__links{display:flex;align-items:center;gap:1.5rem;}
 .navbar__link{color:var(--navbar-link);font-size:.875rem;font-weight:500;}
 .navbar__link:hover{color:var(--white);text-decoration:none;}
+.navbar__link--btn{background:transparent;border:none;font-family:inherit;cursor:pointer;padding:0;}
+.dropdown__link--btn{background:transparent;border:none;font-family:inherit;cursor:pointer;text-align:left;width:100%;}
 .navbar__actions{display:flex;align-items:center;gap:.5rem;flex-shrink:0;}
 .navbar__toggle{padding:.375rem;border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);background:rgba(255,255,255,0.06);color:var(--white);display:none;}
 .navbar__toggle svg{width:1.25rem;height:1.25rem;}
@@ -503,7 +505,7 @@ button{cursor:pointer;font-family:inherit;}
 .form-input,.form-select,.check-card,.radio-card,.kanban-card,
 .info-card,.form-card,.request-item,.auth-card,
 .navbar__link,.navbar__user-link,.dropdown__link,
-.material-tag,.status-badge{
+.material-tag,.status-badge,.modal__option{
   transition:all .2s ease;
 }
 
@@ -517,3 +519,23 @@ html{scroll-behavior:smooth;}
   html{scroll-behavior:auto;}
   *{animation-duration:.01ms!important;transition-duration:.01ms!important;}
 }
+
+/* ─── Modal canónico ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(27,42,31,0.55);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease;padding:1rem;}
+.modal-overlay.is-open{opacity:1;visibility:visible;}
+.modal{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-lg);max-width:28rem;width:100%;padding:2rem;transform:translateY(8px);transition:transform .2s ease;}
+.modal-overlay.is-open .modal{transform:translateY(0);}
+.modal__close{position:absolute;top:.75rem;right:.75rem;background:transparent;border:none;font-size:1.25rem;color:var(--gray-text);cursor:pointer;padding:.25rem .5rem;line-height:1;border-radius:var(--radius);}
+.modal__close:hover{color:var(--dark);background:var(--bg);}
+.modal__icon{width:3rem;height:3rem;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:1rem;}
+.modal__title{font-size:1.25rem;font-weight:700;color:var(--dark);margin-bottom:.5rem;}
+.modal__subtitle{font-size:.875rem;color:var(--gray-text);margin-bottom:1.5rem;line-height:1.5;}
+.modal__options{display:flex;flex-direction:column;gap:.75rem;}
+.modal__option{display:flex;align-items:flex-start;gap:.875rem;padding:1rem;border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;color:var(--dark);transition:all .2s ease;}
+.modal__option:hover{border-color:var(--primary);background:var(--primary-light);text-decoration:none;}
+.modal__option-icon{width:2.5rem;height:2.5rem;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:1.125rem;flex-shrink:0;}
+.modal__option-icon--primary{background:var(--primary-light);color:var(--primary);}
+.modal__option-icon--accent{background:var(--accent-light);color:var(--accent);}
+.modal__option-body{flex:1;}
+.modal__option-title{font-size:.9375rem;font-weight:600;margin-bottom:.125rem;}
+.modal__option-desc{font-size:.8125rem;color:var(--gray-text);line-height:1.4;}

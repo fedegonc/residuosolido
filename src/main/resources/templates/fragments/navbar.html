@@ -13,7 +13,8 @@
         <a href="/" class="navbar__link" data-i18n="nav_home">Inicio</a>
         <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
         <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
-        <a sec:authorize="!hasRole('ORGANIZATION')" href="/rastrear" class="navbar__link" data-i18n="nav_track">Rastrear solicitud</a>
+        <a sec:authorize="hasRole('USER')" href="/solicitudes" class="navbar__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+        <button sec:authorize="!isAuthenticated()" type="button" class="navbar__link navbar__link--btn" onclick="openTrackModal()" data-i18n="nav_my_requests">Mis solicitudes</button>
       </div>
 
       <div class="navbar__actions">
@@ -57,7 +58,8 @@
       <a href="/" class="dropdown__link" data-i18n="nav_home">Inicio</a>
       <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
       <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
-      <a sec:authorize="!hasRole('ORGANIZATION')" href="/rastrear" class="dropdown__link" data-i18n="nav_track">Rastrear solicitud</a>
+      <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+      <button sec:authorize="!isAuthenticated()" type="button" class="dropdown__link dropdown__link--btn" onclick="openTrackModal()" data-i18n="nav_my_requests">Mis solicitudes</button>
       <div class="dropdown__divider">
         <div class="dropdown__lang-row">
           <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
@@ -76,6 +78,32 @@
           <form th:action="@{/logout}" method="post">
             <button type="submit" class="btn btn--outline btn--block" data-i18n="nav_logout">Cerrar sesión</button>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Mis solicitudes (para usuarios sin cuenta) -->
+    <div id="trackModal" class="modal-overlay" onclick="if(event.target===this)closeTrackModal()">
+      <div class="modal">
+        <button type="button" class="modal__close" onclick="closeTrackModal()" aria-label="Cerrar">&times;</button>
+        <div class="modal__icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <h2 class="modal__title" data-i18n="modal_track_title">¿Cómo querés ver tus solicitudes?</h2>
+        <p class="modal__subtitle" data-i18n="modal_track_subtitle">Podés rastrear una solicitud sin tener cuenta usando tu teléfono y código, o entrar a tu cuenta para ver todas las que creaste.</p>
+        <div class="modal__options">
+          <a href="/rastrear" class="modal__option">
+            <div class="modal__option-icon modal__option-icon--primary"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="modal__option-body">
+              <div class="modal__option-title" data-i18n="modal_track_guest_title">Rastrear sin cuenta</div>
+              <div class="modal__option-desc" data-i18n="modal_track_guest_desc">Ingresá tu teléfono y el código que te dimos al crear la solicitud.</div>
+            </div>
+          </a>
+          <a href="/auth/login" class="modal__option">
+            <div class="modal__option-icon modal__option-icon--accent"><i class="fa-solid fa-right-to-bracket"></i></div>
+            <div class="modal__option-body">
+              <div class="modal__option-title" data-i18n="modal_track_login_title">Entrar a mi cuenta</div>
+              <div class="modal__option-desc" data-i18n="modal_track_login_desc">Si ya tenés cuenta, entrá para ver todas tus solicitudes en un solo lugar.</div>
+            </div>
+          </a>
         </div>
       </div>
     </div>

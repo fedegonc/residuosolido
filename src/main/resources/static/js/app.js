@@ -156,4 +156,17 @@
       navigator.serviceWorker.register('/sw.js').catch(function () {});
     });
   }
+
+  /* ─── Modal: Mis solicitudes ─── */
+  window.openTrackModal = function () {
+    var m = document.getElementById('trackModal');
+    if (m) m.classList.add('is-open');
+  };
+  window.closeTrackModal = function () {
+    var m = document.getElementById('trackModal');
+    if (m) m.classList.remove('is-open');
+  };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') window.closeTrackModal();
+  });
 })();
