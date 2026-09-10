@@ -8,7 +8,7 @@
 <body>
   <main layout:fragment="content">
 
-    <!-- Hero: 2 columnas -->
+    <!-- Hero + Cómo funciona (fusionados) -->
     <section class="hero" aria-labelledby="hero-title">
       <div class="page">
         <div class="hero__grid">
@@ -42,15 +42,8 @@
             </svg>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Cómo funciona: 4 pasos -->
-    <section class="how" aria-labelledby="how-title">
-      <div class="page">
-        <h2 id="how-title" class="how__title" data-i18n="how_title">¿Cómo funciona?</h2>
-        <p class="how__subtitle" data-i18n="how_subtitle">En 4 pasos simples</p>
-        <div class="how__grid">
+        <!-- Pasos compactos (sin título, dentro del hero) -->
+        <div class="how__grid how__grid--compact">
           <div class="how__step">
             <div class="how__number">1</div>
             <h3 data-i18n="how_step1">Solicitá</h3>
@@ -75,13 +68,13 @@
       </div>
     </section>
 
-    <!-- Blog cards: historias del reciclaje -->
+    <!-- Blog + CTA cooperativas (fusionados) -->
     <section class="blog-section" aria-labelledby="blog-title">
       <div class="page">
         <h2 id="blog-title" class="how__title">Historias del reciclaje</h2>
         <p class="how__subtitle">Conocé quiénes sostienen el reciclaje en la Frontera de la Paz</p>
         <div class="blog-grid">
-          <a href="/blog/recolectores-informales" class="blog-card">
+          <a href="/blog#recolectores-informales" class="blog-card">
             <div class="blog-card__header">
               <div class="blog-card__icon"><i class="fa-solid fa-users"></i></div>
             </div>
@@ -95,7 +88,7 @@
               <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
             </div>
           </a>
-          <a href="/blog/galpones-de-acopio" class="blog-card">
+          <a href="/blog#galpones-de-acopio" class="blog-card">
             <div class="blog-card__header">
               <div class="blog-card__icon"><i class="fa-solid fa-warehouse"></i></div>
             </div>
@@ -109,7 +102,7 @@
               <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
             </div>
           </a>
-          <a href="/blog/frontera-de-la-paz" class="blog-card">
+          <a href="/blog#frontera-de-la-paz" class="blog-card">
             <div class="blog-card__header">
               <div class="blog-card__icon"><i class="fa-solid fa-handshake"></i></div>
             </div>
@@ -124,21 +117,14 @@
             </div>
           </a>
         </div>
-      </div>
-    </section>
-
-    <!-- Banner cooperativas -->
-    <section class="coop-banner" aria-label="Registro de cooperativas y recicladores">
-      <div class="coop-banner__inner">
-        <div class="coop-banner__content">
-          <div class="coop-banner__icon"><i class="fa-solid fa-hand-holding-droplet"></i></div>
-          <div class="coop-banner__text">
-            <h2 data-i18n="org_cta_title">¿Sos una cooperativa o reciclador?</h2>
+        <!-- CTA cooperativas (dentro de la misma sección) -->
+        <div class="coop-cta">
+          <div class="coop-cta__icon"><i class="fa-solid fa-hand-holding-droplet"></i></div>
+          <div class="coop-cta__text">
+            <h3 data-i18n="org_cta_title">¿Sos una cooperativa o reciclador?</h3>
             <p data-i18n="org_cta_desc">Sumate a la red y recibí solicitudes en tu zona.</p>
           </div>
-        </div>
-        <div class="coop-banner__action">
-          <a href="/auth/register" class="btn btn--white btn--lg" data-i18n="org_cta_button">Registrarme como cooperativa</a>
+          <a href="/auth/register" class="btn btn--primary btn--lg" data-i18n="org_cta_button">Registrarme como cooperativa</a>
         </div>
       </div>
     </section>

@@ -3,8 +3,8 @@ package com.residuosolido.app.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,33 +16,6 @@ import java.util.Map;
  */
 @Controller
 public class BlogController {
-
-    private static final List<Map<String, String>> ARTICLES = List.of(
-            Map.of(
-                    "slug", "recolectores-informales",
-                    "title", "Recolectores informales: el corazón invisible del reciclaje",
-                    "date", "10/09/2026",
-                    "excerpt", "En Rivera y Sant'Ana do Livramento, cientos de recolectores informales recorren las calles separando lo que otros descartan. Trabajan sin equipo, sin sueldo fijo y sin reconocimiento. Este artículo cuenta quiénes son y por qué importan.",
-                    "icon", "fa-solid fa-users",
-                    "tag", "Comunidad"
-            ),
-            Map.of(
-                    "slug", "galpones-de-acopio",
-                    "title", "Los galpones de acopio y el calor del verano",
-                    "date", "10/09/2026",
-                    "excerpt", "En verano, los galpones de acopio superan los 40°C. Sin ventilación ni sombra, las cooperativas de Rivera y Sant'Ana do Livramento trabajan en condiciones extremas. Conocé los desafíos que enfrentan cada día.",
-                    "icon", "fa-solid fa-warehouse",
-                    "tag", "Organizaciones"
-            ),
-            Map.of(
-                    "slug", "frontera-de-la-paz",
-                    "title", "Frontera de la Paz: dos ciudades, un mismo compromiso",
-                    "date", "10/09/2026",
-                    "excerpt", "Rivera (Uruguay) y Sant'Ana do Livramento (Brasil) forman un continuo urbano de 191 mil habitantes sin frontera física. La Agenda Urbana Binacional 2030 busca integrar la gestión de residuos en ambos lados.",
-                    "icon", "fa-solid fa-handshake",
-                    "tag", "Proyecto"
-            )
-    );
 
     private static final String ARTICLE_RECOLECTORES = """
             <p>En las calles de Rivera y Sant'Ana do Livramento, cientos de personas recorren
@@ -116,6 +89,27 @@ public class BlogController {
             Prefeitura de Sant'Ana do Livramento, Unión Europea (DEVCO).</p>
             """;
 
+    private static final List<Map<String, String>> ARTICLES = List.of(
+            article("recolectores-informales", "Recolectores informales: el corazón invisible del reciclaje",
+                    "10/09/2026", "fa-solid fa-users", "Comunidad", ARTICLE_RECOLECTORES),
+            article("galpones-de-acopio", "Los galpones de acopio y el calor del verano",
+                    "10/09/2026", "fa-solid fa-warehouse", "Organizaciones", ARTICLE_GALPONES),
+            article("frontera-de-la-paz", "Frontera de la Paz: dos ciudades, un mismo compromiso",
+                    "10/09/2026", "fa-solid fa-handshake", "Proyecto", ARTICLE_FRONTERA)
+    );
+
+    private static Map<String, String> article(String slug, String title, String date,
+                                                 String icon, String tag, String content) {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("slug", slug);
+        m.put("title", title);
+        m.put("date", date);
+        m.put("icon", icon);
+        m.put("tag", tag);
+        m.put("content", content);
+        return m;
+    }
+
     @GetMapping("/blog")
     public String blogIndex(Model model) {
         model.addAttribute("articles", ARTICLES);
@@ -124,30 +118,5 @@ public class BlogController {
                 Map.of("label", "Blog", "href", "")
         ));
         return "public/blog";
-    }
-
-    @GetMapping("/blog/{slug}")
-    public String blogArticle(@PathVariable String slug, Model model) {
-        Map<String, String> article = ARTICLES.stream()
-                .filter(a -> a.get("slug").equals(slug))
-                .findFirst()
-                .orElse(null);
-        if (article == null) {
-            return "redirect:/blog";
-        }
-        String content = switch (slug) {
-            case "recolectores-informales" -> ARTICLE_RECOLECTORES;
-            case "galpones-de-acopio" -> ARTICLE_GALPONES;
-            case "frontera-de-la-paz" -> ARTICLE_FRONTERA;
-            default -> "";
-        };
-        model.addAttribute("article", article);
-        model.addAttribute("content", content);
-        model.addAttribute("breadcrumbs", List.of(
-                Map.of("label", "Inicio", "href", "/"),
-                Map.of("label", "Blog", "href", "/blog"),
-                Map.of("label", article.get("title"), "href", "")
-        ));
-        return "public/blog-article";
     }
 }

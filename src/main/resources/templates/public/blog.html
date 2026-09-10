@@ -16,29 +16,33 @@
 
       <div class="panel-header">
         <div>
-          <h1 class="panel-header__title">Blog</h1>
-          <p class="panel-header__subtitle">Historias del reciclaje en la Frontera de la Paz</p>
+          <h1 class="panel-header__title">Historias del reciclaje</h1>
+          <p class="panel-header__subtitle">Conocé quiénes sostienen el reciclaje en la Frontera de la Paz</p>
         </div>
       </div>
 
-      <div class="blog-grid">
-        <a th:each="article : ${articles}"
-           th:href="@{/blog/{slug}(slug=${article.slug})}"
-           class="blog-card">
-          <div class="blog-card__header">
-            <div class="blog-card__icon"><i th:class="${article.icon}"></i></div>
-          </div>
-          <div class="blog-card__body">
-            <div class="blog-card__meta">
+      <article th:each="article, iter : ${articles}"
+               th:id="${article.slug}"
+               class="blog-article">
+        <div class="blog-article__header">
+          <div class="blog-article__icon"><i th:class="${article.icon}"></i></div>
+          <div>
+            <div class="blog-article__meta">
               <span class="blog-card__tag" th:text="${article.tag}">Tag</span>
               <span class="blog-card__date" th:text="${article.date}">Fecha</span>
             </div>
-            <h2 class="blog-card__title" th:text="${article.title}">Título</h2>
-            <p class="blog-card__excerpt" th:text="${article.excerpt}">Extracto</p>
-            <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
+            <h2 class="blog-article__title" th:text="${article.title}">Título</h2>
           </div>
-        </a>
-      </div>
+        </div>
+        <div class="blog-article__content" th:utext="${article.content}">
+          Contenido del artículo.
+        </div>
+      </article>
+
+      <a href="/" class="btn btn--outline btn--lg mt-2">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver al inicio</span>
+      </a>
     </div>
   </main>
 </body>

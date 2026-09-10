@@ -1,7 +1,7 @@
 // Service Worker — EcoSolicitud PWA
 // Estrategia: cache-first para estáticos, network-first para todo lo demás.
 
-const CACHE_NAME = 'ecosolicitud-v12';
+const CACHE_NAME = 'ecosolicitud-v13';
 const STATIC_ASSETS = [
   '/',
   '/css/app.css',
