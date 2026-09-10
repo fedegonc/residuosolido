@@ -211,7 +211,7 @@ Invitado/Usuario      RequestCreateController   RequestValidator   CityOrgServic
 ```
 Invitado
   ├─ CU: Solicitar recolección sin cuenta (RF-3)
-  └─ CU: Rastrear solicitud por teléfono (RF-4)
+  └─ CU: Rastrear solicitud por teléfono + código privado (RF-4)
 ```
 
 ### Usuario (registrado)
@@ -220,7 +220,7 @@ Usuario
   ├─ CU: Registrarse (RF-1)
   ├─ CU: Iniciar sesión (RF-2)
   ├─ CU: Solicitar recolección (RF-3)
-  ├─ CU: Rastrear solicitud por teléfono (RF-4)
+  ├─ CU: Rastrear solicitud por teléfono + código (RF-4)
   ├─ CU: Ver dashboard e historial (RF-5)
   ├─ CU: Editar solicitud propia pendiente (RF-5)
   ├─ CU: Eliminar solicitud propia pendiente (RF-5)
@@ -238,7 +238,14 @@ Organización
   ├─ CU: Aceptar solicitud (con horario) (RF-6)
   ├─ CU: Rechazar solicitud (RF-6)
   ├─ CU: Completar solicitud (RF-6)
-  └─ CU: Gestionar recolectores informales — CRUD (RF-8)
+  └─ CU: Gestionar recolectores informales — CRUD (RF-8, sin link en sidebar)
+```
+
+### Visitante (público)
+```
+Visitante
+  ├─ CU: Ver landing page con blog de historias del reciclaje
+  └─ CU: Leer artículos del blog estático (/blog, /blog/{slug})
 ```
 
 Para el detalle de precondiciones/postcondiciones de cada RF, ver `RF-RN.md`.

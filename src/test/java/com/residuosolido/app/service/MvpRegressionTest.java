@@ -66,9 +66,9 @@ class MvpRegressionTest {
     }
 
     @Test
-    void registrationRejectsSevenCharacterPassword() {
+    void registrationRejectsShortPassword() {
         User input = citizen();
-        input.setPassword("1234567");
+        input.setPassword("12");
         assertEquals("error.register.password_min_length", new UserRegistrationService(
                 mock(UserRepository.class), mock(PasswordEncoder.class)).validateUserRegistration(input));
     }

@@ -16,9 +16,9 @@ sistema y debe consultarse junto con los diagramas de `docs/diagrams/`.
   bajo control del servidor y asigna el rol según el checkbox de
   organización.
 - **Validaciones:** username obligatorio y sin espacios; contraseña mínima
-  de 8 caracteres; email válido y normalizado a minúsculas; unicidad de
-  username y email con índices únicos en MongoDB y manejo de
-  `DuplicateKeyException`.
+  de 3 caracteres (ver sección 11); email válido y normalizado a
+  minúsculas; unicidad de username y email con índices únicos en MongoDB
+  y manejo de `DuplicateKeyException`.
 
 ### 2. Rastreo de solicitudes de invitado
 
@@ -161,13 +161,62 @@ sistema y debe consultarse junto con los diagramas de `docs/diagrams/`.
 
 ### Tablero Kanban de solicitudes (CU-06)
 
-- Nueva vista en `/acopio/kanban` que muestra las solicitudes asignadas
-  agrupadas por estado en 4 columnas: Pendientes, En curso, Completadas,
-  Rechazadas.
+- El tablero Kanban se integró al dashboard de organización (`/acopio/inicio`),
+  no es una página aparte. La organización ve sus solicitudes agrupadas en 4
+  columnas: Pendientes, En curso, Completadas, Rechazadas, directamente en
+  el panel principal.
 - Cada card muestra ciudad, materiales, solicitante y fecha. Los botones
   de acción llaman a los mismos endpoints de `OrgRequestController`
   (`/acopio/requests/{id}/transition`) — no duplica lógica de negocio.
 - No implementa drag-and-drop; usa botones como acción intencional.
+- La ruta `/acopio/kanban` fue eliminada; el template `requests-kanban.html`
+  fue removido.
+
+### 11. Política de contraseñas — mínimo 3 caracteres (fase MVP)
+
+- **Decisión:** la validación mínima de contraseña se redujo de 8 a 3
+  caracteres para la fase de MVP/tesis.
+- **Justificación:** el sistema se presenta en un entorno controlado
+  (defensa de tesis, demostración). Exigir 8 caracteres complica las
+  pruebas manuales y la demostración sin aportar seguridad real en esta
+  fase (no hay datos sensibles reales, la base es local).
+- **Riesgo:** una contraseña de 3 caracteres es trivialmente vulnerable a
+  fuerza bruta. Esta política **no es aceptable para producción**.
+- **Para producción:** restaurar el mínimo a 8 caracteres (o aplicar
+  políticas OWASP: mínimo 12, complejidad, breach-list check). El cambio
+  es un solo línea en `AccountInput.password()`.
+- **Documentado como decisión consciente de fase**, no como omisión.
+
+### 12. Blog estático — contenido editorial
+
+- Se agregó un blog estático (`/blog`, `/blog/{slug}`) con 3 artículos:
+  recolectores informales, galpones de acopio, Frontera de la Paz.
+- El contenido vive en templates Thymeleaf y en el controlador
+  `BlogController`, no en base de datos.
+- **No es un CMS:** no hay panel de administración de artículos, ni
+  editor, ni base de datos de posts.
+- **Para producción:** migrar a contenido dinámico (colección `posts` en
+  MongoDB, editor en panel de organización o admin, slug único, fecha
+  de publicación, borrador/publicado). La estructura de rutas `/blog`
+  y `/blog/{slug}` ya es compatible.
+- **Fuentes citadas** en cada artículo (WIEGO, MNCR, Intendencia de
+  Rivera, Eixo Atlântico). Las afirmaciones locales se enmarcan con
+  cuidado; la investigación general brasileña no se presenta como
+  evidencia directa sobre una organización específica.
+
+### 13. Catadores — CRUD sin exposición en sidebar
+
+- El CRUD de `InformalCollector` (`/acopio/catadores/**`) sigue
+  funcionando a nivel de controlador y servicio, pero el link se sacó
+  del sidebar de organización.
+- **Razón:** exponer una tabla de recolectores informales en el panel
+  mezcla responsabilidades (gestión interna vs. comunicación pública) y
+  no aporta al flujo principal del MVP.
+- El blog estático (sección 12) reemplaza esa exposición con contenido
+  editorial sobre recolectores, más apropiado para visitantes.
+- **Para producción:** decidir si el CRUD vuelve como herramienta
+  interna (asignación de recolector a solicitud, RF-8 completo) o si
+  se elimina. Hoy queda como funcionalidad latente, documentada.
 
 ## Fuera de alcance — GPS y geolocalización interactiva
 

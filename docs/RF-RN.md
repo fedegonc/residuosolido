@@ -1,4 +1,3 @@
-okey 
 **Nota para la defensa de tesis:** estos puntos no son omisiones — son decisiones de alcance conscientes, justificadas porque exceden lo que una herramienta de software puede o debe resolver.
 
 ---

@@ -1,34 +1,49 @@
-# 🌱 Plataforma de Gestión de Residuos Sólidos
+# Residuo Sólido — Plataforma de Gestión de Reciclaje
 
-Sistema web para la gestión y coordinación de recolección de residuos reciclables, facilitando la comunicación entre ciudadanos y organizaciones recolectoras.
+Sistema web para la gestión y coordinación de recolección de residuos
+reciclables en la Frontera de la Paz (Rivera, Uruguay — Sant'Ana do
+Livramento, Brasil).
 
-## ✨ Características
+## Características
 
-- Autenticación con roles diferenciados (Usuario, Organización) y onboarding forzado de perfil de organización
-- Solicitudes de recolección por usuario registrado o invitado (sin cuenta), con rastreo por teléfono
-- Selección de organización por ciudad y materiales reciclables a entregar
-- Flujo de estados de solicitud (pendiente → en progreso/rechazada → completada) gestionado por la organización
-- Notificación por WhatsApp en cambios de estado (configurable)
-- Gestión de recolectores informales por organización
-- Panel de estadísticas (dashboard de usuario y de organización)
-- Rate limiting para solicitudes de invitados y bloqueo de cuenta tras intentos de login fallidos
+- Autenticación con roles diferenciados (Usuario, Organización) y
+  onboarding forzado de perfil de organización
+- Solicitudes de recolección por usuario registrado o invitado (sin
+  cuenta), con rastreo por teléfono + código privado
+- Selector de código de país (Uruguay +598 / Brasil +55) con
+  normalización E.164 server-side
+- Selección de organización por ciudad y materiales reciclables
+- Flujo de estados de solicitud (pendiente → en curso/rechazada →
+  completada) gestionado por la organización
+- Tablero Kanban integrado en el panel de organización
+- Blog estático con historias del reciclaje (recolectores informales,
+  galpones de acopio, Frontera de la Paz)
+- Notificación por WhatsApp en cambios de estado (configurable, mock)
+- Rate limiting para solicitudes de invitados y bloqueo de cuenta tras
+  intentos de login fallidos
+- PWA instalable (manifest, service worker, iconos)
+- Diseño canónico homogéneo (variables CSS, BEM, 0 estilos inline)
 - Internacionalización (es/pt)
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
-- **Backend:** Java 17, Spring Boot 3.2
-- **Frontend:** Thymeleaf (SSR) + thymeleaf-layout-dialect, FontAwesome
-- **Base de Datos:** MongoDB
-- **Seguridad:** Spring Security (login con bloqueo por intentos fallidos, CSRF)
-- **Almacenamiento de imágenes:** Local en disco (carpeta configurable vía `UPLOAD_DIR`, servida en `/uploads/**`)
+- **Backend:** Java 21, Spring Boot 3.2, Spring Security 6
+- **Frontend:** Thymeleaf 3 (SSR) + thymeleaf-layout-dialect,
+  FontAwesome 6
+- **Base de Datos:** MongoDB (spring-data-mongodb)
+- **Seguridad:** Spring Security (login con bloqueo por intentos
+  fallidos, CSRF, rate limiting)
+- **Almacenamiento de imágenes:** Local en disco (carpeta configurable
+  vía `UPLOAD_DIR`, servida en `/uploads/**`)
+- **PWA:** manifest.json, service worker, iconos PNG
 
-## 📋 Requisitos
+## Requisitos
 
-- Java 17 o superior
+- Java 21 o superior
 - Maven 3.8+
 - MongoDB (local o Atlas)
 
-## 🚀 Instalación y Ejecución
+## Instalación y Ejecución
 
 1. **Clonar el repositorio**
    ```bash
@@ -38,11 +53,10 @@ Sistema web para la gestión y coordinación de recolección de residuos recicla
 
 2. **Configurar variables de entorno**
 
-   Crear archivo `.env` en la raíz (o exportarlas en el entorno) con las siguientes variables:
+   Crear archivo `.env` en la raíz con:
    ```properties
    SPRING_DATA_MONGODB_URI=mongodb://localhost:27017
-   MONGODB_DATABASE=residuosolido        # opcional, default: fedelabs
-   UPLOAD_DIR=uploads                    # opcional, carpeta local para imágenes de solicitudes
+   UPLOAD_DIR=uploads
    ```
 
 3. **Ejecutar la aplicación**
@@ -50,31 +64,34 @@ Sistema web para la gestión y coordinación de recolección de residuos recicla
    mvn spring-boot:run
    ```
 
-   El perfil activo por defecto es `dev` (`spring.profiles.active` en `application.properties`). Para producción, usar `-Dspring-boot.run.profiles=prod` o `SPRING_PROFILES_ACTIVE=prod`.
-
-4. **Acceder a la aplicación**
-
-   Abrir navegador en `http://localhost:8080`
+4. **Acceder** a `http://localhost:8080`
 
 5. **Correr los tests**
    ```bash
    mvn test
    ```
 
-## 📦 Despliegue
+## Documentación
 
-### Build de producción
+- `docs/CORE.md` — Arquitectura, capas, flujos principales
+- `docs/ENDPOINTS.md` — Rutas HTTP del sistema
+- `docs/RF-RN.md` — Requisitos funcionales y reglas de negocio
+- `docs/DIAGRAMAS.md` — Diagramas UML (clases, ER, estados, secuencia)
+- `docs/TESTING.md` — Estrategia y cobertura de tests
+- `docs/HARDENING.md` — Endurecimiento, limitaciones, mejora futura
+- `docs/METODOLOGIA.md` — Modelo iterativo incremental (4 fases)
+- `docs/TRADEOFFS.md` — Decisiones de diseño y tradeoffs
+- `docs/diagrams/` — Diagramas draw.io (casos de uso, modelo lógico,
+  clases)
+
+## Build de producción
+
 ```bash
 mvn clean package -DskipTests
 java -jar target/app-0.0.1-SNAPSHOT.jar
 ```
 
-### Docker (opcional)
-```bash
-docker build -t residuosolido:latest .
-docker run -p 8080:8080 --env-file .env residuosolido:latest
-```
+## Contribución
 
-##  Contribución
-
-Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para sugerencias y mejoras.
+Las contribuciones son bienvenidas. Abrí un issue o pull request para
+sugerencias y mejoras.

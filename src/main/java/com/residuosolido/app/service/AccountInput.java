@@ -18,7 +18,7 @@ final class AccountInput {
     }
 
     static void password(String value) {
-        if (value == null || value.isBlank() || value.length() < 8) {
+        if (value == null || value.isBlank() || value.length() < 3) {
             throw new IllegalArgumentException("error.register.password_min_length");
         }
         if (value.getBytes(StandardCharsets.UTF_8).length > 72) {

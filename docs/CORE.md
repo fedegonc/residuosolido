@@ -5,7 +5,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        PRESENTACIÓN                           │
-│  Controllers (15) → Templates (24) → Fragments JS           │
+│  Controllers (16) → Templates (27) → Fragments JS           │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -21,7 +21,7 @@
 
 ## Mapeo por Capa
 
-### 1. Controllers (15 archivos)
+### 1. Controllers (16 archivos)
 
 **Auth:**
 - `AuthController` — Login, registro, logout
@@ -33,16 +33,17 @@
 - `UserProfileController` — Dashboard y perfil del ciudadano
 
 **Organización (Acopio):**
-- `OrgDashboardController` — Dashboard de organización
+- `OrgDashboardController` — Dashboard de organización con Kanban integrado
 - `OrgRequestController` — Lista de solicitudes recibidas
 - `OrgRequestDetailController` — Detalle y acciones (aceptar/rechazar/completar)
 - `OrgProfileController` — Perfil de organización
 - `OrgOnboardingController` — Completar perfil post-registro
-- `InformalCollectorController` — Gestión de catadores
+- `InformalCollectorController` — CRUD de catadores (sin link en sidebar, ver TRADEOFFS.md)
 
 **Público:**
 - `PublicMetricsController` — Métricas abiertas de reciclaje por ciudad
-- `GuestTrackingController` — Rastreo de solicitudes por teléfono
+- `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
+- `BlogController` — Blog estático con historias del reciclaje
 
 **API:**
 - `OrgApiController` — Listado de organizaciones por ciudad (JSON)
@@ -129,4 +130,4 @@ OrgOnboardingController.completeProfile
 
 ## Pruebas
 
-159 tests unitarios e integrales en 17 suites. Ver `docs/TESTING.md`.
+193 tests unitarios e integrales en 22 suites. Ver `docs/TESTING.md`.

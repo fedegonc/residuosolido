@@ -12,9 +12,11 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/auth/register` | `AuthController` | Formulario de registro |
 | POST | `/auth/register` | `AuthController` | Procesa registro (Usuario u Organización) |
 | GET | `/auth/login` | `AuthController` | Formulario de login |
-| GET | `/rastrear` | `GuestTrackingController` | Formulario de rastreo por teléfono |
-| POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono |
+| GET | `/rastrear` | `GuestTrackingController` | Formulario de rastreo por teléfono + código privado |
+| POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono + código |
 | GET | `/metricas` | `PublicMetricsController` | Métricas públicas (total completadas, por ciudad) — **sin protección**, ver backlog en `RF-RN.md` |
+| GET | `/blog` | `BlogController` | Índice del blog estático (historias del reciclaje) |
+| GET | `/blog/{slug}` | `BlogController` | Artículo individual del blog |
 | GET | `/api/organizations/by-city?city={City}` | `OrgApiController` | JSON de organizaciones activas en una ciudad (usado por el selector del formulario) |
 
 ## Usuario (rol `USER`)
@@ -37,7 +39,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/acopio/inicio` | `OrgDashboardController` | Dashboard con estadísticas y solicitudes pendientes recientes |
+| GET | `/acopio/inicio` | `OrgDashboardController` | Dashboard con Kanban integrado (4 columnas por estado) + estadísticas |
 | GET | `/acopio/completar-perfil` | `OrgOnboardingController` | Formulario de onboarding forzado (teléfono + ciudad) |
 | POST | `/acopio/completar-perfil` | `OrgOnboardingController` | Guarda el perfil inicial |
 | GET | `/acopio/perfil` | `OrgProfileController` | Formulario de edición de perfil |
@@ -45,7 +47,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/acopio/requests` | `OrgRequestController` | Lista de solicitudes asignadas, con filtro por estado y paginado |
 | GET | `/acopio/requests/{id}` | `OrgRequestDetailController` | Detalle de una solicitud asignada |
 | POST | `/acopio/requests/{id}/transition` | `OrgRequestController` | Cambia estado: `action=accept\|reject\|complete` |
-| GET | `/acopio/catadores` | `InformalCollectorController` | Lista de recolectores informales de la organización |
+| GET | `/acopio/catadores` | `InformalCollectorController` | CRUD de recolectores — **sin link en sidebar** (ver TRADEOFFS.md) |
 | GET | `/acopio/catadores/edit/{id}` | `InformalCollectorController` | Carga un recolector para editar |
 | POST | `/acopio/catadores` | `InformalCollectorController` | Crea o actualiza un recolector (según si llega `id`) |
 | POST | `/acopio/catadores/{id}/delete` | `InformalCollectorController` | Elimina un recolector |
@@ -55,6 +57,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 ## Notas
 
 - No existen rutas `/admin/**` — no hay rol Admin ni panel de administración general.
-- No existen rutas `/posts`, `/categories`, `/feedback` — no hay CMS ni sistema de contenido educativo.
+- No existe la ruta `/acopio/kanban` — el tablero Kanban se integró al dashboard (`/acopio/inicio`).
+- No existen rutas `/posts`, `/categories`, `/feedback` — el blog es estático, sin CMS.
 - Las rutas están en español (`/usuarios`, `/acopio`, `/solicitudes`) por decisión de diseño, sin alias en inglés.
 - `PublicMetricsController` (`/metricas`) es la única ruta pública que expone datos agregados sin protección — pendiente en el backlog (`RF-RN.md`, sección 6) renombrarlo/protegerlo si se agregan métricas privadas por organización.

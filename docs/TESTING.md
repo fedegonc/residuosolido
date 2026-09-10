@@ -1,6 +1,6 @@
 # Testing — EcoSolicitud
 
-Describe la suite de tests real del proyecto (156 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (193 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 
@@ -30,7 +30,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | Clase de test | Qué cubre |
 |---|---|
 | `RequestServiceValidationTest` (13) | Validación server-side de creación/actualización de solicitudes (RN-10: materiales obligatorios, dirección, ciudad; RN-11: borrado solo si `PENDING`) |
-| `RequestQueryServiceTest` (9) | Ownership check de solicitudes por usuario (`getOwnedRequest`, `getEditableOwnedRequest`), rastreo por teléfono |
+| `RequestQueryServiceTest` (10) | Ownership check de solicitudes por usuario (`getOwnedRequest`, `getEditableOwnedRequest`), rastreo por teléfono + código |
 | `RequestOrgServiceTest` (8) | Ownership check por organización, filtros por estado, paginado |
 | `RequestTransitionServiceTest` (13) | Transiciones de estado (`accept`/`reject`/`complete`), optimistic locking, envío de notificación WhatsApp |
 | `CityOrgServiceTest` (9) | Resolución de organización por ciudad (RN-06), validaciones de organización inválida/ciudad incorrecta |
@@ -42,6 +42,9 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | `GuestRateLimiterTest` (5) | Rate limiting por IP (ventana deslizante), header `X-Forwarded-For`, limpieza de memoria |
 | `LoginAttemptServiceTest` (7) | Bloqueo tras intentos fallidos de login, expiración, limpieza de memoria |
 | `RoleBasedLoginTargetUrlResolverTest` (4) | Redirección post-login según rol (RN-05) |
+| `PhoneNumberCountryCodeTest` (23) | Normalización E.164, códigos de país (UY/BR), DDD brasilero, validación de longitud |
+| `MvpRegressionTest` (9) | Regresión de reglas críticas (password corto, org inactiva, etc.) |
+| `PublicMetricsServiceTest` (6) | Métricas públicas por ciudad |
 
 ### Integration / Security tests — `@SpringBootTest` + `MockMvc`
 
@@ -72,7 +75,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | Seguridad por rol | Alta — 2 clases dedicadas + verificación implícita en `EndToEndFlowsTest` |
 | Rate limiting / login attempts | Alta — ambas clases con tests de limpieza de memoria incluidos |
 | `MongoAggregationUtils` (helper compartido de métricas) | Sin test unitario propio — cubierta indirectamente vía `DashboardServiceTest` |
-| `PublicMetricsService` | Sin test unitario detectado — punto débil real, candidato a agregar cobertura |
+| `PublicMetricsService` | Cobertura agregada — `PublicMetricsServiceTest` (6 tests) |
 
 ---
 
