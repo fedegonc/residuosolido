@@ -11,7 +11,7 @@
         <mxCell id="subtitle" value="Vista funcional del MVP · UML · Sección 4.1" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40.0" y="60.0" width="1200.0" height="25.0" />
         </mxCell>
-        <mxCell id="system" value="Residuo Sólido — plataforma de recolección" style="rounded=0;html=0;verticalAlign=top;spacingTop=12;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#ffffff;strokeColor=#33483c;strokeWidth=1.5;" parent="1" vertex="1">
+        <mxCell id="system" value="EcoSolicitud" style="rounded=0;html=0;verticalAlign=top;spacingTop=12;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#ffffff;strokeColor=#33483c;strokeWidth=1.5;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="230.0" y="130.0" width="830.0" height="640.0" />
         </mxCell>
         <mxCell id="guest" value="Invitado" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=16;fillColor=#ffffff;strokeColor=#24392d;strokeWidth=1.5;" parent="1" vertex="1">
@@ -110,7 +110,7 @@
         <mxCell id="inc06-notificar" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;startArrow=none;dashed=1;html=0;fontFamily=Helvetica;fontSize=11;fontColor=#344239;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="cu06" target="inc-notificar">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="scope" value="Alcance: ocho objetivos funcionales de la tesis; no es un inventario de endpoints.&#10;Los actores representan roles de interacción, no clases. CU-02 identifica a quien posee una cuenta, antes de autenticarse.&#10;CU-04 requiere teléfono + código privado de rastreo (no teléfono solo). CU-05: consultar, editar y eliminar propias (edición/eliminación: PENDING).&#10;CU-06: consultar, aceptar, rechazar y completar asignadas.&#10;«include»: CU-03 y CU-05 incluyen validación de organización y materiales; CU-06 incluye notificación al solicitante." style="text;html=0;whiteSpace=wrap;fontFamily=Helvetica;fontSize=13;align=left;verticalAlign=top;fontColor=#344239;" parent="1" vertex="1">
+        <mxCell id="scope" value="Alcance: ocho objetivos funcionales de la tesis; no es un inventario de endpoints.&#10;Los actores representan roles de interacción, no clases. CU-02 identifica a quien posee una cuenta, antes de autenticarse.&#10;CU-04 requiere teléfono + código privado de rastreo (no teléfono solo). CU-05: consultar, editar y eliminar propias (edición/eliminación: PENDING).&#10;CU-06: consultar, aceptar, rechazar y completar asignadas. CU-08 es independiente, sin inclusión.&#10;«include»: CU-03 y CU-05 incluyen validación de organización y materiales; CU-06 incluye notificación al solicitante." style="text;html=0;whiteSpace=wrap;fontFamily=Helvetica;fontSize=13;align=left;verticalAlign=top;fontColor=#344239;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40.0" y="800.0" width="1240.0" height="85.0" />
         </mxCell>
         <mxCell id="source" value="Fuente: elaboración propia a partir de CU-01–CU-08 y los controladores del proyecto. Línea continua sin flecha = asociación actor–caso de uso. Línea discontinua con «include» = inclusión UML." style="text;html=0;whiteSpace=wrap;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;align=left;" parent="1" vertex="1">
