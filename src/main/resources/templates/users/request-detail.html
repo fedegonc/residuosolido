@@ -51,8 +51,8 @@
           <form th:if="${request.canBeDeleted()}"
                 th:action="@{/solicitud/{id}/eliminar(id=${request.id})}" method="post"
                 onsubmit="return confirm('¿Eliminar esta solicitud?');"
-                style="display:inline;">
-            <button type="submit" class="btn btn--outline" style="color:#b91c1c;border-color:#fecaca;">
+                class="d-inline">
+            <button type="submit" class="btn btn--outline btn--danger">
               <i class="fa-solid fa-trash"></i>
               <span data-i18n="req_detail_delete">Eliminar</span>
             </button>
@@ -139,7 +139,7 @@
       <div th:if="${request.hasImage()}" class="info-card">
         <h2 class="info-card__title" data-i18n="req_detail_image">Foto</h2>
         <img th:src="${request.imageUrl}" alt="Foto de materiales"
-             style="width:100%;border-radius:var(--radius);border:1px solid var(--border);">
+             class="img-thumbnail">
       </div>
 
     </div>

@@ -12,7 +12,7 @@
       <!-- Search card -->
       <div class="track-card page--narrow">
         <h1 class="track-card__title" data-i18n="track_title">Rastrear solicitud</h1>
-        <p class="track-card__subtitle" data-i18n="track_subtitle">Ingresá tu teléfono y el código de rastreo que recibiste al crear la solicitud</p>
+        <p class="track-card__subtitle mb-2" data-i18n="track_subtitle">Ingresá tu teléfono y el código de rastreo que recibiste al crear la solicitud</p>
 
         <form th:action="@{/rastrear}" method="post" class="track-form">
           <div class="form-group">
@@ -50,7 +50,7 @@
             </div>
             <h2 class="track-empty__title" data-i18n="track_no_results">No se encontraron solicitudes para este teléfono</h2>
             <p class="track-empty__text" data-i18n="track_no_results_desc">Verificá que el número sea correcto</p>
-            <a href="/solicitudes/nueva" class="btn btn--primary btn--lg" style="margin-top:.75rem;">
+            <a href="/solicitudes/nueva" class="btn btn--primary btn--lg mt-2">
               <i class="fa-solid fa-plus"></i>
               <span data-i18n="track_empty_cta">Crear una solicitud</span>
             </a>
@@ -59,7 +59,7 @@
 
         <!-- Request list -->
         <div th:if="${requests != null and !requests.isEmpty()}">
-          <h2 class="track-card__subtitle" style="margin-bottom:1rem;" data-i18n="track_results_title">Tus solicitudes</h2>
+          <h2 class="track-card__subtitle mb-2" data-i18n="track_results_title">Tus solicitudes</h2>
           <div class="request-list">
             <div th:each="req : ${requests}" class="request-item">
 

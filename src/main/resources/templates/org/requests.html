@@ -37,7 +37,7 @@
         </div>
 
         <!-- Status filter -->
-        <div class="form-actions" style="margin-bottom:1rem;">
+        <div class="form-actions mb-2">
           <a href="/acopio/requests" class="btn btn--outline btn--sm"
              th:classappend="${currentStatus == null} ? 'btn--primary' : ''">
             <span data-i18n="org_req_filter_all">Todas</span>
@@ -65,7 +65,7 @@
           <div class="request-list">
             <div th:each="req : ${requests}" class="request-item">
               <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
-              <div class="form-actions">
+              <div class="form-actions mb-2">
                 <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
                   <i class="fa-solid fa-eye"></i>
                   <span data-i18n="req_list_view">Ver</span>
@@ -164,7 +164,7 @@
         <div th:if="${request.hasImage()}" class="info-card">
           <h2 class="info-card__title" data-i18n="req_detail_image">Foto</h2>
           <img th:src="${request.imageUrl}" alt="Foto de materiales"
-               style="width:100%;max-height:400px;object-fit:contain;border-radius:var(--radius);border:1px solid var(--border);">
+               class="img-detail">
         </div>
 
         <!-- Confirmed slot -->
@@ -188,12 +188,12 @@
                 <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot.name()}"></option>
               </select>
             </div>
-            <div class="form-actions">
+            <div class="form-actions mb-2">
               <button type="submit" class="btn btn--primary">
                 <i class="fa-solid fa-check"></i>
                 <span data-i18n="org_req_accept">Aceptar</span>
               </button>
-              <button type="button" class="btn btn--outline" style="color:#b91c1c;border-color:#fecaca;"
+              <button type="button" class="btn btn--outline btn--danger"
                       onclick="document.getElementById('rejectForm').style.display='block';this.style.display='none';">
                 <i class="fa-solid fa-xmark"></i>
                 <span data-i18n="org_req_reject">Rechazar</span>
@@ -202,11 +202,11 @@
           </form>
           <!-- Reject form (hidden) -->
           <form id="rejectForm" th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post"
-                style="display:none;margin-top:1rem;">
+                class="is-hidden mt-2">
             <input type="hidden" name="action" value="reject" />
-            <p style="font-size:.8125rem;color:var(--gray-text);margin-bottom:.5rem;" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
-            <div class="form-actions">
-              <button type="submit" class="btn btn--outline" style="color:#b91c1c;border-color:#fecaca;">
+            <p class="text-sm text-muted mb-1" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
+            <div class="form-actions mb-2">
+              <button type="submit" class="btn btn--outline btn--danger">
                 <i class="fa-solid fa-xmark"></i>
                 <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span>
               </button>

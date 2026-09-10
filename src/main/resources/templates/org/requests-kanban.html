@@ -73,7 +73,7 @@
               <!-- Reject form -->
               <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="kanban-card__actions">
                 <input type="hidden" name="action" value="reject" />
-                <button type="submit" class="btn btn--outline btn--sm" style="color:#b91c1c;border-color:#fecaca;">
+                <button type="submit" class="btn btn--outline btn--sm btn--danger">
                   <i class="fa-solid fa-xmark"></i>
                   <span data-i18n="org_req_reject">Rechazar</span>
                 </button>

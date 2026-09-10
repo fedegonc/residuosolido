@@ -42,10 +42,10 @@
                        placeholder="9X XXX XXX"
                        required>
               </div>
-              <div class="form-group is-hidden" id="guestPhoneDddGroup" style="margin-top:0.5rem;">
-                <label for="guestDdd" style="font-size:0.85rem;">DDD</label>
-                <input type="text" id="guestDdd" name="guestDdd" class="form-input form-input--small"
-                       value="55" maxlength="2" style="width:5rem;">
+              <div class="form-group is-hidden mt-1" id="guestPhoneDddGroup">
+                <label for="guestDdd" class="label--sm">DDD</label>
+                <input type="text" id="guestDdd" name="guestDdd" class="form-input form-input--small input--ddd"
+                       value="55" maxlength="2">
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@
             </div>
             <div th:if="${request.hasImage()}" class="form-group">
               <label>Imagen actual</label>
-              <img th:src="${request.imageUrl}" alt="Imagen actual" style="max-height:80px;border-radius:var(--radius);border:1px solid var(--border);">
+              <img th:src="${request.imageUrl}" alt="Imagen actual" class="img-preview">
             </div>
           </div>
 

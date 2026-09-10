@@ -22,19 +22,19 @@
       </div>
 
       <!-- Total -->
-      <div class="stats-grid" style="grid-template-columns:1fr;margin-bottom:1.5rem;">
-        <div class="stat-card" style="text-align:center;align-items:center;">
-          <div class="stat-card__icon stat-card__icon--completed" style="margin:0 auto .5rem;">
+      <div class="stats-grid stats-grid--1 mb-3">
+        <div class="stat-card stat-card--center">
+          <div class="stat-card__icon stat-card__icon--completed">
             <i class="fa-solid fa-recycle"></i>
           </div>
-          <span class="stat-card__value" style="font-size:2.5rem;" th:text="${total}">0</span>
+          <span class="stat-card__value stat-card--xl" th:text="${total}">0</span>
           <span class="stat-card__label" data-i18n="metrics_total">Recolecciones completadas</span>
         </div>
       </div>
 
       <!-- By city -->
       <div th:if="${metrics != null and !metrics.isEmpty()}">
-        <h2 class="panel-header__subtitle" style="margin-bottom:1rem;" data-i18n="metrics_by_city">Por ciudad</h2>
+        <h2 class="panel-header__subtitle mb-2" data-i18n="metrics_by_city">Por ciudad</h2>
         <div class="stats-grid">
           <div th:each="entry : ${metrics}" class="stat-card">
             <div class="stat-card__icon stat-card__icon--total">

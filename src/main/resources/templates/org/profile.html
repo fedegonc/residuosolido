@@ -29,7 +29,7 @@
         </button>
       </div>
 
-      <div class="form-grid--2" style="grid-template-columns:1fr;gap:1rem;">
+      <div class="form-grid--stack">
 
         <!-- View card -->
         <div class="info-card" id="viewCard">
@@ -96,10 +96,10 @@
                        th:value="${organization.phone}"
                        placeholder="9X XXX XXX">
               </div>
-              <div class="form-group is-hidden" id="phoneDddGroup" style="margin-top:0.5rem;">
-                <label for="ddd" style="font-size:0.85rem;">DDD</label>
-                <input type="text" id="ddd" name="ddd" class="form-input form-input--small"
-                       value="55" maxlength="2" style="width:5rem;">
+              <div class="form-group is-hidden mt-1" id="phoneDddGroup">
+                <label for="ddd" class="label--sm">DDD</label>
+                <input type="text" id="ddd" name="ddd" class="form-input form-input--small input--ddd"
+                       value="55" maxlength="2">
               </div>
             </div>
             <div class="form-group">

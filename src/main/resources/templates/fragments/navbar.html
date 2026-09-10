@@ -41,7 +41,7 @@
             <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="navbar__user-link" data-i18n="nav_user_panel">Mi panel</a>
             <a sec:authorize="hasRole('USER')" href="/usuarios/perfil" class="navbar__user-link" data-i18n="nav_user_profile">Mi perfil</a>
             <a sec:authorize="hasRole('USER')" href="/solicitudes" class="navbar__user-link" data-i18n="nav_user_requests">Mis solicitudes</a>
-            <form th:action="@{/logout}" method="post" style="display:inline;">
+            <form th:action="@{/logout}" method="post" class="d-inline">
               <button type="submit" class="navbar__user-logout" data-i18n="nav_logout">Cerrar sesión</button>
             </form>
           </div>

@@ -46,8 +46,8 @@
               <form th:if="${req.canBeDeleted()}"
                     th:action="@{/solicitud/{id}/eliminar(id=${req.id})}" method="post"
                     onsubmit="return confirm('¿Eliminar esta solicitud?');"
-                    style="display:inline;">
-                <button type="submit" class="btn btn--outline btn--sm" style="color:#b91c1c;border-color:#fecaca;">
+                    class="d-inline">
+                <button type="submit" class="btn btn--outline btn--sm btn--danger">
                   <i class="fa-solid fa-trash"></i>
                   <span data-i18n="req_list_delete">Eliminar</span>
                 </button>
@@ -65,7 +65,7 @@
           </div>
           <h2 class="track-empty__title" data-i18n="req_list_empty">No tenés solicitudes todavía</h2>
           <p class="track-empty__text" data-i18n="req_list_empty_desc">Creá tu primera solicitud de recolección</p>
-          <a href="/solicitudes/nueva" class="btn btn--primary btn--lg" style="margin-top:.75rem;">
+          <a href="/solicitudes/nueva" class="btn btn--primary btn--lg mt-2">
             <i class="fa-solid fa-plus"></i>
             <span data-i18n="req_list_new">Nueva solicitud</span>
           </a>
