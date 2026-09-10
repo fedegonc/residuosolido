@@ -110,7 +110,7 @@ button{cursor:pointer;font-family:inherit;}
 .page{max-width:var(--maxw);margin:0 auto;padding:0 1.5rem;}
 
 /* ─── Hero ─── */
-.hero{padding:2.5rem 1.5rem;background:linear-gradient(160deg,#d8f3dc 0%,#f0f7f2 50%,#fef0ed 100%);position:relative;overflow:hidden;}
+.hero{padding:2.5rem 1.5rem;background:linear-gradient(160deg,#e8e8e8 0%,#f5f5f5 50%,#eee 100%);position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:-50%;right:-10%;width:40rem;height:40rem;background:radial-gradient(circle,rgba(45,106,79,0.06) 0%,transparent 70%);pointer-events:none;}
 .hero__grid{display:grid;grid-template-columns:1fr;gap:2rem;align-items:center;position:relative;}
 .hero__badge{display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .875rem;
@@ -187,7 +187,7 @@ button{cursor:pointer;font-family:inherit;}
 
 /* ─── Auth split layout (login/register) ─── */
 .auth-split{display:grid;grid-template-columns:1fr;min-height:36rem;}
-.auth-split__intro{display:none;position:relative;overflow:hidden;padding:3rem 2.5rem;background:linear-gradient(160deg,#d8f3dc 0%,#f0f7f2 60%,#fef0ed 100%);}
+.auth-split__intro{display:none;position:relative;overflow:hidden;padding:3rem 2.5rem;background:linear-gradient(160deg,#e8e8e8 0%,#f5f5f5 60%,#eee 100%);}
 .auth-split__badge{display:inline-flex;align-items:center;gap:.375rem;padding:.25rem .75rem;
   background:var(--primary-light);color:var(--primary-hover);border-radius:9999px;font-size:.75rem;font-weight:600;margin-bottom:1.25rem;}
 .auth-split__title{font-size:2rem;font-weight:800;color:var(--dark);line-height:1.15;margin-bottom:.75rem;}
