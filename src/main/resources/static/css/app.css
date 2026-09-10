@@ -329,6 +329,11 @@ button{cursor:pointer;font-family:inherit;}
 .req-form__row{display:grid;grid-template-columns:1fr;gap:.625rem;}
 .form-select{padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--radius);font-size:.875rem;font-family:inherit;color:var(--dark);background:var(--surface);cursor:pointer;}
 .form-select:focus{outline:2px solid var(--primary);outline-offset:-1px;border-color:var(--primary);}
+.form-select--small{width:auto;min-width:5.5rem;padding:.5rem .5rem;font-size:.8125rem;}
+.form-input--small{padding:.4rem .5rem;font-size:.8125rem;}
+.phone-country-row{display:flex;gap:.5rem;align-items:stretch;}
+.phone-country-row .form-select--small{flex-shrink:0;}
+.phone-country-row .form-input{flex:1;}
 .check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;}
 .check-card{display:flex;align-items:center;gap:.5rem;padding:.625rem .75rem;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:.8125rem;font-weight:600;color:var(--dark);transition:border-color .15s,background .15s;}
 .check-card:hover{border-color:var(--primary);}
@@ -403,3 +408,39 @@ button{cursor:pointer;font-family:inherit;}
 .success-card__upsell-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;}
 .success-card__actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.5rem;}
 .success-card__track-link{margin-top:.5rem;}
+
+/* ─── Kanban board ─── */
+.kanban-board{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;align-items:start;}
+@media(max-width:1024px){.kanban-board{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.kanban-board{grid-template-columns:1fr;}}
+.kanban-column{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;min-height:200px;}
+.kanban-column--pending{border-top:3px solid #f59e0b;}
+.kanban-column--in_progress{border-top:3px solid #3b82f6;}
+.kanban-column--completed{border-top:3px solid #22c55e;}
+.kanban-column--rejected{border-top:3px solid #ef4444;}
+.kanban-column__header{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;font-weight:700;font-size:.875rem;color:var(--dark);border-bottom:1px solid var(--border);}
+.kanban-column__header i{font-size:1rem;}
+.kanban-column__count{margin-left:auto;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:0 .5rem;font-size:.75rem;color:var(--gray-text);}
+.kanban-column__body{padding:.5rem;display:flex;flex-direction:column;gap:.5rem;flex:1;}
+.kanban-column__empty{display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:2rem 1rem;color:var(--gray-text);font-size:.8125rem;text-align:center;}
+.kanban-column__empty i{font-size:1.5rem;opacity:.5;}
+.kanban-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem;display:flex;flex-direction:column;gap:.4rem;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s;}
+.kanban-card:hover{box-shadow:var(--shadow-lg);border-color:var(--primary);}
+.kanban-card--pending{border-left:3px solid #f59e0b;}
+.kanban-card--in_progress{border-left:3px solid #3b82f6;}
+.kanban-card--completed{border-left:3px solid #22c55e;}
+.kanban-card--rejected{border-left:3px solid #ef4444;opacity:.8;}
+.kanban-card__city{display:flex;align-items:center;gap:.4rem;font-size:.8125rem;font-weight:600;color:var(--dark);}
+.kanban-card__city i{color:var(--gray-text);font-size:.75rem;}
+.kanban-card__materials{display:flex;flex-wrap:wrap;gap:.25rem;}
+.kanban-card__materials .material-tag{font-size:.6875rem;padding:.1rem .4rem;background:var(--primary-light);color:var(--primary-hover);border-radius:var(--radius);font-weight:600;}
+.kanban-card__contact{display:flex;align-items:center;gap:.4rem;font-size:.8125rem;color:var(--gray-text);}
+.kanban-card__contact i{font-size:.75rem;}
+.kanban-card__date{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--gray-text);}
+.kanban-card__date i{font-size:.7rem;}
+.kanban-card__slot{display:flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:600;color:#1e40af;}
+.kanban-card__slot i{font-size:.7rem;}
+.kanban-card__actions{display:flex;gap:.4rem;align-items:center;margin-top:.25rem;}
+.kanban-card__actions .form-select--small{flex:1;min-width:0;}
+.kanban-card__detail{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--gray-text);text-decoration:none;margin-top:.25rem;}
+.kanban-card__detail:hover{color:var(--primary);}

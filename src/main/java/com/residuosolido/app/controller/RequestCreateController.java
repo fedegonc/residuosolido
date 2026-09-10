@@ -5,6 +5,8 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.CountryCode;
+import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,6 +68,9 @@ public class RequestCreateController extends BaseController {
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(value = "guestName", required = false) String guestName,
                                 @RequestParam(value = "guestPhone", required = false) String guestPhone,
+                                @RequestParam(value = "guestCountryCode", required = false) String guestCountryCode,
+                                @RequestParam(value = "guestPhoneNational", required = false) String guestPhoneNational,
+                                @RequestParam(value = "guestDdd", required = false) String guestDdd,
                                 @RequestParam(value = "organizationId", required = false) String organizationId,
                                 Authentication authentication,
                                 HttpServletRequest httpRequest,
@@ -76,15 +81,20 @@ public class RequestCreateController extends BaseController {
                 flashError(redirectAttributes, "flash.request.rate_limited");
                 return "redirect:/solicitudes/nueva?error";
             }
+            String resolvedGuestPhone = guestPhone;
+            if (guestPhoneNational != null && !guestPhoneNational.trim().isEmpty()
+                    && guestCountryCode != null && !guestCountryCode.trim().isEmpty()) {
+                resolvedGuestPhone = PhoneNumber.of(CountryCode.fromDialCode(guestCountryCode), guestPhoneNational, guestDdd).value();
+            }
             Request created = requestService.createRequestWithImage(user, city, address, addressReference,
-                    materials, guestName, guestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
+                    materials, guestName, resolvedGuestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
 
             flashSuccess(redirectAttributes, "flash.request.created");
             redirectAttributes.addFlashAttribute("createdRequestId", created.getId());
             redirectAttributes.addFlashAttribute("createdRequestStatus", created.getStatus().name());
             redirectAttributes.addFlashAttribute("isGuest", user == null);
             if (user == null) {
-                redirectAttributes.addFlashAttribute("guestPhone", guestPhone);
+                redirectAttributes.addFlashAttribute("guestPhone", resolvedGuestPhone);
                 redirectAttributes.addFlashAttribute("trackingCode", created.getTrackingCode());
             }
             return "redirect:/solicitudes/exito";

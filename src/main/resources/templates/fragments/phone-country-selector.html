@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <th:block th:fragment="script(prefix)">
+    <script th:inline="javascript">
+    (function () {
+      'use strict';
+
+      var prefix = /*[[${prefix}]]*/ 'phone';
+      var countrySel = document.getElementById(prefix + 'CountryCode');
+      var nationalInput = document.getElementById(prefix + 'National');
+      var dddGroup = document.getElementById(prefix + 'DddGroup');
+
+      if (!countrySel || !nationalInput) return;
+
+      var placeholders = {
+        '+598': '9X XXX XXX',
+        '+55':  '9XXXX-XXXX'
+      };
+      var patterns = {
+        '+598': '[0-9 ]{8,11}',
+        '+55':  '[0-9-]{8,12}'
+      };
+
+      function updateForCountry() {
+        var code = countrySel.value;
+        nationalInput.setAttribute('placeholder', placeholders[code] || '');
+        nationalInput.setAttribute('pattern', patterns[code] || '');
+        if (code === '+55') {
+          if (dddGroup) dddGroup.classList.remove('is-hidden');
+        } else {
+          if (dddGroup) dddGroup.classList.add('is-hidden');
+        }
+      }
+
+      countrySel.addEventListener('change', updateForCountry);
+      updateForCountry();
+    })();
+    </script>
+  </th:block>
+</body>
+</html>

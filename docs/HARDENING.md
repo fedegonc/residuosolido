@@ -142,3 +142,51 @@ sistema y debe consultarse junto con los diagramas de `docs/diagrams/`.
 
 - Se conserva el estado actual, no una historia de transiciones con fecha,
   responsable y motivo.
+
+## Mejoras incrementales implementadas
+
+### Selector de código de país en teléfono
+
+- Se agregó un selector de país (`CountryCode`) con dos opciones: Uruguay
+  (+598, 8 dígitos nacionales, primer dígito 9) y Brasil (+55, DDD de 2
+  dígitos + 9 dígitos nacionales, primer dígito 9).
+- `PhoneNumber.of(CountryCode, national, ddd)` normaliza el número al
+  formato E.164, quitando el 0 inicial doméstico uruguayo y anteponiendo
+  el DDD para Brasil.
+- Los formularios de solicitud de invitado, perfil de usuario y perfil de
+  organización usan el selector. La validación HTML5 (pattern) es solo
+  visual; la validación real es del servidor.
+- `PhoneNumber.of(String raw)` se mantiene para compatibilidad con datos
+  existentes y tests previos.
+
+### Tablero Kanban de solicitudes (CU-06)
+
+- Nueva vista en `/acopio/kanban` que muestra las solicitudes asignadas
+  agrupadas por estado en 4 columnas: Pendientes, En curso, Completadas,
+  Rechazadas.
+- Cada card muestra ciudad, materiales, solicitante y fecha. Los botones
+  de acción llaman a los mismos endpoints de `OrgRequestController`
+  (`/acopio/requests/{id}/transition`) — no duplica lógica de negocio.
+- No implementa drag-and-drop; usa botones como acción intencional.
+
+## Fuera de alcance — GPS y geolocalización interactiva
+
+La sección 1.4 de la tesis establece explícitamente que "No hay mapas ni
+geolocalización interactiva", fundamentado en el Oficio 044/2023. Esta
+decisión se mantiene para el MVP.
+
+Si después de la defensa se decide ampliar el alcance, la implementación
+sería:
+
+1. **Modelo:** agregar campo opcional `location: {lat: Double, lng: Double}`
+   a `Request`. No obligatorio, no rompe RF-3.
+2. **Frontend:** botón "Usar mi ubicación GPS" (Geolocation API del
+   navegador) que muestra un mapa Leaflet con marcador arrastrable dentro
+   del área de cobertura Rivera–Sant'Ana do Livramento.
+3. **Validación server-side:** el punto lat/lng, si viene, debe caer dentro
+   de un radio o polígono que cubra la zona fronteriza. Rechazar o ignorar
+   si cae fuera.
+4. **Documentación:** actualizar la sección 1.4 de la tesis y este archivo
+   explicando el cambio de alcance y su justificación técnica.
+
+Esta mejora queda registrada como posible evolución, no como deuda técnica.

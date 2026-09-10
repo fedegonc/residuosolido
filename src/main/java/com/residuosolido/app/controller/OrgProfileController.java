@@ -1,6 +1,8 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.CountryCode;
+import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import org.slf4j.Logger;
@@ -47,19 +49,30 @@ public class OrgProfileController extends BaseController {
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String countryCode,
+            @RequestParam(required = false) String phoneNational,
+            @RequestParam(required = false) String ddd,
             @RequestParam(required = false) City city,
             @RequestParam(required = false) List<MaterialCategory> materials,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
             User currentOrg = getCurrentUser(authentication);
-            userService.updateProfile(currentOrg, email, firstName, phone, city,
+            String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
+            userService.updateProfile(currentOrg, email, firstName, resolvedPhone, city,
                     materials != null ? materials : List.of());
             flashSuccess(redirectAttributes, "flash.profile.updated");
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
-            flashError(redirectAttributes, "flash.profile.update_error");
+            flashError(redirectAttributes, e.getMessage() != null && e.getMessage().startsWith("error.") ? e.getMessage() : "flash.profile.update_error");
         }
         return "redirect:/acopio/perfil";
+    }
+
+    private String resolvePhone(String rawPhone, String countryCode, String phoneNational, String ddd) {
+        if (phoneNational != null && !phoneNational.trim().isEmpty() && countryCode != null && !countryCode.trim().isEmpty()) {
+            return PhoneNumber.of(CountryCode.fromDialCode(countryCode), phoneNational, ddd).value();
+        }
+        return rawPhone;
     }
 }

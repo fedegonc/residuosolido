@@ -9,6 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import com.residuosolido.app.enums.RequestStatus;
 
 @Service
 public class RequestOrgService {
@@ -55,5 +58,19 @@ public class RequestOrgService {
             logger.warn("Filtro de status inválido ignorado: {}", status);
             return getRequestsByOrganization(organization, page, size);
         }
+    }
+
+    /**
+     * Agrupa las solicitudes de la organización por estado para la vista Kanban.
+     * Devuelve un Map ordenado: PENDING, IN_PROGRESS, COMPLETED, REJECTED.
+     */
+    public Map<RequestStatus, List<Request>> getRequestsByOrganizationGroupedByStatus(User organization) {
+        Map<RequestStatus, List<Request>> grouped = new LinkedHashMap<>();
+        for (RequestStatus status : new RequestStatus[]{RequestStatus.PENDING, RequestStatus.IN_PROGRESS,
+                RequestStatus.COMPLETED, RequestStatus.REJECTED}) {
+            grouped.put(status, requestRepository
+                    .findByOrganizationAndStatusOrderByCreatedAtDesc(organization, status, PageRequest.of(0, 100)));
+        }
+        return grouped;
     }
 }

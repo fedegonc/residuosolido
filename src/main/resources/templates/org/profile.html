@@ -86,8 +86,21 @@
               <input type="email" id="email" name="email" class="form-input" th:value="${organization.email}" required>
             </div>
             <div class="form-group">
-              <label for="phone" data-i18n="profile_phone_label">Teléfono</label>
-              <input type="tel" id="phone" name="phone" class="form-input" th:value="${organization.phone}">
+              <label for="phoneNational" data-i18n="profile_phone_label">Teléfono</label>
+              <div class="phone-country-row">
+                <select id="phoneCountryCode" name="countryCode" class="form-select form-select--small">
+                  <option value="+598" th:selected="${organization.phone == null or organization.phone.startsWith('+598')}">🇺🇾 +598</option>
+                  <option value="+55" th:selected="${organization.phone != null and organization.phone.startsWith('+55')}">🇧🇷 +55</option>
+                </select>
+                <input type="tel" id="phoneNational" name="phoneNational" class="form-input"
+                       th:value="${organization.phone}"
+                       placeholder="9X XXX XXX">
+              </div>
+              <div class="form-group is-hidden" id="phoneDddGroup" style="margin-top:0.5rem;">
+                <label for="ddd" style="font-size:0.85rem;">DDD</label>
+                <input type="text" id="ddd" name="ddd" class="form-input form-input--small"
+                       value="55" maxlength="2" style="width:5rem;">
+              </div>
             </div>
             <div class="form-group">
               <label for="city" data-i18n="profile_city_label">Ciudad</label>
@@ -130,6 +143,7 @@
     </div>
 
     <th:block th:replace="~{fragments/toggle-view-edit :: script}"></th:block>
+    <th:block th:replace="~{fragments/phone-country-selector :: script('phone')}"></th:block>
   </main>
 </body>
 </html>
