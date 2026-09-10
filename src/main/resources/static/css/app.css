@@ -128,9 +128,7 @@ button{cursor:pointer;font-family:inherit;}
 .hero__badge{display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .875rem;
   background:var(--surface);color:var(--primary-hover);border-radius:9999px;
   font-size:.75rem;font-weight:600;margin-bottom:1rem;box-shadow:var(--shadow);border:1px solid var(--border);}
-.hero__flag{width:1.25rem;height:.875rem;border-radius:2px;display:inline-block;flex-shrink:0;}
-.hero__flag--uy{background:linear-gradient(180deg,var(--uruguay) 0%,var(--uruguay) 50%,var(--white) 50%,var(--white) 100%);border:1px solid var(--border);}
-.hero__flag--br{background:linear-gradient(135deg,var(--brasil) 0%,var(--brasil) 50%,var(--success-bg) 50%,var(--success-bg) 100%);border:1px solid var(--border);}
+.hero__flag{font-size:1rem;line-height:1;}
 .hero__title{font-size:2.25rem;font-weight:800;color:var(--dark);line-height:1.1;margin-bottom:.75rem;letter-spacing:-0.02em;}
 .hero__title span{color:var(--primary);}
 .hero__subtitle{font-size:1.0625rem;color:var(--gray-text);max-width:32rem;margin-bottom:1.5rem;line-height:1.6;}
