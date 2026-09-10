@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title>Residuo Sólido — Diagramas</title>
+</head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="/">Inicio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <span>Diagramas</span>
+      </nav>
+
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-header__title">Diagramas UML</h1>
+          <p class="panel-header__subtitle">Figuras de la tesis elaboradas con diagrams.net. Descargá los archivos <code>.drawio</code> o abrí el visor interactivo.</p>
+        </div>
+      </div>
+
+      <div class="docs-grid">
+        <div th:each="d : ${diagrams}" class="doc-card">
+          <div class="doc-card__icon"><i th:class="${d.icon}"></i></div>
+          <div class="doc-card__body">
+            <h2 class="doc-card__title" th:text="${d.title}">Título</h2>
+            <p class="doc-card__desc" th:text="${d.desc}">Descripción</p>
+            <div class="doc-card__actions">
+              <a th:href="@{'/docs/diagrams/' + ${d.file} + '.drawio'}"
+                 class="btn btn--outline btn--sm" download>
+                <i class="fa-solid fa-download"></i> .drawio
+              </a>
+              <a th:href="@{'/docs/diagrams/figuras.html#' + ${d.file}}"
+                 class="btn btn--outline btn--sm">
+                <i class="fa-solid fa-eye"></i> Ver
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>El visor interactivo necesita conexión a Internet (carga el motor de diagrams.net desde CDN). Los archivos <code>.drawio</code> se pueden abrir en <a href="https://app.diagrams.net" target="_blank" rel="noopener">diagrams.net</a> sin conexión.</p>
+      </div>
+
+      <a href="/" class="btn btn--outline btn--lg mt-2">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver al inicio</span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

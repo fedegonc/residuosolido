@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title>Residuo Sólido — Documentos</title>
+</head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="/">Inicio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <span>Documentos</span>
+      </nav>
+
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-header__title">Documentación técnica</h1>
+          <p class="panel-header__subtitle">Documentos del proyecto en <code>docs/</code>, elaborados durante el desarrollo del MVP.</p>
+        </div>
+      </div>
+
+      <div class="docs-grid">
+        <a th:each="doc : ${documents}"
+           th:href="@{'/docs/' + ${doc.name} + '.md'}"
+           class="doc-card">
+          <div class="doc-card__icon"><i th:class="${doc.icon}"></i></div>
+          <div class="doc-card__body">
+            <h2 class="doc-card__title" th:text="${doc.title}">Título</h2>
+            <p class="doc-card__desc" th:text="${doc.desc}">Descripción</p>
+            <code class="doc-card__file" th:text="${doc.name + '.md'}">file.md</code>
+          </div>
+        </a>
+      </div>
+
+      <a href="/" class="btn btn--outline btn--lg mt-2">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver al inicio</span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

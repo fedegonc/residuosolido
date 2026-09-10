@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio-mcp" modified="2026-09-10T20:30:00.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram name="Diagrama de estados — Request" id="figura4">
+    <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Título -->
+        <mxCell id="title" value="Figura 4. Diagrama de estados — ciclo de vida de Request" style="text;html=0;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#173d2b;align=left;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="25.0" width="1220.0" height="38.0" />
+        </mxCell>
+        <mxCell id="subtitle" value="UML 2.5 · Sección 4.4 · Transiciones, guardas y acciones derivadas de Request.java y RequestTransitionService.java" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="65.0" width="1220.0" height="25.0" />
+        </mxCell>
+
+        <!-- Pseudoinicio (initial state) -->
+        <mxCell id="initial" value="" style="ellipse;fillColor=#2d6a4f;strokeColor=#2d6a4f;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="120.0" y="380.0" width="24.0" height="24.0" />
+        </mxCell>
+
+        <!-- Estado PENDING -->
+        <mxCell id="pending" value="PENDING&#10;&#10;entry / status = PENDING&#10;entry / trackingCode = generate(8)&#10;do / canBeEdited() = true&#10;do / canBeDeleted() = true" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#eaf2ec;strokeColor=#395e48;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="220.0" y="310.0" width="280.0" height="165.0" />
+        </mxCell>
+
+        <!-- Estado IN_PROGRESS -->
+        <mxCell id="inprogress" value="IN_PROGRESS&#10;&#10;entry / confirmedSlot = slot&#10;do / canBeEdited() = false&#10;do / canBeDeleted() = false" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#eaf2ec;strokeColor=#395e48;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="640.0" y="160.0" width="280.0" height="145.0" />
+        </mxCell>
+
+        <!-- Estado COMPLETED (final) -->
+        <mxCell id="completed" value="COMPLETED&#10;&#10;entry / status = COMPLETED&#10;do / canBeEdited() = false" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#dceae0;strokeColor=#395e48;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1000.0" y="160.0" width="260.0" height="125.0" />
+        </mxCell>
+
+        <!-- Estado REJECTED (final) -->
+        <mxCell id="rejected" value="REJECTED&#10;&#10;entry / status = REJECTED&#10;do / canBeEdited() = false" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#f5e6e0;strokeColor=#a12622;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="640.0" y="470.0" width="280.0" height="125.0" />
+        </mxCell>
+
+        <!-- Pseudofinal (final state) -->
+        <mxCell id="final" value="" style="ellipse;fillColor=#ffffff;strokeColor=#2d6a4f;strokeWidth=3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1108.0" y="380.0" width="30.0" height="30.0" />
+        </mxCell>
+        <mxCell id="final-inner" value="" style="ellipse;fillColor=#2d6a4f;strokeColor=#2d6a4f;strokeWidth=0;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1113.0" y="385.0" width="20.0" height="20.0" />
+        </mxCell>
+
+        <!-- Transición: initial → PENDING -->
+        <mxCell id="t-init" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;" parent="1" edge="1" source="initial" target="pending">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+
+        <!-- Transición: PENDING → IN_PROGRESS (accept) -->
+        <mxCell id="t-accept" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;exitX=1;exitY=0.25;entryX=0;entryY=0.5;exitX=1.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="pending" target="inprogress">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="t-accept-label" value="accept(slot)&#10;[status == PENDING ∧ slot ≠ null]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;align=center;labelBackgroundColor=#ffffff;" parent="t-accept" vertex="1">
+          <mxGeometry as="geometry" x="-0.3" y="-1" width="220" height="45" relative="1">
+            <mxPoint x="-20" y="-30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Transición: PENDING → REJECTED (reject) -->
+        <mxCell id="t-reject-pending" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;exitX=1;exitY=0.75;entryX=0;entryY=0.3;exitX=1.0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.3;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="pending" target="rejected">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="t-reject-pending-label" value="reject()&#10;[status == PENDING]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#a12622;align=center;labelBackgroundColor=#ffffff;" parent="t-reject-pending" vertex="1">
+          <mxGeometry as="geometry" x="-0.3" y="1" width="180" height="45" relative="1">
+            <mxPoint x="-20" y="20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Transición: IN_PROGRESS → COMPLETED (complete) -->
+        <mxCell id="t-complete" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="inprogress" target="completed">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="t-complete-label" value="complete()&#10;[status == IN_PROGRESS]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;align=center;labelBackgroundColor=#ffffff;" parent="t-complete" vertex="1">
+          <mxGeometry as="geometry" x="-0.1" y="-1" width="180" height="45" relative="1">
+            <mxPoint x="0" y="-30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Transición: IN_PROGRESS → REJECTED (reject, arrepentimiento) -->
+        <mxCell id="t-reject-progress" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="inprogress" target="rejected">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="t-reject-progress-label" value="reject()&#10;[status == IN_PROGRESS]&#10;(arrepentimiento de la organización)" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#a12622;align=center;labelBackgroundColor=#ffffff;" parent="t-reject-progress" vertex="1">
+          <mxGeometry as="geometry" x="-1" y="0" width="240" height="55" relative="1">
+            <mxPoint x="-120" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Transición: COMPLETED → final -->
+        <mxCell id="t-completed-final" style="endArrow=open;strokeColor=#2d6a4f;strokeWidth=1.8;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="completed" target="final">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+
+        <!-- Transición: REJECTED → final -->
+        <mxCell id="t-rejected-final" style="endArrow=open;strokeColor=#2d6a4f;strokeWidth=1.8;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="rejected" target="final">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="960.0" y="530.0" />
+              <mxPoint x="960.0" y="395.0" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Nota: optimistic locking -->
+        <mxCell id="note-locking" value="Nota: todas las transiciones están protegidas&#10;con @Version (optimistic locking). Si dos operadores&#10;actúan simultáneamente, la segunda transición&#10;lanza OptimisticLockingFailureException." style="shape=note;size=15;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;align=left;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="220.0" y="560.0" width="360.0" height="100.0" />
+        </mxCell>
+
+        <!-- Nota: notificación -->
+        <mxCell id="note-notify" value="Nota: cada transición dispara&#10;NotificationService.sendWhatsApp()&#10;al teléfono de contacto (si existe)." style="shape=note;size=15;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;align=left;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1000.0" y="560.0" width="260.0" height="80.0" />
+        </mxCell>
+
+        <!-- Nota: edición/eliminación -->
+        <mxCell id="note-edit" value="Nota: solo en PENDING la solicitud&#10;puede editarse o eliminarse&#10;(canBeEdited() / canBeDeleted())." style="shape=note;size=15;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;align=left;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="560.0" width="150.0" height="80.0" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

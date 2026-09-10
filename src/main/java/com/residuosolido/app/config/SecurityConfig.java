@@ -46,6 +46,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/organizations/by-city").permitAll()
                 .requestMatchers("/metricas").permitAll()
                 .requestMatchers("/blog").permitAll()
+                .requestMatchers("/documentos", "/diagramas").permitAll()
+                .requestMatchers("/docs/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 // API endpoints para usuarios autenticados
                 .requestMatchers("/api/**").authenticated()

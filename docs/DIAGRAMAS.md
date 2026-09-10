@@ -119,6 +119,8 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 
 ## 4. Diagrama de estados — ciclo de vida de `Request`
 
+**Figura 4** (`docs/diagrams/figura4-estados.drawio`): diagrama UML 2.5 de estados con pseudoinicio, pseudofin, guardas y acciones entry/do.
+
 ```
                     ┌─────────┐
                     │ PENDING │  (estado inicial, al crear)
@@ -137,12 +139,21 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
      └──────────────┘
 ```
 
-**Reglas (ver RN-07 en `RF-RN.md`):**
-- Solo se puede `accept()`/`reject()` desde `PENDING`.
-- Solo se puede `complete()` desde `IN_PROGRESS`.
-- `reject()` también es válido desde `IN_PROGRESS` (arrepentimiento de la organización).
-- Solo en `PENDING` la solicitud puede editarse o eliminarse (`canBeEdited()`).
-- Transiciones protegidas con `@Version` (optimistic locking) contra condiciones de carrera si dos operadores actúan simultáneamente.
+**Transiciones (con guarda):**
+
+| Transición | Guarda | Acción |
+|---|---|---|
+| `→ PENDING` | — (creación) | `status = PENDING`, `trackingCode = generate(8)` |
+| `PENDING → IN_PROGRESS` | `[status == PENDING ∧ slot ≠ null]` | `confirmedSlot = slot`, `notify(accepted)` |
+| `PENDING → REJECTED` | `[status == PENDING]` | `notify(rejected)` |
+| `IN_PROGRESS → COMPLETED` | `[status == IN_PROGRESS]` | `notify(completed)` |
+| `IN_PROGRESS → REJECTED` | `[status == IN_PROGRESS]` | `notify(rejected)` (arrepentimiento) |
+
+**Notas:**
+- Solo en `PENDING` la solicitud puede editarse o eliminarse (`canBeEdited()` / `canBeDeleted()`).
+- Todas las transiciones están protegidas con `@Version` (optimistic locking) contra condiciones de carrera.
+- Cada transición dispara `NotificationService.sendWhatsApp()` al teléfono de contacto (si existe).
+- `REJECTED` y `COMPLETED` son estados finales: no admiten transiciones salientes.
 
 ---
 
