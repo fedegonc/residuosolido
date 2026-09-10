@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title>Residuo Sólido — Blog</title>
+</head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="/">Inicio</a>
+        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <span>Blog</span>
+      </nav>
+
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-header__title">Blog</h1>
+          <p class="panel-header__subtitle">Historias del reciclaje en la Frontera de la Paz</p>
+        </div>
+      </div>
+
+      <div class="blog-grid">
+        <a th:each="article : ${articles}"
+           th:href="@{/blog/{slug}(slug=${article.slug})}"
+           class="blog-card">
+          <div class="blog-card__icon">
+            <i th:class="${article.icon}"></i>
+          </div>
+          <div class="blog-card__body">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag" th:text="${article.tag}">Tag</span>
+              <span class="blog-card__date" th:text="${article.date}">Fecha</span>
+            </div>
+            <h2 class="blog-card__title" th:text="${article.title}">Título</h2>
+            <p class="blog-card__excerpt" th:text="${article.excerpt}">Extracto</p>
+            <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head><meta charset="UTF-8"></head>
 <body>
   <!-- Fragment: org sidebar navigation
-       Variables: active (string: 'dashboard' | 'requests' | 'profile' | 'catadores') -->
+       Variables: active (string: 'dashboard' | 'requests' | 'profile') -->
   <aside th:fragment="sidebar(active)" class="org-sidebar" aria-label="Navegación de organización">
     <a href="/acopio/inicio" class="org-sidebar__link" th:classappend="${active == 'dashboard'} ? 'is-active'">
       <i class="fa-solid fa-gauge"></i>
@@ -12,10 +12,6 @@
     <a href="/acopio/requests" class="org-sidebar__link" th:classappend="${active == 'requests'} ? 'is-active'">
       <i class="fa-solid fa-list"></i>
       <span data-i18n="org_dash_requests">Solicitudes</span>
-    </a>
-    <a href="/acopio/catadores" class="org-sidebar__link" th:classappend="${active == 'catadores'} ? 'is-active'">
-      <i class="fa-solid fa-users"></i>
-      <span data-i18n="cat_title">Catadores</span>
     </a>
     <a href="/acopio/perfil" class="org-sidebar__link" th:classappend="${active == 'profile'} ? 'is-active'">
       <i class="fa-solid fa-building"></i>
