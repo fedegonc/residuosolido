@@ -2,7 +2,7 @@
 // Estrategia: cache-first para CSS/JS/imágenes, network-first para HTML.
 // Las páginas HTML nunca se pre-cachean para evitar contenido stale.
 
-const CACHE_NAME = 'ecosolicitud-v15';
+const CACHE_NAME = 'ecosolicitud-v16';
 const STATIC_ASSETS = [
   '/css/app.css',
   '/js/app.js',

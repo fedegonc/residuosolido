@@ -65,9 +65,10 @@
           <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
           <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
         </div>
-        <span sec:authorize="!isAuthenticated()">
+      </div>
+      <span sec:authorize="!isAuthenticated()" class="dropdown__auth">
           <a href="/auth/login" class="btn btn--outline btn--block" data-i18n="nav_login">Entrar</a>
-          <a href="/auth/register" class="btn btn--outline btn--block" data-i18n="nav_register">Registrarse</a>
+          <a href="/auth/register" class="btn btn--primary btn--block" data-i18n="nav_register">Registrarse</a>
         </span>
         <div sec:authorize="isAuthenticated()" class="dropdown__auth-links">
           <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>

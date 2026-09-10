@@ -90,6 +90,7 @@ button{cursor:pointer;font-family:inherit;}
 .navbar__user-logout{background:transparent;border:none;color:var(--danger);font-size:.8125rem;font-weight:600;padding:.375rem .625rem;border-radius:var(--radius);cursor:pointer;font-family:inherit;text-align:left;width:100%;}
 .navbar__user-logout:hover{background:var(--danger-bg);}
 .dropdown__auth-links{display:flex;flex-direction:column;gap:.25rem;}
+.dropdown__auth{display:flex;flex-direction:column;gap:.5rem;padding:.5rem 1rem;}
 
 /* Mobile dropdown */
 .dropdown{position:absolute;right:1rem;left:1rem;top:4rem;max-width:20rem;background:var(--surface);
