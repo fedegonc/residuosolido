@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="drawio-mcp" modified="2026-09-10T17:50:55.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
   <diagram name="Casos de uso" id="figura1">
-    <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="950" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="title" value="Figura 1. Casos de uso del sistema" style="text;html=0;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#173d2b;align=left;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="25.0" width="1100.0" height="38.0" />
+          <mxGeometry as="geometry" x="40.0" y="20.0" width="1200.0" height="38.0" />
         </mxCell>
         <mxCell id="subtitle" value="Vista funcional del MVP · UML · Sección 4.1" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="65.0" width="1100.0" height="25.0" />
+          <mxGeometry as="geometry" x="40.0" y="60.0" width="1200.0" height="25.0" />
         </mxCell>
         <mxCell id="system" value="Residuo Sólido — plataforma de recolección" style="rounded=0;html=0;verticalAlign=top;spacingTop=12;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#ffffff;strokeColor=#33483c;strokeWidth=1.5;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="230.0" y="110.0" width="750.0" height="635.0" />
+          <mxGeometry as="geometry" x="230.0" y="130.0" width="830.0" height="640.0" />
         </mxCell>
         <mxCell id="guest" value="Invitado" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=16;fillColor=#ffffff;strokeColor=#24392d;strokeWidth=1.5;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="65.0" y="250.0" width="50.0" height="90.0" />
+          <mxGeometry as="geometry" x="70.0" y="240.0" width="50.0" height="90.0" />
         </mxCell>
         <mxCell id="user" value="Usuario" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=16;fillColor=#ffffff;strokeColor=#24392d;strokeWidth=1.5;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="65.0" y="535.0" width="50.0" height="90.0" />
+          <mxGeometry as="geometry" x="70.0" y="540.0" width="50.0" height="90.0" />
         </mxCell>
         <mxCell id="org" value="Organización" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=16;fillColor=#ffffff;strokeColor=#24392d;strokeWidth=1.5;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="1070.0" y="380.0" width="50.0" height="90.0" />
+          <mxGeometry as="geometry" x="1170.0" y="370.0" width="50.0" height="90.0" />
         </mxCell>
-        <mxCell id="cu01" value="CU-01&#10;Registrar cuenta" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="280.0" y="170.0" width="250.0" height="72.0" />
+        <mxCell id="cu01" value="CU-01&#10;Registrar cuenta" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270.0" y="170.0" width="220.0" height="70.0" />
         </mxCell>
-        <mxCell id="cu03" value="CU-03&#10;Solicitar recolección&#10;de residuos" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="280.0" y="295.0" width="250.0" height="85.0" />
+        <mxCell id="cu03" value="CU-03&#10;Solicitar recolección" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270.0" y="290.0" width="220.0" height="80.0" />
         </mxCell>
-        <mxCell id="cu04" value="CU-04&#10;Rastrear solicitud&#10;(teléfono + código)" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="280.0" y="440.0" width="250.0" height="85.0" />
+        <mxCell id="cu04" value="CU-04&#10;Rastrear solicitud&#10;(teléfono + código)" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270.0" y="430.0" width="220.0" height="80.0" />
         </mxCell>
-        <mxCell id="cu05" value="CU-05&#10;Gestionar solicitudes propias" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="280.0" y="595.0" width="250.0" height="85.0" />
+        <mxCell id="cu05" value="CU-05&#10;Gestionar solicitudes&#10;propias" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270.0" y="570.0" width="220.0" height="80.0" />
         </mxCell>
-        <mxCell id="cu02" value="CU-02&#10;Iniciar sesión" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="660.0" y="170.0" width="270.0" height="72.0" />
+        <mxCell id="cu02" value="CU-02&#10;Iniciar sesión" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="590.0" y="170.0" width="200.0" height="70.0" />
         </mxCell>
-        <mxCell id="cu07" value="CU-07&#10;Completar perfil&#10;y editar datos" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="660.0" y="295.0" width="270.0" height="85.0" />
+        <mxCell id="cu07" value="CU-07&#10;Completar perfil&#10;y editar datos" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="590.0" y="290.0" width="200.0" height="80.0" />
         </mxCell>
-        <mxCell id="cu06" value="CU-06&#10;Gestionar solicitudes asignadas" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="660.0" y="440.0" width="270.0" height="85.0" />
+        <mxCell id="cu06" value="CU-06&#10;Gestionar solicitudes&#10;asignadas" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="860.0" y="290.0" width="180.0" height="80.0" />
         </mxCell>
-        <mxCell id="cu08" value="CU-08&#10;Gestionar recolectores&#10;informales" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=15;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="660.0" y="595.0" width="270.0" height="85.0" />
+        <mxCell id="cu08" value="CU-08&#10;Gestionar recolectores&#10;informales" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="860.0" y="430.0" width="180.0" height="80.0" />
         </mxCell>
         <mxCell id="inc-validar" value="Validar organización&#10;y materiales" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=12;fillColor=#eef5f0;strokeColor=#5a7a66;strokeWidth=1.1;dashed=0;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="535.0" y="455.0" width="125.0" height="75.0" />
+          <mxGeometry as="geometry" x="530.0" y="470.0" width="140.0" height="70.0" />
         </mxCell>
         <mxCell id="inc-notificar" value="Notificar estado&#10;al solicitante" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=12;fillColor=#eef5f0;strokeColor=#5a7a66;strokeWidth=1.1;dashed=0;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="535.0" y="310.0" width="125.0" height="75.0" />
+          <mxGeometry as="geometry" x="830.0" y="560.0" width="140.0" height="70.0" />
         </mxCell>
         <mxCell id="g01" style="endArrow=none;startArrow=none;strokeColor=#3c4640;strokeWidth=1.3;exitX=1;exitY=0.4;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="guest" target="cu01">
           <mxGeometry as="geometry" relative="1" />
@@ -74,18 +74,18 @@
         <mxCell id="u02" style="endArrow=none;startArrow=none;strokeColor=#3c4640;strokeWidth=1.3;exitX=1;exitY=0.9;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="user" target="cu02">
           <mxGeometry as="geometry" relative="1">
             <Array as="points">
-              <mxPoint x="200.0" y="616.0" />
-              <mxPoint x="200.0" y="95.0" />
-              <mxPoint x="795.0" y="95.0" />
+              <mxPoint x="190.0" y="620.0" />
+              <mxPoint x="190.0" y="105.0" />
+              <mxPoint x="690.0" y="105.0" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="u07" style="endArrow=none;startArrow=none;strokeColor=#3c4640;strokeWidth=1.3;exitX=1;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="user" target="cu07">
           <mxGeometry as="geometry" relative="1">
             <Array as="points">
-              <mxPoint x="190.0" y="625.0" />
-              <mxPoint x="190.0" y="85.0" />
-              <mxPoint x="795.0" y="85.0" />
+              <mxPoint x="180.0" y="630.0" />
+              <mxPoint x="180.0" y="95.0" />
+              <mxPoint x="690.0" y="95.0" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -107,14 +107,14 @@
         <mxCell id="inc05-validar" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;startArrow=none;dashed=1;html=0;fontFamily=Helvetica;fontSize=11;fontColor=#344239;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.3;exitX=1;exitY=0.3;entryX=0;entryY=0.7;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="cu05" target="inc-validar">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="inc06-notificar" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;startArrow=none;dashed=1;html=0;fontFamily=Helvetica;fontSize=11;fontColor=#344239;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.3;exitX=0;exitY=0.3;entryX=1;entryY=0.7;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="cu06" target="inc-notificar">
+        <mxCell id="inc06-notificar" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;startArrow=none;dashed=1;html=0;fontFamily=Helvetica;fontSize=11;fontColor=#344239;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="cu06" target="inc-notificar">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
         <mxCell id="scope" value="Alcance: ocho objetivos funcionales de la tesis; no es un inventario de endpoints.&#10;Los actores representan roles de interacción, no clases. CU-02 identifica a quien posee una cuenta, antes de autenticarse.&#10;CU-04 requiere teléfono + código privado de rastreo (no teléfono solo). CU-05: consultar, editar y eliminar propias (edición/eliminación: PENDING).&#10;CU-06: consultar, aceptar, rechazar y completar asignadas.&#10;«include»: CU-03 y CU-05 incluyen validación de organización y materiales; CU-06 incluye notificación al solicitante." style="text;html=0;whiteSpace=wrap;fontFamily=Helvetica;fontSize=13;align=left;verticalAlign=top;fontColor=#344239;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="770.0" width="1120.0" height="85.0" />
+          <mxGeometry as="geometry" x="40.0" y="800.0" width="1240.0" height="85.0" />
         </mxCell>
         <mxCell id="source" value="Fuente: elaboración propia a partir de CU-01–CU-08 y los controladores del proyecto. Línea continua sin flecha = asociación actor–caso de uso. Línea discontinua con «include» = inclusión UML." style="text;html=0;whiteSpace=wrap;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;align=left;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="865.0" width="1120.0" height="32.0" />
+          <mxGeometry as="geometry" x="40.0" y="895.0" width="1240.0" height="32.0" />
         </mxCell>
       </root>
     </mxGraphModel>
