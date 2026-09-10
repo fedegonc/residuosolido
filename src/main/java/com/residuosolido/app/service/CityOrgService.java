@@ -59,11 +59,6 @@ public class CityOrgService {
     }
 
     public List<City> getAvailableCities() {
-        return Arrays.stream(City.values())
-                .filter(c -> {
-                    List<User> orgs = getOrganizationsByCity(c);
-                    return orgs != null && !orgs.isEmpty();
-                })
-                .toList();
+        return Arrays.asList(City.values());
     }
 }
