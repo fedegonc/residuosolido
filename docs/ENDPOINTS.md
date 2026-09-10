@@ -16,6 +16,9 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono + código |
 | GET | `/metricas` | `PublicMetricsController` | Métricas públicas (total completadas, por ciudad) — **sin protección**, ver backlog en `RF-RN.md` |
 | GET | `/blog` | `BlogController` | Blog estático con los 3 artículos expandidos (historias del reciclaje) |
+| GET | `/documentos` | `DocsController` | Índice de documentación técnica (docs/*.md) |
+| GET | `/diagramas` | `DocsController` | Índice de diagramas UML (docs/diagrams/*.drawio) |
+| GET | `/docs/**` | `WebConfig` (resource handler) | Archivos estáticos de docs/ y docs/diagrams/ |
 | GET | `/api/organizations/by-city?city={City}` | `OrgApiController` | JSON de organizaciones activas en una ciudad (usado por el selector del formulario) |
 
 ## Usuario (rol `USER`)

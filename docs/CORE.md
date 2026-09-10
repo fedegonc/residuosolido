@@ -5,7 +5,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        PRESENTACIÓN                           │
-│  Controllers (16) → Templates (27) → Fragments JS           │
+│  Controllers (17) → Templates (29) → Fragments JS           │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -21,7 +21,7 @@
 
 ## Mapeo por Capa
 
-### 1. Controllers (16 archivos)
+### 1. Controllers (17 archivos)
 
 **Auth:**
 - `AuthController` — Login, registro, logout
@@ -44,6 +44,7 @@
 - `PublicMetricsController` — Métricas abiertas de reciclaje por ciudad
 - `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
 - `BlogController` — Blog estático en una sola página (`/blog`)
+- `DocsController` — Páginas públicas de documentación (`/documentos`, `/diagramas`)
 
 **API:**
 - `OrgApiController` — Listado de organizaciones por ciudad (JSON)
