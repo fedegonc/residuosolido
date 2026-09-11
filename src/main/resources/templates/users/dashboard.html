@@ -43,8 +43,8 @@
         </div>
       </div>
 
-      <!-- Stats -->
-      <div class="stats-grid" th:if="${requestStats != null}">
+      <!-- Stats (solo si el usuario tiene solicitudes) -->
+      <div class="stats-grid" th:if="${requestStats != null and requestStats.get('total') > 0}">
         <div class="stat-card">
           <div class="stat-card__icon stat-card__icon--total"><i class="fa-solid fa-list"></i></div>
           <span class="stat-card__value" th:text="${requestStats.get('total')}">0</span>

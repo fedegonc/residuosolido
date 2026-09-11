@@ -33,29 +33,35 @@ public final class MongoAggregationUtils {
 
     /**
      * Cuenta solicitudes por estado (PENDING/IN_PROGRESS/COMPLETED) filtradas por un
-     * criterio base (ej. organization.$id o user.$id), usando un facet aggregation.
+     * criterio base (ej. organization.$id o user.$id), usando un único facet aggregation.
      * Compartido por los dos métodos de RequestMetricsService (organización y usuario)
      * para evitar duplicar la construcción del pipeline.
+     *
+     * Nota: todos los facets deben estar en un solo stage $facet. Si se usan múltiples
+     * stages $facet separados, cada uno reemplaza el documento anterior y solo el último
+     * sobrevive, produciendo counts incorrectos (ej. total=1 siempre).
      */
     @SuppressWarnings("rawtypes")
     public static Map<String, Long> countByStatusFaceted(MongoTemplate mongoTemplate, Criteria baseMatch, boolean includeTotal) {
-        List<AggregationOperation> ops = new ArrayList<>();
-        ops.add(Aggregation.match(baseMatch));
-        ops.add(Aggregation.facet(
+        // Construir un único stage $facet con todos los sub-pipelines
+        var facetBuilder = Aggregation.facet(
                 Aggregation.match(Criteria.where("status").is(RequestStatus.PENDING)),
                 Aggregation.count().as("count")
-        ).as("pending"));
-        ops.add(Aggregation.facet(
-                Aggregation.match(Criteria.where("status").is(RequestStatus.IN_PROGRESS)),
+        ).as("pending")
+         .and(Aggregation.match(Criteria.where("status").is(RequestStatus.IN_PROGRESS)),
                 Aggregation.count().as("count")
-        ).as("inProgress"));
-        ops.add(Aggregation.facet(
-                Aggregation.match(Criteria.where("status").is(RequestStatus.COMPLETED)),
+        ).as("inProgress")
+         .and(Aggregation.match(Criteria.where("status").is(RequestStatus.COMPLETED)),
                 Aggregation.count().as("count")
-        ).as("completed"));
+        ).as("completed");
+
         if (includeTotal) {
-            ops.add(Aggregation.facet(Aggregation.count().as("count")).as("total"));
+            facetBuilder = facetBuilder.and(Aggregation.count().as("count")).as("total");
         }
+
+        List<AggregationOperation> ops = new ArrayList<>();
+        ops.add(Aggregation.match(baseMatch));
+        ops.add(facetBuilder);
 
         AggregationResults<Map> results = mongoTemplate.aggregate(Aggregation.newAggregation(ops), "requests", Map.class);
         Map<String, Long> stats = new HashMap<>();

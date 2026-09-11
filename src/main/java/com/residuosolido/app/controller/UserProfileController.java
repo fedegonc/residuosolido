@@ -6,6 +6,7 @@ import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestQueryService;
+import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -75,11 +77,18 @@ public class UserProfileController extends BaseController {
                                 @RequestParam(required = false) String ddd,
                                 @RequestParam(required = false) City city,
                                 Authentication authentication,
+                                HttpSession session,
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser(authentication);
+            City oldCity = user.getCity();
             String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
             userService.updateProfile(user, email, firstName, resolvedPhone, city);
+            // Si cambió la ciudad, invalidar el locale de sesión para que el
+            // CityAwareLocaleResolver recalcule el idioma según la nueva ciudad
+            if (city != null && !city.equals(oldCity)) {
+                session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
+            }
             flashSuccess(redirectAttributes, "flash.profile.updated");
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de usuario: {}", e.getMessage(), e);

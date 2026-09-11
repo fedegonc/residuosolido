@@ -1,9 +1,18 @@
 package com.residuosolido.app.controller;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,5 +92,52 @@ public class DocsController {
                 Map.of("label", "Diagramas", "href", "")
         ));
         return "public/diagrams";
+    }
+
+    // ========== Servir archivos con content-type correcto ==========
+
+    private static final Path DOCS_DIR = Paths.get("docs").toAbsolutePath();
+
+    /**
+     * Sirve archivos .md con content-type text/markdown para que el navegador
+     * los muestre en vez de descargarlos.
+     */
+    @GetMapping("/docs/{file}.md")
+    public ResponseEntity<Resource> serveMarkdown(@PathVariable String file) {
+        return serveDoc(file + ".md", MediaType.TEXT_MARKDOWN);
+    }
+
+    /**
+     * Sirve archivos .drawio con content-type application/xml para que el visor
+     * los pueda parsear.
+     */
+    @GetMapping("/docs/diagrams/{file}.drawio")
+    public ResponseEntity<Resource> serveDrawio(@PathVariable String file) {
+        return serveDoc("diagrams/" + file + ".drawio", MediaType.APPLICATION_XML);
+    }
+
+    /**
+     * Sirve archivos estáticos del directorio docs/ con el content-type correcto.
+     * Previene path traversal validando que el path resultante esté dentro de docs/.
+     */
+    private ResponseEntity<Resource> serveDoc(String relativePath, MediaType mediaType) {
+        try {
+            File file = DOCS_DIR.resolve(relativePath).normalize().toFile();
+            if (!file.exists() || !file.isFile()) {
+                return ResponseEntity.notFound().build();
+            }
+            // Prevenir path traversal: el path normalizado debe seguir dentro de docs/
+            if (!file.toPath().startsWith(DOCS_DIR)) {
+                return ResponseEntity.notFound().build();
+            }
+            Resource resource = new FileSystemResource(file);
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                    .contentLength(file.length())
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

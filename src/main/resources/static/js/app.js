@@ -10,17 +10,22 @@
      Escanea [data-i18n], [data-i18n-attr], [data-i18n-html] y reemplaza.
 
      Prioridad de idioma:
-     1. localStorage('lang') — elegido por el usuario
-     2. <html lang> — seteado por Thymeleaf (Accept-Language del navegador)
+     1. <html lang> — seteado por el servidor (ciudad del usuario o Accept-Language)
+     2. localStorage('lang') — elegido por el usuario explícitamente
      3. 'es' — fallback por defecto */
 
   var SUPPORTED = ['es', 'pt'];
   var DEFAULT_LANG = 'es';
 
-  var lang = localStorage.getItem('lang') || document.documentElement.lang || DEFAULT_LANG;
+  // El servidor ya resuelve el idioma (ciudad del usuario o Accept-Language).
+  // Solo usamos localStorage si el servidor no seteó el atributo lang.
+  var serverLang = document.documentElement.lang;
+  var lang = serverLang || localStorage.getItem('lang') || DEFAULT_LANG;
   // Normalizar: "pt-BR" → "pt", "es-AR" → "es"
   lang = lang.split('-')[0].toLowerCase();
   if (SUPPORTED.indexOf(lang) === -1) lang = DEFAULT_LANG;
+  // Sincronizar localStorage con el servidor para evitar desync
+  localStorage.setItem('lang', lang);
 
   var translations = {};
 
@@ -52,6 +57,8 @@
         if (translations[key]) el.setAttribute(attr, translations[key]);
       });
     });
+    // Mostrar contenido una vez que las traducciones están aplicadas
+    document.documentElement.style.visibility = 'visible';
   }
 
   // Carga common siempre, luego la página específica inferida de la URL
@@ -154,11 +161,48 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function (reg) {
-        // Forzar chequeo de updates en cada carga
         reg.update();
       }).catch(function () {});
     });
   }
+
+  /* ─── PWA: Install prompt ─── */
+  var deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    var btn = document.getElementById('pwaInstall');
+    if (btn) btn.style.display = 'inline-flex';
+  });
+  window.installPwa = function () {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function () {
+      deferredPrompt = null;
+      var btn = document.getElementById('pwaInstall');
+      if (btn) btn.style.display = 'none';
+    });
+  };
+  window.addEventListener('appinstalled', function () {
+    var btn = document.getElementById('pwaInstall');
+    if (btn) btn.style.display = 'none';
+  });
+
+  /* ─── Theme toggle ─── */
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    var meta = document.getElementById('meta-theme-color');
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#0f1419' : '#2d6a4f');
+  }
+  function toggleTheme() {
+    var current = localStorage.getItem('theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  }
+  document.querySelectorAll('#themeToggle, #themeToggleMobile').forEach(function (btn) {
+    if (btn) btn.addEventListener('click', toggleTheme);
+  });
 
   /* ─── Modal: Mis solicitudes ─── */
   window.openTrackModal = function () {

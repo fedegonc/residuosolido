@@ -32,6 +32,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         loginAttemptService.loginSucceeded(authentication.getName());
+        // Invalidar locale de sesión para que CityAwareLocaleResolver
+        // recalcule el idioma según la ciudad del usuario recién logueado
+        request.getSession().removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
         String targetUrl = targetUrlResolver.resolveTargetUrl(authentication.getAuthorities());
         logger.info("Usuario '{}' autenticado. Redirigiendo a '{}'", authentication.getName(), targetUrl);
         redirectStrategy.sendRedirect(request, response, targetUrl);

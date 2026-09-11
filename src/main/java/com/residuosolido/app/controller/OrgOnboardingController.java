@@ -51,11 +51,14 @@ public class OrgOnboardingController extends BaseController {
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) City city,
             Authentication authentication,
+            jakarta.servlet.http.HttpSession session,
             RedirectAttributes redirectAttributes) {
 
         try {
             User currentUser = getCurrentUser(authentication);
             userService.completeOrgProfile(currentUser, phone, city);
+            // Invalidar locale de sesión para que CityAwareLocaleResolver recalcule
+            session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
             flashSuccess(redirectAttributes, "flash.org.profile_completed");
             return "redirect:/acopio/inicio";
         } catch (IllegalArgumentException e) {

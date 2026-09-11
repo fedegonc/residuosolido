@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#2d6a4f">
+  <meta name="theme-color" content="#2d6a4f" id="meta-theme-color">
   <link rel="manifest" th:href="@{/manifest.json}">
   <link rel="apple-touch-icon" th:href="@{/icon-192.png}">
   <title layout:title-pattern="$LAYOUT_TITLE — $CONTENT_TITLE">Residuo Sólido</title>
@@ -15,6 +15,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
   <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+  <script>
+    // Aplicar tema antes de pintar (evita flash)
+    (function(){
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+      // Ocultar contenido hasta que i18n esté listo (evita flash de texto sin traducir)
+      document.documentElement.style.visibility = 'hidden';
+      // Fallback: mostrar después de 800ms incluso si i18n falla
+      setTimeout(function(){ document.documentElement.style.visibility = 'visible'; }, 800);
+    })();
+  </script>
 </head>
 <body class="app-body">
   <a href="#main-content" class="skip-link" data-i18n="skip_content">Saltar al contenido</a>

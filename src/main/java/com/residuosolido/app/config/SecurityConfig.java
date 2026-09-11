@@ -81,11 +81,11 @@ public class SecurityConfig {
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
                     "img-src 'self' data: https: https://tile.openstreetmap.org; " +
-                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
+                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://www.draw.io; " +
                     "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; " +
-                    "script-src 'self' 'unsafe-inline'; " +
+                    "script-src 'self' 'unsafe-inline' https://www.draw.io; " +
                     "connect-src 'self'; " +
-                    "frame-src 'self' https://www.openstreetmap.org"
+                    "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
                 .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))

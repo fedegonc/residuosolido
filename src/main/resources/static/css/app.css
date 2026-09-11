@@ -1,6 +1,6 @@
 /* app.css — Sistema de diseño Residuo Sólido */
 
-:root {
+:root, [data-theme="light"] {
   --primary:#2d6a4f; --primary-hover:#1b4332; --primary-light:#d8f3dc;
   --accent:#e76f51; --accent-light:#fef0ed;
   --dark:#1b2a1f; --gray-text:#52796f; --bg:#f5f5f5; --surface:#fff;
@@ -642,33 +642,38 @@ html{scroll-behavior:smooth;}
 [data-theme="dark"] .info-card{background:#1a2332;border-color:#2d3748;}
 [data-theme="dark"] .error-page{background:#0f1419;color:#e2e8f0;}
 [data-theme="dark"] .metrics-card{background:#1a2332;border-color:#2d3748;}
+/* Auto dark solo si el usuario no eligió tema manualmente */
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme]) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) {
     --primary:#52b788;--primary-hover:#74c69d;--primary-light:#1b4332;
     --bg:#0f1419;--surface:#1a2332;--border:#2d3748;--dark:#e2e8f0;
     --gray-text:#94a3b8;--white:#0f1419;--shadow:0 1px 3px rgba(0,0,0,0.4);
     --shadow-lg:0 4px 12px rgba(0,0,0,0.5);
   }
-  :root:not([data-theme]) .navbar{background:#161b22;border-color:#2d3748;}
-  :root:not([data-theme]) .navbar__link{color:#94a3b8;}
-  :root:not([data-theme]) .dropdown{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .hero{background:linear-gradient(135deg,#1b4332,#0f1419);}
-  :root:not([data-theme]) .form-input,:root:not([data-theme]) .form-select,:root:not([data-theme]) .form-textarea{
+  html:not([data-theme="light"]):not([data-theme="dark"]) .navbar{background:#161b22;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .navbar__link{color:#94a3b8;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .dropdown{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .hero{background:linear-gradient(135deg,#1b4332,#0f1419);}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .form-input,
+  html:not([data-theme="light"]):not([data-theme="dark"]) .form-select,
+  html:not([data-theme="light"]):not([data-theme="dark"]) .form-textarea{
     background:#0f1419;border-color:#2d3748;color:#e2e8f0;
   }
-  :root:not([data-theme]) .btn--outline{border-color:#2d3748;color:#e2e8f0;background:transparent;}
-  :root:not([data-theme]) .kanban-column{background:#0f1419;border-color:#2d3748;}
-  :root:not([data-theme]) .kanban-card{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .stat-card{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .track-card,:root:not([data-theme]) .form-card,:root:not([data-theme]) .success-card{
+  html:not([data-theme="light"]):not([data-theme="dark"]) .btn--outline{border-color:#2d3748;color:#e2e8f0;background:transparent;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .kanban-column{background:#0f1419;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .kanban-card{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .stat-card{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .track-card,
+  html:not([data-theme="light"]):not([data-theme="dark"]) .form-card,
+  html:not([data-theme="light"]):not([data-theme="dark"]) .success-card{
     background:#1a2332;border-color:#2d3748;
   }
-  :root:not([data-theme]) .blog-card{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .blog-article{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .coop-cta{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .site-footer{background:#161b22;border-color:#2d3748;}
-  :root:not([data-theme]) .doc-card{background:#1a2332;border-color:#2d3748;}
-  :root:not([data-theme]) .docs-note{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .blog-card{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .blog-article{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .coop-cta{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .site-footer{background:#161b22;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .doc-card{background:#1a2332;border-color:#2d3748;}
+  html:not([data-theme="light"]):not([data-theme="dark"]) .docs-note{background:#1a2332;border-color:#2d3748;}
 }
 
 

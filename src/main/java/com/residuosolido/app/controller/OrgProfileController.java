@@ -55,12 +55,17 @@ public class OrgProfileController extends BaseController {
             @RequestParam(required = false) City city,
             @RequestParam(required = false) List<MaterialCategory> materials,
             Authentication authentication,
+            jakarta.servlet.http.HttpSession session,
             RedirectAttributes redirectAttributes) {
         try {
             User currentOrg = getCurrentUser(authentication);
+            City oldCity = currentOrg.getCity();
             String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
             userService.updateProfile(currentOrg, email, firstName, resolvedPhone, city,
                     materials != null ? materials : List.of());
+            if (city != null && !city.equals(oldCity)) {
+                session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
+            }
             flashSuccess(redirectAttributes, "flash.profile.updated");
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
