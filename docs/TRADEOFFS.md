@@ -392,36 +392,35 @@ build si encuentra violaciones (`failOnViolation=false`).
 - El proyecto tiene 68 violaciones heredadas; bloquear el build
   detendría el desarrollo.
 - PMD sigue generando reportes útiles para análisis.
+- Migrado a PMD 7 (maven-pmd-plugin 3.28.0) con rulesets category-based
+  (`bestpractices.xml`, `design.xml`).
 
 **En contra:**
 - Las violaciones pueden acumularse sin consecuencia.
 - El CI no valida calidad estática, solo compilación y tests.
 
-**Para producción:** migrar a PMD 7 (maven-pmd-plugin 3.28), revisar
-las 68 violaciones, activar `failOnViolation=true` cuando lleguen a
-cero.
+**Para producción:** revisar las 68 violaciones de PMD 7, activar
+`failOnViolation=true` cuando lleguen a cero.
 
 ---
 
-## 21. Versiones del stack — staying en Spring Boot 3.2 / Java 17
+## 21. Versiones del stack — Spring Boot 3.2 / Java 21
 
-**Decisión:** el MVP se entrega con Spring Boot 3.2.0 y Java 17,
-aunque existen Spring Boot 4.1.1 y Java 25 LTS.
+**Decisión:** el MVP se entrega con Spring Boot 3.2.0 y Java 21,
+aunque existe Spring Boot 4.1.1.
 
 **A favor:**
 - Spring Boot 3.2 es estable, documentado y compatible con todas
   las dependencias del proyecto.
-- Java 17 es LTS (soporte hasta septiembre 2029).
+- Java 21 es LTS (soporte hasta septiembre 2028).
 - Migrar a Spring Boot 4.0 implica 115 breaking changes (42 rompen
   compilación, 24 fallan en runtime, 19 dan resultados incorrectos
   silenciosamente). `@MockBean` se elimina, Spring Security tiene
   un DSL rewrite, properties se renombran.
 
 **En contra:**
-- El tribunal puede cuestionar el uso de versiones no actuales.
-- Se pierden mejoras de rendimiento y seguridad de Java 21/25.
+- El tribunal puede cuestionar el uso de Spring Boot 3.2 (no 4.x).
 - Spring Boot 3.2 llega a fin de soporte OSS en diciembre 2026.
 
 **Para producción:** migrar primero a 3.5.x (limpiar deprecations),
-después a 4.0 (migración mayor). Subir Java a 21 (safe, sin breaking
-changes). Documentado en `docs/MEJORAS.md` items 63-68.
+después a 4.0 (migración mayor). Documentado en `docs/MEJORAS.md`.

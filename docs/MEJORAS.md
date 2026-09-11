@@ -83,10 +83,10 @@
 | 60 | Logs estructurados (JSON) | Diferido | Logs Spring Boot suficientes |
 | 61 | Rate limiting con Redis | Diferido | In-memory suficiente para MVP |
 | 62 | Multi-tenancy (multi-frontera) | Diferido | Una sola frontera (Rivera-Livramento) |
-| 63 | Upgrade Java 17→21 (pom + Dockerfile) | Diferido | Safe, bajo riesgo |
-| 64 | Upgrade JaCoCo 0.8.11→0.8.15 | Diferido | Patch, sin breaking changes |
-| 65 | Upgrade maven-pmd-plugin 3.21→3.28 | Diferido | PMD 6→7, migrar rulesets |
-| 66 | Upgrade FontAwesome 6.5→7.2 | Diferido | Menor, verificar cambios de iconos |
+| 63 | Upgrade Java 17→21 (pom + Dockerfile) | Implementado | Java 21 LTS en pom, Dockerfile y CI |
+| 64 | Upgrade JaCoCo 0.8.11→0.8.15 | Implementado | Patch, sin breaking changes |
+| 65 | Upgrade maven-pmd-plugin 3.21→3.28 | Implementado | PMD 7, rulesets category-based |
+| 66 | Upgrade FontAwesome 6.5→7.2 | Implementado | CDN y webjar actualizados |
 | 67 | Migración Spring Boot 3.2→3.5 | Diferido | Paso intermedio seguro antes de 4.0 |
 | 68 | Migración Spring Boot 3.5→4.0 | Diferido | 115 breaking changes, @MockBean eliminado |
 
@@ -96,9 +96,9 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 33 |
+| Implementado | 37 |
 | Descartado | 12 |
-| Diferido | 22 |
+| Diferido | 18 |
 | Latente | 1 |
 | **Total** | **68** |
 

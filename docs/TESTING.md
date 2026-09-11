@@ -1,6 +1,6 @@
 # Testing — EcoSolicitud
 
-Describe la suite de tests real del proyecto (216 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (215 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 
@@ -18,7 +18,7 @@ mvn clean test
 # Reporte en: target/site/jacoco/index.html
 ```
 
-No requiere base de datos externa para los tests unitarios (repositorios mockeados con Mockito). Los tests de controller/seguridad usan `@SpringBootTest` + `MockMvc`. Los tests de integración de agregación (`MongoAggregationUtilsIT`) usan MongoDB real (`mongodb://localhost:27017/testdb`).
+No requiere base de datos externa para los tests unitarios (repositorios mockeados con Mockito). Los tests de controller/seguridad usan `@SpringBootTest` + `MockMvc`. Los tests de integración de agregación (`MongoAggregationUtilsIntegrationTest`) usan MongoDB real (`mongodb://localhost:27017/testdb`).
 
 ---
 
@@ -56,7 +56,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | `EndToEndFlowsTest` (14) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |
 | `I18nMessageResolutionTest` (8) | Resolución de mensajes en español/portugués |
 | `DocsControllerTest` (17) | Páginas públicas `/documentos` y `/diagramas`, content-type de `.md`/`.drawio`, path traversal, accesibilidad sin auth |
-| `MongoAggregationUtilsIT` (5) | Agregación faceted con MongoDB real — counts por estado, total, sin solicitudes, REJECTED incluido en total |
+| `MongoAggregationUtilsIntegrationTest` (5) | Agregación faceted con MongoDB real — counts por estado, total, sin solicitudes, REJECTED incluido en total |
 
 ---
 
@@ -66,7 +66,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 - **Mocks de repositorio, no de base de datos real** — `mock(RequestRepository.class)`, sin H2 ni testcontainers (el proyecto usa MongoDB en producción, pero los tests unitarios no necesitan una instancia real).
 - **`@WithMockUser`** para simular usuarios autenticados con rol específico en tests de `MockMvc`.
 - **Regresión obligatoria en cada fix de bug**: cuando se corrigió `deleteOwnedRequest` (RN-11), se agregaron los tests `rn11_deleteOwnedRequest_notPending_throwsIllegalStateException` y `rn11_deleteOwnedRequest_pending_deletesSuccessfully` en el mismo commit.
-- **Test de integración para pipelines de MongoDB**: `MongoAggregationUtilsIT` usa MongoDB real (no mock) para validar que el pipeline `$facet` produce los counts correctos. Este test detectó el bug donde 4 `$facet` stages separados hacían que `total` siempre fuera 1 (cada stage reemplazaba el documento anterior).
+- **Test de integración para pipelines de MongoDB**: `MongoAggregationUtilsIntegrationTest` usa MongoDB real (no mock) para validar que el pipeline `$facet` produce los counts correctos. Este test detectó el bug donde 4 `$facet` stages separados hacían que `total` siempre fuera 1 (cada stage reemplazaba el documento anterior).
 
 ---
 
@@ -77,7 +77,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | Reglas de negocio de `Request` (creación, edición, transición, borrado) | Alta — cubierta por 4 clases de test dedicadas |
 | Seguridad por rol | Alta — 2 clases dedicadas + verificación implícita en `EndToEndFlowsTest` |
 | Rate limiting / login attempts | Alta — ambas clases con tests de limpieza de memoria incluidos |
-| `MongoAggregationUtils` (helper compartido de métricas) | Alta — test de integración propio (`MongoAggregationUtilsIT`, 5 tests con MongoDB real) + cubierto indirectamente vía `RequestMetricsServiceTest` |
+| `MongoAggregationUtils` (helper compartido de métricas) | Alta — test de integración propio (`MongoAggregationUtilsIntegrationTest`, 5 tests con MongoDB real) + cubierto indirectamente vía `RequestMetricsServiceTest` |
 | `PublicMetricsService` | Cobertura agregada — `PublicMetricsServiceTest` (6 tests) |
 
 ---

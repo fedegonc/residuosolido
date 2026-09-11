@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=false"
 })
-class MongoAggregationUtilsIT {
+class MongoAggregationUtilsIntegrationTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;
