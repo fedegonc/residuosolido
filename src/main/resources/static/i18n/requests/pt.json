@@ -27,10 +27,10 @@
   "req_form_guest_name_placeholder": "Ex: Maria Santos",
   "req_form_guest_phone": "Seu telefone",
   "req_form_guest_phone_placeholder": "Ex: +55 55 123 456",
-  "req_form_guest_hint": "Pedimos esses dados para rastrear sua solicitação",
+  "req_form_guest_hint": "Pedimos esses dados para buscar sua solicitação",
   "req_form_logged_in_note": "Usaremos os dados do seu perfil para esta solicitação",
   "req_form_have_account": "Já tem conta? Inicie sessão",
-  "req_form_submit_new": "Enviar solicitação",
+  "req_form_submit_new": "Pedir coleta",
   "req_form_submit_edit": "Salvar alterações",
   "req_form_cancel": "Cancelar",
   "req_form_weight": "Peso aproximado (opcional)",
@@ -91,5 +91,5 @@
   "req_success_not_now": "Agora não",
   "req_success_my_requests": "Minhas solicitações",
   "req_success_new_request": "Nova solicitação",
-  "req_success_track": "Rastrear minha solicitação"
+  "req_success_track": "Buscar minha solicitação"
 }

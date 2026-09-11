@@ -1,13 +1,14 @@
 {
-  "name": "EcoSolicitud",
-  "short_name": "EcoSolicitud",
-  "description": "Plataforma de solicitud y seguimiento de recolección de residuos reciclables",
+  "name": "Residuo Sólido",
+  "short_name": "Residuo Sólido",
+  "description": "Plataforma de solicitud y seguimiento de recolección de residuos reciclables en la Frontera de la Paz",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f0f7f2",
+  "background_color": "#f8fafc",
   "theme_color": "#2d6a4f",
   "orientation": "portrait-primary",
   "lang": "es",
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "/icon-192.png",

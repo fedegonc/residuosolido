@@ -51,9 +51,9 @@ class DocsControllerTest {
         String html = mockMvc.perform(get("/documentos"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        // Verifica que los 10 documentos aparecen como links
+        // Verifica que los 11 documentos aparecen como links
         for (String doc : new String[]{"CORE", "RF-RN", "ENDPOINTS", "METODOLOGIA", "TRADEOFFS",
-                "HARDENING", "TESTING", "MEJORAS", "COPIES", "SUPERFICIES"}) {
+                "HARDENING", "TESTING", "MEJORAS", "COPIES", "SUPERFICIES", "CORRECCIONES"}) {
             org.junit.jupiter.api.Assertions.assertTrue(
                     html.contains("/docs/" + doc + ".md"),
                     "Falta link a " + doc + ".md en /documentos");

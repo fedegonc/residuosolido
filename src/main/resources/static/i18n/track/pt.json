@@ -1,6 +1,6 @@
 {
-  "track_title": "Rastrear solicitação",
-  "track_subtitle": "Digite seu telefone e o código de rastreamento recebido ao criar a solicitação",
+  "track_title": "Buscar minha solicitação",
+  "track_subtitle": "Se você pediu uma coleta sem conta, informe seu telefone e o código recebido.",
   "track_phone_label": "Telefone",
   "track_phone_placeholder": "Ex: +55 55 123 456",
   "track_code_label": "Código de rastreamento",

@@ -305,7 +305,7 @@ JavaScript pesado.
 - Toggle instantáneo (sin recarga).
 - `localStorage` persiste la preferencia.
 - `prefers-color-scheme` respeta la preferencia del SO.
-- Script inline en `<head>` aplica el tema antes de pintar (sin flash).
+- Script externo `theme.js` en `<head>` aplica el tema antes de pintar (sin flash).
 
 **En contra:**
 - Duplicación de variables en `:root` y `[data-theme="dark"]`.

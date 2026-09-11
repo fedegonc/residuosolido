@@ -188,7 +188,7 @@ de `data-i18n` + `i18n/common/*.json`.
 | `City` | RIVERA, LIVRAMENTO | Sí |
 | `RequestStatus` | PENDING, IN_PROGRESS, COMPLETED, REJECTED | Sí |
 | `MaterialCategory` | PLASTICO, PAPEL, CARTON, VIDRIO, METAL, MADERA, ESCOMBROS | Sí |
-| `TimeSlot` | MORNING, AFTERNOON, EVENING | Sí |
+| `TimeSlot` | MANANA, TARDE, NOCHE | Sí |
 
 ### 3.3 Repositorios (3)
 

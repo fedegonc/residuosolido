@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .requestMatchers("/.well-known/**").permitAll()
                 // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
                 .requestMatchers("/error").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/manifest.json", "/sw.js", "/icon-*.png", "/icon-*.svg").permitAll()
                 // Formulario público de nueva solicitud (invitado o autenticado)
                 .requestMatchers(HttpMethod.GET, "/solicitudes/nueva").permitAll()
                 .requestMatchers(HttpMethod.POST, "/solicitudes").permitAll()

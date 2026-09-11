@@ -27,17 +27,9 @@
   // Sincronizar localStorage con el servidor para evitar desync
   localStorage.setItem('lang', lang);
 
-  var translations = {};
-
-  function loadPage(page) {
-    return fetch('/i18n/' + page + '/' + lang + '.json')
-      .then(function (r) { return r.ok ? r.json() : {}; })
-      .then(function (data) {
-        for (var k in data) translations[k] = data[k];
-        applyTranslations();
-      })
-      .catch(function () {});
-  }
+  // El servidor inyecta las traducciones de la página actual en window.uiCopies
+  // (ver UiCopyCatalog.java). Esto elimina el fetch asíncrono y el FOUC.
+  var translations = window.uiCopies || {};
 
   function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -57,35 +49,9 @@
         if (translations[key]) el.setAttribute(attr, translations[key]);
       });
     });
-    // Mostrar contenido una vez que las traducciones están aplicadas
-    document.documentElement.style.visibility = 'visible';
   }
 
-  // Carga common siempre, luego la página específica inferida de la URL
-  var pageName = inferPageName(window.location.pathname);
-
-  function inferPageName(path) {
-    // Mapeo URL → carpeta i18n. Único lugar que se mantiene.
-    var map = [
-      { match: /^\/$/,                page: 'home' },
-      { match: /^\/index$/,           page: 'home' },
-      { match: /^\/rastrear$/,        page: 'track' },
-      { match: /^\/metricas$/,        page: 'metrics' },
-      { match: /^\/auth\/.*/,         page: 'auth' },
-      { match: /^\/solicitudes?.*/,   page: 'requests' },
-      { match: /^\/solicitud\/.*/,    page: 'requests' },
-      { match: /^\/usuarios\/.*/,     page: 'users' },
-      { match: /^\/acopio\/.*/,       page: 'org' },
-    ];
-    for (var i = 0; i < map.length; i++) {
-      if (map[i].match.test(path)) return map[i].page;
-    }
-    return '';
-  }
-
-  loadPage('common').then(function () {
-    if (pageName) loadPage(pageName);
-  });
+  applyTranslations();
 
   /* ─── Language selector ─── */
   function markActiveLang() {

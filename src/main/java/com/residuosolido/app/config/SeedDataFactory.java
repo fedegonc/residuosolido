@@ -82,15 +82,16 @@ public class SeedDataFactory {
     public static void seedAll(UserRepository userRepo, RequestRepository requestRepo,
                                InformalCollectorRepository collectorRepo, PasswordEncoder encoder) {
         logger.info("=== Iniciando carga de datos de prueba ===");
-        requestRepo.deleteAll();
-        userRepo.deleteAll();
-        collectorRepo.deleteAll();
+        if (userRepo.count() > 0 || requestRepo.count() > 0 || collectorRepo.count() > 0) {
+            logger.info("Seed omitido: la base ya contiene datos");
+            return;
+        }
         var s = SeedUserData.seedAll(userRepo, encoder);
         SeedRequestData.seedAll(requestRepo, s.u1(), s.u2(), s.u3(), s.u4(), s.o1(), s.o2(), s.o3(), s.o4(), s.o5(), s.o6());
         createCollector(collectorRepo, s.o1().getId(), "Pedro Silva", "099555666", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL), "Catador de la zona norte");
         createCollector(collectorRepo, s.o1().getId(), "Ana Souza", "099777888", City.RIVERA,
                 List.of(MaterialCategory.VIDRIO, MaterialCategory.METAL), "Recoge vidrio los viernes");
-        logger.info("=== Carga completada — password: 12345678 ===");
+        logger.info("=== Carga de demostración completada ===");
     }
 }

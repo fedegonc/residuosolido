@@ -35,10 +35,11 @@ public class DocsController {
             doc("METODOLOGIA", "Metodología", "Modelo iterativo incremental en 4 fases.", "fa-solid fa-diagram-project"),
             doc("TRADEOFFS", "Tradeoffs de diseño", "Decisiones de diseño y sus consecuencias.", "fa-solid fa-scale-balanced"),
             doc("HARDENING", "Endurecimiento del MVP", "Correcciones de seguridad aplicadas y limitaciones.", "fa-solid fa-shield-halved"),
-            doc("TESTING", "Testing", "Estrategia de pruebas por capa (193 tests, JUnit 5 + Mockito).", "fa-solid fa-vial"),
+            doc("TESTING", "Testing", "Estrategia de pruebas por capa (218 tests, JUnit 5 + Mockito).", "fa-solid fa-vial"),
             doc("MEJORAS", "Superficies de mejora", "Tabla centralizada de mejoras posibles y su estado.", "fa-solid fa-table-list"),
             doc("COPIES", "Copies del sistema", "Microcopy y textos de interfaz.", "fa-solid fa-align-left"),
-            doc("SUPERFICIES", "Superficies de diseño", "Sistema de diseño canónico (variables CSS, BEM).", "fa-solid fa-palette")
+            doc("SUPERFICIES", "Superficies de diseño", "Sistema de diseño canónico (variables CSS, BEM).", "fa-solid fa-palette"),
+            doc("CORRECCIONES", "Correcciones y limpieza", "Defectos corregidos, limitaciones pendientes y tradeoffs.", "fa-solid fa-broom")
     );
 
     private static final List<Map<String, String>> DIAGRAMS = List.of(

@@ -42,7 +42,7 @@
                        placeholder="tu@email.com" class="form-input">
               </div>
             </div>
-            <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_password_hint', 'Mínimo 3 caracteres')}"></div>
+            <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_password_hint', 'Mínimo 8 caracteres')}"></div>
             <div class="form-check">
               <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
               <label for="isOrganization" data-i18n="auth_is_organization">Soy una cooperativa o reciclador</label>

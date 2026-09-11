@@ -1,6 +1,6 @@
 {
-  "track_title": "Rastrear solicitud",
-  "track_subtitle": "Ingresá tu teléfono y el código de rastreo que recibiste al crear la solicitud",
+  "track_title": "Buscar mi solicitud",
+  "track_subtitle": "Si pediste recolección sin cuenta, ingresá tu teléfono y el código que recibiste.",
   "track_phone_label": "Teléfono",
   "track_phone_placeholder": "Ej: +598 99 123 456",
   "track_code_label": "Código de rastreo",

@@ -1,6 +1,6 @@
 # Testing — EcoSolicitud
 
-Describe la suite de tests real del proyecto (215 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (218 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 

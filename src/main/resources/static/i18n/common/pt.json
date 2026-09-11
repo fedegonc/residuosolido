@@ -1,7 +1,7 @@
 {
   "nav_home": "Início",
   "nav_request": "Solicitar coleta",
-  "nav_track": "Rastrear solicitação",
+  "nav_track": "Buscar solicitação",
   "nav_metrics": "Métricas públicas",
   "nav_login": "Entrar",
   "nav_register": "Cadastrar-se",
@@ -24,7 +24,7 @@
   "nav_user_requests": "Minhas solicitações",
   "nav_my_requests": "Minhas solicitações",
   "modal_track_title": "Como você quer ver suas solicitações?",
-  "modal_track_subtitle": "Você pode rastrear uma solicitação sem ter conta usando seu telefone e código, ou entrar na sua conta para ver todas que você criou.",
+  "modal_track_subtitle": "Você pode buscar uma solicitação sem ter conta usando seu telefone e código, ou entrar na sua conta para ver todas que você criou.",
   "modal_track_guest_title": "Buscar sem conta",
   "modal_track_guest_desc": "Digite seu telefone e o código que te demos.",
   "modal_track_login_title": "Entrar na minha conta",

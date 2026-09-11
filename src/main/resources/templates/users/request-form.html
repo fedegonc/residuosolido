@@ -49,7 +49,7 @@
               </div>
             </div>
           </div>
-          <p th:if="${isGuest}" class="form-hint" data-i18n="req_form_guest_hint">Con estos datos podés rastrear tu solicitud sin cuenta.</p>
+          <p th:if="${isGuest}" class="form-hint" data-i18n="req_form_guest_hint">Con estos datos podés buscar tu solicitud sin cuenta.</p>
           <p th:if="${isGuest}" class="form-hint">
             <a href="/auth/login" data-i18n="req_form_have_account">¿Ya tenés cuenta? Iniciá sesión</a>
           </p>
@@ -186,7 +186,7 @@
             <button type="submit" class="btn btn--primary">
               <i class="fa-solid fa-paper-plane"></i>
               <span th:if="${isEdit}" data-i18n="req_form_submit_edit">Guardar cambios</span>
-              <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Enviar solicitud</span>
+              <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Pedir recolección</span>
             </button>
             <a th:href="${isEdit} ? '/solicitud/' + ${request.id} : '/'" class="btn btn--outline">
               <i class="fa-solid fa-xmark"></i>
