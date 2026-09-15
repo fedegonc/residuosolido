@@ -194,8 +194,8 @@ Invitado/Usuario      RequestCreateController   RequestValidator   CityOrgServic
 ### Invitado
 ```
 Invitado
-  ├─ CU: Solicitar recolección sin cuenta (RF-3)
-  └─ CU: Rastrear solicitud por teléfono + código privado (RF-4)
+  ├─ CU: Crear solicitud de recolección sin cuenta (RF-3)
+  └─ CU: Consultar solicitud por teléfono + código privado (RF-4)
 ```
 
 ### Usuario (registrado)
@@ -203,8 +203,7 @@ Invitado
 Usuario
   ├─ CU: Registrarse (RF-1)
   ├─ CU: Iniciar sesión (RF-2)
-  ├─ CU: Solicitar recolección (RF-3)
-  ├─ CU: Rastrear solicitud por teléfono + código (RF-4)
+  ├─ CU: Crear solicitud de recolección (RF-3)
   ├─ CU: Ver dashboard e historial (RF-5)
   ├─ CU: Editar solicitud propia pendiente (RF-5)
   ├─ CU: Eliminar solicitud propia pendiente (RF-5)
