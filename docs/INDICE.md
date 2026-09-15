@@ -20,6 +20,7 @@ Los documentos tecnicos estan concentrados en `docs/` y estan actualizados al es
 | `docs/ENDPOINTS.md` | Listado de rutas HTTP, acceso por rol, anotaciones OpenAPI y resumen de testing. | Actualizado |
 | `docs/MEJORAS.md` | Tabla de mejoras implementadas, descartadas, diferidas y latentes; correcciones aplicadas. | Actualizado |
 | `docs/METODOLOGIA.md` | Modelo iterativo-incremental de 4 fases, copys de UI en anexo. | Actualizado |
+| `docs/MCP-RENDER-LOGS.md` | Configuracion del MCP oficial de Render en Devin CLI para consultar logs del despliegue. | Nuevo |
 
 ---
 
