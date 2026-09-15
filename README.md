@@ -1,4 +1,4 @@
-# Residuo Sólido — Plataforma de Gestión de Reciclaje
+# Eco Solicitud — Plataforma de Gestión de Reciclaje
 
 Sistema web para la gestión y coordinación de recolección de residuos
 reciclables en la Frontera de la Paz (Rivera, Uruguay — Sant'Ana do

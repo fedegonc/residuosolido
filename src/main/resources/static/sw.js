@@ -1,4 +1,4 @@
-// Service Worker — EcoSolicitud PWA
+// Service Worker — Eco Solicitud PWA
 // Estrategia: cache-first para CSS/JS/imágenes, network-first para HTML.
 // Las páginas HTML nunca se pre-cachean para evitar contenido stale.
 

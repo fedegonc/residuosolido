@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @OpenAPIDefinition(
         info = @Info(
-                title = "EcoSolicitud API",
+                title = "Eco Solicitud API",
                 version = "v1",
                 description = "API de gestión de solicitudes de recolección de residuos reciclables en la frontera Rivera-Livramento."
         )

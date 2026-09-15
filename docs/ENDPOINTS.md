@@ -1,4 +1,4 @@
-# Endpoints — EcoSolicitud
+# Endpoints — Eco Solicitud
 
 Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/main/java/com/residuosolido/app/controller`. No incluye rutas hipotéticas ni planificadas — solo lo que existe y compila.
 

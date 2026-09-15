@@ -1,4 +1,4 @@
-# Indice de Documentacion — EcoSolicitud
+# Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: post-cambios de consolidacion  
 > Tests: 218, 0 failures, 0 errors, 0 skipped

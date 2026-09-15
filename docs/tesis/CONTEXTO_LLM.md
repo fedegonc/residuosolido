@@ -9,7 +9,7 @@
 
 ## 1. Descripción del problema
 
-Residuo Sólido es un sistema web para gestionar y coordinar la recolección de residuos reciclables en la Frontera de la Paz: Rivera, Uruguay, y Sant'Ana do Livramento, Brasil.
+Eco Solicitud es un sistema web para gestionar y coordinar la recolección de residuos reciclables en la Frontera de la Paz: Rivera, Uruguay, y Sant'Ana do Livramento, Brasil.
 
 El problema abordado es la necesidad de centralizar la información necesaria para solicitar una recolección y conocer su estado. La solución convierte esa necesidad de coordinación en un proceso de software explícito, implementado y verificable, con reglas, permisos y limitaciones documentadas.
 

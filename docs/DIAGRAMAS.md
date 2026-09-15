@@ -1,4 +1,4 @@
-# Diagramas — EcoSolicitud
+# Diagramas — Eco Solicitud
 
 Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido/app/model`, `enums`) y en los flujos implementados en los controllers. Complementa a `RF-RN.md` (requisitos y reglas de negocio).
 

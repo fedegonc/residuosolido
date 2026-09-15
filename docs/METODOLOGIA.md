@@ -1,6 +1,6 @@
 # Metodología — Modelo Iterativo Incremental
 
-El sistema **Residuo Sólido** se desarrolló siguiendo un **modelo
+El sistema **Eco Solicitud** se desarrolló siguiendo un **modelo
 iterativo incremental** adaptado a las restricciones de un MVP de
 tesis (tecnólogo en Análisis y Desarrollo de Sistemas). Este documento
 describe las 4 fases del modelo aplicado, su alcance y los artefactos
@@ -590,7 +590,7 @@ decía "Buscar mi solicitud". El modal decía "Rastrear sin cuenta".
 | "Acompañá tus solicitudes y contribuí a una ciudad sustentable" | "Acá ves tus solicitudes de recolección y su estado" |
 | "Contanos qué tenés y nos encargamos del resto" | "Decinos qué materiales tenés y en qué dirección retirarlos" |
 | "Ingresá con tu cuenta para continuar" | "Entrá para ver y gestionar tus solicitudes" |
-| "Registrate para empezar a usar Residuo Sólido" | "Creá una cuenta para pedir recolección y seguir el estado" |
+| "Registrate para empezar a usar Eco Solicitud" | "Creá una cuenta para pedir recolección y seguir el estado" |
 | "¿Sos una cooperativa o reciclador?" | "¿Retirás reciclables en Rivera o Sant'Ana?" |
 | "Sumate a la comunidad" | "Sumate a la red de reciclaje" |
 | "Accedé a tu cuenta para seguir contribuyendo a un futuro más limpio" | "Entrá para gestionar tus solicitudes de recolección" |

@@ -1,4 +1,4 @@
-# Defensa de Tesis — Residuo Sólido
+# Defensa de Tesis — Eco Solicitud
 
 Guía para la defensa del proyecto final del Tecnólogo en Análisis y
 Desarrollo de Sistemas (UTEC / IFSUL). Este documento estructura el
@@ -9,7 +9,7 @@ que se puede afirmar.
 
 ## 1. Título sugerido
 
-> **Residuo Sólido: análisis, diseño e implementación de un sistema web
+> **Eco Solicitud: análisis, diseño e implementación de un sistema web
 > para gestionar solicitudes de recolección de reciclables en Rivera y
 > Sant'Ana do Livramento.**
 
@@ -263,7 +263,7 @@ que este proyecto sea "el primero".
 
 
 Este documento registra las decisiones de diseño más importantes del
-MVP **Residuo Sólido**, con su justificación y las consecuencias
+MVP **Eco Solicitud**, con su justificación y las consecuencias
 asumidas. Forma parte del análisis crítico para la defensa de tesis.
 
 ---

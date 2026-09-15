@@ -83,7 +83,7 @@ public class BlogController {
             recolección de residuos entre los dos lados de la frontera y profesionalizar
             el trabajo de los recolectores informales.</p>
 
-            <p>Este proyecto, Residuo Sólido, nace en ese contexto. Conecta a ciudadanos y
+            <p>Este proyecto, Eco Solicitud, nace en ese contexto. Conecta a ciudadanos y
             cooperativas de ambos lados para que los reciclables tengan un mejor destino.
             Es un MVP: una primera versión que demuestra que la tecnología puede acercar
             a la comunidad con quienes reciclan.</p>

@@ -470,7 +470,7 @@ Build: SUCCESS
 
 ### 1.8 Manifest con nombre incorrecto
 
-**Defecto:** `manifest.json` decía "EcoSolicitud" en lugar de "Residuo Sólido".
+**Defecto:** `manifest.json` no coincidía con el branding vigente del sistema.
 
 **Corrección:** Se actualizó el nombre y short_name.
 

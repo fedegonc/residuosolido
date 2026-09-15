@@ -1,4 +1,4 @@
-/* app.js — JS compartido para EcoSolicitud.
+/* app.js — JS compartido para Eco Solicitud.
    i18n client-side + navbar toggle.
    Se carga una sola vez desde layout/base.html. */
 

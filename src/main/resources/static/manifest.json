@@ -1,6 +1,6 @@
 {
-  "name": "Residuo Sólido",
-  "short_name": "Residuo Sólido",
+  "name": "Eco Solicitud",
+  "short_name": "Eco Solicitud",
   "description": "Plataforma de solicitud y seguimiento de recolección de residuos reciclables en la Frontera de la Paz",
   "start_url": "/",
   "display": "standalone",
