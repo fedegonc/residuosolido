@@ -122,7 +122,7 @@ diagramas, tradeoffs explícitos.
   - `docs/DEFENSA.md` — guía de defensa, tradeoffs y limitaciones.
   - `docs/MEJORAS.md` — mejoras implementadas y correcciones.
   - `docs/METODOLOGIA.md` — este archivo (fases y copys en anexo).
-- Diagramas draw.io: casos de uso, modelo lógico, clases, estados UML.
+- Diagramas draw.io: casos de uso, modelo lógico, clases y secuencia UML.
 
 **Cierre de fase:** el sistema está listo para la defensa. La
 documentación refleja el estado real del código. Los tradeoffs están

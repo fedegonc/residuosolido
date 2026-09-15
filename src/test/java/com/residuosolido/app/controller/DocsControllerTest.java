@@ -67,7 +67,7 @@ class DocsControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         for (String fig : new String[]{"figura1-casos-uso", "figura2-modelo-logico",
-                "figura3-clases", "figura4-estados"}) {
+                "figura3-clases", "figura4-secuencia"}) {
             org.junit.jupiter.api.Assertions.assertTrue(
                     html.contains(fig + ".drawio"),
                     "Falta link a " + fig + ".drawio en /diagramas");
@@ -111,14 +111,14 @@ class DocsControllerTest {
 
     @Test
     void drawioFile_servedWithXmlContentType() throws Exception {
-        mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-estados"))
+        mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-secuencia"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(org.springframework.http.MediaType.APPLICATION_XML));
     }
 
     @Test
     void drawioFile_containsMxfileRoot() throws Exception {
-        String body = mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-estados"))
+        String body = mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-secuencia"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         org.junit.jupiter.api.Assertions.assertTrue(
@@ -129,7 +129,7 @@ class DocsControllerTest {
     @Test
     void allDrawioFiles_servedCorrectly() throws Exception {
         for (String fig : new String[]{"figura1-casos-uso", "figura2-modelo-logico",
-                "figura3-clases", "figura4-estados"}) {
+                "figura3-clases", "figura4-secuencia"}) {
             mockMvc.perform(get("/docs/diagrams/" + fig + ".drawio"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(org.springframework.http.MediaType.APPLICATION_XML));

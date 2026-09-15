@@ -52,7 +52,7 @@
 | 29 | 21 tradeoffs documentados | Implementado | docs/DEFENSA.md |
 | 30 | Deploy en Render.com (PaaS) | Implementado | GitHub→deploy automático |
 | 31 | Páginas públicas /documentos y /diagramas | Implementado | DocsController, índice de docs y figuras |
-| 32 | Diagrama de estados UML 2.5 (Figura 4) | Implementado | figura4-estados.drawio, guardas + acciones |
+| 32 | Diagrama de secuencia UML 2.5 (Figura 4) | Implementado | figura4-secuencia.drawio, flujo de creación de solicitud |
 | 33 | CI/CD pipeline (GitHub Actions) | Descartado | Workflow eliminado; la verificación es manual y Render construye el artefacto sin ejecutar tests dependientes del entorno |
 | 34 | **AWS (IaaS)** | **Descartado** | Complejidad no aporta a la tesis. Ver docs/DEFENSA.md §15 |
 | 35 | **VPN para acceso** | **Descartado** | Render.com da dominio público + HTTPS |
@@ -120,7 +120,7 @@
 | CSS líneas | 582 | ~670 | +88 (dark theme) |
 | SW cache version | v14 | v17 | Bumpeado |
 | Documentos docs/ | 9 | 11 | +COPIES.md, +SUPERFICIES.md |
-| Diagramas docs/diagrams/ | 3 figuras | 4 figuras | +figura4-estados.drawio |
+| Diagramas activos docs/diagrams/ | 3 figuras | 4 figuras | +figura4-secuencia.drawio |
 | Controllers | 16 | 17 | +DocsController |
 | Templates | 27 | 29 | +docs.html, +diagrams.html |
 | Endpoints públicos | 8 | 10 | +/documentos, +/diagramas |

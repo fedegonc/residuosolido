@@ -48,9 +48,9 @@ public class DocsController {
             diagram("figura3-clases", "Figura 3 — Clases de Dominio",
                     "Vista simplificada de User y Request.",
                     "fa-solid fa-sitemap"),
-            diagram("figura4-estados", "Figura 4 — Diagrama de Estados",
-                    "Ciclo de vida de Request: PENDING → IN_PROGRESS/REJECTED → COMPLETED.",
-                    "fa-solid fa-arrows-turn-right")
+            diagram("figura4-secuencia", "Figura 4 — Diagrama de Secuencia",
+                    "Creación de una solicitud desde el formulario hasta su persistencia.",
+                    "fa-solid fa-arrow-right-arrow-left")
     );
 
     private static Map<String, String> doc(String name, String title, String desc, String icon) {

@@ -391,7 +391,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - Casos de uso: `docs/diagrams/figura1-casos-uso.drawio`.
 - Modelo lógico: `docs/diagrams/figura2-modelo-logico.drawio`.
 - Diagrama de clases: `docs/diagrams/figura3-clases.drawio`.
-- Diagrama de estados UML 2.5: `docs/diagrams/figura4-estados.drawio`.
+- Diagrama de secuencia UML 2.5: `docs/diagrams/figura4-secuencia.drawio`.
 - Índice visual de figuras: `docs/diagrams/figuras.html`.
 - Explicación textual y arquitectura: `docs/DIAGRAMAS.md`.
 

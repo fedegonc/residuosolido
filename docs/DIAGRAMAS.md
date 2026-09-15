@@ -93,69 +93,46 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 
 ---
 
-## 4. Diagrama de estados — ciclo de vida de `Request`
+## 4. Diagrama de secuencia — Crear solicitud (RF-3)
 
-**Figura 4** (`docs/diagrams/figura4-estados.drawio`): diagrama UML 2.5 de estados con pseudoinicio, pseudofin, guardas y acciones entry/do.
+**Figura 4** (`docs/diagrams/figura4-secuencia.drawio`): diagrama de secuencia UML 2.5 del flujo real de creación de una solicitud.
 
-```
-                    ┌─────────┐
-                    │ PENDING │  (estado inicial, al crear)
-                    └────┬────┘
-                         │
-            ┌────────────┼────────────┐
-            │ accept(slot)             │ reject()
-            ▼                          ▼
-     ┌──────────────┐            ┌──────────┐
-     │ IN_PROGRESS  │            │ REJECTED │  (estado final)
-     └──────┬───────┘            └──────────┘
-            │ complete()
-            ▼
-     ┌──────────────┐
-     │  COMPLETED   │  (estado final)
-     └──────────────┘
-```
+**Participantes:**
 
-**Transiciones (con guarda):**
+- Solicitante (`Invitado` o `Usuario`).
+- Formulario Thymeleaf `request-form.html`.
+- `RequestCreateController`.
+- `GuestRateLimiter`.
+- `RequestService`.
+- `LocalImageService`.
+- `CityOrgService`.
+- `RequestRepository`.
 
-| Transición | Guarda | Acción |
-|---|---|---|
-| `→ PENDING` | — (creación) | `status = PENDING`, `trackingCode = generate(8)` |
-| `PENDING → IN_PROGRESS` | `[status == PENDING ∧ slot ≠ null]` | `confirmedSlot = slot` |
-| `PENDING → REJECTED` | `[status == PENDING]` | `status = REJECTED` |
-| `IN_PROGRESS → COMPLETED` | `[status == IN_PROGRESS]` | `status = COMPLETED` |
-| `IN_PROGRESS → REJECTED` | `[status == IN_PROGRESS]` | `status = REJECTED` |
+**Secuencia representada:**
 
-**Notas:**
-- Solo en `PENDING` la solicitud puede editarse o eliminarse (`canBeEdited()` / `canBeDeleted()`).
-- Todas las transiciones están protegidas con `@Version` (optimistic locking) contra condiciones de carrera.
-- Las notificaciones al teléfono están fuera del alcance del MVP; el contacto queda registrado en la solicitud.
-- `REJECTED` y `COMPLETED` son estados finales: no admiten transiciones salientes.
+1. El solicitante abre `/solicitudes/nueva` y completa el formulario.
+2. El formulario envía `POST /solicitudes`.
+3. Si es invitado, el controller verifica el rate limit.
+4. `RequestService` valida la imagen y los datos de la solicitud.
+5. `CityOrgService` valida la organización seleccionada y su ciudad.
+6. `RequestRepository` persiste la solicitud.
+7. Si existe imagen, `LocalImageService` la guarda y actualiza `imageUrl`.
+8. El controller redirige a `/solicitudes/exito`.
 
 ---
 
-## 5. Diagrama de secuencia — Crear solicitud (RF-3)
+## 5. Ciclo de estados de `Request` — complemento textual
 
+```text
+PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
+   │                            │
+   └────────reject()────────> REJECTED <──reject()───┘
 ```
-Invitado/Usuario      RequestCreateController   RequestValidator   CityOrgService   RequestService   GuestRateLimiter
-      │                        │                       │                │                │                  │
-      │  GET /solicitudes/nueva│                       │                │                │                  │
-      │───────────────────────▶│                       │                │                │                  │
-      │  (form: ciudad, org,   │                       │                │                │                  │
-      │   materiales, etc.)    │                       │                │                │                  │
-      │◀───────────────────────│                       │                │                │                  │
-      │                        │                       │                │                │                  │
-      │  POST /solicitudes/nueva                       │                │                │                  │
-      │───────────────────────▶│                       │                │                │                  │
-      │                        │──isAllowed(ip)?───────┼────────────────┼────────────────┼─────────────────▶│
-      │                        │◀───────true/false──────┼────────────────┼────────────────┼──────────────────│
-      │                        │──validateCreate()─────▶│                │                │                  │
-      │                        │◀──OK / IllegalArgument─│                │                │                  │
-      │                        │──createRequestWithImage()──────────────┼───────────────▶│                  │
-      │                        │                       │                │──findOrganizationByIdAndCity()────▶│(dentro de RequestService)
-      │                        │                       │                │◀───User (org)───│                  │
-      │                        │                       │                │                │  save(Request)   │
-      │◀───redirect /solicitudes/exito──────────────────────────────────┼────────────────│                  │
-```
+
+- Solo `PENDING` puede editarse o eliminarse.
+- `accept` requiere una franja horaria.
+- `REJECTED` y `COMPLETED` son estados finales.
+- Las transiciones se protegen con `@Version` y optimistic locking.
 
 ---
 
