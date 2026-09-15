@@ -11,7 +11,7 @@
         <mxCell id="subtitle" value="Entidades y asociaciones · Cardinalidades mínimas y máximas · Sección 4.2" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40.0" y="65.0" width="1180.0" height="25.0" />
         </mxCell>
-        <mxCell id="account" value="USUARIO / CUENTA" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
+        <mxCell id="account" value="USUARIO" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="60.0" y="150.0" width="330.0" height="310.0" />
         </mxCell>
         <mxCell id="account-data" value="id {identificador}&#10;nombre (firstName)&#10;nombre de acceso (username)&#10;correo (email)&#10;teléfono&#10;rol: USER | ORGANIZATION&#10;ciudad&#10;materiales aceptados [colección]&#10;activo; perfil completado" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="account" vertex="1">

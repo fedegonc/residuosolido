@@ -1,95 +1,128 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="drawio-mcp" modified="2026-09-15T15:15:32.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+<mxfile host="drawio-mcp" modified="2026-09-15T16:30:00.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
   <diagram name="Diagrama de estados — Request" id="figura4">
-    <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="950" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title" value="Figura 4. Diagrama de estados — ciclo de vida de Request" style="text;html=0;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#173d2b;align=left;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="25.0" width="1220.0" height="38.0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Figura 4. Máquina de estados UML 2.5 — ciclo de vida de Request" style="text;html=0;fontFamily=Helvetica;fontSize=22;fontStyle=1;fontColor=#173d2b;align=left;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="20.0" width="1220.0" height="35.0" />
         </mxCell>
-        <mxCell id="subtitle" value="UML 2.5 · Sección 14 · Transiciones derivadas de Request.java y RequestTransitionService.java" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="65.0" width="1220.0" height="25.0" />
+        <mxCell id="subtitle" value="UML 2.5 State Machine · Sección 14 · Fuente: RequestStatus.java (patrón State) y RequestTransitionService.java" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;align=left;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="58.0" width="1220.0" height="22.0" />
         </mxCell>
+
+        <!-- Initial pseudostate -->
         <mxCell id="initial" style="ellipse;fillColor=#000000;strokeColor=#000000;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="100.0" y="380.0" width="20.0" height="20.0" />
+          <mxGeometry as="geometry" x="80.0" y="395.0" width="20.0" height="20.0" />
         </mxCell>
-        <mxCell id="pending" value="PENDING&#10;&#10;entry / status = PENDING&#10;entry / trackingCode = generate(8)&#10;do / canBeEdited() = true&#10;do / canBeDeleted() = true" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#eaf2ec;strokeColor=#395e48;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="220.0" y="310.0" width="280.0" height="165.0" />
+
+        <!-- PENDING state (with internal transitions compartment) -->
+        <mxCell id="pending" value="PENDING" style="swimlane;startSize=32;horizontal=1;rounded=1;arcSize=15;html=0;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="170.0" y="250.0" width="320.0" height="280.0" />
         </mxCell>
-        <mxCell id="inprogress" value="IN_PROGRESS&#10;&#10;entry / confirmedSlot = slot&#10;do / canBeEdited() = false&#10;do / canBeDeleted() = false" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#eaf2ec;strokeColor=#395e48;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="640.0" y="160.0" width="280.0" height="145.0" />
+        <mxCell id="pending-body" value="entry / status = PENDING&#10;entry / trackingCode = generate(8)&#10;do / canBeEdited() = true&#10;do / canBeDeleted() = true&#10;─── internal ───&#10;edit() [canBeEdited()] / update fields&#10;delete() [canBeDeleted()] / remove request" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;" parent="pending" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="32.0" width="320.0" height="248.0" />
         </mxCell>
-        <mxCell id="completed" value="COMPLETED&#10;&#10;entry / status = COMPLETED&#10;do / canBeEdited() = false" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#dceae0;strokeColor=#395e48;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="1000.0" y="160.0" width="260.0" height="125.0" />
+
+        <!-- IN_PROGRESS state -->
+        <mxCell id="inprogress" value="IN_PROGRESS" style="swimlane;startSize=32;horizontal=1;rounded=1;arcSize=15;html=0;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="590.0" y="120.0" width="300.0" height="170.0" />
         </mxCell>
-        <mxCell id="rejected" value="REJECTED&#10;&#10;entry / status = REJECTED&#10;do / canBeEdited() = false" style="rounded=1;arcSize=20;html=0;fontFamily=Helvetica;fontSize=15;fontStyle=1;fillColor=#f5e6e0;strokeColor=#a12622;strokeWidth=2;verticalAlign=top;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="640.0" y="470.0" width="280.0" height="125.0" />
+        <mxCell id="inprogress-body" value="entry / confirmedSlot = slot&#10;entry / status = IN_PROGRESS&#10;do / canBeEdited() = false&#10;do / canBeDeleted() = false&#10;exit / lock release (@Version)" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;" parent="inprogress" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="32.0" width="300.0" height="138.0" />
         </mxCell>
-        <mxCell id="final" style="endArrow=none;html=0;" parent="1" edge="1">
-          <mxGeometry as="geometry" relative="1" />
+
+        <!-- COMPLETED state (terminal) -->
+        <mxCell id="completed" value="COMPLETED" style="swimlane;startSize=32;horizontal=1;rounded=1;arcSize=15;html=0;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#dceae0;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="980.0" y="120.0" width="260.0" height="120.0" />
         </mxCell>
-        <mxCell id="final-outer" style="ellipse;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="1100.0" y="380.0" width="30.0" height="30.0" />
+        <mxCell id="completed-body" value="entry / status = COMPLETED&#10;do / canBeEdited() = false&#10;do / canBeDeleted() = false" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;" parent="completed" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="32.0" width="260.0" height="88.0" />
+        </mxCell>
+
+        <!-- REJECTED state (terminal) -->
+        <mxCell id="rejected" value="REJECTED" style="swimlane;startSize=32;horizontal=1;rounded=1;arcSize=15;html=0;fontFamily=Helvetica;fontSize=16;fontStyle=1;fillColor=#f5e6e0;swimlaneFillColor=#ffffff;strokeColor=#a12622;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="590.0" y="500.0" width="300.0" height="120.0" />
+        </mxCell>
+        <mxCell id="rejected-body" value="entry / status = REJECTED&#10;do / canBeEdited() = false&#10;do / canBeDeleted() = false" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;" parent="rejected" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="32.0" width="300.0" height="88.0" />
+        </mxCell>
+
+        <!-- Final pseudostate -->
+        <mxCell id="final-outer" style="ellipse;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2.5;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1090.0" y="395.0" width="34.0" height="34.0" />
         </mxCell>
         <mxCell id="final-inner" style="ellipse;fillColor=#000000;strokeColor=#000000;strokeWidth=0;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="1107.0" y="387.0" width="16.0" height="16.0" />
+          <mxGeometry as="geometry" x="1098.0" y="403.0" width="18.0" height="18.0" />
         </mxCell>
-        <mxCell id="t-init" style="endArrow=open;strokeColor=#000000;strokeWidth=1.5;" parent="1" edge="1" source="initial" target="pending">
+
+        <!-- Junction pseudostate (merge point for reject from IN_PROGRESS) -->
+        <mxCell id="junction" style="ellipse;fillColor=#000000;strokeColor=#000000;strokeWidth=0;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="575.0" y="402.0" width="14.0" height="14.0" />
+        </mxCell>
+
+        <!-- Transitions -->
+        <!-- Initial → PENDING -->
+        <mxCell id="t-init" value="create()&#10;[user ∨ guest] / new Request" style="endArrow=open;strokeColor=#000000;strokeWidth=1.5;html=0;fontFamily=Helvetica;fontSize=12;fontColor=#25362b;labelBackgroundColor=#ffffff;" parent="1" edge="1" source="initial" target="pending">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="t-accept" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;exitX=1;exitY=0.25;entryX=0;entryY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.25;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="pending" target="inprogress">
+
+        <!-- PENDING → IN_PROGRESS -->
+        <mxCell id="t-accept" value="accept(slot)&#10;[status == PENDING ∧ slot ≠ null]&#10;/ confirmedSlot = slot" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;html=0;fontFamily=Helvetica;fontSize=12;fontColor=#25362b;labelBackgroundColor=#ffffff;exitX=1;exitY=0.25;entryX=0;entryY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="pending" target="inprogress">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="t-accept-label" value="accept(slot)&#10;[status == PENDING ∧ slot ≠ null]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;align=center;labelBackgroundColor=#ffffff;" parent="t-accept" vertex="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint x="-20.0" y="-30.0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="t-reject-pending" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;exitX=1;exitY=0.75;entryX=0;entryY=0.3;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.75;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.3;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="pending" target="rejected">
+
+        <!-- PENDING → REJECTED -->
+        <mxCell id="t-reject-pending" value="reject()&#10;[status == PENDING]&#10;/ status = REJECTED" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;html=0;fontFamily=Helvetica;fontSize=12;fontColor=#a12622;labelBackgroundColor=#ffffff;exitX=1;exitY=0.75;entryX=0;entryY=0.3;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="pending" target="rejected">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="t-reject-pending-label" value="reject()&#10;[status == PENDING]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#a12622;align=center;labelBackgroundColor=#ffffff;" parent="t-reject-pending" vertex="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint x="-20.0" y="20.0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="t-complete" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="inprogress" target="completed">
+
+        <!-- IN_PROGRESS → COMPLETED -->
+        <mxCell id="t-complete" value="complete()&#10;[status == IN_PROGRESS]&#10;/ status = COMPLETED" style="endArrow=open;strokeColor=#344239;strokeWidth=1.8;html=0;fontFamily=Helvetica;fontSize=12;fontColor=#25362b;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="inprogress" target="completed">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="t-complete-label" value="complete()&#10;[status == IN_PROGRESS]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#25362b;align=center;labelBackgroundColor=#ffffff;" parent="t-complete" vertex="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint x="0.0" y="-30.0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="t-reject-progress" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="inprogress" target="rejected">
+
+        <!-- IN_PROGRESS → junction -->
+        <mxCell id="t-reject-progress-junc" value="reject()&#10;[status == IN_PROGRESS]" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;html=0;fontFamily=Helvetica;fontSize=12;fontColor=#a12622;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="inprogress" target="junction">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="t-reject-progress-label" value="reject()&#10;[status == IN_PROGRESS]" style="text;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#a12622;align=center;labelBackgroundColor=#ffffff;" parent="t-reject-progress" vertex="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint x="-120.0" y="0.0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="t-completed-final" style="endArrow=open;strokeColor=#000000;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="completed" target="final-outer">
+
+        <!-- junction → REJECTED -->
+        <mxCell id="t-junc-rejected" style="endArrow=open;strokeColor=#a12622;strokeWidth=1.8;html=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="junction" target="rejected">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="t-rejected-final" style="endArrow=open;strokeColor=#000000;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="rejected" target="final-outer">
+
+        <!-- COMPLETED → final -->
+        <mxCell id="t-completed-final" style="endArrow=open;strokeColor=#000000;strokeWidth=1.5;html=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="completed" target="final-outer">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+
+        <!-- REJECTED → final -->
+        <mxCell id="t-rejected-final" style="endArrow=open;strokeColor=#000000;strokeWidth=1.5;html=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="rejected" target="final-outer">
           <mxGeometry as="geometry" relative="1">
             <Array as="points">
-              <mxPoint x="960.0" y="530.0" />
-              <mxPoint x="960.0" y="395.0" />
+              <mxPoint x="950.0" y="560.0" />
+              <mxPoint x="950.0" y="412.0" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="note-locking" value="Nota: todas las transiciones están protegidas&#10;con @Version (optimistic locking). Si dos operadores&#10;actúan simultáneamente, la segunda transición&#10;lanza OptimisticLockingFailureException." style="shape=note;size=15;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;align=left;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="220.0" y="560.0" width="360.0" height="100.0" />
+
+        <!-- Notes -->
+        <mxCell id="note-locking" value="Nota — Optimistic Locking:&#10;todas las transiciones están protegidas con @Version.&#10;Si dos operadores actúan simultáneamente, la segunda&#10;transición lanza OptimisticLockingFailureException.&#10;El patrón State (RequestStatus.java) encapsula las&#10;transiciones válidas en cada estado y rechaza las&#10;inválidas con IllegalStateException." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="170.0" y="660.0" width="380.0" height="120.0" />
         </mxCell>
-        <mxCell id="note-notify" value="Nota: las notificaciones automáticas&#10;están fuera del alcance del MVP.&#10;El teléfono queda como dato de contacto." style="shape=note;size=15;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;align=left;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="1000.0" y="560.0" width="260.0" height="80.0" />
+
+        <mxCell id="note-notify" value="Nota — Notificaciones:&#10;las notificaciones automáticas están fuera&#10;del alcance del MVP. El teléfono queda&#10;como dato de contacto manual." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="980.0" y="660.0" width="260.0" height="90.0" />
         </mxCell>
-        <mxCell id="note-edit" value="Nota: solo en PENDING la solicitud&#10;puede editarse o eliminarse&#10;(canBeEdited() / canBeDeleted())." style="shape=note;size=15;html=0;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#fffbe6;strokeColor=#d4a843;strokeWidth=1.2;align=left;spacing=10;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="560.0" width="150.0" height="80.0" />
+
+        <mxCell id="note-legend" value="Lectura UML 2.5:&#10;● = pseudosestado inicial    ◉ = pseudosestado final    ⬤ = junction&#10;entry / = acción de entrada    exit / = acción de salida    do / = actividad continua&#10;evento [guardia] / acción = sintaxis de transición&#10;Transición interna (edit, delete) = no dispara entry/exit, no cambia de estado" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=12;fontColor=#344239;fillColor=#f8f9f8;strokeColor=#c0c8c2;strokeWidth=1;rounded=1;arcSize=10;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="580.0" y="660.0" width="380.0" height="100.0" />
         </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

@@ -24,13 +24,19 @@
       <article th:each="article, iter : ${articles}"
                th:id="${article.slug}"
                class="card card--blog">
+        <div class="card__media">
+          <img th:if="${article.image != null}"
+               th:src="${article.image}"
+               th:alt="${article.alt}"
+               loading="lazy"
+               class="card__img"
+               width="800" />
+          <div th:if="${article.image != null}" class="card__media-fallback" th:text="${article.tag}"></div>
+          <span class="blog-card__tag blog-card__tag--overlay" th:text="${article.tag}">Tag</span>
+        </div>
         <div class="card__header">
           <div class="card__icon"><i th:class="${article.icon}"></i></div>
           <div>
-            <div class="card__meta">
-              <span class="blog-card__tag" th:text="${article.tag}">Tag</span>
-              <span class="blog-card__date" th:text="${article.date}">Fecha</span>
-            </div>
             <h2 class="card__title" th:text="${article.title}">Título</h2>
           </div>
         </div>
@@ -38,6 +44,8 @@
           Contenido del artículo.
         </div>
       </article>
+
+      <p class="blog-attribution">Fotografías: elaboración propia.</p>
 
       <a href="/" class="btn btn--outline btn--lg mt-2">
         <i class="fa-solid fa-arrow-left"></i>

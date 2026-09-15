@@ -35,8 +35,9 @@ public class BlogController {
             expuestos al clima extremo.</p>
 
             <p>Este proyecto los reconoce como parte fundamental del sistema. La plataforma
-            permite que las organizaciones de acopio los registren y coordinen, pero la
-            gestión completa de recolectores queda documentada como mejora futura.</p>
+            conecta a ciudadanos y cooperativas de acopio para coordinar la recolección
+            de reciclables; la gestión directa de recolectores informales queda
+            documentada como mejora futura.</p>
 
             <p><strong>Fuentes:</strong> WIEGO (2026), Movimiento Nacional de Catadores (MNCR),
             Intendencia de Rivera, CEMPRE Uruguay.</p>
@@ -93,21 +94,27 @@ public class BlogController {
 
     private static final List<Map<String, String>> ARTICLES = List.of(
             article("recolectores-informales", "Recolectores informales: el corazón invisible del reciclaje",
-                    "10/09/2026", "fa-solid fa-users", "Comunidad", ARTICLE_RECOLECTORES),
+                    null, "fa-solid fa-users", "Comunidad", "/images/blog/recolectores.jpg",
+                    "Recolectores informales separando reciclables en la frontera", ARTICLE_RECOLECTORES),
             article("galpones-de-acopio", "Los galpones de acopio y el calor del verano",
-                    "10/09/2026", "fa-solid fa-warehouse", "Organizaciones", ARTICLE_GALPONES),
+                    null, "fa-solid fa-warehouse", "Organizaciones", "/images/blog/galpones.jpg",
+                    "Interior de un galpón de acopio de cooperativa", ARTICLE_GALPONES),
             article("frontera-de-la-paz", "Frontera de la Paz: dos ciudades, un mismo compromiso",
-                    "10/09/2026", "fa-solid fa-handshake", "Proyecto", ARTICLE_FRONTERA)
+                    null, "fa-solid fa-handshake", "Proyecto", "/images/blog/frontera.jpg",
+                    "Plaza Internacional entre Rivera y Sant'Ana do Livramento", ARTICLE_FRONTERA)
     );
 
     private static Map<String, String> article(String slug, String title, String date,
-                                                 String icon, String tag, String content) {
+                                                 String icon, String tag, String image, String alt,
+                                                 String content) {
         Map<String, String> m = new LinkedHashMap<>();
         m.put("slug", slug);
         m.put("title", title);
         m.put("date", date);
         m.put("icon", icon);
         m.put("tag", tag);
+        m.put("image", image);
+        m.put("alt", alt);
         m.put("content", content);
         return m;
     }

@@ -11,7 +11,7 @@
         <mxCell id="guest" value="Invitado" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;strokeColor=#344239;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="65" y="160" width="55" height="85" />
         </mxCell>
-        <mxCell id="user" value="Usuario registrado" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;strokeColor=#344239;" parent="1" vertex="1">
+        <mxCell id="user" value="Usuario" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;strokeColor=#344239;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="500" y="680" width="55" height="85" />
         </mxCell>
         <mxCell id="organization" value="Organización" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=0;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;strokeColor=#344239;" parent="1" vertex="1">
