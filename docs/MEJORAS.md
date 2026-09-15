@@ -93,6 +93,7 @@
 || 70 | Notificaciones WhatsApp / asincrónicas | Descartado | Eliminadas del MVP; no proveedor configurado |
 || 71 | OpenAPI / Swagger UI | Implementado | `/swagger-ui.html` generado desde controllers |
 || 72 | Centralización de rutas en `Routes.java` | Implementado | Única fuente de verdad para endpoints y seguridad |
+| 73 | Logs de Render vía MCP (Devin CLI) | Implementado | Documentado en docs/MCP-RENDER-LOGS.md; solo lectura, sin `render.yaml` |
 
 ---
 
