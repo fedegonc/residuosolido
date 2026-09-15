@@ -1,5 +1,7 @@
 package com.residuosolido.app.security;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.service.PublicMetricsService;
 import com.residuosolido.app.service.RequestMetricsService;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Tests de seguridad para flujos nuevos: org, catadores y métricas.
+ * Tests de seguridad para flujos nuevos: org y métricas.
  */
 @SpringBootTest(properties = {
         "spring.data.mongodb.uri=mongodb://localhost:27017/testdb",
@@ -36,40 +38,27 @@ class NewFlowsSecurityTest {
 
     @Test
     void orgProfile_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/acopio/perfil"))
+        mockMvc.perform(get(Routes.ORG_PROFILE))
                 .andExpect(status().is3xxRedirection());
     }
 
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void userRole_cannotAccessOrgProfile() throws Exception {
-        mockMvc.perform(get("/acopio/perfil"))
+        mockMvc.perform(get(Routes.ORG_PROFILE))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void orgRequests_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/acopio/requests"))
+        mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().is3xxRedirection());
     }
 
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void userRole_cannotAccessOrgRequests() throws Exception {
-        mockMvc.perform(get("/acopio/requests"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void orgCatadores_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/acopio/catadores"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    @WithMockUser(username = "vecino", roles = "USER")
-    void userRole_cannotAccessOrgCatadores() throws Exception {
-        mockMvc.perform(get("/acopio/catadores"))
+        mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().isForbidden());
     }
 
@@ -78,7 +67,7 @@ class NewFlowsSecurityTest {
         when(publicMetricsService.getPublicMetricsByCity()).thenReturn(Collections.emptyMap());
         when(publicMetricsService.getPublicTotalCompleted()).thenReturn(0L);
 
-        mockMvc.perform(get("/metricas"))
+        mockMvc.perform(get(Routes.METRICAS))
                 .andExpect(status().isOk());
     }
 
@@ -88,7 +77,7 @@ class NewFlowsSecurityTest {
         when(publicMetricsService.getPublicMetricsByCity()).thenReturn(Collections.emptyMap());
         when(publicMetricsService.getPublicTotalCompleted()).thenReturn(0L);
 
-        mockMvc.perform(get("/metricas"))
+        mockMvc.perform(get(Routes.METRICAS))
                 .andExpect(status().isOk());
     }
 }

@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.service.RequestQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ public class GuestTrackingController {
     }
 
     /** Muestra el formulario de rastreo con resultados opcionales. */
-    @GetMapping("/rastrear")
+    @GetMapping(Routes.TRACK)
     public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone,
                                 @RequestParam(value = "code", required = false) String code,
                                 Model model) {
@@ -45,7 +47,7 @@ public class GuestTrackingController {
     }
 
     /** Busca solicitudes por teléfono + código (POST desde el formulario). */
-    @PostMapping("/rastrear")
+    @PostMapping(Routes.TRACK)
     public String trackGuestSubmit(@RequestParam("phone") String phone,
                                    @RequestParam("code") String code,
                                    Model model) {

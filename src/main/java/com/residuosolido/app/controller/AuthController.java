@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.dto.RegistrationForm;
 import com.residuosolido.app.config.GuestRateLimiter;
@@ -30,14 +32,14 @@ public class AuthController extends BaseController {
     }
 
     /** Muestra el formulario de registro (ciudadano u organización). */
-    @GetMapping("/auth/register")
+    @GetMapping(Routes.REGISTER)
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new RegistrationForm());
         return "auth/register";
     }
 
     /** Procesa el registro de un nuevo usuario. */
-    @PostMapping("/auth/register")
+    @PostMapping(Routes.REGISTER)
     public String registerUser(@ModelAttribute("user") RegistrationForm form,
                                @RequestParam(defaultValue = "false") boolean isOrganization,
                                Model model, HttpServletRequest request,
@@ -59,7 +61,7 @@ public class AuthController extends BaseController {
     }
 
     /** Muestra la página de login. Soporta params ?error y ?blocked. */
-    @GetMapping("/auth/login")
+    @GetMapping(Routes.LOGIN)
     public String showLoginPage(HttpServletRequest request, Model model) {
         if (request.getParameter("blocked") != null) {
             model.addAttribute("errorMessage", msg("login.blocked"));

@@ -10,9 +10,9 @@
     <div class="page track-section">
 
       <!-- Search card -->
-      <div class="track-card page--narrow">
-        <h1 class="track-card__title" data-i18n="track_title">Buscar mi solicitud</h1>
-        <p class="track-card__subtitle mb-2" data-i18n="track_subtitle">Si pediste recolección sin cuenta, ingresá tu teléfono y el código que te dimos.</p>
+      <div class="card card--track page--narrow">
+        <h1 class="card__title" data-i18n="track_title">Buscar mi solicitud</h1>
+        <p class="card__subtitle mb-2" data-i18n="track_subtitle">Si pediste recolección sin cuenta, ingresá tu teléfono y el código que te dimos.</p>
 
         <form th:action="@{/rastrear}" method="post" class="track-form">
           <div class="form-group">
@@ -43,7 +43,7 @@
       <div th:if="${searched}" class="page">
 
         <!-- Empty state -->
-        <div th:if="${requests != null and requests.isEmpty()}" class="track-card">
+        <div th:if="${requests != null and requests.isEmpty()}" class="card card--track">
           <div class="track-empty">
             <div class="track-empty__illustration">
               <i class="fa-solid fa-magnifying-glass"></i>
@@ -59,7 +59,7 @@
 
         <!-- Request list -->
         <div th:if="${requests != null and !requests.isEmpty()}">
-          <h2 class="track-card__subtitle mb-2" data-i18n="track_results_title">Estas son tus solicitudes</h2>
+          <h2 class="card__subtitle mb-2" data-i18n="track_results_title">Estas son tus solicitudes</h2>
           <div class="request-list">
             <div th:each="req : ${requests}" class="request-item">
 

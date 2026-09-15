@@ -1,5 +1,7 @@
 package com.residuosolido.app.security;
 
+import com.residuosolido.app.config.Routes;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,13 +34,13 @@ class CriticalSecurityTest {
 
     @Test
     void loginPage_isPublic() throws Exception {
-        mockMvc.perform(get("/auth/login"))
+        mockMvc.perform(get(Routes.LOGIN))
                 .andExpect(status().isOk());
     }
 
     @Test
     void registerPage_isPublic() throws Exception {
-        mockMvc.perform(get("/auth/register"))
+        mockMvc.perform(get(Routes.REGISTER))
                 .andExpect(status().isOk());
     }
 
@@ -46,21 +48,21 @@ class CriticalSecurityTest {
 
     @Test
     void userDashboard_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/usuarios/inicio"))
+        mockMvc.perform(get(Routes.USER_HOME))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/auth/login"));
     }
 
     @Test
     void orgDashboard_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/acopio/inicio"))
+        mockMvc.perform(get(Routes.ORG_HOME))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/auth/login"));
     }
 
     @Test
     void userRequestsList_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get("/solicitudes"))
+        mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/auth/login"));
     }
@@ -70,21 +72,14 @@ class CriticalSecurityTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void userRole_cannotAccessOrgRoutes() throws Exception {
-        mockMvc.perform(get("/acopio/inicio"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "vecino", roles = "USER")
-    void userRole_cannotAccessOrgCatadores() throws Exception {
-        mockMvc.perform(get("/acopio/catadores"))
+        mockMvc.perform(get(Routes.ORG_HOME))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRole_cannotAccessUserRoutes() throws Exception {
-        mockMvc.perform(get("/usuarios/inicio"))
+        mockMvc.perform(get(Routes.USER_HOME))
                 .andExpect(status().isForbidden());
     }
 
@@ -93,7 +88,7 @@ class CriticalSecurityTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void postWithoutCsrf_isRejected() throws Exception {
-        mockMvc.perform(post("/usuarios/perfil"))
+        mockMvc.perform(post(Routes.USER_PROFILE))
                 .andExpect(status().isForbidden());
     }
 
@@ -101,13 +96,13 @@ class CriticalSecurityTest {
     void logout_requiresPost_getIsNotAllowed() throws Exception {
         // GET /logout no existe como endpoint (dead code eliminado);
         // anónimo es redirigido a login por el filter chain
-        mockMvc.perform(get("/logout"))
+        mockMvc.perform(get(Routes.LOGOUT))
                 .andExpect(status().is3xxRedirection());
     }
 
     @Test
     void logout_viaPost_redirectsToHome() throws Exception {
-        mockMvc.perform(post("/logout").with(csrf()))
+        mockMvc.perform(post(Routes.LOGOUT).with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/**"));
     }

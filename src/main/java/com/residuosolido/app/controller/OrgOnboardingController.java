@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import org.slf4j.Logger;
@@ -24,7 +26,7 @@ public class OrgOnboardingController extends BaseController {
     }
 
     /** Muestra el formulario para completar perfil (teléfono y ciudad). */
-    @GetMapping("/acopio/completar-perfil")
+    @GetMapping(Routes.ORG_COMPLETE_PROFILE)
     public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
         try {
             User currentUser = getCurrentUser(authentication);
@@ -46,7 +48,7 @@ public class OrgOnboardingController extends BaseController {
     }
 
     /** Guarda el perfil inicial de la organización. */
-    @PostMapping("/acopio/completar-perfil")
+    @PostMapping(Routes.ORG_COMPLETE_PROFILE)
     public String completeProfile(
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) City city,

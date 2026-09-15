@@ -8,12 +8,12 @@
 <body>
   <main layout:fragment="content">
     <div class="page form-section">
-      <div class="form-card">
+      <div class="card card--form">
 
-        <h1 class="form-card__title" th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</h1>
-        <h1 class="form-card__title" th:unless="${isEdit}" data-i18n="req_form_title_new">Solicitar recolección</h1>
-        <p class="form-card__subtitle" th:if="${isEdit}" data-i18n="req_form_subtitle_edit">Modificá los datos de tu solicitud</p>
-        <p class="form-card__subtitle" th:unless="${isEdit}" data-i18n="req_form_subtitle_new">Decinos qué materiales tenés y en qué dirección retirarlos.</p>
+        <h1 class="card__title" th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</h1>
+        <h1 class="card__title" th:unless="${isEdit}" data-i18n="req_form_title_new">Solicitar recolección</h1>
+        <p class="card__subtitle" th:if="${isEdit}" data-i18n="req_form_subtitle_edit">Modificá los datos de tu solicitud</p>
+        <p class="card__subtitle" th:unless="${isEdit}" data-i18n="req_form_subtitle_new">Decinos qué materiales tenés y en qué dirección retirarlos.</p>
 
         <form th:action="${isEdit} ? '/solicitud/' + ${request.id} + '/editar' : '/solicitudes'"
               method="post"
@@ -131,8 +131,7 @@
                   <label class="radio-card">
                     <input type="radio" name="timeSlot" th:value="${slot.name()}"
                            th:checked="${request.confirmedSlot != null and request.confirmedSlot == slot}">
-                    <i th:class="${slot.name() == 'MANANA'} ? 'fa-solid fa-sun' :
-                                 (${slot.name() == 'TARDE'} ? 'fa-solid fa-cloud-sun' : 'fa-solid fa-moon')}"></i>
+                    <i th:class="${slot.name() == 'MANANA'} ? 'fa-solid fa-sun' : (${slot.name() == 'TARDE'} ? 'fa-solid fa-cloud-sun' : 'fa-solid fa-moon')}"></i>
                     <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(slot.name())}" th:text="${slot.name()}">MANANA</span>
                   </label>
                 </th:block>

@@ -1,9 +1,14 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.dto.OrganizationDto;
-import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.service.CityOrgService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,9 +27,23 @@ public class OrgApiController {
         this.cityOrgService = cityOrgService;
     }
 
-    /** Devuelve las organizaciones de una ciudad como JSON (id, nombre, materiales aceptados). */
-    @GetMapping("/api/organizations/by-city")
-    public List<OrganizationDto> getOrganizationsByCity(@RequestParam City city) {
+    /**
+     * Devuelve las organizaciones de una ciudad como JSON.
+     */
+    @Operation(
+            summary = "Listar organizaciones por ciudad",
+            description = "Devuelve las organizaciones activas de una ciudad con los materiales que aceptan."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Lista de organizaciones",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = OrganizationDto.class))
+    )
+    @GetMapping(Routes.API_ORGANIZATIONS_BY_CITY)
+    public List<OrganizationDto> getOrganizationsByCity(
+            @Parameter(description = "Ciudad para filtrar organizaciones", example = "RIVERA", required = true)
+            @RequestParam City city) {
         return cityOrgService.getOrganizationsByCity(city).stream()
                 .map(org -> new OrganizationDto(org.getId(), org.getDisplayName(), org.getAcceptedMaterials()))
                 .toList();

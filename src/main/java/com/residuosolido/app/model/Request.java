@@ -60,25 +60,21 @@ public class Request {
     private String trackingCode;
 
     public void accept(TimeSlot slot) {
-        if (status != RequestStatus.PENDING) throw new IllegalStateException("error.request.accept_not_pending");
         if (slot == null) throw new IllegalArgumentException("error.request.slot_required");
         this.confirmedSlot = slot;
-        this.status = RequestStatus.IN_PROGRESS;
+        this.status = status.transitionAccept();
     }
 
     public void complete() {
-        if (status != RequestStatus.IN_PROGRESS) throw new IllegalStateException("error.request.complete_not_in_progress");
-        this.status = RequestStatus.COMPLETED;
+        this.status = status.transitionComplete();
     }
 
     public void reject() {
-        if (status != RequestStatus.PENDING && status != RequestStatus.IN_PROGRESS)
-            throw new IllegalStateException("error.request.reject_invalid_state");
-        this.status = RequestStatus.REJECTED;
+        this.status = status.transitionReject();
     }
 
-    public boolean canBeEdited() { return status == RequestStatus.PENDING; }
-    public boolean canBeDeleted() { return status == RequestStatus.PENDING; }
+    public boolean canBeEdited() { return status.canBeEdited(); }
+    public boolean canBeDeleted() { return status.canBeDeleted(); }
     public boolean isGuest() { return user == null; }
     public boolean hasMaterials() { return materials != null && !materials.isEmpty(); }
     public boolean hasImage() { return imageUrl != null && !imageUrl.isBlank(); }

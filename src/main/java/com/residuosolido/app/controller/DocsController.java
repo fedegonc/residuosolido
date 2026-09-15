@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -29,17 +31,11 @@ import java.util.Map;
 public class DocsController {
 
     private static final List<Map<String, String>> DOCUMENTS = List.of(
-            doc("CORE", "Núcleo del sistema", "Visión general, stack y decisiones de arquitectura.", "fa-solid fa-cube"),
-            doc("RF-RN", "Requisitos y reglas de negocio", "8 requisitos funcionales y 14 reglas de negocio (RN-01 a RN-14).", "fa-solid fa-list-check"),
-            doc("ENDPOINTS", "Endpoints HTTP", "Rutas extraídas de los controllers, agrupadas por rol.", "fa-solid fa-route"),
-            doc("METODOLOGIA", "Metodología", "Modelo iterativo incremental en 4 fases.", "fa-solid fa-diagram-project"),
-            doc("TRADEOFFS", "Tradeoffs de diseño", "Decisiones de diseño y sus consecuencias.", "fa-solid fa-scale-balanced"),
-            doc("HARDENING", "Endurecimiento del MVP", "Correcciones de seguridad aplicadas y limitaciones.", "fa-solid fa-shield-halved"),
-            doc("TESTING", "Testing", "Estrategia de pruebas por capa (218 tests, JUnit 5 + Mockito).", "fa-solid fa-vial"),
-            doc("MEJORAS", "Superficies de mejora", "Tabla centralizada de mejoras posibles y su estado.", "fa-solid fa-table-list"),
-            doc("COPIES", "Copies del sistema", "Microcopy y textos de interfaz.", "fa-solid fa-align-left"),
-            doc("SUPERFICIES", "Superficies de diseño", "Sistema de diseño canónico (variables CSS, BEM).", "fa-solid fa-palette"),
-            doc("CORRECCIONES", "Correcciones y limpieza", "Defectos corregidos, limitaciones pendientes y tradeoffs.", "fa-solid fa-broom")
+            doc("DEFENSA", "Defensa de tesis", "Argumento, demo, preguntas del tribunal, tradeoffs y fuentes académicas.", "fa-solid fa-graduation-cap"),
+            doc("METODOLOGIA", "Metodología", "Modelo iterativo incremental, copies del sistema y single source of truth.", "fa-solid fa-diagram-project"),
+            doc("DIAGRAMAS", "Diagramas y requisitos", "Diagramas UML, requisitos funcionales y reglas de negocio.", "fa-solid fa-sitemap"),
+            doc("ENDPOINTS", "Endpoints y testing", "Rutas HTTP extraídas de controllers y estrategia de pruebas (229 tests).", "fa-solid fa-route"),
+            doc("MEJORAS", "Mejoras y auditoría", "Superficies de mejora, hardening, correcciones aplicadas y auditoría.", "fa-solid fa-table-list")
     );
 
     private static final List<Map<String, String>> DIAGRAMS = List.of(
@@ -50,7 +46,7 @@ public class DocsController {
                     "Entidades y asociaciones con multiplicidades (MongoDB).",
                     "fa-solid fa-database"),
             diagram("figura3-clases", "Figura 3 — Clases de Dominio",
-                    "Vista simplificada de User, Request e InformalCollector.",
+                    "Vista simplificada de User y Request.",
                     "fa-solid fa-sitemap"),
             diagram("figura4-estados", "Figura 4 — Diagrama de Estados",
                     "Ciclo de vida de Request: PENDING → IN_PROGRESS/REJECTED → COMPLETED.",
@@ -75,7 +71,7 @@ public class DocsController {
         return m;
     }
 
-    @GetMapping("/documentos")
+    @GetMapping(Routes.DOCUMENTOS)
     public String docsIndex(Model model) {
         model.addAttribute("documents", DOCUMENTS);
         model.addAttribute("breadcrumbs", List.of(
@@ -85,7 +81,7 @@ public class DocsController {
         return "public/docs";
     }
 
-    @GetMapping("/diagramas")
+    @GetMapping(Routes.DIAGRAMAS)
     public String diagramsIndex(Model model) {
         model.addAttribute("diagrams", DIAGRAMS);
         model.addAttribute("breadcrumbs", List.of(
@@ -103,7 +99,7 @@ public class DocsController {
      * Sirve archivos .md con content-type text/markdown para que el navegador
      * los muestre en vez de descargarlos.
      */
-    @GetMapping("/docs/{file}.md")
+    @GetMapping(Routes.DOCS_FILE)
     public ResponseEntity<Resource> serveMarkdown(@PathVariable String file) {
         return serveDoc(file + ".md", MediaType.TEXT_MARKDOWN);
     }
@@ -112,7 +108,7 @@ public class DocsController {
      * Sirve archivos .drawio con content-type application/xml para que el visor
      * los pueda parsear.
      */
-    @GetMapping("/docs/diagrams/{file}.drawio")
+    @GetMapping(Routes.DOCS_DIAGRAM)
     public ResponseEntity<Resource> serveDrawio(@PathVariable String file) {
         return serveDoc("diagrams/" + file + ".drawio", MediaType.APPLICATION_XML);
     }

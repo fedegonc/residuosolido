@@ -1,12 +1,14 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestQueryService;
-import com.residuosolido.app.service.RequestUpdateService;
+import com.residuosolido.app.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +28,22 @@ public class RequestEditController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestEditController.class);
 
-    private final RequestUpdateService requestUpdateService;
+    private final RequestService requestService;
     private final RequestQueryService requestQueryService;
     private final CityOrgService cityOrgService;
 
     @Autowired
-    public RequestEditController(RequestUpdateService requestUpdateService,
+    public RequestEditController(RequestService requestService,
                                  RequestQueryService requestQueryService,
                                  CityOrgService cityOrgService) {
-        this.requestUpdateService = requestUpdateService;
+        this.requestService = requestService;
         this.requestQueryService = requestQueryService;
         this.cityOrgService = cityOrgService;
     }
 
     /** Muestra el formulario de edición con los datos actuales. */
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/solicitud/{id}/editar")
+    @GetMapping(Routes.REQUEST_EDIT)
     public String editRequestForm(@PathVariable String id, Authentication authentication, Model model,
                                   RedirectAttributes redirectAttributes) {
         try {
@@ -69,7 +71,7 @@ public class RequestEditController extends BaseController {
 
     /** Actualiza una solicitud existente (ciudad, dirección, materiales, imagen). */
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/solicitud/{id}/editar")
+    @PostMapping(Routes.REQUEST_EDIT)
     public String updateRequest(@PathVariable String id,
                                 @RequestParam("city") City city,
                                 @RequestParam("address") String address,
@@ -81,7 +83,7 @@ public class RequestEditController extends BaseController {
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser(authentication);
-            requestUpdateService.updateRequest(id, user, city, address, addressReference, materials, organizationId, imageFile);
+            requestService.updateRequest(id, user, city, address, addressReference, materials, organizationId, imageFile);
             flashSuccess(redirectAttributes, "flash.request.updated");
             return "redirect:/solicitud/" + id;
         } catch (SecurityException e) {

@@ -1,11 +1,13 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;
-import com.residuosolido.app.service.RequestOrgService;
+import com.residuosolido.app.service.RequestQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +28,17 @@ public class OrgDashboardController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(OrgDashboardController.class);
 
     private final RequestMetricsService requestMetricsService;
-    private final RequestOrgService requestOrgService;
+    private final RequestQueryService requestQueryService;
 
     @Autowired
     public OrgDashboardController(RequestMetricsService requestMetricsService,
-                                   RequestOrgService requestOrgService) {
+                                   RequestQueryService requestQueryService) {
         this.requestMetricsService = requestMetricsService;
-        this.requestOrgService = requestOrgService;
+        this.requestQueryService = requestQueryService;
     }
 
     /** Página principal de la organización. Redirige a completar perfil si falta. */
-    @GetMapping("/acopio/inicio")
+    @GetMapping(Routes.ORG_HOME)
     public String orgDashboard(Authentication authentication, Model model) {
         User currentOrg = getCurrentUser(authentication);
 
@@ -50,8 +52,8 @@ public class OrgDashboardController extends BaseController {
             model.addAttribute("pendingRequests", data.get("pending"));
             model.addAttribute("inProgressRequests", data.get("inProgress"));
             model.addAttribute("completedRequests", data.get("completed"));
-            model.addAttribute("pendingRequestsList", requestOrgService.getRecentPendingRequestsByOrganization(currentOrg, 5));
-            model.addAttribute("kanban", requestOrgService.getRequestsByOrganizationGroupedByStatus(currentOrg));
+            model.addAttribute("pendingRequestsList", requestQueryService.getRecentPendingRequestsByOrganization(currentOrg, 5));
+            model.addAttribute("kanban", requestQueryService.getRequestsByOrganizationGroupedByStatus(currentOrg));
             model.addAttribute("timeSlots", TimeSlot.values());
         } catch (Exception e) {
             logger.error("Error en dashboard de organización: {}", e.getMessage(), e);

@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,7 @@ import java.util.Map;
  * Blog estático con contenido informativo sobre recolectores informales,
  * organizaciones de acopio y el proyecto binacional.
  * El contenido es estático (hardcodeado) para el MVP; se documenta que
- * puede hacerse dinámico en el futuro (ver docs/HARDENING.md).
+ * puede hacerse dinámico en el futuro (ver docs/MEJORAS.md).
  */
 @Controller
 public class BlogController {
@@ -110,7 +112,7 @@ public class BlogController {
         return m;
     }
 
-    @GetMapping("/blog")
+    @GetMapping(Routes.BLOG)
     public String blogIndex(Model model) {
         model.addAttribute("articles", ARTICLES);
         model.addAttribute("breadcrumbs", List.of(

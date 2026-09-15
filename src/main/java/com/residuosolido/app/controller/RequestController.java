@@ -1,9 +1,11 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.RequestQueryService;
-import com.residuosolido.app.service.RequestUpdateService;
+import com.residuosolido.app.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +22,18 @@ public class RequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
-    private final RequestUpdateService requestUpdateService;
+    private final RequestService requestService;
     private final RequestQueryService requestQueryService;
 
     @Autowired
-    public RequestController(RequestUpdateService requestUpdateService,
+    public RequestController(RequestService requestService,
                              RequestQueryService requestQueryService) {
-        this.requestUpdateService = requestUpdateService;
+        this.requestService = requestService;
         this.requestQueryService = requestQueryService;
     }
 
     /** Página de confirmación tras crear una solicitud. */
-    @GetMapping("/solicitudes/exito")
+    @GetMapping(Routes.REQUESTS_SUCCESS)
     public String requestSuccess(@RequestParam(value = "id", required = false) String id,
                                   Model model, Authentication authentication) {
         if (id != null && !id.isBlank()) {
@@ -49,7 +51,7 @@ public class RequestController extends BaseController {
 
     /** Lista las solicitudes del usuario autenticado (paginado). */
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/solicitudes")
+    @GetMapping(Routes.REQUESTS)
     public String listUserRequests(@RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "20") int size,
                                     Authentication authentication, Model model) {
@@ -62,7 +64,7 @@ public class RequestController extends BaseController {
 
     /** Muestra el detalle de una solicitud del usuario. */
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/solicitud/{id}")
+    @GetMapping(Routes.REQUEST)
     public String requestDetail(@PathVariable String id, Authentication authentication, Model model,
                                  RedirectAttributes redirectAttributes) {
         try {
@@ -81,12 +83,12 @@ public class RequestController extends BaseController {
 
     /** Elimina una solicitud del usuario (solo si está pendiente). */
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/solicitud/{id}/eliminar")
+    @PostMapping(Routes.REQUEST_DELETE)
     public String deleteRequest(@PathVariable String id, Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser(authentication);
-            requestUpdateService.deleteOwnedRequest(id, user);
+            requestService.deleteOwnedRequest(id, user);
             flashSuccess(redirectAttributes, "flash.request.deleted");
         } catch (SecurityException e) {
             flashError(redirectAttributes, "flash.request.not_owned");

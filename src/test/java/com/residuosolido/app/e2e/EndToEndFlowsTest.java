@@ -1,5 +1,7 @@
 package com.residuosolido.app.e2e;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
@@ -8,11 +10,10 @@ import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestMetricsService;
-import com.residuosolido.app.service.RequestOrgService;
+import com.residuosolido.app.service.RequestQueryService;
 import com.residuosolido.app.service.RequestTransitionService;
-import com.residuosolido.app.service.InformalCollectorService;
 import com.residuosolido.app.service.RequestService;
-import com.residuosolido.app.service.RequestUpdateService;
+import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.RequestQueryService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -55,8 +56,6 @@ class EndToEndFlowsTest {
     @MockBean
     private RequestService requestService;
     @MockBean
-    private RequestUpdateService requestUpdateService;
-    @MockBean
     private RequestQueryService requestQueryService;
     @MockBean
     private UserService userService;
@@ -65,11 +64,7 @@ class EndToEndFlowsTest {
     @MockBean
     private CityOrgService cityOrgService;
     @MockBean
-    private RequestOrgService requestOrgService;
-    @MockBean
     private RequestTransitionService requestTransitionService;
-    @MockBean
-    private InformalCollectorService informalCollectorService;
 
     // ═══════════════════════════════════════════════════════
     // Flujo 6: Tracking de invitado (track.html)
@@ -79,7 +74,7 @@ class EndToEndFlowsTest {
     void flujo6_guestTracking_pageLoadsAndShowsForm() throws Exception {
         when(requestQueryService.getGuestRequests(null, null)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/rastrear"))
+        mockMvc.perform(get(Routes.TRACK))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/track"))
                 .andExpect(model().attributeExists("phone", "code", "requests", "searched"));
@@ -99,7 +94,7 @@ class EndToEndFlowsTest {
 
         when(requestQueryService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
 
-        mockMvc.perform(post("/rastrear").with(csrf())
+        mockMvc.perform(post(Routes.TRACK).with(csrf())
                         .param("phone", "+59899123456")
                         .param("code", "AB12CD34"))
                 .andExpect(status().isOk())
@@ -119,7 +114,7 @@ class EndToEndFlowsTest {
         when(cityOrgService.getAvailableCities()).thenReturn(List.of(City.RIVERA));
         when(cityOrgService.getOrganizationsByCity(any())).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/solicitudes/nueva"))
+        mockMvc.perform(get(Routes.REQUESTS_NEW))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/request-form"))
                 .andExpect(model().attribute("isGuest", true))
@@ -141,7 +136,7 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(requestQueryService.getRecentRequestsByUser(user, 5)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/usuarios/inicio"))
+        mockMvc.perform(get(Routes.USER_HOME))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/dashboard"))
                 .andExpect(model().attributeExists("user", "recentRequests", "breadcrumbs"));
@@ -160,7 +155,7 @@ class EndToEndFlowsTest {
         when(requestMetricsService.getUserDashboardStats(user))
                 .thenReturn(Map.of("total", 5L, "pending", 2L, "inProgress", 1L, "completed", 2L));
 
-        mockMvc.perform(get("/usuarios/perfil"))
+        mockMvc.perform(get(Routes.USER_PROFILE))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/profile"))
                 .andExpect(model().attributeExists("user", "requestStats", "cities", "breadcrumbs"));
@@ -180,7 +175,7 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(requestQueryService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/solicitudes"))
+        mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/requests"))
                 .andExpect(model().attributeExists("requests", "currentPage", "pageSize"));
@@ -205,16 +200,16 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(requestMetricsService.getOrgDashboardData(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
-        when(requestOrgService.getRecentPendingRequestsByOrganization(org, 5))
+        when(requestQueryService.getRecentPendingRequestsByOrganization(org, 5))
                 .thenReturn(Collections.emptyList());
-        when(requestOrgService.getRequestsByOrganizationGroupedByStatus(org))
+        when(requestQueryService.getRequestsByOrganizationGroupedByStatus(org))
                 .thenReturn(Map.of(
                         RequestStatus.PENDING, Collections.emptyList(),
                         RequestStatus.IN_PROGRESS, Collections.emptyList(),
                         RequestStatus.COMPLETED, Collections.emptyList(),
                         RequestStatus.REJECTED, Collections.emptyList()));
 
-        mockMvc.perform(get("/acopio/inicio"))
+        mockMvc.perform(get(Routes.ORG_HOME))
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/dashboard"))
                 .andExpect(model().attributeExists("pendingRequests", "inProgressRequests", "completedRequests", "pendingRequestsList", "breadcrumbs"));
@@ -235,13 +230,13 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(userService.updateProfile(any(), any(), any(), any(), any())).thenReturn(org);
 
-        mockMvc.perform(get("/acopio/perfil"))
+        mockMvc.perform(get(Routes.ORG_PROFILE))
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/profile"))
                 .andExpect(model().attributeExists("organization", "cities"));
 
         // POST update
-        mockMvc.perform(post("/acopio/perfil").with(csrf())
+        mockMvc.perform(post(Routes.ORG_PROFILE).with(csrf())
                         .param("email", "coop@test.com")
                         .param("firstName", "Cooperativa")
                         .param("phone", "+59899123456")
@@ -263,10 +258,10 @@ class EndToEndFlowsTest {
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestOrgService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
+        when(requestQueryService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/acopio/requests"))
+        mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/requests"))
                 .andExpect(model().attributeExists("requests", "viewType", "currentPage", "pageSize"))
@@ -291,9 +286,9 @@ class EndToEndFlowsTest {
         req.setGuestPhone("+59899123456");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestOrgService.getOwnedOrgRequest("req1", org)).thenReturn(req);
+        when(requestQueryService.getOwnedOrgRequest("req1", org)).thenReturn(req);
 
-        mockMvc.perform(get("/acopio/requests/req1"))
+        mockMvc.perform(get(Routes.ORG_REQUEST, "req1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/requests"))
                 .andExpect(model().attribute("viewType", "detail"))
@@ -310,51 +305,11 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
 
-        mockMvc.perform(post("/acopio/requests/req1/transition").with(csrf())
+        mockMvc.perform(post(Routes.ORG_REQUEST_TRANSITION, "req1").with(csrf())
                         .param("action", "accept")
                         .param("confirmedSlot", "MANANA"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/acopio/requests"));
-    }
-
-    // ═══════════════════════════════════════════════════════
-    // Flujo 9: Catadores (org/catadores.html)
-    // ═══════════════════════════════════════════════════════
-
-    @Test
-    @WithMockUser(username = "coop", roles = "ORGANIZATION")
-    void flujo9_catadoresList_loadsSuccessfully() throws Exception {
-        User org = new User();
-        org.setId("o1");
-        org.setUsername("coop");
-        org.setProfileCompleted(true);
-
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(informalCollectorService.findByOrganization(org)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get("/acopio/catadores"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("org/catadores"))
-                .andExpect(model().attributeExists("catadores", "cities", "materialCategories"));
-    }
-
-    @Test
-    @WithMockUser(username = "coop", roles = "ORGANIZATION")
-    void flujo9_catadorSave_redirectsOnSuccess() throws Exception {
-        User org = new User();
-        org.setId("o1");
-        org.setUsername("coop");
-        org.setProfileCompleted(true);
-
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-
-        mockMvc.perform(post("/acopio/catadores").with(csrf())
-                        .param("name", "João")
-                        .param("phone", "+59899123456")
-                        .param("city", "RIVERA")
-                        .param("active", "true"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/acopio/catadores"));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -373,7 +328,7 @@ class EndToEndFlowsTest {
         when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("error.request.address_required"));
 
-        mockMvc.perform(post("/solicitudes").with(csrf())
+        mockMvc.perform(post(Routes.REQUESTS).with(csrf())
                         .param("city", "RIVERA")
                         .param("address", "")
                         .param("organizationId", "org1"))

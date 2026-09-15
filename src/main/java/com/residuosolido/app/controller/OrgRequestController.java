@@ -1,10 +1,12 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
-import com.residuosolido.app.service.RequestOrgService;
+import com.residuosolido.app.service.RequestQueryService;
 import com.residuosolido.app.service.RequestTransitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,24 +28,24 @@ public class OrgRequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
-    private final RequestOrgService requestOrgService;
+    private final RequestQueryService requestQueryService;
     private final RequestTransitionService requestTransitionService;
 
     @Autowired
-    public OrgRequestController(RequestOrgService requestOrgService,
+    public OrgRequestController(RequestQueryService requestQueryService,
                                RequestTransitionService requestTransitionService) {
-        this.requestOrgService = requestOrgService;
+        this.requestQueryService = requestQueryService;
         this.requestTransitionService = requestTransitionService;
     }
 
     /** Lista las solicitudes de la organización, con filtro opcional por estado. */
-    @GetMapping("/acopio/requests")
+    @GetMapping(Routes.ORG_REQUESTS)
     public String orgRequests(@RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
         User currentOrg = getCurrentUser(authentication);
-        List<Request> requests = requestOrgService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
+        List<Request> requests = requestQueryService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
@@ -60,7 +62,7 @@ public class OrgRequestController extends BaseController {
     }
 
     /** Cambia el estado de una solicitud: aceptar, rechazar o completar. */
-    @PostMapping("/acopio/requests/{id}/transition")
+    @PostMapping(Routes.ORG_REQUEST_TRANSITION)
     public String orgTransitionRequest(@PathVariable String id,
                                        @RequestParam("action") String action,
                                        @RequestParam(value = "confirmedSlot", required = false) TimeSlot confirmedSlot,

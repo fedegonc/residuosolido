@@ -103,8 +103,8 @@
         </div>
 
         <!-- Contact info -->
-        <div class="info-card">
-          <h2 class="info-card__title" data-i18n="org_req_contact">Contacto</h2>
+        <div class="card card--info">
+          <h2 class="card__title" data-i18n="org_req_contact">Contacto</h2>
           <div class="info-row" th:if="${request.contactName != null}">
             <i class="fa-solid fa-user"></i>
             <span class="info-row__label" data-i18n="org_req_contact_name">Nombre</span>
@@ -128,8 +128,8 @@
         </div>
 
         <!-- Address -->
-        <div class="info-card">
-          <h2 class="info-card__title" data-i18n="req_detail_address">Dirección</h2>
+        <div class="card card--info">
+          <h2 class="card__title" data-i18n="req_detail_address">Dirección</h2>
           <div class="info-row" th:if="${request.city != null}">
             <i class="fa-solid fa-location-dot"></i>
             <span class="info-row__label" data-i18n="req_detail_city">Ciudad</span>
@@ -148,8 +148,8 @@
         </div>
 
         <!-- Materials -->
-        <div class="info-card">
-          <h2 class="info-card__title" data-i18n="req_detail_materials">Materiales</h2>
+        <div class="card card--info">
+          <h2 class="card__title" data-i18n="req_detail_materials">Materiales</h2>
           <div th:if="${request.hasMaterials()}" class="request-item__materials">
             <span th:each="mat : ${request.materials}" class="material-tag" th:text="${mat.name()}"></span>
           </div>
@@ -157,15 +157,15 @@
         </div>
 
         <!-- Image -->
-        <div th:if="${request.hasImage()}" class="info-card">
-          <h2 class="info-card__title" data-i18n="req_detail_image">Foto</h2>
+        <div th:if="${request.hasImage()}" class="card card--info">
+          <h2 class="card__title" data-i18n="req_detail_image">Foto</h2>
           <img th:src="${request.imageUrl}" alt="Foto de materiales"
                class="img-detail">
         </div>
 
         <!-- Confirmed slot -->
-        <div class="info-card" th:if="${request.confirmedSlot != null}">
-          <h2 class="info-card__title" data-i18n="req_detail_slot">Franja confirmada</h2>
+        <div class="card card--info" th:if="${request.confirmedSlot != null}">
+          <h2 class="card__title" data-i18n="req_detail_slot">Franja confirmada</h2>
           <div class="info-row">
             <i class="fa-solid fa-clock"></i>
             <span class="info-row__label" data-i18n="req_detail_slot">Franja confirmada</span>
@@ -174,8 +174,8 @@
         </div>
 
         <!-- Accept form (PENDING only) -->
-        <div th:if="${request.isPending()}" class="info-card">
-          <h2 class="info-card__title" data-i18n="org_req_accept_title">Aceptar solicitud</h2>
+        <div th:if="${request.isPending()}" class="card card--info">
+          <h2 class="card__title" data-i18n="org_req_accept_title">Aceptar solicitud</h2>
           <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="auth-form">
             <input type="hidden" name="action" value="accept" />
             <div class="form-group">
@@ -214,8 +214,8 @@
         </div>
 
         <!-- Complete button (IN_PROGRESS only) -->
-        <div th:if="${request.isInProgress()}" class="info-card">
-          <h2 class="info-card__title" data-i18n="org_req_complete_title">Finalizar recolección</h2>
+        <div th:if="${request.isInProgress()}" class="card card--info">
+          <h2 class="card__title" data-i18n="org_req_complete_title">Finalizar recolección</h2>
           <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post">
             <input type="hidden" name="action" value="complete" />
             <button type="submit" class="btn btn--primary">

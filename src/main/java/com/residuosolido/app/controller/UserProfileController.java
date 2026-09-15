@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.CountryCode;
 import com.residuosolido.app.model.PhoneNumber;
@@ -39,7 +41,7 @@ public class UserProfileController extends BaseController {
     }
 
     /** Dashboard del ciudadano con estadísticas y solicitudes recientes. */
-    @GetMapping("/usuarios/inicio")
+    @GetMapping(Routes.USER_HOME)
     public String dashboard(Authentication authentication, Model model) {
         User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
@@ -53,7 +55,7 @@ public class UserProfileController extends BaseController {
     }
 
     /** Muestra el perfil del ciudadano con sus datos. */
-    @GetMapping("/usuarios/perfil")
+    @GetMapping(Routes.USER_PROFILE)
     public String profile(Authentication authentication, Model model) {
         User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
@@ -68,7 +70,7 @@ public class UserProfileController extends BaseController {
     }
 
     /** Actualiza los datos del perfil del ciudadano. */
-    @PostMapping("/usuarios/perfil")
+    @PostMapping(Routes.USER_PROFILE)
     public String updateProfile(@RequestParam(required = false) String email,
                                 @RequestParam(required = false) String firstName,
                                 @RequestParam(required = false) String phone,

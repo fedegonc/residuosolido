@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.service.PublicMetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +20,7 @@ public class PublicMetricsController {
     }
 
     /** Página pública de métricas (sin autenticación). */
-    @GetMapping("/metricas")
+    @GetMapping(Routes.METRICAS)
     public String publicMetrics(Model model) {
         model.addAttribute("metrics", publicMetricsService.getPublicMetricsByCity());
         model.addAttribute("total", publicMetricsService.getPublicTotalCompleted());

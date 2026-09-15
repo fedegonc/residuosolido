@@ -21,10 +21,10 @@
       </div>
 
       <div class="auth-split__form">
-        <div class="auth-card">
-          <div class="auth-card__icon"><i class="fa-solid fa-user-plus"></i></div>
-          <h1 class="auth-card__title" data-i18n="auth_register_title">Crear cuenta</h1>
-          <p class="auth-card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
+        <div class="card card--auth">
+          <div class="card__icon"><i class="fa-solid fa-user-plus"></i></div>
+          <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
+          <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
 
           <form th:action="@{/auth/register}" th:object="${user}" method="post" class="auth-form">
             <div class="form-group">
@@ -58,7 +58,7 @@
             </a>
           </form>
 
-          <p class="auth-card__footer">
+          <p class="card__footer">
             <span data-i18n="auth_have_account">¿Ya tenés cuenta?</span>
             <a th:href="@{/auth/login}" data-i18n="auth_login_link">Iniciar sesión</a>
           </p>

@@ -61,8 +61,8 @@
       </div>
 
       <!-- Detail info -->
-      <div class="info-card">
-        <h2 class="info-card__title" data-i18n="req_detail_status">Estado</h2>
+      <div class="card card--info">
+        <h2 class="card__title" data-i18n="req_detail_status">Estado</h2>
         <div class="info-row">
           <i class="fa-solid fa-circle-info"></i>
           <span class="info-row__label" data-i18n="req_detail_status">Estado</span>
@@ -84,8 +84,8 @@
         </div>
       </div>
 
-      <div class="info-card">
-        <h2 class="info-card__title" data-i18n="req_detail_address">Dirección</h2>
+      <div class="card card--info">
+        <h2 class="card__title" data-i18n="req_detail_address">Dirección</h2>
         <div class="info-row" th:if="${request.city != null}">
           <i class="fa-solid fa-location-dot"></i>
           <span class="info-row__label" data-i18n="req_detail_city">Ciudad</span>
@@ -103,16 +103,16 @@
         </div>
       </div>
 
-      <div class="info-card">
-        <h2 class="info-card__title" data-i18n="req_detail_materials">Materiales</h2>
+      <div class="card card--info">
+        <h2 class="card__title" data-i18n="req_detail_materials">Materiales</h2>
         <div th:if="${request.hasMaterials()}" class="request-item__materials">
           <span th:each="mat : ${request.materials}" class="material-tag" th:text="${mat.name()}"></span>
         </div>
         <p th:unless="${request.hasMaterials()}" class="info-row__empty">—</p>
       </div>
 
-      <div class="info-card">
-        <h2 class="info-card__title" data-i18n="req_detail_org">Organización</h2>
+      <div class="card card--info">
+        <h2 class="card__title" data-i18n="req_detail_org">Organización</h2>
         <div class="info-row" th:if="${request.organization != null}">
           <i class="fa-solid fa-building"></i>
           <span class="info-row__label" data-i18n="req_detail_org">Organización</span>
@@ -136,8 +136,8 @@
       </div>
 
       <!-- Image -->
-      <div th:if="${request.hasImage()}" class="info-card">
-        <h2 class="info-card__title" data-i18n="req_detail_image">Foto</h2>
+      <div th:if="${request.hasImage()}" class="card card--info">
+        <h2 class="card__title" data-i18n="req_detail_image">Foto</h2>
         <img th:src="${request.imageUrl}" alt="Foto de materiales"
              class="img-thumbnail">
       </div>

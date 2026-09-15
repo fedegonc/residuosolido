@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,7 +34,7 @@ class DocsControllerTest {
 
     @Test
     void documentosPage_returns200() throws Exception {
-        mockMvc.perform(get("/documentos"))
+        mockMvc.perform(get(Routes.DOCUMENTOS))
                 .andExpect(status().isOk())
                 .andExpect(view().name("public/docs"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Documentación técnica")));
@@ -40,7 +42,7 @@ class DocsControllerTest {
 
     @Test
     void diagramasPage_returns200() throws Exception {
-        mockMvc.perform(get("/diagramas"))
+        mockMvc.perform(get(Routes.DIAGRAMAS))
                 .andExpect(status().isOk())
                 .andExpect(view().name("public/diagrams"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Figura 1")));
@@ -48,12 +50,11 @@ class DocsControllerTest {
 
     @Test
     void documentosPage_listsAllDocs() throws Exception {
-        String html = mockMvc.perform(get("/documentos"))
+        String html = mockMvc.perform(get(Routes.DOCUMENTOS))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        // Verifica que los 11 documentos aparecen como links
-        for (String doc : new String[]{"CORE", "RF-RN", "ENDPOINTS", "METODOLOGIA", "TRADEOFFS",
-                "HARDENING", "TESTING", "MEJORAS", "COPIES", "SUPERFICIES", "CORRECCIONES"}) {
+        // Verifica que los 5 documentos aparecen como links
+        for (String doc : new String[]{"DEFENSA", "METODOLOGIA", "DIAGRAMAS", "ENDPOINTS", "MEJORAS"}) {
             org.junit.jupiter.api.Assertions.assertTrue(
                     html.contains("/docs/" + doc + ".md"),
                     "Falta link a " + doc + ".md en /documentos");
@@ -62,7 +63,7 @@ class DocsControllerTest {
 
     @Test
     void diagramasPage_listsAllFigures() throws Exception {
-        String html = mockMvc.perform(get("/diagramas"))
+        String html = mockMvc.perform(get(Routes.DIAGRAMAS))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         for (String fig : new String[]{"figura1-casos-uso", "figura2-modelo-logico",
@@ -77,21 +78,21 @@ class DocsControllerTest {
 
     @Test
     void markdownFile_servedWithMarkdownContentType() throws Exception {
-        mockMvc.perform(get("/docs/CORE.md"))
+        mockMvc.perform(get(Routes.DOCS_FILE, "DEFENSA"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(org.springframework.http.MediaType.TEXT_MARKDOWN));
     }
 
     @Test
     void markdownFile_hasInlineDisposition() throws Exception {
-        mockMvc.perform(get("/docs/CORE.md"))
+        mockMvc.perform(get(Routes.DOCS_FILE, "DEFENSA"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Disposition", org.hamcrest.Matchers.containsString("inline")));
     }
 
     @Test
     void markdownFile_containsContent() throws Exception {
-        String body = mockMvc.perform(get("/docs/CORE.md"))
+        String body = mockMvc.perform(get(Routes.DOCS_FILE, "DEFENSA"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         org.junit.jupiter.api.Assertions.assertFalse(body.isBlank(), "El archivo .md no debe estar vacío");
@@ -99,8 +100,7 @@ class DocsControllerTest {
 
     @Test
     void allMarkdownFiles_servedCorrectly() throws Exception {
-        for (String doc : new String[]{"CORE", "RF-RN", "ENDPOINTS", "METODOLOGIA", "TRADEOFFS",
-                "HARDENING", "TESTING", "MEJORAS", "COPIES", "SUPERFICIES"}) {
+        for (String doc : new String[]{"DEFENSA", "METODOLOGIA", "DIAGRAMAS", "ENDPOINTS", "MEJORAS"}) {
             mockMvc.perform(get("/docs/" + doc + ".md"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(org.springframework.http.MediaType.TEXT_MARKDOWN));
@@ -111,14 +111,14 @@ class DocsControllerTest {
 
     @Test
     void drawioFile_servedWithXmlContentType() throws Exception {
-        mockMvc.perform(get("/docs/diagrams/figura4-estados.drawio"))
+        mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-estados"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(org.springframework.http.MediaType.APPLICATION_XML));
     }
 
     @Test
     void drawioFile_containsMxfileRoot() throws Exception {
-        String body = mockMvc.perform(get("/docs/diagrams/figura4-estados.drawio"))
+        String body = mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-estados"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         org.junit.jupiter.api.Assertions.assertTrue(
@@ -140,13 +140,13 @@ class DocsControllerTest {
 
     @Test
     void nonExistentMarkdown_returns404() throws Exception {
-        mockMvc.perform(get("/docs/NO-EXISTE.md"))
+        mockMvc.perform(get(Routes.DOCS_FILE, "NO-EXISTE"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void nonExistentDrawio_returns404() throws Exception {
-        mockMvc.perform(get("/docs/diagrams/NO-EXISTE.drawio"))
+        mockMvc.perform(get(Routes.DOCS_DIAGRAM, "NO-EXISTE"))
                 .andExpect(status().isNotFound());
     }
 
@@ -164,13 +164,13 @@ class DocsControllerTest {
 
     @Test
     void documentosPage_accessibleWithoutAuth() throws Exception {
-        mockMvc.perform(get("/documentos"))
+        mockMvc.perform(get(Routes.DOCUMENTOS))
                 .andExpect(status().isOk());
     }
 
     @Test
     void diagramasPage_accessibleWithoutAuth() throws Exception {
-        mockMvc.perform(get("/diagramas"))
+        mockMvc.perform(get(Routes.DIAGRAMAS))
                 .andExpect(status().isOk());
     }
 

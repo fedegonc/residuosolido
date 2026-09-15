@@ -230,7 +230,7 @@ class UserServiceTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> userService.completeOrgProfile(org, "   ", City.RIVERA));
-        assertEquals("error.phone.required", ex.getMessage());
+        assertEquals("error.profile.phone_required", ex.getMessage());
     }
 
     @Test

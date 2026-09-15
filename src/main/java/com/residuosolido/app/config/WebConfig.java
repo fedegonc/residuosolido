@@ -3,7 +3,6 @@ package com.residuosolido.app.config;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,9 +11,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residuosolido.app.repository.UserRepository;
 
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -32,11 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
     // ========== INTERNACIONALIZACIÓN ==========
 
     @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
+    public MessageSource messageSource() throws IOException {
+        return new JsonMessageSource(new ObjectMapper());
     }
 
     @Bean

@@ -72,6 +72,12 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+
   
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
@@ -96,6 +102,14 @@
       <groupId>org.webjars.npm</groupId>
       <artifactId>fortawesome__fontawesome-free</artifactId>
       <version>7.2.0</version>
+    </dependency>
+
+    <!-- Playwright para tests de navegador reales (liviano, sin Docker) -->
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>playwright</artifactId>
+      <version>1.48.0</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -133,6 +147,14 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.15</version>
+        <configuration>
+          <excludes>
+            <exclude>com/residuosolido/app/config/DataLoader.class</exclude>
+            <exclude>com/residuosolido/app/exception/GlobalExceptionHandler.class</exclude>
+            <exclude>com/residuosolido/app/exception/GlobalErrorController.class</exclude>
+            <exclude>com/residuosolido/app/ResiduoSolidoApplication.class</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <goals>

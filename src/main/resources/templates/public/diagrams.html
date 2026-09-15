@@ -22,12 +22,12 @@
       </div>
 
       <div class="docs-grid">
-        <div th:each="d : ${diagrams}" class="doc-card">
-          <div class="doc-card__icon"><i th:class="${d.icon}"></i></div>
-          <div class="doc-card__body">
-            <h2 class="doc-card__title" th:text="${d.title}">Título</h2>
-            <p class="doc-card__desc" th:text="${d.desc}">Descripción</p>
-            <div class="doc-card__actions">
+        <div th:each="d : ${diagrams}" class="card card--doc">
+          <div class="card__icon"><i th:class="${d.icon}"></i></div>
+          <div class="card__body">
+            <h2 class="card__title" th:text="${d.title}">Título</h2>
+            <p class="card__desc" th:text="${d.desc}">Descripción</p>
+            <div class="card__actions">
               <a th:href="@{'/docs/diagrams/' + ${d.file} + '.drawio'}"
                  class="btn btn--outline btn--sm" download>
                 <i class="fa-solid fa-download"></i> .drawio

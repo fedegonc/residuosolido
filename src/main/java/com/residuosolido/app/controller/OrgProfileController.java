@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.CountryCode;
 import com.residuosolido.app.model.PhoneNumber;
@@ -29,7 +31,7 @@ public class OrgProfileController extends BaseController {
     }
 
     /** Muestra el formulario de edición del perfil. */
-    @GetMapping("/acopio/perfil")
+    @GetMapping(Routes.ORG_PROFILE)
     public String orgProfile(Authentication authentication, Model model) {
         try {
             User currentOrg = getCurrentUser(authentication);
@@ -44,7 +46,7 @@ public class OrgProfileController extends BaseController {
     }
 
     /** Actualiza los datos del perfil de la organización. */
-    @PostMapping("/acopio/perfil")
+    @PostMapping(Routes.ORG_PROFILE)
     public String updateOrgProfile(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String firstName,

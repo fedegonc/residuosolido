@@ -18,7 +18,6 @@ Livramento, Brasil).
 - Tablero Kanban integrado en el panel de organización
 - Blog estático con historias del reciclaje (recolectores informales,
   galpones de acopio, Frontera de la Paz)
-- Notificación por WhatsApp en cambios de estado (configurable, mock)
 - Rate limiting para solicitudes de invitados y bloqueo de cuenta tras
   intentos de login fallidos
 - PWA instalable (manifest, service worker, iconos)
@@ -73,16 +72,17 @@ Livramento, Brasil).
 
 ## Documentación
 
-- `docs/CORE.md` — Arquitectura, capas, flujos principales
-- `docs/ENDPOINTS.md` — Rutas HTTP del sistema
-- `docs/RF-RN.md` — Requisitos funcionales y reglas de negocio
-- `docs/DIAGRAMAS.md` — Diagramas UML (clases, ER, estados, secuencia)
-- `docs/TESTING.md` — Estrategia y cobertura de tests
-- `docs/HARDENING.md` — Endurecimiento, limitaciones, mejora futura
+- `docs/INDICE.md` — Punto de entrada y mapa de toda la documentación
+- `docs/ENDPOINTS.md` — Rutas HTTP del sistema, acceso por rol y OpenAPI
+- `docs/DIAGRAMAS.md` — Diagramas UML, arquitectura y requisitos en anexo
+- `docs/DEFENSA.md` — Guía de defensa, tradeoffs y limitaciones
+- `docs/MEJORAS.md` — Mejoras implementadas, diferidas y correcciones
 - `docs/METODOLOGIA.md` — Modelo iterativo incremental (4 fases)
-- `docs/TRADEOFFS.md` — Decisiones de diseño y tradeoffs
 - `docs/diagrams/` — Diagramas draw.io (casos de uso, modelo lógico,
-  clases)
+  clases, estados)
+
+Los anexos (arquitectura, RF-RN, testing, hardening, tradeoffs, copys)
+están como secciones dentro de estos archivos. Ver `docs/INDICE.md`.
 
 ## Build de producción
 

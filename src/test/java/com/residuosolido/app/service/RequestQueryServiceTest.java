@@ -1,6 +1,7 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.RequestStatus;
+import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
@@ -15,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class RequestQueryServiceTest {
@@ -29,93 +29,86 @@ class RequestQueryServiceTest {
         service = new RequestQueryService(requestRepository);
     }
 
-    private User user(String id) {
+    private User org(String id) {
         User u = new User();
         u.setId(id);
+        u.setRole(Role.ORGANIZATION);
         return u;
     }
 
-    private Request request(String id, User owner, RequestStatus status) {
+    private Request request(String id, User org, RequestStatus status) {
         Request r = new Request();
         r.setId(id);
-        r.setUser(owner);
         r.setStatus(status);
+        r.assignOrganization(org);
         return r;
     }
 
     @Test
-    void getRequestsByUser_delegatesToRepositoryWithPaging() {
-        User u = user("u1");
-        List<Request> expected = List.of(request("r1", u, RequestStatus.PENDING));
-        when(requestRepository.findByUser(eq(u), any(PageRequest.class))).thenReturn(expected);
-        assertEquals(expected, service.getRequestsByUser(u, 0, 20));
-    }
-
-    @Test
-    void getOwnedRequest_notFound_throws() {
+    void getOwnedOrgRequest_notFound_throws() {
         when(requestRepository.findById("r1")).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> service.getOwnedRequest("r1", user("u1")));
+        assertThrows(IllegalArgumentException.class, () -> service.getOwnedOrgRequest("r1", org("org1")));
     }
 
     @Test
-    void getOwnedRequest_notOwned_throwsSecurityException() {
-        Request r = request("r1", user("otherUser"), RequestStatus.PENDING);
+    void getOwnedOrgRequest_notOwned_throwsSecurityException() {
+        Request r = request("r1", org("otherOrg"), RequestStatus.PENDING);
         when(requestRepository.findById("r1")).thenReturn(Optional.of(r));
-        assertThrows(SecurityException.class, () -> service.getOwnedRequest("r1", user("u1")));
+        assertThrows(SecurityException.class, () -> service.getOwnedOrgRequest("r1", org("org1")));
     }
 
     @Test
-    void getOwnedRequest_guestRequestWithNoUser_throwsSecurityException() {
-        Request r = request("r1", null, RequestStatus.PENDING);
+    void getOwnedOrgRequest_owned_returnsRequest() {
+        User organization = org("org1");
+        Request r = request("r1", organization, RequestStatus.PENDING);
         when(requestRepository.findById("r1")).thenReturn(Optional.of(r));
-        assertThrows(SecurityException.class, () -> service.getOwnedRequest("r1", user("u1")));
+        assertEquals(r, service.getOwnedOrgRequest("r1", organization));
     }
 
     @Test
-    void getOwnedRequest_owned_returnsRequest() {
-        User u = user("u1");
-        Request r = request("r1", u, RequestStatus.PENDING);
-        when(requestRepository.findById("r1")).thenReturn(Optional.of(r));
-        assertEquals(r, service.getOwnedRequest("r1", u));
+    void getRequestsByOrganization_delegatesToRepository() {
+        User organization = org("org1");
+        List<Request> expected = List.of(request("r1", organization, RequestStatus.PENDING));
+        when(requestRepository.findByOrganizationOrderByCreatedAtDesc(eq(organization), any(PageRequest.class)))
+                .thenReturn(expected);
+        assertEquals(expected, service.getRequestsByOrganization(organization, 0, 20));
     }
 
     @Test
-    void getEditableOwnedRequest_notEditable_throws() {
-        User u = user("u1");
-        Request r = request("r1", u, RequestStatus.COMPLETED);
-        when(requestRepository.findById("r1")).thenReturn(Optional.of(r));
-        assertThrows(IllegalStateException.class, () -> service.getEditableOwnedRequest("r1", u));
+    void getOrgRequestsByStatusFilter_blankStatus_returnsAllRequests() {
+        User organization = org("org1");
+        List<Request> expected = List.of(request("r1", organization, RequestStatus.PENDING));
+        when(requestRepository.findByOrganizationOrderByCreatedAtDesc(eq(organization), any(PageRequest.class)))
+                .thenReturn(expected);
+        assertEquals(expected, service.getOrgRequestsByStatusFilter(organization, "  ", 0, 20));
     }
 
     @Test
-    void getEditableOwnedRequest_pending_returnsRequest() {
-        User u = user("u1");
-        Request r = request("r1", u, RequestStatus.PENDING);
-        when(requestRepository.findById("r1")).thenReturn(Optional.of(r));
-        assertEquals(r, service.getEditableOwnedRequest("r1", u));
+    void getOrgRequestsByStatusFilter_validStatus_filtersRequests() {
+        User organization = org("org1");
+        List<Request> expected = List.of(request("r1", organization, RequestStatus.IN_PROGRESS));
+        when(requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(
+                eq(organization), eq(RequestStatus.IN_PROGRESS), any(PageRequest.class)))
+                .thenReturn(expected);
+        assertEquals(expected, service.getOrgRequestsByStatusFilter(organization, "in_progress", 0, 20));
     }
 
     @Test
-    void getGuestRequests_blankPhoneOrCode_returnsEmptyList() {
-        assertTrue(service.getGuestRequests("  ", "AB12CD34").isEmpty());
-        assertTrue(service.getGuestRequests(null, "AB12CD34").isEmpty());
-        assertTrue(service.getGuestRequests("+59899123456", "  ").isEmpty());
-        assertTrue(service.getGuestRequests("+59899123456", null).isEmpty());
+    void getOrgRequestsByStatusFilter_invalidStatus_fallsBackToAllRequests() {
+        User organization = org("org1");
+        List<Request> expected = List.of(request("r1", organization, RequestStatus.PENDING));
+        when(requestRepository.findByOrganizationOrderByCreatedAtDesc(eq(organization), any(PageRequest.class)))
+                .thenReturn(expected);
+        assertEquals(expected, service.getOrgRequestsByStatusFilter(organization, "NOT_A_STATUS", 0, 20));
     }
 
     @Test
-    void getGuestRequests_delegatesToRepositoryWithCanonicalPhoneAndCode() {
-        Request r = request("r1", null, RequestStatus.PENDING);
-        when(requestRepository.findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "AB12CD34"))
-                .thenReturn(List.of(r));
-        assertEquals(List.of(r), service.getGuestRequests(" +59899123456 ", "AB12CD34"));
-    }
-
-    @Test
-    void getGuestRequests_phoneOnlyWithoutCode_returnsEmptyList() {
-        // Privacidad: el teléfono solo no debe exponer solicitudes.
-        assertTrue(service.getGuestRequests("+59899123456", null).isEmpty());
-        assertTrue(service.getGuestRequests("+59899123456", "  ").isEmpty());
-        verifyNoInteractions(requestRepository);
+    void getRecentPendingRequestsByOrganization_delegatesToRepository() {
+        User organization = org("org1");
+        List<Request> expected = List.of(request("r1", organization, RequestStatus.PENDING));
+        when(requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(
+                eq(organization), eq(RequestStatus.PENDING), any(PageRequest.class)))
+                .thenReturn(expected);
+        assertEquals(expected, service.getRecentPendingRequestsByOrganization(organization, 5));
     }
 }

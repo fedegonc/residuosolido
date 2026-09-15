@@ -32,8 +32,8 @@
       <div class="form-grid--stack">
 
         <!-- View card -->
-        <div class="info-card" id="viewCard">
-          <h2 class="info-card__title" data-i18n="org_profile_info">Información de la organización</h2>
+        <div class="card card--info" id="viewCard">
+          <h2 class="card__title" data-i18n="org_profile_info">Información de la organización</h2>
           <div class="info-row">
             <i class="fa-solid fa-building"></i>
             <span class="info-row__label" data-i18n="org_profile_name">Nombre</span>
@@ -74,8 +74,8 @@
         </div>
 
         <!-- Edit card -->
-        <div class="info-card is-hidden" id="editCard">
-          <h2 class="info-card__title" data-i18n="org_profile_edit_title">Editar datos</h2>
+        <div class="card card--info is-hidden" id="editCard">
+          <h2 class="card__title" data-i18n="org_profile_edit_title">Editar datos</h2>
           <form th:action="@{/acopio/perfil}" method="post" class="auth-form">
             <div class="form-group">
               <label for="firstName" data-i18n="org_profile_name_label">Nombre de la organización</label>

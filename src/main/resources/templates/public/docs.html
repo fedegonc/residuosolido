@@ -24,12 +24,12 @@
       <div class="docs-grid">
         <a th:each="doc : ${documents}"
            th:href="@{'/docs/' + ${doc.name} + '.md'}"
-           class="doc-card">
-          <div class="doc-card__icon"><i th:class="${doc.icon}"></i></div>
-          <div class="doc-card__body">
-            <h2 class="doc-card__title" th:text="${doc.title}">Título</h2>
-            <p class="doc-card__desc" th:text="${doc.desc}">Descripción</p>
-            <code class="doc-card__file" th:text="${doc.name + '.md'}">file.md</code>
+           class="card card--doc">
+          <div class="card__icon"><i th:class="${doc.icon}"></i></div>
+          <div class="card__body">
+            <h2 class="card__title" th:text="${doc.title}">Título</h2>
+            <p class="card__desc" th:text="${doc.desc}">Descripción</p>
+            <code class="card__file" th:text="${doc.name + '.md'}">file.md</code>
           </div>
         </a>
       </div>

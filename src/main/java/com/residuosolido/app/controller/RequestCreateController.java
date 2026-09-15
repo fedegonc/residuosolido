@@ -1,5 +1,7 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.config.GuestRateLimiter;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
@@ -42,7 +44,7 @@ public class RequestCreateController extends BaseController {
     }
 
     /** Muestra el formulario para crear una solicitud. */
-    @GetMapping("/solicitudes/nueva")
+    @GetMapping(Routes.REQUESTS_NEW)
     public String newRequestForm(@RequestParam(value = "city", required = false) City city,
                                   Model model, Authentication authentication) {
         model.addAttribute("request", new Request());
@@ -58,7 +60,7 @@ public class RequestCreateController extends BaseController {
     }
 
     /** Procesa la creación de una solicitud (con imagen opcional y rate limit para invitados). */
-    @PostMapping("/solicitudes")
+    @PostMapping(Routes.REQUESTS)
     public String createRequest(@RequestParam("city") City city,
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,

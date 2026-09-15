@@ -30,27 +30,28 @@ public class SecurityConfig {
             .csrf(Customizer.withDefaults())
             .authorizeHttpRequests(authorize -> authorize
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
-                .requestMatchers("/", "/index").permitAll()
-                .requestMatchers("/auth/**", "/login", "/register").permitAll()
-                .requestMatchers("/change-language").permitAll()
-                // Recursos especiales de navegador (evitar guardarlos como destino de login)
-                .requestMatchers("/.well-known/**").permitAll()
-                // Páginas de error deben ser públicas para evitar AccessDenied en flujos de error
-                .requestMatchers("/error").permitAll()
+                .requestMatchers(Routes.HOME, Routes.INDEX).permitAll()
+                .requestMatchers(Routes.LOGIN, "/login", Routes.REGISTER, "/register").permitAll()
+                .requestMatchers(Routes.LANGUAGE).permitAll()
+                // Recursos especiales de navegador
+                .requestMatchers(Routes.WELL_KNOWN).permitAll()
+                // Páginas de error deben ser públicas
+                .requestMatchers(Routes.ERROR).permitAll()
                 .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/manifest.json", "/sw.js", "/icon-*.png", "/icon-*.svg").permitAll()
-                // Formulario público de nueva solicitud (invitado o autenticado)
-                .requestMatchers(HttpMethod.GET, "/solicitudes/nueva").permitAll()
-                .requestMatchers(HttpMethod.POST, "/solicitudes").permitAll()
-                .requestMatchers(HttpMethod.GET, "/solicitudes/exito").permitAll()
-                .requestMatchers("/rastrear").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/organizations/by-city").permitAll()
-                .requestMatchers("/metricas").permitAll()
-                .requestMatchers("/blog").permitAll()
-                .requestMatchers("/documentos", "/diagramas").permitAll()
-                .requestMatchers("/docs/**").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
+                // Formulario público de nueva solicitud
+                .requestMatchers(HttpMethod.GET, Routes.REQUESTS_NEW).permitAll()
+                .requestMatchers(HttpMethod.POST, Routes.REQUESTS).permitAll()
+                .requestMatchers(HttpMethod.GET, Routes.REQUESTS_SUCCESS).permitAll()
+                .requestMatchers(Routes.TRACK).permitAll()
+                .requestMatchers(HttpMethod.GET, Routes.API_ORGANIZATIONS_BY_CITY).permitAll()
+                .requestMatchers(Routes.METRICAS).permitAll()
+                .requestMatchers(Routes.BLOG).permitAll()
+                .requestMatchers(Routes.DOCUMENTOS, Routes.DIAGRAMAS).permitAll()
+                .requestMatchers(Routes.DOCS_ANY).permitAll()
+                .requestMatchers(Routes.ACTUATOR_HEALTH).permitAll()
+                .requestMatchers(Routes.SWAGGER_V3, Routes.SWAGGER_UI, Routes.SWAGGER_HTML).permitAll()
                 // API endpoints para usuarios autenticados
-                .requestMatchers("/api/**").authenticated()
+                .requestMatchers(Routes.API_ANY).authenticated()
                 // Rutas de usuarios regulares
                 .requestMatchers("/usuarios/**").hasRole("USER")
                 // Rutas de organización
@@ -60,16 +61,16 @@ public class SecurityConfig {
             )
             // Manejo por defecto: redirige a /auth/login para recursos HTML
             .formLogin(form -> form
-                .loginPage("/auth/login")
-                .loginProcessingUrl("/auth/login")
+                .loginPage(Routes.LOGIN)
+                .loginProcessingUrl(Routes.LOGIN)
                 .successHandler(successHandler)
                 .failureHandler(failureHandler)
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/logout")
+                .logoutUrl(Routes.LOGOUT)
                 // Usar un flag simple para evitar problemas de codificación en la URL
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl(Routes.HOME)
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()

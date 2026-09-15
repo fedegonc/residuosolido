@@ -30,8 +30,8 @@
       <div class="form-grid--stack">
 
         <!-- Info card (view mode) -->
-        <div class="info-card" id="viewCard">
-          <h2 class="info-card__title" data-i18n="profile_info">Información personal</h2>
+        <div class="card card--info" id="viewCard">
+          <h2 class="card__title" data-i18n="profile_info">Información personal</h2>
           <div class="info-row">
             <i class="fa-solid fa-user"></i>
             <span class="info-row__label" data-i18n="profile_username">Usuario</span>
@@ -63,8 +63,8 @@
         </div>
 
         <!-- Edit card (hidden by default) -->
-        <div class="info-card is-hidden" id="editCard">
-          <h2 class="info-card__title" data-i18n="profile_edit_title">Editar datos</h2>
+        <div class="card card--info is-hidden" id="editCard">
+          <h2 class="card__title" data-i18n="profile_edit_title">Editar datos</h2>
           <form th:action="@{/usuarios/perfil}" method="post" class="auth-form">
             <div class="form-group">
               <label for="firstName" data-i18n="profile_name_label">Nombre</label>
@@ -115,8 +115,8 @@
         </div>
 
         <!-- Stats card -->
-        <div class="info-card">
-          <h2 class="info-card__title" data-i18n="profile_stats">Estadísticas de solicitudes</h2>
+        <div class="card card--info">
+          <h2 class="card__title" data-i18n="profile_stats">Estadísticas de solicitudes</h2>
           <div class="stats-grid stats-grid--2">
             <div class="stat-card">
               <div class="stat-card__icon stat-card__icon--total">

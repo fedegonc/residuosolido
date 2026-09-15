@@ -152,7 +152,7 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 **Notas:**
 - Solo en `PENDING` la solicitud puede editarse o eliminarse (`canBeEdited()` / `canBeDeleted()`).
 - Todas las transiciones están protegidas con `@Version` (optimistic locking) contra condiciones de carrera.
-- Cada transición dispara `NotificationService.sendWhatsApp()` al teléfono de contacto (si existe).
+- Las notificaciones al teléfono están fuera del alcance del MVP; el contacto queda registrado en la solicitud.
 - `REJECTED` y `COMPLETED` son estados finales: no admiten transiciones salientes.
 
 ---
@@ -208,9 +208,6 @@ Invitado/Usuario      RequestCreateController   RequestValidator   CityOrgServic
      │         │             │
      └─────────┴─────────────┘
                ▼
-   NotificationService.sendWhatsApp()
-   (si hay teléfono de contacto)
-               ▼
    redirect a /acopio/requests
 ```
 
@@ -260,3 +257,159 @@ Visitante
 ```
 
 Para el detalle de precondiciones/postcondiciones de cada RF, ver `RF-RN.md`.
+
+---
+
+# Requisitos y Reglas de Negocio (anexo)
+
+**Nota para la defensa de tesis:** estos puntos no son omisiones — son decisiones de alcance conscientes, justificadas porque exceden lo que una herramienta de software puede o debe resolver.
+
+---
+
+## 6. Criterio de alcance y backlog pendiente
+
+**Criterio para decidir si algo nuevo entra al alcance** (chequear en este orden):
+1. ¿Está en el oficio o surge de una necesidad real confirmada por el stakeholder (organización/usuario)?
+2. ¿Es responsabilidad de un sistema de software, o es logística/inversión física/proceso humano?
+3. ¿Se puede resolver con un campo o servicio simple, o requiere una entidad/módulo nuevo?
+
+Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si no, se documenta como limitación consciente (sección 5).
+
+**Backlog pendiente (no implementado):**
+- 🟡 **Métricas privadas por organización + descarga PDF.** Nueva ruta protegida `/acopio/metricas` con `@PreAuthorize("hasRole('ORGANIZATION')")` y endpoint `GET /acopio/metricas/pdf` (sugerido: OpenPDF o iText community). La ruta pública `/metricas` (totales agregados, sin datos personales) es una decisión consciente de diseño, no un bug — está explícitamente en `permitAll()` en `SecurityConfig`.
+- 🟡 **Consistencia de nombres** (baja prioridad): revisar que los nombres de métodos de `RequestQueryService`/`RequestOrgService`/`RequestMetricsService`/`CityOrgService` reflejen consistentemente su sub-dominio.
+
+---
+
+# Núcleo del Sistema (anexo)
+
+
+## Arquitectura General
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        PRESENTACIÓN                           │
+│  Controllers (17) → Templates (29) → Fragments JS           │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                          NEGOCIO                             │
+│  Services (11) → Validadores → Lógica de dominio            │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                          DATOS                               │
+│  Repositories (3) → MongoDB (Request, User, InformalCollector)│
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Mapeo por Capa
+
+### 1. Controllers (17 archivos)
+
+**Auth:**
+- `AuthController` — Login, registro, logout
+
+**Usuario (Ciudadano):**
+- `RequestController` — Listar, ver detalle, eliminar solicitudes
+- `RequestCreateController` — Crear solicitudes (invitado + usuario)
+- `RequestEditController` — Editar solicitudes pendientes
+- `UserProfileController` — Dashboard y perfil del ciudadano
+
+**Organización (Acopio):**
+- `OrgDashboardController` — Dashboard de organización con Kanban integrado
+- `OrgRequestController` — Lista de solicitudes recibidas
+- `OrgRequestDetailController` — Detalle y acciones (aceptar/rechazar/completar)
+- `OrgProfileController` — Perfil de organización
+- `OrgOnboardingController` — Completar perfil post-registro
+- `InformalCollectorController` — CRUD de catadores (sin link en sidebar, ver docs/DEFENSA.md)
+
+**Público:**
+- `PublicMetricsController` — Métricas abiertas de reciclaje por ciudad
+- `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
+- `BlogController` — Blog estático en una sola página (`/blog`)
+- `DocsController` — Páginas públicas de documentación (`/documentos`, `/diagramas`)
+
+**API:**
+- `OrgApiController` — Listado de organizaciones por ciudad (JSON)
+
+**Base:**
+- `BaseController` — Utilidades comunes (usuario actual, mensajes flash)
+
+### 2. Services (11 archivos)
+
+- `UserService` — Gestión de usuarios y perfiles
+- `UserRegistrationService` — Registro de nuevos usuarios/organizaciones
+- `RequestService` — Creación de solicitudes
+- `RequestQueryService` — Consultas de solicitudes
+- `RequestUpdateService` — Edición y eliminación de solicitudes
+- `RequestOrgService` — Consultas de solicitudes para organizaciones
+- `RequestTransitionService` — Transiciones de estado (aceptar/rechazar/completar)
+- `RequestMetricsService` — Métricas de solicitudes (user + org dashboards)
+- `PublicMetricsService` — Métricas públicas por ciudad
+- `CityOrgService` — Búsqueda de organizaciones por ciudad
+- `LocalImageService` — Subida de imágenes locales
+- `InformalCollectorService` — Gestión de recolectores informales
+
+### 3. Modelos (5 clases)
+
+- `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
+- `Request` — Solicitudes de recolección con ciclo de estados
+- `InformalCollector` — Recolectores informales vinculados a una org
+- `OrganizationDto` — DTO para API de organizaciones
+
+### 4. Repositories (3 interfaces)
+
+- `UserRepository` — Persistencia de usuarios
+- `RequestRepository` — Persistencia de solicitudes
+- `InformalCollectorRepository` — Persistencia de recolectores
+
+## Flujos Principales
+
+### 1. Solicitud de recolección (RF-3)
+
+```
+Usuario/Invitado
+  ↓ POST /solicitudes
+RequestCreateController
+  ↓ RequestService.createRequest(...)
+CityOrgService.findOrganizationByIdAndCity  (valida org en ciudad)
+  ↓ RequestRepository.save
+  ↓ Redirect /solicitudes/exito
+```
+
+### 2. Aceptar solicitud (RF-6)
+
+```
+Organización
+  ↓ POST /acopio/requests/{id}/transition?action=accept
+OrgRequestController
+  ↓ RequestTransitionService.acceptRequest(...)
+Request.accept(TimeSlot)  (ciclo de estados)
+  ↓ RequestRepository.save
+```
+
+### 3. Onboarding de organización (RF-7)
+
+```
+Organización registrada
+  ↓ Login
+LoginSuccessHandler → redirige /acopio/completar-perfil
+OrgOnboardingController.completeProfile
+  ↓ UserService.completeOrgProfile
+  ↓ profileCompleted = true
+  ↓ Redirect /acopio/inicio
+```
+
+## Decisiones de Arquitectura
+
+- **Sin panel Admin**: Gestión distribuida por roles (USER, ORGANIZATION).
+- **Mono-modelo User**: Usuarios y organizaciones comparten la misma entidad, diferenciados por `Role`.
+- **Cobertura binacional**: Enum `City` limitado a RIVERA y LIVRAMENTO.
+- **Breadcrumbs inline**: Construidos con `List.of(Map.of(...))` en cada controller.
+- **JavaScript por fragmento**: Reutilización de scripts en `fragments/toggle-view-edit.html` y `fragments/request-form-js.html`.
+- **Imágenes locales**: `LocalImageService` guarda archivos en disco, no en Cloudinary.
+
+## Pruebas
+
+216 tests unitarios e integrales en 22 suites. Ver `docs/ENDPOINTS.md`.

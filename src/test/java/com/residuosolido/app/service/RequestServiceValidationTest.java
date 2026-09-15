@@ -25,9 +25,7 @@ class RequestServiceValidationTest {
     private RequestRepository requestRepository;
     private CityOrgService cityOrgService;
     private LocalImageService imageService;
-    private RequestValidator validator;
     private RequestService requestService;
-    private RequestUpdateService requestUpdateService;
     private RequestQueryService requestQueryService;
 
     @BeforeEach
@@ -35,10 +33,8 @@ class RequestServiceValidationTest {
         requestRepository = mock(RequestRepository.class);
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
-        validator = new RequestValidator();
         requestQueryService = new RequestQueryService(requestRepository);
-        requestService = new RequestService(requestRepository, imageService, validator, cityOrgService);
-        requestUpdateService = new RequestUpdateService(requestRepository, requestQueryService, validator, cityOrgService, imageService);
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, requestQueryService);
     }
 
     private User citizen() {
@@ -106,7 +102,7 @@ class RequestServiceValidationTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> requestUpdateService.updateRequest(
+                () -> requestService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
                         null, "org1", null)
         );
@@ -129,7 +125,7 @@ class RequestServiceValidationTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> requestUpdateService.updateRequest(
+                () -> requestService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
                         Collections.emptyList(), "org1", null)
         );
@@ -164,7 +160,7 @@ class RequestServiceValidationTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> requestUpdateService.updateRequest(
+                () -> requestService.updateRequest(
                         "req1", user, City.RIVERA, "Calle 123", null,
                         List.of(MaterialCategory.PLASTICO), null, null)
         );
@@ -261,7 +257,7 @@ class RequestServiceValidationTest {
                 .thenReturn(java.util.Optional.of(existing));
 
         assertThrows(IllegalStateException.class,
-                () -> requestUpdateService.deleteOwnedRequest("req1", user));
+                () -> requestService.deleteOwnedRequest("req1", user));
     }
 
     @Test
@@ -276,7 +272,7 @@ class RequestServiceValidationTest {
         when(requestRepository.findById("req1"))
                 .thenReturn(java.util.Optional.of(existing));
 
-        requestUpdateService.deleteOwnedRequest("req1", user);
+        requestService.deleteOwnedRequest("req1", user);
 
         org.mockito.Mockito.verify(requestRepository).delete(existing);
     }

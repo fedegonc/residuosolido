@@ -106,7 +106,9 @@ class MvpRegressionTest {
     void authenticatedRequestRequiresContactPhone() {
         User user = citizen();
         user.setPhone(null);
-        assertThrows(IllegalArgumentException.class, () -> new RequestValidator().validateCreate(
+        RequestService svc = new RequestService(mock(RequestRepository.class), mock(LocalImageService.class),
+                mock(CityOrgService.class), new RequestQueryService(mock(RequestRepository.class)));
+        assertThrows(IllegalArgumentException.class, () -> svc.validateCreate(
                 user, City.RIVERA, "Dirección de prueba", List.of(MaterialCategory.PAPEL), null, null, "org"));
     }
 
@@ -115,7 +117,7 @@ class MvpRegressionTest {
         RequestRepository repo = mock(RequestRepository.class);
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
-        RequestService service = new RequestService(repo, mock(LocalImageService.class), new RequestValidator(), cities);
+        RequestService service = new RequestService(repo, mock(LocalImageService.class), cities, new RequestQueryService(repo));
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org", null, null));
         verifyNoInteractions(repo);
@@ -128,7 +130,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, new LocalImageService(images.toString(), repo),
-                new RequestValidator(), cities);
+                cities, new RequestQueryService(repo));
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", null, null, file));

@@ -61,7 +61,7 @@
   <!-- Fragment: empty-state
        Reusable empty state for request lists.
        Variables: messageKey (i18n key), icon (FontAwesome class) -->
-  <div th:fragment="empty-state(messageKey, icon)" class="info-card">
+  <div th:fragment="empty-state(messageKey, icon)" class="card card--info">
     <div class="track-empty">
       <div class="track-empty__illustration">
         <i th:class="${icon}" class="fa-solid fa-inbox"></i>

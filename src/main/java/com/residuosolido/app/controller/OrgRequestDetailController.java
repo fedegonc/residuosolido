@@ -1,9 +1,11 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
+
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.RequestOrgService;
+import com.residuosolido.app.service.RequestQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +23,20 @@ public class OrgRequestDetailController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestDetailController.class);
 
-    private final RequestOrgService requestOrgService;
+    private final RequestQueryService requestQueryService;
 
     @Autowired
-    public OrgRequestDetailController(RequestOrgService requestOrgService) {
-        this.requestOrgService = requestOrgService;
+    public OrgRequestDetailController(RequestQueryService requestQueryService) {
+        this.requestQueryService = requestQueryService;
     }
 
     /** Carga una solicitud individual con sus datos completos. */
-    @GetMapping("/acopio/requests/{id}")
+    @GetMapping(Routes.ORG_REQUEST)
     public String orgRequestDetail(@PathVariable String id, Authentication authentication,
                                     Model model, RedirectAttributes redirectAttributes) {
         try {
             User org = getCurrentUser(authentication);
-            Request request = requestOrgService.getOwnedOrgRequest(id, org);
+            Request request = requestQueryService.getOwnedOrgRequest(id, org);
             model.addAttribute("request", request);
             model.addAttribute("viewType", "detail");
             model.addAttribute("timeSlots", TimeSlot.values());

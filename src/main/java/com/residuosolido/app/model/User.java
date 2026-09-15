@@ -20,6 +20,10 @@ import java.util.List;
  * en una misma tabla/colección, diferenciados por el campo {@link #role}.
  * Usuarios y organizaciones comparten atributos básicos; acceptedMaterials y city
  * son relevantes principalmente para organizaciones.
+ *
+ * Los campos de contacto (email, teléfono, nombre) se validan y canonicalizan
+ * en sus setters, delegando a Value Objects ({@link Email}, {@link PhoneNumber},
+ * {@link Name}). Esto garantiza que el modelo nunca contenga valores inválidos.
  */
 @Getter
 @Setter
@@ -51,6 +55,59 @@ public class User {
     private Boolean profileCompleted = false;
 
     private List<MaterialCategory> acceptedMaterials = new ArrayList<>();
+
+    /**
+     * Setea el email validándolo y normalizándolo via {@link Email}.
+     * Lanza IllegalArgumentException si el formato es inválido.
+     */
+    public void setEmail(String email) {
+        if (email == null || email.isBlank()) {
+            this.email = null;
+            return;
+        }
+        this.email = Email.of(email).value();
+    }
+
+    /**
+     * Devuelve el email como Value Object tipado {@link Email}.
+     * @return Email o null si no tiene email
+     */
+    public Email getEmailAddress() {
+        return this.email == null ? null : Email.of(this.email);
+    }
+
+    /**
+     * Setea el nombre validándolo via {@link Name}.
+     * Lanza IllegalArgumentException si está vacío o excede 100 caracteres.
+     */
+    public void setFirstName(String firstName) {
+        if (firstName == null || firstName.isBlank()) {
+            this.firstName = null;
+            return;
+        }
+        this.firstName = Name.of(firstName).value();
+    }
+
+    /**
+     * Setea el teléfono validándolo y canonicalizándolo a E.164 via {@link PhoneNumber}.
+     * Acepta formatos con espacios (ej: "+598 99 123 456") y los normaliza.
+     * Lanza IllegalArgumentException si el formato es inválido.
+     */
+    public void setPhone(String phone) {
+        if (phone == null || phone.isBlank()) {
+            this.phone = null;
+            return;
+        }
+        this.phone = PhoneNumber.of(phone).value();
+    }
+
+    /**
+     * Devuelve el teléfono como Value Object tipado {@link PhoneNumber}.
+     * @return PhoneNumber o null si no tiene teléfono
+     */
+    public PhoneNumber getPhoneNumber() {
+        return hasPhone() ? PhoneNumber.of(phone) : null;
+    }
 
     public String getDisplayName() {
         return firstName != null && !firstName.isBlank() ? firstName : username;

@@ -2,8 +2,7 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.model.Name;
-import com.residuosolido.app.model.PhoneNumber;
+import com.residuosolido.app.model.Email;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 
@@ -60,14 +59,14 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
 
         if (user.getEmail() != null) {
-            String email = AccountInput.email(user.getEmail());
-            if (userRepository.findByEmailIgnoreCase(email).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
+            Email email = Email.of(user.getEmail());
+            if (userRepository.findByEmailIgnoreCase(email.value()).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
                 throw new IllegalArgumentException("error.register.email_exists");
             }
-            existing.setEmail(email);
+            existing.setEmail(email.value());
         }
         existing.setFirstName(user.getFirstName());
-        existing.setPhone(user.getPhone() == null ? null : PhoneNumber.of(user.getPhone()).value());
+        existing.setPhone(user.getPhone());
         existing.setCity(user.getCity());
         existing.setAcceptedMaterials(user.getAcceptedMaterials());
         if (user.getProfileCompleted() != null) {
@@ -92,14 +91,9 @@ public class UserService {
 
     public User updateProfile(User user, String email, String firstName, String phone, City city,
                                List<MaterialCategory> acceptedMaterials) {
-        if (email != null) user.setEmail(email.trim());
-        if (firstName != null) {
-            Name.of(firstName);
-            user.setFirstName(firstName.trim());
-        }
-        if (phone != null) {
-            user.setPhone(PhoneNumber.of(phone).value());
-        }
+        if (email != null) user.setEmail(email);
+        if (firstName != null) user.setFirstName(firstName);
+        if (phone != null) user.setPhone(phone);
         if (city != null) user.setCity(city);
         if (acceptedMaterials != null) user.setAcceptedMaterials(acceptedMaterials);
         return updateUser(user, null);
@@ -108,7 +102,7 @@ public class UserService {
     // NOTE: Not @Transactional — MongoDB standalone has no transaction support.
     public void completeOrgProfile(User org, String phone, City city) {
         if (phone != null) {
-            org.setPhone(PhoneNumber.of(phone).value());
+            org.setPhone(phone);
         }
         if (city != null) org.setCity(city);
         try {
