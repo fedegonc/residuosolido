@@ -27,20 +27,14 @@
               </a>
             </div>
           </div>
-          <div class="hero__art" aria-hidden="true">
-            <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" class="hero__svg">
-              <circle cx="120" cy="120" r="110" fill="var(--primary-light)" opacity="0.35"/>
-              <circle cx="120" cy="120" r="88" fill="var(--surface)"/>
-              <g fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M120 64 L92 112 L148 112 Z"/>
-                <path d="M92 112 L120 160 L64 160 Z" transform="rotate(120 120 112)"/>
-                <path d="M148 112 L120 160 L176 160 Z" transform="rotate(-120 120 112)"/>
-              </g>
-              <g fill="var(--primary)" opacity="0.85">
-                <circle cx="120" cy="120" r="10"/>
-              </g>
-            </svg>
-          </div>
+          <figure class="hero__art">
+            <img src="/images/hero/plaza-internacional.jpg"
+                 alt="Plaza Internacional entre Rivera y Sant'Ana do Livramento"
+                 class="hero__image" width="1280" height="960">
+            <figcaption class="hero__credit">
+              Foto: <a href="https://commons.wikimedia.org/wiki/File:Plaza_Internacional.jpg" target="_blank" rel="noopener noreferrer">Mx. Granger / Wikimedia Commons</a> (CC0)
+            </figcaption>
+          </figure>
         </div>
         <!-- Pasos compactos (sin título, dentro del hero) -->
         <div class="how__grid how__grid--compact">
@@ -71,16 +65,11 @@
     <!-- Blog + CTA cooperativas (fusionados) -->
     <section class="blog-section" aria-labelledby="blog-title">
       <div class="page">
-        <h2 id="blog-title" class="how__title">Historias del reciclaje</h2>
+        <h2 id="blog-title" class="how__title">Historias</h2>
         <p class="how__subtitle">Conocé quiénes sostienen el reciclaje en la Frontera de la Paz</p>
         <div class="blog-grid">
           <a href="/blog#recolectores-informales" class="blog-card">
             <div class="blog-card__media">
-              <img src="/images/blog/recolectores.jpg"
-                   alt="Recolectores informales separando reciclables en la frontera"
-                   loading="lazy"
-                   class="blog-card__img"
-                   width="800" />
               <span class="blog-card__tag blog-card__tag--overlay">Comunidad</span>
             </div>
             <div class="blog-card__body">
@@ -91,11 +80,6 @@
           </a>
           <a href="/blog#galpones-de-acopio" class="blog-card">
             <div class="blog-card__media">
-              <img src="/images/blog/galpones.jpg"
-                   alt="Interior de un galpón de acopio de cooperativa"
-                   loading="lazy"
-                   class="blog-card__img"
-                   width="800" />
               <span class="blog-card__tag blog-card__tag--overlay">Organizaciones</span>
             </div>
             <div class="blog-card__body">
@@ -106,11 +90,11 @@
           </a>
           <a href="/blog#frontera-de-la-paz" class="blog-card">
             <div class="blog-card__media">
-              <img src="/images/blog/frontera.jpg"
+              <img src="/images/hero/plaza-internacional.jpg"
                    alt="Plaza Internacional entre Rivera y Sant'Ana do Livramento"
                    loading="lazy"
                    class="blog-card__img"
-                   width="800" />
+                   width="1280" height="960">
               <span class="blog-card__tag blog-card__tag--overlay">Proyecto</span>
             </div>
             <div class="blog-card__body">

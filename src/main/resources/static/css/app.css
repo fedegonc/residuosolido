@@ -128,7 +128,7 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 .hero__badge{display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .875rem;background:var(--surface);color:var(--primary-hover);border-radius:9999px;font-size:.75rem;font-weight:600;margin-bottom:1rem;box-shadow:var(--shadow);border:1px solid var(--border)}
 .hero__flag{font-size:1rem;line-height:1}.hero__title{font-size:2.25rem;font-weight:800;color:var(--dark);line-height:1.1;margin-bottom:.75rem;letter-spacing:-0.02em}.hero__title span{color:var(--primary)}
 .hero__subtitle{font-size:1.0625rem;color:var(--gray-text);max-width:32rem;margin-bottom:1.5rem}.hero__cta{display:flex;flex-wrap:wrap;gap:.5rem}
-.hero__art{display:none}.hero__svg{width:14rem;height:14rem;display:block;margin:0 auto}
+.hero__art{display:none;margin:0}.hero__image{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow-lg)}.hero__credit{margin-top:.375rem;text-align:right;font-size:.625rem;color:var(--gray-text)}.hero__credit a{color:inherit;text-decoration:underline}
 .how{padding:1.5rem 1rem;background:var(--bg)}.how__title{font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:.25rem}.how__subtitle{font-size:.875rem;color:var(--gray-text);text-align:center;margin-bottom:2rem}
 .how__grid{display:grid;grid-template-columns:1fr;gap:1.5rem;position:relative}.how__step{text-align:center;position:relative}
 .how__number{width:2rem;height:2rem;border-radius:50%;background:var(--primary);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.875rem;margin:0 auto .75rem}

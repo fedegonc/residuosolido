@@ -16,7 +16,7 @@
 
       <div class="panel-header">
         <div>
-          <h1 class="panel-header__title">Historias del reciclaje</h1>
+          <h1 class="panel-header__title">Historias</h1>
           <p class="panel-header__subtitle">Conocé quiénes sostienen el reciclaje en la Frontera de la Paz</p>
         </div>
       </div>
@@ -31,7 +31,7 @@
                loading="lazy"
                class="card__img"
                width="800" />
-          <div th:if="${article.image != null}" class="card__media-fallback" th:text="${article.tag}"></div>
+          <div th:if="${article.image == null}" class="card__media-fallback" th:text="${article.tag}"></div>
           <span class="blog-card__tag blog-card__tag--overlay" th:text="${article.tag}">Tag</span>
         </div>
         <div class="card__header">
@@ -45,7 +45,7 @@
         </div>
       </article>
 
-      <p class="blog-attribution">Fotografías: elaboración propia.</p>
+      <p class="blog-attribution">Imagen de la Plaza Internacional: <a href="https://commons.wikimedia.org/wiki/File:Plaza_Internacional.jpg" target="_blank" rel="noopener noreferrer">Mx. Granger / Wikimedia Commons</a> (CC0).</p>
 
       <a href="/" class="btn btn--outline btn--lg mt-2">
         <i class="fa-solid fa-arrow-left"></i>
