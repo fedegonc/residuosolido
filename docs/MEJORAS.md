@@ -4,7 +4,7 @@
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
 > **Fecha:** post-commit (`15b7db5`)
-> **Tests:** 216, 0 failures
+> **Tests:** 218, 0 failures
 
 ---
 
@@ -47,13 +47,13 @@
 | 24 | Limpieza de claves muertas (messages_*) | Implementado | 136→91 claves, ES/PT sincronizados |
 | 25 | Documentación centralizada con índice docs/INDICE.md | Implementado | Single source of truth |
 | 26 | Diagramas UML (casos de uso, ER, clases, estados) | Implementado | draw.io, 4 figuras |
-| 27 | 216 tests (unit + integration + e2e) | Implementado | 0 failures |
+| 27 | 218 tests (unit + integration + e2e) | Implementado | 0 failures |
 | 28 | Metodología iterativo-incremental (4 fases) | Implementado | docs/METODOLOGIA.md |
 | 29 | 21 tradeoffs documentados | Implementado | docs/DEFENSA.md |
 | 30 | Deploy en Render.com (PaaS) | Implementado | GitHub→deploy automático |
 | 31 | Páginas públicas /documentos y /diagramas | Implementado | DocsController, índice de docs y figuras |
 | 32 | Diagrama de estados UML 2.5 (Figura 4) | Implementado | figura4-estados.drawio, guardas + acciones |
-| 33 | CI/CD pipeline (GitHub Actions) | Implementado | Tests + PMD + JaCoCo + Docker smoke test |
+| 33 | CI/CD pipeline (GitHub Actions) | Descartado | Workflow eliminado; la verificación es manual y Render construye el artefacto sin ejecutar tests dependientes del entorno |
 | 34 | **AWS (IaaS)** | **Descartado** | Complejidad no aporta a la tesis. Ver docs/DEFENSA.md §15 |
 | 35 | **VPN para acceso** | **Descartado** | Render.com da dominio público + HTTPS |
 | 36 | **MCP de AWS** | **Descartado** | Sin credenciales AWS, sin valor para MVP |
@@ -100,8 +100,8 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 40 |
-| Descartado | 13 |
+| Implementado | 39 |
+| Descartado | 14 |
 | Diferido | 18 |
 | Latente | 1 |
 | **Total** | **72** |
@@ -378,7 +378,7 @@ Esta mejora queda registrada como posible evolución, no como deuda técnica.
 
 Fecha: 2026-09-11
 Versión: post-cleanup (sin tag aún)
-Tests: 216, 0 failures, 0 errors, 0 skipped
+Tests: 218, 0 failures, 0 errors, 0 skipped
 Build: SUCCESS
 
 ---
@@ -544,7 +544,7 @@ mvn test
 Resultado actual:
 
 ```
-Tests run: 216, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 218, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -594,7 +594,7 @@ El seed crea 10 usuarios y 12 solicitudes. Password: `12345678`.
 > crecimientos innecesarios y mantener consistencia.
 >
 > **Fecha de auditoría:** commit `1e4d575`
-> **Tests:** 216, 0 failures
+> **Tests:** 218, 0 failures
 
 ---
 

@@ -2,8 +2,11 @@ package com.residuosolido.app.browser;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DisplayName("Browser: Ciudadano registrado")
 class CitizenBrowserTest extends PlaywrightBaseTest {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("#1 Login + dashboard con stats")
@@ -39,6 +45,29 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         page.locator("[data-i18n='req_success_title']").waitFor();
         assertTrue(page.locator("[data-i18n='req_success_title']").isVisible(),
                 "Debe mostrar página de éxito");
+    }
+
+    @Test
+    @DisplayName("#2b Completar teléfono al crear una solicitud")
+    void citizenWithoutPhoneCompletesItInRequestForm() {
+        User user = userRepository.findByUsername("juan").orElseThrow();
+        String originalPhone = user.getPhone();
+        user.setPhone(null);
+        userRepository.save(user);
+
+        try {
+            login("juan", "12345678");
+            page.navigate(baseUrl + "/solicitudes/nueva");
+            page.locator("#userPhoneNational").fill("99123456");
+            fillRequestForm("RIVERA", "Calle Teléfono 321", "PLASTICO");
+            page.locator("#requestForm button[type='submit']").click();
+            page.locator("[data-i18n='req_success_title']").waitFor();
+            assertTrue(page.locator("[data-i18n='req_success_title']").isVisible());
+        } finally {
+            User persisted = userRepository.findByUsername("juan").orElseThrow();
+            persisted.setPhone(originalPhone);
+            userRepository.save(persisted);
+        }
     }
 
     @Test

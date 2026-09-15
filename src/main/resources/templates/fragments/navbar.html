@@ -11,8 +11,6 @@
 
       <div class="navbar__links">
         <a href="/" class="navbar__link" data-i18n="nav_home">Inicio</a>
-        <a href="/documentos" class="navbar__link">Documentos</a>
-        <a href="/diagramas" class="navbar__link">Diagramas</a>
         <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
         <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
         <a sec:authorize="hasRole('USER')" href="/solicitudes" class="navbar__link" data-i18n="nav_my_requests">Mis solicitudes</a>
@@ -20,9 +18,6 @@
       </div>
 
       <div class="navbar__actions">
-        <button id="pwaInstall" type="button" class="navbar__theme-btn" onclick="installPwa()" aria-label="Instalar app" style="display:none">
-          <i class="fa-solid fa-download"></i>
-        </button>
         <button id="themeToggle" type="button" class="navbar__theme-btn" aria-label="Cambiar tema">
           <i class="fa-solid fa-sun"></i>
           <i class="fa-solid fa-moon"></i>
@@ -65,8 +60,6 @@
 
     <div id="dropdownMenu" class="dropdown is-hidden">
       <a href="/" class="dropdown__link" data-i18n="nav_home">Inicio</a>
-      <a href="/documentos" class="dropdown__link">Documentos</a>
-      <a href="/diagramas" class="dropdown__link">Diagramas</a>
       <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
       <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
       <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
@@ -96,7 +89,6 @@
           </form>
         </div>
       </div>
-    </div>
 
     <!-- Modal: Mis solicitudes (para usuarios sin cuenta) -->
     <div id="trackModal" class="modal-overlay" onclick="if(event.target===this)closeTrackModal()">

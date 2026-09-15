@@ -34,6 +34,13 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span class="footer-min__brand"><i class="fa-solid fa-recycle"></i> Residuo Sólido</span>
+      <nav class="footer-min__links" aria-label="Información técnica">
+        <a href="/documentos">Documentación</a>
+        <a href="/diagramas">Diagramas</a>
+        <button id="pwaInstall" type="button" class="footer-min__install" onclick="installPwa()" disabled>
+          <i class="fa-solid fa-download"></i> Instalar aplicación
+        </button>
+      </nav>
       <span class="footer-min__copy">&copy; <time th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</time> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
     </div>
   </footer>

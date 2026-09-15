@@ -138,7 +138,7 @@
     e.preventDefault();
     deferredPrompt = e;
     var btn = document.getElementById('pwaInstall');
-    if (btn) btn.style.display = 'inline-flex';
+    if (btn) btn.disabled = false;
   });
   window.installPwa = function () {
     if (!deferredPrompt) return;
@@ -146,12 +146,12 @@
     deferredPrompt.userChoice.then(function () {
       deferredPrompt = null;
       var btn = document.getElementById('pwaInstall');
-      if (btn) btn.style.display = 'none';
+      if (btn) btn.disabled = true;
     });
   };
   window.addEventListener('appinstalled', function () {
     var btn = document.getElementById('pwaInstall');
-    if (btn) btn.style.display = 'none';
+    if (btn) btn.disabled = true;
   });
 
   /* ─── Theme toggle ─── */
@@ -161,7 +161,7 @@
     if (meta) meta.setAttribute('content', t === 'dark' ? '#0f1419' : '#2d6a4f');
   }
   function toggleTheme() {
-    var current = localStorage.getItem('theme') || 'light';
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
     var next = current === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', next);
     applyTheme(next);

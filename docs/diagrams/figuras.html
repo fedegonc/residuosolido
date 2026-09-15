@@ -37,7 +37,7 @@
   <noscript>Activá JavaScript para visualizar los diagramas.</noscript>
   <section id="fig1" data-file="figura1-casos-uso.drawio">
     <h2>Figura 1 — Diagrama de Casos de Uso</h2>
-    <p>Sección 4.1. Ocho objetivos funcionales y tres actores. Las asociaciones no expresan secuencia temporal ni flujo de datos. CU-04 requiere teléfono + código privado de rastreo. Las líneas discontinuas con «include» indican inclusión UML: CU-03 y CU-05 incluyen validación de organización y materiales; CU-06 incluye notificación al solicitante.</p>
+    <p>Sección 4.1. Siete objetivos funcionales activos y tres actores. Las asociaciones no expresan secuencia temporal ni flujo de datos. CU-04 requiere teléfono + código privado de rastreo. Las líneas discontinuas con «include» indican inclusión UML: CU-03 y CU-05 incluyen validación de organización y materiales.</p>
     <a href="figura1-casos-uso.drawio" download>Descargar .drawio</a>
     <p class="status" role="status">Cargando diagrama…</p>
     <div class="viewer"></div>
@@ -51,14 +51,14 @@
   </section>
   <section id="fig3" data-file="figura3-clases.drawio">
     <h2>Figura 3 — Diagrama de Clases</h2>
-    <p>Sección 4.3. Vista simplificada de las clases implementadas: User, Request e InformalCollector. Se conservan nombres, tipos y operaciones reales. Role expresa la distinción ciudadano/organización; no se introduce herencia ficticia.</p>
+    <p>Sección 4.3. Vista simplificada de las clases implementadas: User y Request. Se conservan nombres, tipos y operaciones reales. Role expresa la distinción usuario/organización; no se introduce herencia ficticia.</p>
     <a href="figura3-clases.drawio" download>Descargar .drawio</a>
     <p class="status" role="status">Cargando diagrama…</p>
     <div class="viewer"></div>
   </section>
   <section id="fig4" data-file="figura4-estados.drawio">
     <h2>Figura 4 — Diagrama de Estados (Request)</h2>
-    <p>Sección 4.4. Ciclo de vida de una solicitud: PENDING → IN_PROGRESS/REJECTED → COMPLETED. Las transiciones llevan guarda entre corchetes y disparan notificación WhatsApp. El optimistic locking (@Version) protege contra condiciones de carrera.</p>
+    <p>Sección 4.4. Ciclo de vida de una solicitud: PENDING → IN_PROGRESS/REJECTED → COMPLETED. Las transiciones llevan guardas entre corchetes y el optimistic locking (@Version) protege contra condiciones de carrera. Las notificaciones automáticas están fuera del alcance del MVP.</p>
     <a href="figura4-estados.drawio" download>Descargar .drawio</a>
     <p class="status" role="status">Cargando diagrama…</p>
     <div class="viewer"></div>

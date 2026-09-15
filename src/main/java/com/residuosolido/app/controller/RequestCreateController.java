@@ -47,9 +47,11 @@ public class RequestCreateController extends BaseController {
     @GetMapping(Routes.REQUESTS_NEW)
     public String newRequestForm(@RequestParam(value = "city", required = false) City city,
                                   Model model, Authentication authentication) {
+        User user = userService.resolveUser(authentication);
         model.addAttribute("request", new Request());
         model.addAttribute("isEdit", false);
-        model.addAttribute("isGuest", userService.isAnonymous(authentication));
+        model.addAttribute("isGuest", user == null);
+        model.addAttribute("needsPhone", user != null && !user.hasPhone());
         model.addAttribute("cities", cityOrgService.getAvailableCities());
         addFormAttributes(model);
         if (city != null) {
@@ -73,6 +75,9 @@ public class RequestCreateController extends BaseController {
                                 @RequestParam(value = "guestCountryCode", required = false) String guestCountryCode,
                                 @RequestParam(value = "guestPhoneNational", required = false) String guestPhoneNational,
                                 @RequestParam(value = "guestDdd", required = false) String guestDdd,
+                                @RequestParam(value = "userCountryCode", required = false) String userCountryCode,
+                                @RequestParam(value = "userPhoneNational", required = false) String userPhoneNational,
+                                @RequestParam(value = "userDdd", required = false) String userDdd,
                                 @RequestParam(value = "organizationId", required = false) String organizationId,
                                 Authentication authentication,
                                 HttpServletRequest httpRequest,
@@ -87,6 +92,10 @@ public class RequestCreateController extends BaseController {
             if (guestPhoneNational != null && !guestPhoneNational.trim().isEmpty()
                     && guestCountryCode != null && !guestCountryCode.trim().isEmpty()) {
                 resolvedGuestPhone = PhoneNumber.of(CountryCode.fromDialCode(guestCountryCode), guestPhoneNational, guestDdd).value();
+            }
+            if (user != null && !user.hasPhone()) {
+                String phone = PhoneNumber.of(CountryCode.fromDialCode(userCountryCode), userPhoneNational, userDdd).value();
+                userService.updateProfile(user, null, null, phone, null);
             }
             Request created = requestService.createRequestWithImage(user, city, address, addressReference,
                     materials, guestName, resolvedGuestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);

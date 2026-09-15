@@ -78,6 +78,21 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     }
 
     @Test
+    @DisplayName("Footer técnico y cambio de tema funcionan")
+    void footerAndThemeWork() {
+        page.navigate(baseUrl + "/");
+        assertTrue(page.locator("footer a[href='/documentos']").isVisible());
+        assertTrue(page.locator("footer a[href='/diagramas']").isVisible());
+        assertTrue(page.locator("#pwaInstall").isVisible());
+
+        String before = page.locator("html").getAttribute("data-theme");
+        page.locator("#themeToggle").click();
+        String after = page.locator("html").getAttribute("data-theme");
+        assertTrue(!before.equals(after));
+        assertEquals(after, page.evaluate("localStorage.getItem('theme')"));
+    }
+
+    @Test
     @DisplayName("Ruta protegida /acopio redirige a login")
     void protectedRouteRedirectsToLogin() {
         page.navigate(baseUrl + "/acopio/requests");

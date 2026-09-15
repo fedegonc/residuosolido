@@ -38,7 +38,7 @@ aplicaciones, garantizar calidad y elaborar documentación técnica.
 | Análisis de requisitos | 8 RF, 14 RN, 3 actores, casos de uso (`docs/DIAGRAMAS.md`) |
 | Modelado | Entidades, relaciones, estados, multiplicidades (`docs/diagrams/`) |
 | Desarrollo | Flujo completo ciudadano → organización → seguimiento |
-| Testing | 216 tests: unitarios, integración, seguridad, autorización |
+| Testing | 218 tests: unitarios, integración, seguridad, autorización |
 | Calidad | JaCoCo, validación server-side, optimistic locking |
 | Documentación | 11 docs técnicos, 4 diagramas UML, endpoints catalogados |
 | Gestión del proyecto | Iterativo-incremental en 4 fases, tradeoffs documentados |
@@ -123,7 +123,7 @@ Preparar capturas o un video de respaldo por si la demo falla.
 
 | Dimensión | Evidencia presentada |
 |---|---|
-| Correctitud funcional | 216 tests ligados a requisitos |
+| Correctitud funcional | 218 tests ligados a requisitos |
 | Autorización | Tests de acceso con roles incorrectos |
 | Integración | Flujo con aplicación y base de datos reales |
 | Interfaz | Verificación en navegador, móvil, idiomas |
@@ -513,7 +513,7 @@ artículo).
   ~40 clases.
 
 **Justificación de la postergación:** el sistema está estable con
-216 tests pasando. Un refactor de controllers a una semana de la
+218 tests pasando. Un refactor de controllers a una semana de la
 defensa puede introducir regresiones difíciles de detectar. Las
 compactaciones aplicadas (sección 13) ya redujeron el área visible
 del sistema sin tocar controllers ni rutas.
@@ -620,35 +620,32 @@ lugar de depender del visor JS de diagrams.net.
 
 ---
 
-## 19. CI/CD con GitHub Actions (no solo Render.com)
+## 19. Verificación manual antes del deploy automático
 
-**Decisión:** agregar un pipeline de CI en GitHub Actions que corre
-tests, PMD, JaCoCo y un smoke test de Docker en cada push/PR, además
-del deploy automático que ya hace Render.com.
+**Decisión:** eliminar el workflow de GitHub Actions. Los tests, PMD y
+el build Docker se ejecutan manualmente antes del push; Render.com
+construye el artefacto sin repetir tests dependientes de MongoDB o del
+navegador.
 
 **A favor:**
-- Validación antes del deploy: si los tests fallan, Render.com no
-  recibe código roto.
-- Reportes de cobertura (JaCoCo) y análisis estático (PMD) como
-  artifacts descargables.
-- Smoke test del Dockerfile detecta problemas de build antes de
-  producción.
-- MongoDB service container en CI replica el entorno real.
+- El build de Render no depende de una instancia de MongoDB de tests.
+- Se evita duplicar una suite extensa en GitHub Actions y Render.
+- El deploy conserva el flujo simple: verificación local, push y build
+  Docker en Render.
 
 **En contra:**
-- Duplica el tiempo de feedback (local + CI).
-- MongoDB en CI suma ~30s al pipeline (startup del service container).
-- PMD tiene 68 violaciones con `failOnViolation=false` — el pipeline
-  no bloquea por PMD (ver §20).
+- La calidad depende de ejecutar la verificación manual antes del push.
+- GitHub no bloquea código sin tests ni genera artifacts de JaCoCo/PMD.
+- No existe una barrera automática antes del deploy.
 
-**Para producción:** activar `failOnViolation=true` cuando se
-reduzcan las violaciones de PMD a cero.
+**Para producción:** reintroducir una verificación automatizada cuando
+el equipo o la frecuencia de cambios justifiquen el costo operativo.
 
 ---
 
 ## 20. PMD con failOnViolation=false
 
-**Decisión:** PMD corre en el build y en CI, pero no bloquea el
+**Decisión:** PMD está configurado para ejecución manual, pero no bloquea el
 build si encuentra violaciones (`failOnViolation=false`).
 
 **A favor:**
@@ -660,7 +657,7 @@ build si encuentra violaciones (`failOnViolation=false`).
 
 **En contra:**
 - Las violaciones pueden acumularse sin consecuencia.
-- El CI no valida calidad estática, solo compilación y tests.
+- No existe una validación automática de calidad estática antes del deploy.
 
 **Para producción:** revisar las 68 violaciones de PMD 7, activar
 `failOnViolation=true` cuando lleguen a cero.

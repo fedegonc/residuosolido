@@ -59,6 +59,25 @@
             <i class="fa-solid fa-circle-info"></i>
             <span data-i18n="req_form_logged_in_note">Usaremos los datos de tu perfil para esta solicitud</span>
           </div>
+          <div th:if="${needsPhone}" class="req-form__row">
+            <div class="form-group">
+              <label for="userPhoneNational">Teléfono de contacto <span class="req">*</span></label>
+              <div class="phone-country-row">
+                <select id="userPhoneCountryCode" name="userCountryCode" class="form-select form-select--small">
+                  <option value="+598" selected>🇺🇾 +598</option>
+                  <option value="+55">🇧🇷 +55</option>
+                </select>
+                <input type="tel" id="userPhoneNational" name="userPhoneNational" class="form-input"
+                       placeholder="9X XXX XXX" required>
+              </div>
+              <div class="form-group is-hidden mt-1" id="userPhoneDddGroup">
+                <label for="userDdd" class="label--sm">DDD</label>
+                <input type="text" id="userDdd" name="userDdd" class="form-input form-input--small input--ddd"
+                       value="55" maxlength="2">
+              </div>
+              <p class="form-hint">Se guardará en tu perfil para coordinar la recolección.</p>
+            </div>
+          </div>
 
           <!-- City + Organization -->
           <div class="req-form__row">
@@ -200,6 +219,7 @@
     <!-- Page-specific JS -->
     <th:block th:replace="~{fragments/request-form-js :: script}"></th:block>
     <th:block th:replace="~{fragments/phone-country-selector :: script('guestPhone')}"></th:block>
+    <th:block th:replace="~{fragments/phone-country-selector :: script('userPhone')}"></th:block>
   </main>
 </body>
 </html>

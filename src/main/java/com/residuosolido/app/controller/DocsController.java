@@ -34,13 +34,13 @@ public class DocsController {
             doc("DEFENSA", "Defensa de tesis", "Argumento, demo, preguntas del tribunal, tradeoffs y fuentes académicas.", "fa-solid fa-graduation-cap"),
             doc("METODOLOGIA", "Metodología", "Modelo iterativo incremental, copies del sistema y single source of truth.", "fa-solid fa-diagram-project"),
             doc("DIAGRAMAS", "Diagramas y requisitos", "Diagramas UML, requisitos funcionales y reglas de negocio.", "fa-solid fa-sitemap"),
-            doc("ENDPOINTS", "Endpoints y testing", "Rutas HTTP extraídas de controllers y estrategia de pruebas (229 tests).", "fa-solid fa-route"),
+            doc("ENDPOINTS", "Endpoints y testing", "Rutas HTTP extraídas de controllers y estrategia de pruebas (218 tests).", "fa-solid fa-route"),
             doc("MEJORAS", "Mejoras y auditoría", "Superficies de mejora, hardening, correcciones aplicadas y auditoría.", "fa-solid fa-table-list")
     );
 
     private static final List<Map<String, String>> DIAGRAMS = List.of(
             diagram("figura1-casos-uso", "Figura 1 — Casos de Uso",
-                    "Ocho objetivos funcionales y tres actores (invitado, usuario, organización).",
+                    "Siete objetivos funcionales activos y tres actores (invitado, usuario, organización).",
                     "fa-solid fa-users"),
             diagram("figura2-modelo-logico", "Figura 2 — Modelo Lógico",
                     "Entidades y asociaciones con multiplicidades (MongoDB).",

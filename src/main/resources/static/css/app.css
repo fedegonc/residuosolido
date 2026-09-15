@@ -117,7 +117,9 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 .site-footer{background:var(--navbar-bg);color:var(--navbar-link);padding:1.25rem 1rem;flex-shrink:0;border-top:3px solid var(--primary);box-shadow:0 -2px 12px rgba(27,42,31,.10)}
 .footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0 1.5rem}
 .footer-min__brand{display:flex;align-items:center;gap:.375rem;color:var(--white);font-weight:700;font-size:.75rem}.footer-min__brand i{color:var(--primary-light)}
+.footer-min__links{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap}.footer-min__links a,.footer-min__install{color:var(--navbar-link);font:500 .75rem var(--font);background:none;border:0;padding:0}.footer-min__links a:hover,.footer-min__install:not(:disabled):hover{color:var(--white);text-decoration:underline}.footer-min__install:disabled{opacity:.5;cursor:not-allowed}
 .footer-min__copy{color:var(--footer-text);font-size:.75rem}
+@media(max-width:700px){.footer-inner{flex-direction:column;text-align:center}}
 /* Page + sections */
 .page{max-width:var(--maxw);margin:0 auto;padding:0 1.5rem}.page--narrow{max-width:28rem}.page--center{text-align:center;padding-top:4rem;padding-bottom:4rem}
 .hero{padding:1.5rem;background:var(--hero-bg);position:relative;overflow:hidden}

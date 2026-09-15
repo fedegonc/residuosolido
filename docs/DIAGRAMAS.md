@@ -55,22 +55,6 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │ assignOrganization(User)                                │
 └──────────────────────────────────────────────────────┘
 
-┌─────────────────────────────┐
-│      InformalCollector      │
-├─────────────────────────────┤
-│ id: String                  │
-│ organizationId: String       │──── N:1 → User (organización dueña, por id, no @DocumentReference)
-│ name / phone: String        │
-│ city: City                  │
-│ materials: List<MaterialCategory> │
-│ notes: String                │
-│ active: boolean = true       │
-│ createdAt: LocalDateTime     │
-├─────────────────────────────┤
-│ create(...) [factory]        │
-│ updateDetails(...)           │
-│ belongsTo(User)              │
-└─────────────────────────────┘
 ```
 
 **Notas del modelo real (MongoDB, no relacional):**
@@ -100,20 +84,12 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │   users    │ 1     0..N│   requests   │  0..N  1 │        users         │
 │ (Usuario / │──────────▶│ (creador)    │◀─────────│    (organización)    │
 │Organización)│          │              │          │                       │
-└─────┬──────┘          └──────────────┘          └───────────────────────┘
-      │ 1
-      │
-      │ 0..N (por organizationId, referencia manual — no @DocumentReference)
-      ▼
-┌─────────────────────┐
-│ informal_collectors  │
-└─────────────────────┘
+└────────────┘          └──────────────┘          └───────────────────────┘
 ```
 
-- 3 colecciones Mongo: `users`, `requests`, `informal_collectors`.
+- 2 colecciones Mongo: `users` y `requests`.
 - `requests.user` → referencia a `users` (opcional, null si es invitado).
 - `requests.organization` → referencia a `users` con `role=ORGANIZATION` (obligatoria tras crear/editar).
-- `informal_collectors.organizationId` → referencia por `String id` (no `@DocumentReference`), validada en código (`InformalCollectorService`).
 
 ---
 
@@ -144,10 +120,10 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 | Transición | Guarda | Acción |
 |---|---|---|
 | `→ PENDING` | — (creación) | `status = PENDING`, `trackingCode = generate(8)` |
-| `PENDING → IN_PROGRESS` | `[status == PENDING ∧ slot ≠ null]` | `confirmedSlot = slot`, `notify(accepted)` |
-| `PENDING → REJECTED` | `[status == PENDING]` | `notify(rejected)` |
-| `IN_PROGRESS → COMPLETED` | `[status == IN_PROGRESS]` | `notify(completed)` |
-| `IN_PROGRESS → REJECTED` | `[status == IN_PROGRESS]` | `notify(rejected)` (arrepentimiento) |
+| `PENDING → IN_PROGRESS` | `[status == PENDING ∧ slot ≠ null]` | `confirmedSlot = slot` |
+| `PENDING → REJECTED` | `[status == PENDING]` | `status = REJECTED` |
+| `IN_PROGRESS → COMPLETED` | `[status == IN_PROGRESS]` | `status = COMPLETED` |
+| `IN_PROGRESS → REJECTED` | `[status == IN_PROGRESS]` | `status = REJECTED` |
 
 **Notas:**
 - Solo en `PENDING` la solicitud puede editarse o eliminarse (`canBeEdited()` / `canBeDeleted()`).
@@ -245,8 +221,7 @@ Organización
   ├─ CU: Ver solicitudes asignadas, filtrar por estado (RF-6)
   ├─ CU: Aceptar solicitud (con horario) (RF-6)
   ├─ CU: Rechazar solicitud (RF-6)
-  ├─ CU: Completar solicitud (RF-6)
-  └─ CU: Gestionar recolectores informales — CRUD (RF-8, sin link en sidebar)
+  └─ CU: Completar solicitud (RF-6)
 ```
 
 ### Visitante (público)
@@ -289,23 +264,23 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        PRESENTACIÓN                           │
-│  Controllers (17) → Templates (29) → Fragments JS           │
+│  Controllers (16) → Templates (28) → Fragments JS           │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                          NEGOCIO                             │
-│  Services (11) → Validadores → Lógica de dominio            │
+│  Services (9) → Value Objects → Lógica de dominio           │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                          DATOS                               │
-│  Repositories (3) → MongoDB (Request, User, InformalCollector)│
+│  Repositories (2) → MongoDB (Request, User)                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## Mapeo por Capa
 
-### 1. Controllers (17 archivos)
+### 1. Controllers (16 archivos)
 
 **Auth:**
 - `AuthController` — Login, registro, logout
@@ -322,7 +297,6 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
 - `OrgRequestDetailController` — Detalle y acciones (aceptar/rechazar/completar)
 - `OrgProfileController` — Perfil de organización
 - `OrgOnboardingController` — Completar perfil post-registro
-- `InformalCollectorController` — CRUD de catadores (sin link en sidebar, ver docs/DEFENSA.md)
 
 **Público:**
 - `PublicMetricsController` — Métricas abiertas de reciclaje por ciudad
@@ -336,33 +310,30 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
 **Base:**
 - `BaseController` — Utilidades comunes (usuario actual, mensajes flash)
 
-### 2. Services (11 archivos)
+### 2. Services (9 archivos)
 
 - `UserService` — Gestión de usuarios y perfiles
 - `UserRegistrationService` — Registro de nuevos usuarios/organizaciones
-- `RequestService` — Creación de solicitudes
-- `RequestQueryService` — Consultas de solicitudes
-- `RequestUpdateService` — Edición y eliminación de solicitudes
-- `RequestOrgService` — Consultas de solicitudes para organizaciones
+- `RequestService` — Creación, edición y eliminación de solicitudes
+- `RequestQueryService` — Consultas de solicitudes y validación de propiedad
 - `RequestTransitionService` — Transiciones de estado (aceptar/rechazar/completar)
 - `RequestMetricsService` — Métricas de solicitudes (user + org dashboards)
 - `PublicMetricsService` — Métricas públicas por ciudad
 - `CityOrgService` — Búsqueda de organizaciones por ciudad
 - `LocalImageService` — Subida de imágenes locales
-- `InformalCollectorService` — Gestión de recolectores informales
 
-### 3. Modelos (5 clases)
+### 3. Modelos y Value Objects (6 clases + DTO)
 
 - `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
 - `Request` — Solicitudes de recolección con ciclo de estados
-- `InformalCollector` — Recolectores informales vinculados a una org
+- `Email`, `Name` y `PhoneNumber` — Validación y canonicalización
+- `CountryCode` — Código de país para teléfonos de Uruguay y Brasil
 - `OrganizationDto` — DTO para API de organizaciones
 
-### 4. Repositories (3 interfaces)
+### 4. Repositories (2 interfaces)
 
 - `UserRepository` — Persistencia de usuarios
 - `RequestRepository` — Persistencia de solicitudes
-- `InformalCollectorRepository` — Persistencia de recolectores
 
 ## Flujos Principales
 
@@ -412,4 +383,4 @@ OrgOnboardingController.completeProfile
 
 ## Pruebas
 
-216 tests unitarios e integrales en 22 suites. Ver `docs/ENDPOINTS.md`.
+218 tests unitarios e integrales en 22 suites. Ver `docs/ENDPOINTS.md`.

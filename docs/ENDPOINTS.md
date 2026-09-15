@@ -71,7 +71,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 # Testing (anexo)
 
 
-Describe la suite de tests real del proyecto (216 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (218 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 

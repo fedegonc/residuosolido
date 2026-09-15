@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="drawio-mcp" modified="2026-09-10T17:50:55.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+<mxfile host="drawio-mcp" modified="2026-09-15T15:15:07.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
   <diagram name="Clases de dominio" id="figura3">
     <mxGraphModel dx="1354" dy="981" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1180" background="#ffffff" math="0" shadow="0">
       <root>
@@ -29,57 +29,30 @@
         <mxCell id="Request-ops" value="+ accept(slot: TimeSlot): void&#10;+ complete(): void&#10;+ reject(): void&#10;+ assignOrganization(org: User): void&#10;+ canBeEdited(): boolean&#10;+ canBeDeleted(): boolean&#10;+ isGuest(): boolean" style="rounded=0;html=0;align=left;verticalAlign=top;spacing=12;fontFamily=Helvetica;fontSize=14;fontColor=#25362b;fillColor=#ffffff;strokeColor=#395e48;" parent="Request" vertex="1">
           <mxGeometry as="geometry" x="0.0" y="332.0" width="430.0" height="208.0" />
         </mxCell>
-        <mxCell id="Collector" value="InformalCollector" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=18;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="815.0" y="760.0" width="430.0" height="290.0" />
-        </mxCell>
-        <mxCell id="Collector-fields" value="− id: String&#10;− organizationId: String&#10;− name: String&#10;− phone: String&#10;− city: City&#10;− materials: List&lt;MaterialCategory&gt;&#10;− notes: String&#10;− active: boolean" style="text;html=0;align=left;verticalAlign=top;spacing=12;fontFamily=Helvetica;fontSize=14;fontColor=#25362b;" parent="Collector" vertex="1">
-          <mxGeometry as="geometry" x="0.0" y="42.0" width="430.0" height="198.0" />
-        </mxCell>
-        <mxCell id="Collector-ops" value="+ belongsTo(organization: User): boolean" style="rounded=0;html=0;align=left;verticalAlign=middle;spacing=12;fontFamily=Helvetica;fontSize=14;fontColor=#25362b;fillColor=#ffffff;strokeColor=#395e48;" parent="Collector" vertex="1">
-          <mxGeometry as="geometry" x="0.0" y="240.0" width="430.0" height="50.0" />
-        </mxCell>
-        <mxCell id="creator" style="endArrow=none;startArrow=none;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.27;entryX=0;entryY=0.21;exitX=1.0;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.21;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="User" target="Request">
+        <mxCell id="creator" style="endArrow=none;startArrow=none;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.27;entryX=0;entryY=0.21;exitX=1.0;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.21;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.21;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="User" target="Request">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
         <mxCell id="creator-a" value="0..1&#10;− user" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="creator" vertex="1">
-          <mxGeometry as="geometry" x="-1" y="0" width="195" height="55" relative="1">
-            <mxPoint x="12" y="-63" as="offset" />
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="12.0" y="-63.0" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="creator-b" value="0..*&#10;solicitudes propias" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="creator" vertex="1">
-          <mxGeometry as="geometry" x="1" y="0" width="170" height="40" relative="1">
-            <mxPoint x="-182" y="-50" as="offset" />
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="-182.0" y="-50.0" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="assigned" style="endArrow=none;startArrow=none;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.58;entryX=0;entryY=0.452;exitX=1.0;exitY=0.58;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="User" target="Request">
+        <mxCell id="assigned" style="endArrow=none;startArrow=none;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.58;entryX=0;entryY=0.452;exitX=1.0;exitY=0.58;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.58;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="User" target="Request">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
         <mxCell id="assigned-a" value="1&#10;− organization&#10;{role = ORGANIZATION}" style="text;html=0;fontFamily=Helvetica;fontSize=13;align=left;" parent="assigned" vertex="1">
-          <mxGeometry as="geometry" x="-1" y="0" width="195" height="55" relative="1">
-            <mxPoint x="12" y="-63" as="offset" />
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="12.0" y="-63.0" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="assigned-b" value="0..*&#10;solicitudes asignadas" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="assigned" vertex="1">
-          <mxGeometry as="geometry" x="1" y="0" width="180" height="40" relative="1">
-            <mxPoint x="-192" y="-50" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="owner" value="vínculo por organizationId" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=13;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.92;entryX=0;entryY=0.23;exitX=1.0;exitY=0.92;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.23;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="User" target="Collector">
           <mxGeometry as="geometry" relative="1">
-            <Array as="points">
-              <mxPoint x="700.0" y="513.0" />
-              <mxPoint x="700.0" y="827.0" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="owner-a" value="1&#10;organización" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="owner" vertex="1">
-          <mxGeometry as="geometry" x="-1" y="0" width="195" height="55" relative="1">
-            <mxPoint x="12" y="-63" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="owner-b" value="0..*" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="owner" vertex="1">
-          <mxGeometry as="geometry" x="1" y="0" width="65" height="25" relative="1">
-            <mxPoint x="-77" y="-35" as="offset" />
+            <mxPoint x="-192.0" y="-50.0" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Role" value="«enumeration»&#10;Role" style="swimlane;startSize=60;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=16;fillColor=#f2f4f2;swimlaneFillColor=#ffffff;strokeColor=#68796c;" parent="1" vertex="1">
@@ -100,7 +73,7 @@
         <mxCell id="legend" value="Notación: − atributo privado; + operación pública; nombre: Tipo; 0..1 opcional; 0..* cero o más.&#10;Los extremos user y organization representan los atributos de referencia de Request. La colección inversa no se declara en User." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=13;fontColor=#344239;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40.0" y="1080.0" width="1220.0" height="45.0" />
         </mxCell>
-        <mxCell id="source" value="Fuente: elaboración propia a partir de User.java, Request.java, InformalCollector.java y los enums Role / RequestStatus del proyecto." style="text;html=0;whiteSpace=wrap;align=left;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;" parent="1" vertex="1">
+        <mxCell id="source" value="Fuente: elaboración propia a partir de User.java, Request.java y los enums Role / RequestStatus del proyecto." style="text;html=0;whiteSpace=wrap;align=left;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40.0" y="1140.0" width="1220.0" height="25.0" />
         </mxCell>
       </root>

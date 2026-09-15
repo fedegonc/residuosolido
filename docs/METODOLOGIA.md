@@ -92,7 +92,7 @@ la experiencia de usuario y la consistencia visual.
 - Sistema de diseño canónico: variables CSS, BEM, dark mode,
   transiciones suaves, `prefers-reduced-motion`.
 - PWA: `manifest.json`, service worker, iconos PNG.
-- 216 tests, 0 failures.
+- 218 tests, 0 failures.
 
 **Cierre de fase:** el sistema es seguro, consistente, bilingüe y
 instalable como PWA. Las métricas públicas funcionan.
@@ -138,7 +138,7 @@ conscientes, no como omisiones.
 | 1 | Fundación y seguridad | Auth, roles, validación | ~30 |
 | 2 | Flujo de solicitudes | CRUD Request, transiciones | ~100 |
 | 3 | Endurecimiento y UX | Métricas, i18n, PWA, diseño | ~60 |
-| 4 | Contenido y defensa | Blog, docs, diagramas | 216 total |
+| 4 | Contenido y defensa | Blog, docs, diagramas | 218 total |
 
 Cada fase es **incremental** (agrega funcionalidad nueva) e
 **iterativa** (refina y endurece lo anterior). Los tests de cada fase
@@ -158,7 +158,7 @@ retrospectivo, no como metodología seguida desde el inicio.
 | 2. Objetivos de la solución | MVP que gestiona solicitudes de recolección y su estado |
 | 3. Diseño y desarrollo | Arquitectura, modelo de datos, reglas de negocio, interfaz |
 | 4. Demostración | Demo con datos sintéticos (flujo end-to-end) |
-| 5. Evaluación | 216 tests + verificación en navegador; usabilidad pendiente |
+| 5. Evaluación | 218 tests + verificación en navegador; usabilidad pendiente |
 | 6. Comunicación | Documentación técnica, diagramas UML, esta defensa |
 
 **Referencia:** Peffers, K., Tuunanen, T., Rothenberger, M. A., &
@@ -187,7 +187,7 @@ metodología, sistemas comparables y contexto territorial.
 > cliente (JS). Los `messages_*.properties` son para el servidor
 > (Thymeleaf).
 >
-> **Fecha:** commit `1e4d575` · **Tests:** 216, 0 failures
+> **Fecha:** commit `1e4d575` · **Tests:** 218, 0 failures
 
 ---
 
