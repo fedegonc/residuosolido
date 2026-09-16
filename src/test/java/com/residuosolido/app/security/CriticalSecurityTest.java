@@ -2,6 +2,7 @@ package com.residuosolido.app.security;
 
 import com.residuosolido.app.config.Routes;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,8 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * No requieren MongoDB: las decisiones de acceso se toman en el filter chain,
  * antes de llegar a los controladores.
  */
+@Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=mongodb://localhost:27017/testdb",
+        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false"
 })
 @AutoConfigureMockMvc
@@ -47,8 +49,8 @@ class CriticalSecurityTest {
     // ===== Rutas protegidas: anónimo → redirect a login =====
 
     @Test
-    void userDashboard_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get(Routes.USER_HOME))
+    void userRequests_anonymous_redirectsToLogin() throws Exception {
+        mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/auth/login"));
     }
@@ -78,9 +80,9 @@ class CriticalSecurityTest {
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
-    void orgRole_cannotAccessUserRoutes() throws Exception {
-        mockMvc.perform(get(Routes.USER_HOME))
-                .andExpect(status().isForbidden());
+    void orgRole_cannotAccessUserRequests() throws Exception {
+        mockMvc.perform(get(Routes.REQUESTS))
+                .andExpect(status().is3xxRedirection());
     }
 
     // ===== CSRF =====
@@ -88,7 +90,7 @@ class CriticalSecurityTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void postWithoutCsrf_isRejected() throws Exception {
-        mockMvc.perform(post(Routes.USER_PROFILE))
+        mockMvc.perform(post(Routes.REQUEST_DELETE.replace("{id}", "test")))
                 .andExpect(status().isForbidden());
     }
 

@@ -115,23 +115,6 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     }
 
     @Test
-    @DisplayName("#19 Blog carga artículos")
-    void blogLoads() {
-        page.navigate(baseUrl + "/blog");
-        page.waitForTimeout(2000);
-
-        // Verificar que hay contenido de blog
-        Locator blogArticles = page.locator(".card--blog");
-        assertTrue(blogArticles.count() > 0,
-                "El blog debe tener al menos un artículo");
-
-        // El blog usa anchors con # para navegar a artículos
-        // Verificar que hay contenido legible
-        assertTrue(page.locator(".card__title").first().innerText().length() > 0,
-                "Debe haber al menos un título de artículo visible");
-    }
-
-    @Test
     @DisplayName("#20 Cross-role: ciudadano no accede a /acopio")
     void crossRoleDenied() {
         login("juan", "12345678");

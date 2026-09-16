@@ -1,121 +1,54 @@
-<!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head>
-  <title>Eco Solicitud</title>
-</head>
+<head><title>Eco Solicitud</title></head>
 <body>
   <main layout:fragment="content">
-
-    <!-- Hero + Cómo funciona (fusionados) -->
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="page">
-        <div class="hero__grid">
-          <div>
-            <span class="hero__badge"><span class="hero__flag">🇺🇾</span><span class="hero__flag">🇧🇷</span><span data-i18n="badge">Rivera · Sant'Ana do Livramento</span></span>
-            <h1 id="hero-title" class="hero__title" data-i18n="title">Pedí que pasen a buscar tus reciclables</h1>
-            <p class="hero__subtitle" data-i18n="subtitle">Una cooperativa de tu ciudad los retira en el día y horario que coordinen.</p>
-            <div class="hero__cta">
-              <a href="/solicitudes/nueva" class="btn btn--primary btn--lg">
-                <i class="fa-solid fa-clipboard-list"></i>
-                <span data-i18n="cta_request">Pedir recolección</span>
-              </a>
-              <a href="/rastrear" class="btn btn--outline btn--lg">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span data-i18n="cta_track">Ver mi solicitud</span>
-              </a>
-            </div>
-          </div>
-          <figure class="hero__art">
-            <img src="/images/hero/plaza-internacional.jpg"
-                 alt="Plaza Internacional entre Rivera y Sant'Ana do Livramento"
-                 class="hero__image" width="1280" height="960">
-            <figcaption class="hero__credit">
-              Foto: <a href="https://commons.wikimedia.org/wiki/File:Plaza_Internacional.jpg" target="_blank" rel="noopener noreferrer">Mx. Granger / Wikimedia Commons</a> (CC0)
-            </figcaption>
-          </figure>
+    <div class="page">
+      <section class="hero">
+        <h1 class="hero__title" data-i18n="title">Pedí que pasen a buscar tus <span>reciclables</span></h1>
+        <p class="hero__subtitle" data-i18n="subtitle">Una cooperativa de tu ciudad los retira en el día y horario que coordinen.</p>
+        <div class="hero__cta">
+          <a href="/solicitudes/nueva" class="btn btn--primary">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <span data-i18n="cta_request">Pedir recolección</span>
+          </a>
+          <a href="/rastrear" class="btn btn--outline">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span data-i18n="cta_track">Ver mi solicitud</span>
+          </a>
         </div>
-        <!-- Pasos compactos (sin título, dentro del hero) -->
-        <div class="how__grid how__grid--compact">
-          <div class="how__step">
-            <div class="how__number">1</div>
-            <h3 data-i18n="how_step1">Solicitá</h3>
-            <p data-i18n="how_step1_desc">Elegí tu ciudad y los materiales que tenés.</p>
-          </div>
-          <div class="how__step">
-            <div class="how__number">2</div>
-            <h3 data-i18n="how_step2">Asignamos</h3>
-            <p data-i18n="how_step2_desc">Elegís una cooperativa de tu ciudad que acepte esos materiales.</p>
-          </div>
-          <div class="how__step">
-            <div class="how__number">3</div>
-            <h3 data-i18n="how_step3">Retiran</h3>
-            <p data-i18n="how_step3_desc">Coordinan día y horario para el retiro.</p>
-          </div>
-          <div class="how__step">
-            <div class="how__number">4</div>
-            <h3 data-i18n="how_step4">Impactamos</h3>
-            <p data-i18n="how_step4_desc">Seguís el estado con tu teléfono y código de rastreo.</p>
-          </div>
+      </section>
+
+      <div class="how__grid mb">
+        <div class="how__step">
+          <div class="how__number">1</div>
+          <h3 data-i18n="how_step1">Solicitás</h3>
+          <p data-i18n="how_step1_desc">Elegí tu ciudad y los materiales que tenés.</p>
+        </div>
+        <div class="how__step">
+          <div class="how__number">2</div>
+          <h3 data-i18n="how_step2">Asignamos</h3>
+          <p data-i18n="how_step2_desc">Elegís una cooperativa de tu ciudad que acepte esos materiales.</p>
+        </div>
+        <div class="how__step">
+          <div class="how__number">3</div>
+          <h3 data-i18n="how_step3">Retiran</h3>
+          <p data-i18n="how_step3_desc">Coordinan día y horario para el retiro.</p>
+        </div>
+        <div class="how__step">
+          <div class="how__number">4</div>
+          <h3 data-i18n="how_step4">Impactamos</h3>
+          <p data-i18n="how_step4_desc">Seguís el estado con tu teléfono y código de rastreo.</p>
         </div>
       </div>
-    </section>
 
-    <!-- Blog + CTA cooperativas (fusionados) -->
-    <section class="blog-section" aria-labelledby="blog-title">
-      <div class="page">
-        <h2 id="blog-title" class="how__title">Historias</h2>
-        <p class="how__subtitle">Conocé quiénes sostienen el reciclaje en la Frontera de la Paz</p>
-        <div class="blog-grid">
-          <a href="/blog#recolectores-informales" class="blog-card">
-            <div class="blog-card__media">
-              <span class="blog-card__tag blog-card__tag--overlay">Comunidad</span>
-            </div>
-            <div class="blog-card__body">
-              <h3 class="blog-card__title">Recolectores informales: el corazón invisible del reciclaje</h3>
-              <p class="blog-card__excerpt">En Rivera y Sant'Ana do Livramento, cientos de recolectores recorren las calles separando lo que otros descartan. Trabajan sin equipo, sin sueldo fijo y sin reconocimiento.</p>
-              <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-          </a>
-          <a href="/blog#galpones-de-acopio" class="blog-card">
-            <div class="blog-card__media">
-              <span class="blog-card__tag blog-card__tag--overlay">Organizaciones</span>
-            </div>
-            <div class="blog-card__body">
-              <h3 class="blog-card__title">Los galpones de acopio y el calor del verano</h3>
-              <p class="blog-card__excerpt">En verano, los galpones superan los 40°C. Sin ventilación ni sombra, las cooperativas trabajan en condiciones extremas. Conocé los desafíos que enfrentan cada día.</p>
-              <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-          </a>
-          <a href="/blog#frontera-de-la-paz" class="blog-card">
-            <div class="blog-card__media">
-              <img src="/images/hero/plaza-internacional.jpg"
-                   alt="Plaza Internacional entre Rivera y Sant'Ana do Livramento"
-                   loading="lazy"
-                   class="blog-card__img"
-                   width="1280" height="960">
-              <span class="blog-card__tag blog-card__tag--overlay">Proyecto</span>
-            </div>
-            <div class="blog-card__body">
-              <h3 class="blog-card__title">Frontera de la Paz: dos ciudades, un mismo compromiso</h3>
-              <p class="blog-card__excerpt">Rivera y Sant'Ana do Livramento forman un continuo urbano de 191 mil habitantes sin frontera física. La Agenda Urbana Binacional 2030 busca integrar la gestión de residuos.</p>
-              <span class="blog-card__cta">Leer más <i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-          </a>
-        </div>
-        <!-- CTA cooperativas (dentro de la misma sección) -->
-        <div class="coop-cta">
-          <div class="coop-cta__icon"><i class="fa-solid fa-hand-holding-droplet"></i></div>
-          <div class="coop-cta__text">
-            <h3 data-i18n="org_cta_title">¿Retirás reciclables en Rivera o Sant'Ana?</h3>
-            <p data-i18n="org_cta_desc">Registrate para recibir solicitudes de recolección en tu zona.</p>
-          </div>
-          <a href="/auth/register" class="btn btn--primary btn--lg" data-i18n="org_cta_button">Registrarme como organización</a>
-        </div>
+      <div class="card text-center">
+        <h3 data-i18n="org_cta_title">¿Retirás reciclables en Rivera o Sant'Ana?</h3>
+        <p class="hint mb" data-i18n="org_cta_desc">Registrate para recibir solicitudes de recolección en tu zona.</p>
+        <a href="/auth/register" class="btn btn--primary" data-i18n="org_cta_button">Registrarme como organización</a>
       </div>
-    </section>
-
+    </div>
   </main>
 </body>
 </html>

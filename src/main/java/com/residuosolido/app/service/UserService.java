@@ -2,7 +2,6 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.model.Email;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 
@@ -59,11 +58,11 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
 
         if (user.getEmail() != null) {
-            Email email = Email.of(user.getEmail());
-            if (userRepository.findByEmailIgnoreCase(email.value()).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
+            String normalized = user.getEmail().trim().toLowerCase(java.util.Locale.ROOT);
+            if (userRepository.findByEmailIgnoreCase(normalized).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
                 throw new IllegalArgumentException("error.register.email_exists");
             }
-            existing.setEmail(email.value());
+            existing.setEmail(normalized);
         }
         existing.setFirstName(user.getFirstName());
         existing.setPhone(user.getPhone());
@@ -74,15 +73,11 @@ public class UserService {
         }
 
         if (newPassword != null && !newPassword.trim().isEmpty()) {
-            AccountInput.password(newPassword);
+            validatePassword(newPassword);
             existing.setPassword(passwordEncoder.encode(newPassword));
         }
 
         return userRepository.save(existing);
-    }
-
-    public User save(User user) {
-        return userRepository.save(user);
     }
 
     public User updateProfile(User user, String email, String firstName, String phone, City city) {
@@ -111,5 +106,14 @@ public class UserService {
             throw new IllegalArgumentException(e.getMessage());
         }
         userRepository.save(org);
+    }
+
+    private void validatePassword(String value) {
+        if (value == null || value.isBlank() || value.length() < 8) {
+            throw new IllegalArgumentException("error.register.password_min_length");
+        }
+        if (value.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalArgumentException("error.register.password_too_long");
+        }
     }
 }

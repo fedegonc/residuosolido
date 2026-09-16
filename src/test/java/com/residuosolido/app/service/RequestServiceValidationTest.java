@@ -5,6 +5,7 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -20,21 +21,20 @@ import static org.mockito.Mockito.when;
  * No mockea RequestService — instancia el servicio real con dependencias mockeadas
  * para verificar que las validaciones se ejecutan efectivamente.
  */
+@Tag("unit")
 class RequestServiceValidationTest {
 
     private RequestRepository requestRepository;
     private CityOrgService cityOrgService;
     private LocalImageService imageService;
     private RequestService requestService;
-    private RequestQueryService requestQueryService;
 
     @BeforeEach
     void setUp() {
         requestRepository = mock(RequestRepository.class);
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
-        requestQueryService = new RequestQueryService(requestRepository);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService, requestQueryService);
+        requestService = new RequestService(requestRepository, imageService, cityOrgService);
     }
 
     private User citizen() {

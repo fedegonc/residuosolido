@@ -81,8 +81,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     @DisplayName("Footer técnico y cambio de tema funcionan")
     void footerAndThemeWork() {
         page.navigate(baseUrl + "/");
-        assertTrue(page.locator("footer a[href='/documentos']").isVisible());
-        assertTrue(page.locator("footer a[href='/diagramas']").isVisible());
+        assertTrue(page.locator("footer a[href*='docs.google.com']").isVisible());
         assertTrue(page.locator("#pwaInstall").isVisible());
 
         String before = page.locator("html").getAttribute("data-theme");

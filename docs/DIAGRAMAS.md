@@ -184,7 +184,7 @@ Usuario
   ├─ CU: Ver dashboard e historial (RF-5)
   ├─ CU: Editar solicitud propia pendiente (RF-5)
   ├─ CU: Eliminar solicitud propia pendiente (RF-5)
-  └─ CU: Editar perfil (RF-7 — vía UserProfileController)
+  └─ CU: Editar perfil (RF-7 — vía RequestController)
 ```
 
 ### Organización
@@ -203,8 +203,7 @@ Organización
 ### Visitante (público)
 ```
 Visitante
-  ├─ CU: Ver landing page con blog de historias del reciclaje
-  └─ CU: Leer artículos del blog estático (/blog, /blog/{slug})
+  ├─ CU: Ver landing page
 ```
 
 Para el detalle de precondiciones/postcondiciones de cada RF, ver `RF-RN.md`.
@@ -245,7 +244,7 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                          NEGOCIO                             │
-│  Services (9) → Value Objects → Lógica de dominio           │
+│  Services (8) → Modelos → Lógica de dominio                 │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -262,22 +261,16 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
 - `AuthController` — Login, registro, logout
 
 **Usuario (Ciudadano):**
-- `RequestController` — Listar, ver detalle, eliminar solicitudes
+- `RequestController` — Listar, ver detalle, editar, eliminar solicitudes
 - `RequestCreateController` — Crear solicitudes (invitado + usuario)
-- `RequestEditController` — Editar solicitudes pendientes
-- `UserProfileController` — Dashboard y perfil del ciudadano
 
 **Organización (Acopio):**
 - `OrgDashboardController` — Dashboard de organización con Kanban integrado
-- `OrgRequestController` — Lista de solicitudes recibidas
-- `OrgRequestDetailController` — Detalle y acciones (aceptar/rechazar/completar)
-- `OrgProfileController` — Perfil de organización
-- `OrgOnboardingController` — Completar perfil post-registro
+- `OrgRequestController` — Lista, detalle y acciones (aceptar/rechazar/completar)
+- `OrgProfileController` — Perfil de organización + onboarding post-registro
 
 **Público:**
-- `PublicMetricsController` — Métricas abiertas de reciclaje por ciudad
 - `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
-- `BlogController` — Blog estático en una sola página (`/blog`)
 - `DocsController` — Páginas públicas de documentación (`/documentos`, `/diagramas`)
 
 **API:**
@@ -298,12 +291,11 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
 - `CityOrgService` — Búsqueda de organizaciones por ciudad
 - `LocalImageService` — Subida de imágenes locales
 
-### 3. Modelos y Value Objects (6 clases + DTO)
+### 3. Modelos (3 clases + DTO)
 
 - `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
 - `Request` — Solicitudes de recolección con ciclo de estados
-- `Email`, `Name` y `PhoneNumber` — Validación y canonicalización
-- `CountryCode` — Código de país para teléfonos de Uruguay y Brasil
+- `PhoneNumber` — Utility class de normalización E.164 (Uruguay +558 y Brasil +55)
 - `OrganizationDto` — DTO para API de organizaciones
 
 ### 4. Repositories (2 interfaces)
@@ -342,7 +334,7 @@ Request.accept(TimeSlot)  (ciclo de estados)
 Organización registrada
   ↓ Login
 LoginSuccessHandler → redirige /acopio/completar-perfil
-OrgOnboardingController.completeProfile
+OrgProfileController.completeProfile
   ↓ UserService.completeOrgProfile
   ↓ profileCompleted = true
   ↓ Redirect /acopio/inicio
@@ -359,4 +351,4 @@ OrgOnboardingController.completeProfile
 
 ## Pruebas
 
-218 tests unitarios e integrales en 22 suites. Ver `docs/ENDPOINTS.md`.
+176 tests unitarios e integrales en 22 suites. Ver `docs/ENDPOINTS.md`.

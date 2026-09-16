@@ -1,142 +1,91 @@
-<!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head>
-  <title>Eco Solicitud — Perfil de organización</title>
-</head>
+<head><title>Perfil de organización</title></head>
 <body>
   <main layout:fragment="content">
     <div class="org-layout">
       <div th:replace="~{fragments/org-sidebar :: sidebar('profile')}"></div>
-      <div class="org-layout__main panel-section">
+      <div class="org-layout__main">
 
-      <!-- Breadcrumbs -->
-      <nav class="breadcrumb" aria-label="breadcrumb">
+      <nav class="breadcrumb">
         <a href="/">Inicio</a>
         <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        <a href="/acopio/inicio" data-i18n="org_dash_title">Panel de acopio</a>
+        <a href="/acopio/inicio" data-i18n="org_dash_title">Panel</a>
         <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        <span data-i18n="org_profile_title">Perfil de organización</span>
+        <span data-i18n="org_profile_title">Perfil</span>
       </nav>
 
-      <!-- Header -->
-      <div class="panel-header">
-        <h1 class="panel-header__title" data-i18n="org_profile_title">Perfil de organización</h1>
-        <button type="button" class="btn btn--outline" id="editToggle">
-          <i class="fa-solid fa-pen"></i>
-          <span data-i18n="org_profile_edit">Editar perfil</span>
-        </button>
+      <div class="row row--between mb">
+        <h1 class="card__title" data-i18n="org_profile_title">Perfil de organización</h1>
+        <button type="button" class="btn btn--outline" id="editToggle"><i class="fa-solid fa-pen"></i> <span data-i18n="org_profile_edit">Editar</span></button>
       </div>
 
-      <div class="form-grid--stack">
-
-        <!-- View card -->
-        <div class="card card--info" id="viewCard">
-          <h2 class="card__title" data-i18n="org_profile_info">Información de la organización</h2>
-          <div class="info-row">
-            <i class="fa-solid fa-building"></i>
-            <span class="info-row__label" data-i18n="org_profile_name">Nombre</span>
-            <span class="info-row__value" th:text="${organization.displayName}"></span>
-          </div>
-          <div class="info-row">
-            <i class="fa-solid fa-user"></i>
-            <span class="info-row__label" data-i18n="profile_username">Usuario</span>
-            <span class="info-row__value" th:text="${organization.username}"></span>
-          </div>
-          <div class="info-row">
-            <i class="fa-solid fa-envelope"></i>
-            <span class="info-row__label" data-i18n="profile_email">Email</span>
-            <span class="info-row__value" th:text="${organization.email}"></span>
-          </div>
-          <div class="info-row">
-            <i class="fa-solid fa-phone"></i>
-            <span class="info-row__label" data-i18n="profile_phone">Teléfono</span>
-            <span class="info-row__value" th:if="${organization.hasPhone()}" th:text="${organization.phone}"></span>
-            <span class="info-row__empty" th:unless="${organization.hasPhone()}" data-i18n="profile_no_phone">Sin teléfono</span>
-          </div>
-          <div class="info-row">
-            <i class="fa-solid fa-location-dot"></i>
-            <span class="info-row__label" data-i18n="profile_city">Ciudad</span>
-            <span class="info-row__value" th:if="${organization.hasCity()}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(organization.city.name())}" th:text="${organization.city}"></span>
-            <span class="info-row__empty" th:unless="${organization.hasCity()}" data-i18n="profile_no_city">Sin ciudad</span>
-          </div>
-          <div class="info-row">
-            <i class="fa-solid fa-recycle"></i>
-            <span class="info-row__label" data-i18n="org_profile_materials">Materiales que acepta</span>
-            <span class="info-row__value" th:if="${!organization.acceptedMaterials.isEmpty()}">
-              <span th:each="mat, iter : ${organization.acceptedMaterials}"
-                    th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}"
-                    th:text="${mat.name() + (iter.last ? '' : ', ')}"></span>
-            </span>
-            <span class="info-row__empty" th:if="${organization.acceptedMaterials.isEmpty()}" data-i18n="org_profile_no_materials">Sin materiales seleccionados</span>
-          </div>
+      <div class="card mb" id="viewCard">
+        <h2 class="card__subtitle" data-i18n="org_profile_info">Información</h2>
+        <div th:replace="~{fragments/info-row :: row('fa-building', 'Nombre', ${organization.displayName})}"></div>
+        <div th:replace="~{fragments/info-row :: row('fa-user', 'Usuario', ${organization.username})}"></div>
+        <div th:replace="~{fragments/info-row :: row('fa-envelope', 'Email', ${organization.email})}"></div>
+        <div th:replace="~{fragments/info-row :: row('fa-phone', 'Teléfono', ${organization.hasPhone() ? organization.phone : 'Sin teléfono'})}"></div>
+        <div th:replace="~{fragments/info-row :: row('fa-location-dot', 'Ciudad', ${organization.hasCity() ? organization.city.toString() : 'Sin ciudad'})}"></div>
+        <div class="info-row">
+          <i class="fa-solid fa-recycle"></i>
+          <span class="info-row__label" data-i18n="org_profile_materials">Materiales</span>
+          <span th:if="${!organization.acceptedMaterials.isEmpty()}">
+            <span th:each="mat, iter : ${organization.acceptedMaterials}" th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name() + (iter.last ? '' : ', ')}"></span>
+          </span>
+          <span th:if="${organization.acceptedMaterials.isEmpty()}" data-i18n="org_profile_no_materials">Sin materiales</span>
         </div>
+      </div>
 
-        <!-- Edit card -->
-        <div class="card card--info is-hidden" id="editCard">
-          <h2 class="card__title" data-i18n="org_profile_edit_title">Editar datos</h2>
-          <form th:action="@{/acopio/perfil}" method="post" class="auth-form">
-            <div class="form-group">
-              <label for="firstName" data-i18n="org_profile_name_label">Nombre de la organización</label>
-              <input type="text" id="firstName" name="firstName" class="form-input" th:value="${organization.firstName}">
-            </div>
-            <div class="form-group">
-              <label for="email" data-i18n="profile_email_label">Email</label>
-              <input type="email" id="email" name="email" class="form-input" th:value="${organization.email}" required>
-            </div>
-            <div class="form-group">
-              <label for="phoneNational" data-i18n="profile_phone_label">Teléfono</label>
-              <div class="phone-country-row">
-                <select id="phoneCountryCode" name="countryCode" class="form-select form-select--small">
-                  <option value="+598" th:selected="${organization.phone == null or organization.phone.startsWith('+598')}">🇺🇾 +598</option>
-                  <option value="+55" th:selected="${organization.phone != null and organization.phone.startsWith('+55')}">🇧🇷 +55</option>
-                </select>
-                <input type="tel" id="phoneNational" name="phoneNational" class="form-input"
-                       th:value="${organization.phone}"
-                       placeholder="9X XXX XXX">
-              </div>
-              <div class="form-group is-hidden mt-1" id="phoneDddGroup">
-                <label for="ddd" class="label--sm">DDD</label>
-                <input type="text" id="ddd" name="ddd" class="form-input form-input--small input--ddd"
-                       value="55" maxlength="2">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="city" data-i18n="profile_city_label">Ciudad</label>
-              <select id="city" name="city" class="form-select">
-                <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
-                <option th:each="c : ${cities}" th:value="${c}"
-                        th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}"
-                        th:text="${c.name()}"
-                        th:selected="${organization.city != null and organization.city == c}"></option>
+      <div class="card is-hidden" id="editCard">
+        <h2 class="card__subtitle" data-i18n="org_profile_edit_title">Editar datos</h2>
+        <form th:action="@{/acopio/perfil}" method="post" class="stack">
+          <div class="field">
+            <label for="firstName" data-i18n="org_profile_name_label">Nombre</label>
+            <input type="text" id="firstName" name="firstName" class="input" th:value="${organization.firstName}">
+          </div>
+          <div class="field">
+            <label for="email" data-i18n="profile_email_label">Email</label>
+            <input type="email" id="email" name="email" class="input" th:value="${organization.email}" required>
+          </div>
+          <div class="field">
+            <label for="phoneNational" data-i18n="profile_phone_label">Teléfono</label>
+            <div class="phone-country-row">
+              <select id="phoneCountryCode" name="countryCode" class="select select--sm">
+                <option value="+598" th:selected="${organization.phone == null or organization.phone.startsWith('+598')}">🇺🇾 +598</option>
+                <option value="+55" th:selected="${organization.phone != null and organization.phone.startsWith('+55')}">🇧🇷 +55</option>
               </select>
+              <input type="tel" id="phoneNational" name="phoneNational" class="input" th:value="${organization.phone}" placeholder="9X XXX XXX">
             </div>
-            <div class="form-group">
-              <label data-i18n="org_profile_materials">Materiales que acepta</label>
-              <div class="check-grid">
-                <th:block th:each="mat : ${materials}">
-                  <label class="check-card">
-                    <input type="checkbox" name="materials" th:value="${mat.name()}"
-                           th:checked="${organization.acceptedMaterials.contains(mat)}">
-                    <span th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
-                  </label>
-                </th:block>
-              </div>
+            <div class="field is-hidden mt-sm" id="phoneDddGroup">
+              <label for="ddd">DDD</label>
+              <input type="text" id="ddd" name="ddd" class="input input--sm" value="55" maxlength="2">
             </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn--primary">
-                <i class="fa-solid fa-check"></i>
-                <span data-i18n="profile_save">Guardar</span>
-              </button>
-              <button type="button" class="btn btn--outline" id="cancelEdit">
-                <i class="fa-solid fa-xmark"></i>
-                <span data-i18n="profile_cancel">Cancelar</span>
-              </button>
+          </div>
+          <div class="field">
+            <label for="city" data-i18n="profile_city_label">Ciudad</label>
+            <select id="city" name="city" class="select">
+              <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
+              <option th:each="c : ${cities}" th:value="${c}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}" th:text="${c.name()}" th:selected="${organization.city != null and organization.city == c}"></option>
+            </select>
+          </div>
+          <div class="field">
+            <label data-i18n="org_profile_materials">Materiales</label>
+            <div class="check-grid">
+              <th:block th:each="mat : ${materials}">
+                <label class="check-card">
+                  <input type="checkbox" name="materials" th:value="${mat.name()}" th:checked="${organization.acceptedMaterials.contains(mat)}">
+                  <span th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
+                </label>
+              </th:block>
             </div>
-          </form>
-        </div>
-
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="profile_save">Guardar</span></button>
+            <button type="button" class="btn btn--outline" id="cancelEdit"><i class="fa-solid fa-xmark"></i> <span data-i18n="profile_cancel">Cancelar</span></button>
+          </div>
+        </form>
       </div>
 
       </div>

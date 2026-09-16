@@ -38,7 +38,7 @@ aplicaciones, garantizar calidad y elaborar documentación técnica.
 | Análisis de requisitos | 8 RF, 14 RN, 3 actores, casos de uso (`docs/DIAGRAMAS.md`) |
 | Modelado | Entidades, relaciones, estados, multiplicidades (`docs/diagrams/`) |
 | Desarrollo | Flujo completo ciudadano → organización → seguimiento |
-| Testing | 218 tests: unitarios, integración, seguridad, autorización |
+| Testing | 176 tests: unitarios, integración, seguridad, autorización |
 | Calidad | JaCoCo, validación server-side, optimistic locking |
 | Documentación | 11 docs técnicos, 4 diagramas UML, endpoints catalogados |
 | Gestión del proyecto | Iterativo-incremental en 4 fases, tradeoffs documentados |
@@ -66,7 +66,7 @@ solicitudes si no hay esa evidencia.
 ### 4.2 Alcance (2 min)
 
 **Dentro:** solicitudes, selección de organización, estados, permisos,
-seguimiento, métricas públicas, blog.
+seguimiento.
 
 **Fuera:** optimización de rutas, GPS, pagos, notificaciones reales,
 medición de impacto ambiental.
@@ -123,7 +123,7 @@ Preparar capturas o un video de respaldo por si la demo falla.
 
 | Dimensión | Evidencia presentada |
 |---|---|
-| Correctitud funcional | 218 tests ligados a requisitos |
+| Correctitud funcional | 176 tests ligados a requisitos |
 | Autorización | Tests de acceso con roles incorrectos |
 | Integración | Flujo con aplicación y base de datos reales |
 | Interfaz | Verificación en navegador, móvil, idiomas |
@@ -328,38 +328,36 @@ transacciones multi-documento.
 aceptable para producción.**
 
 **Para producción:** restaurar a 8 mínimo (o 12 con políticas OWASP:
-complejidad, breach-list check). Una línea en `AccountInput.password()`.
+complejidad, breach-list check). Una línea en `UserService.validatePassword()`.
 
 ---
 
-## 5. Blog estático (sin CMS)
+## 5. Blog estático — descartado del MVP
 
-**Decisión:** el blog es contenido estático en templates Thymeleaf,
-no en base de datos.
+**Decisión:** el blog estático fue planificado pero no se implementó.
+No existe `BlogController`, ni templates, ni rutas `/blog`.
 
-**A favor:** cero complejidad de backend, cero riesgo de inyección,
-rápido de implementar.
+**A favor de descartarlo:** el blog no aporta al flujo core (solicitud →
+aceptación → completado) y suma mantenimiento sin valor para el MVP.
 
-**En contra:** no hay editor, no hay panel de administración de
-artículos, cambiar contenido requiere editar código y redeployar.
+**En contra:** la landing page tiene menos contenido editorial.
 
-**Para producción:** colección `posts` en MongoDB, editor en panel,
-slug único, fecha de publicación, estado borrador/publicado. Las rutas
-`/blog` y `/blog/{slug}` ya son compatibles.
+**Para producción:** si se reactiva, colección `posts` en MongoDB,
+editor en panel, slug único, fecha de publicación, estado
+borrador/publicado.
 
 ---
 
-## 6. Catadores — CRUD latente
+## 6. Catadores — CRUD descartado
 
-**Decisión:** el CRUD de `InformalCollector` existe en backend pero
-no se expone en el sidebar de organización.
+**Decisión:** el CRUD de `InformalCollector` fue planificado pero no
+se implementó. No existe controller ni servicio.
 
-**A favor:** no mezcla gestión interna con comunicación pública; el
-blog reemplaza la exposición con contenido editorial.
+**A favor de descartarlo:** no mezcla gestión interna con comunicación
+pública.
 
-**En contra:** código sin uso visible; `Request` no tiene relación
-con el recolector responsable (no se puede responder "quién atendió
-esta solicitud").
+**En contra:** `Request` no tiene relación con el recolector
+responsable (no se puede responder "quién atendió esta solicitud").
 
 **Para producción:** decidir si el CRUD vuelve como herramienta
 interna (asignación de recolector a solicitud, RF-8 completo) o si se
@@ -470,21 +468,18 @@ cognitiva, priorizando las mejoras de bajo costo y alto impacto.
 **Aplicado:**
 
 - **Index fusionado (4 secciones → 2):** hero + cómo funciona en una
-  sola sección; blog + CTA cooperativas en otra. El banner de
-  cooperativas se integró como `.coop-cta` inline dentro de la sección
-  de blog, no como sección separada.
-- **Blog en una sola página (3 templates → 1):** `/blog` muestra los
-  3 artículos expandidos uno debajo del otro. La ruta `/blog/{slug}`
-  se eliminó. Las cards del index linkean a `/blog#slug` (anchor).
+  sola sección; CTA cooperativas en otra. El banner de cooperativas
+  se integró como `.coop-cta` inline dentro de la sección de contenido,
+  no como sección separada.
+- **Blog descartado:** el blog estático fue planificado pero no se
+  implementó. No hay `BlogController`, ni templates, ni rutas `/blog`.
 - **Padding reducido:** el hero pasó de `2.5rem` a `1.5rem` de
   padding, uniformando con el resto de las secciones.
 
 **A favor:** menos scroll, menos secciones, menos templates, menos
 rutas. El visitante ve el contenido completo en menos espacio.
 
-**En contra:** el index tiene menos respiración visual; el blog no
-tiene páginas individuales (no se puede compartir un link a un solo
-artículo).
+**En contra:** el index tiene menos contenido editorial sin el blog.
 
 ---
 
@@ -493,16 +488,23 @@ artículo).
 **Decisión:** las siguientes fusiones fueron evaluadas pero
 **diferidas** por riesgo de regresión a una semana de la defensa.
 
+**Implementado (post-podado):**
+
+- **Fusionar request-form + request-edit:** `RequestEditController`
+  fusionado en `RequestController`. Ahora un solo controller maneja
+  listar, ver, editar y eliminar solicitudes.
+- **Fusionar perfiles (user + org + onboarding):** `OrgOnboardingController`
+  fusionado en `OrgProfileController`. Ahora un solo controller maneja
+  onboarding y edición de perfil.
+- **Fusionar org-request + org-request-detail:** `OrgRequestDetailController`
+  fusionado en `OrgRequestController`. Ahora un solo controller maneja
+  lista, detalle y transiciones.
+- **Simplificar RequestStatus:** patrón State abstracto reemplazado por
+  enum simple con métodos basados en `if`. Mismo comportamiento, mismo
+  mensaje de error, 73 → 46 líneas.
+
 **Diferido:**
 
-- **Fusionar request-form + request-edit:** dos controllers
-  (`RequestCreateController`, `RequestEditController`) con rutas y
-  model attributes distintos. Merging requiere cambiar controllers,
-  rutas y tests. Riesgo: alto. Ahorro: ~100 líneas.
-- **Fusionar perfiles (user + org + onboarding):** tres controllers
-  (`UserProfileController`, `OrgProfileController`,
-  `OrgOnboardingController`) con lógica de validación distinta.
-  Riesgo: alto. Ahorro: ~150 líneas.
 - **Fusionar dashboards (user + org):** el dashboard de organización
   ya tiene Kanban integrado; el de usuario es un subset. Merging
   requiere condicionales por rol y cambios en ambos controllers.
@@ -513,10 +515,10 @@ artículo).
   ~40 clases.
 
 **Justificación de la postergación:** el sistema está estable con
-218 tests pasando. Un refactor de controllers a una semana de la
-defensa puede introducir regresiones difíciles de detectar. Las
-compactaciones aplicadas (sección 13) ya redujeron el área visible
-del sistema sin tocar controllers ni rutas.
+176 tests pasando. Las fusiones de controllers ya aplicadas
+(RequestEditController, OrgOnboardingController, OrgRequestDetailController)
+redujeron de 13 a 10 controllers sin regresiones. Las fusiones restantes
+(dashboards) requieren condicionales por rol más complejos.
 
 **Para después de la defensa:** estas fusiones son el próximo paso
 natural de compactación. Cada una se puede hacer de forma aislada

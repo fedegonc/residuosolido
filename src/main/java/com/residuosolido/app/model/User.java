@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Entidad de usuario. Modela tanto ciudadanos (USER) como organizaciones (ORGANIZATION)
@@ -22,8 +23,7 @@ import java.util.List;
  * son relevantes principalmente para organizaciones.
  *
  * Los campos de contacto (email, teléfono, nombre) se validan y canonicalizan
- * en sus setters, delegando a Value Objects ({@link Email}, {@link PhoneNumber},
- * {@link Name}). Esto garantiza que el modelo nunca contenga valores inválidos.
+ * en sus setters, garantizando que el modelo nunca contenga valores inválidos.
  */
 @Getter
 @Setter
@@ -32,6 +32,8 @@ import java.util.List;
 @ToString(exclude = "password")
 @Document(collection = "users")
 public class User {
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     @Id
     private String id;
@@ -57,7 +59,7 @@ public class User {
     private List<MaterialCategory> acceptedMaterials = new ArrayList<>();
 
     /**
-     * Setea el email validándolo y normalizándolo via {@link Email}.
+     * Setea el email validándolo y normalizándolo a minúsculas.
      * Lanza IllegalArgumentException si el formato es inválido.
      */
     public void setEmail(String email) {
@@ -65,19 +67,15 @@ public class User {
             this.email = null;
             return;
         }
-        this.email = Email.of(email).value();
+        String normalized = email.trim().toLowerCase(java.util.Locale.ROOT);
+        if (normalized.length() > 254 || !EMAIL_PATTERN.matcher(normalized).matches()) {
+            throw new IllegalArgumentException("error.register.email_invalid");
+        }
+        this.email = normalized;
     }
 
     /**
-     * Devuelve el email como Value Object tipado {@link Email}.
-     * @return Email o null si no tiene email
-     */
-    public Email getEmailAddress() {
-        return this.email == null ? null : Email.of(this.email);
-    }
-
-    /**
-     * Setea el nombre validándolo via {@link Name}.
+     * Setea el nombre validándolo.
      * Lanza IllegalArgumentException si está vacío o excede 100 caracteres.
      */
     public void setFirstName(String firstName) {
@@ -85,7 +83,11 @@ public class User {
             this.firstName = null;
             return;
         }
-        this.firstName = Name.of(firstName).value();
+        String trimmed = firstName.trim();
+        if (trimmed.length() > 100) {
+            throw new IllegalArgumentException("error.name.too_long");
+        }
+        this.firstName = trimmed;
     }
 
     /**
@@ -98,15 +100,7 @@ public class User {
             this.phone = null;
             return;
         }
-        this.phone = PhoneNumber.of(phone).value();
-    }
-
-    /**
-     * Devuelve el teléfono como Value Object tipado {@link PhoneNumber}.
-     * @return PhoneNumber o null si no tiene teléfono
-     */
-    public PhoneNumber getPhoneNumber() {
-        return hasPhone() ? PhoneNumber.of(phone) : null;
+        this.phone = PhoneNumber.normalize(phone);
     }
 
     public String getDisplayName() {
@@ -125,15 +119,11 @@ public class User {
         return phone != null && !phone.isBlank();
     }
 
-    public boolean hasCity() {
-        return city != null;
-    }
-
     public void completeProfile() {
         if (!hasPhone()) {
             throw new IllegalStateException("error.profile.phone_required");
         }
-        if (!hasCity()) {
+        if (city == null) {
             throw new IllegalStateException("error.profile.city_required");
         }
         this.profileCompleted = true;
@@ -141,14 +131,6 @@ public class User {
 
     public boolean needsProfileCompletion() {
         return !isProfileComplete();
-    }
-
-    public String getAcceptedMaterialsCsv() {
-        if (acceptedMaterials == null || acceptedMaterials.isEmpty()) return "";
-        return acceptedMaterials.stream()
-                .map(Enum::name)
-                .reduce((a, b) -> a + "," + b)
-                .orElse("");
     }
 
 }

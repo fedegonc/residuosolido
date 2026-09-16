@@ -1,77 +1,65 @@
-<!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head>
-  <title>Eco Solicitud — Solicitudes</title>
-</head>
+<head><title>Mis solicitudes</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page panel-section">
-
-      <!-- Breadcrumbs -->
-      <nav class="breadcrumb" aria-label="breadcrumb">
-        <a href="/" class="breadcrumb__link">Inicio</a>
-        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        <a href="/usuarios/inicio" class="breadcrumb__link">Mi panel</a>
+    <div class="page">
+      <nav class="breadcrumb">
+        <a href="/">Inicio</a>
         <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
         <span data-i18n="req_list_title">Mis solicitudes</span>
       </nav>
 
-      <!-- Header -->
-      <div class="panel-header">
-        <h1 class="panel-header__title" data-i18n="req_list_title">Mis solicitudes</h1>
+      <div class="row row--between mb">
+        <div>
+          <h1 class="card__title">
+            <span data-i18n="dash_welcome">Hola</span>,
+            <span th:text="${user.displayName}"></span>
+          </h1>
+          <p class="hint" data-i18n="dash_subtitle">Acá ves tus solicitudes de recolección y su estado.</p>
+        </div>
         <a href="/solicitudes/nueva" class="btn btn--primary">
           <i class="fa-solid fa-plus"></i>
           <span data-i18n="req_list_new">Nueva solicitud</span>
         </a>
       </div>
 
-      <!-- Request list -->
-      <div th:if="${requests != null and !requests.isEmpty()}">
-        <div class="request-list">
-          <div th:each="req : ${requests}" class="request-item">
-            <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
-            <!-- Actions -->
-            <div class="form-actions">
-              <a th:href="@{/solicitud/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
-                <i class="fa-solid fa-eye"></i>
-                <span data-i18n="req_list_view">Ver</span>
-              </a>
-              <a th:if="${req.canBeEdited()}"
-                 th:href="@{/solicitud/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
-                <i class="fa-solid fa-pen"></i>
-                <span data-i18n="req_list_edit">Editar</span>
-              </a>
-              <form th:if="${req.canBeDeleted()}"
-                    th:action="@{/solicitud/{id}/eliminar(id=${req.id})}" method="post"
-                    onsubmit="return confirm('¿Eliminar esta solicitud?');"
-                    class="d-inline">
-                <button type="submit" class="btn btn--outline btn--sm btn--danger">
-                  <i class="fa-solid fa-trash"></i>
-                  <span data-i18n="req_list_delete">Eliminar</span>
-                </button>
-              </form>
-            </div>
+      <div class="grid grid--4 mb" th:if="${requestStats != null and requestStats.get('total') > 0}">
+        <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-list"></i></div><span class="stat-card__value" th:text="${requestStats.get('total')}">0</span><span class="stat-card__label" data-i18n="dash_stat_total">Total</span></div>
+        <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-clock"></i></div><span class="stat-card__value" th:text="${requestStats.get('pending')}">0</span><span class="stat-card__label" data-i18n="dash_stat_pending">Pendientes</span></div>
+        <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-truck"></i></div><span class="stat-card__value" th:text="${requestStats.get('inProgress')}">0</span><span class="stat-card__label" data-i18n="dash_stat_progress">En curso</span></div>
+        <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-circle-check"></i></div><span class="stat-card__value" th:text="${requestStats.get('completed')}">0</span><span class="stat-card__label" data-i18n="dash_stat_completed">Completadas</span></div>
+      </div>
+
+      <div th:if="${requests != null and !requests.isEmpty()}" class="request-list">
+        <div th:each="req : ${requests}" class="request-item">
+          <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
+          <div class="form-actions">
+            <a th:href="@{/rastrear?id={id}(id=${req.id})}" class="btn btn--outline btn--sm">
+              <i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span>
+            </a>
+            <a th:if="${req.canBeEdited()}" th:href="@{/solicitud/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
+              <i class="fa-solid fa-pen"></i> <span data-i18n="req_list_edit">Editar</span>
+            </a>
+            <form th:if="${req.canBeDeleted()}" th:action="@{/solicitud/{id}/eliminar(id=${req.id})}" method="post"
+                  onsubmit="return confirm('¿Eliminar esta solicitud?');" style="display:inline">
+              <button type="submit" class="btn btn--outline btn--sm btn--danger">
+                <i class="fa-solid fa-trash"></i> <span data-i18n="req_list_delete">Eliminar</span>
+              </button>
+            </form>
           </div>
         </div>
       </div>
 
-      <!-- Empty state -->
-      <div th:if="${requests == null or requests.isEmpty()}" class="card card--info">
-        <div class="track-empty">
-          <div class="track-empty__illustration">
-            <i class="fa-solid fa-seedling"></i>
-          </div>
-          <h2 class="track-empty__title" data-i18n="req_list_empty">Acá van a aparecer tus solicitudes</h2>
-          <p class="track-empty__text" data-i18n="req_list_empty_desc">Cuando crees una solicitud de recolección, la vas a ver en esta lista.</p>
-          <a href="/solicitudes/nueva" class="btn btn--primary btn--lg mt-2">
-            <i class="fa-solid fa-plus"></i>
-            <span data-i18n="req_list_new">Nueva solicitud</span>
+      <div th:if="${requests == null or requests.isEmpty()}">
+        <div th:replace="~{fragments/empty-state :: state('fa-seedling', 'Acá van a aparecer tus solicitudes')}"></div>
+        <div class="text-center mt">
+          <a href="/solicitudes/nueva" class="btn btn--primary">
+            <i class="fa-solid fa-plus"></i> <span data-i18n="req_list_new">Nueva solicitud</span>
           </a>
         </div>
       </div>
-
     </div>
   </main>
 </body>

@@ -1,121 +1,75 @@
-<!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head>
-  <title>Eco Solicitud — Mis solicitudes</title>
-</head>
+<head><title>Rastrear solicitud</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page track-section">
+    <div class="page">
 
-      <!-- Search card -->
-      <div class="card card--track page--narrow">
+      <div class="card page--narrow mb">
         <h1 class="card__title" data-i18n="track_title">Buscar mi solicitud</h1>
-        <p class="card__subtitle mb-2" data-i18n="track_subtitle">Si pediste recolección sin cuenta, ingresá tu teléfono y el código que te dimos.</p>
-
-        <form th:action="@{/rastrear}" method="post" class="track-form">
-          <div class="form-group">
+        <p class="card__subtitle" data-i18n="track_subtitle">Si pediste recolección sin cuenta, ingresá tu teléfono y el código que te dimos.</p>
+        <form th:action="@{/rastrear}" method="post" class="stack">
+          <div class="field">
             <label for="phone" data-i18n="track_phone_label">Teléfono</label>
-            <input type="tel" id="phone" name="phone" class="form-input"
-                   th:value="${phone}"
-                   data-i18n-attr="placeholder:track_phone_placeholder"
-                   placeholder="Ej: +598 99 123 456"
-                   required>
+            <input type="tel" id="phone" name="phone" class="input" th:value="${phone}"
+                   data-i18n-attr="placeholder:track_phone_placeholder" placeholder="Ej: +598 99 123 456" required>
           </div>
-          <div class="form-group">
+          <div class="field">
             <label for="code" data-i18n="track_code_label">Código de rastreo</label>
-            <input type="text" id="code" name="code" class="form-input"
-                   th:value="${code}"
-                   data-i18n-attr="placeholder:track_code_placeholder"
-                   placeholder="Ej: AB12CD34"
-                   autocomplete="off"
-                   required>
+            <input type="text" id="code" name="code" class="input" th:value="${code}"
+                   data-i18n-attr="placeholder:track_code_placeholder" placeholder="Ej: AB12CD34" autocomplete="off" required>
           </div>
           <button type="submit" class="btn btn--primary btn--block">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span data-i18n="track_search_btn">Buscar</span>
+            <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="track_search_btn">Buscar</span>
           </button>
         </form>
       </div>
 
-      <!-- Results -->
-      <div th:if="${searched}" class="page">
-
-        <!-- Empty state -->
-        <div th:if="${requests != null and requests.isEmpty()}" class="card card--track">
-          <div class="track-empty">
-            <div class="track-empty__illustration">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </div>
-            <h2 class="track-empty__title" data-i18n="track_no_results">No encontramos solicitudes con esos datos</h2>
-            <p class="track-empty__text" data-i18n="track_no_results_desc">Revisá el teléfono y el código. El código tiene 8 letras y números.</p>
-            <a href="/solicitudes/nueva" class="btn btn--primary btn--lg mt-2">
-              <i class="fa-solid fa-plus"></i>
-              <span data-i18n="track_empty_cta">Crear una solicitud</span>
+      <div th:if="${searched}">
+        <div th:if="${requests != null and requests.isEmpty()}">
+          <div th:replace="~{fragments/empty-state :: state('fa-magnifying-glass', 'No encontramos solicitudes con esos datos')}"></div>
+          <div class="text-center mt">
+            <a href="/solicitudes/nueva" class="btn btn--primary">
+              <i class="fa-solid fa-plus"></i> <span data-i18n="track_empty_cta">Crear una solicitud</span>
             </a>
           </div>
         </div>
 
-        <!-- Request list -->
         <div th:if="${requests != null and !requests.isEmpty()}">
-          <h2 class="card__subtitle mb-2" data-i18n="track_results_title">Estas son tus solicitudes</h2>
+          <h2 class="card__subtitle mb" data-i18n="track_results_title">Estas son tus solicitudes</h2>
           <div class="request-list">
             <div th:each="req : ${requests}" class="request-item">
-
-              <!-- Header: ID + status badge -->
               <div class="request-item__header">
-                <span class="request-item__id">
-                  <span data-i18n="track_request_id">Solicitud</span>
-                  #<span th:text="${req.id}"></span>
-                </span>
-                <span class="status-badge"
-                      th:classappend="${req.status.name() == 'PENDING'} ? 'status-badge--pending' :
-                                       (${req.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
-                                       (${req.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
-                                       'status-badge--rejected'))"
-                      th:text="${req.status.name() == 'PENDING'} ? 'Pendiente' :
-                               (${req.status.name() == 'IN_PROGRESS'} ? 'En curso' :
-                               (${req.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
-                  Pendiente
-                </span>
+                <span><span data-i18n="track_request_id">Solicitud</span> #<span th:text="${req.id}"></span></span>
+                <div th:replace="~{fragments/badge :: status(${req.status})}"></div>
               </div>
-
-              <!-- Body: date, city, address, materials, org -->
-              <div class="request-item__body">
-                <div class="request-item__row" th:if="${req.createdAt != null}">
-                  <i class="fa-solid fa-calendar"></i>
-                  <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.city != null}">
-                  <i class="fa-solid fa-location-dot"></i>
-                  <span th:attr="data-i18n=${'city_' + #strings.toLowerCase(req.city.name())}" th:text="${req.city}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.address != null and !req.address.isBlank()}">
-                  <i class="fa-solid fa-route"></i>
-                  <span th:text="${req.address}"></span>
-                </div>
-
-                <!-- Materials -->
-                <div th:if="${req.hasMaterials()}" class="request-item__materials">
-                  <span th:each="mat : ${req.materials}" class="material-tag" th:text="${mat.name()}"></span>
-                </div>
-
-                <!-- Organization -->
-                <div class="request-item__row" th:if="${req.organization != null}">
-                  <i class="fa-solid fa-building"></i>
-                  <span th:text="${req.organization.displayName}"></span>
-                </div>
-                <div class="request-item__row" th:if="${req.organization == null}">
-                  <i class="fa-solid fa-building"></i>
-                  <span data-i18n="track_no_org">Sin asignar</span>
-                </div>
+              <div th:if="${req.createdAt != null}" class="info-row">
+                <i class="fa-solid fa-calendar"></i>
+                <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
               </div>
-
+              <div th:if="${req.city != null}" class="info-row">
+                <i class="fa-solid fa-location-dot"></i>
+                <span th:attr="data-i18n=${'city_' + #strings.toLowerCase(req.city.name())}" th:text="${req.city}"></span>
+              </div>
+              <div th:if="${req.address != null and !req.address.isBlank()}" class="info-row">
+                <i class="fa-solid fa-route"></i>
+                <span th:text="${req.address}"></span>
+              </div>
+              <div th:if="${req.hasMaterials()}" class="request-item__materials">
+                <span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span>
+              </div>
+              <div th:if="${req.organization != null}" class="info-row">
+                <i class="fa-solid fa-building"></i>
+                <span th:text="${req.organization.displayName}"></span>
+              </div>
+              <div th:if="${req.organization == null}" class="info-row">
+                <i class="fa-solid fa-building"></i>
+                <span data-i18n="track_no_org">Sin asignar</span>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
 
     </div>

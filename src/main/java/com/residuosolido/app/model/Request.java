@@ -83,15 +83,6 @@ public class Request {
     public String getContactName() { return user != null ? user.getDisplayName() : guestName; }
     public String getContactPhone() { return user != null ? user.getPhone() : guestPhone; }
 
-    public String getContactInitials() {
-        String name = getContactName();
-        if (name == null || name.isBlank()) return "?";
-        String[] parts = name.trim().split("\\s+");
-        String initials = String.valueOf(parts[0].charAt(0));
-        if (parts.length > 1) initials += parts[1].charAt(0);
-        return initials.toUpperCase();
-    }
-
     public void assignOrganization(User org) {
         if (org == null) throw new IllegalArgumentException("error.request.organization_required");
         if (!org.isOrganization()) throw new IllegalArgumentException("error.request.assign_not_organization");

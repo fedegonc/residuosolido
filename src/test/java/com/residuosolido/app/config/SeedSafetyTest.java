@@ -2,11 +2,13 @@ package com.residuosolido.app.config;
 
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class SeedSafetyTest {
     @Test
     void existingUsersAreNeverDeletedOrOverwritten() {

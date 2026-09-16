@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.enums.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +14,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * Handler post-login: resetea intentos fallidos, invalida el locale de sesión
+ * (para que CityAwareLocaleResolver recalcule el idioma según la ciudad del usuario)
+ * y delega la redirección a RoleBasedLoginTargetUrlResolver.
+ */
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -22,7 +28,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final LoginAttemptService loginAttemptService;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    public LoginSuccessHandler(RoleBasedLoginTargetUrlResolver targetUrlResolver, LoginAttemptService loginAttemptService) {
+    public LoginSuccessHandler(RoleBasedLoginTargetUrlResolver targetUrlResolver,
+                                LoginAttemptService loginAttemptService) {
         this.targetUrlResolver = targetUrlResolver;
         this.loginAttemptService = loginAttemptService;
     }
@@ -32,8 +39,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         loginAttemptService.loginSucceeded(authentication.getName());
-        // Invalidar locale de sesión para que CityAwareLocaleResolver
-        // recalcule el idioma según la ciudad del usuario recién logueado
         request.getSession().removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
         String targetUrl = targetUrlResolver.resolveTargetUrl(authentication.getAuthorities());
         logger.info("Usuario '{}' autenticado. Redirigiendo a '{}'", authentication.getName(), targetUrl);

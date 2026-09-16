@@ -16,10 +16,6 @@ public final class Routes {
     // Páginas públicas
     public static final String HOME = "/";
     public static final String INDEX = "/index";
-    public static final String BLOG = "/blog";
-    public static final String METRICAS = "/metricas";
-    public static final String DOCUMENTOS = "/documentos";
-    public static final String DIAGRAMAS = "/diagramas";
     public static final String LANGUAGE = "/change-language";
 
     // Auth
@@ -30,7 +26,6 @@ public final class Routes {
     // Solicitudes
     public static final String REQUESTS_NEW = "/solicitudes/nueva";
     public static final String REQUESTS = "/solicitudes";
-    public static final String REQUESTS_SUCCESS = "/solicitudes/exito";
     public static final String REQUEST = "/solicitud/{id}";
     public static final String REQUEST_EDIT = "/solicitud/{id}/editar";
     public static final String REQUEST_DELETE = "/solicitud/{id}/eliminar";
@@ -38,7 +33,6 @@ public final class Routes {
 
     // Usuarios
     public static final String USER_HOME = "/usuarios/inicio";
-    public static final String USER_PROFILE = "/usuarios/perfil";
 
     // Organización
     public static final String ORG_HOME = "/acopio/inicio";

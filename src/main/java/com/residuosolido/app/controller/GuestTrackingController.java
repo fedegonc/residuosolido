@@ -3,7 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.Request;
-import com.residuosolido.app.service.RequestQueryService;
+import com.residuosolido.app.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +22,11 @@ import java.util.List;
 @Controller
 public class GuestTrackingController {
 
-    private final RequestQueryService requestQueryService;
+    private final RequestService requestService;
 
     @Autowired
-    public GuestTrackingController(RequestQueryService requestQueryService) {
-        this.requestQueryService = requestQueryService;
+    public GuestTrackingController(RequestService requestService) {
+        this.requestService = requestService;
     }
 
     /** Muestra el formulario de rastreo con resultados opcionales. */
@@ -37,7 +37,7 @@ public class GuestTrackingController {
         boolean searched = phone != null && !phone.trim().isEmpty()
                 && code != null && !code.trim().isEmpty();
         List<Request> requests = searched
-                ? requestQueryService.getGuestRequests(phone, code)
+                ? requestService.getGuestRequests(phone, code)
                 : List.of();
         model.addAttribute("phone", phone != null ? phone : "");
         model.addAttribute("code", code != null ? code : "");
@@ -51,7 +51,7 @@ public class GuestTrackingController {
     public String trackGuestSubmit(@RequestParam("phone") String phone,
                                    @RequestParam("code") String code,
                                    Model model) {
-        List<Request> requests = requestQueryService.getGuestRequests(phone, code);
+        List<Request> requests = requestService.getGuestRequests(phone, code);
         model.addAttribute("phone", phone);
         model.addAttribute("code", code);
         model.addAttribute("requests", requests);

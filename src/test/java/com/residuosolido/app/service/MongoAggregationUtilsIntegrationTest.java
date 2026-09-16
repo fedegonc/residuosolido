@@ -11,6 +11,7 @@ import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,8 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * Este test usa MongoDB real (no mock) para validar que el pipeline produce
  * los counts correctos.
  */
+@Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=mongodb://localhost:27017/testdb",
+        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=false"
 })

@@ -7,7 +7,7 @@ import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;
-import com.residuosolido.app.service.RequestQueryService;
+import com.residuosolido.app.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,13 @@ public class OrgDashboardController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(OrgDashboardController.class);
 
     private final RequestMetricsService requestMetricsService;
-    private final RequestQueryService requestQueryService;
+    private final RequestService requestService;
 
     @Autowired
     public OrgDashboardController(RequestMetricsService requestMetricsService,
-                                   RequestQueryService requestQueryService) {
+                                   RequestService requestService) {
         this.requestMetricsService = requestMetricsService;
-        this.requestQueryService = requestQueryService;
+        this.requestService = requestService;
     }
 
     /** Página principal de la organización. Redirige a completar perfil si falta. */
@@ -52,8 +52,8 @@ public class OrgDashboardController extends BaseController {
             model.addAttribute("pendingRequests", data.get("pending"));
             model.addAttribute("inProgressRequests", data.get("inProgress"));
             model.addAttribute("completedRequests", data.get("completed"));
-            model.addAttribute("pendingRequestsList", requestQueryService.getRecentPendingRequestsByOrganization(currentOrg, 5));
-            model.addAttribute("kanban", requestQueryService.getRequestsByOrganizationGroupedByStatus(currentOrg));
+            model.addAttribute("pendingRequestsList", requestService.getRecentPendingRequestsByOrganization(currentOrg, 5));
+            model.addAttribute("kanban", requestService.getRequestsByOrganizationGroupedByStatus(currentOrg));
             model.addAttribute("timeSlots", TimeSlot.values());
         } catch (Exception e) {
             logger.error("Error en dashboard de organización: {}", e.getMessage(), e);

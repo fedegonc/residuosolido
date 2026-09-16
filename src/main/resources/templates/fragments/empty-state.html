@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="state(icon, message)" class="empty-state">
+    <i aria-hidden="true" th:class="'fa-solid ' + ${icon}"></i>
+    <span class="empty-state__text" th:text="${message}">No hay elementos</span>
+  </div>
+</body>
+</html>

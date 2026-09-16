@@ -3,7 +3,6 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.CountryCode;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
@@ -19,7 +18,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-/** Gestión del perfil de la organización: datos de contacto, ciudad y materiales aceptados. */
+/**
+ * Gestión del perfil de organización:
+ * - Onboarding (primera configuración, forzada post-registro)
+ * - Edición de perfil (datos de contacto, ciudad, materiales aceptados)
+ *
+ * Antes estaba dividido en OrgOnboardingController + OrgProfileController.
+ */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgProfileController extends BaseController {
@@ -29,6 +34,57 @@ public class OrgProfileController extends BaseController {
     @Autowired
     public OrgProfileController() {
     }
+
+    // ========== Onboarding (primera configuración) ==========
+
+    /** Muestra el formulario para completar perfil (teléfono y ciudad). */
+    @GetMapping(Routes.ORG_COMPLETE_PROFILE)
+    public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = getCurrentUser(authentication);
+
+            if (currentUser.isProfileComplete()) {
+                redirectAttributes.addFlashAttribute("infoMessage", msg("flash.org.profile_already_complete"));
+                return "redirect:/acopio/inicio";
+            }
+
+            model.addAttribute("organization", currentUser);
+            model.addAttribute("cities", City.values());
+            return "org/complete-profile";
+
+        } catch (Exception e) {
+            logger.error("Error al cargar formulario de completar perfil: {}", e.getMessage(), e);
+            flashError(redirectAttributes, "flash.org.profile_form_error");
+            return "redirect:/auth/login";
+        }
+    }
+
+    /** Guarda el perfil inicial de la organización. */
+    @PostMapping(Routes.ORG_COMPLETE_PROFILE)
+    public String completeProfile(
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) City city,
+            Authentication authentication,
+            jakarta.servlet.http.HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            User currentUser = getCurrentUser(authentication);
+            userService.completeOrgProfile(currentUser, phone, city);
+            session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
+            flashSuccess(redirectAttributes, "flash.org.profile_completed");
+            return "redirect:/acopio/inicio";
+        } catch (IllegalArgumentException e) {
+            flashError(redirectAttributes, e.getMessage());
+            return "redirect:/acopio/completar-perfil";
+        } catch (Exception e) {
+            logger.error("Error al completar perfil de organización: {}", e.getMessage(), e);
+            flashError(redirectAttributes, "flash.org.profile_complete_error");
+            return "redirect:/acopio/completar-perfil";
+        }
+    }
+
+    // ========== Edición de perfil ==========
 
     /** Muestra el formulario de edición del perfil. */
     @GetMapping(Routes.ORG_PROFILE)
@@ -78,7 +134,7 @@ public class OrgProfileController extends BaseController {
 
     private String resolvePhone(String rawPhone, String countryCode, String phoneNational, String ddd) {
         if (phoneNational != null && !phoneNational.trim().isEmpty() && countryCode != null && !countryCode.trim().isEmpty()) {
-            return PhoneNumber.of(CountryCode.fromDialCode(countryCode), phoneNational, ddd).value();
+            return PhoneNumber.normalize(countryCode, phoneNational, ddd);
         }
         return rawPhone;
     }

@@ -1,104 +1,81 @@
-<!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head>
-  <title>Eco Solicitud — Solicitud</title>
-</head>
+<head><title>Solicitar recolección</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page form-section">
+    <div class="page">
       <div class="card card--form">
-
         <h1 class="card__title" th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</h1>
         <h1 class="card__title" th:unless="${isEdit}" data-i18n="req_form_title_new">Solicitar recolección</h1>
         <p class="card__subtitle" th:if="${isEdit}" data-i18n="req_form_subtitle_edit">Modificá los datos de tu solicitud</p>
         <p class="card__subtitle" th:unless="${isEdit}" data-i18n="req_form_subtitle_new">Decinos qué materiales tenés y en qué dirección retirarlos.</p>
 
         <form th:action="${isEdit} ? '/solicitud/' + ${request.id} + '/editar' : '/solicitudes'"
-              method="post"
-              enctype="multipart/form-data"
-              id="requestForm"
-              class="req-form">
+              method="post" enctype="multipart/form-data" id="requestForm" class="stack">
 
-          <!-- Guest fields (only for anonymous users) -->
-          <div th:if="${isGuest}" class="req-form__row">
-            <div class="form-group">
+          <div th:if="${isGuest}" class="grid grid--2">
+            <div class="field">
               <label for="guestName" data-i18n="req_form_guest_name">Tu nombre <span class="req">*</span></label>
-              <input type="text" id="guestName" name="guestName" class="form-input"
-                     th:value="${request.guestName}"
-                     data-i18n-attr="placeholder:req_form_guest_name_placeholder"
-                     placeholder="Ej: Ana García" required>
+              <input type="text" id="guestName" name="guestName" class="input" th:value="${request.guestName}"
+                     data-i18n-attr="placeholder:req_form_guest_name_placeholder" placeholder="Ej: Ana García" required>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label for="guestPhoneNational" data-i18n="req_form_guest_phone">Tu teléfono <span class="req">*</span></label>
               <div class="phone-country-row">
-                <select id="guestPhoneCountryCode" name="guestCountryCode" class="form-select form-select--small">
+                <select id="guestPhoneCountryCode" name="guestCountryCode" class="select select--sm">
                   <option value="+598" selected>🇺🇾 +598</option>
                   <option value="+55">🇧🇷 +55</option>
                 </select>
-                <input type="tel" id="guestPhoneNational" name="guestPhoneNational" class="form-input"
-                       th:value="${request.guestPhone != null ? request.guestPhone : ''}"
-                       placeholder="9X XXX XXX"
-                       required>
+                <input type="tel" id="guestPhoneNational" name="guestPhoneNational" class="input"
+                       th:value="${request.guestPhone != null ? request.guestPhone : ''}" placeholder="9X XXX XXX" required>
               </div>
-              <div class="form-group is-hidden mt-1" id="guestPhoneDddGroup">
-                <label for="guestDdd" class="label--sm">DDD</label>
-                <input type="text" id="guestDdd" name="guestDdd" class="form-input form-input--small input--ddd"
-                       value="55" maxlength="2">
+              <div class="field is-hidden mt-sm" id="guestPhoneDddGroup">
+                <label for="guestDdd">DDD</label>
+                <input type="text" id="guestDdd" name="guestDdd" class="input input--sm" value="55" maxlength="2">
               </div>
             </div>
           </div>
-          <p th:if="${isGuest}" class="form-hint" data-i18n="req_form_guest_hint">Con estos datos podés buscar tu solicitud sin cuenta.</p>
-          <p th:if="${isGuest}" class="form-hint">
-            <a href="/auth/login" data-i18n="req_form_have_account">¿Ya tenés cuenta? Iniciá sesión</a>
-          </p>
+          <p th:if="${isGuest}" class="hint" data-i18n="req_form_guest_hint">Con estos datos podés buscar tu solicitud sin cuenta.</p>
+          <p th:if="${isGuest}" class="hint"><a href="/auth/login" data-i18n="req_form_have_account">¿Ya tenés cuenta? Iniciá sesión</a></p>
 
-          <!-- Logged-in note (instead of silently hiding guest fields) -->
-          <div th:if="${!isGuest}" class="form-info-note">
+          <div th:if="${!isGuest}" class="alert alert--info">
             <i class="fa-solid fa-circle-info"></i>
             <span data-i18n="req_form_logged_in_note">Usaremos los datos de tu perfil para esta solicitud</span>
           </div>
-          <div th:if="${needsPhone}" class="req-form__row">
-            <div class="form-group">
-              <label for="userPhoneNational">Teléfono de contacto <span class="req">*</span></label>
-              <div class="phone-country-row">
-                <select id="userPhoneCountryCode" name="userCountryCode" class="form-select form-select--small">
-                  <option value="+598" selected>🇺🇾 +598</option>
-                  <option value="+55">🇧🇷 +55</option>
-                </select>
-                <input type="tel" id="userPhoneNational" name="userPhoneNational" class="form-input"
-                       placeholder="9X XXX XXX" required>
-              </div>
-              <div class="form-group is-hidden mt-1" id="userPhoneDddGroup">
-                <label for="userDdd" class="label--sm">DDD</label>
-                <input type="text" id="userDdd" name="userDdd" class="form-input form-input--small input--ddd"
-                       value="55" maxlength="2">
-              </div>
-              <p class="form-hint">Se guardará en tu perfil para coordinar la recolección.</p>
+
+          <div th:if="${needsPhone}" class="field">
+            <label for="userPhoneNational">Teléfono de contacto <span class="req">*</span></label>
+            <div class="phone-country-row">
+              <select id="userPhoneCountryCode" name="userCountryCode" class="select select--sm">
+                <option value="+598" selected>🇺🇾 +598</option>
+                <option value="+55">🇧🇷 +55</option>
+              </select>
+              <input type="tel" id="userPhoneNational" name="userPhoneNational" class="input" placeholder="9X XXX XXX" required>
             </div>
+            <div class="field is-hidden mt-sm" id="userPhoneDddGroup">
+              <label for="userDdd">DDD</label>
+              <input type="text" id="userDdd" name="userDdd" class="input input--sm" value="55" maxlength="2">
+            </div>
+            <span class="hint">Se guardará en tu perfil para coordinar la recolección.</span>
           </div>
 
-          <!-- City + Organization -->
-          <div class="req-form__row">
-            <div class="form-group">
+          <div class="grid grid--2">
+            <div class="field">
               <label for="city" data-i18n="req_form_city">Ciudad <span class="req">*</span></label>
-              <select id="city" name="city" class="form-select" th:disabled="${isEdit}" required>
+              <select id="city" name="city" class="select" th:disabled="${isEdit}" required>
                 <option value="" data-i18n="req_form_city_select">Seleccioná una ciudad</option>
-                <option th:each="c : ${cities}"
-                        th:value="${c}"
+                <option th:each="c : ${cities}" th:value="${c}"
                         th:attr="data-i18n=${'req_city_' + #strings.toLowerCase(c.name())}"
-                        th:text="${c.name()}"
-                        th:selected="${selectedCity != null and selectedCity == c}"></option>
+                        th:text="${c.name()}" th:selected="${selectedCity != null and selectedCity == c}"></option>
               </select>
             </div>
-            <div class="form-group">
-              <label for="organizationId" data-i18n="req_form_org">Organización de acopio <span class="req">*</span></label>
-              <select id="organizationId" name="organizationId" class="form-select" required th:disabled="${!isEdit}">
+            <div class="field">
+              <label for="organizationId" data-i18n="req_form_org">Organización <span class="req">*</span></label>
+              <select id="organizationId" name="organizationId" class="select" required th:disabled="${!isEdit}">
                 <option value="" data-i18n="req_form_org_select">Primero seleccioná una ciudad</option>
                 <th:block th:if="${isEdit and organizations != null}">
-                  <option th:each="org : ${organizations}"
-                          th:value="${org.id}"
+                  <option th:each="org : ${organizations}" th:value="${org.id}"
                           th:attr="data-materials=${org.acceptedMaterialsCsv}"
                           th:text="${org.displayName}"
                           th:selected="${request.organization != null and request.organization.id == org.id}"></option>
@@ -107,62 +84,51 @@
             </div>
           </div>
 
-          <!-- Address (reference only on edit) -->
-          <div class="req-form__row">
-            <div class="form-group">
-              <label for="address" data-i18n="req_form_address">Dirección de recolección <span class="req">*</span></label>
-              <input type="text" id="address" name="address" class="form-input"
-                     th:value="${request.address}"
-                     data-i18n-attr="placeholder:req_form_address_placeholder"
-                     placeholder="Ej: Calle 123" required>
+          <div class="grid grid--2">
+            <div class="field">
+              <label for="address" data-i18n="req_form_address">Dirección <span class="req">*</span></label>
+              <input type="text" id="address" name="address" class="input" th:value="${request.address}"
+                     data-i18n-attr="placeholder:req_form_address_placeholder" placeholder="Ej: Calle 123" required>
             </div>
-            <div th:if="${isEdit}" class="form-group">
+            <div th:if="${isEdit}" class="field">
               <label for="addressReference" data-i18n="req_form_address_ref">Referencia (opcional)</label>
-              <input type="text" id="addressReference" name="addressReference" class="form-input"
+              <input type="text" id="addressReference" name="addressReference" class="input"
                      th:value="${request.addressReference}"
-                     data-i18n-attr="placeholder:req_form_address_ref_placeholder"
-                     placeholder="Ej: Casa esquinera, portón verde">
+                     data-i18n-attr="placeholder:req_form_address_ref_placeholder" placeholder="Ej: Casa esquinera">
             </div>
           </div>
 
-          <!-- Materials (always shown) -->
-          <div class="req-form__row req-form__row--wide">
-            <div class="form-group">
-              <label data-i18n="req_form_materials">Materiales a reciclar <span class="req">*</span></label>
-              <div class="check-grid">
-                <th:block th:each="mat : ${materials}">
-                  <label class="check-card" th:attr="data-material=${mat.name()}">
-                    <input type="checkbox" name="materials" th:value="${mat.name()}"
-                           th:checked="${request.hasMaterials() and request.materials.contains(mat)}">
-                    <span th:attr="data-i18n=${'req_mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
-                  </label>
-                </th:block>
-              </div>
+          <div class="field">
+            <label data-i18n="req_form_materials">Materiales <span class="req">*</span></label>
+            <div class="check-grid">
+              <th:block th:each="mat : ${materials}">
+                <label class="check-card" th:attr="data-material=${mat.name()}">
+                  <input type="checkbox" name="materials" th:value="${mat.name()}"
+                         th:checked="${request.hasMaterials() and request.materials.contains(mat)}">
+                  <span th:attr="data-i18n=${'req_mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
+                </label>
+              </th:block>
             </div>
           </div>
 
-          <!-- Time slots (only on edit) -->
-          <div th:if="${isEdit}" class="req-form__row req-form__row--wide">
-            <div class="form-group">
-              <label data-i18n="req_form_timeslot">Franja horaria</label>
-              <div class="radio-grid">
-                <th:block th:each="slot : ${timeSlots}">
-                  <label class="radio-card">
-                    <input type="radio" name="timeSlot" th:value="${slot.name()}"
-                           th:checked="${request.confirmedSlot != null and request.confirmedSlot == slot}">
-                    <i th:class="${slot.name() == 'MANANA'} ? 'fa-solid fa-sun' : (${slot.name() == 'TARDE'} ? 'fa-solid fa-cloud-sun' : 'fa-solid fa-moon')}"></i>
-                    <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(slot.name())}" th:text="${slot.name()}">MANANA</span>
-                  </label>
-                </th:block>
-              </div>
+          <div th:if="${isEdit}" class="field">
+            <label data-i18n="req_form_timeslot">Franja horaria</label>
+            <div class="radio-grid">
+              <th:block th:each="slot : ${timeSlots}">
+                <label class="radio-card">
+                  <input type="radio" name="timeSlot" th:value="${slot.name()}"
+                         th:checked="${request.confirmedSlot != null and request.confirmedSlot == slot}">
+                  <i th:class="${slot.name() == 'MANANA'} ? 'fa-solid fa-sun' : (${slot.name() == 'TARDE'} ? 'fa-solid fa-cloud-sun' : 'fa-solid fa-moon')}"></i>
+                  <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(slot.name())}" th:text="${slot.name()}">MANANA</span>
+                </label>
+              </th:block>
             </div>
           </div>
 
-          <!-- Weight + volume (only on edit) -->
-          <div th:if="${isEdit}" class="req-form__row">
-            <div class="form-group">
-              <label data-i18n="req_form_weight">Peso aproximado (opcional)</label>
-              <select id="estimatedWeight" name="estimatedWeight" class="form-select">
+          <div th:if="${isEdit}" class="grid grid--2">
+            <div class="field">
+              <label data-i18n="req_form_weight">Peso (opcional)</label>
+              <select id="estimatedWeight" name="estimatedWeight" class="select">
                 <option value="" data-i18n="req_form_select_default">— Sin especificar —</option>
                 <option value="0-5" th:selected="${request.estimatedWeight == '0-5'}" data-i18n="req_form_weight_0_5">Menos de 5 kg</option>
                 <option value="5-20" th:selected="${request.estimatedWeight == '5-20'}" data-i18n="req_form_weight_5_20">5 a 20 kg</option>
@@ -170,36 +136,29 @@
                 <option value="50+" th:selected="${request.estimatedWeight == '50+'}" data-i18n="req_form_weight_50_plus">Más de 50 kg</option>
               </select>
             </div>
-            <div class="form-group">
-              <label data-i18n="req_form_volume">Volumen aproximado (opcional)</label>
-              <select id="estimatedVolume" name="estimatedVolume" class="form-select">
+            <div class="field">
+              <label data-i18n="req_form_volume">Volumen (opcional)</label>
+              <select id="estimatedVolume" name="estimatedVolume" class="select">
                 <option value="" data-i18n="req_form_select_default">— Sin especificar —</option>
                 <option value="bag" th:selected="${request.estimatedVolume == 'bag'}" data-i18n="req_form_volume_bag">Una bolsa</option>
                 <option value="box" th:selected="${request.estimatedVolume == 'box'}" data-i18n="req_form_volume_box">Una caja</option>
-                <option value="trunk" th:selected="${request.estimatedVolume == 'trunk'}" data-i18n="req_form_volume_trunk">Un baúl de auto</option>
-                <option value="pickup" th:selected="${request.estimatedVolume == 'pickup'}" data-i18n="req_form_volume_pickup">Carga de camioneta</option>
+                <option value="trunk" th:selected="${request.estimatedVolume == 'trunk'}" data-i18n="req_form_volume_trunk">Un baúl</option>
+                <option value="pickup" th:selected="${request.estimatedVolume == 'pickup'}" data-i18n="req_form_volume_pickup">Camioneta</option>
               </select>
             </div>
           </div>
 
-          <!-- Image upload (only on edit) -->
-          <div th:if="${isEdit}" class="req-form__row req-form__row--wide">
-            <div class="form-group">
-              <label data-i18n="req_form_image">Foto (opcional)</label>
-              <label class="file-upload" for="imageFile">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span data-i18n="req_form_image_choose">Click para subir</span>
-                <input type="file" id="imageFile" name="imageFile" accept="image/jpeg,image/png">
-                <span class="file-name" id="fileName"></span>
-              </label>
-            </div>
-            <div th:if="${request.hasImage()}" class="form-group">
-              <label>Imagen actual</label>
-              <img th:src="${request.imageUrl}" alt="Imagen actual" class="img-preview">
-            </div>
+          <div th:if="${isEdit}" class="field">
+            <label data-i18n="req_form_image">Foto (opcional)</label>
+            <label class="file-upload" for="imageFile">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span data-i18n="req_form_image_choose">Click para subir</span>
+              <input type="file" id="imageFile" name="imageFile" accept="image/jpeg,image/png">
+              <span class="file-name" id="fileName"></span>
+            </label>
+            <img th:if="${request.hasImage()}" th:src="${request.imageUrl}" alt="Imagen actual" class="img-preview">
           </div>
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="submit" class="btn btn--primary">
               <i class="fa-solid fa-paper-plane"></i>
@@ -207,16 +166,13 @@
               <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Pedir recolección</span>
             </button>
             <a th:href="${isEdit} ? '/solicitud/' + ${request.id} : '/'" class="btn btn--outline">
-              <i class="fa-solid fa-xmark"></i>
-              <span data-i18n="req_form_cancel">Cancelar</span>
+              <i class="fa-solid fa-xmark"></i> <span data-i18n="req_form_cancel">Cancelar</span>
             </a>
           </div>
-
         </form>
       </div>
     </div>
 
-    <!-- Page-specific JS -->
     <th:block th:replace="~{fragments/request-form-js :: script}"></th:block>
     <th:block th:replace="~{fragments/phone-country-selector :: script('guestPhone')}"></th:block>
     <th:block th:replace="~{fragments/phone-country-selector :: script('userPhone')}"></th:block>

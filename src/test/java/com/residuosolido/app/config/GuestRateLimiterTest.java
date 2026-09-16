@@ -1,12 +1,14 @@
 package com.residuosolido.app.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Tag("unit")
 class GuestRateLimiterTest {
 
     private HttpServletRequest requestFrom(String ip) {

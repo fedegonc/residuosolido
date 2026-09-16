@@ -1,18 +1,14 @@
-<!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head>
-  <title>Eco Solicitud — Solicitudes de acopio</title>
-</head>
+<head><title>Solicitudes de acopio</title></head>
 <body>
   <main layout:fragment="content">
     <div class="org-layout">
       <div th:replace="~{fragments/org-sidebar :: sidebar('requests')}"></div>
-      <div class="org-layout__main panel-section">
+      <div class="org-layout__main">
 
-      <!-- Breadcrumbs -->
-      <nav class="breadcrumb" aria-label="breadcrumb">
+      <nav class="breadcrumb">
         <th:block th:each="crumb, iter : ${breadcrumbs}">
           <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
           <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Solicitudes</span>
@@ -22,209 +18,106 @@
 
       <!-- ═══ LIST VIEW ═══ -->
       <th:block th:if="${viewType == 'list'}">
-        <div class="panel-header">
-          <h1 class="panel-header__title" data-i18n="org_req_title">Solicitudes</h1>
-          <div class="panel-actions">
-            <a href="/acopio/inicio" class="btn btn--outline">
-              <i class="fa-solid fa-arrow-left"></i>
-              <span data-i18n="org_req_back_dashboard">Volver al panel</span>
-            </a>
-          </div>
+        <div class="row row--between mb">
+          <h1 class="card__title" data-i18n="org_req_title">Solicitudes</h1>
+          <a href="/acopio/inicio" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="org_req_back_dashboard">Volver</span></a>
         </div>
 
-        <!-- Status filter -->
-        <div class="form-actions mb-2">
-          <a href="/acopio/requests" class="btn btn--outline btn--sm"
-             th:classappend="${currentStatus == null} ? 'btn--primary' : ''">
-            <span data-i18n="org_req_filter_all">Todas</span>
-          </a>
-          <a href="/acopio/requests?status=PENDING" class="btn btn--outline btn--sm"
-             th:classappend="${currentStatus == 'PENDING'} ? 'btn--primary' : ''">
-            <span data-i18n="req_status_pending">Pendientes</span>
-          </a>
-          <a href="/acopio/requests?status=IN_PROGRESS" class="btn btn--outline btn--sm"
-             th:classappend="${currentStatus == 'IN_PROGRESS'} ? 'btn--primary' : ''">
-            <span data-i18n="req_status_in_progress">En curso</span>
-          </a>
-          <a href="/acopio/requests?status=COMPLETED" class="btn btn--outline btn--sm"
-             th:classappend="${currentStatus == 'COMPLETED'} ? 'btn--primary' : ''">
-            <span data-i18n="req_status_completed">Completadas</span>
-          </a>
-          <a href="/acopio/requests?status=REJECTED" class="btn btn--outline btn--sm"
-             th:classappend="${currentStatus == 'REJECTED'} ? 'btn--primary' : ''">
-            <span data-i18n="req_status_rejected">Rechazadas</span>
-          </a>
+        <div class="row mb">
+          <a href="/acopio/requests" class="btn btn--outline btn--sm" th:classappend="${currentStatus == null} ? 'btn--primary' : ''"><span data-i18n="org_req_filter_all">Todas</span></a>
+          <a href="/acopio/requests?status=PENDING" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'PENDING'} ? 'btn--primary' : ''"><span data-i18n="req_status_pending">Pendientes</span></a>
+          <a href="/acopio/requests?status=IN_PROGRESS" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'IN_PROGRESS'} ? 'btn--primary' : ''"><span data-i18n="req_status_in_progress">En curso</span></a>
+          <a href="/acopio/requests?status=COMPLETED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'COMPLETED'} ? 'btn--primary' : ''"><span data-i18n="req_status_completed">Completadas</span></a>
+          <a href="/acopio/requests?status=REJECTED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'REJECTED'} ? 'btn--primary' : ''"><span data-i18n="req_status_rejected">Rechazadas</span></a>
         </div>
 
-        <!-- Request list -->
-        <div th:if="${requests != null and !requests.isEmpty()}">
-          <div class="request-list">
-            <div th:each="req : ${requests}" class="request-item">
-              <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
-              <div class="form-actions mb-2">
-                <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
-                  <i class="fa-solid fa-eye"></i>
-                  <span data-i18n="req_list_view">Ver</span>
-                </a>
-              </div>
+        <div th:if="${requests != null and !requests.isEmpty()}" class="request-list">
+          <div th:each="req : ${requests}" class="request-item">
+            <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
+            <div class="form-actions">
+              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
             </div>
           </div>
         </div>
-
-        <!-- Empty state -->
-        <th:block th:replace="~{fragments/request-list :: empty-state(messageKey='No hay solicitudes', icon='fa-solid fa-inbox')}"></th:block>
+        <div th:if="${requests == null or requests.isEmpty()}">
+          <div th:replace="~{fragments/empty-state :: state('fa-inbox', 'No hay solicitudes')}"></div>
+        </div>
       </th:block>
 
       <!-- ═══ DETAIL VIEW ═══ -->
       <th:block th:if="${viewType == 'detail'}">
-        <div class="panel-header">
+        <div class="row row--between mb">
           <div>
-            <h1 class="panel-header__title">
-              <span data-i18n="req_detail_title">Detalle de solicitud</span>
-              #<span th:text="${request.id}"></span>
-            </h1>
-            <span class="status-badge"
-                  th:classappend="${request.status.name() == 'PENDING'} ? 'status-badge--pending' :
-                                   (${request.status.name() == 'IN_PROGRESS'} ? 'status-badge--in_progress' :
-                                   (${request.status.name() == 'COMPLETED'} ? 'status-badge--completed' :
-                                   'status-badge--rejected'))"
-                  th:text="${request.status.name() == 'PENDING'} ? 'Pendiente' :
-                           (${request.status.name() == 'IN_PROGRESS'} ? 'En curso' :
-                           (${request.status.name() == 'COMPLETED'} ? 'Completado' : 'Rechazado'))">
-              Pendiente
-            </span>
+            <h1 class="card__title"><span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span></h1>
+            <div th:replace="~{fragments/badge :: status(${request.status})}"></div>
           </div>
-          <div class="panel-actions">
-            <a href="/acopio/requests" class="btn btn--outline">
-              <i class="fa-solid fa-arrow-left"></i>
-              <span data-i18n="req_detail_back">Volver</span>
-            </a>
-          </div>
+          <a href="/acopio/requests" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="req_detail_back">Volver</span></a>
         </div>
 
-        <!-- Contact info -->
-        <div class="card card--info">
-          <h2 class="card__title" data-i18n="org_req_contact">Contacto</h2>
-          <div class="info-row" th:if="${request.contactName != null}">
-            <i class="fa-solid fa-user"></i>
-            <span class="info-row__label" data-i18n="org_req_contact_name">Nombre</span>
-            <span class="info-row__value" th:text="${request.contactName}"></span>
-          </div>
-          <div class="info-row" th:if="${request.contactPhone != null}">
-            <i class="fa-solid fa-phone"></i>
-            <span class="info-row__label" data-i18n="profile_phone">Teléfono</span>
-            <span class="info-row__value" th:text="${request.contactPhone}"></span>
-          </div>
-          <div class="info-row" th:if="${request.isGuest()}">
-            <i class="fa-solid fa-user-tag"></i>
-            <span class="info-row__label" data-i18n="org_req_type">Tipo</span>
-            <span class="info-row__value" data-i18n="org_req_guest">Invitado</span>
-          </div>
-          <div class="info-row" th:unless="${request.isGuest()}">
-            <i class="fa-solid fa-user-tag"></i>
-            <span class="info-row__label" data-i18n="org_req_type">Tipo</span>
-            <span class="info-row__value" data-i18n="org_req_registered">Registrado</span>
-          </div>
+        <div class="card mb">
+          <h2 class="card__subtitle" data-i18n="org_req_contact">Contacto</h2>
+          <div th:replace="~{fragments/info-row :: row('fa-user', 'Nombre', ${request.contactName})}"></div>
+          <div th:replace="~{fragments/info-row :: row('fa-phone', 'Teléfono', ${request.contactPhone})}"></div>
+          <div th:replace="~{fragments/info-row :: row('fa-user-tag', 'Tipo', ${request.isGuest() ? 'Invitado' : 'Registrado'})}"></div>
         </div>
 
-        <!-- Address -->
-        <div class="card card--info">
-          <h2 class="card__title" data-i18n="req_detail_address">Dirección</h2>
-          <div class="info-row" th:if="${request.city != null}">
-            <i class="fa-solid fa-location-dot"></i>
-            <span class="info-row__label" data-i18n="req_detail_city">Ciudad</span>
-            <span class="info-row__value" th:text="${request.city}"></span>
-          </div>
-          <div class="info-row" th:if="${request.address != null and !request.address.isBlank()}">
-            <i class="fa-solid fa-route"></i>
-            <span class="info-row__label" data-i18n="req_detail_address">Dirección</span>
-            <span class="info-row__value" th:text="${request.address}"></span>
-          </div>
-          <div class="info-row" th:if="${request.addressReference != null and !request.addressReference.isBlank()}">
-            <i class="fa-solid fa-flag"></i>
-            <span class="info-row__label" data-i18n="req_detail_ref">Referencia</span>
-            <span class="info-row__value" th:text="${request.addressReference}"></span>
-          </div>
+        <div class="card mb">
+          <h2 class="card__subtitle" data-i18n="req_detail_address">Dirección</h2>
+          <div th:replace="~{fragments/info-row :: row('fa-location-dot', 'Ciudad', ${request.city != null ? request.city.toString() : null})}"></div>
+          <div th:replace="~{fragments/info-row :: row('fa-route', 'Dirección', ${request.address})}"></div>
+          <div th:replace="~{fragments/info-row :: row('fa-flag', 'Referencia', ${request.addressReference})}"></div>
         </div>
 
-        <!-- Materials -->
-        <div class="card card--info">
-          <h2 class="card__title" data-i18n="req_detail_materials">Materiales</h2>
+        <div class="card mb">
+          <h2 class="card__subtitle" data-i18n="req_detail_materials">Materiales</h2>
           <div th:if="${request.hasMaterials()}" class="request-item__materials">
-            <span th:each="mat : ${request.materials}" class="material-tag" th:text="${mat.name()}"></span>
+            <span th:each="mat : ${request.materials}" class="tag" th:text="${mat.name()}"></span>
           </div>
-          <p th:unless="${request.hasMaterials()}" class="info-row__empty">—</p>
+          <span th:unless="${request.hasMaterials()}">—</span>
         </div>
 
-        <!-- Image -->
-        <div th:if="${request.hasImage()}" class="card card--info">
-          <h2 class="card__title" data-i18n="req_detail_image">Foto</h2>
-          <img th:src="${request.imageUrl}" alt="Foto de materiales"
-               class="img-detail">
+        <div th:if="${request.hasImage()}" class="card mb">
+          <h2 class="card__subtitle" data-i18n="req_detail_image">Foto</h2>
+          <img th:src="${request.imageUrl}" alt="Foto" class="img-detail">
         </div>
 
-        <!-- Confirmed slot -->
-        <div class="card card--info" th:if="${request.confirmedSlot != null}">
-          <h2 class="card__title" data-i18n="req_detail_slot">Franja confirmada</h2>
-          <div class="info-row">
-            <i class="fa-solid fa-clock"></i>
-            <span class="info-row__label" data-i18n="req_detail_slot">Franja confirmada</span>
-            <span class="info-row__value" th:text="${request.confirmedSlot}"></span>
-          </div>
+        <div th:if="${request.confirmedSlot != null}" class="card mb">
+          <h2 class="card__subtitle" data-i18n="req_detail_slot">Franja confirmada</h2>
+          <div class="info-row"><i class="fa-solid fa-clock"></i><span th:text="${request.confirmedSlot}"></span></div>
         </div>
 
-        <!-- Accept form (PENDING only) -->
-        <div th:if="${request.isPending()}" class="card card--info">
-          <h2 class="card__title" data-i18n="org_req_accept_title">Aceptar solicitud</h2>
-          <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="auth-form">
+        <div th:if="${request.isPending()}" class="card mb">
+          <h2 class="card__subtitle" data-i18n="org_req_accept_title">Aceptar solicitud</h2>
+          <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="stack">
             <input type="hidden" name="action" value="accept" />
-            <div class="form-group">
-              <label for="confirmedSlot" data-i18n="org_req_select_slot">Confirmar franja horaria</label>
-              <select id="confirmedSlot" name="confirmedSlot" class="form-select" required>
+            <div class="field">
+              <label for="confirmedSlot" data-i18n="org_req_select_slot">Confirmar franja</label>
+              <select id="confirmedSlot" name="confirmedSlot" class="select" required>
                 <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot.name()}"></option>
               </select>
             </div>
-            <div class="form-actions mb-2">
-              <button type="submit" class="btn btn--primary">
-                <i class="fa-solid fa-check"></i>
-                <span data-i18n="org_req_accept">Aceptar</span>
-              </button>
-              <button type="button" class="btn btn--outline btn--danger"
-                      onclick="document.getElementById('rejectForm').style.display='block';this.style.display='none';">
-                <i class="fa-solid fa-xmark"></i>
-                <span data-i18n="org_req_reject">Rechazar</span>
-              </button>
+            <div class="row">
+              <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="org_req_accept">Aceptar</span></button>
+              <button type="button" class="btn btn--outline btn--danger" onclick="document.getElementById('rejectForm').classList.remove('is-hidden');this.classList.add('is-hidden')"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
             </div>
           </form>
-          <!-- Reject form (hidden) -->
-          <form id="rejectForm" th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post"
-                class="is-hidden mt-2">
+          <form id="rejectForm" th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="is-hidden mt">
             <input type="hidden" name="action" value="reject" />
-            <p class="text-sm text-muted mb-1" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
-            <div class="form-actions mb-2">
-              <button type="submit" class="btn btn--outline btn--danger">
-                <i class="fa-solid fa-xmark"></i>
-                <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span>
-              </button>
-              <button type="button" class="btn btn--outline" onclick="document.getElementById('rejectForm').style.display='none';">
-                <span data-i18n="profile_cancel">Cancelar</span>
-              </button>
+            <p class="hint mb-sm" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
+            <div class="row">
+              <button type="submit" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span></button>
+              <button type="button" class="btn btn--outline" onclick="document.getElementById('rejectForm').classList.add('is-hidden')"><span data-i18n="profile_cancel">Cancelar</span></button>
             </div>
           </form>
         </div>
 
-        <!-- Complete button (IN_PROGRESS only) -->
-        <div th:if="${request.isInProgress()}" class="card card--info">
-          <h2 class="card__title" data-i18n="org_req_complete_title">Finalizar recolección</h2>
+        <div th:if="${request.isInProgress()}" class="card mb">
+          <h2 class="card__subtitle" data-i18n="org_req_complete_title">Finalizar recolección</h2>
           <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post">
             <input type="hidden" name="action" value="complete" />
-            <button type="submit" class="btn btn--primary">
-              <i class="fa-solid fa-circle-check"></i>
-              <span data-i18n="org_req_complete">Marcar como completada</span>
-            </button>
+            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-circle-check"></i> <span data-i18n="org_req_complete">Marcar como completada</span></button>
           </form>
         </div>
-
       </th:block>
 
       </div>

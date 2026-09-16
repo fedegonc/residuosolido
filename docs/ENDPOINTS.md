@@ -14,8 +14,6 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/auth/login` | `AuthController` | Formulario de login |
 | GET | `/rastrear` | `GuestTrackingController` | Formulario de rastreo por teléfono + código privado |
 | POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono + código |
-| GET | `/metricas` | `PublicMetricsController` | Métricas públicas (total completadas, por ciudad) — **sin protección**, ver backlog en `RF-RN.md` |
-| GET | `/blog` | `BlogController` | Blog estático con los 3 artículos expandidos (historias del reciclaje) |
 | GET | `/documentos` | `DocsController` | Índice de documentación técnica (docs/*.md) |
 | GET | `/diagramas` | `DocsController` | Índice de diagramas UML (docs/diagrams/*.drawio) |
 | GET | `/docs/**` | `WebConfig` (resource handler) | Archivos estáticos de docs/ y docs/diagrams/ |
@@ -25,16 +23,12 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/usuarios/inicio` | `UserProfileController` | Dashboard con estadísticas y solicitudes recientes |
-| GET | `/usuarios/perfil` | `UserProfileController` | Formulario de perfil |
-| POST | `/usuarios/perfil` | `UserProfileController` | Actualiza email/nombre/teléfono/ciudad |
 | GET | `/solicitudes` | `RequestController` | Lista de solicitudes propias |
 | GET | `/solicitudes/nueva` | `RequestCreateController` | Formulario de nueva solicitud (también accesible sin login) |
 | POST | `/solicitudes/nueva` | `RequestCreateController` | Crea la solicitud (con imagen opcional) |
-| GET | `/solicitudes/exito` | `RequestController` | Página de confirmación tras crear |
 | GET | `/solicitud/{id}` | `RequestController` | Detalle de una solicitud propia |
-| GET | `/solicitud/{id}/editar` | `RequestEditController` | Formulario de edición (solo si `PENDING`) |
-| POST | `/solicitud/{id}/editar` | `RequestEditController` | Actualiza la solicitud |
+| GET | `/solicitud/{id}/editar` | `RequestController` | Formulario de edición (solo si `PENDING`) |
+| POST | `/solicitud/{id}/editar` | `RequestController` | Actualiza la solicitud |
 | POST | `/solicitud/{id}/eliminar` | `RequestController` | Elimina la solicitud (solo si `PENDING`) |
 
 ## Organización (rol `ORGANIZATION`)
@@ -42,17 +36,13 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
 | GET | `/acopio/inicio` | `OrgDashboardController` | Dashboard con Kanban integrado (4 columnas por estado) + estadísticas |
-| GET | `/acopio/completar-perfil` | `OrgOnboardingController` | Formulario de onboarding forzado (teléfono + ciudad) |
-| POST | `/acopio/completar-perfil` | `OrgOnboardingController` | Guarda el perfil inicial |
+| GET | `/acopio/completar-perfil` | `OrgProfileController` | Formulario de onboarding forzado (teléfono + ciudad) |
+| POST | `/acopio/completar-perfil` | `OrgProfileController` | Guarda el perfil inicial |
 | GET | `/acopio/perfil` | `OrgProfileController` | Formulario de edición de perfil |
 | POST | `/acopio/perfil` | `OrgProfileController` | Actualiza datos de la organización |
 | GET | `/acopio/requests` | `OrgRequestController` | Lista de solicitudes asignadas, con filtro por estado y paginado |
-| GET | `/acopio/requests/{id}` | `OrgRequestDetailController` | Detalle de una solicitud asignada |
+| GET | `/acopio/requests/{id}` | `OrgRequestController` | Detalle de una solicitud asignada |
 | POST | `/acopio/requests/{id}/transition` | `OrgRequestController` | Cambia estado: `action=accept\|reject\|complete` |
-| GET | `/acopio/catadores` | `InformalCollectorController` | CRUD de recolectores — **sin link en sidebar** (ver docs/DEFENSA.md) |
-| GET | `/acopio/catadores/edit/{id}` | `InformalCollectorController` | Carga un recolector para editar |
-| POST | `/acopio/catadores` | `InformalCollectorController` | Crea o actualiza un recolector (según si llega `id`) |
-| POST | `/acopio/catadores/{id}/delete` | `InformalCollectorController` | Elimina un recolector |
 
 ---
 
@@ -60,9 +50,8 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 - No existen rutas `/admin/**` — no hay rol Admin ni panel de administración general.
 - No existe la ruta `/acopio/kanban` — el tablero Kanban se integró al dashboard (`/acopio/inicio`).
-- No existen rutas `/posts`, `/categories`, `/feedback` — el blog es estático, sin CMS.
+- No existen rutas `/blog`, `/posts`, `/metricas` — el blog y las métricas públicas fueron descartados del MVP.
 - Las rutas están en español (`/usuarios`, `/acopio`, `/solicitudes`) por decisión de diseño, sin alias en inglés.
-- `PublicMetricsController` (`/metricas`) es la única ruta pública que expone datos agregados sin protección — pendiente en el backlog (`docs/DIAGRAMAS.md` sección 6) renombrarlo/protegerlo si se agregan métricas privadas por organización.
 - Las rutas físicas están centralizadas en `com.residuosolido.app.config.Routes` para evitar URLs hardcodeadas en controllers, seguridad y tests.
 - OpenAPI/Swagger UI está disponible en `/swagger-ui.html` y `/v3/api-docs` (público en `SecurityConfig`).
 
@@ -71,7 +60,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 # Testing (anexo)
 
 
-Describe la suite de tests real del proyecto (218 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (176 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 
@@ -101,33 +90,40 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | Clase de test | Qué cubre |
 |---|---|
 | `RequestServiceValidationTest` (13) | Validación server-side de creación/actualización de solicitudes (RN-10: materiales obligatorios, dirección, ciudad; RN-11: borrado solo si `PENDING`) |
-| `RequestQueryServiceTest` (10) | Ownership check de solicitudes por usuario (`getOwnedRequest`, `getEditableOwnedRequest`), rastreo por teléfono + código |
-| `RequestOrgServiceTest` (8) | Ownership check por organización, filtros por estado, paginado |
-| `RequestTransitionServiceTest` (13) | Transiciones de estado (`accept`/`reject`/`complete`) y optimistic locking |
 | `CityOrgServiceTest` (9) | Resolución de organización por ciudad (RN-06), validaciones de organización inválida/ciudad incorrecta |
 | `UserServiceTest` (17) | Registro, actualización de perfil, completar perfil de organización |
-| `InformalCollectorServiceTest` (9) | CRUD de recolectores informales, ownership por organización |
 | `RequestMetricsServiceTest` (6) | Agregación Mongo faceted para estadísticas de organización y usuario (counts por estado) |
 | `LocalImageServiceTest` (7) | Validación de tipo/tamaño de imagen, guardado local |
-| `BreadcrumbServiceTest` (6) | Construcción de breadcrumbs |
 | `GuestRateLimiterTest` (5) | Rate limiting por IP (ventana deslizante), header `X-Forwarded-For`, limpieza de memoria |
 | `LoginAttemptServiceTest` (7) | Bloqueo tras intentos fallidos de login, expiración, limpieza de memoria |
 | `RoleBasedLoginTargetUrlResolverTest` (4) | Redirección post-login según rol (RN-05) |
 | `PhoneNumberCountryCodeTest` (23) | Normalización E.164, códigos de país (UY/BR), DDD brasilero, validación de longitud |
 | `MvpRegressionTest` (9) | Regresión de reglas críticas (password corto, org inactiva, etc.) |
-| `PublicMetricsServiceTest` (6) | Métricas públicas por ciudad |
 
 ### Integration / Security tests — `@SpringBootTest` + `MockMvc`
 
 | Clase de test | Qué cubre |
 |---|---|
-| `CriticalSecurityTest` (11) | Control de acceso por rol en rutas protegidas (`/usuarios/**`, `/acopio/**`), CSRF |
-| `NewFlowsSecurityTest` (8) | Seguridad de flujos agregados recientemente (invitados, rastreo) |
+ `CriticalSecurityTest` (10) | Control de acceso por rol en rutas protegidas (`/usuarios/**`, `/acopio/**`), CSRF |
+ `NewFlowsSecurityTest` (4) | Seguridad de flujos agregados recientemente (invitados, rastreo) |
 | `OrganizationControllerTest` (5) | Flujo completo de organización vía `MockMvc` |
-| `EndToEndFlowsTest` (14) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |
-| `I18nMessageResolutionTest` (8) | Resolución de mensajes en español/portugués |
-| `DocsControllerTest` (17) | Páginas públicas `/documentos` y `/diagramas`, content-type de `.md`/`.drawio`, path traversal, accesibilidad sin auth |
+ `EndToEndFlowsTest` (11) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |
+ `I18nMessageResolutionTest` (8) | Resolución de mensajes en español/portugués |
+ `DocsControllerTest` (8) | Páginas públicas `/documentos` y `/diagramas`, content-type de `.md`/`.drawio`, path traversal, accesibilidad sin auth |
 | `MongoAggregationUtilsIntegrationTest` (5) | Agregación faceted con MongoDB real — counts por estado, total, sin solicitudes, REJECTED incluido en total |
+
+### Browser tests — Playwright (tag `browser`)
+
+Requieren navegador real (Chromium). Se excluyen con `-DexcludedGroups=browser`.
+
+| Clase de test | Qué cubre |
+|---|---|
+| `HomePageBrowserTest` (6) | Render de landing page, navegación, responsive |
+| `CitizenBrowserTest` (7) | Flujo completo del ciudadano: registro → login → crear solicitud → ver lista |
+| `OrganizationBrowserTest` (5) | Flujo de organización: login → dashboard → aceptar/rechazar solicitud |
+| `GuestBrowserTest` (2) | Solicitud de invitado + rastreo por código |
+| `FullLifecycleBrowserTest` (1) | Ciclo completo: invitado crea → org acepta → org completa |
+| `TransversalBrowserTest` (6) | Tema claro/oscuro, i18n es/pt, accesibilidad, PWA |
 
 ---
 
@@ -145,11 +141,10 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 
 | Área | Cobertura |
 |---|---|
-| Reglas de negocio de `Request` (creación, edición, transición, borrado) | Alta — cubierta por 4 clases de test dedicadas |
+| Reglas de negocio de `Request` (creación, edición, transición, borrado) | Alta — cubierta por `RequestServiceValidationTest` (consolidado) |
 | Seguridad por rol | Alta — 2 clases dedicadas + verificación implícita en `EndToEndFlowsTest` |
 | Rate limiting / login attempts | Alta — ambas clases con tests de limpieza de memoria incluidos |
 | `MongoAggregationUtils` (helper compartido de métricas) | Alta — test de integración propio (`MongoAggregationUtilsIntegrationTest`, 5 tests con MongoDB real) + cubierto indirectamente vía `RequestMetricsServiceTest` |
-| `PublicMetricsService` | Cobertura agregada — `PublicMetricsServiceTest` (6 tests) |
 
 ---
 

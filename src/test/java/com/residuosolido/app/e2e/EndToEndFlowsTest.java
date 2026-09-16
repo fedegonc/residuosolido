@@ -10,12 +10,9 @@ import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestMetricsService;
-import com.residuosolido.app.service.RequestQueryService;
-import com.residuosolido.app.service.RequestTransitionService;
 import com.residuosolido.app.service.RequestService;
-import com.residuosolido.app.service.RequestService;
-import com.residuosolido.app.service.RequestQueryService;
 import com.residuosolido.app.service.UserService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,8 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Usa MockMvc + MockBean para aislar la capa de presentación sin requerir MongoDB.
  * Cubre los 8 flujos principales del sistema.
  */
+@Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=mongodb://localhost:27017/testdb",
+        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false"
 })
 @AutoConfigureMockMvc
@@ -56,15 +54,11 @@ class EndToEndFlowsTest {
     @MockBean
     private RequestService requestService;
     @MockBean
-    private RequestQueryService requestQueryService;
-    @MockBean
     private UserService userService;
     @MockBean
     private RequestMetricsService requestMetricsService;
     @MockBean
     private CityOrgService cityOrgService;
-    @MockBean
-    private RequestTransitionService requestTransitionService;
 
     // ═══════════════════════════════════════════════════════
     // Flujo 6: Tracking de invitado (track.html)
@@ -72,7 +66,7 @@ class EndToEndFlowsTest {
 
     @Test
     void flujo6_guestTracking_pageLoadsAndShowsForm() throws Exception {
-        when(requestQueryService.getGuestRequests(null, null)).thenReturn(Collections.emptyList());
+        when(requestService.getGuestRequests(null, null)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get(Routes.TRACK))
                 .andExpect(status().isOk())
@@ -92,7 +86,7 @@ class EndToEndFlowsTest {
         req.setCity(City.RIVERA);
         req.setMaterials(List.of(MaterialCategory.PLASTICO));
 
-        when(requestQueryService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
+        when(requestService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
 
         mockMvc.perform(post(Routes.TRACK).with(csrf())
                         .param("phone", "+59899123456")
@@ -122,43 +116,26 @@ class EndToEndFlowsTest {
     }
 
     // ═══════════════════════════════════════════════════════
-    // Flujo 7: Perfil de usuario (dashboard.html + profile.html)
+    // Flujo 7: Dashboard unificado (requests.html con stats)
     // ═══════════════════════════════════════════════════════
 
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
-    void flujo7_userDashboard_loadsWithRecentRequests() throws Exception {
+    void flujo7_userRequestsList_loadsWithStats() throws Exception {
         User user = new User();
         user.setId("u1");
         user.setUsername("vecino");
         user.setFirstName("Vecino");
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
-        when(requestQueryService.getRecentRequestsByUser(user, 5)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get(Routes.USER_HOME))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users/dashboard"))
-                .andExpect(model().attributeExists("user", "recentRequests", "breadcrumbs"));
-    }
-
-    @Test
-    @WithMockUser(username = "vecino", roles = "USER")
-    void flujo7_userProfile_loadsWithStats() throws Exception {
-        User user = new User();
-        user.setId("u1");
-        user.setUsername("vecino");
-        user.setFirstName("Vecino");
-        user.setEmail("vecino@test.com");
-
-        when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
+        when(requestService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(requestMetricsService.getUserDashboardStats(user))
-                .thenReturn(Map.of("total", 5L, "pending", 2L, "inProgress", 1L, "completed", 2L));
+                .thenReturn(Map.of("total", 0L, "pending", 0L, "inProgress", 0L, "completed", 0L));
 
-        mockMvc.perform(get(Routes.USER_PROFILE))
+        mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().isOk())
-                .andExpect(view().name("users/profile"))
-                .andExpect(model().attributeExists("user", "requestStats", "cities", "breadcrumbs"));
+                .andExpect(view().name("users/requests"))
+                .andExpect(model().attributeExists("user", "requests", "requestStats"));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -173,7 +150,7 @@ class EndToEndFlowsTest {
         user.setUsername("vecino");
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
-        when(requestQueryService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(requestService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().isOk())
@@ -200,9 +177,9 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(requestMetricsService.getOrgDashboardData(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
-        when(requestQueryService.getRecentPendingRequestsByOrganization(org, 5))
+        when(requestService.getRecentPendingRequestsByOrganization(org, 5))
                 .thenReturn(Collections.emptyList());
-        when(requestQueryService.getRequestsByOrganizationGroupedByStatus(org))
+        when(requestService.getRequestsByOrganizationGroupedByStatus(org))
                 .thenReturn(Map.of(
                         RequestStatus.PENDING, Collections.emptyList(),
                         RequestStatus.IN_PROGRESS, Collections.emptyList(),
@@ -258,7 +235,7 @@ class EndToEndFlowsTest {
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestQueryService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
+        when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS))
@@ -286,7 +263,7 @@ class EndToEndFlowsTest {
         req.setGuestPhone("+59899123456");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestQueryService.getOwnedOrgRequest("req1", org)).thenReturn(req);
+        when(requestService.getOwnedOrgRequest("req1", org)).thenReturn(req);
 
         mockMvc.perform(get(Routes.ORG_REQUEST, "req1"))
                 .andExpect(status().isOk())

@@ -5,9 +5,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#2d6a4f" id="meta-theme-color">
-  <link rel="manifest" th:href="@{/manifest.json}">
-  <link rel="apple-touch-icon" th:href="@{/icon-192.png}">
   <title layout:title-pattern="$LAYOUT_TITLE — $CONTENT_TITLE">Eco Solicitud</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css">
   <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
-  <script th:src="@{/js/theme.js}"></script>
   <script th:inline="javascript">window.uiCopies = [[${uiCopies}]];</script>
 </head>
 <body class="app-body">
@@ -25,23 +21,18 @@
     <div th:replace="~{fragments/navbar :: nav}"></div>
   </header>
 
-  <div th:replace="~{fragments/feedback :: msg('success', ${successMessage})}" th:if="${successMessage != null}"></div>
-  <div th:replace="~{fragments/feedback :: msg('error', ${errorMessage})}" th:if="${errorMessage != null}"></div>
-  <div th:replace="~{fragments/feedback :: msg('warning', ${warningMessage})}" th:if="${warningMessage != null}"></div>
-  <div th:replace="~{fragments/feedback :: msg('info', ${infoMessage})}" th:if="${infoMessage != null}"></div>
+  <div th:replace="~{fragments/alert :: msg('success', ${successMessage})}" th:if="${successMessage != null}"></div>
+  <div th:replace="~{fragments/alert :: msg('error', ${errorMessage})}" th:if="${errorMessage != null}"></div>
+  <div th:replace="~{fragments/alert :: msg('warning', ${warningMessage})}" th:if="${warningMessage != null}"></div>
+  <div th:replace="~{fragments/alert :: msg('info', ${infoMessage})}" th:if="${infoMessage != null}"></div>
+
   <main id="main-content" class="app-main" layout:fragment="content"></main>
 
   <footer class="site-footer">
     <div class="footer-inner">
       <span class="footer-min__brand"><i class="fa-solid fa-recycle"></i> Eco Solicitud</span>
-      <nav class="footer-min__links" aria-label="Información técnica">
-        <a href="/documentos">Documentación</a>
-        <a href="/diagramas">Diagramas</a>
+      <nav class="footer-min__links" aria-label="Información">
         <a href="https://docs.google.com/document/d/1LNOGjk2HbU49zUnKQ6cMVhqFjj4WriRQsG8U7t2K2Ic/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Tesis</a>
-        <a href="/metricas">Métricas</a>
-        <button id="pwaInstall" type="button" class="footer-min__install" onclick="installPwa()" disabled>
-          <i class="fa-solid fa-download"></i> Instalar aplicación
-        </button>
       </nav>
       <span class="footer-min__copy">&copy; <time th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</time> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
     </div>

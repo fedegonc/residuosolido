@@ -1,7 +1,6 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.Role;
-import com.residuosolido.app.model.Email;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,15 +28,15 @@ public class UserRegistrationService {
         }
         if (user.getUsername().length() > 64) return "error.register.username_too_long";
         try {
-            AccountInput.password(user.getPassword());
-            Email.of(user.getEmail());
+            validatePassword(user.getPassword());
+            validateEmail(user.getEmail());
         } catch (IllegalArgumentException e) {
             return e.getMessage();
         }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "error.register.username_exists";
         }
-        if (userRepository.findByEmailIgnoreCase(Email.of(user.getEmail()).value()).isPresent()) {
+        if (userRepository.findByEmailIgnoreCase(user.getEmail().trim().toLowerCase(java.util.Locale.ROOT)).isPresent()) {
             return "error.register.email_exists";
         }
         return null;
@@ -59,5 +58,27 @@ public class UserRegistrationService {
         created.setActive(true);
         created.setCreatedAt(LocalDateTime.now());
         return userRepository.insert(created);
+    }
+
+    private static final java.util.regex.Pattern EMAIL_PATTERN =
+            java.util.regex.Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+
+    private void validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("error.register.email_invalid");
+        }
+        String normalized = email.trim().toLowerCase(java.util.Locale.ROOT);
+        if (normalized.length() > 254 || !EMAIL_PATTERN.matcher(normalized).matches()) {
+            throw new IllegalArgumentException("error.register.email_invalid");
+        }
+    }
+
+    private void validatePassword(String value) {
+        if (value == null || value.isBlank() || value.length() < 8) {
+            throw new IllegalArgumentException("error.register.password_min_length");
+        }
+        if (value.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalArgumentException("error.register.password_too_long");
+        }
     }
 }

@@ -41,7 +41,7 @@ Implementar un MVP que gestione solicitudes de recolección y su estado, adaptad
 - **Implementado:** dashboards para usuario y organización.
 - **Implementado:** tablero Kanban integrado al dashboard de organización.
 - **Implementado:** métricas públicas agregadas por ciudad.
-- **Implementado:** blog estático.
+- **Descartado:** blog estático (no se implementó).
 - **Implementado:** internacionalización español/portugués.
 - **Implementado:** PWA instalable con caché de recursos estáticos.
 - **Parcialmente implementado / latente:** gestión de recolectores informales; el CRUD existe, pero no tiene acceso visible desde el sidebar y una solicitud no registra al recolector responsable.
@@ -52,7 +52,7 @@ Implementar un MVP que gestione solicitudes de recolección y su estado, adaptad
 - **Descartado para el MVP:** pagos.
 - **Descartado para el MVP:** notificaciones reales por WhatsApp o SMS.
 - **Descartado para el MVP:** panel general con rol `ADMIN`.
-- **Descartado para el MVP:** CMS para el blog.
+- **Descartado para el MVP:** blog estático (no se implementó).
 - **Descartado para el MVP:** medición de impacto ambiental.
 - **Limitación conocida:** no existe validación de usabilidad con usuarios reales.
 
@@ -146,7 +146,7 @@ Representa tanto usuarios como organizaciones, diferenciados mediante `Role`.
 
 Datos documentados: identificador, username, email, contraseña, rol, nombre, teléfono, ciudad, estado activo, estado del perfil, materiales aceptados y fecha de creación.
 
-Los Value Objects `Email`, `Name` y `PhoneNumber` concentran validación y canonicalización server-side. `PhoneNumber` admite Uruguay `+598` y Brasil `+55`, y normaliza a formato E.164.
+La validación de email, nombre y teléfono se realiza inline en los setters de `User`. `PhoneNumber` es una utility class con métodos estáticos que admite Uruguay `+598` y Brasil `+55`, y normaliza a formato E.164.
 
 ### `Request`
 
@@ -228,7 +228,7 @@ Las operaciones de dominio incluyen `accept(TimeSlot)`, `reject()`, `complete()`
 La documentación canónica registra:
 
 ```text
-Tests run: 218, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 176, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -290,7 +290,7 @@ Render se eligió para reducir configuración operativa y mantener el foco en el
 - **Implementado:** interfaz bilingüe español/portugués.
 - **Implementado:** PWA instalable con caché de CSS, JavaScript, imágenes, manifest e iconos.
 - **Implementado:** documentación técnica, endpoints catalogados y cuatro diagramas UML editables.
-- **Implementado:** suite documentada de 218 tests sin fallos.
+- **Implementado:** suite documentada de 176 tests sin fallos.
 
 La evaluación realizada demuestra correctitud funcional y controles técnicos. No demuestra usabilidad ni impacto ambiental.
 
@@ -309,7 +309,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - **Limitación conocida:** CSP con `unsafe-inline`.
 - **Limitación conocida:** MongoDB sin transacciones multi-documento.
 - **Limitación conocida:** asignación por ciudad, no por proximidad geográfica.
-- **Limitación conocida:** blog estático sin CMS.
+- **Limitación conocida:** blog no implementado en el MVP.
 - **Limitación conocida:** sin rol o panel `ADMIN`.
 - **Descartado:** notificaciones automáticas en el MVP.
 
@@ -329,7 +329,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - **Thymeleaf SSR:** reduce piezas de despliegue.
 - **Un solo CSS con variables y BEM:** evita tooling adicional de frontend y mantiene coherencia visual.
 - **Dark mode con variables CSS:** evita dependencias y respeta preferencia persistida y del sistema operativo.
-- **Blog estático:** elimina complejidad de CMS y riesgo de edición dinámica.
+- **Sin blog:** elimina complejidad de CMS y riesgo de edición dinámica.
 - **Kanban integrado al dashboard:** reduce navegación y reutiliza endpoints existentes.
 - **HTML fuera del caché del service worker:** evita contenido desactualizado a costa de navegación offline.
 

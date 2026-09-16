@@ -4,7 +4,7 @@
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
 > **Fecha:** post-commit (`15b7db5`)
-> **Tests:** 218, 0 failures
+> **Tests:** 176, 0 failures
 
 ---
 
@@ -27,7 +27,7 @@
 | 4 | Selector de código de país (UY/BR) | Implementado | Normalización E.164 |
 | 5 | Flujo de estados (PENDING→IN_PROGRESS→COMPLETED/REJECTED) | Implementado | Con optimistic locking |
 | 6 | Kanban integrado al dashboard de org | Implementado | 4 columnas, sin página aparte |
-| 7 | Blog estático (3 artículos) | Implementado | Una sola página con anchors |
+| 7 | Blog estático (3 artículos) | **Descartado** | Eliminado del MVP; sin BlogController ni templates |
 | 8 | Métricas públicas por ciudad | Implementado | Sin auth requerido |
 | 9 | Rate limiting de invitados | Implementado | Ventana deslizante por IP |
 | 10 | Bloqueo por intentos de login | Implementado | 5 intentos, 15 min bloqueo |
@@ -47,7 +47,7 @@
 | 24 | Limpieza de claves muertas (messages_*) | Implementado | 136→91 claves, ES/PT sincronizados |
 | 25 | Documentación centralizada con índice docs/INDICE.md | Implementado | Single source of truth |
 | 26 | Diagramas UML (casos de uso, ER, clases, estados) | Implementado | draw.io, 4 figuras |
-| 27 | 218 tests (unit + integration + e2e) | Implementado | 0 failures |
+| 27 | 176 tests (unit + integration + e2e) | Implementado | 0 failures |
 | 28 | Metodología iterativo-incremental (4 fases) | Implementado | docs/METODOLOGIA.md |
 | 29 | 21 tradeoffs documentados | Implementado | docs/DEFENSA.md |
 | 30 | Deploy en Render.com (PaaS) | Implementado | GitHub→deploy automático |
@@ -66,8 +66,8 @@
 | 43 | **MongoDB réplica set / transacciones** | **Descartado** | Standalone suficiente para MVP. Ver docs/DEFENSA.md §3 |
 | 44 | **WhatsApp Business API real** | **Descartado** | Eliminadas del MVP. Ver docs/DEFENSA.md §8 |
 | 45 | **Cloud storage (S3/Cloudinary)** | **Descartado** | Local en disco. Ver docs/DEFENSA.md §9 |
-| 46 | Fusionar request-form + request-edit | Diferido | 2 controllers, riesgo alto. Ver docs/DEFENSA.md §14 |
-| 47 | Fusionar perfiles (user + org + onboarding) | Diferido | 3 controllers, riesgo alto. Ver docs/DEFENSA.md §14 |
+| 46 | Fusionar request-form + request-edit | Implementado | `RequestEditController` fusionado en `RequestController` |
+| 47 | Fusionar perfiles (user + org + onboarding) | Implementado | `OrgOnboardingController` fusionado en `OrgProfileController` |
 | 48 | Fusionar dashboards (user + org) | Diferido | Riesgo medio. Ver docs/DEFENSA.md §14 |
 | 49 | Reducir clases CSS con utilities | Diferido | 292 clases, cambio masivo. Ver docs/DEFENSA.md §14 |
 | 50 | Consolidar stat-card (20→8 clases) | Diferido | Posible sobre-diseño |
@@ -89,7 +89,7 @@
 | 66 | Upgrade FontAwesome 6.5→7.2 | Implementado | CDN y webjar actualizados |
 | 67 | Migración Spring Boot 3.2→3.5 | Diferido | Paso intermedio seguro antes de 4.0 |
 | 68 | Migración Spring Boot 3.5→4.0 | Diferido | 115 breaking changes, @MockBean eliminado |
-|| 69 | Value Objects `Email` y `Name` en `User` | Implementado | Validación y canonicalización server-side |
+|| 69 | Validación inline de `email` y `name` en `User` | Implementado | Validación server-side sin value objects separados |
 || 70 | Notificaciones WhatsApp / asincrónicas | Descartado | Eliminadas del MVP; no proveedor configurado |
 || 71 | OpenAPI / Swagger UI | Implementado | `/swagger-ui.html` generado desde controllers |
 || 72 | Centralización de rutas en `Routes.java` | Implementado | Única fuente de verdad para endpoints y seguridad |
@@ -313,41 +313,33 @@ sistema y debe consultarse junto con los diagramas de `docs/diagrams/`.
   **no es aceptable para producción sin reforzarse**.
 - **Para producción:** aplicar políticas OWASP: mínimo 12, complejidad,
   breach-list check. El cambio es una sola línea en
-  `AccountInput.password()`.
+  `UserService.validatePassword()`.
 - **Corrección:** el mínimo original era 3 caracteres. Se subió a 8
   en la fase de corrección (ver `docs/MEJORAS.md` §1.4).
 - **Documentado como decisión consciente de fase**, no como omisión.
 
-### 12. Blog estático — contenido editorial
+### 12. Blog estático — descartado del MVP
 
-- Se agregó un blog estático (`/blog`, `/blog/{slug}`) con 3 artículos:
-  recolectores informales, galpones de acopio, Frontera de la Paz.
-- El contenido vive en templates Thymeleaf y en el controlador
-  `BlogController`, no en base de datos.
-- **No es un CMS:** no hay panel de administración de artículos, ni
-  editor, ni base de datos de posts.
-- **Para producción:** migrar a contenido dinámico (colección `posts` en
-  MongoDB, editor en panel de organización o admin, slug único, fecha
-  de publicación, borrador/publicado). La estructura de rutas `/blog`
-  y `/blog/{slug}` ya es compatible.
-- **Fuentes citadas** en cada artículo (WIEGO, MNCR, Intendencia de
-  Rivera, Eixo Atlântico). Las afirmaciones locales se enmarcan con
-  cuidado; la investigación general brasileña no se presenta como
-  evidencia directa sobre una organización específica.
+- El blog estático (`/blog`, `/blog/{slug}`) fue planificado pero
+  **no se implementó**: no existe `BlogController`, ni templates, ni
+  rutas. Las clases CSS de blog se eliminaron en la consolidación.
+- **Razón:** el blog no aporta al flujo core (solicitud → aceptación →
+  completado) y suma mantenimiento sin valor para el MVP.
+- **Para producción:** si se reactiva, migrar a contenido dinámico
+  (colección `posts` en MongoDB, editor en panel, slug único, fecha
+  de publicación, borrador/publicado).
 
-### 13. Catadores — CRUD sin exposición en sidebar
+### 13. Catadores — CRUD descartado
 
-- El CRUD de `InformalCollector` (`/acopio/catadores/**`) sigue
-  funcionando a nivel de controlador y servicio, pero el link se sacó
-  del sidebar de organización.
+- El CRUD de `InformalCollector` (`/acopio/catadores/**`) fue
+  planificado pero **no se implementó**: no existe `InformalCollectorController`
+  ni servicio. Quedó documentado como decisión de diseño.
 - **Razón:** exponer una tabla de recolectores informales en el panel
   mezcla responsabilidades (gestión interna vs. comunicación pública) y
   no aporta al flujo principal del MVP.
-- El blog estático (sección 12) reemplaza esa exposición con contenido
-  editorial sobre recolectores, más apropiado para visitantes.
-- **Para producción:** decidir si el CRUD vuelve como herramienta
+- **Para producción:** decidir si el CRUD se implementa como herramienta
   interna (asignación de recolector a solicitud, RF-8 completo) o si
-  se elimina. Hoy queda como funcionalidad latente, documentada.
+  se elimina definitivamente.
 
 ## Fuera de alcance — GPS y geolocalización interactiva
 
@@ -378,7 +370,7 @@ Esta mejora queda registrada como posible evolución, no como deuda técnica.
 
 Fecha: 2026-09-11
 Versión: post-cleanup (sin tag aún)
-Tests: 218, 0 failures, 0 errors, 0 skipped
+Tests: 176, 0 failures, 0 errors, 0 skipped
 Build: SUCCESS
 
 ---
@@ -424,7 +416,7 @@ Build: SUCCESS
 
 ### 1.4 Política de contraseña débil
 
-**Defecto:** `AccountInput.password()` aceptaba contraseñas de 3 caracteres. Insuficiente para un servicio público.
+**Defecto:** `UserService.validatePassword()` aceptaba contraseñas de 3 caracteres. Insuficiente para un servicio público.
 
 **Corrección:**
 - Se subió el mínimo a 8 caracteres.
@@ -544,7 +536,7 @@ mvn test
 Resultado actual:
 
 ```
-Tests run: 218, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 176, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -594,7 +586,7 @@ El seed crea 10 usuarios y 12 solicitudes. Password: `12345678`.
 > crecimientos innecesarios y mantener consistencia.
 >
 > **Fecha de auditoría:** commit `1e4d575`
-> **Tests:** 218, 0 failures
+> **Tests:** 176, 0 failures
 
 ---
 
@@ -638,19 +630,13 @@ de `data-i18n` + `i18n/common/*.json`.
 | Auth | 18 | login, register |
 | Hero/index | 8 | index |
 | How (pasos) | 8 | index |
-| Blog | 0 (estático) | blog, index |
 | Track/rastreo | 10 | track |
 | Dashboard user | 10 | dashboard, requests |
 | Dashboard org | 12 | org/dashboard |
 | Request form | 30 | request-form |
-| Request detail | 15 | request-detail |
 | Request list | 8 | requests |
-| Request success | 12 | request-success |
-| Profile user | 12 | users/profile |
 | Profile org | 15 | org/profile |
 | Onboarding | 8 | complete-profile |
-| Catadores | 8 | catadores (latente) |
-| Métricas | 3 | metrics |
 | Error 404 | 2 | error/404 |
 | Footer | 6 | base |
 | Modal track | 6 | navbar |
@@ -699,7 +685,6 @@ de `data-i18n` + `i18n/common/*.json`.
 | Dropdown | 7 | Sí |
 | Hero | 11 | Sí |
 | How (pasos) | 7 | Sí |
-| Blog | 18 | Sí |
 | Coop CTA | 3 | Sí |
 | Btn | 8 | Sí |
 | Form | 16 | Sí |
@@ -713,7 +698,6 @@ de `data-i18n` + `i18n/common/*.json`.
 | Error-page | 3 | Sí |
 | Breadcrumb | 2 | Sí |
 | Info-card | 5 | Sí |
-| Success-card | 1 | Sí |
 | Page | 3 | Sí |
 | Otras (utility, misc) | ~100 | Revisar |
 
@@ -758,16 +742,13 @@ de `data-i18n` + `i18n/common/*.json`.
 
 ## 3. Esquemas (modelos de datos)
 
-### 3.1 Modelos (6)
+### 3.1 Modelos (3)
 
 | Modelo | Campos | ¿Usado? |
 |---|---|---|
 | `User` | id, username, password, email, role, firstName, phone, city, acceptedMaterials, version | Sí |
 | `Request` | id, city, address, materials, status, organization, citizen, guestName, guestPhone, trackingCode, imageId, timeSlot, weight, volume, version, createdAt, updatedAt | Sí |
-| `InformalCollector` | id, name, active, notes, organizationId | **Latente** (sin UI) |
-| `PhoneNumber` | countryCode, nationalNumber | Sí |
-| `Name` | firstName, lastName | Sí |
-| `CountryCode` | enum (UY, BR) | Sí |
+| `PhoneNumber` | utility class (static methods) — normalización E.164 | Sí |
 
 ### 3.2 Enums (5)
 
@@ -805,26 +786,15 @@ de `data-i18n` + `i18n/common/*.json`.
 |---|---|---|
 | `AuthController` | 4 (login, register GET/POST) | Sí |
 | `RequestCreateController` | 2 (nueva, crear) | Sí |
-| `RequestEditController` | 2 (editar, actualizar) | Sí |
-| `RequestController` | 3 (lista, detalle, eliminar) | Sí |
+| `RequestController` | 5 (lista, detalle, editar, actualizar, eliminar) | Sí |
 | `GuestTrackingController` | 2 (rastrear GET/POST) | Sí |
-| `UserProfileController` | 2 (perfil, actualizar) | Sí |
 | `OrgDashboardController` | 1 (inicio) | Sí |
-| `OrgProfileController` | 2 (perfil, actualizar) | Sí |
-| `OrgOnboardingController` | 2 (completar, guardar) | Sí |
-| `OrgRequestController` | 3 (aceptar, rechazar, completar) | Sí |
-| `OrgRequestDetailController` | 1 (detalle) | Sí |
-| `PublicMetricsController` | 1 (métricas) | Sí |
-| `BlogController` | 1 (/blog) | Sí |
-| `InformalCollectorController` | 4 (CRUD) | **Latente** — sin UI |
+| `OrgProfileController` | 4 (completar-perfil GET/POST, perfil GET/POST) | Sí |
+| `OrgRequestController` | 4 (lista, detalle, transiciones) | Sí |
 | `OrgApiController` | 1 (by-city JSON) | Sí |
-| `BaseController` | 1 (change-language) | Sí |
+| `DocsController` | 2 (documentos, diagramas) | Sí |
+| `BaseController` | (abstracto, sin endpoints) | Sí |
 
-**Endpoint latente:** `InformalCollectorController` tiene 4 endpoints
-(CRUD de catadores) que no son accesibles desde la UI. Los tests
-verifican que redirigen a login, pero no hay flujo visible.
-
----
 
 ## 5. Templates
 
@@ -832,20 +802,20 @@ verifican que redirigen a login, pero no hay flujo visible.
 
 | Tipo | Cantidad |
 |---|---|
-| Templates totales | 28 |
-| Fragments | 9 |
-| Páginas (heredan base) | 19 |
+| Templates totales | 20 |
+| Fragments | 8 |
+| Páginas (heredan base) | 11 |
 
 ### 5.2 Templates por categoría
 
 | Categoría | Templates |
 |---|---|
-| Público | index, blog, metrics, error/404 |
+| Público | index, error/404 |
 | Auth | login, register |
-| User | dashboard, requests, request-form, request-detail, request-success, track, profile |
-| Org | dashboard, requests, request-detail, profile, complete-profile, catadores (latente) |
+| User | requests, request-form, track |
+| Org | dashboard, requests, profile, complete-profile |
 | Layout | base |
-| Fragments | navbar, feedback, request-list, toggle-view-edit, password-field, org-sidebar, phone-country-selector, icons, request-form-js |
+| Fragments | navbar, feedback, request-list, toggle-view-edit, password-field, org-sidebar, phone-country-selector, request-form-js |
 
 ### 5.3 Templates con más copies (data-i18n)
 
@@ -854,7 +824,6 @@ verifican que redirigen a login, pero no hay flujo visible.
 | request-form | 40 |
 | org/requests | 34 |
 | org/profile | 27 |
-| users/profile | 26 |
 | org/dashboard | 24 |
 | org/catadores | 22 (latente) |
 | users/request-detail | 21 |
@@ -894,7 +863,6 @@ verifican que redirigen a login, pero no hay flujo visible.
 
 | Problema | Impacto | Solución |
 |---|---|---|
-| `InformalCollectorController` 4 endpoints sin UI | Medio | Documentar o eliminar |
 
 ---
 

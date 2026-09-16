@@ -5,9 +5,10 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.service.RequestQueryService;
+import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * - Safe parse de status filter (no 500 con valor inválido)
  * - Rutas protegidas por rol ORGANIZATION
  */
+@Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=mongodb://localhost:27017/testdb",
+        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false"
 })
 @AutoConfigureMockMvc
@@ -43,7 +45,7 @@ class OrganizationControllerTest {
     private UserService userService;
 
     @MockBean
-    private RequestQueryService requestQueryService;
+    private RequestService requestService;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +58,7 @@ class OrganizationControllerTest {
         mockOrg.setPhone("+59899123456");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(mockOrg);
-        when(requestQueryService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
+        when(requestService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
     }
 
     @Test

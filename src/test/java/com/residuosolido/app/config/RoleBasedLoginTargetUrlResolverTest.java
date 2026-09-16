@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -7,6 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("unit")
 class RoleBasedLoginTargetUrlResolverTest {
 
     private final RoleBasedLoginTargetUrlResolver resolver = new RoleBasedLoginTargetUrlResolver();

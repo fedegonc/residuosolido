@@ -8,6 +8,7 @@ import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.mock.web.MockMultipartFile;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class MvpRegressionTest {
     @TempDir
     Path images;
@@ -107,7 +109,7 @@ class MvpRegressionTest {
         User user = citizen();
         user.setPhone(null);
         RequestService svc = new RequestService(mock(RequestRepository.class), mock(LocalImageService.class),
-                mock(CityOrgService.class), new RequestQueryService(mock(RequestRepository.class)));
+                mock(CityOrgService.class));
         assertThrows(IllegalArgumentException.class, () -> svc.validateCreate(
                 user, City.RIVERA, "Dirección de prueba", List.of(MaterialCategory.PAPEL), null, null, "org"));
     }
@@ -117,7 +119,7 @@ class MvpRegressionTest {
         RequestRepository repo = mock(RequestRepository.class);
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
-        RequestService service = new RequestService(repo, mock(LocalImageService.class), cities, new RequestQueryService(repo));
+        RequestService service = new RequestService(repo, mock(LocalImageService.class), cities);
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org", null, null));
         verifyNoInteractions(repo);
@@ -130,7 +132,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, new LocalImageService(images.toString(), repo),
-                cities, new RequestQueryService(repo));
+                cities);
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", null, null, file));
@@ -139,6 +141,6 @@ class MvpRegressionTest {
 
     @Test
     void phoneRepresentationsAreCanonical() {
-        assertEquals(PhoneNumber.of("+59899123456"), PhoneNumber.of(" +598 99 123 456 "));
+        assertEquals(PhoneNumber.normalize("+59899123456"), PhoneNumber.normalize(" +598 99 123 456 "));
     }
 }

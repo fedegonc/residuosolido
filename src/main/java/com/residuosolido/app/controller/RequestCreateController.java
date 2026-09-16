@@ -7,7 +7,6 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.CountryCode;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestService;
@@ -91,24 +90,20 @@ public class RequestCreateController extends BaseController {
             String resolvedGuestPhone = guestPhone;
             if (guestPhoneNational != null && !guestPhoneNational.trim().isEmpty()
                     && guestCountryCode != null && !guestCountryCode.trim().isEmpty()) {
-                resolvedGuestPhone = PhoneNumber.of(CountryCode.fromDialCode(guestCountryCode), guestPhoneNational, guestDdd).value();
+                resolvedGuestPhone = PhoneNumber.normalize(guestCountryCode, guestPhoneNational, guestDdd);
             }
             if (user != null && !user.hasPhone()) {
-                String phone = PhoneNumber.of(CountryCode.fromDialCode(userCountryCode), userPhoneNational, userDdd).value();
+                String phone = PhoneNumber.normalize(userCountryCode, userPhoneNational, userDdd);
                 userService.updateProfile(user, null, null, phone, null);
             }
             Request created = requestService.createRequestWithImage(user, city, address, addressReference,
                     materials, guestName, resolvedGuestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
 
             flashSuccess(redirectAttributes, "flash.request.created");
-            redirectAttributes.addFlashAttribute("createdRequestId", created.getId());
-            redirectAttributes.addFlashAttribute("createdRequestStatus", created.getStatus().name());
-            redirectAttributes.addFlashAttribute("isGuest", user == null);
-            if (user == null) {
-                redirectAttributes.addFlashAttribute("guestPhone", resolvedGuestPhone);
-                redirectAttributes.addFlashAttribute("trackingCode", created.getTrackingCode());
+            if (user == null && resolvedGuestPhone != null && created.getTrackingCode() != null) {
+                return "redirect:/rastrear?phone=" + resolvedGuestPhone + "&code=" + created.getTrackingCode();
             }
-            return "redirect:/solicitudes/exito";
+            return "redirect:/solicitudes";
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("warningMessage", msg(e.getMessage()));
             return "redirect:/solicitudes";

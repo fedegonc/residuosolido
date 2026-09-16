@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: post-cambios de consolidacion  
-> Tests: 218, 0 failures, 0 errors, 0 skipped
+> Tests: 176, 0 failures, 0 errors, 0 skipped
 > Build: SUCCESS
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
@@ -42,8 +42,9 @@ Los anexos que antes se referenciaban como archivos separados ahora viven como s
 ## Mejoras recientes que ya estan documentadas
 
 - **Rutas centralizadas en `Routes.java`**: una sola fuente de verdad para URL de controllers, seguridad y tests.
-- **Value Objects `Email`, `Name` y `PhoneNumber`**: validacion y canonicalizacion server-side en el modelo `User`.
-- **State Pattern en `RequestStatus`**: las transiciones `accept/reject/complete` estan encapsuladas en el enum de estado.
+- **Validación inline en `User`**: email, nombre y teléfono se validan y canonicalizan en los setters, sin value objects separados.
+- **`PhoneNumber` como utility class**: normalización E.164 para Uruguay (+598) y Brasil (+55) con métodos estáticos.
+- **Transiciones de estado en `RequestStatus`**: las transiciones `accept/reject/complete` están encapsuladas en el enum de estado.
 - **OpenAPI/Swagger UI**: documentacion automatica de endpoints en `/swagger-ui.html`.
 - **i18n unificado en JSON**: catalogos `es.json` y `pt.json` en `static/i18n/`.
 

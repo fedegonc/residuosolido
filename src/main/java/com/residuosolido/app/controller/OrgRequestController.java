@@ -6,8 +6,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
-import com.residuosolido.app.service.RequestQueryService;
-import com.residuosolido.app.service.RequestTransitionService;
+import com.residuosolido.app.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +20,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
 
-/** Lista y gestiona las solicitudes recibidas por una organización (aceptar, rechazar, completar). */
+/**
+ * Gestión de solicitudes por la organización:
+ * - Lista con filtro por estado
+ * - Detalle individual
+ * - Transiciones de estado (aceptar, rechazar, completar)
+ *
+ * Antes estaba dividido en OrgRequestController + OrgRequestDetailController.
+ */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgRequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
-    private final RequestQueryService requestQueryService;
-    private final RequestTransitionService requestTransitionService;
+    private final RequestService requestService;
 
     @Autowired
-    public OrgRequestController(RequestQueryService requestQueryService,
-                               RequestTransitionService requestTransitionService) {
-        this.requestQueryService = requestQueryService;
-        this.requestTransitionService = requestTransitionService;
+    public OrgRequestController(RequestService requestService) {
+        this.requestService = requestService;
     }
 
     /** Lista las solicitudes de la organización, con filtro opcional por estado. */
@@ -45,7 +48,7 @@ public class OrgRequestController extends BaseController {
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
         User currentOrg = getCurrentUser(authentication);
-        List<Request> requests = requestQueryService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
+        List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
@@ -61,6 +64,27 @@ public class OrgRequestController extends BaseController {
         return "org/requests";
     }
 
+    /** Carga una solicitud individual con sus datos completos. */
+    @GetMapping(Routes.ORG_REQUEST)
+    public String orgRequestDetail(@PathVariable String id, Authentication authentication,
+                                    Model model, RedirectAttributes redirectAttributes) {
+        try {
+            User org = getCurrentUser(authentication);
+            Request request = requestService.getOwnedOrgRequest(id, org);
+            model.addAttribute("request", request);
+            model.addAttribute("viewType", "detail");
+            model.addAttribute("timeSlots", TimeSlot.values());
+            return "org/requests";
+        } catch (SecurityException e) {
+            flashError(redirectAttributes, "flash.org.request_not_owned");
+            return "redirect:/acopio/requests";
+        } catch (Exception e) {
+            logger.error("Error al cargar solicitud {}: {}", id, e.getMessage(), e);
+            flashError(redirectAttributes, "flash.org.request_load_error");
+            return "redirect:/acopio/requests";
+        }
+    }
+
     /** Cambia el estado de una solicitud: aceptar, rechazar o completar. */
     @PostMapping(Routes.ORG_REQUEST_TRANSITION)
     public String orgTransitionRequest(@PathVariable String id,
@@ -72,15 +96,15 @@ public class OrgRequestController extends BaseController {
             User org = getCurrentUser(authentication);
             switch (action) {
                 case "accept" -> {
-                    requestTransitionService.acceptRequest(id, org, confirmedSlot);
+                    requestService.acceptRequest(id, org, confirmedSlot);
                     flashSuccess(redirectAttributes, "flash.org.request_accepted");
                 }
                 case "reject" -> {
-                    requestTransitionService.rejectRequest(id, org);
+                    requestService.rejectRequest(id, org);
                     flashSuccess(redirectAttributes, "flash.org.request_rejected");
                 }
                 case "complete" -> {
-                    requestTransitionService.completeRequest(id, org);
+                    requestService.completeRequest(id, org);
                     flashSuccess(redirectAttributes, "flash.org.request_completed");
                     return "redirect:/acopio/inicio";
                 }

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><meta charset="UTF-8"></head>
 <body>
   <nav th:fragment="nav" class="navbar" aria-label="Navegación principal">
     <div class="navbar__inner">
@@ -18,35 +16,27 @@
       </div>
 
       <div class="navbar__actions">
-        <button id="themeToggle" type="button" class="navbar__theme-btn" aria-label="Cambiar tema">
-          <i class="fa-solid fa-sun"></i>
-          <i class="fa-solid fa-moon"></i>
-        </button>
         <div class="navbar__lang">
           <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
           <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
         </div>
 
-        <!-- Anonymous: login + register -->
         <span sec:authorize="!isAuthenticated()">
           <a href="/auth/login" class="btn btn--primary" data-i18n="nav_login">Entrar</a>
           <a href="/auth/register" class="btn btn--outline" data-i18n="nav_register">Registrarse</a>
         </span>
 
-        <!-- Authenticated: user menu -->
         <div sec:authorize="isAuthenticated()" class="navbar__user">
           <div class="navbar__user-info">
             <span class="navbar__user-avatar"><i class="fa-solid fa-user"></i></span>
-            <span class="navbar__user-name" sec:authentication="name">federico</span>
+            <span class="navbar__user-name" sec:authentication="name">usuario</span>
           </div>
-          <div class="navbar__user-links">
-            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="navbar__user-link" data-i18n="nav_org_panel">Panel acopio</a>
-            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" class="navbar__user-link" data-i18n="nav_org_profile">Perfil</a>
-            <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="navbar__user-link" data-i18n="nav_user_panel">Mi panel</a>
-            <a sec:authorize="hasRole('USER')" href="/usuarios/perfil" class="navbar__user-link" data-i18n="nav_user_profile">Mi perfil</a>
-            <a sec:authorize="hasRole('USER')" href="/solicitudes" class="navbar__user-link" data-i18n="nav_user_requests">Mis solicitudes</a>
-            <form th:action="@{/logout}" method="post" class="d-inline">
-              <button type="submit" class="navbar__user-logout" data-i18n="nav_logout">Cerrar sesión</button>
+          <div class="navbar__menu">
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" data-i18n="nav_org_panel">Panel acopio</a>
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" data-i18n="nav_org_profile">Perfil</a>
+            <a sec:authorize="hasRole('USER')" href="/solicitudes" data-i18n="nav_my_requests">Mis solicitudes</a>
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="btn btn--block" data-i18n="nav_logout">Cerrar sesión</button>
             </form>
           </div>
         </div>
@@ -66,31 +56,24 @@
       <button sec:authorize="!isAuthenticated()" type="button" class="dropdown__link dropdown__link--btn" onclick="openTrackModal()" data-i18n="nav_my_requests">Mis solicitudes</button>
       <div class="dropdown__divider">
         <div class="dropdown__lang-row">
-          <button id="themeToggleMobile" type="button" class="navbar__theme-btn" aria-label="Cambiar tema">
-            <i class="fa-solid fa-sun"></i>
-            <i class="fa-solid fa-moon"></i>
-          </button>
           <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
           <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
         </div>
       </div>
       <span sec:authorize="!isAuthenticated()" class="dropdown__auth">
-          <a href="/auth/login" class="btn btn--primary btn--block" data-i18n="nav_login">Entrar</a>
-          <a href="/auth/register" class="btn btn--outline btn--block" data-i18n="nav_register">Registrarse</a>
-        </span>
-        <div sec:authorize="isAuthenticated()" class="dropdown__auth-links">
-          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
-          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" class="dropdown__link" data-i18n="nav_org_profile">Perfil</a>
-          <a sec:authorize="hasRole('USER')" href="/usuarios/inicio" class="dropdown__link" data-i18n="nav_user_panel">Mi panel</a>
-          <a sec:authorize="hasRole('USER')" href="/usuarios/perfil" class="dropdown__link" data-i18n="nav_user_profile">Mi perfil</a>
-          <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_user_requests">Mis solicitudes</a>
-          <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn--outline btn--block" data-i18n="nav_logout">Cerrar sesión</button>
-          </form>
-        </div>
+        <a href="/auth/login" class="btn btn--primary btn--block" data-i18n="nav_login">Entrar</a>
+        <a href="/auth/register" class="btn btn--outline btn--block" data-i18n="nav_register">Registrarse</a>
+      </span>
+      <div sec:authorize="isAuthenticated()" class="dropdown__auth">
+        <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/inicio" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
+        <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" class="dropdown__link" data-i18n="nav_org_profile">Perfil</a>
+        <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+        <form th:action="@{/logout}" method="post">
+          <button type="submit" class="btn btn--outline btn--block" data-i18n="nav_logout">Cerrar sesión</button>
+        </form>
       </div>
+    </div>
 
-    <!-- Modal: Mis solicitudes (para usuarios sin cuenta) -->
     <div id="trackModal" class="modal-overlay" onclick="if(event.target===this)closeTrackModal()">
       <div class="modal">
         <button type="button" class="modal__close" onclick="closeTrackModal()" aria-label="Cerrar">&times;</button>
@@ -100,14 +83,14 @@
         <div class="modal__options">
           <a href="/rastrear" class="modal__option">
             <div class="modal__option-icon modal__option-icon--primary"><i class="fa-solid fa-magnifying-glass"></i></div>
-            <div class="modal__option-body">
+            <div>
               <div class="modal__option-title" data-i18n="modal_track_guest_title">Buscar sin cuenta</div>
               <div class="modal__option-desc" data-i18n="modal_track_guest_desc">Ingresá tu teléfono y el código que te dimos.</div>
             </div>
           </a>
           <a href="/auth/login" class="modal__option">
             <div class="modal__option-icon modal__option-icon--accent"><i class="fa-solid fa-right-to-bracket"></i></div>
-            <div class="modal__option-body">
+            <div>
               <div class="modal__option-title" data-i18n="modal_track_login_title">Entrar a mi cuenta</div>
               <div class="modal__option-desc" data-i18n="modal_track_login_desc">Si ya tenés cuenta, entrá para ver todas tus solicitudes en un solo lugar.</div>
             </div>

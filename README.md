@@ -16,8 +16,6 @@ Livramento, Brasil).
 - Flujo de estados de solicitud (pendiente → en curso/rechazada →
   completada) gestionado por la organización
 - Tablero Kanban integrado en el panel de organización
-- Blog estático con historias del reciclaje (recolectores informales,
-  galpones de acopio, Frontera de la Paz)
 - Rate limiting para solicitudes de invitados y bloqueo de cuenta tras
   intentos de login fallidos
 - PWA instalable (manifest, service worker, iconos)

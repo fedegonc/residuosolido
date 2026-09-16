@@ -3,6 +3,7 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -17,6 +18,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Tag("unit")
 class RequestMetricsServiceTest {
 
     private MongoTemplate mongoTemplate;
