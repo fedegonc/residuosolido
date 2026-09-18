@@ -147,6 +147,8 @@
 || 124 | `MongoIndexMigration` — reemplaza `auto-index-creation` por migración explícita | Implementado | El índice único de `email` (sin `sparse`) chocó al dejar de pedir email en el registro (2+ usuarios con `email=null`) y tiró abajo el arranque completo (`IndexKeySpecsConflict`). Se desactivó `spring.data.mongodb.auto-index-creation` y se agregó un `CommandLineRunner` idempotente que arregla el índice viejo y asegura los otros 3 `@Indexed` del proyecto explícitamente — más robusto que la creación automática, y portable a una base nueva |
 || 125 | Fix inconsistencia: teléfono de registro usaba un input suelto en vez del selector binacional | Implementado | El campo de teléfono del registro (#123) se implementó con un `<input>` simple, distinto del selector país+nacional+DDD ya usado en `request-form.html`/`org/profile.html`. Ahora `register.html` usa exactamente el mismo componente (prefijo `phone`, ya soportado por `app.js` sin cambios), y `RegistrationForm` construye el teléfono vía `PhoneNumber.normalize(countryCode, phoneNational, ddd)` en vez de un string crudo. Verificado en vivo con ambas ramas (UY y BR+DDD) |
 || 126 | Crear `docs/BOILERPLATE_VS_CORE.md` | Implementado | Documento vivo (v1) que clasifica cada clase backend/frontend/infra en Boilerplate, Core o Zona gris — separa qué es infraestructura genérica de Spring Boot de qué es el aporte real del dominio. Referenciado desde `docs/INDICE.md` |
+|| 127 | **TEMPORAL** — links a `MEJORAS.md`/`DEFENSA.md`/`BOILERPLATE_VS_CORE.md` + visor de diagramas UML en el footer | Implementado (sacar antes de producción) | Agregados para revisar avance fácil esta semana de desarrollo, vía `DocsController` (`/docs/{file}.md`, ambos ya públicos). **Tripwire: sacar todo esto antes de que un usuario real (no de prueba) vea el sitio** — no tiene sentido exponer docs internos de tesis en el footer de producción |
+|| 128 | Visor embebido de diagramas UML (`/docs/diagramas`) | Implementado | El link de diagramas del footer (#127) originalmente apuntaba a los 5 `.drawio` crudos (XML sin renderizar, requería copiar/pegar a app.diagrams.net a mano). Ahora `DocsController.viewDiagrams()` lee cada `.drawio` de `docs/diagrams/` y lo embebe inline en un `data-mxgraph` (JSON con la clave `xml`, escapado automáticamente por Thymeleaf al atributo HTML), renderizado client-side por el script oficial `viewer-static.min.js` de draw.io. Evita el problema de CORS de la alternativa (`?lightbox=1#U<url>`, que depende de que draw.io pueda hacer fetch cross-origin a `localhost`) porque el XML ya viaja embebido en el HTML, sin fetch externo. CSP `script-src` ampliado con `https://viewer.diagrams.net`. Mismo tripwire que #127 |
 
 ---
 
@@ -154,11 +156,11 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 88 |
+| Implementado | 90 |
 | Descartado | 14 |
 | Diferido | 20 |
 | Latente | 1 |
-| **Total** | **123** |
+| **Total** | **125** |
 
 ---
 

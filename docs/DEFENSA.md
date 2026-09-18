@@ -860,3 +860,23 @@ de intentos más estrictos, verificación de teléfono) hasta tener **~50
 usuarios reales** (no de prueba/demo). Antes de eso, la fricción de un
 registro robusto cuesta más de lo que previene. Las organizaciones sí
 mantienen email (siguen siendo pocas y verificadas manualmente por ahora).
+
+## 25. Visor embebido de diagramas UML en vez de links a XML crudo
+
+**Decisión:** los links "UML" del footer temporal (§22/#127 en
+`docs/MEJORAS.md`) no abren el `.drawio` crudo — abren `/docs/diagramas`,
+una página que renderiza los 5 diagramas con el script oficial
+`viewer-static.min.js` de draw.io.
+
+**Por qué no la alternativa obvia (`https://www.draw.io/?lightbox=1#U<url>`):**
+esa URL depende de que el servidor de draw.io haga *fetch* cross-origin al
+`.drawio` en `localhost:8080`, algo que puede fallar en silencio por CORS y
+que no se puede verificar de forma confiable sin un navegador real. La
+solución elegida evita el problema por completo: `DocsController` lee el
+XML del disco del lado del servidor y lo pasa embebido (como JSON en un
+atributo `data-mxgraph`) directamente en el HTML; el script de draw.io solo
+lo renderiza, no necesita pedirle nada a este servidor. CSP `script-src`
+se amplió con `https://viewer.diagrams.net` para permitir ese script.
+
+**Mismo tripwire que #127:** es parte del mismo footer temporal, se saca
+junto con el resto antes de que un usuario real vea el sitio.

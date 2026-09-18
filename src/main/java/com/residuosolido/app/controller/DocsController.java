@@ -1,5 +1,6 @@
 package com.residuosolido.app.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residuosolido.app.config.Routes;
 
 import org.springframework.core.io.FileSystemResource;
@@ -8,12 +9,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Sirve archivos estáticos de docs/ con el content-type correcto.
@@ -23,6 +29,15 @@ import java.nio.file.Paths;
 public class DocsController {
 
     private static final Path DOCS_DIR = Paths.get("docs").toAbsolutePath();
+    private static final ObjectMapper JSON = new ObjectMapper();
+
+    private static final List<String[]> DIAGRAMS = List.of(
+            new String[]{"figura1-casos-uso", "Casos de uso"},
+            new String[]{"figura2-modelo-logico", "Modelo lógico / ER"},
+            new String[]{"figura3-clases", "Diagrama de clases"},
+            new String[]{"figura4-secuencia", "Diagrama de secuencia"},
+            new String[]{"figura4-estados", "Diagrama de estados"}
+    );
 
     @GetMapping(Routes.DOCS_FILE)
     public ResponseEntity<Resource> serveMarkdown(@PathVariable String file) {
@@ -32,6 +47,43 @@ public class DocsController {
     @GetMapping(Routes.DOCS_DIAGRAM)
     public ResponseEntity<Resource> serveDrawio(@PathVariable String file) {
         return serveDoc("diagrams/" + file + ".drawio", MediaType.APPLICATION_XML);
+    }
+
+    /**
+     * Visor embebido: lee cada .drawio del disco y lo pasa como XML inline al
+     * script oficial de draw.io (viewer-static.min.js), que lo renderiza en el
+     * cliente sin necesitar que draw.io haga fetch a este servidor (evita CORS).
+     */
+    @GetMapping(Routes.DOCS_DIAGRAMS_VIEW)
+    public String viewDiagrams(Model model) {
+        List<Map<String, String>> diagrams = DIAGRAMS.stream()
+                .map(d -> {
+                    Map<String, String> entry = new LinkedHashMap<>();
+                    entry.put("title", d[1]);
+                    entry.put("mxgraph", toMxgraphAttr(d[0]));
+                    return entry;
+                })
+                .filter(entry -> entry.get("mxgraph") != null)
+                .toList();
+        model.addAttribute("diagrams", diagrams);
+        return "docs/diagramas";
+    }
+
+    private String toMxgraphAttr(String baseName) {
+        try {
+            File file = DOCS_DIR.resolve("diagrams/" + baseName + ".drawio").normalize().toFile();
+            if (!file.exists() || !file.isFile() || !file.toPath().startsWith(DOCS_DIR)) {
+                return null;
+            }
+            String xml = Files.readString(file.toPath());
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("xml", xml);
+            payload.put("toolbar", "zoom layers lightbox");
+            payload.put("resize", true);
+            return JSON.writeValueAsString(payload);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private ResponseEntity<Resource> serveDoc(String relativePath, MediaType mediaType) {

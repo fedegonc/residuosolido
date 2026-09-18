@@ -1,0 +1,22 @@
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Diagramas UML</title></head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+      <h1 class="mb-lg">Diagramas UML</h1>
+      <p class="mb-lg" style="color:var(--muted)">
+        Vista temporal de desarrollo — cada diagrama se renderiza con el visor
+        oficial de draw.io a partir del <code>.drawio</code> fuente en
+        <code>docs/diagrams/</code>. Ver <a href="/docs/MEJORAS.md" target="_blank">MEJORAS.md</a>.
+      </p>
+      <section class="card mb-lg" th:each="d : ${diagrams}">
+        <h2 th:text="${d.title}">Título</h2>
+        <div class="mxgraph" style="max-width:100%;border:1px solid var(--border);border-radius:var(--radius)" th:attr="data-mxgraph=${d.mxgraph}"></div>
+      </section>
+    </div>
+  </main>
+  <script layout:fragment="pageScripts" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+</body>
+</html>

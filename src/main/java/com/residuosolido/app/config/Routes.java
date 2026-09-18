@@ -57,6 +57,7 @@ public final class Routes {
     public static final String DOCS_ANY = "/docs/**";
     public static final String DOCS_FILE = "/docs/{file}.md";
     public static final String DOCS_DIAGRAM = "/docs/diagrams/{file}.drawio";
+    public static final String DOCS_DIAGRAMS_VIEW = "/docs/diagramas";
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
 

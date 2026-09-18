@@ -82,7 +82,7 @@ public class SecurityConfig {
                     "img-src 'self' data: https: https://tile.openstreetmap.org; " +
                     "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
                     "font-src 'self' data; " +
-                    "script-src 'self' https://www.draw.io; " +
+                    "script-src 'self' https://www.draw.io https://viewer.diagrams.net; " +
                     "connect-src 'self'; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
