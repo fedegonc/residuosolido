@@ -9,6 +9,29 @@
 .env
 *.env
 env.properties
+
+# ========================================
+# MARKDOWN SUELTO (notas/narraciones de sesión)
+# ========================================
+# Solo afecta .md NUEVOS (no trackeados). Los ya versionados (README.md,
+# docs/*.md: MEJORAS, DEFENSA, ENDPOINTS, INDICE, DIAGRAMAS, METODOLOGIA,
+# BOILERPLATE_VS_CORE) siguen trackeados igual — gitignore no los saca del
+# repo, solo evita que un .md nuevo suelto se sume sin pasar por el sistema
+# de docs canónico (ver docs/INDICE.md).
+*.md
+!README.md
+!CLAUDE.md
+!docs/INDICE.md
+!docs/DEFENSA.md
+!docs/DIAGRAMAS.md
+!docs/ENDPOINTS.md
+!docs/MEJORAS.md
+!docs/METODOLOGIA.md
+!docs/BOILERPLATE_VS_CORE.md
+!docs/SEGURIDAD.md
+!docs/tesis/CONTEXTO_LLM.md
+!.agents/skills/emil-design-eng/SKILL.md
+
 # ========================================
 # MAVEN
 # ========================================

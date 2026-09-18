@@ -48,11 +48,13 @@ Livramento, Brasil).
 
 2. **Configurar variables de entorno**
 
-   Crear archivo `.env` en la raíz con:
-   ```properties
-   SPRING_DATA_MONGODB_URI=mongodb://localhost:27017
-   UPLOAD_DIR=uploads
+   Copiar `.env.example` a `.env` (gitignored) y completar con valores reales:
+   ```bash
+   cp .env.example .env
    ```
+   En producción (Render u otro host), las mismas claves se configuran como
+   variables de entorno del servicio — nunca en archivos versionados. Ver
+   `docs/DEFENSA.md` §26.
 
 3. **Ejecutar la aplicación**
    ```bash

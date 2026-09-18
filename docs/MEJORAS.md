@@ -149,6 +149,7 @@
 || 126 | Crear `docs/BOILERPLATE_VS_CORE.md` | Implementado | Documento vivo (v1) que clasifica cada clase backend/frontend/infra en Boilerplate, Core o Zona gris — separa qué es infraestructura genérica de Spring Boot de qué es el aporte real del dominio. Referenciado desde `docs/INDICE.md` |
 || 127 | **TEMPORAL** — links a `MEJORAS.md`/`DEFENSA.md`/`BOILERPLATE_VS_CORE.md` + visor de diagramas UML en el footer | Implementado (sacar antes de producción) | Agregados para revisar avance fácil esta semana de desarrollo, vía `DocsController` (`/docs/{file}.md`, ambos ya públicos). **Tripwire: sacar todo esto antes de que un usuario real (no de prueba) vea el sitio** — no tiene sentido exponer docs internos de tesis en el footer de producción |
 || 128 | Visor embebido de diagramas UML (`/docs/diagramas`) | Implementado | El link de diagramas del footer (#127) originalmente apuntaba a los 5 `.drawio` crudos (XML sin renderizar, requería copiar/pegar a app.diagrams.net a mano). Ahora `DocsController.viewDiagrams()` lee cada `.drawio` de `docs/diagrams/` y lo embebe inline en un `data-mxgraph` (JSON con la clave `xml`, escapado automáticamente por Thymeleaf al atributo HTML), renderizado client-side por el script oficial `viewer-static.min.js` de draw.io. Evita el problema de CORS de la alternativa (`?lightbox=1#U<url>`, que depende de que draw.io pueda hacer fetch cross-origin a `localhost`) porque el XML ya viaja embebido en el HTML, sin fetch externo. CSP `script-src` ampliado con `https://viewer.diagrams.net`. Mismo tripwire que #127 |
+|| 129 | Centralizar secretos: `.env` + `.env.example`, sacar credencial hardcodeada de `application-dev.properties` | Implementado | `application-dev.properties` tenía la connection string de MongoDB Atlas (usuario+password reales) hardcodeada y committeada en git — credencial rotada en Atlas tras detectar el leak. Ahora `application-dev.properties` no tiene `spring.data.mongodb.uri` propio, hereda el de `application.properties` (`${SPRING_DATA_MONGODB_URI}`), que Spring Boot carga desde `.env` en la raíz (gitignored) vía `spring.config.import=optional:file:.env[.properties]`. `.env.example` (versionado, sin secretos reales) documenta las 3 claves (`SPRING_DATA_MONGODB_URI`, `MONGODB_DATABASE`, `UPLOAD_DIR`). En Render, las mismas claves van como variables de entorno del servicio. Se borró `.env.local` suelto (no lo leía nadie, tenía la credencial vieja ya revocada). Ver `docs/DEFENSA.md` §26 |
 
 ---
 
@@ -156,11 +157,11 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 90 |
+| Implementado | 91 |
 | Descartado | 14 |
 | Diferido | 20 |
 | Latente | 1 |
-| **Total** | **125** |
+| **Total** | **126** |
 
 ---
 

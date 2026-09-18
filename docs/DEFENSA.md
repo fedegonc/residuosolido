@@ -891,3 +891,28 @@ se amplió con `https://viewer.diagrams.net` para permitir ese script.
 
 **Mismo tripwire que #127:** es parte del mismo footer temporal, se saca
 junto con el resto antes de que un usuario real vea el sitio.
+
+## 26. Centralización de secretos vía `.env` + `.env.example`
+
+**Decisión:** una única fuente de verdad para credenciales (`SPRING_DATA_MONGODB_URI`,
+`MONGODB_DATABASE`, `UPLOAD_DIR`): un archivo `.env` en la raíz (gitignored),
+cargado automáticamente por Spring Boot vía
+`spring.config.import=optional:file:.env[.properties]` en `application.properties`.
+`.env.example` (sí versionado) documenta las claves esperadas con valores de
+ejemplo, sin secretos reales. En producción (Render) las mismas claves se
+configuran como variables de entorno del servicio, no como archivo — Render
+las inyecta al proceso y Spring las toma igual vía `${...}`.
+
+**Por qué:** `application-dev.properties` tenía la connection string de
+MongoDB Atlas hardcodeada y **committeada en git** (usuario + password reales
+en texto plano, filtrados en el historial). Al rotar esa credencial en Atlas
+tras detectar el leak, se corrigió la causa raíz en vez de solo cambiar el
+valor: ahora ningún archivo versionado puede contener una credencial real,
+porque no hay dónde escribirla salvo `.env` (ignorado) o el dashboard del
+host. `application-dev.properties` ya no tiene `spring.data.mongodb.uri`
+propio — hereda el de `application.properties`, que a su vez viene de `.env`.
+
+**Consecuencia asumida:** cada desarrollador nuevo necesita copiar
+`.env.example` → `.env` y pedir la credencial real por un canal aparte (no
+git) antes del primer `mvn spring-boot:run`. Es fricción de onboarding a
+cambio de no volver a filtrar credenciales por accidente.
