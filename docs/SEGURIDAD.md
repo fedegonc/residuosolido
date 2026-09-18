@@ -21,19 +21,26 @@ ver las referencias cruzadas de cada punto.
    pantalla compartida): se rota de inmediato en el proveedor (Atlas →
    Database Access → nuevo usuario/password) y se la considera comprometida
    aunque se borre del archivo — sigue viva en el historial de git.
-5. **Antes de commitear**, revisar `git status`/`git diff` de cualquier
+5. **Tokens de acceso a proveedores (GitHub, etc.) nunca van embebidos en
+   la URL del remote** (`git remote -v` lo expone en texto plano vía
+   `.git/config`, y ese archivo puede terminar copiado/compartido sin
+   querer). Usar un credential helper (`git config --global
+   credential.helper store` como mínimo, o integración con el keyring del
+   SO — `git-credential-libsecret` en Linux) y dejar la URL del remote
+   limpia (`https://github.com/usuario/repo.git`, sin token).
+6. **Antes de commitear**, revisar `git status`/`git diff` de cualquier
    `.properties`, `.env*` o archivo de config nuevo — no confiar en
    `git add -A` a ciegas.
 
 ## Contraseñas de usuarios de la app (no confundir con lo anterior)
 
-6. El PIN de 4 dígitos del registro simplificado es una decisión de fricción
+7. El PIN de 4 dígitos del registro simplificado es una decisión de fricción
    mínima para el MVP, no un estándar de seguridad — ver
    `docs/DEFENSA.md` §4 y §24 para el tradeoff completo.
 
 ## Índices y config de Mongo
 
-7. Cambios a `@Indexed` van también en `MongoIndexMigration.java` (no
+8. Cambios a `@Indexed` van también en `MongoIndexMigration.java` (no
    alcanza con la anotación, `auto-index-creation` está deshabilitado a
    propósito) — ver comentario en esa clase y `CLAUDE.md`.
 

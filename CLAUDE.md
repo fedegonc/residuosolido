@@ -95,3 +95,27 @@ mvn pmd:pmd pmd:check           # análisis estático
   está en `false` a propósito; los índices se gestionan explícitamente en
   `MongoIndexMigration.java` (un `CommandLineRunner` idempotente). Cualquier
   cambio a un `@Indexed` existente va ahí, no solo en la anotación.
+
+## Convenciones de Git
+
+- **Ramas:**
+  - `main` — estable y deployable. Render hace auto-deploy on push a `main`
+    (ver `docs/DEFENSA.md` §19) — nunca pushear directo acá sin verificar
+    (`mvn clean test`) antes.
+  - `developer` — rama de integración. Punto de partida por defecto para
+    trabajo nuevo.
+  - Ramas de tópico, siempre desde `developer`, nomenclatura
+    `<área>/<slug-corto>`: `feature/<slug>` (funcionalidad nueva),
+    `fix/<slug>` (bug), `ops/<slug>` (infra/deploy/build), `sec/<slug>`
+    (seguridad/secretos), `test/<slug>` (tests/cobertura), `docs/<slug>`
+    (documentación).
+  - Flujo de merge: tópico → `developer` → `main`. Nunca tópico → `main`
+    directo.
+- **Commits — Conventional Commits corto:** `<tipo>: <resumen en minúsculas,
+  sin punto final>`. Tipos: `feat`, `fix`, `docs`, `ops`, `sec`, `test`,
+  `refactor`, `chore`, `style`. El motivo extendido (qué y por qué) va en el
+  body del commit si hace falta, no amontonado en el título.
+  Ejemplo: `sec: sacar token de la url del remote` en vez de un párrafo.
+- **Nunca modificar `git config`** (remote URL, credential.helper, etc.)
+  vía Claude Code — es una acción que el usuario ejecuta directamente en su
+  terminal (ver `docs/SEGURIDAD.md`).
