@@ -1,5 +1,18 @@
-/* app.js — JS compartido para Eco Solicitud.
-   i18n client-side + navbar toggle + modal + check-cards. */
+/* app.js — JS global de Eco Solicitud: se carga en TODAS las páginas (base.html).
+   Solo va aquí lo que es (a) verdaderamente global (i18n, toasts) o (b) un
+   comportamiento de componente activado por markup (data-attr/clase), reusado
+   en más de una página. Lógica exclusiva de una sola página va en su propio
+   archivo, cargado vía layout:fragment="pageScripts" de esa página:
+     - request-form.html → /js/request-form.js
+     - org/profile.html  → /js/org-profile.js
+   HTMX maneja navbar, modal y actualizaciones parciales.
+
+   Componentes globales activados por markup (usados en más de una página):
+     .check-card       → request-form.html, org/profile.html
+     [data-toggle-target] (password) → auth/login.html, auth/register.html
+     .radio-card       → request-form.html
+     #imageFile/#fileName → request-form.html
+     selector de país (#*CountryCode) → request-form.html (guestPhone/userPhone), org/profile.html (phone) */
 
 (function () {
   'use strict';
@@ -52,36 +65,14 @@
   });
   markActiveLang();
 
-  /* ─── Navbar toggle (mobile) ─── */
-  var btn = document.getElementById('menuBtn');
-  var menu = document.getElementById('dropdownMenu');
-  var menuIcon = document.getElementById('menuIcon');
-  var closeIcon = document.getElementById('closeIcon');
-
-  if (btn && menu) {
-    btn.addEventListener('click', function () {
-      menu.classList.toggle('is-hidden');
-      if (menuIcon) menuIcon.classList.toggle('is-hidden');
-      if (closeIcon) closeIcon.classList.toggle('is-hidden');
-      btn.setAttribute('aria-expanded', String(!menu.classList.contains('is-hidden')));
-    });
-    document.addEventListener('click', function (e) {
-      if (!btn.contains(e.target) && !menu.contains(e.target)) {
-        menu.classList.add('is-hidden');
-        if (menuIcon) menuIcon.classList.remove('is-hidden');
-        if (closeIcon) closeIcon.classList.add('is-hidden');
-      }
-    });
-  }
-
-  /* ─── Check-card visual state ─── */
+  /* ─── Check-card visual state (componente) ─── */
   document.querySelectorAll('.check-card input[type="checkbox"]').forEach(function (cb) {
     function update() { cb.closest('.check-card').classList.toggle('check-card--checked', cb.checked); }
     cb.addEventListener('change', update);
     update();
   });
 
-  /* ─── Password visibility toggle ─── */
+  /* ─── Password visibility toggle (componente) ─── */
   document.querySelectorAll('[data-toggle-target]').forEach(function (toggleBtn) {
     toggleBtn.addEventListener('click', function () {
       var input = document.getElementById(toggleBtn.getAttribute('data-toggle-target'));
@@ -97,16 +88,61 @@
     });
   });
 
-  /* ─── Modal: Mis solicitudes ─── */
-  window.openTrackModal = function () {
-    var m = document.getElementById('trackModal');
-    if (m) m.classList.add('is-open');
-  };
-  window.closeTrackModal = function () {
-    var m = document.getElementById('trackModal');
-    if (m) m.classList.remove('is-open');
-  };
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') window.closeTrackModal();
+  /* ─── Re-apply i18n after HTMX swaps ─── */
+  document.body.addEventListener('htmx:afterSwap', applyTranslations);
+
+  /* ─── Toast de error de red/servidor para requests HTMX ─── */
+  function showErrorToast() {
+    document.querySelectorAll('.toast').forEach(function (el) { el.remove(); });
+    var toast = document.createElement('div');
+    toast.className = 'alert alert--error toast';
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span data-i18n="_server_error_generic">' +
+      (translations._server_error_generic || 'Algo salió mal. Probá de nuevo en un momento.') + '</span>';
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.remove(); }, 5000);
+  }
+  document.body.addEventListener('htmx:responseError', showErrorToast);
+  document.body.addEventListener('htmx:sendError', showErrorToast);
+
+  /* ─── Radio card visual state (componente) ─── */
+  document.querySelectorAll('.radio-card input[type="radio"]').forEach(function (rb) {
+    rb.addEventListener('change', function () {
+      document.querySelectorAll('.radio-card').forEach(function (card) {
+        card.classList.remove('radio-card--checked');
+      });
+      rb.closest('.radio-card').classList.add('radio-card--checked');
+    });
+    if (rb.checked) rb.closest('.radio-card').classList.add('radio-card--checked');
+  });
+
+  /* ─── File upload name display (componente) ─── */
+  var fileInput = document.getElementById('imageFile');
+  var fileName = document.getElementById('fileName');
+  if (fileInput && fileName) {
+    fileInput.addEventListener('change', function () {
+      fileName.textContent = fileInput.files && fileInput.files.length > 0 ? fileInput.files[0].name : '';
+    });
+  }
+
+  /* ─── Phone country selector (UY/BR) (componente) ─── */
+  var PHONE_PREFIXES = ['guestPhone', 'userPhone', 'phone'];
+  var PHONE_PLACEHOLDERS = { '+598': '9X XXX XXX', '+55': '9XXXX-XXXX' };
+  var PHONE_PATTERNS = { '+598': '[0-9 ]{8,11}', '+55': '[0-9-]{8,12}' };
+
+  PHONE_PREFIXES.forEach(function (prefix) {
+    var countrySel = document.getElementById(prefix + 'CountryCode');
+    var nationalInput = document.getElementById(prefix + 'National');
+    var dddGroup = document.getElementById(prefix + 'DddGroup');
+    if (!countrySel || !nationalInput) return;
+
+    function updateForCountry() {
+      var code = countrySel.value;
+      nationalInput.setAttribute('placeholder', PHONE_PLACEHOLDERS[code] || '');
+      nationalInput.setAttribute('pattern', PHONE_PATTERNS[code] || '');
+      if (dddGroup) dddGroup.classList.toggle('is-hidden', code !== '+55');
+    }
+    countrySel.addEventListener('change', updateForCountry);
+    updateForCountry();
   });
 })();

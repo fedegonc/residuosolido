@@ -5,6 +5,7 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
+import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestService;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class OrgRequestController extends BaseController {
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
-        model.addAttribute("viewType", "list");
+        model.addAttribute("viewType", RequestViewType.LIST);
         model.addAttribute("currentStatus", status);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
@@ -72,7 +73,7 @@ public class OrgRequestController extends BaseController {
             User org = getCurrentUser(authentication);
             Request request = requestService.getOwnedOrgRequest(id, org);
             model.addAttribute("request", request);
-            model.addAttribute("viewType", "detail");
+            model.addAttribute("viewType", RequestViewType.DETAIL);
             model.addAttribute("timeSlots", TimeSlot.values());
             return "org/requests";
         } catch (SecurityException e) {

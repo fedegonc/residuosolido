@@ -6,13 +6,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title layout:title-pattern="$LAYOUT_TITLE — $CONTENT_TITLE">Eco Solicitud</title>
+  <meta name="description" content="Eco Solicitud — Plataforma de recolección de reciclables en la frontera Uruguay-Brasil. Conecta ciudadanos con organizaciones de acopio.">
+  <meta name="author" content="Federico">
+  <meta name="theme-color" content="#2d6a4f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Eco Solicitud">
+  <meta property="og:description" content="Plataforma de recolección de reciclables en la frontera Uruguay-Brasil.">
+  <meta property="og:locale" th:content="${#locale.language}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Eco Solicitud">
+  <meta name="twitter:description" content="Plataforma de recolección de reciclables en la frontera Uruguay-Brasil.">
   <link rel="stylesheet" th:href="@{/css/app.css}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/htmx-states.css}">
+  <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/7.2.0/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/css/fonts.css}">
   <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
-  <script th:inline="javascript">window.uiCopies = [[${uiCopies}]];</script>
+  <script th:src="@{/webjars/htmx.org/2.0.4/dist/htmx.min.js}"></script>
+  <script th:src="@{/js/i18n.js}"></script>
+  <th:block layout:fragment="extraHead"></th:block>
 </head>
 <body class="app-body">
   <a href="#main-content" class="skip-link" data-i18n="skip_content">Saltar al contenido</a>
@@ -21,23 +32,24 @@
     <div th:replace="~{fragments/navbar :: nav}"></div>
   </header>
 
-  <div th:replace="~{fragments/alert :: msg('success', ${successMessage})}" th:if="${successMessage != null}"></div>
-  <div th:replace="~{fragments/alert :: msg('error', ${errorMessage})}" th:if="${errorMessage != null}"></div>
-  <div th:replace="~{fragments/alert :: msg('warning', ${warningMessage})}" th:if="${warningMessage != null}"></div>
-  <div th:replace="~{fragments/alert :: msg('info', ${infoMessage})}" th:if="${infoMessage != null}"></div>
+  <div th:replace="~{fragments/ui :: msg('success', ${successMessage})}" th:if="${successMessage != null}"></div>
+  <div th:replace="~{fragments/ui :: msg('error', ${errorMessage})}" th:if="${errorMessage != null}"></div>
+  <div th:replace="~{fragments/ui :: msg('warning', ${warningMessage})}" th:if="${warningMessage != null}"></div>
+  <div th:replace="~{fragments/ui :: msg('info', ${infoMessage})}" th:if="${infoMessage != null}"></div>
 
   <main id="main-content" class="app-main" layout:fragment="content"></main>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <span class="footer-min__brand"><i class="fa-solid fa-recycle"></i> Eco Solicitud</span>
-      <nav class="footer-min__links" aria-label="Información">
+  <footer class="footer">
+    <div class="footer__inner">
+      <span class="footer__brand"><i class="fa-solid fa-recycle"></i> Eco Solicitud</span>
+      <nav class="footer__links" aria-label="Información">
         <a href="https://docs.google.com/document/d/1LNOGjk2HbU49zUnKQ6cMVhqFjj4WriRQsG8U7t2K2Ic/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Tesis</a>
       </nav>
-      <span class="footer-min__copy">&copy; <time th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</time> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
+      <span class="footer__copy">&copy; <time th:text="${#temporals.format(#temporals.createNow(),'yyyy')}">2026</time> <span data-i18n="footer_rights">Todos los derechos reservados.</span></span>
     </div>
   </footer>
 
   <script th:src="@{/js/app.js}"></script>
+  <th:block layout:fragment="pageScripts"></th:block>
 </body>
 </html>

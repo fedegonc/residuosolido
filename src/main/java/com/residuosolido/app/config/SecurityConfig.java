@@ -31,18 +31,20 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
                 .requestMatchers(Routes.HOME, Routes.INDEX).permitAll()
+                .requestMatchers(Routes.SEED).permitAll()
                 .requestMatchers(Routes.LOGIN, "/login", Routes.REGISTER, "/register").permitAll()
                 .requestMatchers(Routes.LANGUAGE).permitAll()
                 // Recursos especiales de navegador
                 .requestMatchers(Routes.WELL_KNOWN).permitAll()
                 // Páginas de error deben ser públicas
                 .requestMatchers(Routes.ERROR).permitAll()
-                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/manifest.json", "/sw.js", "/icon-*.png", "/icon-*.svg").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/robots.txt", "/sitemap.xml", "/sw.js").permitAll()
                 // Formulario público de nueva solicitud
                 .requestMatchers(HttpMethod.GET, Routes.REQUESTS_NEW).permitAll()
                 .requestMatchers(HttpMethod.POST, Routes.REQUESTS).permitAll()
                 .requestMatchers(Routes.TRACK).permitAll()
                 .requestMatchers(HttpMethod.GET, Routes.API_ORGANIZATIONS_BY_CITY).permitAll()
+                .requestMatchers(HttpMethod.GET, Routes.HTMX_ORG_OPTIONS).permitAll()
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH).permitAll()
                 .requestMatchers(Routes.SWAGGER_V3, Routes.SWAGGER_UI, Routes.SWAGGER_HTML).permitAll()
@@ -78,9 +80,9 @@ public class SecurityConfig {
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
                     "img-src 'self' data: https: https://tile.openstreetmap.org; " +
-                    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://www.draw.io; " +
-                    "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; " +
-                    "script-src 'self' 'unsafe-inline' https://www.draw.io; " +
+                    "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
+                    "font-src 'self' data; " +
+                    "script-src 'self' https://www.draw.io; " +
                     "connect-src 'self'; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))

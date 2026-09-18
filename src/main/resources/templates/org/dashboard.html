@@ -1,111 +1,44 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+      layout:decorate="~{layout/base-sidebar}">
 <head><title>Panel de acopio</title></head>
 <body>
-  <main layout:fragment="content">
-    <div class="org-layout">
-      <div th:replace="~{fragments/org-sidebar :: sidebar('dashboard')}"></div>
+  <aside layout:fragment="sidebar">
+    <div th:replace="~{fragments/org-sidebar :: sidebar('dashboard')}"></div>
+  </aside>
 
-      <div class="org-layout__main">
-        <nav class="breadcrumb">
-          <th:block th:each="crumb, iter : ${breadcrumbs}">
-            <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
-            <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Panel</span>
-            <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-          </th:block>
-        </nav>
+  <div layout:fragment="pageContent">
+        <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
-        <div class="row row--between mb">
-          <div>
-            <h1 class="card__title"><span data-i18n="org_dash_greeting">¡Hola</span>, <span th:text="${user.displayName}"></span>!</h1>
-            <p class="hint" data-i18n="org_dash_subtitle">Solicitudes pendientes, en curso y completadas de tu organización.</p>
-          </div>
+        <div class="row row--between mb-lg">
+          <div th:replace="~{fragments/ui :: greeting('org_dash_greeting', '¡Hola', ${user.displayName}, true, 'org_dash_subtitle', 'Solicitudes pendientes, en curso y completadas de tu organización.')}"></div>
           <div class="row">
             <a href="/acopio/requests" class="btn btn--outline"><i class="fa-solid fa-list"></i> <span data-i18n="org_dash_requests">Lista</span></a>
             <a href="/acopio/perfil" class="btn btn--outline"><i class="fa-solid fa-building"></i> <span data-i18n="org_profile_title">Perfil</span></a>
           </div>
         </div>
 
-        <div class="grid grid--3 mb">
-          <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-clock"></i></div><span class="stat-card__value" th:text="${pendingRequests}">0</span><span class="stat-card__label" data-i18n="dash_stat_pending">Pendientes</span></div>
-          <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-truck"></i></div><span class="stat-card__value" th:text="${inProgressRequests}">0</span><span class="stat-card__label" data-i18n="dash_stat_progress">En curso</span></div>
-          <div class="stat-card"><div class="stat-card__icon"><i class="fa-solid fa-circle-check"></i></div><span class="stat-card__value" th:text="${completedRequests}">0</span><span class="stat-card__label" data-i18n="dash_stat_completed">Completadas</span></div>
+        <div class="grid grid--3 mb-lg">
+          <div th:replace="~{fragments/ui :: tile('fa-clock', ${pendingRequests}, 'dash_stat_pending', 'Pendientes')}"></div>
+          <div th:replace="~{fragments/ui :: tile('fa-truck', ${inProgressRequests}, 'dash_stat_progress', 'En curso')}"></div>
+          <div th:replace="~{fragments/ui :: tile('fa-circle-check', ${completedRequests}, 'dash_stat_completed', 'Completadas')}"></div>
         </div>
 
         <h2 class="card__subtitle mb" data-i18n="org_kanban_title">Tablero de solicitudes</h2>
 
-        <div class="kanban">
-          <!-- PENDING -->
-          <div class="kanban-column">
-            <div class="kanban-column__header"><i class="fa-solid fa-clock"></i><span data-i18n="req_status_pending">Pendientes</span><span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING).size()}">0</span></div>
-            <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING)}" class="kanban-card">
-              <div class="info-row"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}"></span></div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials"><span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}"></span></div>
-              <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="row">
-                <input type="hidden" name="action" value="accept" />
-                <select name="confirmedSlot" class="select select--sm" required>
-                  <option th:each="slot : ${timeSlots}" th:value="${slot.name()}" th:text="${slot.name() == 'MANANA' ? 'Mañana' : (slot.name() == 'TARDE' ? 'Tarde' : 'Noche')}">Franja</option>
-                </select>
-                <button type="submit" class="btn btn--primary btn--sm"><i class="fa-solid fa-check"></i></button>
-              </form>
-              <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="row">
-                <input type="hidden" name="action" value="reject" />
-                <button type="submit" class="btn btn--outline btn--sm btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
-              </form>
-              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
-            </div>
-            <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).PENDING).isEmpty()}" class="empty-state"><i class="fa-solid fa-inbox"></i><span class="empty-state__text" data-i18n="org_kanban_empty">Sin solicitudes</span></div>
-          </div>
-
-          <!-- IN_PROGRESS -->
-          <div class="kanban-column">
-            <div class="kanban-column__header"><i class="fa-solid fa-truck"></i><span data-i18n="req_status_in_progress">En curso</span><span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS).size()}">0</span></div>
-            <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS)}" class="kanban-card">
-              <div class="info-row"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}"></span></div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials"><span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}"></span></div>
-              <div th:if="${req.confirmedSlot != null}" class="info-row"><i class="fa-solid fa-clock"></i><span th:text="${req.confirmedSlot.name() == 'MANANA' ? 'Mañana' : (req.confirmedSlot.name() == 'TARDE' ? 'Tarde' : 'Noche')}"></span></div>
-              <form th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post">
-                <input type="hidden" name="action" value="complete" />
-                <button type="submit" class="btn btn--primary btn--sm"><i class="fa-solid fa-circle-check"></i> <span data-i18n="org_req_complete">Completar</span></button>
-              </form>
-              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
-            </div>
-            <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS).isEmpty()}" class="empty-state"><i class="fa-solid fa-inbox"></i><span class="empty-state__text" data-i18n="org_kanban_empty">Sin solicitudes</span></div>
-          </div>
-
-          <!-- COMPLETED -->
-          <div class="kanban-column">
-            <div class="kanban-column__header"><i class="fa-solid fa-circle-check"></i><span data-i18n="req_status_completed">Completadas</span><span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED).size()}">0</span></div>
-            <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED)}" class="kanban-card">
-              <div class="info-row"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}"></span></div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials"><span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}"></span></div>
-              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
-            </div>
-            <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).COMPLETED).isEmpty()}" class="empty-state"><i class="fa-solid fa-inbox"></i><span class="empty-state__text" data-i18n="org_kanban_empty">Sin solicitudes</span></div>
-          </div>
-
-          <!-- REJECTED -->
-          <div class="kanban-column">
-            <div class="kanban-column__header"><i class="fa-solid fa-ban"></i><span data-i18n="req_status_rejected">Rechazadas</span><span class="kanban-column__count" th:text="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED).size()}">0</span></div>
-            <div th:each="req : ${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED)}" class="kanban-card">
-              <div class="info-row"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}"></span></div>
-              <div th:if="${req.hasMaterials()}" class="request-item__materials"><span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}"></span></div>
-              <div class="info-row"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}"></span></div>
-              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
-            </div>
-            <div th:if="${kanban.get(T(com.residuosolido.app.enums.RequestStatus).REJECTED).isEmpty()}" class="empty-state"><i class="fa-solid fa-inbox"></i><span class="empty-state__text" data-i18n="org_kanban_empty">Sin solicitudes</span></div>
-          </div>
+        <!-- T(...) no se puede usar dentro de los argumentos de un fragment call (Thymeleaf
+             lo prohíbe por seguridad: "Instantiation of new objects... is forbidden in this
+             context"). Se resuelve antes con th:with y se pasan variables simples. -->
+        <div class="kanban"
+             th:with="pending=${T(com.residuosolido.app.enums.RequestStatus).PENDING},
+                      inProgress=${T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS},
+                      completed=${T(com.residuosolido.app.enums.RequestStatus).COMPLETED},
+                      rejected=${T(com.residuosolido.app.enums.RequestStatus).REJECTED}">
+          <div th:replace="~{fragments/kanban-column :: column(${pending}, ${kanban.get(pending)}, ${timeSlots})}"></div>
+          <div th:replace="~{fragments/kanban-column :: column(${inProgress}, ${kanban.get(inProgress)}, ${timeSlots})}"></div>
+          <div th:replace="~{fragments/kanban-column :: column(${completed}, ${kanban.get(completed)}, ${timeSlots})}"></div>
+          <div th:replace="~{fragments/kanban-column :: column(${rejected}, ${kanban.get(rejected)}, ${timeSlots})}"></div>
         </div>
-      </div>
-    </div>
-  </main>
+  </div>
 </body>
 </html>

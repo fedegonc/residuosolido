@@ -19,8 +19,8 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("[data-i18n='auth_register_title']").waitFor();
 
         page.locator("#username").fill("testuser" + System.currentTimeMillis());
-        page.locator("#email").fill("testuser" + System.currentTimeMillis() + "@test.com");
-        page.locator("input[name='password']").fill("12345678");
+        page.locator("#phoneNational").fill("99123456");
+        page.locator("input[name='password']").fill("1234");
         // No marcar "soy organización"
         page.locator("button[type='submit']").click();
 
@@ -37,8 +37,8 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("[data-i18n='auth_register_title']").waitFor();
 
         page.locator("#username").fill("testorg" + System.currentTimeMillis());
-        page.locator("#email").fill("testorg" + System.currentTimeMillis() + "@test.com");
-        page.locator("input[name='password']").fill("12345678");
+        page.locator("#phoneNational").fill("99123457");
+        page.locator("input[name='password']").fill("1234");
         // Marcar "soy organización"
         page.locator("#isOrganization").check();
         page.locator("button[type='submit']").click();

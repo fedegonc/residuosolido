@@ -11,7 +11,7 @@
 
         <form th:action="@{/auth/login}" method="post" class="stack">
           <div class="field">
-            <label for="username" data-i18n="auth_username">Usuario</label>
+            <label for="username" data-i18n="auth_name">Nombre</label>
             <input type="text" id="username" name="username" required autofocus class="input" placeholder=" ">
           </div>
           <div th:replace="~{fragments/password-field :: field('password', 'password', null, null)}"></div>

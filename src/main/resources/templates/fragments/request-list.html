@@ -4,7 +4,7 @@
   <div th:fragment="request-item-card(req)" class="request-item">
     <div class="request-item__header">
       <span><span data-i18n="track_request_id">Solicitud</span> #<span th:text="${req.id}"></span></span>
-      <div th:replace="~{fragments/badge :: status(${req.status})}"></div>
+      <div th:replace="~{fragments/ui :: status(${req.status})}"></div>
     </div>
     <div class="info-row" th:if="${req.createdAt != null}">
       <i class="fa-solid fa-calendar"></i>

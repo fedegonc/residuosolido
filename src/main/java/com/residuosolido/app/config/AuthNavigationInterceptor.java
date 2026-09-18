@@ -14,12 +14,6 @@ public class AuthNavigationInterceptor implements HandlerInterceptor {
             "/auth/login", "/auth/register", "/", "/index"
     );
 
-    private final RoleBasedLoginTargetUrlResolver targetUrlResolver;
-
-    public AuthNavigationInterceptor(RoleBasedLoginTargetUrlResolver targetUrlResolver) {
-        this.targetUrlResolver = targetUrlResolver;
-    }
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -32,7 +26,7 @@ public class AuthNavigationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String targetUrl = targetUrlResolver.resolveTargetUrl(auth.getAuthorities());
+        String targetUrl = Routes.resolveHomeForRole(auth);
         response.sendRedirect(targetUrl);
         return false;
     }

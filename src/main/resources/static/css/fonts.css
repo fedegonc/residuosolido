@@ -1,0 +1,8 @@
+/* Self-hosted Plus Jakarta Sans (variable font, all weights in one file) */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-400.woff2') format('woff2');
+}

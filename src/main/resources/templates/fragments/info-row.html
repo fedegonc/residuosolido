@@ -1,9 +1,0 @@
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-  <div th:fragment="row(icon, label, value)" th:if="${value != null}" class="info-row">
-    <i aria-hidden="true" th:class="'fa-solid ' + ${icon}"></i>
-    <span class="info-row__label" th:text="${label}">Label</span>
-    <span class="info-row__value" th:text="${value}">Value</span>
-  </div>
-</body>
-</html>

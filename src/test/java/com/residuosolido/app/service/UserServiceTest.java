@@ -34,59 +34,57 @@ class UserServiceTest {
         userRegistrationService = new UserRegistrationService(userRepository, passwordEncoder);
     }
 
-    // ===== Password mínimo 3 chars en registro =====
+    // ===== PIN de 4 dígitos en registro (fricción mínima para pruebas, ver DEFENSA.md §24) =====
 
     @Test
-    void validateUserRegistration_shortPassword_returnsError() {
+    void validateUserRegistration_invalidPin_returnsError() {
         User user = new User();
         user.setUsername("nuevo");
-        user.setEmail("nuevo@test.com");
+        user.setPhone("+59899123456");
         user.setPassword("12");
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         String error = userRegistrationService.validateUserRegistration(user);
         assertNotNull(error);
-        assertTrue(error.contains("error.register.password_min_length"));
+        assertTrue(error.contains("error.register.pin_invalid"));
     }
 
     @Test
-    void validateUserRegistration_nullPassword_returnsError() {
+    void validateUserRegistration_nullPin_returnsError() {
         User user = new User();
         user.setUsername("nuevo");
-        user.setEmail("nuevo@test.com");
+        user.setPhone("+59899123456");
         user.setPassword(null);
 
         String error = userRegistrationService.validateUserRegistration(user);
         assertNotNull(error);
-        assertTrue(error.contains("error.register.password_min_length"));
+        assertTrue(error.contains("error.register.pin_invalid"));
     }
 
     @Test
-    void validateUserRegistration_validPassword_returnsNull() {
+    void validateUserRegistration_validPin_returnsNull() {
         User user = new User();
         user.setUsername("nuevo");
-        user.setEmail("nuevo@test.com");
-        user.setPassword("password123");
+        user.setPhone("+59899123456");
+        user.setPassword("1234");
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         assertNull(userRegistrationService.validateUserRegistration(user));
     }
 
     @Test
-    void validateUserRegistration_exactly3Chars_returnsNull() {
+    void validateUserRegistration_missingPhone_returnsError() {
         User user = new User();
         user.setUsername("nuevo");
-        user.setEmail("nuevo@test.com");
-        user.setPassword("12345678");
+        user.setPassword("1234");
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertNull(userRegistrationService.validateUserRegistration(user));
+        String error = userRegistrationService.validateUserRegistration(user);
+        assertNotNull(error);
+        assertTrue(error.contains("error.register.phone_required"));
     }
 
     // ===== Password mínimo 3 chars en update =====
@@ -184,10 +182,10 @@ class UserServiceTest {
     void registerUser_encodesPasswordAndSetsDefaults() {
         User user = new User();
         user.setUsername("newuser");
-        user.setEmail("newuser@test.com");
-        user.setPassword("password123");
+        user.setPhone("+59899123456");
+        user.setPassword("1234");
 
-        when(passwordEncoder.encode("password123")).thenReturn("encoded");
+        when(passwordEncoder.encode("1234")).thenReturn("encoded");
         when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         User result = userRegistrationService.registerUser(user, false);
@@ -201,10 +199,10 @@ class UserServiceTest {
     void registerUser_asOrganization_setsOrganizationRole() {
         User user = new User();
         user.setUsername("org1");
-        user.setEmail("org1@test.com");
-        user.setPassword("password123");
+        user.setPhone("+59899123456");
+        user.setPassword("1234");
 
-        when(passwordEncoder.encode("password123")).thenReturn("encoded");
+        when(passwordEncoder.encode("1234")).thenReturn("encoded");
         when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         User result = userRegistrationService.registerUser(user, true);

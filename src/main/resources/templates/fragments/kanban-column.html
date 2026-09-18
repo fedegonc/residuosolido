@@ -1,0 +1,45 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <th:block th:fragment="column(status, requests, timeSlots)">
+    <div class="kanban-column" th:with="safeRequests=${requests != null ? requests : {}}">
+      <div class="kanban-column__header">
+        <i th:class="${status == T(com.residuosolido.app.enums.RequestStatus).PENDING} ? 'fa-solid fa-clock' :
+                      (${status == T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS} ? 'fa-solid fa-truck' :
+                      (${status == T(com.residuosolido.app.enums.RequestStatus).COMPLETED} ? 'fa-solid fa-circle-check' : 'fa-solid fa-ban'))"></i>
+        <span th:attr="data-i18n=${'req_status_' + #strings.toLowerCase(status.name())}" th:text="${status.name()}"></span>
+        <span class="kanban-column__count" th:text="${safeRequests.size()}">0</span>
+      </div>
+      <div th:each="req : ${safeRequests}" class="kanban-card">
+        <div class="info-row"><i class="fa-solid fa-location-dot"></i><span th:text="${req.city}"></span></div>
+        <div th:if="${req.hasMaterials()}" class="request-item__materials">
+          <span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span>
+        </div>
+        <div class="info-row"><i class="fa-solid fa-user"></i><span th:text="${req.contactName != null ? req.contactName : 'Invitado'}"></span></div>
+        <div class="info-row"><i class="fa-solid fa-calendar"></i><span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}"></span></div>
+        <div th:if="${req.confirmedSlot != null}" class="info-row"><i class="fa-solid fa-clock"></i><span th:text="${req.confirmedSlot.name() == 'MANANA' ? 'Mañana' : (req.confirmedSlot.name() == 'TARDE' ? 'Tarde' : 'Noche')}"></span></div>
+
+        <form th:if="${status == T(com.residuosolido.app.enums.RequestStatus).PENDING}"
+              th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="row">
+          <input type="hidden" name="action" value="accept" />
+          <select name="confirmedSlot" class="select select--sm" required>
+            <option th:each="slot : ${timeSlots}" th:value="${slot.name()}" th:text="${slot.name() == 'MANANA' ? 'Mañana' : (slot.name() == 'TARDE' ? 'Tarde' : 'Noche')}">Franja</option>
+          </select>
+          <button type="submit" class="btn btn--primary btn--sm"><i class="fa-solid fa-check"></i></button>
+        </form>
+        <form th:if="${status == T(com.residuosolido.app.enums.RequestStatus).PENDING}"
+              th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post" class="row">
+          <input type="hidden" name="action" value="reject" />
+          <button type="submit" class="btn btn--outline btn--sm btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
+        </form>
+        <form th:if="${status == T(com.residuosolido.app.enums.RequestStatus).IN_PROGRESS}"
+              th:action="@{/acopio/requests/{id}/transition(id=${req.id})}" method="post">
+          <input type="hidden" name="action" value="complete" />
+          <button type="submit" class="btn btn--primary btn--sm"><i class="fa-solid fa-circle-check"></i> <span data-i18n="org_req_complete">Completar</span></button>
+        </form>
+        <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
+      </div>
+      <div th:if="${safeRequests.isEmpty()}" class="empty-state"><i class="fa-solid fa-inbox"></i><span class="empty-state__text" data-i18n="org_kanban_empty">Sin solicitudes</span></div>
+    </div>
+  </th:block>
+</body>
+</html>

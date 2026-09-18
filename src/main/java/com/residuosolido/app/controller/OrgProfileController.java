@@ -94,6 +94,11 @@ public class OrgProfileController extends BaseController {
             model.addAttribute("organization", currentOrg);
             model.addAttribute("cities", City.values());
             model.addAttribute("materials", MaterialCategory.values());
+            model.addAttribute("breadcrumbs", List.of(
+                    java.util.Map.of("label", "Inicio", "href", "/"),
+                    java.util.Map.of("label", "Panel de acopio", "href", "/acopio/inicio"),
+                    java.util.Map.of("label", "Perfil", "href", "")
+            ));
         } catch (Exception e) {
             logger.error("Error al cargar perfil de organización: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", msg("flash.org.profile_load_error"));

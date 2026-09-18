@@ -1,0 +1,57 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="state(icon, message)" class="empty-state">
+    <i aria-hidden="true" th:class="'fa-solid ' + ${icon}"></i>
+    <span class="empty-state__text" th:text="${message}">No hay elementos</span>
+  </div>
+
+  <th:block th:fragment="status(status)">
+    <span class="badge"
+          th:classappend="'badge--' + ${#strings.toLowerCase(status.name())}"
+          th:text="${status}">PENDING</span>
+  </th:block>
+
+  <div th:fragment="row(icon, label, value)" th:if="${value != null}" class="info-row">
+    <i aria-hidden="true" th:class="'fa-solid ' + ${icon}"></i>
+    <span class="info-row__label" th:text="${label}">Label</span>
+    <span class="info-row__value" th:text="${value}">Value</span>
+  </div>
+
+  <div th:fragment="tile(icon, value, labelKey, labelText)" class="stat-card">
+    <div class="stat-card__icon"><i th:class="'fa-solid ' + ${icon}"></i></div>
+    <span class="stat-card__value" th:text="${value}">0</span>
+    <span class="stat-card__label" th:attr="data-i18n=${labelKey}" th:text="${labelText}">Label</span>
+  </div>
+
+  <th:block th:fragment="options">
+    <option value="" data-i18n="req_form_org_select">Seleccioná una organización</option>
+    <option th:each="org : ${organizations}" th:value="${org.id}"
+            th:attr="data-materials=${org.acceptedMaterialsCsv}"
+            th:text="${org.displayName}"></option>
+  </th:block>
+
+  <div th:fragment="msg(type, text)" th:if="${type != null and text != null}"
+       class="alert"
+       th:classappend="'alert--' + ${type}"
+       role="alert">
+    <i aria-hidden="true" th:class="${type == 'success' ? 'fa-solid fa-circle-check' : (type == 'error' ? 'fa-solid fa-circle-exclamation' : (type == 'warning' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-info'))}"></i>
+    <span th:text="${text}"></span>
+  </div>
+
+  <nav th:fragment="trail(crumbs)" class="breadcrumb" aria-label="Ruta de navegación">
+    <th:block th:each="crumb, iter : ${crumbs}">
+      <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
+      <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Actual</span>
+      <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumb__sep" aria-hidden="true"></i>
+    </th:block>
+  </nav>
+
+  <div th:fragment="greeting(greetingKey, greetingText, name, exclamation, subtitleKey, subtitleText)">
+    <h1 class="card__title">
+      <span th:attr="data-i18n=${greetingKey}" th:text="${greetingText}"></span>,
+      <span th:text="${name}"></span><span th:if="${exclamation}">!</span>
+    </h1>
+    <p class="hint" th:attr="data-i18n=${subtitleKey}" th:text="${subtitleText}"></p>
+  </div>
+</body>
+</html>

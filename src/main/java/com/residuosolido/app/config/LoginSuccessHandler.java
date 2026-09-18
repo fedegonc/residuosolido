@@ -17,20 +17,17 @@ import java.io.IOException;
 /**
  * Handler post-login: resetea intentos fallidos, invalida el locale de sesión
  * (para que CityAwareLocaleResolver recalcule el idioma según la ciudad del usuario)
- * y delega la redirección a RoleBasedLoginTargetUrlResolver.
+ * y delega la redirección a Routes.resolveHomeForRole.
  */
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
 
-    private final RoleBasedLoginTargetUrlResolver targetUrlResolver;
     private final LoginAttemptService loginAttemptService;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    public LoginSuccessHandler(RoleBasedLoginTargetUrlResolver targetUrlResolver,
-                                LoginAttemptService loginAttemptService) {
-        this.targetUrlResolver = targetUrlResolver;
+    public LoginSuccessHandler(LoginAttemptService loginAttemptService) {
         this.loginAttemptService = loginAttemptService;
     }
 
@@ -40,7 +37,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
         loginAttemptService.loginSucceeded(authentication.getName());
         request.getSession().removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
-        String targetUrl = targetUrlResolver.resolveTargetUrl(authentication.getAuthorities());
+        String targetUrl = Routes.resolveHomeForRole(authentication);
         logger.info("Usuario '{}' autenticado. Redirigiendo a '{}'", authentication.getName(), targetUrl);
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }

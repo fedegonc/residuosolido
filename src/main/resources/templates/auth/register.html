@@ -11,14 +11,25 @@
 
         <form th:action="@{/auth/register}" th:object="${user}" method="post" class="stack">
           <div class="field">
-            <label for="username" data-i18n="auth_username">Usuario</label>
-            <input type="text" id="username" th:field="*{username}" required class="input" placeholder=" ">
+            <label for="username" data-i18n="auth_name">Nombre</label>
+            <input type="text" id="username" th:field="*{username}" required class="input"
+                   data-i18n-attr="placeholder:auth_name_placeholder" placeholder="Ej: Ana García">
           </div>
           <div class="field">
-            <label for="email" data-i18n="auth_email">Email</label>
-            <input type="email" id="email" th:field="*{email}" required class="input" placeholder="tu@email.com">
+            <label for="phoneNational" data-i18n="auth_phone">Número de celular</label>
+            <div class="phone-country-row">
+              <select id="phoneCountryCode" name="countryCode" class="select select--sm">
+                <option value="+598" selected>🇺🇾 +598</option>
+                <option value="+55">🇧🇷 +55</option>
+              </select>
+              <input type="tel" id="phoneNational" name="phoneNational" class="input" placeholder="9X XXX XXX" required>
+            </div>
+            <div class="field is-hidden mt-sm" id="phoneDddGroup">
+              <label for="ddd">DDD</label>
+              <input type="text" id="ddd" name="ddd" class="input input--sm" value="55" maxlength="2">
+            </div>
           </div>
-          <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_password_hint', 'Mínimo 8 caracteres')}"></div>
+          <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
           <div class="field">
             <label class="row">
               <input type="checkbox" id="isOrganization" name="isOrganization" value="true">

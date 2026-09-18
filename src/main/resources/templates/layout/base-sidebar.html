@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head></head>
+<body>
+  <!-- Layout de 2 columnas para secciones con navegación lateral (org/*).
+       Slots: 'sidebar' (nav lateral) y 'pageContent' (contenido real de la página). -->
+  <main layout:fragment="content" class="org-layout">
+    <aside layout:fragment="sidebar"></aside>
+    <div class="org-layout__main" layout:fragment="pageContent"></div>
+  </main>
+</body>
+</html>

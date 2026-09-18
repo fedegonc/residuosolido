@@ -40,7 +40,10 @@ public class User {
 
     @Indexed(unique = true)
     private String username;
-    @Indexed(unique = true, collation = "{'locale':'en','strength':2}")
+    /* sparse=true: el registro ya no pide email (pide teléfono en su lugar, ver
+       RegistrationForm/UserRegistrationService) — sin sparse, el índice único
+       rechazaría el 2do usuario con email=null. */
+    @Indexed(unique = true, sparse = true, collation = "{'locale':'en','strength':2}")
     private String email;
     private String password;
 
@@ -117,6 +120,17 @@ public class User {
 
     public boolean hasPhone() {
         return phone != null && !phone.isBlank();
+    }
+
+    public boolean hasCity() {
+        return city != null;
+    }
+
+    /** Contrato explícito para el filtro de materiales en el frontend (ver app.js filterMaterialsByOrg).
+     * No usar acceptedMaterials.toString() directamente: su formato es un detalle de
+     * implementación de List, no una API — este método es la única fuente de verdad. */
+    public String getAcceptedMaterialsCsv() {
+        return acceptedMaterials.stream().map(Enum::name).collect(java.util.stream.Collectors.joining(","));
     }
 
     public void completeProfile() {

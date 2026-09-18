@@ -42,8 +42,7 @@ class MvpRegressionTest {
         User user = new User();
         user.setId("citizen");
         user.setUsername("citizen");
-        user.setEmail("citizen@example.test");
-        user.setPassword("password123");
+        user.setPassword("1234");
         user.setRole(Role.USER);
         user.setPhone("+59899123456");
         return user;
@@ -68,10 +67,10 @@ class MvpRegressionTest {
     }
 
     @Test
-    void registrationRejectsShortPassword() {
+    void registrationRejectsInvalidPin() {
         User input = citizen();
         input.setPassword("12");
-        assertEquals("error.register.password_min_length", new UserRegistrationService(
+        assertEquals("error.register.pin_invalid", new UserRegistrationService(
                 mock(UserRepository.class), mock(PasswordEncoder.class)).validateUserRegistration(input));
     }
 

@@ -340,13 +340,36 @@ OrgProfileController.completeProfile
   ↓ Redirect /acopio/inicio
 ```
 
+## Sistema de Layouts (Thymeleaf Layout Dialect)
+
+Layouts anidados con `layout:decorate` para separar responsabilidades sin duplicar navbar/footer/alerts en cada página:
+
+```
+layout/base.html (raíz)
+  ├─ slots: content, extraHead, pageScripts
+  ├─ maneja: navbar, alerts globales, footer, scripts globales (app.js)
+  │
+  └─ layout/base-sidebar.html (decora base.html)
+       ├─ slots: sidebar, pageContent
+       ├─ maneja: grid de 2 columnas (.org-layout)
+       │
+       └─ org/dashboard.html, org/requests.html, org/profile.html
+            (llenan solo 'sidebar' y 'pageContent', heredan todo lo demás)
+```
+
+**Por qué dos niveles en vez de fragmentos nativos:** Layout Dialect es 100% server-side
+(no pesa en el bundle del navegador) y da slots múltiples con herencia real. Los 3
+templates de `/org` antes duplicaban `<div class="org-layout"><sidebar/><main>...`
+manualmente; ahora solo declaran su `sidebar` y `pageContent`, y cualquier página nueva
+con sidebar puede decorar `layout/base-sidebar` sin repetir el grid.
+
 ## Decisiones de Arquitectura
 
 - **Sin panel Admin**: Gestión distribuida por roles (USER, ORGANIZATION).
 - **Mono-modelo User**: Usuarios y organizaciones comparten la misma entidad, diferenciados por `Role`.
 - **Cobertura binacional**: Enum `City` limitado a RIVERA y LIVRAMENTO.
 - **Breadcrumbs inline**: Construidos con `List.of(Map.of(...))` en cada controller.
-- **JavaScript por fragmento**: Reutilización de scripts en `fragments/toggle-view-edit.html` y `fragments/request-form-js.html`.
+- **JavaScript scoped por página**: lo global/reusado por 2+ páginas vive en `app.js`; lo exclusivo de una página (ej. `filterMaterialsByOrg`, el toggle view/edit de perfil) va en su propio archivo (`request-form.js`, `org-profile.js`) cargado vía `layout:fragment="pageScripts"`. Reemplaza al enfoque anterior de scripts embebidos en fragments HTML (`fragments/toggle-view-edit.html`/`request-form-js.html`, eliminados).
 - **Imágenes locales**: `LocalImageService` guarda archivos en disco, no en Cloudinary.
 
 ## Pruebas

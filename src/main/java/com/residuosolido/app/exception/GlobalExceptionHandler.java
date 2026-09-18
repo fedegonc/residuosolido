@@ -1,6 +1,6 @@
 package com.residuosolido.app.exception;
 
-import com.residuosolido.app.config.RoleBasedLoginTargetUrlResolver;
+import com.residuosolido.app.config.Routes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,6 @@ public class GlobalExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
-    @Autowired
-    private RoleBasedLoginTargetUrlResolver targetUrlResolver;
-
     @ExceptionHandler(NoResourceFoundException.class)
     public String handleNotFound(HttpServletRequest request) {
         logger.debug("Recurso no encontrado: {}", request.getRequestURI());
@@ -45,6 +42,13 @@ public class GlobalExceptionHandler {
                                         RedirectAttributes redirectAttributes) {
         logger.warn("Argumento inválido en {}: {}", request.getRequestURI(), e.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
+        // Un error de validación (ej. teléfono mal formado) debe devolver al formulario
+        // donde ocurrió, no a un destino "genérico" por rol — si no, el usuario ve el
+        // error en una pantalla sin el campo que lo causó (ej. termina en /auth/login).
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.isBlank()) {
+            return "redirect:" + referer;
+        }
         return "redirect:" + resolveTarget();
     }
 
@@ -57,7 +61,7 @@ public class GlobalExceptionHandler {
 
     private String resolveTarget() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String url = targetUrlResolver.resolveTargetUrl(auth);
+        String url = Routes.resolveHomeForRole(auth);
         return url.equals("/") ? "/auth/login" : url;
     }
 }

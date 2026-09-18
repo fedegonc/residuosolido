@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /acopio/
+Disallow: /solicitudes
+Disallow: /auth/
+Disallow: /rastrear
+Disallow: /api/
+Disallow: /solicitudes/org-options

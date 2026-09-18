@@ -1,6 +1,6 @@
 package com.residuosolido.app.exception;
 
-import com.residuosolido.app.config.RoleBasedLoginTargetUrlResolver;
+import com.residuosolido.app.config.Routes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +16,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class GlobalErrorController implements ErrorController {
 
     private final MessageSource messageSource;
-    private final RoleBasedLoginTargetUrlResolver targetUrlResolver;
 
     @Autowired
-    public GlobalErrorController(MessageSource messageSource, RoleBasedLoginTargetUrlResolver targetUrlResolver) {
+    public GlobalErrorController(MessageSource messageSource) {
         this.messageSource = messageSource;
-        this.targetUrlResolver = targetUrlResolver;
     }
 
     @RequestMapping("/error")
@@ -34,7 +32,7 @@ public class GlobalErrorController implements ErrorController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null && auth.isAuthenticated() && !(auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
-            String target = targetUrlResolver.resolveTargetUrl(auth);
+            String target = Routes.resolveHomeForRole(auth);
             redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage("flash.error.not_found_auth", null, LocaleContextHolder.getLocale()));
             return "redirect:" + target;
         }

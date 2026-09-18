@@ -1,20 +1,31 @@
 package com.residuosolido.app.dto;
 
+import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * El teléfono usa el mismo selector binacional (país + nacional + DDD) que
+ * request-form.html/org-profile.html — no un input suelto. Mismo patrón,
+ * mismo componente JS (PHONE_PREFIXES en app.js ya incluye "phone").
+ */
 @Getter
 @Setter
 public class RegistrationForm {
     private String username;
-    private String email;
+    private String countryCode;
+    private String phoneNational;
+    private String ddd;
     private String password;
 
     public User toUser() {
         User user = new User();
         user.setUsername(username);
-        user.setEmail(email);
+        if (phoneNational != null && !phoneNational.trim().isEmpty()
+                && countryCode != null && !countryCode.trim().isEmpty()) {
+            user.setPhone(PhoneNumber.normalize(countryCode, phoneNational, ddd));
+        }
         user.setPassword(password);
         return user;
     }

@@ -1,9 +1,0 @@
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-  <th:block th:fragment="status(status)">
-    <span class="badge"
-          th:classappend="'badge--' + ${#strings.toLowerCase(status.name())}"
-          th:text="${status}">PENDING</span>
-  </th:block>
-</body>
-</html>

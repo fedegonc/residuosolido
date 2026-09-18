@@ -1,23 +1,18 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+      layout:decorate="~{layout/base-sidebar}">
 <head><title>Solicitudes de acopio</title></head>
 <body>
-  <main layout:fragment="content">
-    <div class="org-layout">
-      <div th:replace="~{fragments/org-sidebar :: sidebar('requests')}"></div>
-      <div class="org-layout__main">
+  <aside layout:fragment="sidebar">
+    <div th:replace="~{fragments/org-sidebar :: sidebar('requests')}"></div>
+  </aside>
 
-      <nav class="breadcrumb">
-        <th:block th:each="crumb, iter : ${breadcrumbs}">
-          <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
-          <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Solicitudes</span>
-          <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        </th:block>
-      </nav>
+  <div layout:fragment="pageContent">
+
+      <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
       <!-- ═══ LIST VIEW ═══ -->
-      <th:block th:if="${viewType == 'list'}">
+      <th:block th:if="${viewType == T(com.residuosolido.app.enums.RequestViewType).LIST}">
         <div class="row row--between mb">
           <h1 class="card__title" data-i18n="org_req_title">Solicitudes</h1>
           <a href="/acopio/inicio" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="org_req_back_dashboard">Volver</span></a>
@@ -40,50 +35,50 @@
           </div>
         </div>
         <div th:if="${requests == null or requests.isEmpty()}">
-          <div th:replace="~{fragments/empty-state :: state('fa-inbox', 'No hay solicitudes')}"></div>
+          <div th:replace="~{fragments/ui :: state('fa-inbox', 'No hay solicitudes')}"></div>
         </div>
       </th:block>
 
       <!-- ═══ DETAIL VIEW ═══ -->
-      <th:block th:if="${viewType == 'detail'}">
+      <th:block th:if="${viewType == T(com.residuosolido.app.enums.RequestViewType).DETAIL}">
         <div class="row row--between mb">
           <div>
             <h1 class="card__title"><span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span></h1>
-            <div th:replace="~{fragments/badge :: status(${request.status})}"></div>
+            <div th:replace="~{fragments/ui :: status(${request.status})}"></div>
           </div>
           <a href="/acopio/requests" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="req_detail_back">Volver</span></a>
         </div>
 
         <div class="card mb">
           <h2 class="card__subtitle" data-i18n="org_req_contact">Contacto</h2>
-          <div th:replace="~{fragments/info-row :: row('fa-user', 'Nombre', ${request.contactName})}"></div>
-          <div th:replace="~{fragments/info-row :: row('fa-phone', 'Teléfono', ${request.contactPhone})}"></div>
-          <div th:replace="~{fragments/info-row :: row('fa-user-tag', 'Tipo', ${request.isGuest() ? 'Invitado' : 'Registrado'})}"></div>
-        </div>
+          <div th:replace="~{fragments/ui :: row('fa-user', 'Nombre', ${request.contactName})}"></div>
+          <div th:replace="~{fragments/ui :: row('fa-phone', 'Teléfono', ${request.contactPhone})}"></div>
+          <div th:replace="~{fragments/ui :: row('fa-user-tag', 'Tipo', ${request.isGuest() ? 'Invitado' : 'Registrado'})}"></div>
 
-        <div class="card mb">
-          <h2 class="card__subtitle" data-i18n="req_detail_address">Dirección</h2>
-          <div th:replace="~{fragments/info-row :: row('fa-location-dot', 'Ciudad', ${request.city != null ? request.city.toString() : null})}"></div>
-          <div th:replace="~{fragments/info-row :: row('fa-route', 'Dirección', ${request.address})}"></div>
-          <div th:replace="~{fragments/info-row :: row('fa-flag', 'Referencia', ${request.addressReference})}"></div>
-        </div>
-
-        <div class="card mb">
-          <h2 class="card__subtitle" data-i18n="req_detail_materials">Materiales</h2>
-          <div th:if="${request.hasMaterials()}" class="request-item__materials">
-            <span th:each="mat : ${request.materials}" class="tag" th:text="${mat.name()}"></span>
+          <div class="divider">
+            <h2 class="card__subtitle" data-i18n="req_detail_address">Dirección</h2>
+            <div th:replace="~{fragments/ui :: row('fa-location-dot', 'Ciudad', ${request.city != null ? request.city.toString() : null})}"></div>
+            <div th:replace="~{fragments/ui :: row('fa-route', 'Dirección', ${request.address})}"></div>
+            <div th:replace="~{fragments/ui :: row('fa-flag', 'Referencia', ${request.addressReference})}"></div>
           </div>
-          <span th:unless="${request.hasMaterials()}">—</span>
-        </div>
 
-        <div th:if="${request.hasImage()}" class="card mb">
-          <h2 class="card__subtitle" data-i18n="req_detail_image">Foto</h2>
-          <img th:src="${request.imageUrl}" alt="Foto" class="img-detail">
-        </div>
+          <div class="divider">
+            <h2 class="card__subtitle" data-i18n="req_detail_materials">Materiales</h2>
+            <div th:if="${request.hasMaterials()}" class="request-item__materials">
+              <span th:each="mat : ${request.materials}" class="tag" th:text="${mat.name()}"></span>
+            </div>
+            <span th:unless="${request.hasMaterials()}">—</span>
+          </div>
 
-        <div th:if="${request.confirmedSlot != null}" class="card mb">
-          <h2 class="card__subtitle" data-i18n="req_detail_slot">Franja confirmada</h2>
-          <div class="info-row"><i class="fa-solid fa-clock"></i><span th:text="${request.confirmedSlot}"></span></div>
+          <div th:if="${request.hasImage()}" class="divider">
+            <h2 class="card__subtitle" data-i18n="req_detail_image">Foto</h2>
+            <img th:src="${request.imageUrl}" th:alt="'Foto de la solicitud #' + ${request.id}" class="img-detail">
+          </div>
+
+          <div th:if="${request.confirmedSlot != null}" class="divider">
+            <h2 class="card__subtitle" data-i18n="req_detail_slot">Franja confirmada</h2>
+            <div class="info-row"><i class="fa-solid fa-clock"></i><span th:text="${request.confirmedSlot}"></span></div>
+          </div>
         </div>
 
         <div th:if="${request.isPending()}" class="card mb">
@@ -120,8 +115,6 @@
         </div>
       </th:block>
 
-      </div>
-    </div>
-  </main>
+  </div>
 </body>
 </html>

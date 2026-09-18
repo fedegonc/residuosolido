@@ -1,20 +1,15 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+      layout:decorate="~{layout/base-sidebar}">
 <head><title>Perfil de organización</title></head>
 <body>
-  <main layout:fragment="content">
-    <div class="org-layout">
-      <div th:replace="~{fragments/org-sidebar :: sidebar('profile')}"></div>
-      <div class="org-layout__main">
+  <aside layout:fragment="sidebar">
+    <div th:replace="~{fragments/org-sidebar :: sidebar('profile')}"></div>
+  </aside>
 
-      <nav class="breadcrumb">
-        <a href="/">Inicio</a>
-        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        <a href="/acopio/inicio" data-i18n="org_dash_title">Panel</a>
-        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
-        <span data-i18n="org_profile_title">Perfil</span>
-      </nav>
+  <div layout:fragment="pageContent">
+
+      <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
       <div class="row row--between mb">
         <h1 class="card__title" data-i18n="org_profile_title">Perfil de organización</h1>
@@ -23,11 +18,11 @@
 
       <div class="card mb" id="viewCard">
         <h2 class="card__subtitle" data-i18n="org_profile_info">Información</h2>
-        <div th:replace="~{fragments/info-row :: row('fa-building', 'Nombre', ${organization.displayName})}"></div>
-        <div th:replace="~{fragments/info-row :: row('fa-user', 'Usuario', ${organization.username})}"></div>
-        <div th:replace="~{fragments/info-row :: row('fa-envelope', 'Email', ${organization.email})}"></div>
-        <div th:replace="~{fragments/info-row :: row('fa-phone', 'Teléfono', ${organization.hasPhone() ? organization.phone : 'Sin teléfono'})}"></div>
-        <div th:replace="~{fragments/info-row :: row('fa-location-dot', 'Ciudad', ${organization.hasCity() ? organization.city.toString() : 'Sin ciudad'})}"></div>
+        <div th:replace="~{fragments/ui :: row('fa-building', 'Nombre', ${organization.displayName})}"></div>
+        <div th:replace="~{fragments/ui :: row('fa-user', 'Usuario', ${organization.username})}"></div>
+        <div th:replace="~{fragments/ui :: row('fa-envelope', 'Email', ${organization.email})}"></div>
+        <div th:replace="~{fragments/ui :: row('fa-phone', 'Teléfono', ${organization.hasPhone() ? organization.phone : 'Sin teléfono'})}"></div>
+        <div th:replace="~{fragments/ui :: row('fa-location-dot', 'Ciudad', ${organization.hasCity() ? organization.city.toString() : 'Sin ciudad'})}"></div>
         <div class="info-row">
           <i class="fa-solid fa-recycle"></i>
           <span class="info-row__label" data-i18n="org_profile_materials">Materiales</span>
@@ -88,11 +83,10 @@
         </form>
       </div>
 
-      </div>
-    </div>
+  </div>
 
-    <th:block th:replace="~{fragments/toggle-view-edit :: script}"></th:block>
-    <th:block th:replace="~{fragments/phone-country-selector :: script('phone')}"></th:block>
-  </main>
+  <th:block layout:fragment="pageScripts">
+    <script th:src="@{/js/org-profile.js}"></script>
+  </th:block>
 </body>
 </html>

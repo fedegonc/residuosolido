@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -33,7 +34,12 @@ public class GuestTrackingController {
     @GetMapping(Routes.TRACK)
     public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone,
                                 @RequestParam(value = "code", required = false) String code,
+                                @RequestHeader(value = "HX-Request", required = false) String hxRequest,
                                 Model model) {
+        // HTMX: devolver solo el modal cuando no hay búsqueda
+        if ("true".equals(hxRequest) && (phone == null || phone.isBlank()) && (code == null || code.isBlank())) {
+            return "fragments/track-modal :: modal";
+        }
         boolean searched = phone != null && !phone.trim().isEmpty()
                 && code != null && !code.trim().isEmpty();
         List<Request> requests = searched

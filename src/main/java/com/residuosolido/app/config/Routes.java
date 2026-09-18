@@ -1,5 +1,10 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.enums.Role;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+
 /**
  * Fuente única de verdad para las rutas de la aplicación.
  *
@@ -17,6 +22,7 @@ public final class Routes {
     public static final String HOME = "/";
     public static final String INDEX = "/index";
     public static final String LANGUAGE = "/change-language";
+    public static final String SEED = "/seed";
 
     // Auth
     public static final String LOGIN = "/auth/login";
@@ -44,6 +50,7 @@ public final class Routes {
 
     // API
     public static final String API_ORGANIZATIONS_BY_CITY = "/api/organizations/by-city";
+    public static final String HTMX_ORG_OPTIONS = "/solicitudes/org-options";
     public static final String API_ANY = "/api/**";
 
     // Documentación y estáticos
@@ -58,4 +65,22 @@ public final class Routes {
     public static final String SWAGGER_V3 = "/v3/api-docs/**";
     public static final String SWAGGER_UI = "/swagger-ui/**";
     public static final String SWAGGER_HTML = "/swagger-ui.html";
+
+    /**
+     * A qué pantalla "vuelve" cada rol tras login o tras un error — función pura,
+     * sin estado, por eso vive acá como static en vez de ser un @Component inyectado
+     * en 4 archivos distintos (LoginSuccessHandler, AuthNavigationInterceptor,
+     * GlobalErrorController, GlobalExceptionHandler).
+     */
+    public static String resolveHomeForRole(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return HOME;
+        }
+        for (GrantedAuthority authority : auth.getAuthorities()) {
+            String name = authority.getAuthority();
+            if (name.equals("ROLE_" + Role.ORGANIZATION.name())) return ORG_HOME;
+            if (name.equals("ROLE_" + Role.USER.name())) return USER_HOME;
+        }
+        return HOME;
+    }
 }

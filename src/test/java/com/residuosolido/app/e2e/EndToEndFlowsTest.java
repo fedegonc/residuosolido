@@ -6,6 +6,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
+import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.service.CityOrgService;
@@ -242,7 +243,7 @@ class EndToEndFlowsTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/requests"))
                 .andExpect(model().attributeExists("requests", "viewType", "currentPage", "pageSize"))
-                .andExpect(model().attribute("viewType", "list"));
+                .andExpect(model().attribute("viewType", RequestViewType.LIST));
     }
 
     @Test
@@ -268,7 +269,7 @@ class EndToEndFlowsTest {
         mockMvc.perform(get(Routes.ORG_REQUEST, "req1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/requests"))
-                .andExpect(model().attribute("viewType", "detail"))
+                .andExpect(model().attribute("viewType", RequestViewType.DETAIL))
                 .andExpect(model().attributeExists("request", "timeSlots"));
     }
 

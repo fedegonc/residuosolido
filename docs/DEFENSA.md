@@ -316,6 +316,10 @@ operación parcial falla después de persistir.
 **Para producción:** migrar a réplica set (mínimo) para habilitar
 transacciones multi-documento.
 
+**Tripwire:** ante el primer incidente real de dato parcial (ej. una
+solicitud creada sin su imagen porque la operación falló a mitad de
+camino) — no "cuando escale", una condición verificable y puntual.
+
 ---
 
 ## 4. Contraseña mínima de 3 caracteres (fase MVP)
@@ -329,6 +333,10 @@ aceptable para producción.**
 
 **Para producción:** restaurar a 8 mínimo (o 12 con políticas OWASP:
 complejidad, breach-list check). Una línea en `UserService.validatePassword()`.
+
+**Tripwire:** el mismo que el PIN de registro (§24) — **~50 usuarios
+reales**. Son la misma decisión (fricción de auth vs. facilidad de
+prueba), no dos criterios distintos.
 
 ---
 
@@ -379,6 +387,10 @@ de solicitudes.
 **Para producción:** paginación del Kanban o vista dedicada con
 drag-and-drop si el volumen lo justifica.
 
+**Tripwire:** cuando una organización tenga más de ~20 solicitudes
+pendientes simultáneas — no "si el volumen lo justifica" (vago), un
+número que se puede consultar en la base.
+
 ---
 
 ## 8. Notificaciones WhatsApp
@@ -409,6 +421,10 @@ cloud storage.
 instancias, cada una tiene su disco), sin backup automático, sin CDN.
 
 **Para producción:** migrar a S3 / Cloudinary / similar.
+
+**Tripwire:** antes del primer deploy a un entorno con filesystem
+efímero real (ej. Render sin disco persistente) — riesgo ya identificado
+en el FODA del proyecto: un redeploy puede borrar `/uploads` entero.
 
 ---
 
@@ -686,3 +702,161 @@ aunque existe Spring Boot 4.1.1.
 
 **Para producción:** migrar primero a 3.5.x (limpiar deprecations),
 después a 4.0 (migración mayor). Documentado en `docs/MEJORAS.md`.
+
+---
+
+## 22. Brief de personalidad visual (anti-slop de diseño)
+
+**Decisión:** definir por escrito la personalidad visual del producto
+antes de seguir ajustando CSS, porque el frontend actual — aunque
+minimalista y bien tokenizado — usa casi exclusivamente los defaults
+genéricos de cualquier template generado por IA (gradiente diagonal en
+botones, círculos numerados en "cómo funciona", una sola familia
+tipográfica "segura", cero color secundario con propósito). Consistencia
+sin intención sigue siendo genérico.
+
+**Los 3 adjetivos que debe transmitir:**
+1. **Territorial** — es un sistema de un lugar concreto (Rivera —
+   Sant'Ana do Livramento), no una plataforma global genérica.
+2. **Institucional / confiable** — se parece más a un servicio público
+   bien hecho que a una landing de SaaS buscando ronda de inversión.
+3. **Directo al grano** — sin lenguaje aspiracional ni decoración que no
+   cumple una función (coherente con la regla ya existente de
+   "microcopy anti-slop", `docs/MEJORAS.md` #17 y #21).
+
+**Qué NO debe sentirse:**
+- No debe parecer una landing de growth/SaaS (gradientes, iconos en
+  círculos de colores, copy tipo "revolucionamos el reciclaje").
+- No debe depender de decoración para verse terminado — si algo se
+  saca y la interfaz sigue funcionando igual de bien, esa decoración no
+  cumplía un propósito.
+
+**Referencia de sensación (no de diseño literal):** un servicio
+municipal o cooperativo bien ejecutado — sobrio, con jerarquía clara,
+sin necesidad de "vender" nada porque ya resuelve un problema real.
+
+**Consecuencia práctica:** cualquier elección visual nueva se evalúa
+contra estos 3 adjetivos antes de agregarse. Los cambios de la Fase 1
+(sin gradientes, con color secundario con propósito real, "cómo
+funciona" sin círculos numerados) están documentados en `docs/MEJORAS.md`.
+
+---
+
+## 23. Métricas del proyecto y diagnóstico de escala (¿un estudiante o un equipo?)
+
+**Pregunta que anticipa esta sección:** "¿esto lo hizo un solo estudiante
+o hacía falta un equipo?" Se responde con métricas, no con opinión.
+
+### Líneas de código por capa
+
+| Capa | Archivos | LOC |
+|---|---|---|
+| Backend Java (producción) | 47 clases | 3.457 |
+| Backend Java (tests) | 26 clases | 3.245 |
+| Frontend — templates Thymeleaf | 25 | 1.127 |
+| Frontend — CSS (`app.css`+`fonts.css`+`htmx-states.css`) | 3 | 287 |
+| Frontend — JS vanilla | 1 | 180 |
+| i18n (es/pt, JSON) | 2 | 556 |
+| Documentación (`docs/*.md`) | 7 | 3.258 |
+| **Total** | **111** | **~12.110** |
+
+### Estructura del backend (47 clases)
+
+| Paquete | Archivos | Rol |
+|---|---|---|
+| `config` | 13 | Seguridad, i18n, rutas centralizadas (incluye `resolveHomeForRole`), carga de datos |
+| `controller` | 12 | HTTP, 27 endpoints (`@*Mapping`), 32 constantes de ruta en `Routes.java` |
+| `service` | 7 | Lógica de negocio (el más grande: `RequestService`, 329 líneas) |
+| `enums` | 5 | Estados, materiales, ciudades, franjas |
+| `model` | 3 | Entidades de dominio |
+| `repository` / `dto` / `exception` | 2 c/u | Persistencia, transferencia, manejo de errores |
+
+**Ningún archivo supera las 330 líneas** (el más grande, `RequestService.java`,
+sigue siendo una sola responsabilidad legible de punta a punta). No hay
+"clases dios" ni lógica dispersa sin dueño claro.
+
+### Testing y desarrollo
+
+- **171 métodos `@Test`** + **1 `@ParameterizedTest`** con 8 casos
+  (`I18nMessageResolutionTest`) → hasta 179 ejecuciones reales posibles.
+  `docs/INDICE.md`/`MEJORAS.md` registran 176 — no coincide exacto con
+  ningún conteo estático; **correr `mvn clean test` antes de la defensa**
+  para confirmar el número real en vez de citar el de los docs.
+- **428 commits**, un solo autor (3 alias de email de la misma persona:
+  `fedegonc`/`FedericoGoncalvez`/`goncalvezfede@gmail.com`), a lo largo de
+  **~14 meses** (jul. 2025 → sep. 2026).
+- Metodología iterativo-incremental documentada en `docs/METODOLOGIA.md`
+  (4 fases), no un sprint de último momento.
+
+### Diagnóstico
+
+**La escala y la estructura son consistentes con un estudiante trabajando
+solo de forma sostenida, no con una necesidad real de equipo.** Argumentos:
+
+1. **Tamaño total** (~12k líneas contando tests y docs, ~7k solo código):
+   está en el rango típico de un proyecto de tesis/capstone individual
+   (3k-15k LOC), muy por debajo del umbral donde el paralelismo de un
+   equipo se vuelve necesario (proyectos de 50k+ LOC, múltiples
+   servicios desplegables, o necesidad de especialización simultánea
+   24/7 en áreas separadas).
+2. **Sin necesidad de especialización paralela**: una sola base de datos
+   (MongoDB, no distribuida), un solo desplegable (no microservicios),
+   frontend deliberadamente minimalista sin framework (`docs/MEJORAS.md`
+   — decisión explícita, no limitación de tiempo).
+3. **Cero señales de "demasiadas manos sin coordinar"**: un solo autor
+   en el historial de git, convenciones de nombres y capas consistentes
+   en las 47 clases, sin duplicación de responsabilidades entre
+   controllers/services.
+4. **Lo que sí haría falta un equipo**: escalar esto a producción real
+   multi-frontera (`docs/MEJORAS.md` #62, diferido), Redis para rate
+   limiting distribuido (#61, diferido), o un piloto de campo con
+   cooperativas — trabajo de *operación*, no de *desarrollo inicial*.
+
+**Lo que no se puede afirmar:** que ninguna herramienta de asistencia se
+usó durante el desarrollo — esta sección mide escala y estructura del
+resultado, no el proceso de escritura línea por línea.
+
+---
+
+## 24. Registro simplificado: nombre + teléfono + PIN de 4 dígitos
+
+**Decisión:** el registro/login dejaron de pedir usuario técnico + email +
+contraseña de 8+ caracteres. Ahora piden: **nombre** (acepta espacios,
+sigue siendo la clave de login internamente), **número de celular** (en
+vez de email) y un **PIN de 4 dígitos** (en vez de contraseña).
+
+**Motivo — fricción mínima para pruebas, no una decisión de producción:**
+inventar un usuario+email+contraseña de 8 caracteres es fricción real al
+probar el sistema repetidamente (demos, pruebas manuales, defensa). El
+teléfono además es un dato que el sistema ya necesita del ciudadano para
+coordinar la recolección — pedirlo en el registro no agrega un campo
+nuevo, solo lo adelanta.
+
+**A favor:**
+- Menos campos, menos fricción para probar el flujo completo repetidas veces.
+- El teléfono es dato real del dominio (ya se usa para rastreo de invitados).
+- Consistente con la contraseña mínima de 3-8 caracteres ya aceptada como
+  tradeoff de MVP (§4) — este es el mismo tipo de decisión, más explícita.
+
+**En contra — límites que no se pueden ignorar:**
+- **Un PIN de 4 dígitos (10.000 combinaciones) no es apto para producción
+  real.** Sin límite de intentos más agresivo que el actual (`LoginAttemptService`,
+  3 intentos/15 min ya existente) sería fuerza-bruteable en un sistema real
+  con más usuarios.
+- El nombre como clave de login puede colisionar (dos "Juan Pérez") —
+  aceptable para pruebas, no para escala real.
+- El email dejó de pedirse; el índice único de `email` en Mongo se volvió
+  `sparse` para permitir múltiples usuarios sin email (ver
+  `MongoIndexMigration.java`, `docs/MEJORAS.md` #123).
+
+**Para producción:** volver a exigir contraseña real (8+ caracteres,
+`UserService.validatePassword` ya lo hace para el flujo de edición de
+perfil, sin usar todavía desde ninguna pantalla) y considerar 2FA por SMS
+ya que el teléfono ya se captura.
+
+**Umbral concreto para revisar esto — decisión explícita, no "algún día":**
+no vale la pena invertir en registro robusto (contraseñas fuertes, límites
+de intentos más estrictos, verificación de teléfono) hasta tener **~50
+usuarios reales** (no de prueba/demo). Antes de eso, la fricción de un
+registro robusto cuesta más de lo que previene. Las organizaciones sí
+mantienen email (siguen siendo pocas y verificadas manualmente por ahora).
