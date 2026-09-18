@@ -60,7 +60,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 # Testing (anexo)
 
 
-Describe la suite de tests real del proyecto (176 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (181 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 
@@ -96,7 +96,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | `LocalImageServiceTest` (7) | Validación de tipo/tamaño de imagen, guardado local |
 | `GuestRateLimiterTest` (5) | Rate limiting por IP (ventana deslizante), header `X-Forwarded-For`, limpieza de memoria |
 | `LoginAttemptServiceTest` (7) | Bloqueo tras intentos fallidos de login, expiración, limpieza de memoria |
-| `RoleBasedLoginTargetUrlResolverTest` (4) | Redirección post-login según rol (RN-05) |
+| `RoutesTest` (6) | Redirección post-login según rol (RN-05) — reemplaza a `RoleBasedLoginTargetUrlResolverTest`, fusionado en `Routes.resolveHomeForRole()` |
 | `PhoneNumberCountryCodeTest` (23) | Normalización E.164, códigos de país (UY/BR), DDD brasilero, validación de longitud |
 | `MvpRegressionTest` (9) | Regresión de reglas críticas (password corto, org inactiva, etc.) |
 
@@ -109,7 +109,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | `OrganizationControllerTest` (5) | Flujo completo de organización vía `MockMvc` |
  `EndToEndFlowsTest` (11) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |
  `I18nMessageResolutionTest` (8) | Resolución de mensajes en español/portugués |
- `DocsControllerTest` (8) | Páginas públicas `/documentos` y `/diagramas`, content-type de `.md`/`.drawio`, path traversal, accesibilidad sin auth |
+ `DocsControllerTest` (8) | `/docs/{file}.md` y `/docs/diagrams/{file}.drawio`: content-type, `Content-Disposition: inline`, 404 en inexistentes, path traversal bloqueado. **No cubre** el visor `/docs/diagramas` (nuevo, sin test todavía) |
 | `MongoAggregationUtilsIntegrationTest` (5) | Agregación faceted con MongoDB real — counts por estado, total, sin solicitudes, REJECTED incluido en total |
 
 ### Browser tests — Playwright (tag `browser`)
@@ -123,7 +123,7 @@ Requieren navegador real (Chromium). Se excluyen con `-DexcludedGroups=browser`.
 | `OrganizationBrowserTest` (5) | Flujo de organización: login → dashboard → aceptar/rechazar solicitud |
 | `GuestBrowserTest` (2) | Solicitud de invitado + rastreo por código |
 | `FullLifecycleBrowserTest` (1) | Ciclo completo: invitado crea → org acepta → org completa |
-| `TransversalBrowserTest` (6) | Tema claro/oscuro, i18n es/pt, accesibilidad, PWA |
+| `TransversalBrowserTest` (6) | Registro ciudadano/organización, cambio de idioma es→pt, tema claro→oscuro, menú hamburguesa mobile, aislamiento cross-role |
 
 ---
 

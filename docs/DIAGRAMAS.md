@@ -374,4 +374,4 @@ con sidebar puede decorar `layout/base-sidebar` sin repetir el grid.
 
 ## Pruebas
 
-176 tests unitarios e integrales en 22 suites. Ver `docs/ENDPOINTS.md`.
+181 tests unitarios e integrales en 24 clases. Ver `docs/ENDPOINTS.md`.

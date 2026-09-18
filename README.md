@@ -18,7 +18,6 @@ Livramento, Brasil).
 - Tablero Kanban integrado en el panel de organización
 - Rate limiting para solicitudes de invitados y bloqueo de cuenta tras
   intentos de login fallidos
-- PWA instalable (manifest, service worker, iconos)
 - Diseño canónico homogéneo (variables CSS, BEM, 0 estilos inline)
 - Internacionalización (es/pt)
 
@@ -32,7 +31,6 @@ Livramento, Brasil).
   fallidos, CSRF, rate limiting)
 - **Almacenamiento de imágenes:** Local en disco (carpeta configurable
   vía `UPLOAD_DIR`, servida en `/uploads/**`)
-- **PWA:** manifest.json, service worker, iconos PNG
 
 ## Requisitos
 

@@ -4,7 +4,7 @@
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
 > **Fecha:** post-commit (`15b7db5`)
-> **Tests:** 176, 0 failures
+> **Tests:** 181, 0 failures
 
 ---
 
@@ -31,7 +31,7 @@
 | 8 | Métricas públicas por ciudad | Implementado | Sin auth requerido |
 | 9 | Rate limiting de invitados | Implementado | Ventana deslizante por IP |
 | 10 | Bloqueo por intentos de login | Implementado | 5 intentos, 15 min bloqueo |
-| 11 | PWA instalable | Implementado | manifest.json, SW, install prompt |
+| 11 | PWA instalable | **Descartado** (ver #100) | manifest.json, SW, install prompt — luego removidos; solo queda un Service Worker "kill-switch" para desinstalar el viejo en navegadores que lo tenían |
 | 12 | i18n español/portugués | Implementado | Client-side + server-side |
 | 13 | Dark mode toggle | Implementado | CSS variables, localStorage, prefers-color-scheme |
 | 14 | FOUC fix (flash de texto sin traducir) | Implementado | visibility:hidden hasta i18n ready |
@@ -43,11 +43,11 @@
 | 20 | Optimistic locking (@Version) | Implementado | En transiciones y borrado |
 | 21 | Validación de imagen antes de persistir | Implementado | Tipo, extensión, tamaño |
 | 22 | Contraseña mínima 3 caracteres | Implementado | Decisión de fase MVP |
-| 23 | Service Worker cache (CSS/JS only) | Implementado | HTML network-first, sin pre-cache |
+| 23 | Service Worker cache (CSS/JS only) | **Descartado** (ver #100) | HTML network-first, sin pre-cache — el SW completo se descartó después junto con el resto de la PWA (#11) |
 | 24 | Limpieza de claves muertas (messages_*) | Implementado | 136→91 claves, ES/PT sincronizados |
 | 25 | Documentación centralizada con índice docs/INDICE.md | Implementado | Single source of truth |
 | 26 | Diagramas UML (casos de uso, ER, clases, estados) | Implementado | draw.io, 4 figuras |
-| 27 | 176 tests (unit + integration + e2e) | Implementado | 0 failures |
+| 27 | 181 tests (unit + integration + e2e) | Implementado | 0 failures |
 | 28 | Metodología iterativo-incremental (4 fases) | Implementado | docs/METODOLOGIA.md |
 | 29 | 21 tradeoffs documentados | Implementado | docs/DEFENSA.md |
 | 30 | Deploy en Render.com (PaaS) | Implementado | GitHub→deploy automático |
@@ -426,7 +426,7 @@ Esta mejora queda registrada como posible evolución, no como deuda técnica.
 
 Fecha: 2026-09-11
 Versión: post-cleanup (sin tag aún)
-Tests: 176, 0 failures, 0 errors, 0 skipped
+Tests: 181, 0 failures, 0 errors, 0 skipped
 Build: SUCCESS
 
 ---
@@ -534,17 +534,28 @@ El CSP usa `script-src 'unsafe-inline'` y `style-src 'unsafe-inline'`. Es necesa
 
 **Para corregir:** Usar nonces o hashes CSP. Requiere cambio arquitectónico.
 
-### 2.2 PWA sin offline completo
+### 2.2 PWA descartada (histórico — ya no aplica)
 
-La PWA se puede instalar, pero HTML no está cacheado intencionalmente. Navegación offline no funciona. Solo CSS/JS/imágenes se cachean.
+**Obsoleto.** La PWA (manifest, install prompt, cache offline) se descartó
+por completo (#11, #23). El único remanente en el código es `sw.js`, un
+Service Worker "kill-switch" (#100) que se autodesregistra y limpia la
+caché vieja en navegadores que habían instalado la PWA antes de que se
+sacara — no cachea nada nuevo, no hay funcionalidad offline.
 
-**No se corrige:** Es un tradeoff intencional para evitar contenido stale.
+### 2.3 `EndToEndFlowsTest` sigue siendo MockMvc (parcialmente resuelto)
 
-### 2.3 Tests E2E son MockMvc
+`EndToEndFlowsTest` usa MockMvc, no un navegador real. **Esto ya no es
+toda la historia:** hoy existen 6 clases con Playwright/Chromium real
+(`browser/CitizenBrowserTest`, `OrganizationBrowserTest`,
+`GuestBrowserTest`, `FullLifecycleBrowserTest`, `HomePageBrowserTest`,
+`TransversalBrowserTest`, sobre `PlaywrightBaseTest`) que cubren los
+flujos de registro/login, creación de solicitud, aceptación/rechazo y
+rastreo de invitado en un navegador real.
 
-`EndToEndFlowsTest` usa MockMvc con servicios simulados. No es un test de navegador real.
-
-**Para corregir:** Agregar tests con Selenium o Playwright.
+**Pendiente real:** `EndToEndFlowsTest` (11 tests) no se migró a
+Playwright — sigue siendo MockMvc. No haría falta migrarlo si los
+Playwright ya cubren los mismos flujos; si no coinciden 1:1, revisar cuál
+de los dos suites tiene huecos.
 
 ### 2.4 Sin validación de usabilidad
 
@@ -573,13 +584,16 @@ No se puede afirmar que el sistema aumenta el reciclaje o los ingresos. Eso requ
 
 ## 4. Política de fuente de verdad de copies
 
-El sistema tiene tres fuentes de copies:
+El sistema tiene dos fuentes de copies (un `messages_{es,pt}.properties`
+separado ya no existe — se unificó todo en JSON, ver `JsonMessageSource`):
 
-1. **`static/i18n/{page}/{lang}.json`** — fuente primaria. `UiCopyCatalog` los carga server-side y los inyecta en `window.uiCopies`.
-2. **`messages_{es,pt}.properties`** — mensajes de validación del servidor (errores de formularios, flash messages).
-3. **Fallback en templates** — texto visible si el JS falla. Debe coincidir con el JSON.
+1. **`static/i18n/{lang}.json`** (uno por idioma, no por página) — fuente
+   única. `UiCopyCatalog` inyecta las claves cliente en `window.uiCopies`;
+   `JsonMessageSource` resuelve las claves `_server_*` server-side
+   (validación de formularios, flash messages) leyendo el mismo archivo.
+2. **Fallback en templates** — texto visible si el JS falla. Debe coincidir con el JSON.
 
-**Regla:** Cuando se cambia un copy, se actualizan las tres fuentes. `docs/METODOLOGIA.md` es el inventario, no la fuente de runtime.
+**Regla:** Cuando se cambia un copy, se actualizan ambas fuentes. `docs/METODOLOGIA.md` es el inventario, no la fuente de runtime.
 
 ---
 
@@ -592,7 +606,7 @@ mvn test
 Resultado actual:
 
 ```
-Tests run: 176, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 181, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -600,14 +614,14 @@ Requiere MongoDB en `localhost:27017`.
 
 ---
 
-## 6. Comportamiento PWA/cache actual
+## 6. Comportamiento del Service Worker actual (post-descarte de PWA)
 
-- **Cache version:** `ecosolicitud-v19`
-- **Pre-cacheados:** CSS, JS, manifest, icons, favicon
-- **No pre-cacheados:** HTML, API
-- **HTML/API:** network-first, sin guardar en cache
-- **Actualización:** `updateViaCache: 'none'` + `reg.update()` en cada carga
-- **Offline:** CSS/JS/imágenes disponibles; HTML no
+**Obsoleto — ya no hay cache real.** Esta sección describía la PWA activa
+(`ecosolicitud-v19`, precacheo de CSS/JS/manifest/icons). Esa PWA se
+descartó (#11, #23). El `sw.js` actual (#100) no precachea nada: solo se
+instala, se autodesregistra (`self.registration.unregister()`) y limpia
+cualquier caché vieja que haya quedado en el navegador del usuario. No
+hay comportamiento offline de ningún tipo hoy.
 
 ---
 
@@ -636,13 +650,21 @@ El seed crea 10 usuarios y 12 solicitudes. Password: `12345678`.
 
 # Superficies del sistema — auditoría (anexo)
 
+> **⚠️ Foto histórica, congelada en el commit `1e4d575`.** Su
+> recomendación de prioridad alta ("3 fuentes de copies superpuestas →
+> Unificar en una") **ya se implementó**: `messages.properties`,
+> `messages_es.properties` y `messages_pt.properties` **ya no existen**.
+> Todo quedó unificado en `static/i18n/{lang}.json` (`JsonMessageSource` +
+> `UiCopyCatalog`, ver §4 más arriba). Las secciones de abajo que hablan
+> de sincronizar/limpiar esos `.properties` son historia, no un TODO
+> pendiente — no las tomes como checklist para la defensa.
 
-> **Propósito:** centralizar todas las superficies del sistema (copies,
+> **Propósito (original):** centralizar todas las superficies del sistema (copies,
 > estilos, esquemas, endpoints) en un único documento para detectar
 > crecimientos innecesarios y mantener consistencia.
 >
 > **Fecha de auditoría:** commit `1e4d575`
-> **Tests:** 176, 0 failures
+> **Tests:** 181, 0 failures
 
 ---
 

@@ -38,7 +38,7 @@ aplicaciones, garantizar calidad y elaborar documentación técnica.
 | Análisis de requisitos | 8 RF, 14 RN, 3 actores, casos de uso (`docs/DIAGRAMAS.md`) |
 | Modelado | Entidades, relaciones, estados, multiplicidades (`docs/diagrams/`) |
 | Desarrollo | Flujo completo ciudadano → organización → seguimiento |
-| Testing | 176 tests: unitarios, integración, seguridad, autorización |
+| Testing | 181 tests: unitarios, integración, seguridad, autorización |
 | Calidad | JaCoCo, validación server-side, optimistic locking |
 | Documentación | 11 docs técnicos, 4 diagramas UML, endpoints catalogados |
 | Gestión del proyecto | Iterativo-incremental en 4 fases, tradeoffs documentados |
@@ -123,7 +123,7 @@ Preparar capturas o un video de respaldo por si la demo falla.
 
 | Dimensión | Evidencia presentada |
 |---|---|
-| Correctitud funcional | 176 tests ligados a requisitos |
+| Correctitud funcional | 181 tests ligados a requisitos |
 | Autorización | Tests de acceso con roles incorrectos |
 | Integración | Flujo con aplicación y base de datos reales |
 | Interfaz | Verificación en navegador, móvil, idiomas |
@@ -150,7 +150,7 @@ Ver sección 7 de este documento.
 | "¿Demostraste que mejora el reciclaje?" | "No. Evalué el software. El impacto requiere un piloto posterior" |
 | "¿Usaste IA?" | "Sí, como asistencia de desarrollo y revisión. Declaro su alcance y asumo la responsabilidad de explicar, verificar y corregir el resultado" |
 | "¿Por qué MongoDB y no PostgreSQL?" | "Ambos son válidos. MongoDB simplifica el modelado de materiales como array embebido. Documenté el tradeoff" |
-| "¿La PWA funciona offline?" | "Se puede instalar, pero HTML no se cachea intencionalmente para evitar contenido stale. Solo CSS/JS/imágenes están disponibles offline" |
+| "¿Por qué hay un `sw.js`?" | "Es un kill-switch, no una PWA activa: la PWA se descartó (`docs/MEJORAS.md` #11/#100) pero navegadores que la habían instalado antes seguían con el Service Worker viejo interceptando *todos* los fetches. El `sw.js` actual solo se auto-desregistra y limpia caché" |
 | "¿Las notificaciones de WhatsApp son reales?" | "No. No hay notificaciones en el MVP; el teléfono queda registrado en la solicitud" |
 | "¿La contraseña de 8 caracteres es suficiente?" | "Es defendible para un MVP. Una política de producción exigiría complejidad (mayúsculas, números, símbolos) y rotación" |
 
@@ -161,9 +161,15 @@ Ver sección 7 de este documento.
 - Que aumenta el reciclaje o los ingresos de las organizaciones.
 - Que es la primera plataforma de reciclaje.
 - Que tiene seguridad de producción (CSP usa `unsafe-inline`).
-- Que funciona offline completo (HTML no se cachea intencionalmente).
-- Que los tests E2E son de navegador (son MockMvc con servicios
-  simulados).
+- Que la app es instalable como PWA (se descartó, ver `docs/MEJORAS.md`
+  #11/#100 — solo queda un Service Worker "kill-switch" que se
+  autodesregistra).
+- Que **todos** los tests E2E son de navegador real: `EndToEndFlowsTest`
+  sigue siendo MockMvc (stack simulado, sin navegador). Sí hay 6 clases
+  con Playwright/Chromium real (`browser/*BrowserTest`) que cubren los
+  flujos principales de ciudadano, organización e invitado — sería
+  incorrecto decir que no hay tests de navegador real, pero también
+  incorrecto decir que toda la suite E2E lo es.
 - Que envía notificaciones reales por WhatsApp (no hay notificaciones en el MVP).
 - Que se validó la usabilidad con usuarios reales (no se hizo).
 - Que se siguió DSRM desde el inicio (la metodología fue
@@ -179,8 +185,8 @@ Ver sección 7 de este documento.
 | Limitación | Estado | Documentación |
 |---|---|---|
 | CSP con `unsafe-inline` | Aceptada | `docs/MEJORAS.md` §2.1 |
-| PWA sin offline completo | Tradeoff intencional | `docs/MEJORAS.md` §2.2 |
-| Tests E2E son MockMvc | Aceptada | `docs/MEJORAS.md` §2.3 |
+| PWA descartada (kill-switch activo) | Resuelto/histórico | `docs/MEJORAS.md` #11, #100 |
+| Mayoría de tests E2E son MockMvc | Parcialmente resuelto | 6 clases Playwright reales, `docs/MEJORAS.md` §2.3 |
 | Notificaciones WhatsApp | Descartada | Eliminadas del MVP; sin proveedor configurado |
 | Sin validación de usabilidad | Trabajo futuro | `docs/MEJORAS.md` §2.4 |
 | Sin medición de impacto | Trabajo futuro | `docs/MEJORAS.md` §2.5 |
@@ -531,7 +537,7 @@ rutas. El visitante ve el contenido completo en menos espacio.
   ~40 clases.
 
 **Justificación de la postergación:** el sistema está estable con
-176 tests pasando. Las fusiones de controllers ya aplicadas
+181 tests pasando. Las fusiones de controllers ya aplicadas
 (RequestEditController, OrgOnboardingController, OrgRequestDetailController)
 redujeron de 13 a 10 controllers sin regresiones. Las fusiones restantes
 (dashboards) requieren condicionales por rol más complejos.
@@ -777,11 +783,16 @@ sigue siendo una sola responsabilidad legible de punta a punta). No hay
 
 ### Testing y desarrollo
 
-- **171 métodos `@Test`** + **1 `@ParameterizedTest`** con 8 casos
-  (`I18nMessageResolutionTest`) → hasta 179 ejecuciones reales posibles.
-  `docs/INDICE.md`/`MEJORAS.md` registran 176 — no coincide exacto con
-  ningún conteo estático; **correr `mvn clean test` antes de la defensa**
-  para confirmar el número real en vez de citar el de los docs.
+- **173 métodos `@Test`** + **1 `@ParameterizedTest`** con 8 casos
+  (`I18nMessageResolutionTest`) → **181 ejecuciones reales** (26 archivos
+  de test, 24 con métodos `@Test`; 2 son clases base/seed sin tests
+  propios: `PlaywrightBaseTest`, `BrowserTestSeed`). `docs/INDICE.md`/
+  `MEJORAS.md` ya reflejan este número (actualizado en esta pasada de
+  sincronización); igual **correr `mvn clean test` antes de la defensa**
+  para confirmar que sigue siendo exacto — la suite `MongoAggregationUtilsIntegrationTest`,
+  `DocsControllerTest` y otras requieren un MongoDB real en
+  `localhost:27017`, así que este conteo es estático (por código), no
+  el resultado de una corrida verificada en este entorno.
 - **428 commits**, un solo autor (3 alias de email de la misma persona:
   `fedegonc`/`FedericoGoncalvez`/`goncalvezfede@gmail.com`), a lo largo de
   **~14 meses** (jul. 2025 → sep. 2026).

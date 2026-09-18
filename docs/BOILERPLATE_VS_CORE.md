@@ -86,7 +86,7 @@ las reglas de negocio antes de tocar (core).
 | Auth | Boilerplate | `auth/login.html`, `auth/register.html` |
 | `request-form.html` | **Core** | El formulario central — conoce ciudad, materiales, organización, franjas |
 | `kanban-column.html`, `request-list.html` | **Core** | Encapsulan el ciclo de estados y el vocabulario de materiales en la UI |
-| `org-options.html` | **Core** | El filtro ciudad→organización vive acá también, no solo en el backend |
+| `fragments/ui.html :: options` | **Core** | El filtro ciudad→organización vive acá también, no solo en el backend. Nota: técnicamente vive dentro de `ui.html` (fusionado ahí junto con las piezas boilerplate por reducción de archivos, ver `MEJORAS.md` #120), pero esta pieza específica sigue siendo Core, no Boilerplate |
 | `track.html`, `track-modal.html` | **Core** | Rastreo de invitado — específico del dominio |
 | `org/complete-profile.html` | Zona gris | El onboarding forzado es negocio, la forma (un CRUD simple) es genérica |
 

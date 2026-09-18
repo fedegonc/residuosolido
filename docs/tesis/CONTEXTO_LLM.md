@@ -1,7 +1,7 @@
 # Contexto consolidado para asistencia con la tesis
 
 **Estado:** borrador parcial  
-**Última actualización:** 2026-09-15  
+**Última actualización:** 2026-09-17  
 **Fuente de verdad:** no (es un ensamblado derivado)  
 **Relacionado con:** `README.md`, `docs/INDICE.md`, `docs/METODOLOGIA.md`, `docs/DIAGRAMAS.md`, `docs/ENDPOINTS.md`, `docs/DEFENSA.md`, `docs/MEJORAS.md` y secciones canónicas de despliegue/observabilidad
 
@@ -43,7 +43,7 @@ Implementar un MVP que gestione solicitudes de recolección y su estado, adaptad
 - **Implementado:** métricas públicas agregadas por ciudad.
 - **Descartado:** blog estático (no se implementó).
 - **Implementado:** internacionalización español/portugués.
-- **Implementado:** PWA instalable con caché de recursos estáticos.
+- **Descartado:** PWA instalable — se implementó y luego se removió por completo (solo queda un Service Worker kill-switch, ver `docs/MEJORAS.md` #11/#100).
 - **Parcialmente implementado / latente:** gestión de recolectores informales; el CRUD existe, pero no tiene acceso visible desde el sidebar y una solicitud no registra al recolector responsable.
 
 ### Fuera del alcance
@@ -185,8 +185,7 @@ Las operaciones de dominio incluyen `accept(TimeSlot)`, `reject()`, `complete()`
 - **Implementado — Persistencia:** MongoDB con Spring Data MongoDB.
 - **Implementado — Interfaz:** HTML, JavaScript, CSS con variables y convención BEM, FontAwesome.
 - **Implementado — Seguridad:** Spring Security, CSRF, control por roles, bloqueo de login y rate limiting.
-- **Implementado — PWA:** manifest, service worker e iconos.
-- **Implementado — Testing:** JUnit 5, Mockito, Spring Boot Test, Spring Security Test y MockMvc.
+- **Implementado — Testing:** JUnit 5, Mockito, Spring Boot Test, Spring Security Test, MockMvc y Playwright (navegador real).
 - **Implementado — Calidad:** JaCoCo y PMD 7.
 - **Implementado — Empaquetado:** Maven y Docker multi-stage.
 - **Implementado — Plataforma:** Render.com y MongoDB Atlas.
@@ -228,7 +227,7 @@ Las operaciones de dominio incluyen `accept(TimeSlot)`, `reject()`, `complete()`
 La documentación canónica registra:
 
 ```text
-Tests run: 176, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 181, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -288,9 +287,9 @@ Render se eligió para reducir configuración operativa y mantener el foco en el
 - **Implementado:** seguimiento para invitados sin exponer solicitudes por teléfono solamente.
 - **Implementado:** métricas públicas agregadas por ciudad.
 - **Implementado:** interfaz bilingüe español/portugués.
-- **Implementado:** PWA instalable con caché de CSS, JavaScript, imágenes, manifest e iconos.
+- **Descartado:** PWA instalable — se removió por completo; solo queda un Service Worker kill-switch (`docs/MEJORAS.md` #100) que desinstala el viejo, sin cache activo.
 - **Implementado:** documentación técnica, endpoints catalogados y cuatro diagramas UML editables.
-- **Implementado:** suite documentada de 176 tests sin fallos.
+- **Implementado:** suite documentada de 181 tests sin fallos.
 
 La evaluación realizada demuestra correctitud funcional y controles técnicos. No demuestra usabilidad ni impacto ambiental.
 
@@ -305,7 +304,6 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - **Limitación conocida:** una cuenta `ORGANIZATION` representa simultáneamente identidad de acceso y participante de negocio; no admite múltiples operadores.
 - **Limitación conocida:** no se verifica la legitimidad de una organización registrada.
 - **Limitación conocida:** imágenes almacenadas localmente, sin almacenamiento distribuido, backup o CDN.
-- **Limitación conocida:** PWA instalable sin navegación HTML offline.
 - **Limitación conocida:** CSP con `unsafe-inline`.
 - **Limitación conocida:** MongoDB sin transacciones multi-documento.
 - **Limitación conocida:** asignación por ciudad, no por proximidad geográfica.
