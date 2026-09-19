@@ -36,7 +36,8 @@ public class DocsController {
             new String[]{"figura2-modelo-logico", "Modelo lógico / ER"},
             new String[]{"figura3-clases", "Diagrama de clases"},
             new String[]{"figura4-secuencia", "Diagrama de secuencia"},
-            new String[]{"figura4-estados", "Diagrama de estados"}
+            new String[]{"figura4-estados", "Diagrama de estados"},
+            new String[]{"figura5-gitflow", "Gitflow del proyecto"}
     );
 
     @GetMapping(Routes.DOCS_FILE)

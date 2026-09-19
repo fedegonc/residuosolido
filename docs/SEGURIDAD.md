@@ -1,7 +1,7 @@
 # Reglas mínimas de secretos y seguridad — Eco Solicitud
 
 Checklist corto para no repetir el leak de credencial de Mongo Atlas que
-motivó `docs/DEFENSA.md` §26. Para el detalle y el porqué de cada decisión,
+motivó `docs/TRADEOFFS.md` §26. Para el detalle y el porqué de cada decisión,
 ver las referencias cruzadas de cada punto.
 
 ## Secretos / credenciales de infraestructura
@@ -36,7 +36,7 @@ ver las referencias cruzadas de cada punto.
 
 7. El PIN de 4 dígitos del registro simplificado es una decisión de fricción
    mínima para el MVP, no un estándar de seguridad — ver
-   `docs/DEFENSA.md` §4 y §24 para el tradeoff completo.
+   `docs/TRADEOFFS.md` §4 y §24 para el tradeoff completo.
 
 ## Índices y config de Mongo
 
@@ -46,6 +46,6 @@ ver las referencias cruzadas de cada punto.
 
 ## Referencias
 
-- `docs/DEFENSA.md` §26 — centralización de secretos (`.env`/`.env.example`), motivo completo.
-- `docs/DEFENSA.md` §4 — contraseña mínima, fase MVP.
+- `docs/TRADEOFFS.md` §26 — centralización de secretos (`.env`/`.env.example`), motivo completo.
+- `docs/TRADEOFFS.md` §4 — contraseña mínima, fase MVP.
 - `docs/MEJORAS.md` #129 — registro del cambio de centralización.

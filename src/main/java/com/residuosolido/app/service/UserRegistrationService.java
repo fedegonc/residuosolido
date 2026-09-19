@@ -21,7 +21,7 @@ public class UserRegistrationService {
 
     /**
      * Registro simplificado a propósito para facilitar las pruebas (ver
-     * docs/DEFENSA.md §24): nombre en vez de usuario técnico (acepta espacios),
+     * docs/TRADEOFFS.md §24): nombre en vez de usuario técnico (acepta espacios),
      * teléfono en vez de email, PIN de 4 dígitos en vez de contraseña.
      */
     public String validateUserRegistration(User user) {

@@ -18,7 +18,7 @@
 - Feature/mejora nueva → agregar fila en `docs/MEJORAS.md` (tabla de superficies) con su estado (Implementado/Descartado/Diferido).
 - Endpoint nuevo → actualizar `docs/ENDPOINTS.md` y `Routes.java`.
 - Mecanismo de seguridad nuevo o cambiado → actualizar `docs/DEFENSA.md` y `docs/MEJORAS.md`.
-- Decisión de diseño/tradeoff → agregar sección en `docs/DEFENSA.md` (tradeoffs).
+- Decisión de diseño/tradeoff → agregar sección en `docs/TRADEOFFS.md`.
 - Cambio en el conteo de tests → actualizar encabezado de `docs/INDICE.md`.
 - Diagrama nuevo o modificado → `docs/diagrams/` + referenciar en `docs/DIAGRAMAS.md`.
 
@@ -45,11 +45,15 @@ mvn pmd:pmd pmd:check           # análisis estático
 
 ## Documentación del Proyecto
 
-- `docs/INDICE.md` — mapa de toda la documentación
-- `docs/DEFENSA.md` — guía de defensa de tesis, tradeoffs
-- `docs/DIAGRAMAS.md` — diagramas UML y arquitectura
+- `docs/INDICE.md` — mapa de toda la documentación (un doc por tema)
+- `docs/REQUISITOS.md` — catálogo RF/RN y criterio de alcance
+- `docs/DEFENSA.md` — guía de defensa de tesis
+- `docs/TRADEOFFS.md` — decisiones de diseño y tradeoffs
+- `docs/DIAGRAMAS.md` — diagramas UML
+- `docs/ARQUITECTURA.md` — núcleo del sistema y flujos
 - `docs/ENDPOINTS.md` — rutas HTTP y OpenAPI
 - `docs/MEJORAS.md` — estado de mejoras (implementado/descartado/diferido)
+- `docs/GITFLOW.md` — flujo de ramas, commits y deploy
 
 ## Convenciones de Frontend
 
@@ -100,7 +104,7 @@ mvn pmd:pmd pmd:check           # análisis estático
 
 - **Ramas:**
   - `main` — estable y deployable. Render hace auto-deploy on push a `main`
-    (ver `docs/DEFENSA.md` §19) — nunca pushear directo acá sin verificar
+    (ver `docs/TRADEOFFS.md` §19) — nunca pushear directo acá sin verificar
     (`mvn clean test`) antes.
   - `developer` — rama de integración. Punto de partida por defecto para
     trabajo nuevo.

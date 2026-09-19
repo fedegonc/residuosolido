@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  *
  * Motivo: el índice único de "email" venía sin sparse (de cuando el registro
  * pedía email obligatorio). Ahora el registro pide teléfono en su lugar
- * (ver UserRegistrationService, docs/DEFENSA.md §24) — con 2+ usuarios en
+ * (ver UserRegistrationService, docs/TRADEOFFS.md §24) — con 2+ usuarios en
  * email=null, ese índice viejo choca y tira abajo el arranque de la app
  * (MongoCommandException IndexKeySpecsConflict).
  *

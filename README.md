@@ -54,7 +54,7 @@ Livramento, Brasil).
    ```
    En producción (Render u otro host), las mismas claves se configuran como
    variables de entorno del servicio — nunca en archivos versionados. Ver
-   `docs/DEFENSA.md` §26.
+   `docs/TRADEOFFS.md` §26.
 
 3. **Ejecutar la aplicación**
    ```bash
@@ -71,16 +71,21 @@ Livramento, Brasil).
 ## Documentación
 
 - `docs/INDICE.md` — Punto de entrada y mapa de toda la documentación
+- `docs/REQUISITOS.md` — Catálogo RF/RN y criterio de alcance
 - `docs/ENDPOINTS.md` — Rutas HTTP del sistema, acceso por rol y OpenAPI
-- `docs/DIAGRAMAS.md` — Diagramas UML, arquitectura y requisitos en anexo
-- `docs/DEFENSA.md` — Guía de defensa, tradeoffs y limitaciones
-- `docs/MEJORAS.md` — Mejoras implementadas, diferidas y correcciones
+- `docs/DIAGRAMAS.md` — Diagramas UML y flujos
+- `docs/ARQUITECTURA.md` — Núcleo del sistema (componentes y flujos)
+- `docs/GITFLOW.md` — Flujo de trabajo del repo (ramas, merges, deploy)
+- `docs/DEFENSA.md` — Guía de defensa de tesis
+- `docs/TRADEOFFS.md` — Decisiones de diseño y tradeoffs
+- `docs/MEJORAS.md` — Tabla de mejoras (implementadas/descartadas/diferidas)
 - `docs/METODOLOGIA.md` — Modelo iterativo incremental (4 fases)
+- `docs/COPIES.md` — Textos de UI (single source of truth i18n)
 - `docs/diagrams/` — Diagramas draw.io (casos de uso, modelo lógico,
-  clases, estados)
+  clases, estados, secuencia, gitflow)
 
-Los anexos (arquitectura, RF-RN, testing, hardening, tradeoffs, copys)
-están como secciones dentro de estos archivos. Ver `docs/INDICE.md`.
+Organización: un documento por tema. Ver `docs/INDICE.md` para el mapa
+temático completo.
 
 ## Build de producción
 

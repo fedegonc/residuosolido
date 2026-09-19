@@ -98,7 +98,7 @@ Los documentos canónicos declaran 8 requisitos funcionales, 14 reglas de negoci
 - Todos los materiales de una solicitud deben estar incluidos entre los aceptados por la organización.
 - Las transiciones y el borrado utilizan optimistic locking mediante `@Version`.
 
-[FALTA: catálogo canónico completo y numerado de los 8 RF y las 14 RN con descripción, precondiciones, postcondiciones y criterios de aceptación; debería originarse en la sección `Requisitos y Reglas de Negocio` de `docs/DIAGRAMAS.md`.]
+[RESUELTO: el catálogo canónico RF/RN vive en `docs/REQUISITOS.md` — 8 RF por actor y RN numeradas con su punto de aplicación en código.]
 
 ## 5. Arquitectura
 
@@ -135,7 +135,7 @@ Incluye controllers Spring MVC, templates Thymeleaf renderizados en servidor, fr
 
 La persistencia utiliza Spring Data MongoDB. `Request.user` y `Request.organization` son referencias documentales a `User`. Los materiales se almacenan como una lista del enum `MaterialCategory`; no existe una entidad separada para materiales.
 
-[FALTA: sincronización canónica de cantidades y componentes arquitectónicos después de las consolidaciones y eliminaciones recientes; debería originarse en `docs/DIAGRAMAS.md` §Núcleo del Sistema.]
+[RESUELTO: el núcleo del sistema vive en `docs/ARQUITECTURA.md` — inventario de componentes por capa, flujos principales y decisiones de arquitectura.]
 
 ## 6. Modelo de dominio
 
@@ -327,7 +327,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - **Un solo CSS con variables y BEM:** evita tooling adicional de frontend y mantiene coherencia visual.
 - **Dark mode con variables CSS:** evita dependencias y respeta preferencia persistida y del sistema operativo.
 - **Sin blog:** elimina complejidad de CMS y riesgo de edición dinámica.
-- **Panel de acopio como lista filtrada (no Kanban):** una sola vista de la verdad con filtro por estado; el Kanban se eliminó por duplicar la lista (ver `docs/DEFENSA.md` §7).
+- **Panel de acopio como lista filtrada (no Kanban):** una sola vista de la verdad con filtro por estado; el Kanban se eliminó por duplicar la lista (ver `docs/TRADEOFFS.md` §7).
 - **HTML fuera del caché del service worker:** evita contenido desactualizado a costa de navegación offline.
 
 ### Operación
@@ -392,7 +392,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - Índice visual de figuras: `docs/diagrams/figuras.html`.
 - Explicación textual y arquitectura: `docs/DIAGRAMAS.md`.
 
-[FALTA: diagrama canónico de despliegue/infraestructura que relacione GitHub, Render, contenedor Docker, Spring Boot, MongoDB Atlas, Actuator y monitorización externa; debería originarse en `docs/DIAGRAMAS.md` y guardarse en `docs/diagrams/`.]
+[PARCIAL: `docs/diagrams/figura5-gitflow.drawio` cubre el tramo repo→Render→producción. Falta el detalle de contenedor Docker, MongoDB Atlas, Actuator y monitorización externa.]
 
 ## Resumen de huecos
 

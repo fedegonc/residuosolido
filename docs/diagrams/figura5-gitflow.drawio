@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio-mcp" modified="2026-09-19T01:56:00.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram name="figura5-gitflow" id="57f8efc6c62e">
+    <mxGraphModel dx="1354" dy="981" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="developer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="560" y="330" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="3" value="feature/&lt;slug&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="560" y="230" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="4" value="Trabajo local&#10;(commits convencionales)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="50" y="130" width="212.0" height="60.0" />
+        </mxCell>
+        <mxCell id="5" value="Producción" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="560" y="630" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="6" value="main" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="560" y="430" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="7" value="Render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=10;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="560" y="530" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="8" value="checkout -b desde developer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" edge="1" source="4" target="3">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="160" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9" value="merge — tests OK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" edge="1" source="3" target="2">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="10" value="merge — verificado mvn test" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" edge="1" source="2" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="11" value="push → auto-deploy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" edge="1" source="6" target="7">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="12" value="https://residuosolido.onrender.com" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" edge="1" source="7" target="5">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="13" value="Gitflow del proyecto — Eco Solicitud" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="300" y="130" width="400" height="60.0" />
+        </mxCell>
+        <mxCell id="14" value="Flujo de ramas: tópico → developer → main → deploy automático" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="760" y="130" width="400" height="60.0" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
