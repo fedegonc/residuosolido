@@ -63,7 +63,6 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 
 /* ═══ CARD ═══ */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:var(--gap)}
-.card--form{padding:1.25rem}
 .card__title{font-size:var(--text-xl);font-weight:700;margin-bottom:.25rem;color:var(--text)}
 .card__subtitle{font-size:var(--text-sm);color:var(--muted);margin-bottom:1rem}
 .card__footer{margin-top:1rem;text-align:center;font-size:var(--text-sm);color:var(--muted)}

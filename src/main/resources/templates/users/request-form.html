@@ -18,18 +18,18 @@
       (cualquier isGuest/needsPhone), isEdit=true    → edición (campos extra arriba)
   -->
   <main layout:fragment="content">
-    <div class="page">
-      <div class="card card--form">
-        <h1 class="card__title" th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</h1>
-        <h1 class="card__title" th:unless="${isEdit}" data-i18n="req_form_title_new">Solicitar recolección</h1>
-        <p class="card__subtitle" th:if="${isEdit}" data-i18n="req_form_subtitle_edit">Modificá los datos de tu solicitud</p>
-        <p class="card__subtitle" th:unless="${isEdit}" data-i18n="req_form_subtitle_new">Decinos qué materiales tenés y en qué dirección retirarlos.</p>
+    <div class="page page--center">
+      <div class="split">
+        <section class="hero">
+          <h1 class="card__title" th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</h1>
+          <h1 class="card__title" th:unless="${isEdit}" data-i18n="req_form_title_new">Solicitar recolección</h1>
+          <p class="card__subtitle" th:if="${isEdit}" data-i18n="req_form_subtitle_edit">Modificá los datos de tu solicitud</p>
+          <p class="card__subtitle" th:unless="${isEdit}" data-i18n="req_form_subtitle_new">Decinos qué materiales tenés y en qué dirección retirarlos.</p>
 
-        <form th:action="${isEdit} ? '/solicitudes/' + ${request.id} : '/solicitar'"
-              method="post" enctype="multipart/form-data" id="requestForm" class="stack">
-          <input th:if="${isEdit}" type="hidden" name="_method" value="put">
+          <form th:action="${isEdit} ? '/solicitudes/' + ${request.id} : '/solicitar'"
+                method="post" enctype="multipart/form-data" id="requestForm" class="stack">
+            <input th:if="${isEdit}" type="hidden" name="_method" value="put">
 
-          <div class="grid grid--2">
             <!-- Sección: contacto -->
             <div class="form-section">
               <h2 class="card__subtitle" data-i18n="req_form_section_contact">Tu información de contacto</h2>
@@ -121,10 +121,9 @@
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="field">
-            <label data-i18n="req_form_materials">Materiales <span class="req">*</span></label>
+            <div class="field">
+              <label data-i18n="req_form_materials">Materiales <span class="req">*</span></label>
             <span class="htmx-indicator hint" id="materialsLoading"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="req_form_materials_loading">Actualizando materiales...</span></span>
             <div class="check-grid">
               <th:block th:each="mat : ${materials}">
@@ -185,20 +184,42 @@
             <img th:if="${request.hasImage()}" th:src="${request.imageUrl}" th:alt="'Foto de la solicitud #' + ${request.id}" class="img-preview">
           </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn btn--primary">
-              <i class="fa-solid fa-paper-plane"></i>
-              <span th:if="${isEdit}" data-i18n="req_form_submit_edit">Guardar cambios</span>
-              <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Pedir recolección</span>
-            </button>
-            <a th:href="${isEdit} ? '/mis-solicitudes' : '/'" class="btn btn--outline">
-              <i class="fa-solid fa-xmark"></i> <span data-i18n="req_form_cancel">Cancelar</span>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span th:if="${isEdit}" data-i18n="req_form_submit_edit">Guardar cambios</span>
+                <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Pedir recolección</span>
+              </button>
+              <a th:href="${isEdit} ? '/mis-solicitudes' : '/'" class="btn btn--outline">
+                <i class="fa-solid fa-xmark"></i> <span data-i18n="req_form_cancel">Cancelar</span>
+              </a>
+            </div>
+          </form>
+        </section>
+
+        <section class="hero hero--dark" th:if="${isGuest}">
+          <h2 class="hero__title hero__title--sm" data-i18n="req_form_alt_guest_title">¿Ya pediste una recolección?</h2>
+          <p class="hero__subtitle" data-i18n="req_form_alt_guest_desc">Buscala con tu teléfono y el código que te dimos.</p>
+          <div class="hero__cta">
+            <a th:href="@{/rastrear}" class="btn btn--light">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span data-i18n="cta_track">Buscar mi solicitud</span>
             </a>
           </div>
-        </form>
+        </section>
+
+        <section class="hero hero--dark" th:unless="${isGuest}">
+          <h2 class="hero__title hero__title--sm" data-i18n="req_form_alt_user_title">Tus solicitudes</h2>
+          <p class="hero__subtitle" data-i18n="req_form_alt_user_desc">Mirá el estado de las recolecciones que ya pediste.</p>
+          <div class="hero__cta">
+            <a th:href="@{/mis-solicitudes}" class="btn btn--light">
+              <i class="fa-solid fa-list"></i>
+              <span data-i18n="nav_my_requests">Mis solicitudes</span>
+            </a>
+          </div>
+        </section>
       </div>
     </div>
-
   </main>
 
   <th:block layout:fragment="pageScripts">
