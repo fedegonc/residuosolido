@@ -171,7 +171,7 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 .footer__copy{color:#7a9b89;font-size:var(--text-xs)}
 @media(max-width:768px){.footer__inner{flex-direction:column;text-align:center}}
 
-/* ═══ MODAL (HTMX-loaded) ═══ */
+/* ═══ MODAL ═══ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem;transition:background-color var(--transition-base) var(--ease-out);
   @starting-style{background-color:rgba(0,0,0,0)}
 }
@@ -273,3 +273,4 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 .hero--dark .hero__title{color:#fff;margin-bottom:1rem}
 .hero--dark .hero__subtitle{color:rgba(255,255,255,.72)}
 .hero--dark .stack{gap:.75rem}
+.hero--dark .field label{color:rgba(255,255,255,.9)}

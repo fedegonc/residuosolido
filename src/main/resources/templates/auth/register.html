@@ -10,35 +10,12 @@
           <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
           <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
 
-          <form th:action="@{/registrarse}" th:object="${user}" method="post" class="stack">
-            <div class="field">
-              <label for="username" data-i18n="auth_name">Nombre</label>
-              <input type="text" id="username" th:field="*{username}" required class="input"
-                     data-i18n-attr="placeholder:auth_name_placeholder" placeholder="Ej: Ana García">
-            </div>
-            <div class="field">
-              <label for="phoneNational" data-i18n="auth_phone">Número de celular</label>
-              <div class="phone-country-row">
-                <select id="phoneCountryCode" name="countryCode" class="select select--sm">
-                  <option value="+598" selected>🇺🇾 +598</option>
-                  <option value="+55">🇧🇷 +55</option>
-                </select>
-                <input type="tel" id="phoneNational" name="phoneNational" class="input" placeholder="9X XXX XXX" required>
-              </div>
-              <div class="field is-hidden mt-sm" id="phoneDddGroup">
-                <label for="ddd">DDD</label>
-                <input type="text" id="ddd" name="ddd" class="input input--sm" value="55" maxlength="2">
-              </div>
-            </div>
-            <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
-            <div class="field">
-              <label class="row">
-                <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
-                <span data-i18n="auth_is_organization">Soy una cooperativa o reciclador</span>
-              </label>
-              <span class="hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección.</span>
-            </div>
-            <button type="submit" class="btn btn--primary btn--block" data-i18n="auth_register_button">Registrarse</button>
+          <form th:action="@{/registrarse}" method="post" class="stack">
+            <div th:replace="~{fragments/forms :: text('username', 'username', 'text', 'auth_name', 'Nombre', 'auth_name_placeholder', 'Ej: Ana García', true, ${user.username})}"></div>
+            <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'auth_phone', 'Número de celular', true, ${user.phoneNational}, ${user.countryCode}, ${user.ddd}, null, null)}"></div>
+            <div th:replace="~{fragments/forms :: pin('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
+            <div th:replace="~{fragments/forms :: check('isOrganization', 'isOrganization', 'auth_is_organization', 'Soy una cooperativa o reciclador', 'auth_is_organization_hint', 'Marcá esta opción si querés recibir solicitudes de recolección.')}"></div>
+            <div th:replace="~{fragments/forms :: submit(null, 'auth_register_button', 'Registrarse', 'btn--primary btn--block')}"></div>
           </form>
 
           <p class="card__footer">

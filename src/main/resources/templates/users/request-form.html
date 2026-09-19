@@ -34,25 +34,14 @@
             <div class="form-section">
               <h2 class="card__subtitle" data-i18n="req_form_section_contact">Tu información de contacto</h2>
               <div class="stack" th:if="${isGuest}">
-                <div class="field">
-                  <label for="guestName" data-i18n="req_form_guest_name">Tu nombre <span class="req">*</span></label>
-                  <input type="text" id="guestName" name="guestName" class="input" th:value="${request.guestName}"
-                         data-i18n-attr="placeholder:req_form_guest_name_placeholder" placeholder="Ej: Ana García" required>
-                </div>
-                <div class="field">
-                  <label for="guestPhoneNational" data-i18n="req_form_guest_phone">Tu teléfono <span class="req">*</span></label>
-                  <div class="phone-country-row">
-                    <select id="guestPhoneCountryCode" name="guestCountryCode" class="select select--sm">
-                      <option value="+598" selected>🇺🇾 +598</option>
-                      <option value="+55">🇧🇷 +55</option>
-                    </select>
-                    <input type="tel" id="guestPhoneNational" name="guestPhoneNational" class="input"
-                           th:value="${request.guestPhone != null ? request.guestPhone : ''}" placeholder="9X XXX XXX" required>
-                  </div>
-                  <div class="field is-hidden mt-sm" id="guestPhoneDddGroup">
-                    <label for="guestDdd">DDD</label>
-                    <input type="text" id="guestDdd" name="guestDdd" class="input input--sm" value="55" maxlength="2">
-                  </div>
+                <div th:replace="~{fragments/forms :: text('guestName', 'guestName', 'text', 'req_form_guest_name', 'Tu nombre', 'req_form_guest_name_placeholder', 'Ej: Ana García', true, ${request.guestName})}"></div>
+                <!-- Prefill: el index manda los params ya separados (guestCountryCode/
+                     guestPhoneNational/guestDdd); ?telefono= crudo queda como fallback
+                     vía request.guestPhone (lo reparte distributePrefill en app.js) -->
+                <div th:with="gpn=${param.guestPhoneNational != null ? param.guestPhoneNational[0] : request.guestPhone},
+                              gcc=${param.guestCountryCode != null ? param.guestCountryCode[0] : null},
+                              gdd=${param.guestDdd != null ? param.guestDdd[0] : null}">
+                  <div th:replace="~{fragments/forms :: phone('guestPhone', 'guestCountryCode', 'guestPhoneNational', 'guestDdd', 'req_form_guest_phone', 'Tu teléfono', true, ${gpn}, ${gcc}, ${gdd}, null, null)}"></div>
                 </div>
                 <p class="hint" data-i18n="req_form_guest_hint">Te pedimos estos datos para poder buscar tu solicitud</p>
                 <p class="hint"><a href="/entrar" data-i18n="req_form_have_account">¿Ya tenés cuenta? Iniciá sesión</a></p>
@@ -61,20 +50,8 @@
                 <i class="fa-solid fa-circle-info"></i>
                 <span data-i18n="req_form_logged_in_note">Usaremos los datos de tu perfil para esta solicitud</span>
               </div>
-              <div th:if="${needsPhone}" class="field">
-                <label for="userPhoneNational">Teléfono de contacto <span class="req">*</span></label>
-                <div class="phone-country-row">
-                  <select id="userPhoneCountryCode" name="userCountryCode" class="select select--sm">
-                    <option value="+598" selected>🇺🇾 +598</option>
-                    <option value="+55">🇧🇷 +55</option>
-                  </select>
-                  <input type="tel" id="userPhoneNational" name="userPhoneNational" class="input" placeholder="9X XXX XXX" required>
-                </div>
-                <div class="field is-hidden mt-sm" id="userPhoneDddGroup">
-                  <label for="userDdd">DDD</label>
-                  <input type="text" id="userDdd" name="userDdd" class="input input--sm" value="55" maxlength="2">
-                </div>
-                <span class="hint">Se guardará en tu perfil para coordinar la recolección.</span>
+              <div th:if="${needsPhone}">
+                <div th:replace="~{fragments/forms :: phone('userPhone', 'userCountryCode', 'userPhoneNational', 'userDdd', null, 'Teléfono de contacto', true, null, null, null, null, 'Se guardará en tu perfil para coordinar la recolección.')}"></div>
               </div>
             </div>
 
@@ -83,10 +60,8 @@
               <h2 class="card__subtitle" data-i18n="req_form_section_details">Detalles de la recolección</h2>
               <div class="stack">
                 <div class="field">
-                  <label for="ciudad" data-i18n="req_form_city">Ciudad <span class="req">*</span></label>
-                  <select id="ciudad" name="ciudad" class="select" th:disabled="${isEdit}" required
-                          hx-get="/solicitudes/org-options" hx-target="#organizationId" hx-include="this"
-                          hx-indicator="#materialsLoading">
+                  <label for="ciudad"><span data-i18n="req_form_city">Ciudad</span> <span class="req">*</span></label>
+                  <select id="ciudad" name="ciudad" class="select" th:disabled="${isEdit}" required>
                     <option value="" data-i18n="req_form_city_select">Seleccioná una ciudad</option>
                     <option th:each="c : ${cities}" th:value="${c}"
                             th:attr="data-i18n=${'req_city_' + #strings.toLowerCase(c.name())}"
@@ -108,32 +83,17 @@
                     </th:block>
                   </select>
                 </div>
-                <div class="field">
-                  <label for="address" data-i18n="req_form_address">Dirección <span class="req">*</span></label>
-                  <input type="text" id="address" name="address" class="input" th:value="${request.address}"
-                         data-i18n-attr="placeholder:req_form_address_placeholder" placeholder="Ej: Calle 123" required>
-                </div>
-                <div th:if="${isEdit}" class="field">
-                  <label for="addressReference" data-i18n="req_form_address_ref">Referencia (opcional)</label>
-                  <input type="text" id="addressReference" name="addressReference" class="input"
-                         th:value="${request.addressReference}"
-                         data-i18n-attr="placeholder:req_form_address_ref_placeholder" placeholder="Ej: Casa esquinera">
+                <div th:replace="~{fragments/forms :: text('address', 'address', 'text', 'req_form_address', 'Dirección', 'req_form_address_placeholder', 'Ej: Calle 123', true, ${request.address})}"></div>
+                <div th:if="${isEdit}">
+                  <div th:replace="~{fragments/forms :: text('addressReference', 'addressReference', 'text', 'req_form_address_ref', 'Referencia (opcional)', 'req_form_address_ref_placeholder', 'Ej: Casa esquinera', false, ${request.addressReference})}"></div>
                 </div>
               </div>
             </div>
 
             <div class="field">
-              <label data-i18n="req_form_materials">Materiales <span class="req">*</span></label>
-            <span class="htmx-indicator hint" id="materialsLoading"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="req_form_materials_loading">Actualizando materiales...</span></span>
-            <div class="check-grid">
-              <th:block th:each="mat : ${materials}">
-                <label class="check-card" th:attr="data-material=${mat.name()}">
-                  <input type="checkbox" name="materials" th:value="${mat.name()}"
-                         th:checked="${request.hasMaterials() and request.materials.contains(mat)}">
-                  <span th:attr="data-i18n=${'req_mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
-                </label>
-              </th:block>
-            </div>
+              <label><span data-i18n="req_form_materials">Materiales</span> <span class="req">*</span></label>
+            <span class="hint is-hidden" id="materialsLoading"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="req_form_materials_loading">Actualizando materiales...</span></span>
+            <div th:replace="~{fragments/forms :: checkGrid(${materials}, 'materials', ${request.materials}, 'req_mat_')}"></div>
           </div>
 
           <div th:if="${isEdit}" class="field">

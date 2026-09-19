@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"></head>
+<body>
+  <!--
+    Campos de formulario canónicos — raíz única de todos los forms del sitio
+    (index, login, register, track, request-form, org/profile). Convenciones:
+      - labelKey/labelText: clave i18n + texto default ES. labelKey=null → label
+        sin data-i18n; ambos null → sin label (inputs placeholder-only, ej. index).
+      - El texto i18n va en un <span> interno, no en el <label>: applyTranslations
+        hace textContent y borraría el span.req (*) si estuviera en el label.
+      - required: agrega el atributo al input y el span.req al label.
+      - phone(prefix, ccName, natName, dddName, ...): ids derivados del prefijo
+        (los que engancha app.js → PHONE_PREFIXES); names explícitos porque son
+        el contrato con el backend (guest*/user*/sin prefijo según el controller).
+        name=null → el input no se submitea (track lo usa así: JS asigna
+        name='telefono' al nacional en runtime).
+          ids: {prefix}CountryCode | {prefix}National | {prefix}DddGroup | {prefix}Ddd
+    Casos con attrs únicos (autofocus, autocomplete, hx-*, selects con th:each
+    sobre listas del modelo) quedan inline en su template — ver MEJORAS.md #137.
+  -->
+
+  <!-- Texto/email genérico: label opcional + input.input + placeholder i18n. -->
+  <div th:fragment="text(id, name, type, labelKey, labelText, phKey, phText, required, value)" class="field">
+    <label th:if="${labelText != null}" th:for="${id}">
+      <span th:attr="data-i18n=${labelKey}" th:text="${labelText}"></span>
+      <span th:if="${required}" class="req">*</span>
+    </label>
+    <input th:type="${type}" th:id="${id}" th:name="${name}" class="input" th:value="${value}"
+           th:required="${required}" th:placeholder="${phText}"
+           th:attr="data-i18n-attr=${phKey != null ? 'placeholder:' + phKey : null}">
+  </div>
+
+  <!-- Teléfono binacional UY/BR: select país + nacional + DDD (visible solo en +55). -->
+  <div th:fragment="phone(prefix, ccName, natName, dddName, labelKey, labelText, required, nationalValue, selectedCode, dddValue, hintKey, hintText)" class="field">
+    <label th:if="${labelText != null}" th:for="${prefix} + 'National'">
+      <span th:attr="data-i18n=${labelKey}" th:text="${labelText}"></span>
+      <span th:if="${required}" class="req">*</span>
+    </label>
+    <div class="phone-country-row">
+      <select th:id="${prefix} + 'CountryCode'" th:attr="name=${ccName}" class="select select--sm">
+        <option value="+598" th:selected="${selectedCode == null or selectedCode == '+598'}">🇺🇾 +598</option>
+        <option value="+55" th:selected="${'+55'.equals(selectedCode)}">🇧🇷 +55</option>
+      </select>
+      <input type="tel" th:id="${prefix} + 'National'" th:attr="name=${natName}" class="input"
+             th:value="${nationalValue}" th:required="${required}" placeholder="9X XXX XXX">
+    </div>
+    <div class="field mt-sm" th:id="${prefix} + 'DddGroup'"
+         th:classappend="${'+55'.equals(selectedCode)} ? '' : 'is-hidden'">
+      <label th:for="${prefix} + 'Ddd'">DDD</label>
+      <input type="text" th:id="${prefix} + 'Ddd'" th:attr="name=${dddName}" class="input input--sm"
+             th:value="${dddValue != null ? dddValue : '55'}" maxlength="2">
+    </div>
+    <span th:if="${hintText != null}" class="hint" th:attr="data-i18n=${hintKey}" th:text="${hintText}"></span>
+  </div>
+
+  <!-- Checklist de items como cards seleccionables (materiales en request-form
+       y org/profile). selected = colección ya marcada (o null). data-material
+       lo lee request-form.js para filtrar por organización. -->
+  <div th:fragment="checkGrid(items, name, selected, i18nPrefix)" class="check-grid">
+    <label th:each="mat : ${items}" class="check-card" th:attr="data-material=${mat.name()}">
+      <input type="checkbox" th:name="${name}" th:value="${mat.name()}"
+             th:checked="${selected != null and selected.contains(mat)}">
+      <span th:attr="data-i18n=${i18nPrefix + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}"></span>
+    </label>
+  </div>
+
+  <!-- Checkbox con label inline + hint opcional. -->
+  <div th:fragment="check(id, name, labelKey, labelText, hintKey, hintText)" class="field">
+    <label class="row">
+      <input type="checkbox" th:id="${id}" th:name="${name}" value="true">
+      <span th:attr="data-i18n=${labelKey}" th:text="${labelText}"></span>
+    </label>
+    <span th:if="${hintText != null}" class="hint" th:attr="data-i18n=${hintKey}" th:text="${hintText}"></span>
+  </div>
+
+  <!-- PIN de 4 dígitos en vez de contraseña — fricción mínima para pruebas,
+       ver docs/TRADEOFFS.md §24. (antes fragments/password-field.html) -->
+  <div th:fragment="pin(id, name, hintKey, hintText)" class="field">
+    <label th:for="${id}" data-i18n="auth_pin">PIN</label>
+    <div class="password-field">
+      <i class="fa-solid fa-lock" aria-hidden="true"></i>
+      <input type="password" th:id="${id}" th:name="${name}" required placeholder=" " class="password-field__input"
+             maxlength="4" pattern="[0-9]{4}" inputmode="numeric" autocomplete="off">
+      <button type="button" class="password-field__toggle"
+              aria-label="Mostrar u ocultar PIN" aria-pressed="false">
+        <i class="fa-solid fa-eye" aria-hidden="true"></i>
+      </button>
+    </div>
+    <span th:if="${hintText != null}" class="hint" th:attr="data-i18n=${hintKey}" th:text="${hintText}"></span>
+  </div>
+
+  <!-- Submit con icono opcional. variant = clases 'btn--*' (ej. 'btn--primary btn--block'). -->
+  <button th:fragment="submit(icon, labelKey, labelText, variant)" type="submit" th:class="'btn ' + ${variant}">
+    <i th:if="${icon != null}" th:class="'fa-solid ' + ${icon}" aria-hidden="true"></i>
+    <span th:attr="data-i18n=${labelKey}" th:text="${labelText}"></span>
+  </button>
+</body>
+</html>

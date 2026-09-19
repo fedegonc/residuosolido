@@ -500,8 +500,8 @@ o hacía falta un equipo?" Se responde con métricas, no con opinión.
 | Backend Java (producción) | 47 clases | 3.457 |
 | Backend Java (tests) | 26 clases | 3.245 |
 | Frontend — templates Thymeleaf | 25 | 1.127 |
-| Frontend — CSS (`app.css`+`fonts.css`+`htmx-states.css`) | 3 | 287 |
-| Frontend — JS vanilla | 1 | 180 |
+| Frontend — CSS (`app.css`+`fonts.css`) | 2 | 287 |
+| Frontend — JS vanilla | 3 | 180 |
 | i18n (es/pt, JSON) | 2 | 556 |
 | Documentación (`docs/*.md`) | 7 | 3.258 |
 | **Total** | **111** | **~12.110** |

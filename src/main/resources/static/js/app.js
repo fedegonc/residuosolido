@@ -5,14 +5,16 @@
    archivo, cargado vía layout:fragment="pageScripts" de esa página:
      - request-form.html → /js/request-form.js
      - org/profile.html  → /js/org-profile.js
-   HTMX maneja navbar, modal y actualizaciones parciales.
+   El modal de rastreo del navbar es markup inline oculto (is-hidden) — se
+   abre con [data-modal-open] y se cierra con .modal__close / overlay / Escape.
 
    Componentes globales activados por markup (usados en más de una página):
      .check-card       → request-form.html, org/profile.html
-     [data-toggle-target] (password) → auth/login.html, auth/register.html
+     .password-field__toggle (PIN) → auth/login.html, auth/register.html
      .radio-card       → request-form.html
      #imageFile/#fileName → request-form.html
-     selector de país (#*CountryCode) → request-form.html (guestPhone/userPhone), org/profile.html (phone) */
+     selector de país (#*CountryCode) → index, request-form (guestPhone/userPhone),
+     register, org/profile (phone), track (trackPhone) — markup canónico en fragments/forms.html */
 
 (function () {
   'use strict';
@@ -34,7 +36,7 @@
     document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
       el.getAttribute('data-i18n-attr').split(',').forEach(function (pair) {
         var parts = pair.trim().split(':');
-        if (translations[parts[1].trim()]) el.setAttribute(parts[0].trim(), translations[parts[1].trim()]);
+        if (parts[1] && translations[parts[1].trim()]) el.setAttribute(parts[0].trim(), translations[parts[1].trim()]);
       });
     });
   }
@@ -48,9 +50,9 @@
   });
 
   /* ─── Password visibility toggle (componente) ─── */
-  document.querySelectorAll('[data-toggle-target]').forEach(function (toggleBtn) {
+  document.querySelectorAll('.password-field__toggle').forEach(function (toggleBtn) {
     toggleBtn.addEventListener('click', function () {
-      var input = document.getElementById(toggleBtn.getAttribute('data-toggle-target'));
+      var input = toggleBtn.closest('.password-field').querySelector('input');
       if (!input) return;
       var icon = toggleBtn.querySelector('i');
       var willShow = input.type === 'password';
@@ -66,9 +68,16 @@
   /* ─── Interacciones delegadas (los handlers inline onclick/onsubmit están
      bloqueados por CSP script-src 'self') ─── */
   document.addEventListener('click', function (e) {
+    var opener = e.target.closest && e.target.closest('[data-modal-open]');
+    if (opener) {
+      var modal = document.getElementById(opener.getAttribute('data-modal-open'));
+      var target = modal && modal.querySelector('.modal-overlay');
+      if (target) target.classList.remove('is-hidden');
+      return;
+    }
     var overlay = e.target.closest && e.target.closest('.modal-overlay');
     if (overlay && (e.target.closest('.modal__close') || e.target === overlay)) {
-      overlay.remove();
+      overlay.classList.add('is-hidden');
       return;
     }
     var rejectToggle = e.target.closest && e.target.closest('#rejectToggle');
@@ -84,31 +93,14 @@
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
-      var overlay = document.querySelector('.modal-overlay');
-      if (overlay) overlay.remove();
+      var overlay = document.querySelector('.modal-overlay:not(.is-hidden)');
+      if (overlay) overlay.classList.add('is-hidden');
     }
   });
   document.addEventListener('submit', function (e) {
     var msg = e.target.getAttribute && e.target.getAttribute('data-confirm');
     if (msg && !window.confirm(msg)) e.preventDefault();
   });
-
-  /* ─── Re-apply i18n after HTMX swaps ─── */
-  document.body.addEventListener('htmx:afterSwap', applyTranslations);
-
-  /* ─── Toast de error de red/servidor para requests HTMX ─── */
-  function showErrorToast() {
-    document.querySelectorAll('.toast').forEach(function (el) { el.remove(); });
-    var toast = document.createElement('div');
-    toast.className = 'alert alert--error toast';
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span data-i18n="_server_error_generic">' +
-      (translations._server_error_generic || 'Algo salió mal. Probá de nuevo en un momento.') + '</span>';
-    document.body.appendChild(toast);
-    setTimeout(function () { toast.remove(); }, 5000);
-  }
-  document.body.addEventListener('htmx:responseError', showErrorToast);
-  document.body.addEventListener('htmx:sendError', showErrorToast);
 
   /* ─── Radio card visual state (componente) ─── */
   document.querySelectorAll('.radio-card input[type="radio"]').forEach(function (rb) {
@@ -131,7 +123,7 @@
   }
 
   /* ─── Phone country selector (UY/BR) (componente) ─── */
-  var PHONE_PREFIXES = ['guestPhone', 'userPhone', 'phone'];
+  var PHONE_PREFIXES = ['guestPhone', 'userPhone', 'phone', 'trackPhone'];
   var PHONE_PLACEHOLDERS = { '+598': '9X XXX XXX', '+55': '9XXXX-XXXX' };
   var PHONE_PATTERNS = { '+598': '[0-9 ]{8,11}', '+55': '[0-9-]{8,12}' };
 
@@ -147,7 +139,59 @@
       nationalInput.setAttribute('pattern', PHONE_PATTERNS[code] || '');
       if (dddGroup) dddGroup.classList.toggle('is-hidden', code !== '+55');
     }
+
+    /* Prefill: el index manda ?telefono=<texto libre> y el server lo vuelca
+       crudo en el input nacional. Si trae código de país (con o sin '+'),
+       lo reparte entre select / nacional / DDD. Espejo de PhoneNumber.normalize. */
+    function distributePrefill() {
+      var raw = nationalInput.value.replace(/[\s\-()]/g, '');
+      if (!raw) return;
+      var code = null;
+      var national = raw;
+      if (raw.indexOf('+598') === 0) { code = '+598'; national = raw.slice(4); }
+      else if (raw.indexOf('+55') === 0) { code = '+55'; national = raw.slice(3); }
+      else if (/^598\d{8}$/.test(raw)) { code = '+598'; national = raw.slice(3); }
+      else if (/^55\d{11}$/.test(raw)) { code = '+55'; national = raw.slice(2); }
+      // 11 dígitos sin código: jamás es UY válido (exige 8), se asume BR con DDD
+      else if (/^\d{2}9\d{8}$/.test(raw)) { code = '+55'; national = raw; }
+      if (code === '+55' && /^\d{11}$/.test(national)) {
+        var dddInput = dddGroup && dddGroup.querySelector('input');
+        if (dddInput) dddInput.value = national.slice(0, 2);
+        national = national.slice(2);
+      }
+      if (code) countrySel.value = code;
+      if ((code || countrySel.value) === '+598') national = national.replace(/^0+/, '');
+      nationalInput.value = national;
+    }
+
+    distributePrefill();
     countrySel.addEventListener('change', updateForCountry);
     updateForCountry();
   });
+
+  /* ─── Track (guest): el server espera un solo param `telefono` E.164.
+     El componente renderiza sin names (inputs = solo UI); JS promueve el
+     nacional a `telefono` y al submit lo reescribe como E.164. Sin JS,
+     telefono no se sube y el server simplemente no busca (no rompe). ─── */
+  var trackForm = document.getElementById('trackForm');
+  if (trackForm) {
+    var trackNat = document.getElementById('trackPhoneNational');
+    trackNat.name = 'telefono';
+    trackForm.addEventListener('submit', function () {
+      var code = document.getElementById('trackPhoneCountryCode').value;
+      var nat = trackNat.value.replace(/[\s\-()]/g, '');
+      var full;
+      if (nat.charAt(0) === '+') {
+        full = nat;
+      } else if (code === '+55') {
+        // 11 dígitos = DDD embebido (espejo de distributePrefill)
+        var ddd = nat.length === 11 ? nat.slice(0, 2) : document.getElementById('trackPhoneDdd').value.trim();
+        if (nat.length === 11) nat = nat.slice(2);
+        full = code + ddd + nat;
+      } else {
+        full = code + nat.replace(/^0+/, '');
+      }
+      trackNat.value = full;
+    });
+  }
 })();

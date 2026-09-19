@@ -11,12 +11,13 @@
           <p class="card__subtitle" data-i18n="auth_login_subtitle">Entrá para ver y gestionar tus solicitudes.</p>
 
           <form th:action="@{/entrar}" method="post" class="stack">
+            <!-- queda inline: es el único campo con autofocus (forms::text no lo modela) -->
             <div class="field">
               <label for="username" data-i18n="auth_name">Nombre</label>
               <input type="text" id="username" name="username" required autofocus class="input" placeholder=" ">
             </div>
-            <div th:replace="~{fragments/password-field :: field('password', 'password', null, null)}"></div>
-            <button type="submit" class="btn btn--primary btn--block" data-i18n="auth_login_button">Entrar</button>
+            <div th:replace="~{fragments/forms :: pin('password', 'password', null, null)}"></div>
+            <div th:replace="~{fragments/forms :: submit(null, 'auth_login_button', 'Entrar', 'btn--primary btn--block')}"></div>
           </form>
 
           <p class="card__footer">

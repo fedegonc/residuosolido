@@ -46,7 +46,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/solicitudes/org-options?ciudad=` | `RequestCreateController` | Opciones `<select>` de organizaciones por ciudad (HTMX) |
+| GET | `/solicitudes/org-options?ciudad=` | `RequestCreateController` | Opciones `<select>` de organizaciones por ciudad (fetch) |
 
 ---
 

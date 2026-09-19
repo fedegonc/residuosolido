@@ -65,8 +65,8 @@ public class RequestCreateController extends BaseController {
         return "users/request-form";
     }
 
-    /** HTMX: devuelve las opciones de organización para una ciudad como HTML. */
-    @GetMapping(Routes.HTMX_ORG_OPTIONS)
+    /** Devuelve las opciones de organización para una ciudad como HTML (fetch). */
+    @GetMapping(Routes.ORG_OPTIONS)
     public String orgOptionsForCity(@RequestParam("ciudad") City ciudad, Model model) {
         model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(ciudad));
         return "fragments/ui :: options";

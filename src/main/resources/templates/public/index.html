@@ -24,15 +24,12 @@
 
         <section class="hero hero--dark">
           <h2 class="hero__title hero__title--sm" data-i18n="split_guest_title">Hacelo con tu nombre y celular</h2>
+          <!-- El teléfono usa el componente canónico (prefix guestPhone) → los params
+               llegan ya estructurados a /solicitar: guestCountryCode/guestPhoneNational/guestDdd -->
           <form action="/solicitar" method="get" class="stack">
-            <input type="text" name="nombre" class="input" placeholder="Tu nombre" required
-                   data-i18n-attr="placeholder:split_guest_name">
-            <input type="tel" name="telefono" class="input" placeholder="Tu celular" required
-                   data-i18n-attr="placeholder:split_guest_phone">
-            <button type="submit" class="btn btn--light">
-              <i class="fa-solid fa-arrow-right"></i>
-              <span data-i18n="cta_request">Pedir recolección</span>
-            </button>
+            <div th:replace="~{fragments/forms :: text('nombre', 'nombre', 'text', null, null, 'split_guest_name', 'Tu nombre', true, null)}"></div>
+            <div th:replace="~{fragments/forms :: phone('guestPhone', 'guestCountryCode', 'guestPhoneNational', 'guestDdd', null, null, true, null, null, null, null, null)}"></div>
+            <div th:replace="~{fragments/forms :: submit('fa-arrow-right', 'cta_request', 'Pedir recolección', 'btn--light')}"></div>
           </form>
         </section>
       </div>

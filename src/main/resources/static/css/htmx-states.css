@@ -1,6 +1,0 @@
-/* Estados de HTMX: indicador de carga y transiciones de swap */
-.htmx-request{opacity:.6;pointer-events:none}
-.htmx-request .htmx-indicator{display:inline-block}
-.htmx-indicator{display:none}
-.htmx-swapping{opacity:0;transition:opacity var(--transition-base) var(--ease-out)}
-.htmx-settling{opacity:1;transition:opacity var(--transition-base) var(--ease-out)}

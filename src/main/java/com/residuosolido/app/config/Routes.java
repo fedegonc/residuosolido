@@ -46,7 +46,7 @@ public final class Routes {
 
     // API
     public static final String API_ORGANIZATIONS_BY_CITY = "/organizaciones";
-    public static final String HTMX_ORG_OPTIONS = "/solicitudes/org-options";
+    public static final String ORG_OPTIONS = "/solicitudes/org-options";
     public static final String API_ANY = "/api/**";
 
     // Documentación y estáticos

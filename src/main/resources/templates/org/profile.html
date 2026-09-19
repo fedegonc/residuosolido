@@ -38,28 +38,9 @@
         <h2 class="card__subtitle" data-i18n="org_profile_edit_title">Editar datos</h2>
         <form th:action="@{/mi-organizacion}" method="post" class="stack">
           <input type="hidden" name="_method" value="put">
-          <div class="field">
-            <label for="firstName" data-i18n="org_profile_name_label">Nombre</label>
-            <input type="text" id="firstName" name="firstName" class="input" th:value="${organization.firstName}">
-          </div>
-          <div class="field">
-            <label for="email" data-i18n="profile_email_label">Email</label>
-            <input type="email" id="email" name="email" class="input" th:value="${organization.email}" required>
-          </div>
-          <div class="field">
-            <label for="phoneNational" data-i18n="profile_phone_label">Teléfono</label>
-            <div class="phone-country-row">
-              <select id="phoneCountryCode" name="countryCode" class="select select--sm">
-                <option value="+598" th:selected="${organization.phone == null or organization.phone.startsWith('+598')}">🇺🇾 +598</option>
-                <option value="+55" th:selected="${organization.phone != null and organization.phone.startsWith('+55')}">🇧🇷 +55</option>
-              </select>
-              <input type="tel" id="phoneNational" name="phoneNational" class="input" th:value="${organization.phone}" placeholder="9X XXX XXX">
-            </div>
-            <div class="field is-hidden mt-sm" id="phoneDddGroup">
-              <label for="ddd">DDD</label>
-              <input type="text" id="ddd" name="ddd" class="input input--sm" value="55" maxlength="2">
-            </div>
-          </div>
+          <div th:replace="~{fragments/forms :: text('firstName', 'firstName', 'text', 'org_profile_name_label', 'Nombre', null, null, false, ${organization.firstName})}"></div>
+          <div th:replace="~{fragments/forms :: text('email', 'email', 'email', 'profile_email_label', 'Email', null, null, true, ${organization.email})}"></div>
+          <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'profile_phone_label', 'Teléfono', false, ${organization.phone}, ${organization.phone != null and organization.phone.startsWith('+55') ? '+55' : null}, null, null, null)}"></div>
           <div class="field">
             <label for="city" data-i18n="profile_city_label">Ciudad</label>
             <select id="city" name="ciudad" class="select">
@@ -69,14 +50,7 @@
           </div>
           <div class="field">
             <label data-i18n="org_profile_materials">Materiales</label>
-            <div class="check-grid">
-              <th:block th:each="mat : ${materials}">
-                <label class="check-card">
-                  <input type="checkbox" name="materiales" th:value="${mat.name()}" th:checked="${organization.acceptedMaterials.contains(mat)}">
-                  <span th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
-                </label>
-              </th:block>
-            </div>
+            <div th:replace="~{fragments/forms :: checkGrid(${materials}, 'materiales', ${organization.acceptedMaterials}, 'mat_')}"></div>
           </div>
           <div class="form-actions">
             <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="profile_save">Guardar</span></button>

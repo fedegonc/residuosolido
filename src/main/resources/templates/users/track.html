@@ -9,20 +9,18 @@
       <div class="card page--narrow mb">
         <h1 class="card__title" data-i18n="track_title">Buscar mi solicitud</h1>
         <p class="card__subtitle" data-i18n="track_subtitle">Si pediste recolección sin cuenta, ingresá tu teléfono y el código que te dimos.</p>
-        <form th:action="@{/rastrear}" method="get" class="stack">
-          <div class="field">
-            <label for="telefono" data-i18n="track_phone_label">Teléfono</label>
-            <input type="tel" id="telefono" name="telefono" class="input" th:value="${telefono}"
-                   data-i18n-attr="placeholder:track_phone_placeholder" placeholder="Ej: +598 99 123 456" required>
-          </div>
+        <!-- El teléfono usa el componente canónico (prefix trackPhone) con names=null:
+             los inputs son solo UI. app.js asigna name='telefono' al nacional y al
+             submit lo reescribe como E.164 — el server sigue recibiendo `telefono`. -->
+        <form th:action="@{/rastrear}" method="get" class="stack" id="trackForm">
+          <div th:replace="~{fragments/forms :: phone('trackPhone', null, null, null, 'track_phone_label', 'Teléfono', true, ${telefono}, null, null, null, null)}"></div>
+          <!-- queda inline: único campo con autocomplete="off" (forms::text no lo modela) -->
           <div class="field">
             <label for="codigo" data-i18n="track_code_label">Código de rastreo</label>
             <input type="text" id="codigo" name="codigo" class="input" th:value="${codigo}"
                    data-i18n-attr="placeholder:track_code_placeholder" placeholder="Ej: AB12CD34" autocomplete="off" required>
           </div>
-          <button type="submit" class="btn btn--primary btn--block">
-            <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="track_search_btn">Buscar</span>
-          </button>
+          <div th:replace="~{fragments/forms :: submit('fa-magnifying-glass', 'track_search_btn', 'Buscar', 'btn--primary btn--block')}"></div>
         </form>
       </div>
 
