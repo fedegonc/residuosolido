@@ -4,7 +4,7 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.dto.RegistrationForm;
-import com.residuosolido.app.config.GuestRateLimiter;
+import com.residuosolido.app.config.RateLimiter;
 import org.springframework.dao.DuplicateKeyException;
 import com.residuosolido.app.service.UserRegistrationService;
 import org.slf4j.Logger;
@@ -23,10 +23,10 @@ public class AuthController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final UserRegistrationService userRegistrationService;
-    private final GuestRateLimiter rateLimiter;
+    private final RateLimiter rateLimiter;
 
     @Autowired
-    public AuthController(UserRegistrationService userRegistrationService, GuestRateLimiter rateLimiter) {
+    public AuthController(UserRegistrationService userRegistrationService, RateLimiter rateLimiter) {
         this.userRegistrationService = userRegistrationService;
         this.rateLimiter = rateLimiter;
     }

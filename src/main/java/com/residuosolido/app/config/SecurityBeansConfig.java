@@ -20,9 +20,9 @@ public class SecurityBeansConfig {
     private static final Logger log = LoggerFactory.getLogger(SecurityBeansConfig.class);
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository, LoginAttemptService loginAttemptService) {
+    public UserDetailsService userDetailsService(UserRepository userRepository, RateLimiter rateLimiter) {
         return username -> {
-            if (loginAttemptService.isBlocked(username)) {
+            if (rateLimiter.isBlocked(username)) {
                 throw new LockedException("Cuenta bloqueada temporalmente por múltiples intentos fallidos");
             }
             return userRepository.findByUsername(username)

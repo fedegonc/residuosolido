@@ -16,12 +16,10 @@ import org.springframework.security.config.Customizer;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final LoginSuccessHandler successHandler;
-    private final LoginFailureHandler failureHandler;
- 
-    public SecurityConfig(LoginSuccessHandler successHandler, LoginFailureHandler failureHandler) {
-        this.successHandler = successHandler;
-        this.failureHandler = failureHandler;
+    private final AuthenticationEventHandler authHandler;
+
+    public SecurityConfig(AuthenticationEventHandler authHandler) {
+        this.authHandler = authHandler;
     }
 
     @Bean
@@ -60,8 +58,8 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage(Routes.LOGIN)
                 .loginProcessingUrl(Routes.LOGIN)
-                .successHandler(successHandler)
-                .failureHandler(failureHandler)
+                .successHandler(authHandler)
+                .failureHandler(authHandler)
                 .permitAll()
             )
             .logout(logout -> logout

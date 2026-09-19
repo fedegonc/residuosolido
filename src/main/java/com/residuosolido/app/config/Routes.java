@@ -66,7 +66,7 @@ public final class Routes {
     /**
      * A qué pantalla "vuelve" cada rol tras login o tras un error — función pura,
      * sin estado, por eso vive acá como static en vez de ser un @Component inyectado
-     * en 4 archivos distintos (LoginSuccessHandler, AuthNavigationInterceptor,
+     * en 4 archivos distintos (AuthenticationEventHandler, AuthNavigationInterceptor,
      * GlobalErrorController, GlobalExceptionHandler).
      */
     public static String resolveHomeForRole(Authentication auth) {

@@ -2,7 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.Routes;
 
-import com.residuosolido.app.config.GuestRateLimiter;
+import com.residuosolido.app.config.RateLimiter;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
@@ -31,12 +31,12 @@ public class RequestCreateController extends BaseController {
 
     private final RequestService requestService;
     private final CityOrgService cityOrgService;
-    private final GuestRateLimiter guestRateLimiter;
+    private final RateLimiter guestRateLimiter;
 
     @Autowired
     public RequestCreateController(RequestService requestService,
                                    CityOrgService cityOrgService,
-                                   GuestRateLimiter guestRateLimiter) {
+                                   RateLimiter guestRateLimiter) {
         this.requestService = requestService;
         this.cityOrgService = cityOrgService;
         this.guestRateLimiter = guestRateLimiter;
