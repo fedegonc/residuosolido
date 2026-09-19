@@ -18,14 +18,14 @@ class RoutesTest {
     void organization_redirectsToAcopioRequests() {
         Authentication auth = new UsernamePasswordAuthenticationToken("org", "pass",
                 List.of(new SimpleGrantedAuthority("ROLE_ORGANIZATION")));
-        assertEquals("/acopio/requests", Routes.resolveHomeForRole(auth));
+        assertEquals("/acopio/solicitudes", Routes.resolveHomeForRole(auth));
     }
 
     @Test
-    void user_redirectsToUsuariosInicio() {
+    void user_redirectsToMisSolicitudes() {
         Authentication auth = new UsernamePasswordAuthenticationToken("user", "pass",
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        assertEquals("/usuarios/inicio", Routes.resolveHomeForRole(auth));
+        assertEquals("/mis-solicitudes", Routes.resolveHomeForRole(auth));
     }
 
     @Test

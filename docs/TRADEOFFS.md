@@ -121,7 +121,7 @@ elimina.
 en una ruta separada — menos navegación, todo en un solo lugar.
 
 **Decisión actual:** el Kanban fue **eliminado**. El panel de acopio es
-`/acopio/requests`: una lista filtrable por estado con estadísticas en
+`/acopio/solicitudes`: una lista filtrable por estado con estadísticas en
 el encabezado. Las acciones (aceptar/rechazar/completar) se hacen desde
 el detalle de cada solicitud.
 

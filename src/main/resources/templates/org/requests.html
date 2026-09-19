@@ -20,18 +20,18 @@
         </div>
 
         <div class="row mb">
-          <a href="/acopio/requests" class="btn btn--outline btn--sm" th:classappend="${currentStatus == null} ? 'btn--primary' : ''"><span data-i18n="org_req_filter_all">Todas</span></a>
-          <a href="/acopio/requests?status=PENDING" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'PENDING'} ? 'btn--primary' : ''"><span data-i18n="req_status_pending">Pendientes</span></a>
-          <a href="/acopio/requests?status=IN_PROGRESS" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'IN_PROGRESS'} ? 'btn--primary' : ''"><span data-i18n="req_status_in_progress">En curso</span></a>
-          <a href="/acopio/requests?status=COMPLETED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'COMPLETED'} ? 'btn--primary' : ''"><span data-i18n="req_status_completed">Completadas</span></a>
-          <a href="/acopio/requests?status=REJECTED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'REJECTED'} ? 'btn--primary' : ''"><span data-i18n="req_status_rejected">Rechazadas</span></a>
+          <a href="/acopio/solicitudes" class="btn btn--outline btn--sm" th:classappend="${currentStatus == null} ? 'btn--primary' : ''"><span data-i18n="org_req_filter_all">Todas</span></a>
+          <a href="/acopio/solicitudes?estado=PENDING" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'PENDING'} ? 'btn--primary' : ''"><span data-i18n="req_status_pending">Pendientes</span></a>
+          <a href="/acopio/solicitudes?estado=IN_PROGRESS" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'IN_PROGRESS'} ? 'btn--primary' : ''"><span data-i18n="req_status_in_progress">En curso</span></a>
+          <a href="/acopio/solicitudes?estado=COMPLETED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'COMPLETED'} ? 'btn--primary' : ''"><span data-i18n="req_status_completed">Completadas</span></a>
+          <a href="/acopio/solicitudes?estado=REJECTED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'REJECTED'} ? 'btn--primary' : ''"><span data-i18n="req_status_rejected">Rechazadas</span></a>
         </div>
 
         <div th:if="${requests != null and !requests.isEmpty()}" class="request-list">
           <div th:each="req : ${requests}" class="request-item">
             <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
             <div class="form-actions">
-              <a th:href="@{/acopio/requests/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
+              <a th:href="@{/acopio/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
             <h1 class="card__title"><span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span></h1>
             <div th:replace="~{fragments/ui :: status(${request.status})}"></div>
           </div>
-          <a href="/acopio/requests" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="req_detail_back">Volver</span></a>
+          <a href="/acopio/solicitudes" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="req_detail_back">Volver</span></a>
         </div>
 
         <div class="card mb">
@@ -84,8 +84,7 @@
 
         <div th:if="${request.isPending()}" class="card mb">
           <h2 class="card__subtitle" data-i18n="org_req_accept_title">Aceptar solicitud</h2>
-          <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="stack">
-            <input type="hidden" name="action" value="accept" />
+          <form th:action="@{/acopio/solicitudes/{id}/aceptar(id=${request.id})}" method="post" class="stack">
             <div class="field">
               <label for="confirmedSlot" data-i18n="org_req_select_slot">Confirmar franja</label>
               <select id="confirmedSlot" name="confirmedSlot" class="select" required>
@@ -97,8 +96,7 @@
               <button type="button" id="rejectToggle" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
             </div>
           </form>
-          <form id="rejectForm" th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="is-hidden mt">
-            <input type="hidden" name="action" value="reject" />
+          <form id="rejectForm" th:action="@{/acopio/solicitudes/{id}/rechazar(id=${request.id})}" method="post" class="is-hidden mt">
             <p class="hint mb-sm" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
             <div class="row">
               <button type="submit" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span></button>
@@ -109,8 +107,7 @@
 
         <div th:if="${request.isInProgress()}" class="card mb">
           <h2 class="card__subtitle" data-i18n="org_req_complete_title">Finalizar recolección</h2>
-          <form th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post">
-            <input type="hidden" name="action" value="complete" />
+          <form th:action="@{/acopio/solicitudes/{id}/completar(id=${request.id})}" method="post">
             <button type="submit" class="btn btn--primary"><i class="fa-solid fa-circle-check"></i> <span data-i18n="org_req_complete">Marcar como completada</span></button>
           </form>
         </div>

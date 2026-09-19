@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -72,7 +73,7 @@ class EndToEndFlowsTest {
         mockMvc.perform(get(Routes.TRACK))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/track"))
-                .andExpect(model().attributeExists("phone", "code", "requests", "searched"));
+                .andExpect(model().attributeExists("telefono", "codigo", "requests", "searched"));
     }
 
     @Test
@@ -89,14 +90,14 @@ class EndToEndFlowsTest {
 
         when(requestService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
 
-        mockMvc.perform(post(Routes.TRACK).with(csrf())
-                        .param("phone", "+59899123456")
-                        .param("code", "AB12CD34"))
+        mockMvc.perform(get(Routes.TRACK)
+                        .param("telefono", "+59899123456")
+                        .param("codigo", "AB12CD34"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("users/track"))
                 .andExpect(model().attribute("searched", true))
-                .andExpect(model().attribute("phone", "+59899123456"))
-                .andExpect(model().attribute("code", "AB12CD34"));
+                .andExpect(model().attribute("telefono", "+59899123456"))
+                .andExpect(model().attribute("codigo", "AB12CD34"));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -208,13 +209,13 @@ class EndToEndFlowsTest {
                 .andExpect(model().attributeExists("organization", "cities"));
 
         // POST update
-        mockMvc.perform(post(Routes.ORG_PROFILE).with(csrf())
+        mockMvc.perform(put(Routes.ORG_PROFILE).with(csrf())
                         .param("email", "coop@test.com")
                         .param("firstName", "Cooperativa")
                         .param("phone", "+59899123456")
-                        .param("city", "RIVERA"))
+                        .param("ciudad", "RIVERA"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/acopio/perfil"));
+                .andExpect(redirectedUrl("/mi-organizacion"));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -286,11 +287,10 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
 
-        mockMvc.perform(post(Routes.ORG_REQUEST_TRANSITION, "req1").with(csrf())
-                        .param("action", "accept")
+        mockMvc.perform(post(Routes.ORG_REQUEST_ACCEPT, "req1").with(csrf())
                         .param("confirmedSlot", "MANANA"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/acopio/requests"));
+                .andExpect(redirectedUrl("/acopio/solicitudes"));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -309,11 +309,11 @@ class EndToEndFlowsTest {
         when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("error.request.address_required"));
 
-        mockMvc.perform(post(Routes.REQUESTS).with(csrf())
-                        .param("city", "RIVERA")
+        mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
+                        .param("ciudad", "RIVERA")
                         .param("address", "")
                         .param("organizationId", "org1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/solicitudes/nueva"));
+                .andExpect(redirectedUrl("/solicitar"));
     }
 }

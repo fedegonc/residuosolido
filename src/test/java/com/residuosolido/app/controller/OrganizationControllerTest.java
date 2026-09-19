@@ -70,14 +70,14 @@ class OrganizationControllerTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequests_invalidStatusFilter_doesNotReturn500() throws Exception {
-        mockMvc.perform(get(Routes.ORG_REQUESTS).param("status", "INVALID_STATUS"))
+        mockMvc.perform(get(Routes.ORG_REQUESTS).param("estado", "INVALID_STATUS"))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequests_validStatusFilter_returnsOk() throws Exception {
-        mockMvc.perform(get(Routes.ORG_REQUESTS).param("status", "PENDING"))
+        mockMvc.perform(get(Routes.ORG_REQUESTS).param("estado", "PENDING"))
                 .andExpect(status().isOk());
     }
 
@@ -91,7 +91,7 @@ class OrganizationControllerTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequests_garbageString_doesNotReturn500() throws Exception {
-        mockMvc.perform(get(Routes.ORG_REQUESTS).param("status", "'; DROP TABLE--"))
+        mockMvc.perform(get(Routes.ORG_REQUESTS).param("estado", "'; DROP TABLE--"))
                 .andExpect(status().isOk());
     }
 

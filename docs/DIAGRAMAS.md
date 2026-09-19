@@ -110,7 +110,7 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 
 **Secuencia representada:**
 
-1. El solicitante abre `/solicitudes/nueva` y completa el formulario.
+1. El solicitante abre `/solicitar` y completa el formulario.
 2. El formulario envía `POST /solicitudes`.
 3. Si es invitado, el controller verifica el rate limit.
 4. `RequestService` valida la imagen y los datos de la solicitud.
@@ -139,13 +139,13 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
 ## 6. Diagrama de flujo — Aceptar/Rechazar/Completar solicitud (RF-6)
 
 ```
-[Organización ve /acopio/requests]
+[Organización ve /acopio/solicitudes]
             │
             ▼
 [Selecciona acción: accept | reject | complete]
             │
             ▼
-   POST /acopio/requests/{id}/transition
+   POST /acopio/solicitudes/{id}/aceptar
             │
             ▼
   ┌─────────────────────────┐
@@ -161,7 +161,7 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
      │         │             │
      └─────────┴─────────────┘
                ▼
-   redirect a /acopio/requests
+   redirect a /acopio/solicitudes
 ```
 
 ---

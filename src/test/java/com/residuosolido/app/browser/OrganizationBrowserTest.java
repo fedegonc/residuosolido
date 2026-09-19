@@ -32,11 +32,11 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
         login("coopverde", "12345678");
 
         // Ir a la lista de solicitudes
-        page.navigate(baseUrl + "/acopio/requests");
+        page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
         // Buscar solicitudes pendientes
-        Locator viewLinks = page.locator("a[href*='/acopio/requests/']");
+        Locator viewLinks = page.locator("a[href*='/acopio/solicitudes/']");
         if (viewLinks.count() > 0) {
             viewLinks.first().click();
             page.locator("[data-i18n='req_detail_title']").waitFor();
@@ -61,10 +61,10 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#11 Rechazar solicitud pendiente")
     void orgRejectsRequest() {
         login("coopverde", "12345678");
-        page.navigate(baseUrl + "/acopio/requests");
+        page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
-        Locator viewLinks = page.locator("a[href*='/acopio/requests/']");
+        Locator viewLinks = page.locator("a[href*='/acopio/solicitudes/']");
         if (viewLinks.count() > 0) {
             viewLinks.first().click();
             page.locator("[data-i18n='req_detail_title']").waitFor();
@@ -86,7 +86,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#12 Completar solicitud en curso")
     void orgCompletesRequest() {
         login("coopverde", "12345678");
-        page.navigate(baseUrl + "/acopio/requests");
+        page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
         // Filtrar por "en curso" si hay filtro
@@ -96,7 +96,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
             page.waitForTimeout(1000);
         }
 
-        Locator viewLinks = page.locator("a[href*='/acopio/requests/']");
+        Locator viewLinks = page.locator("a[href*='/acopio/solicitudes/']");
         if (viewLinks.count() > 0) {
             viewLinks.first().click();
             page.locator("[data-i18n='req_detail_title']").waitFor();
@@ -116,7 +116,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#13 Editar perfil de organización")
     void orgEditsProfile() {
         login("coopverde", "12345678");
-        page.navigate(baseUrl + "/acopio/perfil");
+        page.navigate(baseUrl + "/mi-organizacion");
 
         page.locator("h1[data-i18n='org_profile_title']").waitFor();
         // Clickear "Editar perfil"

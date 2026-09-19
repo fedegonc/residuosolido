@@ -40,8 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(Routes.ERROR).permitAll()
                 .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/robots.txt", "/sitemap.xml", "/sw.js").permitAll()
                 // Formulario público de nueva solicitud
-                .requestMatchers(HttpMethod.GET, Routes.REQUESTS_NEW).permitAll()
-                .requestMatchers(HttpMethod.POST, Routes.REQUESTS).permitAll()
+                .requestMatchers(Routes.REQUESTS_NEW).permitAll()
                 .requestMatchers(Routes.TRACK).permitAll()
                 .requestMatchers(HttpMethod.GET, Routes.API_ORGANIZATIONS_BY_CITY).permitAll()
                 .requestMatchers(HttpMethod.GET, Routes.HTMX_ORG_OPTIONS).permitAll()
@@ -51,9 +50,9 @@ public class SecurityConfig {
                 // API endpoints para usuarios autenticados
                 .requestMatchers(Routes.API_ANY).authenticated()
                 // Rutas de usuarios regulares
-                .requestMatchers("/usuarios/**").hasRole("USER")
+                .requestMatchers(Routes.REQUESTS, "/solicitudes/**").hasRole("USER")
                 // Rutas de organización
-                .requestMatchers("/acopio/**").hasRole("ORGANIZATION")
+                .requestMatchers("/acopio/**", Routes.ORG_PROFILE).hasRole("ORGANIZATION")
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )

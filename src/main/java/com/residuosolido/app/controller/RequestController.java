@@ -47,13 +47,6 @@ public class RequestController extends BaseController {
         this.cityOrgService = cityOrgService;
     }
 
-    /** Dashboard unificado: lista de solicitudes + stats del usuario. */
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping(Routes.USER_HOME)
-    public String userHome() {
-        return "redirect:/solicitudes";
-    }
-
     /** Lista las solicitudes del usuario autenticado con stats. */
     @PreAuthorize("hasRole('USER')")
     @GetMapping(Routes.REQUESTS)
@@ -71,7 +64,7 @@ public class RequestController extends BaseController {
 
     /** Elimina una solicitud del usuario (solo si está pendiente). */
     @PreAuthorize("hasRole('USER')")
-    @PostMapping(Routes.REQUEST_DELETE)
+    @DeleteMapping(Routes.REQUEST)
     public String deleteRequest(@PathVariable String id, Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         try {
@@ -84,7 +77,7 @@ public class RequestController extends BaseController {
             logger.error("Error al eliminar solicitud: {}", e.getMessage());
             flashError(redirectAttributes, "flash.request.delete_error");
         }
-        return "redirect:/solicitudes";
+        return "redirect:" + Routes.REQUESTS;
     }
 
     /** Muestra el formulario de edición con los datos actuales. */
@@ -104,22 +97,22 @@ public class RequestController extends BaseController {
             return "users/request-form";
         } catch (SecurityException e) {
             flashError(redirectAttributes, "flash.request.not_owned");
-            return "redirect:/solicitudes";
+            return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
             flashError(redirectAttributes, "flash.request.edit.pending_only");
-            return "redirect:/solicitudes";
+            return "redirect:" + Routes.REQUESTS;
         } catch (Exception e) {
             logger.error("Error al cargar formulario de edición: {}", e.getMessage());
             flashError(redirectAttributes, "flash.request.load_error");
-            return "redirect:/solicitudes";
+            return "redirect:" + Routes.REQUESTS;
         }
     }
 
     /** Actualiza una solicitud existente (ciudad, dirección, materiales, imagen). */
     @PreAuthorize("hasRole('USER')")
-    @PostMapping(Routes.REQUEST_EDIT)
+    @PutMapping(Routes.REQUEST)
     public String updateRequest(@PathVariable String id,
-                                @RequestParam("city") City city,
+                                @RequestParam("ciudad") City ciudad,
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
@@ -129,19 +122,19 @@ public class RequestController extends BaseController {
                                 RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser(authentication);
-            requestService.updateRequest(id, user, city, address, addressReference, materials, organizationId, imageFile);
+            requestService.updateRequest(id, user, ciudad, address, addressReference, materials, organizationId, imageFile);
             flashSuccess(redirectAttributes, "flash.request.updated");
-            return "redirect:/solicitud/" + id;
+            return "redirect:" + Routes.REQUESTS;
         } catch (SecurityException e) {
             flashError(redirectAttributes, "flash.request.not_owned");
-            return "redirect:/solicitudes";
+            return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("warningMessage", msg(e.getMessage()));
-            return "redirect:/solicitud/" + id;
+            return "redirect:" + Routes.REQUESTS;
         } catch (Exception e) {
             logger.error("Error al actualizar solicitud: {}", e.getMessage());
             flashError(redirectAttributes, "flash.request.update_error");
-            return "redirect:/solicitud/" + id;
+            return "redirect:" + Routes.REQUESTS;
         }
     }
 }

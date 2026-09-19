@@ -15,7 +15,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#14 Registro de ciudadano")
     void registerCitizen() {
-        page.navigate(baseUrl + "/registrar");
+        page.navigate(baseUrl + "/registrarse");
         page.locator("[data-i18n='auth_register_title']").waitFor();
 
         page.locator("#username").fill("testuser" + System.currentTimeMillis());
@@ -25,7 +25,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("button[type='submit']").click();
 
         // Debe redirigir a login con mensaje de éxito o a dashboard
-        page.waitForURL(url -> !url.contains("/registrar"));
+        page.waitForURL(url -> !url.contains("/registrarse"));
         assertTrue(page.url().contains("/entrar") || page.url().contains("/usuarios"),
                 "Después de registrar debe ir a login o dashboard");
     }
@@ -33,7 +33,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#15 Registro de organización → onboarding")
     void registerOrganization() {
-        page.navigate(baseUrl + "/registrar");
+        page.navigate(baseUrl + "/registrarse");
         page.locator("[data-i18n='auth_register_title']").waitFor();
 
         page.locator("#username").fill("testorg" + System.currentTimeMillis());
@@ -44,8 +44,8 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("button[type='submit']").click();
 
         // Debe redirigir al perfil (onboarding integrado) o login
-        page.waitForURL(url -> !url.contains("/registrar"));
-        assertTrue(page.url().contains("/acopio/perfil")
+        page.waitForURL(url -> !url.contains("/registrarse"));
+        assertTrue(page.url().contains("/mi-organizacion")
                         || page.url().contains("/entrar"),
                 "Después de registrar org debe ir al perfil u onboarding");
     }
@@ -120,7 +120,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         login("juan", "12345678");
 
         // Intentar acceder a área de organización
-        page.navigate(baseUrl + "/acopio/requests");
+        page.navigate(baseUrl + "/acopio/solicitudes");
 
         // Debe ser denegado (403) o redirigido
         page.waitForTimeout(2000);

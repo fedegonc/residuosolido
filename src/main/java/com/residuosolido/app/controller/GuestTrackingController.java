@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,36 +31,23 @@ public class GuestTrackingController {
 
     /** Muestra el formulario de rastreo con resultados opcionales. */
     @GetMapping(Routes.TRACK)
-    public String trackGuestForm(@RequestParam(value = "phone", required = false) String phone,
-                                @RequestParam(value = "code", required = false) String code,
+    public String trackGuestForm(@RequestParam(value = "telefono", required = false) String telefono,
+                                @RequestParam(value = "codigo", required = false) String codigo,
                                 @RequestHeader(value = "HX-Request", required = false) String hxRequest,
                                 Model model) {
         // HTMX: devolver solo el modal cuando no hay búsqueda
-        if ("true".equals(hxRequest) && (phone == null || phone.isBlank()) && (code == null || code.isBlank())) {
+        if ("true".equals(hxRequest) && (telefono == null || telefono.isBlank()) && (codigo == null || codigo.isBlank())) {
             return "fragments/track-modal :: modal";
         }
-        boolean searched = phone != null && !phone.trim().isEmpty()
-                && code != null && !code.trim().isEmpty();
+        boolean searched = telefono != null && !telefono.trim().isEmpty()
+                && codigo != null && !codigo.trim().isEmpty();
         List<Request> requests = searched
-                ? requestService.getGuestRequests(phone, code)
+                ? requestService.getGuestRequests(telefono, codigo)
                 : List.of();
-        model.addAttribute("phone", phone != null ? phone : "");
-        model.addAttribute("code", code != null ? code : "");
+        model.addAttribute("telefono", telefono != null ? telefono : "");
+        model.addAttribute("codigo", codigo != null ? codigo : "");
         model.addAttribute("requests", requests);
         model.addAttribute("searched", searched);
-        return "users/track";
-    }
-
-    /** Busca solicitudes por teléfono + código (POST desde el formulario). */
-    @PostMapping(Routes.TRACK)
-    public String trackGuestSubmit(@RequestParam("phone") String phone,
-                                   @RequestParam("code") String code,
-                                   Model model) {
-        List<Request> requests = requestService.getGuestRequests(phone, code);
-        model.addAttribute("phone", phone);
-        model.addAttribute("code", code);
-        model.addAttribute("requests", requests);
-        model.addAttribute("searched", true);
         return "users/track";
     }
 }

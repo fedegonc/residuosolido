@@ -43,7 +43,7 @@ public class OrgProfileController extends BaseController {
             model.addAttribute("materials", MaterialCategory.values());
             model.addAttribute("breadcrumbs", List.of(
                     java.util.Map.of("label", "Inicio", "href", "/"),
-                    java.util.Map.of("label", "Panel de acopio", "href", "/acopio/requests"),
+                    java.util.Map.of("label", "Panel de acopio", "href", Routes.ORG_REQUESTS),
                     java.util.Map.of("label", "Perfil", "href", "")
             ));
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class OrgProfileController extends BaseController {
     }
 
     /** Actualiza los datos del perfil de la organización. */
-    @PostMapping(Routes.ORG_PROFILE)
+    @PutMapping(Routes.ORG_PROFILE)
     public String updateOrgProfile(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String firstName,
@@ -62,8 +62,8 @@ public class OrgProfileController extends BaseController {
             @RequestParam(required = false) String countryCode,
             @RequestParam(required = false) String phoneNational,
             @RequestParam(required = false) String ddd,
-            @RequestParam(required = false) City city,
-            @RequestParam(required = false) List<MaterialCategory> materials,
+            @RequestParam(value = "ciudad", required = false) City ciudad,
+            @RequestParam(value = "materiales", required = false) List<MaterialCategory> materiales,
             Authentication authentication,
             jakarta.servlet.http.HttpSession session,
             RedirectAttributes redirectAttributes) {
@@ -71,9 +71,9 @@ public class OrgProfileController extends BaseController {
             User currentOrg = getCurrentUser(authentication);
             City oldCity = currentOrg.getCity();
             String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
-            userService.updateProfile(currentOrg, email, firstName, resolvedPhone, city,
-                    materials != null ? materials : List.of());
-            if (city != null && !city.equals(oldCity)) {
+            userService.updateProfile(currentOrg, email, firstName, resolvedPhone, ciudad,
+                    materiales != null ? materiales : List.of());
+            if (ciudad != null && !ciudad.equals(oldCity)) {
                 session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
             }
             flashSuccess(redirectAttributes, "flash.profile.updated");
@@ -81,7 +81,7 @@ public class OrgProfileController extends BaseController {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
             flashError(redirectAttributes, e.getMessage() != null && e.getMessage().startsWith("error.") ? e.getMessage() : "flash.profile.update_error");
         }
-        return "redirect:/acopio/perfil";
+        return "redirect:" + Routes.ORG_PROFILE;
     }
 
     private String resolvePhone(String rawPhone, String countryCode, String phoneNational, String ddd) {

@@ -262,5 +262,6 @@
   "_server_error_generic": "Algo salió mal. Probá de nuevo en un momento.",
   "_server_error_not_found_auth": "La página que buscás no existe.",
   "_server_error_not_found_guest": "La página que buscás no existe. Iniciá sesión para continuar.",
-  "_server_error_status_code": "Código de error"
+  "_server_error_status_code": "Código de error",
+  "hero_img_alt": "Plaza Internacional — frontera Rivera–Sant'Ana do Livramento"
 }

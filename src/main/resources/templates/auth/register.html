@@ -10,7 +10,7 @@
           <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
           <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
 
-          <form th:action="@{/registrar}" th:object="${user}" method="post" class="stack">
+          <form th:action="@{/registrarse}" th:object="${user}" method="post" class="stack">
             <div class="field">
               <label for="username" data-i18n="auth_name">Nombre</label>
               <input type="text" id="username" th:field="*{username}" required class="input"
@@ -51,7 +51,7 @@
           <h2 class="hero__title hero__title--sm" data-i18n="auth_nocount_title">¿No querés crear cuenta?</h2>
           <p class="hero__subtitle" data-i18n="auth_nocount_desc">Podés pedir la recolección solo con tu nombre y celular — te damos un código para seguirla.</p>
           <div class="hero__cta">
-            <a th:href="@{/solicitudes/nueva}" class="btn btn--light">
+            <a th:href="@{/solicitar}" class="btn btn--light">
               <i class="fa-solid fa-arrow-right"></i>
               <span data-i18n="auth_nocount_cta">Pedir sin cuenta</span>
             </a>

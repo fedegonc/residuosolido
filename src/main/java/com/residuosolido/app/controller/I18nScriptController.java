@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.UiCopyCatalog;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,9 @@ public class I18nScriptController {
 
     @GetMapping("/js/i18n.js")
     public ResponseEntity<String> i18nScript(HttpServletRequest request) {
-        Map<String, String> copies = uiCopyCatalog.copies(request, request.getLocale());
+        // LocaleContextHolder refleja el LocaleResolver de Spring (sesión/ciudad),
+        // no Accept-Language — request.getLocale() ignoraría el ?lang= elegido.
+        Map<String, String> copies = uiCopyCatalog.copies(request, LocaleContextHolder.getLocale());
         StringBuilder sb = new StringBuilder();
         sb.append("window.uiCopies = {");
         boolean first = true;

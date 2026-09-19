@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.dto.OrganizationDto;
 import com.residuosolido.app.enums.City;
+import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.service.CityOrgService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,8 +44,11 @@ public class OrgApiController {
     @GetMapping(Routes.API_ORGANIZATIONS_BY_CITY)
     public List<OrganizationDto> getOrganizationsByCity(
             @Parameter(description = "Ciudad para filtrar organizaciones", example = "RIVERA", required = true)
-            @RequestParam City city) {
-        return cityOrgService.getOrganizationsByCity(city).stream()
+            @RequestParam("ciudad") City ciudad,
+            @Parameter(description = "Material para filtrar organizaciones", example = "PLASTICO", required = false)
+            @RequestParam(value = "material", required = false) MaterialCategory material) {
+        return cityOrgService.getOrganizationsByCity(ciudad).stream()
+                .filter(org -> material == null || org.getAcceptedMaterials().contains(material))
                 .map(org -> new OrganizationDto(org.getId(), org.getDisplayName(), org.getAcceptedMaterials()))
                 .toList();
     }

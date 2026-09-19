@@ -43,7 +43,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
         assertTrue(page.locator("[data-i18n='auth_login_title']").innerText().contains("sesi"),
                 "Debe mostrar el título de login");
 
-        page.locator("a[href*='/registrar']").first().click();
+        page.locator("a[href*='/registrarse']").first().click();
         page.locator("[data-i18n='auth_register_title']").waitFor();
         assertTrue(page.locator("[data-i18n='auth_register_title']").innerText().contains("cuenta"),
                 "Debe mostrar el título de registro");
@@ -94,7 +94,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("Ruta protegida /acopio redirige a login")
     void protectedRouteRedirectsToLogin() {
-        page.navigate(baseUrl + "/acopio/requests");
+        page.navigate(baseUrl + "/acopio/solicitudes");
 
         page.waitForURL("**/entrar**");
         assertTrue(page.url().contains("/entrar"),

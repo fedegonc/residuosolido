@@ -17,15 +17,9 @@
 (function () {
   'use strict';
 
-  /* ─── i18n client-side ─── */
-  var SUPPORTED = ['es', 'pt'];
-  var DEFAULT_LANG = 'es';
-  var serverLang = document.documentElement.lang;
-  var lang = serverLang || localStorage.getItem('lang') || DEFAULT_LANG;
-  lang = lang.split('-')[0].toLowerCase();
-  if (SUPPORTED.indexOf(lang) === -1) lang = DEFAULT_LANG;
-  localStorage.setItem('lang', lang);
-
+  /* ─── i18n client-side: el servidor ya resolvió el idioma (?lang= → sesión)
+     y sirvió el catálogo correcto en window.uiCopies vía /js/i18n.js?l=<lang>.
+     Acá solo se aplica; no hay estado de idioma en el cliente. ─── */
   var translations = window.uiCopies || {};
 
   function applyTranslations() {
@@ -45,25 +39,6 @@
     });
   }
   applyTranslations();
-
-  /* ─── Language selector ─── */
-  function markActiveLang() {
-    document.querySelectorAll('[data-lang]').forEach(function (btn) {
-      btn.classList.toggle('is-active', btn.getAttribute('data-lang') === lang);
-    });
-  }
-  document.querySelectorAll('[data-lang]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var chosen = btn.getAttribute('data-lang');
-      if (chosen !== lang) {
-        localStorage.setItem('lang', chosen);
-        var url = new URL(window.location.href);
-        url.searchParams.set('lang', chosen);
-        window.location.href = url.toString();
-      }
-    });
-  });
-  markActiveLang();
 
   /* ─── Check-card visual state (componente) ─── */
   document.querySelectorAll('.check-card input[type="checkbox"]').forEach(function (cb) {

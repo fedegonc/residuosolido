@@ -36,7 +36,8 @@
 
       <div class="card" id="editCard" th:classappend="${organization.isProfileComplete()} ? 'is-hidden'">
         <h2 class="card__subtitle" data-i18n="org_profile_edit_title">Editar datos</h2>
-        <form th:action="@{/acopio/perfil}" method="post" class="stack">
+        <form th:action="@{/mi-organizacion}" method="post" class="stack">
+          <input type="hidden" name="_method" value="put">
           <div class="field">
             <label for="firstName" data-i18n="org_profile_name_label">Nombre</label>
             <input type="text" id="firstName" name="firstName" class="input" th:value="${organization.firstName}">
@@ -61,7 +62,7 @@
           </div>
           <div class="field">
             <label for="city" data-i18n="profile_city_label">Ciudad</label>
-            <select id="city" name="city" class="select">
+            <select id="city" name="ciudad" class="select">
               <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
               <option th:each="c : ${cities}" th:value="${c}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}" th:text="${c.name()}" th:selected="${organization.city != null and organization.city == c}"></option>
             </select>
@@ -71,7 +72,7 @@
             <div class="check-grid">
               <th:block th:each="mat : ${materials}">
                 <label class="check-card">
-                  <input type="checkbox" name="materials" th:value="${mat.name()}" th:checked="${organization.acceptedMaterials.contains(mat)}">
+                  <input type="checkbox" name="materiales" th:value="${mat.name()}" th:checked="${organization.acceptedMaterials.contains(mat)}">
                   <span th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name()}">PLASTICO</span>
                 </label>
               </th:block>

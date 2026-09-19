@@ -48,7 +48,7 @@ public class OrgRequestController extends BaseController {
 
     /** Lista las solicitudes de la organización, con filtro opcional por estado. */
     @GetMapping(Routes.ORG_REQUESTS)
-    public String orgRequests(@RequestParam(required = false) String status,
+    public String orgRequests(@RequestParam(value = "estado", required = false) String estado,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
@@ -63,12 +63,12 @@ public class OrgRequestController extends BaseController {
         model.addAttribute("inProgressCount", stats.get("inProgress"));
         model.addAttribute("completedCount", stats.get("completed"));
 
-        List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
+        List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, estado, page, size);
 
         model.addAttribute("requests", requests);
         model.addAttribute("totalRequests", requests.size());
         model.addAttribute("viewType", RequestViewType.LIST);
-        model.addAttribute("currentStatus", status);
+        model.addAttribute("currentStatus", estado);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         model.addAttribute("breadcrumbs", List.of(
@@ -91,33 +91,54 @@ public class OrgRequestController extends BaseController {
             return "org/requests";
         } catch (SecurityException e) {
             flashError(redirectAttributes, "flash.org.request_not_owned");
-            return "redirect:/acopio/requests";
+            return "redirect:" + Routes.ORG_REQUESTS;
         } catch (Exception e) {
             logger.error("Error al cargar solicitud {}: {}", id, e.getMessage(), e);
             flashError(redirectAttributes, "flash.org.request_load_error");
-            return "redirect:/acopio/requests";
+            return "redirect:" + Routes.ORG_REQUESTS;
         }
     }
 
-    /** Cambia el estado de una solicitud: aceptar, rechazar o completar. */
-    @PostMapping(Routes.ORG_REQUEST_TRANSITION)
-    public String orgTransitionRequest(@PathVariable String id,
-                                       @RequestParam("action") String action,
-                                       @RequestParam(value = "confirmedSlot", required = false) TimeSlot confirmedSlot,
-                                       Authentication authentication,
-                                       RedirectAttributes redirectAttributes) {
+    /** Acepta una solicitud pendiente, opcionalmente confirmando el horario. */
+    @PostMapping(Routes.ORG_REQUEST_ACCEPT)
+    public String acceptRequest(@PathVariable String id,
+                                @RequestParam(value = "confirmedSlot", required = false) TimeSlot confirmedSlot,
+                                Authentication authentication,
+                                RedirectAttributes redirectAttributes) {
+        return transition(id, "aceptar", confirmedSlot, authentication, redirectAttributes);
+    }
+
+    /** Rechaza una solicitud pendiente. */
+    @PostMapping(Routes.ORG_REQUEST_REJECT)
+    public String rejectRequest(@PathVariable String id,
+                                Authentication authentication,
+                                RedirectAttributes redirectAttributes) {
+        return transition(id, "rechazar", null, authentication, redirectAttributes);
+    }
+
+    /** Marca una solicitud aceptada como completada. */
+    @PostMapping(Routes.ORG_REQUEST_COMPLETE)
+    public String completeRequest(@PathVariable String id,
+                                  Authentication authentication,
+                                  RedirectAttributes redirectAttributes) {
+        return transition(id, "completar", null, authentication, redirectAttributes);
+    }
+
+    private String transition(String id, String action, TimeSlot confirmedSlot,
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
         try {
             User org = getCurrentUser(authentication);
             switch (action) {
-                case "accept" -> {
+                case "aceptar" -> {
                     requestService.acceptRequest(id, org, confirmedSlot);
                     flashSuccess(redirectAttributes, "flash.org.request_accepted");
                 }
-                case "reject" -> {
+                case "rechazar" -> {
                     requestService.rejectRequest(id, org);
                     flashSuccess(redirectAttributes, "flash.org.request_rejected");
                 }
-                case "complete" -> {
+                case "completar" -> {
                     requestService.completeRequest(id, org);
                     flashSuccess(redirectAttributes, "flash.org.request_completed");
                 }
@@ -131,6 +152,6 @@ public class OrgRequestController extends BaseController {
             logger.error("Error en transición '{}' para solicitud {}: {}", action, id, e.getMessage(), e);
             flashError(redirectAttributes, "flash.org.request_transition_error");
         }
-        return "redirect:/acopio/requests";
+        return "redirect:" + Routes.ORG_REQUESTS;
     }
 }

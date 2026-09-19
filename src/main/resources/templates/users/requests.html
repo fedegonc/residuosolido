@@ -13,7 +13,7 @@
 
       <div class="row row--between mb-lg">
         <div th:replace="~{fragments/ui :: greeting('dash_welcome', 'Hola', ${user.displayName}, false, 'dash_subtitle', 'Acá ves tus solicitudes de recolección y su estado.')}"></div>
-        <a href="/solicitudes/nueva" class="btn btn--primary">
+        <a href="/solicitar" class="btn btn--primary">
           <i class="fa-solid fa-plus"></i>
           <span data-i18n="req_list_new">Nueva solicitud</span>
         </a>
@@ -33,11 +33,12 @@
             <a th:href="@{/rastrear?id={id}(id=${req.id})}" class="btn btn--outline btn--sm">
               <i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span>
             </a>
-            <a th:if="${req.canBeEdited()}" th:href="@{/solicitud/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
+            <a th:if="${req.canBeEdited()}" th:href="@{/solicitudes/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
               <i class="fa-solid fa-pen"></i> <span data-i18n="req_list_edit">Editar</span>
             </a>
-            <form th:if="${req.canBeDeleted()}" th:action="@{/solicitud/{id}/eliminar(id=${req.id})}" method="post"
+            <form th:if="${req.canBeDeleted()}" th:action="@{/solicitudes/{id}(id=${req.id})}" method="post"
                   data-confirm="¿Eliminar esta solicitud?" data-i18n-attr="data-confirm:req_delete_confirm">
+              <input type="hidden" name="_method" value="delete">
               <button type="submit" class="btn btn--outline btn--sm btn--danger">
                 <i class="fa-solid fa-trash"></i> <span data-i18n="req_list_delete">Eliminar</span>
               </button>
@@ -49,7 +50,7 @@
       <div th:if="${requests == null or requests.isEmpty()}">
         <div th:replace="~{fragments/ui :: state('fa-seedling', 'Acá van a aparecer tus solicitudes')}"></div>
         <div class="text-center mt">
-          <a href="/solicitudes/nueva" class="btn btn--primary">
+          <a href="/solicitar" class="btn btn--primary">
             <i class="fa-solid fa-plus"></i> <span data-i18n="req_list_new">Nueva solicitud</span>
           </a>
         </div>

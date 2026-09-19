@@ -22,7 +22,7 @@
   <link rel="stylesheet" th:href="@{/css/fonts.css}">
   <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
   <script th:src="@{/webjars/htmx.org/2.0.4/dist/htmx.min.js}"></script>
-  <script th:src="@{/js/i18n.js}"></script>
+  <script th:src="@{/js/i18n.js(l=${#locale.language})}"></script>
   <th:block layout:fragment="extraHead"></th:block>
 </head>
 <body class="app-body">

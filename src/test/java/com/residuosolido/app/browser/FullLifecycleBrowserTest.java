@@ -24,7 +24,7 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#21 Ciclo completo: crear → aceptar → completar → rastrear")
     void fullRequestLifecycle() {
         // === 1. INVITADO CREA SOLICITUD ===
-        page.navigate(baseUrl + "/solicitudes/nueva");
+        page.navigate(baseUrl + "/solicitar");
         page.locator("[data-i18n='req_form_title_new']").waitFor();
 
         String guestPhone = "91112233";
@@ -47,11 +47,11 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
         // Login como coopverde (Rivera, acepta PLASTICO)
         login("coopverde", "12345678");
 
-        page.navigate(baseUrl + "/acopio/requests");
+        page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
         // Buscar la solicitud pendiente del invitado
-        Locator viewLinks = page.locator("a[href*='/acopio/requests/']");
+        Locator viewLinks = page.locator("a[href*='/acopio/solicitudes/']");
         boolean accepted = false;
         for (int i = 0; i < viewLinks.count() && !accepted; i++) {
             viewLinks.nth(i).click();
@@ -67,16 +67,16 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
                 accepted = true;
             } else {
                 // Volver a la lista y probar la siguiente
-                page.navigate(baseUrl + "/acopio/requests");
+                page.navigate(baseUrl + "/acopio/solicitudes");
                 page.locator("[data-i18n='org_req_title']").waitFor();
-                viewLinks = page.locator("a[href*='/acopio/requests/']");
+                viewLinks = page.locator("a[href*='/acopio/solicitudes/']");
             }
         }
 
         // === 3. ORGANIZACIÓN COMPLETA LA SOLICITUD ===
         if (accepted) {
             // Buscar la solicitud en curso y completarla
-            page.navigate(baseUrl + "/acopio/requests");
+            page.navigate(baseUrl + "/acopio/solicitudes");
             page.locator("[data-i18n='org_req_title']").waitFor();
 
             Locator inProgressFilter = page.locator("a[href*='status=IN_PROGRESS']");
@@ -85,7 +85,7 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
                 page.waitForTimeout(1000);
             }
 
-            Locator inProgressLinks = page.locator("a[href*='/acopio/requests/']");
+            Locator inProgressLinks = page.locator("a[href*='/acopio/solicitudes/']");
             for (int i = 0; i < inProgressLinks.count(); i++) {
                 inProgressLinks.nth(i).click();
                 page.locator("[data-i18n='req_detail_title']").waitFor();
@@ -98,9 +98,9 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
                     page.waitForTimeout(2000);
                     break;
                 }
-                page.navigate(baseUrl + "/acopio/requests");
+                page.navigate(baseUrl + "/acopio/solicitudes");
                 page.locator("[data-i18n='org_req_title']").waitFor();
-                inProgressLinks = page.locator("a[href*='/acopio/requests/']");
+                inProgressLinks = page.locator("a[href*='/acopio/solicitudes/']");
             }
         }
 

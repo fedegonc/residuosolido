@@ -55,7 +55,7 @@ las reglas de negocio antes de tocar (core).
 | `Routes` | Boilerplate | Constantes de URL — aunque `resolveHomeForRole()` codifica "USER→/usuarios, ORGANIZATION→/acopio", que es negocio-lite |
 | `WebConfig`, `AuthNavigationInterceptor` | Boilerplate | Plomería de Spring MVC |
 | `GuestRateLimiter`, `LoginAttemptService`, `LoginFailureHandler` | Boilerplate | Seguridad genérica, no específica del dominio de reciclaje |
-| `LoginSuccessHandler` | Boilerplate | Redirige por rol — mecanismo genérico aunque el destino (`/acopio` vs `/usuarios`) es negocio |
+| `LoginSuccessHandler` | Boilerplate | Redirige por rol — mecanismo genérico aunque el destino (`/acopio/solicitudes` vs `/mis-solicitudes`) es negocio |
 | `JsonMessageSource`, `UiCopyCatalog` | Boilerplate | Mecanismo de i18n, agnóstico del contenido |
 | `DataLoader` | Boilerplate | Seed de datos demo |
 | `MongoIndexMigration` | Boilerplate | Infraestructura de datos, agnóstica del dominio |

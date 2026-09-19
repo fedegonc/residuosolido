@@ -15,7 +15,7 @@ class GuestBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#7 Invitado crea solicitud")
     void guestCreatesRequest() {
-        page.navigate(baseUrl + "/solicitudes/nueva");
+        page.navigate(baseUrl + "/solicitar");
 
         page.locator("[data-i18n='req_form_title_new']").waitFor();
         // Verificar que el formulario tiene campos de invitado
@@ -41,7 +41,7 @@ class GuestBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#8 Invitado rastrea solicitud")
     void guestTracksRequest() {
         // Primero crear una solicitud como invitado
-        page.navigate(baseUrl + "/solicitudes/nueva");
+        page.navigate(baseUrl + "/solicitar");
         page.locator("[data-i18n='req_form_title_new']").waitFor();
         fillGuestRequestForm("Test Track", "+598", "98765432",
                 "RIVERA", "Calle Track 111", "PAPEL");

@@ -36,7 +36,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#2 Crear solicitud como ciudadano")
     void citizenCreatesRequest() {
         login("juan", "12345678");
-        page.navigate(baseUrl + "/solicitudes/nueva");
+        page.navigate(baseUrl + "/solicitar");
 
         page.locator("[data-i18n='req_form_title_new']").waitFor();
         fillRequestForm("RIVERA", "Calle Test 123", "PLASTICO");
@@ -57,7 +57,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
 
         try {
             login("juan", "12345678");
-            page.navigate(baseUrl + "/solicitudes/nueva");
+            page.navigate(baseUrl + "/solicitar");
             page.locator("#userPhoneNational").fill("99123456");
             fillRequestForm("RIVERA", "Calle Teléfono 321", "PLASTICO");
             page.locator("#requestForm button[type='submit']").click();
@@ -75,16 +75,16 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     void citizenEditsRequest() {
         login("juan", "12345678");
         // Crear una solicitud primero
-        page.navigate(baseUrl + "/solicitudes/nueva");
+        page.navigate(baseUrl + "/solicitar");
         fillRequestForm("RIVERA", "Calle Edit 456", "PAPEL");
         page.locator("#requestForm button[type='submit']").click();
         page.locator("[data-i18n='req_success_title']").waitFor();
 
         // Ir a mis solicitudes
-        page.navigate(baseUrl + "/solicitudes");
+        page.navigate(baseUrl + "/mis-solicitudes");
         page.locator(".request-item").first().waitFor();
         // Entrar al detalle de la primera
-        page.locator("a[href*='/solicitud/']").first().click();
+        page.locator("a[href*='/solicitudes/']").first().click();
         page.locator("[data-i18n='req_detail_title']").waitFor();
 
         // Si hay botón editar, clickearlo
@@ -102,15 +102,15 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     void citizenDeletesRequest() {
         login("juan", "12345678");
         // Crear una solicitud para eliminar
-        page.navigate(baseUrl + "/solicitudes/nueva");
+        page.navigate(baseUrl + "/solicitar");
         fillRequestForm("RIVERA", "Calle Delete 789", "VIDRIO");
         page.locator("#requestForm button[type='submit']").click();
         page.locator("[data-i18n='req_success_title']").waitFor();
 
         // Ir al detalle
-        page.navigate(baseUrl + "/solicitudes");
+        page.navigate(baseUrl + "/mis-solicitudes");
         page.locator(".request-item").first().waitFor();
-        page.locator("a[href*='/solicitud/']").first().click();
+        page.locator("a[href*='/solicitudes/']").first().click();
         page.locator("[data-i18n='req_detail_title']").waitFor();
 
         // Clickear eliminar (el form tiene un confirm() de JS)
@@ -124,7 +124,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         }
         // Verificar que vuelve a la lista, muestra éxito, o no había form de eliminar
         assertTrue(deleted
-                        || page.url().contains("/solicitudes")
+                        || page.url().contains("/mis-solicitudes")
                         || page.url().contains("/usuarios")
                         || page.locator(".alert--success").isVisible()
                         || page.locator("[data-i18n='req_detail_title']").isVisible(),
@@ -172,7 +172,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
             page.locator("button[data-i18n='nav_logout']").first().click(new Locator.ClickOptions().setTimeout(5000));
         } catch (Exception e) {
             // Fallback: submit del form via JS
-            page.evaluate("document.querySelector('form[action=\"/logout\"]').submit()");
+            page.evaluate("document.querySelector('form[action=\"/salir\"]').submit()");
         }
         page.waitForURL(url -> !url.contains("/usuarios"), new Page.WaitForURLOptions().setTimeout(10000));
 

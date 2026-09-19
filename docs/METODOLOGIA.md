@@ -105,7 +105,7 @@ diagramas, tradeoffs explícitos.
 
 **Artefactos producidos:**
 
-- Panel de acopio consolidado en una sola vista (`/acopio/requests`):
+- Panel de acopio consolidado en una sola vista (`/acopio/solicitudes`):
   estadísticas + lista filtrable por estado. (Originalmente fue un
   Kanban en `/acopio/inicio`; se eliminó por duplicar la lista, ver
   `docs/MEJORAS.md` #130 y `docs/TRADEOFFS.md` §7.)

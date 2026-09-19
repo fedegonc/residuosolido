@@ -27,7 +27,7 @@ Registro con nombre, teléfono y PIN de 4 dígitos (ver `docs/TRADEOFFS.md`
 | Usuario, Organización | Implementado |
 
 Login con teléfono (E.164) + PIN en `/entrar`. Redirección por rol:
-usuario → `/usuarios/inicio`, organización → `/acopio/requests`.
+usuario → `/mis-solicitudes`, organización → `/acopio/solicitudes`.
 
 ### RF-3 — Crear solicitud de recolección
 
@@ -35,7 +35,7 @@ usuario → `/usuarios/inicio`, organización → `/acopio/requests`.
 |---|---|
 | Invitado, Usuario | Implementado |
 
-Formulario en `/solicitudes/nueva`: ciudad, dirección, materiales, peso/volumen
+Formulario en `/solicitar`: ciudad, dirección, materiales, peso/volumen
 estimado, imagen opcional. Invitados ingresan nombre + teléfono (los campos se
 pueden precargar desde el index). El sistema asigna la organización elegible
 más cercana y genera un código de seguimiento.
@@ -64,7 +64,7 @@ mientras estén `PENDING` (RN-4, RN-11).
 |---|---|
 | Organización | Implementado |
 
-Panel `/acopio/requests`: estadísticas, filtro por estado, detalle y
+Panel `/acopio/solicitudes`: estadísticas, filtro por estado, detalle y
 transiciones — aceptar con franja horaria, rechazar con motivo, completar
 (RN-1, RN-2).
 
@@ -74,7 +74,7 @@ transiciones — aceptar con franja horaria, rechazar con motivo, completar
 |---|---|
 | Usuario, Organización | Implementado |
 
-`/acopio/perfil` absorbe el onboarding: si el perfil de la organización está
+`/mi-organizacion` absorbe el onboarding: si el perfil de la organización está
 incompleto (sin teléfono o ciudad), el formulario abre en modo edición y
 `updateProfile` marca `profileCompleted` al guardar.
 
@@ -101,7 +101,7 @@ Decisión consciente: el modelo `Catador` existe pero no hay navegación hacia
 | RN-6 | Todos los materiales de la solicitud deben estar incluidos entre los aceptados por la organización | Validación en creación/asignación |
 | RN-7 | Transiciones y borrado usan optimistic locking con `@Version` | `Request.version` — conflictos devuelven `409`/`IllegalStateException` |
 | RN-8 | El teléfono se normaliza a formato E.164 (`+598`/`+55`) | `PhoneNumber` utility, setters de `User` |
-| RN-9 | Una organización con perfil incompleto es redirigida a `/acopio/perfil` antes de gestionar solicitudes | `OrgRequestController` |
+| RN-9 | Una organización con perfil incompleto es redirigida a `/mi-organizacion` antes de gestionar solicitudes | `OrgRequestController` |
 | RN-10 | Materiales, dirección y ciudad son obligatorios al crear/editar | `RequestServiceValidationTest` (13 tests) |
 | RN-11 | Borrado permitido solo si `PENDING` y propiedad del solicitante | `deleteOwnedRequest` + tests de regresión |
 

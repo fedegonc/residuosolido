@@ -26,28 +26,26 @@ public final class Routes {
 
     // Auth
     public static final String LOGIN = "/entrar";
-    public static final String LOGOUT = "/logout";
-    public static final String REGISTER = "/registrar";
+    public static final String LOGOUT = "/salir";
+    public static final String REGISTER = "/registrarse";
 
     // Solicitudes
-    public static final String REQUESTS_NEW = "/solicitudes/nueva";
-    public static final String REQUESTS = "/solicitudes";
-    public static final String REQUEST = "/solicitud/{id}";
-    public static final String REQUEST_EDIT = "/solicitud/{id}/editar";
-    public static final String REQUEST_DELETE = "/solicitud/{id}/eliminar";
+    public static final String REQUESTS_NEW = "/solicitar";
+    public static final String REQUESTS = "/mis-solicitudes";
+    public static final String REQUEST_EDIT = "/solicitudes/{id}/editar";
+    public static final String REQUEST = "/solicitudes/{id}";
     public static final String TRACK = "/rastrear";
 
-    // Usuarios
-    public static final String USER_HOME = "/usuarios/inicio";
-
     // Organización
-    public static final String ORG_PROFILE = "/acopio/perfil";
-    public static final String ORG_REQUESTS = "/acopio/requests";
-    public static final String ORG_REQUEST = "/acopio/requests/{id}";
-    public static final String ORG_REQUEST_TRANSITION = "/acopio/requests/{id}/transition";
+    public static final String ORG_PROFILE = "/mi-organizacion";
+    public static final String ORG_REQUESTS = "/acopio/solicitudes";
+    public static final String ORG_REQUEST = "/acopio/solicitudes/{id}";
+    public static final String ORG_REQUEST_ACCEPT = "/acopio/solicitudes/{id}/aceptar";
+    public static final String ORG_REQUEST_REJECT = "/acopio/solicitudes/{id}/rechazar";
+    public static final String ORG_REQUEST_COMPLETE = "/acopio/solicitudes/{id}/completar";
 
     // API
-    public static final String API_ORGANIZATIONS_BY_CITY = "/api/organizations/by-city";
+    public static final String API_ORGANIZATIONS_BY_CITY = "/organizaciones";
     public static final String HTMX_ORG_OPTIONS = "/solicitudes/org-options";
     public static final String API_ANY = "/api/**";
 
@@ -78,7 +76,7 @@ public final class Routes {
         for (GrantedAuthority authority : auth.getAuthorities()) {
             String name = authority.getAuthority();
             if (name.equals("ROLE_" + Role.ORGANIZATION.name())) return ORG_REQUESTS;
-            if (name.equals("ROLE_" + Role.USER.name())) return USER_HOME;
+            if (name.equals("ROLE_" + Role.USER.name())) return REQUESTS;
         }
         return HOME;
     }

@@ -23,21 +23,21 @@
 
       <div class="navbar__links">
         <a href="/" class="navbar__link" data-i18n="nav_home">Inicio</a>
-        <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
-        <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/requests" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
-        <a sec:authorize="hasRole('USER')" href="/solicitudes" class="navbar__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+        <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitar" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
+        <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
+        <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="navbar__link" data-i18n="nav_my_requests">Mis solicitudes</a>
         <th:block th:replace="~{::trackButtonDesktop}"></th:block>
       </div>
 
       <div class="navbar__actions">
         <div class="navbar__lang">
-          <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
-          <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
+          <a href="?lang=es" class="navbar__lang-btn" th:classappend="${#locale.language == 'es'} ? 'is-active'" aria-label="Español">ES</a>
+          <a href="?lang=pt" class="navbar__lang-btn" th:classappend="${#locale.language == 'pt'} ? 'is-active'" aria-label="Português">PT</a>
         </div>
 
         <span sec:authorize="!isAuthenticated()" class="row">
           <a href="/entrar" class="btn btn--primary" data-i18n="nav_login">Entrar</a>
-          <a href="/registrar" class="btn btn--outline" data-i18n="nav_register">Registrarse</a>
+          <a href="/registrarse" class="btn btn--outline" data-i18n="nav_register">Registrarse</a>
         </span>
 
         <details sec:authorize="isAuthenticated()" class="navbar__user">
@@ -46,10 +46,10 @@
             <span class="navbar__user-name" sec:authentication="name">usuario</span>
           </summary>
           <div class="navbar__menu">
-            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/requests" data-i18n="nav_org_panel">Panel acopio</a>
-            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" data-i18n="nav_org_profile">Perfil</a>
-            <a sec:authorize="hasRole('USER')" href="/solicitudes" data-i18n="nav_my_requests">Mis solicitudes</a>
-            <form th:action="@{/logout}" method="post">
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" data-i18n="nav_org_panel">Panel acopio</a>
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/mi-organizacion" data-i18n="nav_org_profile">Perfil</a>
+            <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" data-i18n="nav_my_requests">Mis solicitudes</a>
+            <form th:action="@{/salir}" method="post">
               <button type="submit" class="btn btn--block" data-i18n="nav_logout">Cerrar sesión</button>
             </form>
           </div>
@@ -62,25 +62,25 @@
         </summary>
         <div class="dropdown">
           <a href="/" class="dropdown__link" data-i18n="nav_home">Inicio</a>
-          <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitudes/nueva" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
-          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/requests" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
-          <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+          <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitar" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
+          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
+          <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
           <th:block th:replace="~{::trackButtonMobile}"></th:block>
           <div class="dropdown__divider">
             <div class="dropdown__lang-row">
-              <button type="button" class="navbar__lang-btn" data-lang="es" aria-label="Español">ES</button>
-              <button type="button" class="navbar__lang-btn" data-lang="pt" aria-label="Português">PT</button>
+              <a href="?lang=es" class="navbar__lang-btn" th:classappend="${#locale.language == 'es'} ? 'is-active'" aria-label="Español">ES</a>
+              <a href="?lang=pt" class="navbar__lang-btn" th:classappend="${#locale.language == 'pt'} ? 'is-active'" aria-label="Português">PT</a>
             </div>
           </div>
           <span sec:authorize="!isAuthenticated()" class="dropdown__auth">
             <a href="/entrar" class="btn btn--primary btn--block" data-i18n="nav_login">Entrar</a>
-            <a href="/registrar" class="btn btn--outline btn--block" data-i18n="nav_register">Registrarse</a>
+            <a href="/registrarse" class="btn btn--outline btn--block" data-i18n="nav_register">Registrarse</a>
           </span>
           <div sec:authorize="isAuthenticated()" class="dropdown__auth">
-            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/requests" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
-            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/perfil" class="dropdown__link" data-i18n="nav_org_profile">Perfil</a>
-            <a sec:authorize="hasRole('USER')" href="/solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
-            <form th:action="@{/logout}" method="post">
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
+            <a sec:authorize="hasRole('ORGANIZATION')" href="/mi-organizacion" class="dropdown__link" data-i18n="nav_org_profile">Perfil</a>
+            <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+            <form th:action="@{/salir}" method="post">
               <button type="submit" class="btn btn--outline btn--block" data-i18n="nav_logout">Cerrar sesión</button>
             </form>
           </div>

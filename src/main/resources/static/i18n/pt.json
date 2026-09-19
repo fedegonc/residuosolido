@@ -262,5 +262,6 @@
   "_server_error_generic": "Ocorreu um erro inesperado. Tente novamente.",
   "_server_error_not_found_auth": "A página que você procura não existe.",
   "_server_error_not_found_guest": "A página que você procura não existe. Inicie sessão para continuar.",
-  "_server_error_status_code": "Código de erro"
+  "_server_error_status_code": "Código de erro",
+  "hero_img_alt": "Praça Internacional — fronteira Rivera–Sant'Ana do Livramento"
 }

@@ -9,46 +9,57 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
 | GET | `/`, `/index` | `AuthController` | Landing page pública |
-| GET | `/registrar` | `AuthController` | Formulario de registro |
-| POST | `/registrar` | `AuthController` | Procesa registro (Usuario u Organización) |
+| GET | `/registrarse` | `AuthController` | Formulario de registro |
+| POST | `/registrarse` | `AuthController` | Procesa registro (Usuario u Organización) |
 | GET | `/entrar` | `AuthController` | Formulario de login (POST procesado por Spring Security en la misma URL) |
-| GET | `/rastrear` | `GuestTrackingController` | Formulario de rastreo por teléfono + código privado |
-| POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono + código |
+| POST | `/salir` | Spring Security | Cierra sesión (procesado por el filter chain, no por un controller) |
+| GET | `/solicitar` | `RequestCreateController` | Formulario de nueva solicitud — público (invitado) o con sesión `USER`; prefill `?ciudad=&nombre=&telefono=` |
+| POST | `/solicitar` | `RequestCreateController` | Crea la solicitud (con imagen opcional, rate limit para invitados) |
+| GET | `/rastrear?telefono=&codigo=` | `GuestTrackingController` | Rastreo de solicitudes de invitado por teléfono + código privado |
+| GET | `/organizaciones?ciudad=&material=` | `OrgApiController` | JSON de organizaciones activas en una ciudad, filtro opcional por material (combo del formulario) |
 | GET | `/documentos` | `DocsController` | Índice de documentación técnica (docs/*.md) |
 | GET | `/diagramas` | `DocsController` | Índice de diagramas UML (docs/diagrams/*.drawio) |
 | GET | `/docs/**` | `WebConfig` (resource handler) | Archivos estáticos de docs/ y docs/diagrams/ |
-| GET | `/api/organizations/by-city?city={City}` | `OrgApiController` | JSON de organizaciones activas en una ciudad (usado por el selector del formulario) |
 
 ## Usuario (rol `USER`)
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/solicitudes` | `RequestController` | Lista de solicitudes propias |
-| GET | `/solicitudes/nueva` | `RequestCreateController` | Formulario de nueva solicitud (también accesible sin login) |
-| POST | `/solicitudes/nueva` | `RequestCreateController` | Crea la solicitud (con imagen opcional) |
-| GET | `/solicitud/{id}` | `RequestController` | Detalle de una solicitud propia |
-| GET | `/solicitud/{id}/editar` | `RequestController` | Formulario de edición (solo si `PENDING`) |
-| POST | `/solicitud/{id}/editar` | `RequestController` | Actualiza la solicitud |
-| POST | `/solicitud/{id}/eliminar` | `RequestController` | Elimina la solicitud (solo si `PENDING`) |
+| GET | `/mis-solicitudes` | `RequestController` | Lista de solicitudes propias con stats |
+| GET | `/solicitudes/{id}/editar` | `RequestController` | Formulario de edición (solo si `PENDING`) |
+| PUT | `/solicitudes/{id}` | `RequestController` | Actualiza la solicitud (solo si `PENDING`) |
+| DELETE | `/solicitudes/{id}` | `RequestController` | Elimina la solicitud (solo si `PENDING`) |
 
 ## Organización (rol `ORGANIZATION`)
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/acopio/requests` | `OrgRequestController` | Panel de acopio: estadísticas + lista de solicitudes con filtro por estado (redirige a `/acopio/perfil` si el perfil está incompleto) |
-| GET | `/acopio/perfil` | `OrgProfileController` | Perfil de la organización; abre en modo edición si está incompleto (absorbe el onboarding) |
-| POST | `/acopio/perfil` | `OrgProfileController` | Actualiza datos de la organización |
-| GET | `/acopio/requests/{id}` | `OrgRequestController` | Detalle de una solicitud asignada |
-| POST | `/acopio/requests/{id}/transition` | `OrgRequestController` | Cambia estado: `action=accept\|reject\|complete` |
+| GET | `/acopio/solicitudes?estado=` | `OrgRequestController` | Panel de acopio: estadísticas + lista con filtro por estado (redirige a `/mi-organizacion` si el perfil está incompleto) |
+| GET | `/acopio/solicitudes/{id}` | `OrgRequestController` | Detalle de una solicitud asignada |
+| POST | `/acopio/solicitudes/{id}/aceptar` | `OrgRequestController` | Acepta una solicitud pendiente (`confirmedSlot` opcional) |
+| POST | `/acopio/solicitudes/{id}/rechazar` | `OrgRequestController` | Rechaza una solicitud pendiente |
+| POST | `/acopio/solicitudes/{id}/completar` | `OrgRequestController` | Marca una solicitud en curso como completada |
+| GET | `/mi-organizacion` | `OrgProfileController` | Perfil de la organización; abre en modo edición si está incompleto (absorbe el onboarding) |
+| PUT | `/mi-organizacion` | `OrgProfileController` | Actualiza datos de la organización |
+
+## Endpoints internos (no parte del vocabulario público)
+
+| Método | Ruta | Controller | Descripción |
+|---|---|---|---|
+| GET | `/solicitudes/org-options?ciudad=` | `RequestCreateController` | Opciones `<select>` de organizaciones por ciudad (HTMX) |
 
 ---
 
 ## Notas
 
+- **14 acciones sobre 10 recursos distintos** — contando las tres transiciones de organización por separado.
+- `/solicitar` es verbo porque es la acción principal del sistema y la única URL que un ciudadano podría tipear a mano; `/rastrear` por la misma razón (se escribe con el código en el papel al lado). `/solicitudes/{id}` se mantiene plural y sustantivo para editar/borrar — es CRUD puro, sin verbo de dominio.
+- `/acopio/**` es el prefijo del área de organización: un solo segmento identifica la zona y el matcher de seguridad es una línea (`.requestMatchers("/acopio/**").hasRole("ORGANIZATION")`). `/mi-organizacion` queda fuera del prefijo por legibilidad pero tiene el mismo matcher explícito.
+- Los formularios HTML solo emiten GET/POST: `PUT` y `DELETE` llegan vía `_method=put|delete` en el body, traducidos por `HiddenHttpMethodFilter` (`spring.mvc.hiddenmethod.filter.enabled=true`).
+- Rutas en español sin tildes ni `ñ` (`organizaciones`, `solicitar`, `rastrear`, `acopio`) — los nombres de las rutas son los mismos que se usan en la defensa.
 - No existen rutas `/admin/**` — no hay rol Admin ni panel de administración general.
-- No existen rutas `/acopio/inicio`, `/acopio/completar-perfil` ni `/acopio/kanban` — el dashboard Kanban y el onboarding separado fueron consolidados: el panel de acopio es `/acopio/requests` y el onboarding vive en `/acopio/perfil` (ver `docs/MEJORAS.md`).
+- No existen rutas `/acopio/inicio`, `/acopio/completar-perfil` ni `/acopio/kanban` — el dashboard Kanban y el onboarding separado fueron consolidados.
 - No existen rutas `/blog`, `/posts`, `/metricas` — el blog y las métricas públicas fueron descartados del MVP.
-- Las rutas están en español (`/usuarios`, `/acopio`, `/solicitudes`, `/entrar`, `/registrar`) por decisión de diseño, sin alias en inglés — `/auth/login` y `/auth/register` fueron renombradas a slugs de una palabra coherentes con el resto.
 - Las rutas físicas están centralizadas en `com.residuosolido.app.config.Routes` para evitar URLs hardcodeadas en controllers, seguridad y tests.
 - OpenAPI/Swagger UI está disponible en `/swagger-ui.html` y `/v3/api-docs` (público en `SecurityConfig`).
 
@@ -101,7 +112,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 
 | Clase de test | Qué cubre |
 |---|---|
- `CriticalSecurityTest` (10) | Control de acceso por rol en rutas protegidas (`/usuarios/**`, `/acopio/**`), CSRF |
+ `CriticalSecurityTest` (10) | Control de acceso por rol en rutas protegidas (`/mis-solicitudes`, `/solicitudes/**`, `/acopio/**`, `/mi-organizacion`), CSRF |
  `NewFlowsSecurityTest` (4) | Seguridad de flujos agregados recientemente (invitados, rastreo) |
 | `OrganizationControllerTest` (5) | Flujo completo de organización vía `MockMvc` |
  `EndToEndFlowsTest` (11) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |

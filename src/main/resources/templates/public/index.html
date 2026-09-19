@@ -7,10 +7,11 @@
     <div class="page page--center">
       <div class="split">
         <section class="hero">
+          <img src="/images/hero/plaza-internacional.jpg" class="hero__img" alt="Plaza Internacional — frontera Rivera–Sant'Ana do Livramento" data-i18n-attr="alt:hero_img_alt">
           <h1 class="hero__title" data-i18n="title">Pedí que pasen a buscar tus <span>reciclables</span></h1>
           <p class="hero__subtitle" data-i18n="subtitle">Una cooperativa de tu ciudad los retira en el día y horario que coordinen.</p>
           <div class="hero__cta">
-            <a href="/solicitudes/nueva" class="btn btn--primary">
+            <a href="/solicitar" class="btn btn--primary">
               <i class="fa-solid fa-clipboard-list"></i>
               <span data-i18n="cta_request">Pedir recolección</span>
             </a>
@@ -23,10 +24,10 @@
 
         <section class="hero hero--dark">
           <h2 class="hero__title hero__title--sm" data-i18n="split_guest_title">Hacelo con tu nombre y celular</h2>
-          <form action="/solicitudes/nueva" method="get" class="stack">
-            <input type="text" name="name" class="input" placeholder="Tu nombre" required
+          <form action="/solicitar" method="get" class="stack">
+            <input type="text" name="nombre" class="input" placeholder="Tu nombre" required
                    data-i18n-attr="placeholder:split_guest_name">
-            <input type="tel" name="phone" class="input" placeholder="Tu celular" required
+            <input type="tel" name="telefono" class="input" placeholder="Tu celular" required
                    data-i18n-attr="placeholder:split_guest_phone">
             <button type="submit" class="btn btn--light">
               <i class="fa-solid fa-arrow-right"></i>

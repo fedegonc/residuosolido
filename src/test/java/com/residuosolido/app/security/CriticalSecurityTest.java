@@ -11,6 +11,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
@@ -82,7 +83,7 @@ class CriticalSecurityTest {
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRole_cannotAccessUserRequests() throws Exception {
         mockMvc.perform(get(Routes.REQUESTS))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isForbidden());
     }
 
     // ===== CSRF =====
@@ -90,13 +91,13 @@ class CriticalSecurityTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void postWithoutCsrf_isRejected() throws Exception {
-        mockMvc.perform(post(Routes.REQUEST_DELETE.replace("{id}", "test")))
+        mockMvc.perform(delete(Routes.REQUEST, "test"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void logout_requiresPost_getIsNotAllowed() throws Exception {
-        // GET /logout no existe como endpoint (dead code eliminado);
+        // GET /salir no existe como endpoint (dead code eliminado);
         // anónimo es redirigido a login por el filter chain
         mockMvc.perform(get(Routes.LOGOUT))
                 .andExpect(status().is3xxRedirection());

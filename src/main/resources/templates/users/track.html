@@ -9,15 +9,15 @@
       <div class="card page--narrow mb">
         <h1 class="card__title" data-i18n="track_title">Buscar mi solicitud</h1>
         <p class="card__subtitle" data-i18n="track_subtitle">Si pediste recolección sin cuenta, ingresá tu teléfono y el código que te dimos.</p>
-        <form th:action="@{/rastrear}" method="post" class="stack">
+        <form th:action="@{/rastrear}" method="get" class="stack">
           <div class="field">
-            <label for="phone" data-i18n="track_phone_label">Teléfono</label>
-            <input type="tel" id="phone" name="phone" class="input" th:value="${phone}"
+            <label for="telefono" data-i18n="track_phone_label">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" class="input" th:value="${telefono}"
                    data-i18n-attr="placeholder:track_phone_placeholder" placeholder="Ej: +598 99 123 456" required>
           </div>
           <div class="field">
-            <label for="code" data-i18n="track_code_label">Código de rastreo</label>
-            <input type="text" id="code" name="code" class="input" th:value="${code}"
+            <label for="codigo" data-i18n="track_code_label">Código de rastreo</label>
+            <input type="text" id="codigo" name="codigo" class="input" th:value="${codigo}"
                    data-i18n-attr="placeholder:track_code_placeholder" placeholder="Ej: AB12CD34" autocomplete="off" required>
           </div>
           <button type="submit" class="btn btn--primary btn--block">
@@ -30,7 +30,7 @@
         <div th:if="${requests != null and requests.isEmpty()}">
           <div th:replace="~{fragments/ui :: state('fa-magnifying-glass', 'No encontramos solicitudes con esos datos')}"></div>
           <div class="text-center mt">
-            <a href="/solicitudes/nueva" class="btn btn--primary">
+            <a href="/solicitar" class="btn btn--primary">
               <i class="fa-solid fa-plus"></i> <span data-i18n="track_empty_cta">Crear una solicitud</span>
             </a>
           </div>

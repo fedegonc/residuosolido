@@ -1,9 +1,12 @@
 User-agent: *
 Allow: /
 Disallow: /acopio/
+Disallow: /acopio
+Disallow: /mis-solicitudes
 Disallow: /solicitudes
 Disallow: /entrar
-Disallow: /registrar
+Disallow: /registrarse
 Disallow: /rastrear
+Disallow: /mi-organizacion
 Disallow: /api/
 Disallow: /solicitudes/org-options

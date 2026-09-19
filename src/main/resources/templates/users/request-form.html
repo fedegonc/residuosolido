@@ -25,8 +25,9 @@
         <p class="card__subtitle" th:if="${isEdit}" data-i18n="req_form_subtitle_edit">Modificá los datos de tu solicitud</p>
         <p class="card__subtitle" th:unless="${isEdit}" data-i18n="req_form_subtitle_new">Decinos qué materiales tenés y en qué dirección retirarlos.</p>
 
-        <form th:action="${isEdit} ? '/solicitud/' + ${request.id} + '/editar' : '/solicitudes'"
+        <form th:action="${isEdit} ? '/solicitudes/' + ${request.id} : '/solicitar'"
               method="post" enctype="multipart/form-data" id="requestForm" class="stack">
+          <input th:if="${isEdit}" type="hidden" name="_method" value="put">
 
           <div class="grid grid--2">
             <!-- Sección: contacto -->
@@ -82,8 +83,8 @@
               <h2 class="card__subtitle" data-i18n="req_form_section_details">Detalles de la recolección</h2>
               <div class="stack">
                 <div class="field">
-                  <label for="city" data-i18n="req_form_city">Ciudad <span class="req">*</span></label>
-                  <select id="city" name="city" class="select" th:disabled="${isEdit}" required
+                  <label for="ciudad" data-i18n="req_form_city">Ciudad <span class="req">*</span></label>
+                  <select id="ciudad" name="ciudad" class="select" th:disabled="${isEdit}" required
                           hx-get="/solicitudes/org-options" hx-target="#organizationId" hx-include="this"
                           hx-indicator="#materialsLoading">
                     <option value="" data-i18n="req_form_city_select">Seleccioná una ciudad</option>
@@ -190,7 +191,7 @@
               <span th:if="${isEdit}" data-i18n="req_form_submit_edit">Guardar cambios</span>
               <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Pedir recolección</span>
             </button>
-            <a th:href="${isEdit} ? '/solicitud/' + ${request.id} : '/'" class="btn btn--outline">
+            <a th:href="${isEdit} ? '/mis-solicitudes' : '/'" class="btn btn--outline">
               <i class="fa-solid fa-xmark"></i> <span data-i18n="req_form_cancel">Cancelar</span>
             </a>
           </div>

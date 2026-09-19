@@ -89,7 +89,7 @@ CityOrgService.findOrganizationByIdAndCity  (valida org en ciudad)
 
 ```
 Organización
-  ↓ POST /acopio/requests/{id}/transition?action=accept
+  ↓ POST /acopio/solicitudes/{id}/aceptar
 OrgRequestController
   ↓ RequestTransitionService.acceptRequest(...)
 Request.accept(TimeSlot)  (ciclo de estados)
@@ -101,13 +101,13 @@ Request.accept(TimeSlot)  (ciclo de estados)
 ```
 Organización registrada
   ↓ Login
-LoginSuccessHandler → redirige /acopio/requests
+LoginSuccessHandler → redirige /acopio/solicitudes
 OrgRequestController.orgRequests
-  ↓ needsProfileCompletion() → Redirect /acopio/perfil
+  ↓ needsProfileCompletion() → Redirect /mi-organizacion
 OrgProfileController.profile (abre en modo edición)
-  ↓ POST /acopio/perfil
+  ↓ PUT /mi-organizacion
 UserService.updateProfile → auto-completa si tiene teléfono + ciudad
-  ↓ Redirect /acopio/requests
+  ↓ Redirect /acopio/solicitudes
 ```
 
 ## Sistema de Layouts (Thymeleaf Layout Dialect)
