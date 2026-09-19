@@ -38,12 +38,12 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     void navigationHomeToLoginToRegister() {
         page.navigate(baseUrl + "/");
 
-        page.locator("a[href*='/auth/login']").first().click();
+        page.locator("a[href*='/entrar']").first().click();
         page.locator("[data-i18n='auth_login_title']").waitFor();
         assertTrue(page.locator("[data-i18n='auth_login_title']").innerText().contains("sesi"),
                 "Debe mostrar el título de login");
 
-        page.locator("a[href*='/auth/register']").first().click();
+        page.locator("a[href*='/registrar']").first().click();
         page.locator("[data-i18n='auth_register_title']").waitFor();
         assertTrue(page.locator("[data-i18n='auth_register_title']").innerText().contains("cuenta"),
                 "Debe mostrar el título de registro");
@@ -52,7 +52,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("Login con credenciales inválidas muestra error")
     void loginWithInvalidCredentialsShowsError() {
-        page.navigate(baseUrl + "/auth/login");
+        page.navigate(baseUrl + "/entrar");
 
         page.locator("#username").fill("usuario_inexistente");
         page.locator("input[name='password']").fill("clave_mala_123");
@@ -96,8 +96,8 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     void protectedRouteRedirectsToLogin() {
         page.navigate(baseUrl + "/acopio/requests");
 
-        page.waitForURL("**/auth/login**");
-        assertTrue(page.url().contains("/auth/login"),
+        page.waitForURL("**/entrar**");
+        assertTrue(page.url().contains("/entrar"),
                 "Acceso anónimo a /acopio debe redirigir a login");
     }
 }

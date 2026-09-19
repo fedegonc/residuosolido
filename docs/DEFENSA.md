@@ -379,23 +379,32 @@ elimina.
 
 ---
 
-## 7. Kanban integrado al dashboard (no página aparte)
+## 7. Panel de acopio: lista filtrada, no Kanban (revisado)
 
-**Decisión:** el tablero Kanban vive en `/acopio/inicio`, no en una
-ruta separada.
+**Decisión original:** el tablero Kanban vivía en `/acopio/inicio`, no
+en una ruta separada — menos navegación, todo en un solo lugar.
 
-**A favor:** menos navegación, la organización ve todo en un solo
-lugar, menos código.
+**Decisión actual:** el Kanban fue **eliminado**. El panel de acopio es
+`/acopio/requests`: una lista filtrable por estado con estadísticas en
+el encabezado. Las acciones (aceptar/rechazar/completar) se hacen desde
+el detalle de cada solicitud.
 
-**En contra:** el dashboard puede sentirse cargado si crece el número
-de solicitudes.
+**Por qué cambió:** el Kanban duplicaba funcionalidad — mostraba las
+mismas solicitudes agrupadas por estado que la lista ya podía filtrar,
+y ofrecía las mismas transiciones que el detalle. Dos vistas del mismo
+dato era código doble para mantener y explicar. Además cargaba una
+lista de pendientes que nunca llegaba a renderizarse. Eliminarlo
+suma en credibilidad (menos superficie duplicada) y en
+mantenibilidad (una sola vista de la verdad).
 
-**Para producción:** paginación del Kanban o vista dedicada con
-drag-and-drop si el volumen lo justifica.
+**Lo que se pierde:** la vista de "tablero" con columnas por estado es
+más visual que una lista. Con el volumen esperado del MVP (pocas
+solicitudes simultáneas por organización), el filtro por estado cubre
+la misma necesidad.
 
-**Tripwire:** cuando una organización tenga más de ~20 solicitudes
-pendientes simultáneas — no "si el volumen lo justifica" (vago), un
-número que se puede consultar en la base.
+**Para producción:** si el volumen crece, paginación de la lista o una
+vista dedicada con drag-and-drop. El tripwire original sigue vigente:
+~20 solicitudes pendientes simultáneas por organización.
 
 ---
 
@@ -527,24 +536,19 @@ rutas. El visitante ve el contenido completo en menos espacio.
 
 **Diferido:**
 
-- **Fusionar dashboards (user + org):** el dashboard de organización
-  ya tiene Kanban integrado; el de usuario es un subset. Merging
-  requiere condicionales por rol y cambios en ambos controllers.
-  Riesgo: medio. Ahorro: ~80 líneas.
-- **Reducir clases CSS con utilities:** 292 clases únicas, muchas
+- **Reducir clases CSS con utilities:** muchas clases únicas son
   reemplazables por utilities (`text-sm`, `mt-1`). Pero implica
   cambiar múltiples templates. Riesgo: bajo pero tedioso. Ahorro:
   ~40 clases.
 
-**Justificación de la postergación:** el sistema está estable con
-181 tests pasando. Las fusiones de controllers ya aplicadas
-(RequestEditController, OrgOnboardingController, OrgRequestDetailController)
-redujeron de 13 a 10 controllers sin regresiones. Las fusiones restantes
-(dashboards) requieren condicionales por rol más complejos.
+**Resuelto desde entonces:** la fusión de dashboards quedó obsoleta —
+el dashboard de usuario se absorbió en su lista de solicitudes, y el
+dashboard Kanban de organización se eliminó directamente (ver §7).
+Los controllers web bajaron a 11 con 153 tests pasando sin regresiones.
 
-**Para después de la defensa:** estas fusiones son el próximo paso
-natural de compactación. Cada una se puede hacer de forma aislada
-con su propio set de tests.
+**Para después de la defensa:** la compactación de CSS con utilities
+es el próximo paso natural. Se puede hacer de forma aislada con su
+propio set de tests.
 
 ---
 

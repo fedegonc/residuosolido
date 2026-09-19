@@ -11,7 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AuthNavigationInterceptor implements HandlerInterceptor {
 
     private static final java.util.Set<String> GUEST_ONLY_PATHS = java.util.Set.of(
-            "/auth/login", "/auth/register", "/", "/index"
+            "/entrar", "/registrar", "/", "/index"
     );
 
     @Override

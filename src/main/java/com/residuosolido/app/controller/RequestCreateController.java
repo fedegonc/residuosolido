@@ -42,12 +42,17 @@ public class RequestCreateController extends BaseController {
         this.guestRateLimiter = guestRateLimiter;
     }
 
-    /** Muestra el formulario para crear una solicitud. */
+    /** Muestra el formulario para crear una solicitud (acepta prefill de nombre/teléfono desde la home). */
     @GetMapping(Routes.REQUESTS_NEW)
     public String newRequestForm(@RequestParam(value = "city", required = false) City city,
+                                  @RequestParam(value = "name", required = false) String name,
+                                  @RequestParam(value = "phone", required = false) String phone,
                                   Model model, Authentication authentication) {
         User user = userService.resolveUser(authentication);
-        model.addAttribute("request", new Request());
+        Request request = new Request();
+        if (name != null) request.setGuestName(name);
+        if (phone != null) request.setGuestPhone(phone);
+        model.addAttribute("request", request);
         model.addAttribute("isEdit", false);
         model.addAttribute("isGuest", user == null);
         model.addAttribute("needsPhone", user != null && !user.hasPhone());

@@ -15,7 +15,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#14 Registro de ciudadano")
     void registerCitizen() {
-        page.navigate(baseUrl + "/auth/register");
+        page.navigate(baseUrl + "/registrar");
         page.locator("[data-i18n='auth_register_title']").waitFor();
 
         page.locator("#username").fill("testuser" + System.currentTimeMillis());
@@ -25,15 +25,15 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("button[type='submit']").click();
 
         // Debe redirigir a login con mensaje de éxito o a dashboard
-        page.waitForURL(url -> !url.contains("/auth/register"));
-        assertTrue(page.url().contains("/auth/login") || page.url().contains("/usuarios"),
+        page.waitForURL(url -> !url.contains("/registrar"));
+        assertTrue(page.url().contains("/entrar") || page.url().contains("/usuarios"),
                 "Después de registrar debe ir a login o dashboard");
     }
 
     @Test
     @DisplayName("#15 Registro de organización → onboarding")
     void registerOrganization() {
-        page.navigate(baseUrl + "/auth/register");
+        page.navigate(baseUrl + "/registrar");
         page.locator("[data-i18n='auth_register_title']").waitFor();
 
         page.locator("#username").fill("testorg" + System.currentTimeMillis());
@@ -43,11 +43,11 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("#isOrganization").check();
         page.locator("button[type='submit']").click();
 
-        // Debe redirigir a completar perfil (onboarding) o login
-        page.waitForURL(url -> !url.contains("/auth/register"));
-        assertTrue(page.url().contains("/acopio/completar-perfil")
-                        || page.url().contains("/auth/login"),
-                "Después de registrar org debe ir a onboarding o login");
+        // Debe redirigir al perfil (onboarding integrado) o login
+        page.waitForURL(url -> !url.contains("/registrar"));
+        assertTrue(page.url().contains("/acopio/perfil")
+                        || page.url().contains("/entrar"),
+                "Después de registrar org debe ir al perfil u onboarding");
     }
 
     @Test

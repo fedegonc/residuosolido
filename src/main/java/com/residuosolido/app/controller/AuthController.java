@@ -50,7 +50,7 @@ public class AuthController extends BaseController {
             }
             userRegistrationService.registerUser(form.toUser(), isOrganization);
             flashSuccess(redirectAttributes, "login.success");
-            return "redirect:/auth/login";
+            return "redirect:/entrar";
         } catch (DuplicateKeyException e) {
             model.addAttribute("errorMessage", msg("error.register.identity_exists"));
         } catch (IllegalArgumentException e) {

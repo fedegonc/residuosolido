@@ -18,10 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Servicio unificado de solicitudes: consultas, creación/edición/eliminación y transiciones de estado.
@@ -223,10 +221,6 @@ public class RequestService {
         return requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, status, PageRequest.of(page, size));
     }
 
-    public List<Request> getRecentPendingRequestsByOrganization(User organization, int limit) {
-        return requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, RequestStatus.PENDING, PageRequest.of(0, limit));
-    }
-
     public List<Request> getOrgRequestsByStatusFilter(User organization, String status, int page, int size) {
         if (status == null || status.trim().isEmpty()) {
             return getRequestsByOrganization(organization, page, size);
@@ -238,20 +232,6 @@ public class RequestService {
             logger.warn("Filtro de status inválido ignorado: {}", status);
             return getRequestsByOrganization(organization, page, size);
         }
-    }
-
-    /**
-     * Agrupa las solicitudes de la organización por estado para la vista Kanban.
-     * Devuelve un Map ordenado: PENDING, IN_PROGRESS, COMPLETED, REJECTED.
-     */
-    public Map<RequestStatus, List<Request>> getRequestsByOrganizationGroupedByStatus(User organization) {
-        Map<RequestStatus, List<Request>> grouped = new LinkedHashMap<>();
-        for (RequestStatus status : new RequestStatus[]{RequestStatus.PENDING, RequestStatus.IN_PROGRESS,
-                RequestStatus.COMPLETED, RequestStatus.REJECTED}) {
-            grouped.put(status, requestRepository
-                    .findByOrganizationAndStatusOrderByCreatedAtDesc(organization, status, PageRequest.of(0, 100)));
-        }
-        return grouped;
     }
 
     // ========== Validación ==========

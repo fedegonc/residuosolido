@@ -15,7 +15,7 @@ Livramento, Brasil).
 - Selección de organización por ciudad y materiales reciclables
 - Flujo de estados de solicitud (pendiente → en curso/rechazada →
   completada) gestionado por la organización
-- Tablero Kanban integrado en el panel de organización
+- Panel de organización con estadísticas y lista filtrable por estado
 - Rate limiting para solicitudes de invitados y bloqueo de cuenta tras
   intentos de login fallidos
 - Diseño canónico homogéneo (variables CSS, BEM, 0 estilos inline)

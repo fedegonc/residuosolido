@@ -130,7 +130,7 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(requestService.getRequestsByUser(any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
-        when(requestMetricsService.getUserDashboardStats(user))
+        when(requestMetricsService.getUserRequestStats(user))
                 .thenReturn(Map.of("total", 0L, "pending", 0L, "inProgress", 0L, "completed", 0L));
 
         mockMvc.perform(get(Routes.REQUESTS))
@@ -160,12 +160,12 @@ class EndToEndFlowsTest {
     }
 
     // ═══════════════════════════════════════════════════════
-    // Flujo 8: Perfil de organización (org/profile.html + org/dashboard.html)
+    // Flujo 8: Panel y perfil de organización
     // ═══════════════════════════════════════════════════════
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
-    void flujo8_orgDashboard_loadsWithStats() throws Exception {
+    void flujo8_orgPanel_loadsWithStats() throws Exception {
         User org = new User();
         org.setId("o1");
         org.setUsername("coop");
@@ -176,21 +176,15 @@ class EndToEndFlowsTest {
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(requestMetricsService.getOrgDashboardData(org))
+        when(requestMetricsService.getOrgRequestStats(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
-        when(requestService.getRecentPendingRequestsByOrganization(org, 5))
+        when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
-        when(requestService.getRequestsByOrganizationGroupedByStatus(org))
-                .thenReturn(Map.of(
-                        RequestStatus.PENDING, Collections.emptyList(),
-                        RequestStatus.IN_PROGRESS, Collections.emptyList(),
-                        RequestStatus.COMPLETED, Collections.emptyList(),
-                        RequestStatus.REJECTED, Collections.emptyList()));
 
-        mockMvc.perform(get(Routes.ORG_HOME))
+        mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().isOk())
-                .andExpect(view().name("org/dashboard"))
-                .andExpect(model().attributeExists("pendingRequests", "inProgressRequests", "completedRequests", "pendingRequestsList", "breadcrumbs"));
+                .andExpect(view().name("org/requests"))
+                .andExpect(model().attributeExists("pendingCount", "inProgressCount", "completedCount", "requests", "breadcrumbs"));
     }
 
     @Test
@@ -206,7 +200,7 @@ class EndToEndFlowsTest {
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(userService.updateProfile(any(), any(), any(), any(), any())).thenReturn(org);
+        when(userService.updateProfile(any(), any(), any(), any(), any(), any())).thenReturn(org);
 
         mockMvc.perform(get(Routes.ORG_PROFILE))
                 .andExpect(status().isOk())
@@ -233,6 +227,9 @@ class EndToEndFlowsTest {
         User org = new User();
         org.setId("o1");
         org.setUsername("coop");
+        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
+        org.setPhone("+59899123456");
+        org.setCity(City.RIVERA);
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
@@ -252,6 +249,9 @@ class EndToEndFlowsTest {
         User org = new User();
         org.setId("o1");
         org.setUsername("coop");
+        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
+        org.setPhone("+59899123456");
+        org.setCity(City.RIVERA);
         org.setProfileCompleted(true);
 
         Request req = new Request();
@@ -279,6 +279,9 @@ class EndToEndFlowsTest {
         User org = new User();
         org.setId("o1");
         org.setUsername("coop");
+        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
+        org.setPhone("+59899123456");
+        org.setCity(City.RIVERA);
         org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);

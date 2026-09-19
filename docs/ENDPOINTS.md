@@ -9,9 +9,9 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
 | GET | `/`, `/index` | `AuthController` | Landing page pública |
-| GET | `/auth/register` | `AuthController` | Formulario de registro |
-| POST | `/auth/register` | `AuthController` | Procesa registro (Usuario u Organización) |
-| GET | `/auth/login` | `AuthController` | Formulario de login |
+| GET | `/registrar` | `AuthController` | Formulario de registro |
+| POST | `/registrar` | `AuthController` | Procesa registro (Usuario u Organización) |
+| GET | `/entrar` | `AuthController` | Formulario de login (POST procesado por Spring Security en la misma URL) |
 | GET | `/rastrear` | `GuestTrackingController` | Formulario de rastreo por teléfono + código privado |
 | POST | `/rastrear` | `GuestTrackingController` | Busca solicitudes por teléfono + código |
 | GET | `/documentos` | `DocsController` | Índice de documentación técnica (docs/*.md) |
@@ -35,12 +35,9 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/acopio/inicio` | `OrgDashboardController` | Dashboard con Kanban integrado (4 columnas por estado) + estadísticas |
-| GET | `/acopio/completar-perfil` | `OrgProfileController` | Formulario de onboarding forzado (teléfono + ciudad) |
-| POST | `/acopio/completar-perfil` | `OrgProfileController` | Guarda el perfil inicial |
-| GET | `/acopio/perfil` | `OrgProfileController` | Formulario de edición de perfil |
+| GET | `/acopio/requests` | `OrgRequestController` | Panel de acopio: estadísticas + lista de solicitudes con filtro por estado (redirige a `/acopio/perfil` si el perfil está incompleto) |
+| GET | `/acopio/perfil` | `OrgProfileController` | Perfil de la organización; abre en modo edición si está incompleto (absorbe el onboarding) |
 | POST | `/acopio/perfil` | `OrgProfileController` | Actualiza datos de la organización |
-| GET | `/acopio/requests` | `OrgRequestController` | Lista de solicitudes asignadas, con filtro por estado y paginado |
 | GET | `/acopio/requests/{id}` | `OrgRequestController` | Detalle de una solicitud asignada |
 | POST | `/acopio/requests/{id}/transition` | `OrgRequestController` | Cambia estado: `action=accept\|reject\|complete` |
 
@@ -49,9 +46,9 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 ## Notas
 
 - No existen rutas `/admin/**` — no hay rol Admin ni panel de administración general.
-- No existe la ruta `/acopio/kanban` — el tablero Kanban se integró al dashboard (`/acopio/inicio`).
+- No existen rutas `/acopio/inicio`, `/acopio/completar-perfil` ni `/acopio/kanban` — el dashboard Kanban y el onboarding separado fueron consolidados: el panel de acopio es `/acopio/requests` y el onboarding vive en `/acopio/perfil` (ver `docs/MEJORAS.md`).
 - No existen rutas `/blog`, `/posts`, `/metricas` — el blog y las métricas públicas fueron descartados del MVP.
-- Las rutas están en español (`/usuarios`, `/acopio`, `/solicitudes`) por decisión de diseño, sin alias en inglés.
+- Las rutas están en español (`/usuarios`, `/acopio`, `/solicitudes`, `/entrar`, `/registrar`) por decisión de diseño, sin alias en inglés — `/auth/login` y `/auth/register` fueron renombradas a slugs de una palabra coherentes con el resto.
 - Las rutas físicas están centralizadas en `com.residuosolido.app.config.Routes` para evitar URLs hardcodeadas en controllers, seguridad y tests.
 - OpenAPI/Swagger UI está disponible en `/swagger-ui.html` y `/v3/api-docs` (público en `SecurityConfig`).
 

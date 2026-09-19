@@ -74,11 +74,11 @@ public abstract class PlaywrightBaseTest {
 
     /** Login con usuario y password. Asume que está en cualquier página. */
     protected void login(String username, String password) {
-        page.navigate(baseUrl + "/auth/login");
+        page.navigate(baseUrl + "/entrar");
         page.locator("#username").fill(username);
         page.locator("input[name='password']").fill(password);
         page.locator("button[type='submit']").click();
-        page.waitForURL(url -> !url.contains("/auth/login"), new Page.WaitForURLOptions().setTimeout(10000));
+        page.waitForURL(url -> !url.contains("/entrar"), new Page.WaitForURLOptions().setTimeout(10000));
     }
 
     /** Llenar formulario de solicitud (para ciudadano logueado). */

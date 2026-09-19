@@ -38,8 +38,7 @@ Implementar un MVP que gestione solicitudes de recolección y su estado, adaptad
 - **Implementado:** edición y eliminación de solicitudes propias mientras están en `PENDING`.
 - **Implementado:** gestión de estados por la organización: aceptar, rechazar y completar.
 - **Implementado:** seguimiento de solicitudes de invitados mediante teléfono y código privado.
-- **Implementado:** dashboards para usuario y organización.
-- **Implementado:** tablero Kanban integrado al dashboard de organización.
+- **Implementado:** panel de solicitudes para usuario y organización (con estadísticas en el encabezado; los dashboards separados fueron absorbidos, ver `docs/MEJORAS.md` #130).
 - **Implementado:** métricas públicas agregadas por ciudad.
 - **Descartado:** blog estático (no se implementó).
 - **Implementado:** internacionalización español/portugués.
@@ -328,7 +327,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - **Un solo CSS con variables y BEM:** evita tooling adicional de frontend y mantiene coherencia visual.
 - **Dark mode con variables CSS:** evita dependencias y respeta preferencia persistida y del sistema operativo.
 - **Sin blog:** elimina complejidad de CMS y riesgo de edición dinámica.
-- **Kanban integrado al dashboard:** reduce navegación y reutiliza endpoints existentes.
+- **Panel de acopio como lista filtrada (no Kanban):** una sola vista de la verdad con filtro por estado; el Kanban se eliminó por duplicar la lista (ver `docs/DEFENSA.md` §7).
 - **HTML fuera del caché del service worker:** evita contenido desactualizado a costa de navegación offline.
 
 ### Operación

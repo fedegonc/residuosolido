@@ -4,49 +4,36 @@
 <head><title>Inicio</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page">
-      <section class="hero">
-        <h1 class="hero__title" data-i18n="title">Pedí que pasen a buscar tus <span>reciclables</span></h1>
-        <p class="hero__subtitle" data-i18n="subtitle">Una cooperativa de tu ciudad los retira en el día y horario que coordinen.</p>
-        <div class="hero__cta">
-          <a href="/solicitudes/nueva" class="btn btn--primary">
-            <i class="fa-solid fa-clipboard-list"></i>
-            <span data-i18n="cta_request">Pedir recolección</span>
-          </a>
-          <a href="/rastrear" class="btn btn--outline">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span data-i18n="cta_track">Ver mi solicitud</span>
-          </a>
-        </div>
-      </section>
+    <div class="page page--center">
+      <div class="split">
+        <section class="hero">
+          <h1 class="hero__title" data-i18n="title">Pedí que pasen a buscar tus <span>reciclables</span></h1>
+          <p class="hero__subtitle" data-i18n="subtitle">Una cooperativa de tu ciudad los retira en el día y horario que coordinen.</p>
+          <div class="hero__cta">
+            <a href="/solicitudes/nueva" class="btn btn--primary">
+              <i class="fa-solid fa-clipboard-list"></i>
+              <span data-i18n="cta_request">Pedir recolección</span>
+            </a>
+            <a href="/rastrear" class="btn btn--outline">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span data-i18n="cta_track">Ver mi solicitud</span>
+            </a>
+          </div>
+        </section>
 
-      <div class="how__grid mb-lg">
-        <div class="how__step">
-          <div class="how__number">1</div>
-          <h3 data-i18n="how_step1">Solicitás</h3>
-          <p data-i18n="how_step1_desc">Elegí tu ciudad y los materiales que tenés.</p>
-        </div>
-        <div class="how__step">
-          <div class="how__number">2</div>
-          <h3 data-i18n="how_step2">Asignamos</h3>
-          <p data-i18n="how_step2_desc">Elegís una cooperativa de tu ciudad que acepte esos materiales.</p>
-        </div>
-        <div class="how__step">
-          <div class="how__number">3</div>
-          <h3 data-i18n="how_step3">Retiran</h3>
-          <p data-i18n="how_step3_desc">Coordinan día y horario para el retiro.</p>
-        </div>
-        <div class="how__step">
-          <div class="how__number">4</div>
-          <h3 data-i18n="how_step4">Impactamos</h3>
-          <p data-i18n="how_step4_desc">Seguís el estado con tu teléfono y código de rastreo.</p>
-        </div>
-      </div>
-
-      <div class="card text-center">
-        <h3 data-i18n="org_cta_title">¿Retirás reciclables en Rivera o Sant'Ana?</h3>
-        <p class="hint mb" data-i18n="org_cta_desc">Registrate para recibir solicitudes de recolección en tu zona.</p>
-        <a href="/auth/register" class="btn btn--primary" data-i18n="org_cta_button">Registrarme como organización</a>
+        <section class="hero hero--dark">
+          <h2 class="hero__title hero__title--sm" data-i18n="split_guest_title">Hacelo con tu nombre y celular</h2>
+          <form action="/solicitudes/nueva" method="get" class="stack">
+            <input type="text" name="name" class="input" placeholder="Tu nombre" required
+                   data-i18n-attr="placeholder:split_guest_name">
+            <input type="tel" name="phone" class="input" placeholder="Tu celular" required
+                   data-i18n-attr="placeholder:split_guest_phone">
+            <button type="submit" class="btn btn--light">
+              <i class="fa-solid fa-arrow-right"></i>
+              <span data-i18n="cta_request">Pedir recolección</span>
+            </button>
+          </form>
+        </section>
       </div>
     </div>
   </main>

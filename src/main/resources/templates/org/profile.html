@@ -1,22 +1,23 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base-sidebar}">
+      layout:decorate="~{layout/base}">
 <head><title>Perfil de organización</title></head>
 <body>
-  <aside layout:fragment="sidebar">
-    <div th:replace="~{fragments/org-sidebar :: sidebar('profile')}"></div>
-  </aside>
-
-  <div layout:fragment="pageContent">
+  <main layout:fragment="content">
 
       <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
       <div class="row row--between mb">
         <h1 class="card__title" data-i18n="org_profile_title">Perfil de organización</h1>
-        <button type="button" class="btn btn--outline" id="editToggle"><i class="fa-solid fa-pen"></i> <span data-i18n="org_profile_edit">Editar</span></button>
+        <button type="button" class="btn btn--outline" id="editToggle" th:if="${organization.isProfileComplete()}"><i class="fa-solid fa-pen"></i> <span data-i18n="org_profile_edit">Editar</span></button>
       </div>
 
-      <div class="card mb" id="viewCard">
+      <div th:if="${!organization.isProfileComplete()}" class="alert alert--info mb">
+        <i class="fa-solid fa-circle-info"></i>
+        <span data-i18n="onboard_subtitle">Necesitamos estos datos para que los ciudadanos puedan contactarte</span>
+      </div>
+
+      <div class="card mb" id="viewCard" th:if="${organization.isProfileComplete()}">
         <h2 class="card__subtitle" data-i18n="org_profile_info">Información</h2>
         <div th:replace="~{fragments/ui :: row('fa-building', 'Nombre', ${organization.displayName})}"></div>
         <div th:replace="~{fragments/ui :: row('fa-user', 'Usuario', ${organization.username})}"></div>
@@ -33,7 +34,7 @@
         </div>
       </div>
 
-      <div class="card is-hidden" id="editCard">
+      <div class="card" id="editCard" th:classappend="${organization.isProfileComplete()} ? 'is-hidden'">
         <h2 class="card__subtitle" data-i18n="org_profile_edit_title">Editar datos</h2>
         <form th:action="@{/acopio/perfil}" method="post" class="stack">
           <div class="field">
@@ -78,12 +79,12 @@
           </div>
           <div class="form-actions">
             <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="profile_save">Guardar</span></button>
-            <button type="button" class="btn btn--outline" id="cancelEdit"><i class="fa-solid fa-xmark"></i> <span data-i18n="profile_cancel">Cancelar</span></button>
+            <button type="button" class="btn btn--outline" id="cancelEdit" th:if="${organization.isProfileComplete()}"><i class="fa-solid fa-xmark"></i> <span data-i18n="profile_cancel">Cancelar</span></button>
           </div>
         </form>
       </div>
 
-  </div>
+  </main>
 
   <th:block layout:fragment="pageScripts">
     <script th:src="@{/js/org-profile.js}"></script>

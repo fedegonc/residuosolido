@@ -52,35 +52,35 @@ class RequestMetricsServiceTest {
                 .thenReturn(results);
     }
 
-    // ─── getOrgDashboardData (ex-DashboardService) ───
+    // ─── getOrgRequestStats (stats del panel de acopio) ───
 
     @Test
-    void getOrgDashboardData_noResults_returnsZeroedCounts() {
+    void getOrgRequestStats_noResults_returnsZeroedCounts() {
         mockAggregationResult(null);
-        Map<String, Long> data = service.getOrgDashboardData(organization("org1"));
+        Map<String, Long> data = service.getOrgRequestStats(organization("org1"));
         assertEquals(0L, data.get("pending"));
         assertEquals(0L, data.get("inProgress"));
         assertEquals(0L, data.get("completed"));
     }
 
     @Test
-    void getOrgDashboardData_withResults_extractsCounts() {
+    void getOrgRequestStats_withResults_extractsCounts() {
         Map<String, Object> mapped = Map.of(
                 "pending", List.of(Map.of("count", 3)),
                 "inProgress", List.of(Map.of("count", 2)),
                 "completed", List.of(Map.of("count", 7))
         );
         mockAggregationResult(mapped);
-        Map<String, Long> data = service.getOrgDashboardData(organization("org1"));
+        Map<String, Long> data = service.getOrgRequestStats(organization("org1"));
         assertEquals(3L, data.get("pending"));
         assertEquals(2L, data.get("inProgress"));
         assertEquals(7L, data.get("completed"));
     }
 
     @Test
-    void getOrgDashboardData_returnsOnlyThreeKeys_noTotal() {
+    void getOrgRequestStats_returnsOnlyThreeKeys_noTotal() {
         mockAggregationResult(null);
-        Map<String, Long> data = service.getOrgDashboardData(organization("org1"));
+        Map<String, Long> data = service.getOrgRequestStats(organization("org1"));
         assertEquals(3, data.size());
         assertTrue(data.containsKey("pending"));
         assertTrue(data.containsKey("inProgress"));
@@ -88,12 +88,12 @@ class RequestMetricsServiceTest {
         assertFalse(data.containsKey("total"));
     }
 
-    // ─── getUserDashboardStats ───
+    // ─── getUserRequestStats ───
 
     @Test
-    void getUserDashboardStats_noResults_returnsZeroedCounts() {
+    void getUserRequestStats_noResults_returnsZeroedCounts() {
         mockAggregationResult(null);
-        Map<String, Long> data = service.getUserDashboardStats(user("u1"));
+        Map<String, Long> data = service.getUserRequestStats(user("u1"));
         assertEquals(0L, data.get("pending"));
         assertEquals(0L, data.get("inProgress"));
         assertEquals(0L, data.get("completed"));
@@ -101,7 +101,7 @@ class RequestMetricsServiceTest {
     }
 
     @Test
-    void getUserDashboardStats_withResults_extractsCounts() {
+    void getUserRequestStats_withResults_extractsCounts() {
         Map<String, Object> mapped = Map.of(
                 "pending", List.of(Map.of("count", 1)),
                 "inProgress", List.of(Map.of("count", 2)),
@@ -109,7 +109,7 @@ class RequestMetricsServiceTest {
                 "total", List.of(Map.of("count", 7))
         );
         mockAggregationResult(mapped);
-        Map<String, Long> data = service.getUserDashboardStats(user("u1"));
+        Map<String, Long> data = service.getUserRequestStats(user("u1"));
         assertEquals(1L, data.get("pending"));
         assertEquals(2L, data.get("inProgress"));
         assertEquals(4L, data.get("completed"));
@@ -117,9 +117,9 @@ class RequestMetricsServiceTest {
     }
 
     @Test
-    void getUserDashboardStats_returnsFourKeys_includingTotal() {
+    void getUserRequestStats_returnsFourKeys_includingTotal() {
         mockAggregationResult(null);
-        Map<String, Long> data = service.getUserDashboardStats(user("u1"));
+        Map<String, Long> data = service.getUserRequestStats(user("u1"));
         assertEquals(4, data.size());
         assertTrue(data.containsKey("total"));
     }

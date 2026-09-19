@@ -209,65 +209,65 @@ class UserServiceTest {
         assertEquals(Role.ORGANIZATION, result.getRole());
     }
 
-    // ===== completeOrgProfile: validaciones en capa de dominio =====
+    // ===== updateProfile en orgs: auto-completa el perfil cuando hay phone + city =====
 
     @Test
-    void completeOrgProfile_nullPhone_throwsPhoneRequired() {
+    void updateProfile_orgWithoutPhone_doesNotCompleteProfile() {
         User org = new User();
         org.setId("1");
         org.setUsername("coop");
+        org.setRole(Role.ORGANIZATION);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.completeOrgProfile(org, null, City.RIVERA));
-        assertEquals("error.profile.phone_required", ex.getMessage());
+        when(userRepository.findById("1")).thenReturn(Optional.of(org));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        userService.updateProfile(org, null, null, null, City.RIVERA, null);
+
+        assertNotEquals(Boolean.TRUE, org.getProfileCompleted());
     }
 
     @Test
-    void completeOrgProfile_blankPhone_throwsPhoneRequired() {
+    void updateProfile_orgWithoutCity_doesNotCompleteProfile() {
         User org = new User();
         org.setId("1");
         org.setUsername("coop");
+        org.setRole(Role.ORGANIZATION);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.completeOrgProfile(org, "   ", City.RIVERA));
-        assertEquals("error.profile.phone_required", ex.getMessage());
+        when(userRepository.findById("1")).thenReturn(Optional.of(org));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        userService.updateProfile(org, null, null, "+59899123456", null, null);
+
+        assertNotEquals(Boolean.TRUE, org.getProfileCompleted());
     }
 
     @Test
-    void completeOrgProfile_invalidPhoneFormat_throwsPhoneInvalid() {
+    void updateProfile_invalidPhoneFormat_throwsPhoneInvalid() {
         User org = new User();
         org.setId("1");
         org.setUsername("coop");
+        org.setRole(Role.ORGANIZATION);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.completeOrgProfile(org, "099123456", City.RIVERA));
+                () -> userService.updateProfile(org, null, null, "099123456", City.RIVERA, null));
         assertEquals("error.phone.invalid", ex.getMessage());
     }
 
     @Test
-    void completeOrgProfile_nullCity_throwsCityRequired() {
+    void updateProfile_orgWithPhoneAndCity_completesProfile() {
         User org = new User();
         org.setId("1");
         org.setUsername("coop");
+        org.setRole(Role.ORGANIZATION);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.completeOrgProfile(org, "+598 99 123 456", null));
-        assertEquals("error.profile.city_required", ex.getMessage());
-    }
-
-    @Test
-    void completeOrgProfile_validPhoneAndCity_marksProfileCompleted() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
-
+        when(userRepository.findById("1")).thenReturn(Optional.of(org));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        userService.completeOrgProfile(org, "+598 99 123 456", City.RIVERA);
+        userService.updateProfile(org, null, null, "+598 99 123 456", City.RIVERA, null);
 
         assertTrue(org.getProfileCompleted());
         assertEquals(City.RIVERA, org.getCity());
-        verify(userRepository).save(org);
+        verify(userRepository).save(any(User.class));
     }
 
     @Test

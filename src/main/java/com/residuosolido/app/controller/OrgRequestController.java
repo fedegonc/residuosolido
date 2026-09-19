@@ -7,6 +7,7 @@ import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 /**
  * Gestión de solicitudes por la organización:
- * - Lista con filtro por estado
+ * - Lista con filtro por estado (pantalla principal del acopio)
  * - Detalle individual
  * - Transiciones de estado (aceptar, rechazar, completar)
  *
@@ -35,10 +36,13 @@ public class OrgRequestController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
+    private final RequestMetricsService requestMetricsService;
     private final RequestService requestService;
 
     @Autowired
-    public OrgRequestController(RequestService requestService) {
+    public OrgRequestController(RequestMetricsService requestMetricsService,
+                                 RequestService requestService) {
+        this.requestMetricsService = requestMetricsService;
         this.requestService = requestService;
     }
 
@@ -49,6 +53,16 @@ public class OrgRequestController extends BaseController {
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication, Model model) {
         User currentOrg = getCurrentUser(authentication);
+
+        if (currentOrg.needsProfileCompletion()) {
+            return "redirect:" + Routes.ORG_PROFILE;
+        }
+
+        Map<String, Long> stats = requestMetricsService.getOrgRequestStats(currentOrg);
+        model.addAttribute("pendingCount", stats.get("pending"));
+        model.addAttribute("inProgressCount", stats.get("inProgress"));
+        model.addAttribute("completedCount", stats.get("completed"));
+
         List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, status, page, size);
 
         model.addAttribute("requests", requests);
@@ -59,8 +73,7 @@ public class OrgRequestController extends BaseController {
         model.addAttribute("pageSize", size);
         model.addAttribute("breadcrumbs", List.of(
                 Map.of("label", "Inicio", "href", "/"),
-                Map.of("label", "Panel de acopio", "href", "/acopio/inicio"),
-                Map.of("label", "Solicitudes", "href", "")
+                Map.of("label", "Panel de acopio", "href", "")
         ));
         return "org/requests";
     }
@@ -107,7 +120,6 @@ public class OrgRequestController extends BaseController {
                 case "complete" -> {
                     requestService.completeRequest(id, org);
                     flashSuccess(redirectAttributes, "flash.org.request_completed");
-                    return "redirect:/acopio/inicio";
                 }
                 default -> flashError(redirectAttributes, "flash.org.request_invalid_action");
             }

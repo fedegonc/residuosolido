@@ -88,6 +88,36 @@
     });
   });
 
+  /* ─── Interacciones delegadas (los handlers inline onclick/onsubmit están
+     bloqueados por CSP script-src 'self') ─── */
+  document.addEventListener('click', function (e) {
+    var overlay = e.target.closest && e.target.closest('.modal-overlay');
+    if (overlay && (e.target.closest('.modal__close') || e.target === overlay)) {
+      overlay.remove();
+      return;
+    }
+    var rejectToggle = e.target.closest && e.target.closest('#rejectToggle');
+    if (rejectToggle) {
+      document.getElementById('rejectForm').classList.remove('is-hidden');
+      rejectToggle.classList.add('is-hidden');
+      return;
+    }
+    if (e.target.closest && e.target.closest('#rejectCancel')) {
+      document.getElementById('rejectForm').classList.add('is-hidden');
+      document.getElementById('rejectToggle').classList.remove('is-hidden');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      var overlay = document.querySelector('.modal-overlay');
+      if (overlay) overlay.remove();
+    }
+  });
+  document.addEventListener('submit', function (e) {
+    var msg = e.target.getAttribute && e.target.getAttribute('data-confirm');
+    if (msg && !window.confirm(msg)) e.preventDefault();
+  });
+
   /* ─── Re-apply i18n after HTMX swaps ─── */
   document.body.addEventListener('htmx:afterSwap', applyTranslations);
 

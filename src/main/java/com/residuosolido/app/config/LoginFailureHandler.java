@@ -37,6 +37,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         }
         logger.warn("Intento de login fallido para usuario '{}' ({})", username, exception.getMessage());
         String param = isLocked || loginAttemptService.isBlocked(username) ? "blocked" : "error";
-        redirectStrategy.sendRedirect(request, response, "/auth/login?" + param);
+        redirectStrategy.sendRedirect(request, response, "/entrar?" + param);
     }
 }

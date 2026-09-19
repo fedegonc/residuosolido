@@ -265,9 +265,8 @@ Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog. Si
 - `RequestCreateController` — Crear solicitudes (invitado + usuario)
 
 **Organización (Acopio):**
-- `OrgDashboardController` — Dashboard de organización con Kanban integrado
-- `OrgRequestController` — Lista, detalle y acciones (aceptar/rechazar/completar)
-- `OrgProfileController` — Perfil de organización + onboarding post-registro
+- `OrgRequestController` — Panel de acopio: estadísticas + lista, detalle y acciones (aceptar/rechazar/completar)
+- `OrgProfileController` — Perfil de organización (edición y onboarding en una sola página)
 
 **Público:**
 - `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
@@ -333,35 +332,33 @@ Request.accept(TimeSlot)  (ciclo de estados)
 ```
 Organización registrada
   ↓ Login
-LoginSuccessHandler → redirige /acopio/completar-perfil
-OrgProfileController.completeProfile
-  ↓ UserService.completeOrgProfile
-  ↓ profileCompleted = true
-  ↓ Redirect /acopio/inicio
+LoginSuccessHandler → redirige /acopio/requests
+OrgRequestController.orgRequests
+  ↓ needsProfileCompletion() → Redirect /acopio/perfil
+OrgProfileController.profile (abre en modo edición)
+  ↓ POST /acopio/perfil
+UserService.updateProfile → auto-completa si tiene teléfono + ciudad
+  ↓ Redirect /acopio/requests
 ```
 
 ## Sistema de Layouts (Thymeleaf Layout Dialect)
 
-Layouts anidados con `layout:decorate` para separar responsabilidades sin duplicar navbar/footer/alerts en cada página:
+Todas las páginas decoran un único layout raíz con `layout:decorate`, sin duplicar navbar/footer/alerts en cada página:
 
 ```
 layout/base.html (raíz)
   ├─ slots: content, extraHead, pageScripts
   ├─ maneja: navbar, alerts globales, footer, scripts globales (app.js)
   │
-  └─ layout/base-sidebar.html (decora base.html)
-       ├─ slots: sidebar, pageContent
-       ├─ maneja: grid de 2 columnas (.org-layout)
-       │
-       └─ org/dashboard.html, org/requests.html, org/profile.html
-            (llenan solo 'sidebar' y 'pageContent', heredan todo lo demás)
+  └─ todas las páginas: org/requests.html, org/profile.html,
+     users/requests.html, users/track.html, auth/*, public/*
+     (llenan solo 'content', heredan todo lo demás)
 ```
 
-**Por qué dos niveles en vez de fragmentos nativos:** Layout Dialect es 100% server-side
-(no pesa en el bundle del navegador) y da slots múltiples con herencia real. Los 3
-templates de `/org` antes duplicaban `<div class="org-layout"><sidebar/><main>...`
-manualmente; ahora solo declaran su `sidebar` y `pageContent`, y cualquier página nueva
-con sidebar puede decorar `layout/base-sidebar` sin repetir el grid.
+**Por qué un solo nivel:** antes existía `layout/base-sidebar.html` como segundo nivel
+para las páginas de `/org` (sidebar con 2 links), pero el navbar global ya muestra los
+mismos links para el rol ORGANIZATION — era navegación duplicada. Se eliminó y las
+páginas de org decoran `base.html` directamente (ver `docs/MEJORAS.md` #130).
 
 ## Decisiones de Arquitectura
 

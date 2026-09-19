@@ -63,7 +63,7 @@ public class RequestController extends BaseController {
         User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
         model.addAttribute("requests", requestService.getRequestsByUser(user, page, size));
-        model.addAttribute("requestStats", requestMetricsService.getUserDashboardStats(user));
+        model.addAttribute("requestStats", requestMetricsService.getUserRequestStats(user));
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         return "users/requests";

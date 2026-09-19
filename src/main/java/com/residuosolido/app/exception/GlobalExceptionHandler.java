@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage(e.getMessage(), null, e.getMessage(), LocaleContextHolder.getLocale()));
         // Un error de validación (ej. teléfono mal formado) debe devolver al formulario
         // donde ocurrió, no a un destino "genérico" por rol — si no, el usuario ve el
-        // error en una pantalla sin el campo que lo causó (ej. termina en /auth/login).
+        // error en una pantalla sin el campo que lo causó (ej. termina en /entrar).
         String referer = request.getHeader("Referer");
         if (referer != null && !referer.isBlank()) {
             return "redirect:" + referer;
@@ -62,6 +62,6 @@ public class GlobalExceptionHandler {
     private String resolveTarget() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String url = Routes.resolveHomeForRole(auth);
-        return url.equals("/") ? "/auth/login" : url;
+        return url.equals("/") ? "/entrar" : url;
     }
 }

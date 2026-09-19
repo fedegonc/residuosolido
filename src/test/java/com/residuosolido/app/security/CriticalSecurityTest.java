@@ -52,21 +52,21 @@ class CriticalSecurityTest {
     void userRequests_anonymous_redirectsToLogin() throws Exception {
         mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/auth/login"));
+                .andExpect(redirectedUrlPattern("**/entrar"));
     }
 
     @Test
-    void orgDashboard_anonymous_redirectsToLogin() throws Exception {
-        mockMvc.perform(get(Routes.ORG_HOME))
+    void orgRequests_anonymous_redirectsToLogin() throws Exception {
+        mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/auth/login"));
+                .andExpect(redirectedUrlPattern("**/entrar"));
     }
 
     @Test
     void userRequestsList_anonymous_redirectsToLogin() throws Exception {
         mockMvc.perform(get(Routes.REQUESTS))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/auth/login"));
+                .andExpect(redirectedUrlPattern("**/entrar"));
     }
 
     // ===== Separación de roles =====
@@ -74,7 +74,7 @@ class CriticalSecurityTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void userRole_cannotAccessOrgRoutes() throws Exception {
-        mockMvc.perform(get(Routes.ORG_HOME))
+        mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().isForbidden());
     }
 

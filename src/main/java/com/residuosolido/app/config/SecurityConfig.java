@@ -32,7 +32,7 @@ public class SecurityConfig {
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
                 .requestMatchers(Routes.HOME, Routes.INDEX).permitAll()
                 .requestMatchers(Routes.SEED).permitAll()
-                .requestMatchers(Routes.LOGIN, "/login", Routes.REGISTER, "/register").permitAll()
+                .requestMatchers(Routes.LOGIN, Routes.REGISTER).permitAll()
                 .requestMatchers(Routes.LANGUAGE).permitAll()
                 // Recursos especiales de navegador
                 .requestMatchers(Routes.WELL_KNOWN).permitAll()
@@ -57,7 +57,7 @@ public class SecurityConfig {
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )
-            // Manejo por defecto: redirige a /auth/login para recursos HTML
+            // Manejo por defecto: redirige a /entrar para recursos HTML
             .formLogin(form -> form
                 .loginPage(Routes.LOGIN)
                 .loginProcessingUrl(Routes.LOGIN)

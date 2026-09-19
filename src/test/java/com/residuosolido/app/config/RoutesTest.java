@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class RoutesTest {
 
     @Test
-    void organization_redirectsToAcopioInicio() {
+    void organization_redirectsToAcopioRequests() {
         Authentication auth = new UsernamePasswordAuthenticationToken("org", "pass",
                 List.of(new SimpleGrantedAuthority("ROLE_ORGANIZATION")));
-        assertEquals("/acopio/inicio", Routes.resolveHomeForRole(auth));
+        assertEquals("/acopio/requests", Routes.resolveHomeForRole(auth));
     }
 
     @Test

@@ -37,7 +37,7 @@
               <i class="fa-solid fa-pen"></i> <span data-i18n="req_list_edit">Editar</span>
             </a>
             <form th:if="${req.canBeDeleted()}" th:action="@{/solicitud/{id}/eliminar(id=${req.id})}" method="post"
-                  onsubmit="return confirm('¿Eliminar esta solicitud?');">
+                  data-confirm="¿Eliminar esta solicitud?" data-i18n-attr="data-confirm:req_delete_confirm">
               <button type="submit" class="btn btn--outline btn--sm btn--danger">
                 <i class="fa-solid fa-trash"></i> <span data-i18n="req_list_delete">Eliminar</span>
               </button>

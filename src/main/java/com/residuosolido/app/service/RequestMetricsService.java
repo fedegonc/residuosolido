@@ -20,7 +20,7 @@ public class RequestMetricsService {
     }
 
     /**
-     * Stats del dashboard del ciudadano.
+     * Stats de solicitudes del ciudadano (header de la lista).
      *
      * Request.user usa @DocumentReference(lazy=true), que guarda el ObjectId
      * directamente en el campo "user" (no como DBRef con $id). Por eso el match
@@ -28,12 +28,12 @@ public class RequestMetricsService {
      *
      * Si el ID no es un ObjectId válido (ej. en tests con mocks), usa el String directamente.
      */
-    public Map<String, Long> getUserDashboardStats(User user) {
+    public Map<String, Long> getUserRequestStats(User user) {
         return MongoAggregationUtils.countByStatusFaceted(
                 mongoTemplate, Criteria.where("user").is(toObjectIdOrString(user.getId())), true);
     }
 
-    public Map<String, Long> getOrgDashboardData(User organization) {
+    public Map<String, Long> getOrgRequestStats(User organization) {
         return MongoAggregationUtils.countByStatusFaceted(
                 mongoTemplate, Criteria.where("organization").is(toObjectIdOrString(organization.getId())), false);
     }

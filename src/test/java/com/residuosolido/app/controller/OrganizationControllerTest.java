@@ -5,6 +5,7 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +48,9 @@ class OrganizationControllerTest {
     @MockBean
     private RequestService requestService;
 
+    @MockBean
+    private RequestMetricsService requestMetricsService;
+
     @BeforeEach
     void setUp() {
         User mockOrg = new User();
@@ -59,6 +63,8 @@ class OrganizationControllerTest {
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(mockOrg);
         when(requestService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
+        when(requestMetricsService.getOrgRequestStats(any(User.class)))
+                .thenReturn(java.util.Map.of("pending", 0L, "inProgress", 0L, "completed", 0L));
     }
 
     @Test

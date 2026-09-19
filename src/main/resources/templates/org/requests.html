@@ -1,13 +1,9 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base-sidebar}">
+      layout:decorate="~{layout/base}">
 <head><title>Solicitudes de acopio</title></head>
 <body>
-  <aside layout:fragment="sidebar">
-    <div th:replace="~{fragments/org-sidebar :: sidebar('requests')}"></div>
-  </aside>
-
-  <div layout:fragment="pageContent">
+  <main layout:fragment="content">
 
       <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
@@ -15,7 +11,12 @@
       <th:block th:if="${viewType == T(com.residuosolido.app.enums.RequestViewType).LIST}">
         <div class="row row--between mb">
           <h1 class="card__title" data-i18n="org_req_title">Solicitudes</h1>
-          <a href="/acopio/inicio" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="org_req_back_dashboard">Volver</span></a>
+        </div>
+
+        <div class="grid grid--3 mb-lg">
+          <div th:replace="~{fragments/ui :: tile('fa-clock', ${pendingCount}, 'dash_stat_pending', 'Pendientes')}"></div>
+          <div th:replace="~{fragments/ui :: tile('fa-truck', ${inProgressCount}, 'dash_stat_progress', 'En curso')}"></div>
+          <div th:replace="~{fragments/ui :: tile('fa-circle-check', ${completedCount}, 'dash_stat_completed', 'Completadas')}"></div>
         </div>
 
         <div class="row mb">
@@ -93,7 +94,7 @@
             </div>
             <div class="row">
               <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="org_req_accept">Aceptar</span></button>
-              <button type="button" class="btn btn--outline btn--danger" onclick="document.getElementById('rejectForm').classList.remove('is-hidden');this.classList.add('is-hidden')"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
+              <button type="button" id="rejectToggle" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
             </div>
           </form>
           <form id="rejectForm" th:action="@{/acopio/requests/{id}/transition(id=${request.id})}" method="post" class="is-hidden mt">
@@ -101,7 +102,7 @@
             <p class="hint mb-sm" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
             <div class="row">
               <button type="submit" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span></button>
-              <button type="button" class="btn btn--outline" onclick="document.getElementById('rejectForm').classList.add('is-hidden')"><span data-i18n="profile_cancel">Cancelar</span></button>
+              <button type="button" id="rejectCancel" class="btn btn--outline"><span data-i18n="profile_cancel">Cancelar</span></button>
             </div>
           </form>
         </div>
@@ -115,6 +116,6 @@
         </div>
       </th:block>
 
-  </div>
+  </main>
 </body>
 </html>

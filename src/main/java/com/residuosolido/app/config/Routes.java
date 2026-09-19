@@ -25,9 +25,9 @@ public final class Routes {
     public static final String SEED = "/seed";
 
     // Auth
-    public static final String LOGIN = "/auth/login";
+    public static final String LOGIN = "/entrar";
     public static final String LOGOUT = "/logout";
-    public static final String REGISTER = "/auth/register";
+    public static final String REGISTER = "/registrar";
 
     // Solicitudes
     public static final String REQUESTS_NEW = "/solicitudes/nueva";
@@ -41,9 +41,7 @@ public final class Routes {
     public static final String USER_HOME = "/usuarios/inicio";
 
     // Organización
-    public static final String ORG_HOME = "/acopio/inicio";
     public static final String ORG_PROFILE = "/acopio/perfil";
-    public static final String ORG_COMPLETE_PROFILE = "/acopio/completar-perfil";
     public static final String ORG_REQUESTS = "/acopio/requests";
     public static final String ORG_REQUEST = "/acopio/requests/{id}";
     public static final String ORG_REQUEST_TRANSITION = "/acopio/requests/{id}/transition";
@@ -79,7 +77,7 @@ public final class Routes {
         }
         for (GrantedAuthority authority : auth.getAuthorities()) {
             String name = authority.getAuthority();
-            if (name.equals("ROLE_" + Role.ORGANIZATION.name())) return ORG_HOME;
+            if (name.equals("ROLE_" + Role.ORGANIZATION.name())) return ORG_REQUESTS;
             if (name.equals("ROLE_" + Role.USER.name())) return USER_HOME;
         }
         return HOME;

@@ -31,8 +31,7 @@ las reglas de negocio antes de tocar (core).
 | `GuestTrackingController` | **Core** | Rastreo por teléfono+código privado — específico de "invitado sin cuenta" |
 | `RequestCreateController` | **Core** | Creación de solicitud — el punto de entrada al dominio |
 | `RequestController` | **Core** | Vista/edición de solicitud del ciudadano |
-| `OrgDashboardController` | **Core** | Dashboard + Kanban por estado — específico del flujo de organización |
-| `OrgRequestController` | **Core** | Transiciones de estado (aceptar/rechazar/completar) — las reglas de negocio viven acá |
+| `OrgRequestController` | **Core** | Panel de acopio + transiciones de estado (aceptar/rechazar/completar) — las reglas de negocio viven acá |
 | `OrgApiController` | **Core** | Organizaciones por ciudad — parte de la lógica de matching |
 | `OrgProfileController` | Zona gris | El CRUD de perfil es genérico, pero el **onboarding forzado** (no podés operar sin perfil completo) es una regla de negocio |
 
@@ -45,8 +44,8 @@ las reglas de negocio antes de tocar (core).
 | `UserRegistrationService` | Boilerplate | Alta de cuenta — mecanismo genérico (el PIN de 4 dígitos es una decisión de fricción, no de dominio) |
 | `RequestService` | **Core** | El servicio más grande del proyecto (329 líneas) — crear/validar/transicionar solicitudes, es el corazón |
 | `CityOrgService` | **Core** | Selección de organización por ciudad + materiales aceptados — el matching es el aporte real |
-| `RequestMetricsService` | **Core** | Stats del dashboard agrupadas por estado — conoce el ciclo de vida del dominio |
-| `UserService` | Zona gris | Update de perfil genérico, pero `completeOrgProfile` valida reglas de negocio específicas |
+| `RequestMetricsService` | **Core** | Stats del panel de solicitudes agrupadas por estado — conoce el ciclo de vida del dominio |
+| `UserService` | Zona gris | Update de perfil genérico, pero `updateProfile` auto-completa el perfil de org validando reglas de negocio (teléfono + ciudad) |
 
 ### Config
 
@@ -81,14 +80,14 @@ las reglas de negocio antes de tocar (core).
 
 | Capa | Clasificación | Ejemplos |
 |---|---|---|
-| Shell/layout | Boilerplate | `layout/base.html`, `base-sidebar.html`, `navbar.html`, footer |
+| Shell/layout | Boilerplate | `layout/base.html`, `navbar.html`, footer |
 | Piezas genéricas | Boilerplate | `fragments/ui.html` (alert, badge, info-row, empty-state, breadcrumb, page-header, stat-tile), `password-field.html` |
 | Auth | Boilerplate | `auth/login.html`, `auth/register.html` |
 | `request-form.html` | **Core** | El formulario central — conoce ciudad, materiales, organización, franjas |
-| `kanban-column.html`, `request-list.html` | **Core** | Encapsulan el ciclo de estados y el vocabulario de materiales en la UI |
+| `request-list.html` | **Core** | Encapsula el ciclo de estados y el vocabulario de materiales en la UI |
 | `fragments/ui.html :: options` | **Core** | El filtro ciudad→organización vive acá también, no solo en el backend. Nota: técnicamente vive dentro de `ui.html` (fusionado ahí junto con las piezas boilerplate por reducción de archivos, ver `MEJORAS.md` #120), pero esta pieza específica sigue siendo Core, no Boilerplate |
 | `track.html`, `track-modal.html` | **Core** | Rastreo de invitado — específico del dominio |
-| `org/complete-profile.html` | Zona gris | El onboarding forzado es negocio, la forma (un CRUD simple) es genérica |
+| `org/profile.html` | Zona gris | El onboarding forzado (absorbido acá, abre en modo edición si está incompleto) es negocio, la forma (un CRUD simple) es genérica |
 
 ---
 

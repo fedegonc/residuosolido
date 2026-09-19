@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: post-cambios de consolidacion  
-> Tests: 181, 0 failures, 0 errors, 0 skipped
+> Fecha de sincronizacion: post-consolidacion de pantallas de organizacion  
+> Tests: 153, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
 > Build: SUCCESS
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  

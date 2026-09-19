@@ -4,50 +4,59 @@
 <head><title>Registro</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page page--narrow center">
-      <div class="card">
-        <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
-        <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
+    <div class="page page--center">
+      <div class="split">
+        <section class="hero">
+          <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
+          <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
 
-        <form th:action="@{/auth/register}" th:object="${user}" method="post" class="stack">
-          <div class="field">
-            <label for="username" data-i18n="auth_name">Nombre</label>
-            <input type="text" id="username" th:field="*{username}" required class="input"
-                   data-i18n-attr="placeholder:auth_name_placeholder" placeholder="Ej: Ana García">
-          </div>
-          <div class="field">
-            <label for="phoneNational" data-i18n="auth_phone">Número de celular</label>
-            <div class="phone-country-row">
-              <select id="phoneCountryCode" name="countryCode" class="select select--sm">
-                <option value="+598" selected>🇺🇾 +598</option>
-                <option value="+55">🇧🇷 +55</option>
-              </select>
-              <input type="tel" id="phoneNational" name="phoneNational" class="input" placeholder="9X XXX XXX" required>
+          <form th:action="@{/registrar}" th:object="${user}" method="post" class="stack">
+            <div class="field">
+              <label for="username" data-i18n="auth_name">Nombre</label>
+              <input type="text" id="username" th:field="*{username}" required class="input"
+                     data-i18n-attr="placeholder:auth_name_placeholder" placeholder="Ej: Ana García">
             </div>
-            <div class="field is-hidden mt-sm" id="phoneDddGroup">
-              <label for="ddd">DDD</label>
-              <input type="text" id="ddd" name="ddd" class="input input--sm" value="55" maxlength="2">
+            <div class="field">
+              <label for="phoneNational" data-i18n="auth_phone">Número de celular</label>
+              <div class="phone-country-row">
+                <select id="phoneCountryCode" name="countryCode" class="select select--sm">
+                  <option value="+598" selected>🇺🇾 +598</option>
+                  <option value="+55">🇧🇷 +55</option>
+                </select>
+                <input type="tel" id="phoneNational" name="phoneNational" class="input" placeholder="9X XXX XXX" required>
+              </div>
+              <div class="field is-hidden mt-sm" id="phoneDddGroup">
+                <label for="ddd">DDD</label>
+                <input type="text" id="ddd" name="ddd" class="input input--sm" value="55" maxlength="2">
+              </div>
             </div>
-          </div>
-          <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
-          <div class="field">
-            <label class="row">
-              <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
-              <span data-i18n="auth_is_organization">Soy una cooperativa o reciclador</span>
-            </label>
-            <span class="hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección.</span>
-          </div>
-          <button type="submit" class="btn btn--primary btn--block" data-i18n="auth_register_button">Registrarse</button>
-          <a th:href="@{/auth/login}" class="btn btn--outline btn--block">
-            <i class="fa-solid fa-right-to-bracket"></i>
-            <span data-i18n="auth_login_link">Iniciar sesión</span>
-          </a>
-        </form>
+            <div th:replace="~{fragments/password-field :: field('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
+            <div class="field">
+              <label class="row">
+                <input type="checkbox" id="isOrganization" name="isOrganization" value="true">
+                <span data-i18n="auth_is_organization">Soy una cooperativa o reciclador</span>
+              </label>
+              <span class="hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección.</span>
+            </div>
+            <button type="submit" class="btn btn--primary btn--block" data-i18n="auth_register_button">Registrarse</button>
+          </form>
 
-        <p class="card__footer">
-          <span data-i18n="auth_have_account">¿Ya tenés cuenta?</span>
-          <a th:href="@{/auth/login}" data-i18n="auth_login_link">Iniciar sesión</a>
-        </p>
+          <p class="card__footer">
+            <span data-i18n="auth_have_account">¿Ya tenés cuenta?</span>
+            <a th:href="@{/entrar}" data-i18n="auth_login_link">Iniciar sesión</a>
+          </p>
+        </section>
+
+        <section class="hero hero--dark">
+          <h2 class="hero__title hero__title--sm" data-i18n="auth_nocount_title">¿No querés crear cuenta?</h2>
+          <p class="hero__subtitle" data-i18n="auth_nocount_desc">Podés pedir la recolección solo con tu nombre y celular — te damos un código para seguirla.</p>
+          <div class="hero__cta">
+            <a th:href="@{/solicitudes/nueva}" class="btn btn--light">
+              <i class="fa-solid fa-arrow-right"></i>
+              <span data-i18n="auth_nocount_cta">Pedir sin cuenta</span>
+            </a>
+          </div>
+        </section>
       </div>
     </div>
   </main>

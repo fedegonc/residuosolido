@@ -91,21 +91,10 @@ public class UserService {
         if (phone != null) user.setPhone(phone);
         if (city != null) user.setCity(city);
         if (acceptedMaterials != null) user.setAcceptedMaterials(acceptedMaterials);
+        if (user.isOrganization() && user.hasPhone() && user.hasCity()) {
+            user.completeProfile();
+        }
         return updateUser(user, null);
-    }
-
-    // NOTE: Not @Transactional — MongoDB standalone has no transaction support.
-    public void completeOrgProfile(User org, String phone, City city) {
-        if (phone != null) {
-            org.setPhone(phone);
-        }
-        if (city != null) org.setCity(city);
-        try {
-            org.completeProfile();
-        } catch (IllegalStateException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-        userRepository.save(org);
     }
 
     private void validatePassword(String value) {

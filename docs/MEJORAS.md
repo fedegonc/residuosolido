@@ -150,6 +150,7 @@
 || 127 | **TEMPORAL** — links a `MEJORAS.md`/`DEFENSA.md`/`BOILERPLATE_VS_CORE.md` + visor de diagramas UML en el footer | Implementado (sacar antes de producción) | Agregados para revisar avance fácil esta semana de desarrollo, vía `DocsController` (`/docs/{file}.md`, ambos ya públicos). **Tripwire: sacar todo esto antes de que un usuario real (no de prueba) vea el sitio** — no tiene sentido exponer docs internos de tesis en el footer de producción |
 || 128 | Visor embebido de diagramas UML (`/docs/diagramas`) | Implementado | El link de diagramas del footer (#127) originalmente apuntaba a los 5 `.drawio` crudos (XML sin renderizar, requería copiar/pegar a app.diagrams.net a mano). Ahora `DocsController.viewDiagrams()` lee cada `.drawio` de `docs/diagrams/` y lo embebe inline en un `data-mxgraph` (JSON con la clave `xml`, escapado automáticamente por Thymeleaf al atributo HTML), renderizado client-side por el script oficial `viewer-static.min.js` de draw.io. Evita el problema de CORS de la alternativa (`?lightbox=1#U<url>`, que depende de que draw.io pueda hacer fetch cross-origin a `localhost`) porque el XML ya viaja embebido en el HTML, sin fetch externo. CSP `script-src` ampliado con `https://viewer.diagrams.net`. Mismo tripwire que #127 |
 || 129 | Centralizar secretos: `.env` + `.env.example`, sacar credencial hardcodeada de `application-dev.properties` | Implementado | `application-dev.properties` tenía la connection string de MongoDB Atlas (usuario+password reales) hardcodeada y committeada en git — credencial rotada en Atlas tras detectar el leak. Ahora `application-dev.properties` no tiene `spring.data.mongodb.uri` propio, hereda el de `application.properties` (`${SPRING_DATA_MONGODB_URI}`), que Spring Boot carga desde `.env` en la raíz (gitignored) vía `spring.config.import=optional:file:.env[.properties]`. `.env.example` (versionado, sin secretos reales) documenta las 3 claves (`SPRING_DATA_MONGODB_URI`, `MONGODB_DATABASE`, `UPLOAD_DIR`). En Render, las mismas claves van como variables de entorno del servicio. Se borró `.env.local` suelto (no lo leía nadie, tenía la credencial vieja ya revocada). Ver `docs/DEFENSA.md` §26 |
+|| 130 | Consolidar pantallas de organización: 4 → 2 (dashboard Kanban + onboarding absorbidos) | Implementado | `org/dashboard.html` + `fragments/kanban-column.html` + `OrgDashboardController` eliminados — el Kanban duplicaba `org/requests.html` (misma data, mismas transiciones accept/reject/complete vía detalle; el filtro por estado hace el mismo trabajo) y cargaba `pendingRequestsList` que nunca se renderizaba. Las stat tiles pasaron al header de `org/requests.html`. `org/complete-profile.html` + sus endpoints eliminados — era un subconjunto de `org/profile.html` (solo phone+city): ahora el perfil abre en modo edición cuando `!isProfileComplete()` y `UserService.updateProfile` auto-completa el flag si la org tiene phone+city (método `completeOrgProfile` eliminado). El check `needsProfileCompletion()` se movió a `OrgRequestController`. `/acopio/inicio` y `/acopio/completar-perfil` dejaron de existir; `resolveHomeForRole` ahora devuelve `/acopio/requests` para orgs. Sidebar org quedó con 2 links. También eliminados de `RequestService`: `getRecentPendingRequestsByOrganization`, `getRequestsByOrganizationGroupedByStatus` (huérfanos). Tests migrados: `EndToEndFlowsTest`, `RoutesTest`, `CriticalSecurityTest`, `OrganizationControllerTest`, `UserServiceTest`, `OrganizationBrowserTest`, `TransversalBrowserTest` |
 
 ---
 
@@ -157,11 +158,11 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 91 |
+| Implementado | 92 |
 | Descartado | 14 |
 | Diferido | 20 |
 | Latente | 1 |
-| **Total** | **126** |
+| **Total** | **127** |
 
 ---
 

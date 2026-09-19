@@ -38,6 +38,6 @@ public class GlobalErrorController implements ErrorController {
         }
 
         redirectAttributes.addFlashAttribute("warningMessage", messageSource.getMessage("flash.error.not_found_guest", null, LocaleContextHolder.getLocale()));
-        return "redirect:/auth/login";
+        return "redirect:/entrar";
     }
 }

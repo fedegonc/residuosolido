@@ -15,15 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class OrganizationBrowserTest extends PlaywrightBaseTest {
 
     @Test
-    @DisplayName("#9 Login org + dashboard con kanban")
-    void orgLoginAndKanban() {
+    @DisplayName("#9 Login org + panel con stats")
+    void orgLoginAndPanel() {
         login("coopverde", "12345678");
 
-        page.locator("[data-i18n='org_dash_title']").waitFor();
-        assertTrue(page.locator(".kanban-board").isVisible(),
-                "El dashboard debe mostrar el tablero Kanban");
-        assertTrue(page.locator(".kanban-column").count() >= 3,
-                "El Kanban debe tener al menos 3 columnas");
+        page.locator("[data-i18n='org_req_title']").waitFor();
+        assertTrue(page.locator(".stat-card").count() >= 3,
+                "El panel debe mostrar las tarjetas de estadísticas");
+        assertTrue(page.url().contains("/acopio"),
+                "La org debe aterrizar en el área de acopio");
     }
 
     @Test

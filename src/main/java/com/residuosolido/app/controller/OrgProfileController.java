@@ -19,11 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 /**
- * Gestión del perfil de organización:
- * - Onboarding (primera configuración, forzada post-registro)
- * - Edición de perfil (datos de contacto, ciudad, materiales aceptados)
- *
- * Antes estaba dividido en OrgOnboardingController + OrgProfileController.
+ * Perfil de organización: vista y edición de datos de contacto, ciudad y
+ * materiales aceptados. Cuando el perfil está incompleto, el template abre
+ * el formulario de edición directamente (funciona como onboarding).
  */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
@@ -35,58 +33,7 @@ public class OrgProfileController extends BaseController {
     public OrgProfileController() {
     }
 
-    // ========== Onboarding (primera configuración) ==========
-
-    /** Muestra el formulario para completar perfil (teléfono y ciudad). */
-    @GetMapping(Routes.ORG_COMPLETE_PROFILE)
-    public String showCompleteProfileForm(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            User currentUser = getCurrentUser(authentication);
-
-            if (currentUser.isProfileComplete()) {
-                redirectAttributes.addFlashAttribute("infoMessage", msg("flash.org.profile_already_complete"));
-                return "redirect:/acopio/inicio";
-            }
-
-            model.addAttribute("organization", currentUser);
-            model.addAttribute("cities", City.values());
-            return "org/complete-profile";
-
-        } catch (Exception e) {
-            logger.error("Error al cargar formulario de completar perfil: {}", e.getMessage(), e);
-            flashError(redirectAttributes, "flash.org.profile_form_error");
-            return "redirect:/auth/login";
-        }
-    }
-
-    /** Guarda el perfil inicial de la organización. */
-    @PostMapping(Routes.ORG_COMPLETE_PROFILE)
-    public String completeProfile(
-            @RequestParam(required = false) String phone,
-            @RequestParam(required = false) City city,
-            Authentication authentication,
-            jakarta.servlet.http.HttpSession session,
-            RedirectAttributes redirectAttributes) {
-
-        try {
-            User currentUser = getCurrentUser(authentication);
-            userService.completeOrgProfile(currentUser, phone, city);
-            session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
-            flashSuccess(redirectAttributes, "flash.org.profile_completed");
-            return "redirect:/acopio/inicio";
-        } catch (IllegalArgumentException e) {
-            flashError(redirectAttributes, e.getMessage());
-            return "redirect:/acopio/completar-perfil";
-        } catch (Exception e) {
-            logger.error("Error al completar perfil de organización: {}", e.getMessage(), e);
-            flashError(redirectAttributes, "flash.org.profile_complete_error");
-            return "redirect:/acopio/completar-perfil";
-        }
-    }
-
-    // ========== Edición de perfil ==========
-
-    /** Muestra el formulario de edición del perfil. */
+    /** Muestra el perfil de la organización (o el formulario si está incompleto). */
     @GetMapping(Routes.ORG_PROFILE)
     public String orgProfile(Authentication authentication, Model model) {
         try {
@@ -96,7 +43,7 @@ public class OrgProfileController extends BaseController {
             model.addAttribute("materials", MaterialCategory.values());
             model.addAttribute("breadcrumbs", List.of(
                     java.util.Map.of("label", "Inicio", "href", "/"),
-                    java.util.Map.of("label", "Panel de acopio", "href", "/acopio/inicio"),
+                    java.util.Map.of("label", "Panel de acopio", "href", "/acopio/requests"),
                     java.util.Map.of("label", "Perfil", "href", "")
             ));
         } catch (Exception e) {

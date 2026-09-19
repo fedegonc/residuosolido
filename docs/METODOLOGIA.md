@@ -105,7 +105,10 @@ diagramas, tradeoffs explícitos.
 
 **Artefactos producidos:**
 
-- Kanban integrado al dashboard de organización (no página aparte).
+- Panel de acopio consolidado en una sola vista (`/acopio/requests`):
+  estadísticas + lista filtrable por estado. (Originalmente fue un
+  Kanban en `/acopio/inicio`; se eliminó por duplicar la lista, ver
+  `docs/MEJORAS.md` #130 y `docs/DEFENSA.md` §7.)
 - "Mis solicitudes" — modal canónico con rastreo sin cuenta / login.
 - Política de contraseña mínima de 8 caracteres (documentada en
   `docs/MEJORAS.md`).
@@ -489,16 +492,12 @@ metodología, sistemas comparables y contexto territorial.
 
 ## 6. Organización (ROLE_ORGANIZATION)
 
-### 6.1 Dashboard
+### 6.1 Panel de acopio
 
-| Clave | Texto (ES) |
-|---|---|
-| `org_dash_title` | Panel de acopio |
-| `org_dash_greeting` | ¡Hola |
-| `org_dash_subtitle` | Solicitudes pendientes, en curso y completadas de tu organización. |
-| `org_dash_requests` | Lista de solicitudes |
-| `org_kanban_title` | Tablero de solicitudes |
-| `org_kanban_empty` | Sin solicitudes por ahora |
+Las claves `org_dash_*` y `org_kanban_*` fueron eliminadas junto con el
+dashboard Kanban (ver `docs/MEJORAS.md` #130). El panel actual usa
+`org_req_*` y las claves compartidas `dash_stat_*` para las
+estadísticas del encabezado.
 
 ### 6.2 Lista de solicitudes
 

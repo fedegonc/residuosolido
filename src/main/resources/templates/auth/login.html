@@ -4,28 +4,37 @@
 <head><title>Iniciar sesión</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page page--narrow center">
-      <div class="card">
-        <h1 class="card__title" data-i18n="auth_login_title">Iniciar sesión</h1>
-        <p class="card__subtitle" data-i18n="auth_login_subtitle">Entrá para ver y gestionar tus solicitudes.</p>
+    <div class="page page--center">
+      <div class="split">
+        <section class="hero">
+          <h1 class="card__title" data-i18n="auth_login_title">Iniciar sesión</h1>
+          <p class="card__subtitle" data-i18n="auth_login_subtitle">Entrá para ver y gestionar tus solicitudes.</p>
 
-        <form th:action="@{/auth/login}" method="post" class="stack">
-          <div class="field">
-            <label for="username" data-i18n="auth_name">Nombre</label>
-            <input type="text" id="username" name="username" required autofocus class="input" placeholder=" ">
+          <form th:action="@{/entrar}" method="post" class="stack">
+            <div class="field">
+              <label for="username" data-i18n="auth_name">Nombre</label>
+              <input type="text" id="username" name="username" required autofocus class="input" placeholder=" ">
+            </div>
+            <div th:replace="~{fragments/password-field :: field('password', 'password', null, null)}"></div>
+            <button type="submit" class="btn btn--primary btn--block" data-i18n="auth_login_button">Entrar</button>
+          </form>
+
+          <p class="card__footer">
+            <span data-i18n="auth_no_account">¿No tenés cuenta?</span>
+            <a th:href="@{/registrar}" data-i18n="auth_register_link">Registrarse</a>
+          </p>
+        </section>
+
+        <section class="hero hero--dark">
+          <h2 class="hero__title hero__title--sm" data-i18n="auth_guest_title">¿Buscás tu solicitud?</h2>
+          <p class="hero__subtitle" data-i18n="auth_guest_desc">Si pediste sin cuenta, buscala con tu teléfono y el código que te dimos.</p>
+          <div class="hero__cta">
+            <a th:href="@{/rastrear}" class="btn btn--light">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span data-i18n="cta_track">Buscar mi solicitud</span>
+            </a>
           </div>
-          <div th:replace="~{fragments/password-field :: field('password', 'password', null, null)}"></div>
-          <button type="submit" class="btn btn--primary btn--block" data-i18n="auth_login_button">Entrar</button>
-          <a th:href="@{/auth/register}" class="btn btn--outline btn--block">
-            <i class="fa-solid fa-user-plus"></i>
-            <span data-i18n="auth_register_link">Registrarse</span>
-          </a>
-        </form>
-
-        <p class="card__footer">
-          <span data-i18n="auth_no_account">¿No tenés cuenta?</span>
-          <a th:href="@{/auth/register}" data-i18n="auth_register_link">Registrarse</a>
-        </p>
+        </section>
       </div>
     </div>
   </main>
