@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: reorganizacion de docs en archivos focales + gitflow  
-> Tests: 158, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
+> Tests: 192, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
 > Build: SUCCESS
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
