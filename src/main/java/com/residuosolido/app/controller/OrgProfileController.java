@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -86,7 +87,7 @@ public class OrgProfileController extends BaseController {
             userService.updateProfile(currentOrg, email, firstName, resolvedPhone, ciudad,
                     materiales != null ? materiales : List.of());
             if (ciudad != null && !ciudad.equals(oldCity)) {
-                session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
+                session.removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
             }
             flashSuccess(redirectAttributes, ServerMessage.FLASH_PROFILE_UPDATED);
         } catch (Exception e) {

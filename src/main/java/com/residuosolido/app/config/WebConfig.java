@@ -57,7 +57,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(authNavigationInterceptor)
-                .addPathPatterns("/", "/index", "/entrar", "/registrarse");
+                .addPathPatterns(Routes.GUEST_ONLY_PATHS.toArray(String[]::new));
     }
 
     @Override

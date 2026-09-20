@@ -10,10 +10,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthNavigationInterceptor implements HandlerInterceptor {
 
-    private static final java.util.Set<String> GUEST_ONLY_PATHS = java.util.Set.of(
-            "/entrar", "/registrarse", "/", "/index"
-    );
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -22,7 +18,7 @@ public class AuthNavigationInterceptor implements HandlerInterceptor {
         }
 
         String path = request.getRequestURI();
-        if (!GUEST_ONLY_PATHS.contains(path)) {
+        if (!Routes.GUEST_ONLY_PATHS.contains(path)) {
             return true;
         }
 

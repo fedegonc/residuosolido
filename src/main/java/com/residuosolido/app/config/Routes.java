@@ -29,6 +29,9 @@ public final class Routes {
     public static final String LOGOUT = "/salir";
     public static final String REGISTER = "/registrarse";
 
+    /** Rutas donde un usuario ya autenticado no debería estar (login/registro/home) — ver AuthNavigationInterceptor. */
+    public static final java.util.Set<String> GUEST_ONLY_PATHS = java.util.Set.of(HOME, INDEX, LOGIN, REGISTER);
+
     // Solicitudes
     public static final String REQUESTS_NEW = "/solicitar";
     public static final String REQUESTS = "/mis-solicitudes";
