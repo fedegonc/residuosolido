@@ -9,6 +9,7 @@ import com.residuosolido.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -207,5 +208,163 @@ class UserServiceTest {
         userService.updateProfile(org, null, null, null, null, List.of());
 
         assertTrue(org.getAcceptedMaterials().isEmpty());
+    }
+
+    // ===== findAuthenticatedUserByUsername =====
+
+    @Test
+    void findAuthenticatedUserByUsername_found_returnsUser() {
+        User user = new User();
+        user.setId("1");
+        user.setUsername("citizen");
+        when(userRepository.findByUsername("citizen")).thenReturn(Optional.of(user));
+
+        assertEquals(user, userService.findAuthenticatedUserByUsername("citizen"));
+    }
+
+    @Test
+    void findAuthenticatedUserByUsername_notFound_throwsValidationException() {
+        when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> userService.findAuthenticatedUserByUsername("ghost"));
+    }
+
+    // ===== isAnonymous / resolveUser =====
+
+    @Test
+    void isAnonymous_nullAuthentication_returnsTrue() {
+        assertTrue(userService.isAnonymous(null));
+    }
+
+    @Test
+    void isAnonymous_anonymousPrincipal_returnsTrue() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn("anonymousUser");
+        assertTrue(userService.isAnonymous(auth));
+    }
+
+    @Test
+    void isAnonymous_realPrincipal_returnsFalse() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn("citizen");
+        assertFalse(userService.isAnonymous(auth));
+    }
+
+    @Test
+    void resolveUser_anonymous_returnsNull() {
+        assertNull(userService.resolveUser(null));
+        verifyNoInteractions(userRepository);
+    }
+
+    @Test
+    void resolveUser_authenticated_returnsUser() {
+        User user = new User();
+        user.setId("1");
+        user.setUsername("citizen");
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn("citizen");
+        when(auth.getName()).thenReturn("citizen");
+        when(userRepository.findByUsername("citizen")).thenReturn(Optional.of(user));
+
+        assertEquals(user, userService.resolveUser(auth));
+    }
+
+    // ===== updateUser =====
+
+    @Test
+    void updateUser_notFound_throwsValidationException() {
+        User form = new User();
+        form.setId("ghost");
+        when(userRepository.findById("ghost")).thenReturn(Optional.empty());
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> userService.updateUser(form));
+    }
+
+    @Test
+    void updateUser_emailUsedByAnotherUser_throwsValidationException() {
+        User existing = new User();
+        existing.setId("1");
+        User otherOwner = new User();
+        otherOwner.setId("2");
+
+        User form = new User();
+        form.setId("1");
+        form.setEmail("nuevo@test.com");
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
+        when(userRepository.findByEmailIgnoreCase("nuevo@test.com")).thenReturn(Optional.of(otherOwner));
+
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> userService.updateUser(form));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void updateUser_sameEmailAsSelf_doesNotThrow() {
+        User existing = new User();
+        existing.setId("1");
+        existing.setEmail("mismo@test.com");
+
+        User form = new User();
+        form.setId("1");
+        form.setEmail("mismo@test.com");
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
+        when(userRepository.findByEmailIgnoreCase("mismo@test.com")).thenReturn(Optional.of(existing));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(form);
+        assertEquals("mismo@test.com", result.getEmail());
+    }
+
+    @Test
+    void updateUser_nullEmail_skipsUniquenessCheck() {
+        User existing = new User();
+        existing.setId("1");
+        existing.setEmail("previo@test.com");
+
+        User form = new User();
+        form.setId("1");
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(form);
+        assertEquals("previo@test.com", result.getEmail());
+        verify(userRepository, never()).findByEmailIgnoreCase(any());
+    }
+
+    @Test
+    void updateUser_explicitProfileCompletedFalse_overridesExisting() {
+        User existing = new User();
+        existing.setId("1");
+        existing.setProfileCompleted(true);
+
+        User form = new User();
+        form.setId("1");
+        form.setProfileCompleted(false);
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateUser(form);
+        assertFalse(result.getProfileCompleted());
+    }
+
+    // ===== updateProfile: email =====
+
+    @Test
+    void updateProfile_withEmail_setsEmailOnUser() {
+        User user = new User();
+        user.setId("1");
+        user.setUsername("citizen");
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailIgnoreCase("nueva@test.com")).thenReturn(Optional.empty());
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        User result = userService.updateProfile(user, "nueva@test.com", null, null, null);
+
+        assertEquals("nueva@test.com", result.getEmail());
     }
 }
