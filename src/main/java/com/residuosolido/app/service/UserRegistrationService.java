@@ -1,6 +1,8 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,22 +25,23 @@ public class UserRegistrationService {
      * Registro simplificado a propósito para facilitar las pruebas (ver
      * docs/TRADEOFFS.md §24): nombre en vez de usuario técnico (acepta espacios),
      * teléfono en vez de email, PIN de 4 dígitos en vez de contraseña.
+     * Devuelve la clave del primer error encontrado, o null si es válido.
      */
-    public String validateUserRegistration(User user) {
+    public ServerMessage validateUserRegistration(User user) {
         if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            return "error.register.username_required";
+            return ServerMessage.ERROR_REGISTER_USERNAME_REQUIRED;
         }
-        if (user.getUsername().length() > 64) return "error.register.username_too_long";
+        if (user.getUsername().length() > 64) return ServerMessage.ERROR_REGISTER_USERNAME_TOO_LONG;
         try {
             validatePin(user.getPassword());
-        } catch (IllegalArgumentException e) {
-            return e.getMessage();
+        } catch (ValidationException e) {
+            return e.key();
         }
         if (user.getPhone() == null || user.getPhone().isBlank()) {
-            return "error.register.phone_required";
+            return ServerMessage.ERROR_REGISTER_PHONE_REQUIRED;
         }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return "error.register.username_exists";
+            return ServerMessage.ERROR_REGISTER_USERNAME_EXISTS;
         }
         return null;
     }
@@ -49,8 +52,8 @@ public class UserRegistrationService {
     }
 
     public User registerUser(User user, boolean isOrganization) {
-        String error = validateUserRegistration(user);
-        if (error != null) throw new IllegalArgumentException(error);
+        ServerMessage error = validateUserRegistration(user);
+        if (error != null) throw new ValidationException(error);
         User created = new User();
         created.setUsername(user.getUsername());
         created.setPhone(user.getPhone());
@@ -64,7 +67,7 @@ public class UserRegistrationService {
     /** PIN de 4 dígitos — no es una contraseña real, es fricción mínima para pruebas. */
     private void validatePin(String value) {
         if (value == null || !value.matches("\\d{4}")) {
-            throw new IllegalArgumentException("error.register.pin_invalid");
+            throw new ValidationException(ServerMessage.ERROR_REGISTER_PIN_INVALID);
         }
     }
 }

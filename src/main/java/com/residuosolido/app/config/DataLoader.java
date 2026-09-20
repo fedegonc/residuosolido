@@ -102,7 +102,7 @@ public class DataLoader {
         User u = new User();
         u.setUsername(username);
         u.setEmail(email);
-        u.setPassword(encoder.encode("12345678"));
+        u.setPassword(encoder.encode("1234"));
         u.setRole(role);
         u.setFirstName(firstName);
         u.setPhone(phone);

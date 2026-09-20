@@ -2,6 +2,7 @@ package com.residuosolido.app.e2e;
 
 import com.residuosolido.app.config.Routes;
 
+import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
@@ -124,8 +125,7 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void flujo7_userRequestsList_loadsWithStats() throws Exception {
-        User user = new User();
-        user.setId("u1");
+        User user = TestFixtures.citizen("u1", "+59899123456");
         user.setUsername("vecino");
         user.setFirstName("Vecino");
 
@@ -147,8 +147,7 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void flujo4_userRequestsList_loadsSuccessfully() throws Exception {
-        User user = new User();
-        user.setId("u1");
+        User user = TestFixtures.citizen("u1", "+59899123456");
         user.setUsername("vecino");
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
@@ -167,14 +166,9 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo8_orgPanel_loadsWithStats() throws Exception {
-        User org = new User();
-        org.setId("o1");
+        User org = TestFixtures.organization("o1", City.RIVERA);
         org.setUsername("coop");
         org.setFirstName("Cooperativa");
-        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        org.setPhone("+59899123456");
-        org.setCity(City.RIVERA);
-        org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(requestMetricsService.getOrgRequestStats(org))
@@ -191,14 +185,10 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo8_orgProfile_loadsAndCanUpdate() throws Exception {
-        User org = new User();
-        org.setId("o1");
+        User org = TestFixtures.organization("o1", City.RIVERA);
         org.setUsername("coop");
         org.setFirstName("Cooperativa");
         org.setEmail("coop@test.com");
-        org.setPhone("+59899123456");
-        org.setCity(City.RIVERA);
-        org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(userService.updateProfile(any(), any(), any(), any(), any(), any())).thenReturn(org);
@@ -225,13 +215,8 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgRequestsList_loadsSuccessfully() throws Exception {
-        User org = new User();
-        org.setId("o1");
+        User org = TestFixtures.organization("o1", City.RIVERA);
         org.setUsername("coop");
-        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        org.setPhone("+59899123456");
-        org.setCity(City.RIVERA);
-        org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
@@ -247,13 +232,8 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgRequestDetail_loadsSuccessfully() throws Exception {
-        User org = new User();
-        org.setId("o1");
+        User org = TestFixtures.organization("o1", City.RIVERA);
         org.setUsername("coop");
-        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        org.setPhone("+59899123456");
-        org.setCity(City.RIVERA);
-        org.setProfileCompleted(true);
 
         Request req = new Request();
         req.setId("req1");
@@ -277,13 +257,8 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgAcceptRequest_redirectsOnSuccess() throws Exception {
-        User org = new User();
-        org.setId("o1");
+        User org = TestFixtures.organization("o1", City.RIVERA);
         org.setUsername("coop");
-        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        org.setPhone("+59899123456");
-        org.setCity(City.RIVERA);
-        org.setProfileCompleted(true);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
 
@@ -300,8 +275,7 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
     void rn10_createRequest_emptyAddress_redirectsWithError() throws Exception {
-        User user = new User();
-        user.setId("u1");
+        User user = TestFixtures.citizen("u1", "+59899123456");
         user.setUsername("vecino");
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);

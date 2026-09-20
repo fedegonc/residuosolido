@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
@@ -28,23 +29,13 @@ class MvpRegressionTest {
     Path images;
 
     private User organization() {
-        User org = new User();
-        org.setId("org");
-        org.setRole(Role.ORGANIZATION);
-        org.setCity(City.RIVERA);
-        org.setPhone("+59899123456");
-        org.setProfileCompleted(true);
-        org.setAcceptedMaterials(List.of(MaterialCategory.PAPEL));
-        return org;
+        return TestFixtures.organization("org", City.RIVERA, MaterialCategory.PAPEL);
     }
 
     private User citizen() {
-        User user = new User();
-        user.setId("citizen");
+        User user = TestFixtures.citizen("citizen", "+59899123456");
         user.setUsername("citizen");
         user.setPassword("1234");
-        user.setRole(Role.USER);
-        user.setPhone("+59899123456");
         return user;
     }
 
@@ -70,7 +61,7 @@ class MvpRegressionTest {
     void registrationRejectsInvalidPin() {
         User input = citizen();
         input.setPassword("12");
-        assertEquals("error.register.pin_invalid", new UserRegistrationService(
+        assertEquals(com.residuosolido.app.enums.ServerMessage.ERROR_REGISTER_PIN_INVALID, new UserRegistrationService(
                 mock(UserRepository.class), mock(PasswordEncoder.class)).validateUserRegistration(input));
     }
 

@@ -100,11 +100,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.webjars.npm</groupId>
-      <artifactId>fortawesome__fontawesome-free</artifactId>
-      <version>7.2.0</version>
-    </dependency>
 
 
     <!-- Playwright para tests de navegador reales (liviano, sin Docker) -->

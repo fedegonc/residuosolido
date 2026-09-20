@@ -20,7 +20,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
 
         page.locator("#username").fill("testuser" + System.currentTimeMillis());
         page.locator("#phoneNational").fill("99123456");
-        page.locator("input[name='password']").fill("1234");
+        fillPin("password", "1234");
         // No marcar "soy organización"
         page.locator("button[type='submit']").click();
 
@@ -38,7 +38,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
 
         page.locator("#username").fill("testorg" + System.currentTimeMillis());
         page.locator("#phoneNational").fill("99123457");
-        page.locator("input[name='password']").fill("1234");
+        fillPin("password", "1234");
         // Marcar "soy organización"
         page.locator("#isOrganization").check();
         page.locator("button[type='submit']").click();
@@ -117,7 +117,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#20 Cross-role: ciudadano no accede a /acopio")
     void crossRoleDenied() {
-        login("juan", "12345678");
+        login("juan", "1234");
 
         // Intentar acceder a área de organización
         page.navigate(baseUrl + "/acopio/solicitudes");

@@ -1,5 +1,10 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.exception.StateException;
+import com.residuosolido.app.exception.OwnershipException;
+
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
@@ -127,7 +132,7 @@ public class RequestService {
         try {
             requestRepository.delete(request);
         } catch (OptimisticLockingFailureException ex) {
-            throw new IllegalStateException("flash.request.delete.concurrent", ex);
+            throw new StateException(ServerMessage.FLASH_REQUEST_DELETE_CONCURRENT, ex);
         }
     }
 
@@ -155,7 +160,7 @@ public class RequestService {
         try {
             requestRepository.save(request);
         } catch (OptimisticLockingFailureException e) {
-            throw new IllegalStateException("flash.request.concurrent_modification", e);
+            throw new StateException(ServerMessage.FLASH_REQUEST_CONCURRENT_MODIFICATION, e);
         }
     }
 
@@ -167,9 +172,9 @@ public class RequestService {
 
     public Request getOwnedRequest(String id, User user) {
         Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("flash.request.not_found"));
+                .orElseThrow(() -> new ValidationException(ServerMessage.FLASH_REQUEST_NOT_FOUND));
         if (request.getUser() == null || !request.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("flash.request.not_owned");
+            throw new OwnershipException(ServerMessage.FLASH_REQUEST_NOT_OWNED);
         }
         return request;
     }
@@ -177,7 +182,7 @@ public class RequestService {
     public Request getEditableOwnedRequest(String id, User user) {
         Request request = getOwnedRequest(id, user);
         if (!request.canBeEdited()) {
-            throw new IllegalStateException("flash.request.edit.pending_only");
+            throw new StateException(ServerMessage.FLASH_REQUEST_EDIT_PENDING_ONLY);
         }
         return request;
     }
@@ -205,9 +210,9 @@ public class RequestService {
 
     public Request getOwnedOrgRequest(String id, User org) {
         Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("flash.org.request_not_found"));
+                .orElseThrow(() -> new ValidationException(ServerMessage.FLASH_ORG_REQUEST_NOT_FOUND));
         if (request.getOrganization() == null || !request.getOrganization().getId().equals(org.getId())) {
-            throw new SecurityException("flash.org.request_not_owned");
+            throw new OwnershipException(ServerMessage.FLASH_ORG_REQUEST_NOT_OWNED);
         }
         return request;
     }
@@ -217,17 +222,13 @@ public class RequestService {
                 PageRequest.of(page, size));
     }
 
-    public List<Request> getRequestsByOrganizationAndStatus(User organization, RequestStatus status, int page, int size) {
-        return requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, status, PageRequest.of(page, size));
-    }
-
     public List<Request> getOrgRequestsByStatusFilter(User organization, String status, int page, int size) {
         if (status == null || status.trim().isEmpty()) {
             return getRequestsByOrganization(organization, page, size);
         }
         try {
             RequestStatus filterStatus = RequestStatus.valueOf(status.trim().toUpperCase(Locale.ROOT));
-            return getRequestsByOrganizationAndStatus(organization, filterStatus, page, size);
+            return requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, filterStatus, PageRequest.of(page, size));
         } catch (IllegalArgumentException ex) {
             logger.warn("Filtro de status inválido ignorado: {}", status);
             return getRequestsByOrganization(organization, page, size);
@@ -236,7 +237,7 @@ public class RequestService {
 
     // ========== Validación ==========
 
-    public void validateCreate(User user, City city, String address,
+    void validateCreate(User user, City city, String address,
                                 List<MaterialCategory> materials, String guestName, String guestPhone,
                                 String organizationId) {
         validateCoreFields(city, address, materials, organizationId);
@@ -244,55 +245,55 @@ public class RequestService {
             validateGuest(guestName, guestPhone);
         } else {
             if (!user.isActive() || user.getRole() != Role.USER) {
-                throw new IllegalArgumentException("error.request.citizen_required");
+                throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
             }
             if (!PhoneNumber.isValid(user.getPhone())) {
-                throw new IllegalArgumentException("error.profile.phone_required");
+                throw new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
             }
         }
     }
 
-    public void validateUpdate(City city, String address, List<MaterialCategory> materials, String organizationId) {
+    void validateUpdate(City city, String address, List<MaterialCategory> materials, String organizationId) {
         validateCoreFields(city, address, materials, organizationId);
     }
 
     private void validateCoreFields(City city, String address, List<MaterialCategory> materials, String organizationId) {
         if (city == null) {
-            throw new IllegalArgumentException("error.request.city_required");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
         }
         if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.request.address_required");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ADDRESS_REQUIRED);
         }
         if (materials == null || materials.isEmpty()) {
-            throw new IllegalArgumentException("error.request.materials_required");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_REQUIRED);
         }
         if (organizationId == null || organizationId.isBlank()) {
-            throw new IllegalArgumentException("error.request.organization_required");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
     }
 
-    public void validateMaterials(User organization, List<MaterialCategory> materials) {
+    void validateMaterials(User organization, List<MaterialCategory> materials) {
         if (organization.getAcceptedMaterials() == null || materials == null || materials.isEmpty()
                 || materials.stream().anyMatch(m -> m == null || !organization.getAcceptedMaterials().contains(m))) {
-            throw new IllegalArgumentException("error.request.materials_not_accepted");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_NOT_ACCEPTED);
         }
     }
 
-    public void validateEstimates(String weight, String volume) {
+    void validateEstimates(String weight, String volume) {
         if (weight != null && !weight.isBlank() && !List.of("0-5", "5-20", "20-50", "50+").contains(weight)) {
-            throw new IllegalArgumentException("error.request.invalid_weight");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_INVALID_WEIGHT);
         }
         if (volume != null && !volume.isBlank() && !List.of("bag", "box", "trunk", "pickup").contains(volume)) {
-            throw new IllegalArgumentException("error.request.invalid_volume");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_INVALID_VOLUME);
         }
     }
 
     private void validateGuest(String guestName, String guestPhone) {
         if (guestName == null || guestName.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.name.required");
+            throw new ValidationException(ServerMessage.ERROR_NAME_REQUIRED);
         }
         if (guestName.trim().length() > 100) {
-            throw new IllegalArgumentException("error.name.too_long");
+            throw new ValidationException(ServerMessage.ERROR_NAME_TOO_LONG);
         }
         PhoneNumber.normalize(guestPhone);
     }

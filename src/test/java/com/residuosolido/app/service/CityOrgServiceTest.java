@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
@@ -29,15 +30,7 @@ class CityOrgServiceTest {
     }
 
     private User org(String id, City city) {
-        User u = new User();
-        u.setId(id);
-        u.setRole(Role.ORGANIZATION);
-        u.setCity(city);
-        u.setActive(true);
-        u.setPhone("+59899123456");
-        u.setProfileCompleted(true);
-        u.setAcceptedMaterials(List.of(MaterialCategory.PAPEL));
-        return u;
+        return TestFixtures.organization(id, city, MaterialCategory.PAPEL);
     }
 
     @Test
@@ -61,9 +54,7 @@ class CityOrgServiceTest {
 
     @Test
     void findOrganizationByIdAndCity_notAnOrganization_throws() {
-        User user = new User();
-        user.setId("u1");
-        user.setRole(Role.USER);
+        User user = TestFixtures.citizen("u1", "+59899123456");
         when(userRepository.findById("u1")).thenReturn(Optional.of(user));
         assertThrows(IllegalArgumentException.class,
                 () -> service.findOrganizationByIdAndCity("u1", City.RIVERA));

@@ -1,5 +1,9 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.exception.StateException;
+
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.repository.RequestRepository;
 import org.slf4j.Logger;
@@ -52,7 +56,7 @@ public class LocalImageService {
             extension = originalName.substring(originalName.lastIndexOf(".")).toLowerCase(Locale.ROOT);
         }
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new IllegalArgumentException("error.image.invalid_extension");
+            throw new ValidationException(ServerMessage.ERROR_IMAGE_INVALID_EXTENSION);
         }
 
         String filename = UUID.randomUUID() + extension;
@@ -73,11 +77,11 @@ public class LocalImageService {
             return;
         }
         if (file.getSize() > MAX_FILE_SIZE_BYTES) {
-            throw new IllegalArgumentException("error.image.too_large");
+            throw new ValidationException(ServerMessage.ERROR_IMAGE_TOO_LARGE);
         }
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase(Locale.ROOT))) {
-            throw new IllegalArgumentException("error.image.invalid_type");
+            throw new ValidationException(ServerMessage.ERROR_IMAGE_INVALID_TYPE);
         }
         String originalName = file.getOriginalFilename();
         String extension = "";
@@ -85,7 +89,7 @@ public class LocalImageService {
             extension = originalName.substring(originalName.lastIndexOf(".")).toLowerCase(Locale.ROOT);
         }
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new IllegalArgumentException("error.image.invalid_extension");
+            throw new ValidationException(ServerMessage.ERROR_IMAGE_INVALID_EXTENSION);
         }
     }
 
@@ -96,7 +100,7 @@ public class LocalImageService {
                 return requestRepository.save(request);
             } catch (Exception e) {
                 logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
-                throw new IllegalStateException("flash.request.image_upload_failed", e);
+                throw new StateException(ServerMessage.FLASH_REQUEST_IMAGE_UPLOAD_FAILED, e);
             }
         }
         return request;

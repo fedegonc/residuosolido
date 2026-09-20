@@ -12,11 +12,11 @@
           <p class="hero__subtitle" data-i18n="subtitle">Una cooperativa de tu ciudad los retira en el día y horario que coordinen.</p>
           <div class="hero__cta">
             <a href="/solicitar" class="btn btn--primary">
-              <i class="fa-solid fa-clipboard-list"></i>
+              <svg class="icon"><use href="/images/icons.svg#clipboard-list"/></svg>
               <span data-i18n="cta_request">Pedir recolección</span>
             </a>
             <a href="/rastrear" class="btn btn--outline">
-              <i class="fa-solid fa-magnifying-glass"></i>
+              <svg class="icon"><use href="/images/icons.svg#magnifying-glass"/></svg>
               <span data-i18n="cta_track">Ver mi solicitud</span>
             </a>
           </div>
@@ -29,7 +29,7 @@
           <form action="/solicitar" method="get" class="stack">
             <div th:replace="~{fragments/forms :: text('nombre', 'nombre', 'text', null, null, 'split_guest_name', 'Tu nombre', true, null)}"></div>
             <div th:replace="~{fragments/forms :: phone('guestPhone', 'guestCountryCode', 'guestPhoneNational', 'guestDdd', null, null, true, null, null, null, null, null)}"></div>
-            <div th:replace="~{fragments/forms :: submit('fa-arrow-right', 'cta_request', 'Pedir recolección', 'btn--light')}"></div>
+            <div th:replace="~{fragments/forms :: submit('arrow-right', 'cta_request', 'Pedir recolección', 'btn--light')}"></div>
           </form>
         </section>
       </div>

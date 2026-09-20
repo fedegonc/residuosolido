@@ -4,13 +4,12 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
+import com.residuosolido.app.enums.ServerMessage;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -33,8 +32,6 @@ import java.util.Map;
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgRequestController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
 
     private final RequestMetricsService requestMetricsService;
     private final RequestService requestService;
@@ -81,22 +78,13 @@ public class OrgRequestController extends BaseController {
     /** Carga una solicitud individual con sus datos completos. */
     @GetMapping(Routes.ORG_REQUEST)
     public String orgRequestDetail(@PathVariable String id, Authentication authentication,
-                                    Model model, RedirectAttributes redirectAttributes) {
-        try {
-            User org = getCurrentUser(authentication);
-            Request request = requestService.getOwnedOrgRequest(id, org);
-            model.addAttribute("request", request);
-            model.addAttribute("viewType", RequestViewType.DETAIL);
-            model.addAttribute("timeSlots", TimeSlot.values());
-            return "org/requests";
-        } catch (SecurityException e) {
-            flashError(redirectAttributes, "flash.org.request_not_owned");
-            return "redirect:" + Routes.ORG_REQUESTS;
-        } catch (Exception e) {
-            logger.error("Error al cargar solicitud {}: {}", id, e.getMessage(), e);
-            flashError(redirectAttributes, "flash.org.request_load_error");
-            return "redirect:" + Routes.ORG_REQUESTS;
-        }
+                                    Model model) {
+        User org = getCurrentUser(authentication);
+        Request request = requestService.getOwnedOrgRequest(id, org);
+        model.addAttribute("request", request);
+        model.addAttribute("viewType", RequestViewType.DETAIL);
+        model.addAttribute("timeSlots", TimeSlot.values());
+        return "org/requests";
     }
 
     /** Acepta una solicitud pendiente, opcionalmente confirmando el horario. */
@@ -132,26 +120,28 @@ public class OrgRequestController extends BaseController {
             switch (action) {
                 case "aceptar" -> {
                     requestService.acceptRequest(id, org, confirmedSlot);
-                    flashSuccess(redirectAttributes, "flash.org.request_accepted");
+                    flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_ACCEPTED);
                 }
                 case "rechazar" -> {
                     requestService.rejectRequest(id, org);
-                    flashSuccess(redirectAttributes, "flash.org.request_rejected");
+                    flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_REJECTED);
                 }
                 case "completar" -> {
                     requestService.completeRequest(id, org);
-                    flashSuccess(redirectAttributes, "flash.org.request_completed");
+                    flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_COMPLETED);
                 }
-                default -> flashError(redirectAttributes, "flash.org.request_invalid_action");
+                default -> flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_INVALID_ACTION);
             }
-        } catch (SecurityException e) {
-            flashError(redirectAttributes, "flash.org.request_not_owned");
         } catch (IllegalStateException e) {
-            flashError(redirectAttributes, e.getMessage());
-        } catch (Exception e) {
-            logger.error("Error en transición '{}' para solicitud {}: {}", action, id, e.getMessage(), e);
-            flashError(redirectAttributes, "flash.org.request_transition_error");
+            flashError(redirectAttributes, e);
         }
+        return "redirect:" + Routes.ORG_REQUESTS;
+    }
+
+    /** Toda operación de este controller que falle por no ser dueño de la solicitud cae acá. */
+    @ExceptionHandler(SecurityException.class)
+    public String handleNotOwned(RedirectAttributes redirectAttributes) {
+        flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_NOT_OWNED);
         return "redirect:" + Routes.ORG_REQUESTS;
     }
 }

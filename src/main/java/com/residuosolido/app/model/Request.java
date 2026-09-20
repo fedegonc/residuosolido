@@ -1,5 +1,8 @@
 package com.residuosolido.app.model;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
@@ -60,7 +63,7 @@ public class Request {
     private String trackingCode;
 
     public void accept(TimeSlot slot) {
-        if (slot == null) throw new IllegalArgumentException("error.request.slot_required");
+        if (slot == null) throw new ValidationException(ServerMessage.ERROR_REQUEST_SLOT_REQUIRED);
         this.confirmedSlot = slot;
         this.status = status.transitionAccept();
     }
@@ -84,8 +87,8 @@ public class Request {
     public String getContactPhone() { return user != null ? user.getPhone() : guestPhone; }
 
     public void assignOrganization(User org) {
-        if (org == null) throw new IllegalArgumentException("error.request.organization_required");
-        if (!org.isOrganization()) throw new IllegalArgumentException("error.request.assign_not_organization");
+        if (org == null) throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        if (!org.isOrganization()) throw new ValidationException(ServerMessage.ERROR_REQUEST_ASSIGN_NOT_ORGANIZATION);
         this.organization = org;
     }
 

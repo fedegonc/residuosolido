@@ -1,5 +1,8 @@
 package com.residuosolido.app.enums;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.StateException;
+
 /**
  * Estado de una solicitud de recolección.
  *
@@ -17,21 +20,21 @@ public enum RequestStatus {
 
     public RequestStatus transitionAccept() {
         if (this != PENDING) {
-            throw new IllegalStateException("error.request.accept_not_pending");
+            throw new StateException(ServerMessage.ERROR_REQUEST_ACCEPT_NOT_PENDING);
         }
         return IN_PROGRESS;
     }
 
     public RequestStatus transitionComplete() {
         if (this != IN_PROGRESS) {
-            throw new IllegalStateException("error.request.complete_not_in_progress");
+            throw new StateException(ServerMessage.ERROR_REQUEST_COMPLETE_NOT_IN_PROGRESS);
         }
         return COMPLETED;
     }
 
     public RequestStatus transitionReject() {
         if (this != PENDING && this != IN_PROGRESS) {
-            throw new IllegalStateException("error.request.reject_invalid_state");
+            throw new StateException(ServerMessage.ERROR_REQUEST_REJECT_INVALID_STATE);
         }
         return REJECTED;
     }

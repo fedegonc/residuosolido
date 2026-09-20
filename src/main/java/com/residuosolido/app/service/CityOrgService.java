@@ -1,5 +1,8 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
@@ -28,21 +31,21 @@ public class CityOrgService {
      */
     public User findOrganizationByIdAndCity(String organizationId, City city) {
         if (organizationId == null || organizationId.isBlank()) {
-            throw new IllegalArgumentException("error.request.organization_required");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
         if (city == null) {
-            throw new IllegalArgumentException("error.request.city_required");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
         }
         User org = userRepository.findById(organizationId)
-                .orElseThrow(() -> new IllegalArgumentException("error.request.organization_not_found"));
+                .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_FOUND));
         if (!org.isOrganization()) {
-            throw new IllegalArgumentException("error.request.assign_not_organization");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ASSIGN_NOT_ORGANIZATION);
         }
         if (org.getCity() == null || org.getCity() != city) {
-            throw new IllegalArgumentException("error.request.organization_not_in_city");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_IN_CITY);
         }
         if (!isAvailable(org)) {
-            throw new IllegalArgumentException("error.request.organization_unavailable");
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_UNAVAILABLE);
         }
         return org;
     }

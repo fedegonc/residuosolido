@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.Routes;
 
+import com.residuosolido.app.enums.ServerMessage;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
@@ -9,8 +10,6 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -31,8 +30,6 @@ import java.util.List;
  */
 @Controller
 public class RequestController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
     private final RequestService requestService;
     private final RequestMetricsService requestMetricsService;
@@ -67,16 +64,9 @@ public class RequestController extends BaseController {
     @DeleteMapping(Routes.REQUEST)
     public String deleteRequest(@PathVariable String id, Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
-        try {
-            User user = getCurrentUser(authentication);
-            requestService.deleteOwnedRequest(id, user);
-            flashSuccess(redirectAttributes, "flash.request.deleted");
-        } catch (SecurityException e) {
-            flashError(redirectAttributes, "flash.request.not_owned");
-        } catch (Exception e) {
-            logger.error("Error al eliminar solicitud: {}", e.getMessage());
-            flashError(redirectAttributes, "flash.request.delete_error");
-        }
+        User user = getCurrentUser(authentication);
+        requestService.deleteOwnedRequest(id, user);
+        flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_DELETED);
         return "redirect:" + Routes.REQUESTS;
     }
 
@@ -95,15 +85,8 @@ public class RequestController extends BaseController {
             model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(request.getCity()));
             addFormAttributes(model);
             return "users/request-form";
-        } catch (SecurityException e) {
-            flashError(redirectAttributes, "flash.request.not_owned");
-            return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
-            flashError(redirectAttributes, "flash.request.edit.pending_only");
-            return "redirect:" + Routes.REQUESTS;
-        } catch (Exception e) {
-            logger.error("Error al cargar formulario de edición: {}", e.getMessage());
-            flashError(redirectAttributes, "flash.request.load_error");
+            flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_EDIT_PENDING_ONLY);
             return "redirect:" + Routes.REQUESTS;
         }
     }
@@ -123,18 +106,18 @@ public class RequestController extends BaseController {
         try {
             User user = getCurrentUser(authentication);
             requestService.updateRequest(id, user, ciudad, address, addressReference, materials, organizationId, imageFile);
-            flashSuccess(redirectAttributes, "flash.request.updated");
-            return "redirect:" + Routes.REQUESTS;
-        } catch (SecurityException e) {
-            flashError(redirectAttributes, "flash.request.not_owned");
+            flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_UPDATED);
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("warningMessage", msg(e.getMessage()));
-            return "redirect:" + Routes.REQUESTS;
-        } catch (Exception e) {
-            logger.error("Error al actualizar solicitud: {}", e.getMessage());
-            flashError(redirectAttributes, "flash.request.update_error");
+            redirectAttributes.addFlashAttribute("warningMessage", msg(e));
             return "redirect:" + Routes.REQUESTS;
         }
+    }
+
+    /** Toda operación de este controller que falle por no ser dueño de la solicitud cae acá. */
+    @ExceptionHandler(SecurityException.class)
+    public String handleNotOwned(RedirectAttributes redirectAttributes) {
+        flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_NOT_OWNED);
+        return "redirect:" + Routes.REQUESTS;
     }
 }

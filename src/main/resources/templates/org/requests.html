@@ -14,9 +14,9 @@
         </div>
 
         <div class="grid grid--3 mb-lg">
-          <div th:replace="~{fragments/ui :: tile('fa-clock', ${pendingCount}, 'dash_stat_pending', 'Pendientes')}"></div>
-          <div th:replace="~{fragments/ui :: tile('fa-truck', ${inProgressCount}, 'dash_stat_progress', 'En curso')}"></div>
-          <div th:replace="~{fragments/ui :: tile('fa-circle-check', ${completedCount}, 'dash_stat_completed', 'Completadas')}"></div>
+          <div th:replace="~{fragments/ui :: tile('clock', ${pendingCount}, 'dash_stat_pending', 'Pendientes')}"></div>
+          <div th:replace="~{fragments/ui :: tile('truck', ${inProgressCount}, 'dash_stat_progress', 'En curso')}"></div>
+          <div th:replace="~{fragments/ui :: tile('circle-check', ${completedCount}, 'dash_stat_completed', 'Completadas')}"></div>
         </div>
 
         <div class="row mb">
@@ -31,12 +31,12 @@
           <div th:each="req : ${requests}" class="request-item">
             <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
             <div class="form-actions">
-              <a th:href="@{/acopio/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span></a>
+              <a th:href="@{/acopio/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span></a>
             </div>
           </div>
         </div>
         <div th:if="${requests == null or requests.isEmpty()}">
-          <div th:replace="~{fragments/ui :: state('fa-inbox', 'No hay solicitudes')}"></div>
+          <div th:replace="~{fragments/ui :: state('inbox', 'No hay solicitudes')}"></div>
         </div>
       </th:block>
 
@@ -47,20 +47,20 @@
             <h1 class="card__title"><span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span></h1>
             <div th:replace="~{fragments/ui :: status(${request.status})}"></div>
           </div>
-          <a href="/acopio/solicitudes" class="btn btn--outline"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="req_detail_back">Volver</span></a>
+          <a href="/acopio/solicitudes" class="btn btn--outline"><svg class="icon"><use href="/images/icons.svg#arrow-left"/></svg> <span data-i18n="req_detail_back">Volver</span></a>
         </div>
 
         <div class="card mb">
           <h2 class="card__subtitle" data-i18n="org_req_contact">Contacto</h2>
-          <div th:replace="~{fragments/ui :: row('fa-user', 'Nombre', ${request.contactName})}"></div>
-          <div th:replace="~{fragments/ui :: row('fa-phone', 'Teléfono', ${request.contactPhone})}"></div>
-          <div th:replace="~{fragments/ui :: row('fa-user-tag', 'Tipo', ${request.isGuest() ? 'Invitado' : 'Registrado'})}"></div>
+          <div th:replace="~{fragments/ui :: row('user', 'Nombre', ${request.contactName})}"></div>
+          <div th:replace="~{fragments/ui :: row('phone', 'Teléfono', ${request.contactPhone})}"></div>
+          <div th:replace="~{fragments/ui :: row('user-tag', 'Tipo', ${request.isGuest() ? 'Invitado' : 'Registrado'})}"></div>
 
           <div class="divider">
             <h2 class="card__subtitle" data-i18n="req_detail_address">Dirección</h2>
-            <div th:replace="~{fragments/ui :: row('fa-location-dot', 'Ciudad', ${request.city != null ? request.city.toString() : null})}"></div>
-            <div th:replace="~{fragments/ui :: row('fa-route', 'Dirección', ${request.address})}"></div>
-            <div th:replace="~{fragments/ui :: row('fa-flag', 'Referencia', ${request.addressReference})}"></div>
+            <div th:replace="~{fragments/ui :: row('location-dot', 'Ciudad', ${request.city != null ? request.city.toString() : null})}"></div>
+            <div th:replace="~{fragments/ui :: row('route', 'Dirección', ${request.address})}"></div>
+            <div th:replace="~{fragments/ui :: row('flag', 'Referencia', ${request.addressReference})}"></div>
           </div>
 
           <div class="divider">
@@ -78,7 +78,7 @@
 
           <div th:if="${request.confirmedSlot != null}" class="divider">
             <h2 class="card__subtitle" data-i18n="req_detail_slot">Franja confirmada</h2>
-            <div class="info-row"><i class="fa-solid fa-clock"></i><span th:text="${request.confirmedSlot}"></span></div>
+            <div class="info-row"><svg class="icon"><use href="/images/icons.svg#clock"/></svg><span th:text="${request.confirmedSlot}"></span></div>
           </div>
         </div>
 
@@ -92,14 +92,14 @@
               </select>
             </div>
             <div class="row">
-              <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="org_req_accept">Aceptar</span></button>
-              <button type="button" id="rejectToggle" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject">Rechazar</span></button>
+              <button type="submit" class="btn btn--primary"><svg class="icon"><use href="/images/icons.svg#check"/></svg> <span data-i18n="org_req_accept">Aceptar</span></button>
+              <button type="button" id="rejectToggle" class="btn btn--outline btn--danger"><svg class="icon"><use href="/images/icons.svg#xmark"/></svg> <span data-i18n="org_req_reject">Rechazar</span></button>
             </div>
           </form>
           <form id="rejectForm" th:action="@{/acopio/solicitudes/{id}/rechazar(id=${request.id})}" method="post" class="is-hidden mt">
             <p class="hint mb-sm" data-i18n="org_req_reject_confirm">¿Confirmás el rechazo?</p>
             <div class="row">
-              <button type="submit" class="btn btn--outline btn--danger"><i class="fa-solid fa-xmark"></i> <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span></button>
+              <button type="submit" class="btn btn--outline btn--danger"><svg class="icon"><use href="/images/icons.svg#xmark"/></svg> <span data-i18n="org_req_reject_confirm_btn">Sí, rechazar</span></button>
               <button type="button" id="rejectCancel" class="btn btn--outline"><span data-i18n="profile_cancel">Cancelar</span></button>
             </div>
           </form>
@@ -108,7 +108,7 @@
         <div th:if="${request.isInProgress()}" class="card mb">
           <h2 class="card__subtitle" data-i18n="org_req_complete_title">Finalizar recolección</h2>
           <form th:action="@{/acopio/solicitudes/{id}/completar(id=${request.id})}" method="post">
-            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-circle-check"></i> <span data-i18n="org_req_complete">Marcar como completada</span></button>
+            <button type="submit" class="btn btn--primary"><svg class="icon"><use href="/images/icons.svg#circle-check"/></svg> <span data-i18n="org_req_complete">Marcar como completada</span></button>
           </form>
         </div>
       </th:block>

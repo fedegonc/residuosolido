@@ -1,7 +1,9 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.ServerMessage;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.exception.Keyed;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,27 +28,42 @@ public abstract class BaseController {
     }
 
     /** Traduce una clave i18n al idioma actual. */
-    protected String msg(String key) {
-        return messageSource.getMessage(key, null, key, LocaleContextHolder.getLocale());
+    protected String msg(ServerMessage key) {
+        return messageSource.getMessage(key.code(), null, key.code(), LocaleContextHolder.getLocale());
     }
 
     /** Traduce una clave i18n con parámetros. */
-    protected String msg(String key, Object... args) {
-        return messageSource.getMessage(key, args, key, LocaleContextHolder.getLocale());
+    protected String msg(ServerMessage key, Object... args) {
+        return messageSource.getMessage(key.code(), args, key.code(), LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * Mensaje de una excepción: usa la clave tipada si la excepción la lleva
+     * (Keyed), si no cae al getMessage() — que para excepciones de dominio
+     * ya es la clave generada por el enum.
+     */
+    protected String msg(Throwable e) {
+        String code = e instanceof Keyed k ? k.key().code() : e.getMessage();
+        return messageSource.getMessage(code, null, code, LocaleContextHolder.getLocale());
     }
 
     /** Mensaje de éxito flash para la próxima vista. */
-    protected void flashSuccess(RedirectAttributes ra, String key) {
+    protected void flashSuccess(RedirectAttributes ra, ServerMessage key) {
         ra.addFlashAttribute("successMessage", msg(key));
     }
 
     /** Mensaje de error flash para la próxima vista. */
-    protected void flashError(RedirectAttributes ra, String key) {
+    protected void flashError(RedirectAttributes ra, ServerMessage key) {
         ra.addFlashAttribute("errorMessage", msg(key));
     }
 
+    /** Mensaje de error flash desde una excepción (clave tipada o getMessage). */
+    protected void flashError(RedirectAttributes ra, Throwable e) {
+        ra.addFlashAttribute("errorMessage", msg(e));
+    }
+
     /** Mensaje de error flash con parámetros. */
-    protected void flashError(RedirectAttributes ra, String key, Object... args) {
+    protected void flashError(RedirectAttributes ra, ServerMessage key, Object... args) {
         ra.addFlashAttribute("errorMessage", msg(key, args));
     }
 

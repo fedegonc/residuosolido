@@ -1,5 +1,8 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
@@ -46,15 +49,15 @@ public class AuthController extends BaseController {
                                RedirectAttributes redirectAttributes) {
         try {
             if (!rateLimiter.isAllowed(request, "registration")) {
-                throw new IllegalArgumentException("flash.request.rate_limited");
+                throw new ValidationException(ServerMessage.FLASH_REQUEST_RATE_LIMITED);
             }
             userRegistrationService.registerUser(form.toUser(), isOrganization);
-            flashSuccess(redirectAttributes, "login.success");
+            flashSuccess(redirectAttributes, ServerMessage.AUTH_LOGIN_SUCCESS);
             return "redirect:/entrar";
         } catch (DuplicateKeyException e) {
-            model.addAttribute("errorMessage", msg("error.register.identity_exists"));
+            model.addAttribute("errorMessage", msg(ServerMessage.ERROR_REGISTER_IDENTITY_EXISTS));
         } catch (IllegalArgumentException e) {
-            model.addAttribute("errorMessage", msg(e.getMessage()));
+            model.addAttribute("errorMessage", msg(e));
         }
         form.setPassword(null);
         return "auth/register";
@@ -64,9 +67,9 @@ public class AuthController extends BaseController {
     @GetMapping(Routes.LOGIN)
     public String showLoginPage(HttpServletRequest request, Model model) {
         if (request.getParameter("blocked") != null) {
-            model.addAttribute("errorMessage", msg("login.blocked"));
+            model.addAttribute("errorMessage", msg(ServerMessage.AUTH_LOGIN_BLOCKED));
         } else if (request.getParameter("error") != null) {
-            model.addAttribute("errorMessage", msg("login.error"));
+            model.addAttribute("errorMessage", msg(ServerMessage.AUTH_LOGIN_ERROR));
         }
         return "auth/login";
     }

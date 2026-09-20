@@ -52,16 +52,63 @@
   /* ─── Password visibility toggle (componente) ─── */
   document.querySelectorAll('.password-field__toggle').forEach(function (toggleBtn) {
     toggleBtn.addEventListener('click', function () {
-      var input = toggleBtn.closest('.password-field').querySelector('input');
-      if (!input) return;
-      var icon = toggleBtn.querySelector('i');
-      var willShow = input.type === 'password';
-      input.type = willShow ? 'text' : 'password';
-      if (icon) {
-        icon.classList.toggle('fa-eye', !willShow);
-        icon.classList.toggle('fa-eye-slash', willShow);
-      }
+      var field = toggleBtn.closest('.password-field, .pin-boxes');
+      if (!field) return;
+      var inputs = field.querySelectorAll('.pin-boxes__digit');
+      if (!inputs.length) { var single = field.querySelector('input'); inputs = single ? [single] : []; }
+      if (!inputs.length) return;
+      var use = toggleBtn.querySelector('use');
+      var willShow = inputs[0].type === 'password';
+      inputs.forEach(function (i) { i.type = willShow ? 'text' : 'password'; });
+      if (use) use.setAttribute('href', '/images/icons.svg#' + (willShow ? 'eye-slash' : 'eye'));
       toggleBtn.setAttribute('aria-pressed', String(willShow));
+    });
+  });
+
+  /* ─── PWA: SW pass-through + prompt de instalación ─── */
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+  var deferredInstall = null;
+  function setInstallVisible(v) {
+    document.querySelectorAll('[data-install-app]').forEach(function (b) { b.classList.toggle('is-hidden', !v); });
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredInstall = e;
+    setInstallVisible(true);
+  });
+  window.addEventListener('appinstalled', function () { setInstallVisible(false); });
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-install-app]');
+    if (!btn || !deferredInstall) return;
+    deferredInstall.prompt();
+    deferredInstall.userChoice.finally(function () {
+      deferredInstall = null;
+      setInstallVisible(false);
+    });
+  });
+
+  /* ─── PIN de 4 casillas: auto-avance, backspace, paste → hidden ─── */
+  document.querySelectorAll('.pin-boxes').forEach(function (box) {
+    var digits = box.querySelectorAll('.pin-boxes__digit');
+    var hidden = box.querySelector('.pin-boxes__value');
+    function sync() { if (hidden) hidden.value = Array.from(digits).map(function (d) { return d.value; }).join(''); }
+    digits.forEach(function (d, i) {
+      d.addEventListener('input', function () {
+        d.value = d.value.replace(/\D/g, '').slice(-1);
+        if (d.value && digits[i + 1]) digits[i + 1].focus();
+        sync();
+      });
+      d.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !d.value && digits[i - 1]) digits[i - 1].focus();
+      });
+      d.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var text = (e.clipboardData.getData('text') || '').replace(/\D/g, '');
+        if (!text.length) return;
+        text.split('').slice(0, digits.length).forEach(function (ch, j) { digits[j].value = ch; });
+        digits[Math.min(text.length, digits.length) - 1].focus();
+        sync();
+      });
     });
   });
 

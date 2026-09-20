@@ -80,4 +80,17 @@ public final class Routes {
         }
         return HOME;
     }
+
+    /**
+     * A dónde navegar tras una excepción: el home del rol (o /entrar para
+     * anónimos). Si el destino es la misma URI que lanzó la excepción,
+     * redirigir crearía un loop infinito (el flash sobrevive y relanza el
+     * error en cada render) — en ese caso devuelve la vista de error.
+     * Función pura: (auth, uri) → view name.
+     */
+    public static String resolveErrorNavigation(Authentication auth, String currentUri) {
+        String home = resolveHomeForRole(auth);
+        String target = home.equals(HOME) ? LOGIN : home;
+        return target.equals(currentUri) ? "error/404" : "redirect:" + target;
+    }
 }

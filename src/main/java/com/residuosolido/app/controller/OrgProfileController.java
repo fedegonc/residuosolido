@@ -4,6 +4,9 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.PhoneNumber;
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.Keyed;
+import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import org.slf4j.Logger;
@@ -48,7 +51,7 @@ public class OrgProfileController extends BaseController {
             ));
         } catch (Exception e) {
             logger.error("Error al cargar perfil de organización: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", msg("flash.org.profile_load_error"));
+            model.addAttribute("errorMessage", msg(ServerMessage.FLASH_ORG_PROFILE_LOAD_ERROR));
         }
         return "org/profile";
     }
@@ -71,15 +74,24 @@ public class OrgProfileController extends BaseController {
             User currentOrg = getCurrentUser(authentication);
             City oldCity = currentOrg.getCity();
             String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
+            // Ciudad y telefono son obligatorios SIEMPRE en este form (no solo mientras el
+            // perfil esta incompleto) — antes el <select>/input no tenian required y el
+            // guardado pasaba igual sin avisar, dejando el perfil incompleto en silencio.
+            if (resolvedPhone == null || resolvedPhone.isBlank()) {
+                throw new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
+            }
+            if (ciudad == null) {
+                throw new ValidationException(ServerMessage.ERROR_PROFILE_CITY_REQUIRED);
+            }
             userService.updateProfile(currentOrg, email, firstName, resolvedPhone, ciudad,
                     materiales != null ? materiales : List.of());
             if (ciudad != null && !ciudad.equals(oldCity)) {
                 session.removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
             }
-            flashSuccess(redirectAttributes, "flash.profile.updated");
+            flashSuccess(redirectAttributes, ServerMessage.FLASH_PROFILE_UPDATED);
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
-            flashError(redirectAttributes, e.getMessage() != null && e.getMessage().startsWith("error.") ? e.getMessage() : "flash.profile.update_error");
+            flashError(redirectAttributes, e instanceof Keyed k ? k.key() : ServerMessage.FLASH_PROFILE_UPDATE_ERROR);
         }
         return "redirect:" + Routes.ORG_PROFILE;
     }

@@ -17,9 +17,10 @@
   <meta name="twitter:title" content="Eco Solicitud">
   <meta name="twitter:description" content="Plataforma de recolección de reciclables en la frontera Uruguay-Brasil.">
   <link rel="stylesheet" th:href="@{/css/app.css}">
-  <link rel="stylesheet" th:href="@{/webjars/fortawesome__fontawesome-free/7.2.0/css/all.min.css}">
   <link rel="stylesheet" th:href="@{/css/fonts.css}">
   <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+  <link rel="manifest" th:href="@{/manifest.webmanifest}">
+  <meta name="theme-color" content="#2d6a4f">
   <script th:src="@{/js/i18n.js(l=${#locale.language})}"></script>
   <th:block layout:fragment="extraHead"></th:block>
 </head>
@@ -39,7 +40,7 @@
 
   <footer class="footer">
     <div class="footer__inner">
-      <span class="footer__brand"><i class="fa-solid fa-recycle"></i> Eco Solicitud</span>
+      <span class="footer__brand"><svg class="icon"><use href="/images/icons.svg#recycle"/></svg> Eco Solicitud</span>
       <!-- TEMPORAL: links directos a docs internos para revisar avance esta semana
            (solo desarrollo). SACAR antes de que haya usuarios reales viendo el sitio —
            no tiene sentido en producción, ver docs/MEJORAS.md. -->

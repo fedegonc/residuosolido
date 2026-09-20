@@ -9,23 +9,23 @@
 
       <div class="row row--between mb">
         <h1 class="card__title" data-i18n="org_profile_title">Perfil de organización</h1>
-        <button type="button" class="btn btn--outline" id="editToggle" th:if="${organization.isProfileComplete()}"><i class="fa-solid fa-pen"></i> <span data-i18n="org_profile_edit">Editar</span></button>
+        <button type="button" class="btn btn--outline" id="editToggle" th:if="${organization.isProfileComplete()}"><svg class="icon"><use href="/images/icons.svg#pen"/></svg> <span data-i18n="org_profile_edit">Editar</span></button>
       </div>
 
       <div th:if="${!organization.isProfileComplete()}" class="alert alert--info mb">
-        <i class="fa-solid fa-circle-info"></i>
+        <svg class="icon"><use href="/images/icons.svg#circle-info"/></svg>
         <span data-i18n="onboard_subtitle">Necesitamos estos datos para que los ciudadanos puedan contactarte</span>
       </div>
 
       <div class="card mb" id="viewCard" th:if="${organization.isProfileComplete()}">
         <h2 class="card__subtitle" data-i18n="org_profile_info">Información</h2>
-        <div th:replace="~{fragments/ui :: row('fa-building', 'Nombre', ${organization.displayName})}"></div>
-        <div th:replace="~{fragments/ui :: row('fa-user', 'Usuario', ${organization.username})}"></div>
-        <div th:replace="~{fragments/ui :: row('fa-envelope', 'Email', ${organization.email})}"></div>
-        <div th:replace="~{fragments/ui :: row('fa-phone', 'Teléfono', ${organization.hasPhone() ? organization.phone : 'Sin teléfono'})}"></div>
-        <div th:replace="~{fragments/ui :: row('fa-location-dot', 'Ciudad', ${organization.hasCity() ? organization.city.toString() : 'Sin ciudad'})}"></div>
+        <div th:replace="~{fragments/ui :: row('building', 'Nombre', ${organization.displayName})}"></div>
+        <div th:replace="~{fragments/ui :: row('user', 'Usuario', ${organization.username})}"></div>
+        <div th:replace="~{fragments/ui :: row('envelope', 'Email', ${organization.email})}"></div>
+        <div th:replace="~{fragments/ui :: row('phone', 'Teléfono', ${organization.hasPhone() ? organization.phone : 'Sin teléfono'})}"></div>
+        <div th:replace="~{fragments/ui :: row('location-dot', 'Ciudad', ${organization.hasCity() ? organization.city.toString() : 'Sin ciudad'})}"></div>
         <div class="info-row">
-          <i class="fa-solid fa-recycle"></i>
+          <svg class="icon"><use href="/images/icons.svg#recycle"/></svg>
           <span class="info-row__label" data-i18n="org_profile_materials">Materiales</span>
           <span th:if="${!organization.acceptedMaterials.isEmpty()}">
             <span th:each="mat, iter : ${organization.acceptedMaterials}" th:attr="data-i18n=${'mat_' + #strings.toLowerCase(mat.name())}" th:text="${mat.name() + (iter.last ? '' : ', ')}"></span>
@@ -40,21 +40,21 @@
           <input type="hidden" name="_method" value="put">
           <div th:replace="~{fragments/forms :: text('firstName', 'firstName', 'text', 'org_profile_name_label', 'Nombre', null, null, false, ${organization.firstName})}"></div>
           <div th:replace="~{fragments/forms :: text('email', 'email', 'email', 'profile_email_label', 'Email', null, null, true, ${organization.email})}"></div>
-          <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'profile_phone_label', 'Teléfono', false, ${organization.phone}, ${organization.phone != null and organization.phone.startsWith('+55') ? '+55' : null}, null, null, null)}"></div>
+          <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'profile_phone_label', 'Teléfono', true, ${organization.phone}, ${organization.phone != null and organization.phone.startsWith('+55') ? '+55' : null}, null, null, null)}"></div>
           <div class="field">
-            <label for="city" data-i18n="profile_city_label">Ciudad</label>
-            <select id="city" name="ciudad" class="select">
+            <label for="city" data-i18n="profile_city_label">Ciudad <span class="req">*</span></label>
+            <select id="city" name="ciudad" class="select" required>
               <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
               <option th:each="c : ${cities}" th:value="${c}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}" th:text="${c.name()}" th:selected="${organization.city != null and organization.city == c}"></option>
             </select>
           </div>
-          <div class="field">
-            <label data-i18n="org_profile_materials">Materiales</label>
+          <fieldset class="field">
+            <legend data-i18n="org_profile_materials">Materiales</legend>
             <div th:replace="~{fragments/forms :: checkGrid(${materials}, 'materiales', ${organization.acceptedMaterials}, 'mat_')}"></div>
-          </div>
+          </fieldset>
           <div class="form-actions">
-            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> <span data-i18n="profile_save">Guardar</span></button>
-            <button type="button" class="btn btn--outline" id="cancelEdit" th:if="${organization.isProfileComplete()}"><i class="fa-solid fa-xmark"></i> <span data-i18n="profile_cancel">Cancelar</span></button>
+            <button type="submit" class="btn btn--primary"><svg class="icon"><use href="/images/icons.svg#check"/></svg> <span data-i18n="profile_save">Guardar</span></button>
+            <button type="button" class="btn btn--outline" id="cancelEdit" th:if="${organization.isProfileComplete()}"><svg class="icon"><use href="/images/icons.svg#xmark"/></svg> <span data-i18n="profile_cancel">Cancelar</span></button>
           </div>
         </form>
       </div>

@@ -14,7 +14,7 @@
   <nav th:fragment="nav" class="navbar" aria-label="Navegación principal">
     <div class="navbar__inner">
       <a href="/" class="navbar__brand">
-        <span class="navbar__logo"><i class="fa-solid fa-recycle"></i></span>
+        <span class="navbar__logo"><svg class="icon"><use href="/images/icons.svg#recycle"/></svg></span>
         <span>Eco Solicitud</span>
       </a>
 
@@ -27,6 +27,10 @@
       </div>
 
       <div class="navbar__actions">
+        <button type="button" class="navbar__install is-hidden" data-install-app
+                data-i18n-attr="title:nav_install" title="Instalar app" aria-label="Instalar app">
+          <svg class="icon"><use href="/images/icons.svg#download"/></svg>
+        </button>
         <div class="navbar__lang">
           <a href="?lang=es" class="navbar__lang-btn" th:classappend="${#locale.language == 'es'} ? 'is-active'" aria-label="Español">ES</a>
           <a href="?lang=pt" class="navbar__lang-btn" th:classappend="${#locale.language == 'pt'} ? 'is-active'" aria-label="Português">PT</a>
@@ -39,7 +43,7 @@
 
         <details sec:authorize="isAuthenticated()" class="navbar__user">
           <summary class="navbar__user-info">
-            <span class="navbar__user-avatar"><i class="fa-solid fa-user"></i></span>
+            <span class="navbar__user-avatar"><svg class="icon"><use href="/images/icons.svg#user"/></svg></span>
             <span class="navbar__user-name" sec:authentication="name">usuario</span>
           </summary>
           <div class="navbar__menu">
@@ -63,6 +67,7 @@
           <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
           <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
           <th:block th:replace="~{::trackButtonMobile}"></th:block>
+          <button type="button" class="dropdown__link dropdown__link--btn is-hidden" data-install-app data-i18n="nav_install">Instalar app</button>
           <div class="dropdown__divider">
             <div class="dropdown__lang-row">
               <a href="?lang=es" class="navbar__lang-btn" th:classappend="${#locale.language == 'es'} ? 'is-active'" aria-label="Español">ES</a>
@@ -93,19 +98,19 @@
       <div class="modal-overlay is-hidden">
         <div class="modal">
           <button type="button" class="modal__close" aria-label="Cerrar">&times;</button>
-          <div class="modal__icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div class="modal__icon"><svg class="icon"><use href="/images/icons.svg#clipboard-list"/></svg></div>
           <h2 class="modal__title" data-i18n="modal_track_title">¿Cómo querés ver tus solicitudes?</h2>
           <p class="modal__subtitle" data-i18n="modal_track_subtitle">Podés buscar una solicitud sin tener cuenta usando tu teléfono y código, o entrar a tu cuenta para ver todas las que creaste.</p>
           <div class="modal__options">
             <a href="/rastrear" class="modal__option">
-              <div class="modal__option-icon modal__option-icon--primary"><i class="fa-solid fa-magnifying-glass"></i></div>
+              <div class="modal__option-icon modal__option-icon--primary"><svg class="icon"><use href="/images/icons.svg#magnifying-glass"/></svg></div>
               <div>
                 <div class="modal__option-title" data-i18n="modal_track_guest_title">Buscar sin cuenta</div>
                 <div class="modal__option-desc" data-i18n="modal_track_guest_desc">Ingresá tu teléfono y el código que te dimos.</div>
               </div>
             </a>
             <a href="/entrar" class="modal__option">
-              <div class="modal__option-icon modal__option-icon--accent"><i class="fa-solid fa-right-to-bracket"></i></div>
+              <div class="modal__option-icon modal__option-icon--accent"><svg class="icon"><use href="/images/icons.svg#right-to-bracket"/></svg></div>
               <div>
                 <div class="modal__option-title" data-i18n="modal_track_login_title">Entrar a mi cuenta</div>
                 <div class="modal__option-desc" data-i18n="modal_track_login_desc">Si ya tenés cuenta, entrá para ver todas tus solicitudes en un solo lugar.</div>

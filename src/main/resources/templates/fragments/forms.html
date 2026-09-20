@@ -28,7 +28,8 @@
     </label>
     <input th:type="${type}" th:id="${id}" th:name="${name}" class="input" th:value="${value}"
            th:required="${required}" th:placeholder="${phText}"
-           th:attr="data-i18n-attr=${phKey != null ? 'placeholder:' + phKey : null}">
+           th:with="phAttr=${phKey != null ? 'placeholder:' + phKey : null}"
+           th:attr="data-i18n-attr=${phAttr}">
   </div>
 
   <!-- Teléfono binacional UY/BR: select país + nacional + DDD (visible solo en +55). -->
@@ -74,25 +75,27 @@
     <span th:if="${hintText != null}" class="hint" th:attr="data-i18n=${hintKey}" th:text="${hintText}"></span>
   </div>
 
-  <!-- PIN de 4 dígitos en vez de contraseña — fricción mínima para pruebas,
-       ver docs/TRADEOFFS.md §24. (antes fragments/password-field.html) -->
+  <!-- PIN de 4 casillas estilo OTP (método provisorio — ver TRADEOFFS §24).
+       Los 4 inputs no llevan name: JS los compone en el hidden que sí viaja. -->
   <div th:fragment="pin(id, name, hintKey, hintText)" class="field">
-    <label th:for="${id}" data-i18n="auth_pin">PIN</label>
-    <div class="password-field">
-      <i class="fa-solid fa-lock" aria-hidden="true"></i>
-      <input type="password" th:id="${id}" th:name="${name}" required placeholder=" " class="password-field__input"
-             maxlength="4" pattern="[0-9]{4}" inputmode="numeric" autocomplete="off">
-      <button type="button" class="password-field__toggle"
+    <label th:for="${id} + '-1'" data-i18n="auth_pin">PIN</label>
+    <div class="pin-boxes">
+      <input th:each="i : ${#numbers.sequence(1,4)}" type="password" class="pin-boxes__digit"
+             th:id="${id} + '-' + ${i}" maxlength="1" inputmode="numeric" autocomplete="off" required
+             th:attr="aria-label='Dígito ' + ${i}">
+      <input type="hidden" th:id="${id}" th:name="${name}" class="pin-boxes__value">
+      <button type="button" class="password-field__toggle pin-boxes__toggle"
               aria-label="Mostrar u ocultar PIN" aria-pressed="false">
-        <i class="fa-solid fa-eye" aria-hidden="true"></i>
+        <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#eye"/></svg>
       </button>
     </div>
     <span th:if="${hintText != null}" class="hint" th:attr="data-i18n=${hintKey}" th:text="${hintText}"></span>
+    <span class="hint" data-i18n="auth_pin_preview">Método de verificación provisorio — cambiará para el lanzamiento.</span>
   </div>
 
   <!-- Submit con icono opcional. variant = clases 'btn--*' (ej. 'btn--primary btn--block'). -->
   <button th:fragment="submit(icon, labelKey, labelText, variant)" type="submit" th:class="'btn ' + ${variant}">
-    <i th:if="${icon != null}" th:class="'fa-solid ' + ${icon}" aria-hidden="true"></i>
+    <svg th:if="${icon != null}" class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
     <span th:attr="data-i18n=${labelKey}" th:text="${labelText}"></span>
   </button>
 </body>

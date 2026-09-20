@@ -55,7 +55,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
         page.navigate(baseUrl + "/entrar");
 
         page.locator("#username").fill("usuario_inexistente");
-        page.locator("input[name='password']").fill("clave_mala_123");
+        fillPin("password", "9999");
         page.locator("button[type='submit']").click();
 
         page.locator(".alert--error").waitFor();

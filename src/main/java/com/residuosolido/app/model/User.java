@@ -1,5 +1,9 @@
 package com.residuosolido.app.model;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.exception.StateException;
+
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
@@ -72,7 +76,7 @@ public class User {
         }
         String normalized = email.trim().toLowerCase(java.util.Locale.ROOT);
         if (normalized.length() > 254 || !EMAIL_PATTERN.matcher(normalized).matches()) {
-            throw new IllegalArgumentException("error.register.email_invalid");
+            throw new ValidationException(ServerMessage.ERROR_REGISTER_EMAIL_INVALID);
         }
         this.email = normalized;
     }
@@ -88,7 +92,7 @@ public class User {
         }
         String trimmed = firstName.trim();
         if (trimmed.length() > 100) {
-            throw new IllegalArgumentException("error.name.too_long");
+            throw new ValidationException(ServerMessage.ERROR_NAME_TOO_LONG);
         }
         this.firstName = trimmed;
     }
@@ -135,10 +139,10 @@ public class User {
 
     public void completeProfile() {
         if (!hasPhone()) {
-            throw new IllegalStateException("error.profile.phone_required");
+            throw new StateException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
         }
         if (city == null) {
-            throw new IllegalStateException("error.profile.city_required");
+            throw new StateException(ServerMessage.ERROR_PROFILE_CITY_REQUIRED);
         }
         this.profileCompleted = true;
     }

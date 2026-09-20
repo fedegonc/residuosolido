@@ -313,3 +313,10 @@ work/
 # Ejemplo:
 # /custom-config/
 # /private-data/
+
+# Sandbox de diseño: núcleo duro en un solo archivo Java, sin Spring/Mongo,
+# para prototipar flujos/tests a velocidad récord (java scratch/App.java).
+# No es parte del build ni se porta tal cual al código real.
+/scratch/
+cp.txt
+App*.class

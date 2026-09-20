@@ -26,11 +26,6 @@ public final class MongoAggregationUtils {
         return 0L;
     }
 
-    public static long extractSimpleCount(Map result, String fieldName) {
-        Object value = result.get(fieldName);
-        return value instanceof Number ? ((Number) value).longValue() : 0L;
-    }
-
     /**
      * Cuenta solicitudes por estado (PENDING/IN_PROGRESS/COMPLETED) filtradas por un
      * criterio base (ej. organization.$id o user.$id), usando un único facet aggregation.

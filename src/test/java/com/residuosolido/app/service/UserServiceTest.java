@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.enums.ServerMessage;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
@@ -30,7 +31,7 @@ class UserServiceTest {
     void setUp() {
         userRepository = mock(UserRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        userService = new UserService(userRepository, passwordEncoder);
+        userService = new UserService(userRepository);
         userRegistrationService = new UserRegistrationService(userRepository, passwordEncoder);
     }
 
@@ -45,9 +46,8 @@ class UserServiceTest {
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        String error = userRegistrationService.validateUserRegistration(user);
-        assertNotNull(error);
-        assertTrue(error.contains("error.register.pin_invalid"));
+        ServerMessage error = userRegistrationService.validateUserRegistration(user);
+        assertEquals(ServerMessage.ERROR_REGISTER_PIN_INVALID, error);
     }
 
     @Test
@@ -57,9 +57,8 @@ class UserServiceTest {
         user.setPhone("+59899123456");
         user.setPassword(null);
 
-        String error = userRegistrationService.validateUserRegistration(user);
-        assertNotNull(error);
-        assertTrue(error.contains("error.register.pin_invalid"));
+        ServerMessage error = userRegistrationService.validateUserRegistration(user);
+        assertEquals(ServerMessage.ERROR_REGISTER_PIN_INVALID, error);
     }
 
     @Test
@@ -82,98 +81,8 @@ class UserServiceTest {
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        String error = userRegistrationService.validateUserRegistration(user);
-        assertNotNull(error);
-        assertTrue(error.contains("error.register.phone_required"));
-    }
-
-    // ===== Password mínimo 3 chars en update =====
-
-    @Test
-    void updateUser_shortPassword_throwsException() {
-        User existing = new User();
-        existing.setId("123");
-        existing.setUsername("user1");
-        existing.setEmail("user1@test.com");
-        existing.setCity(City.RIVERA);
-
-        User update = new User();
-        update.setId("123");
-        update.setEmail("user1@test.com");
-        update.setCity(City.RIVERA);
-
-        when(userRepository.findById("123")).thenReturn(Optional.of(existing));
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.updateUser(update, "12"));
-        assertTrue(ex.getMessage().contains("error.register.password_min_length"));
-    }
-
-    @Test
-    void updateUser_validPassword_encodesAndSaves() {
-        User existing = new User();
-        existing.setId("123");
-        existing.setUsername("user1");
-        existing.setEmail("user1@test.com");
-        existing.setCity(City.RIVERA);
-
-        User update = new User();
-        update.setId("123");
-        update.setEmail("updated@test.com");
-        update.setCity(City.RIVERA);
-
-        when(userRepository.findById("123")).thenReturn(Optional.of(existing));
-        when(passwordEncoder.encode("password123")).thenReturn("encoded");
-        when(userRepository.save(any(User.class))).thenReturn(existing);
-
-        User result = userService.updateUser(update, "password123");
-        assertEquals("encoded", result.getPassword());
-        verify(passwordEncoder).encode("password123");
-        verify(userRepository).save(any(User.class));
-    }
-
-    @Test
-    void updateUser_nullPassword_doesNotChangePassword() {
-        User existing = new User();
-        existing.setId("123");
-        existing.setUsername("user1");
-        existing.setEmail("user1@test.com");
-        existing.setCity(City.RIVERA);
-        existing.setPassword("oldencoded");
-
-        User update = new User();
-        update.setId("123");
-        update.setEmail("updated@test.com");
-        update.setCity(City.RIVERA);
-
-        when(userRepository.findById("123")).thenReturn(Optional.of(existing));
-        when(userRepository.save(any(User.class))).thenReturn(existing);
-
-        userService.updateUser(update, null);
-        assertEquals("oldencoded", existing.getPassword());
-        verify(passwordEncoder, never()).encode(anyString());
-    }
-
-    @Test
-    void updateUser_emptyPassword_doesNotChangePassword() {
-        User existing = new User();
-        existing.setId("123");
-        existing.setUsername("user1");
-        existing.setEmail("user1@test.com");
-        existing.setCity(City.RIVERA);
-        existing.setPassword("oldencoded");
-
-        User update = new User();
-        update.setId("123");
-        update.setEmail("updated@test.com");
-        update.setCity(City.RIVERA);
-
-        when(userRepository.findById("123")).thenReturn(Optional.of(existing));
-        when(userRepository.save(any(User.class))).thenReturn(existing);
-
-        userService.updateUser(update, "   ");
-        assertEquals("oldencoded", existing.getPassword());
-        verify(passwordEncoder, never()).encode(anyString());
+        ServerMessage error = userRegistrationService.validateUserRegistration(user);
+        assertEquals(ServerMessage.ERROR_REGISTER_PHONE_REQUIRED, error);
     }
 
     // ===== registerUser =====

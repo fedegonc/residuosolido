@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.User;
@@ -38,24 +39,11 @@ class RequestServiceValidationTest {
     }
 
     private User citizen() {
-        User user = new User();
-        user.setId("u1");
-        user.setRole(com.residuosolido.app.enums.Role.USER);
-        user.setActive(true);
-        user.setPhone("+59899123456");
-        return user;
+        return TestFixtures.citizen("u1", "+59899123456");
     }
 
     private User org() {
-        User org = new User();
-        org.setId("org1");
-        org.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        org.setCity(City.RIVERA);
-        org.setActive(true);
-        org.setPhone("+59899123456");
-        org.setProfileCompleted(true);
-        org.setAcceptedMaterials(List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL));
-        return org;
+        return TestFixtures.organization("org1", City.RIVERA, MaterialCategory.PLASTICO, MaterialCategory.PAPEL);
     }
 
     // ─── materials null ───

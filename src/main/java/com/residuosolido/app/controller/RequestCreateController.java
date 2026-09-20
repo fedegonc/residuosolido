@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.config.RateLimiter;
+import com.residuosolido.app.enums.ServerMessage;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
@@ -96,7 +97,7 @@ public class RequestCreateController extends BaseController {
         try {
             User user = userService.resolveUser(authentication);
             if (user == null && !guestRateLimiter.isAllowed(httpRequest)) {
-                flashError(redirectAttributes, "flash.request.rate_limited");
+                flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_RATE_LIMITED);
                 return "redirect:" + Routes.REQUESTS_NEW + "?error";
             }
             String resolvedGuestPhone = guestPhone;
@@ -111,20 +112,20 @@ public class RequestCreateController extends BaseController {
             Request created = requestService.createRequestWithImage(user, ciudad, address, addressReference,
                     materials, guestName, resolvedGuestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
 
-            flashSuccess(redirectAttributes, "flash.request.created");
+            flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATED);
             if (user == null && resolvedGuestPhone != null && created.getTrackingCode() != null) {
                 return "redirect:" + Routes.TRACK + "?telefono=" + resolvedGuestPhone + "&codigo=" + created.getTrackingCode();
             }
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("warningMessage", msg(e.getMessage()));
+            redirectAttributes.addFlashAttribute("warningMessage", msg(e));
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalArgumentException e) {
-            flashError(redirectAttributes, e.getMessage());
+            flashError(redirectAttributes, e);
             return "redirect:" + Routes.REQUESTS_NEW;
         } catch (Exception e) {
             logger.error("Error al crear solicitud: {}", e.getMessage());
-            flashError(redirectAttributes, "flash.request.create_error");
+            flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATE_ERROR);
             return "redirect:" + Routes.REQUESTS_NEW;
         }
     }

@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-        "spring.data.mongodb.uri=mongodb://172.17.0.2:27017/testdb-browser",
+        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb-browser}",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=true"
     }
@@ -72,18 +72,30 @@ public abstract class PlaywrightBaseTest {
         if (context != null) context.close();
     }
 
-    /** Login con usuario y password. Asume que está en cualquier página. */
+    /**
+     * Llena el widget de PIN (fragments/forms :: pin, ver app.js): 4 cajitas
+     * con id "{fieldId}-1".."{fieldId}-4" que sincronizan a un <input hidden>
+     * vía evento 'input' — ya no es un <input> plano rellenable de una. fill()
+     * en cada cajita dispara ese evento igual que tipear de verdad.
+     */
+    protected void fillPin(String fieldId, String pin) {
+        for (int i = 0; i < Math.min(pin.length(), 4); i++) {
+            page.locator("#" + fieldId + "-" + (i + 1)).fill(String.valueOf(pin.charAt(i)));
+        }
+    }
+
+    /** Login con usuario y PIN. Asume que está en cualquier página. */
     protected void login(String username, String password) {
         page.navigate(baseUrl + "/entrar");
         page.locator("#username").fill(username);
-        page.locator("input[name='password']").fill(password);
+        fillPin("password", password);
         page.locator("button[type='submit']").click();
         page.waitForURL(url -> !url.contains("/entrar"), new Page.WaitForURLOptions().setTimeout(10000));
     }
 
     /** Llenar formulario de solicitud (para ciudadano logueado). */
     protected void fillRequestForm(String city, String address, String material) {
-        page.locator("#city").selectOption(city);
+        page.locator("#ciudad").selectOption(city);
         // Esperar a que el JS cargue las organizaciones via fetch
         page.waitForTimeout(2000);
         page.locator("#organizationId option:not([value=''])").first().waitFor(
@@ -100,7 +112,7 @@ public abstract class PlaywrightBaseTest {
         page.locator("#guestName").fill(guestName);
         page.locator("#guestPhoneCountryCode").selectOption(countryCode);
         page.locator("#guestPhoneNational").fill(phoneNational);
-        page.locator("#city").selectOption(city);
+        page.locator("#ciudad").selectOption(city);
         // Esperar a que el JS cargue las organizaciones via fetch
         page.waitForTimeout(2000);
         page.locator("#organizationId option:not([value=''])").first().waitFor(

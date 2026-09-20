@@ -1,20 +1,19 @@
-/* Kill-switch: el PWA/Service Worker fue descartado (ver docs/MEJORAS.md #11).
-   Este script solo existe para desinstalarse a sí mismo en navegadores que
-   todavía tengan el Service Worker viejo activo (registrado antes del 15/9). */
-self.addEventListener('install', function (event) {
+/* SW mínimo: Chrome exige un fetch handler para que la app sea instalable
+   (ver docs/MEJORAS.md — PWA mínimo). NO cachea nada: en activate limpia los
+   caches heredados del SW viejo (era PWA completa, descartada por stale-cache)
+   y todo request va directo a la red. */
+self.addEventListener('install', function () {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', function (event) {
   event.waitUntil(
     caches.keys()
-      .then(function (cacheNames) {
-        return Promise.all(cacheNames.map(function (name) { return caches.delete(name); }));
-      })
-      .then(function () { return self.registration.unregister(); })
-      .then(function () { return self.clients.matchAll(); })
-      .then(function (clients) {
-        clients.forEach(function (client) { client.navigate(client.url); });
-      })
+      .then(function (names) { return Promise.all(names.map(function (n) { return caches.delete(n); })); })
+      .then(function () { return self.clients.claim(); })
   );
+});
+
+self.addEventListener('fetch', function (event) {
+  event.respondWith(fetch(event.request));
 });

@@ -14,7 +14,7 @@
     var toast = document.createElement('div');
     toast.className = 'alert alert--error toast';
     toast.setAttribute('role', 'alert');
-    toast.innerHTML = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span>' +
+    toast.innerHTML = '<svg class="icon" aria-hidden="true"><use href="/images/icons.svg#triangle-exclamation"/></svg><span>' +
       (translations._server_error_generic || 'Algo salió mal. Probá de nuevo en un momento.') + '</span>';
     document.body.appendChild(toast);
     setTimeout(function () { toast.remove(); }, 5000);

@@ -7,23 +7,23 @@
     <div class="page">
       <nav class="breadcrumb">
         <a href="/">Inicio</a>
-        <i class="fa-solid fa-chevron-right breadcrumb__sep"></i>
+        <svg class="icon breadcrumb__sep"><use href="/images/icons.svg#chevron-right"/></svg>
         <span data-i18n="req_list_title">Mis solicitudes</span>
       </nav>
 
       <div class="row row--between mb-lg">
         <div th:replace="~{fragments/ui :: greeting('dash_welcome', 'Hola', ${user.displayName}, false, 'dash_subtitle', 'Acá ves tus solicitudes de recolección y su estado.')}"></div>
         <a href="/solicitar" class="btn btn--primary">
-          <i class="fa-solid fa-plus"></i>
+          <svg class="icon"><use href="/images/icons.svg#plus"/></svg>
           <span data-i18n="req_list_new">Nueva solicitud</span>
         </a>
       </div>
 
       <div class="grid grid--4 mb-lg" th:if="${requestStats != null and requestStats.get('total') > 0}">
-        <div th:replace="~{fragments/ui :: tile('fa-list', ${requestStats.get('total')}, 'dash_stat_total', 'Total')}"></div>
-        <div th:replace="~{fragments/ui :: tile('fa-clock', ${requestStats.get('pending')}, 'dash_stat_pending', 'Pendientes')}"></div>
-        <div th:replace="~{fragments/ui :: tile('fa-truck', ${requestStats.get('inProgress')}, 'dash_stat_progress', 'En curso')}"></div>
-        <div th:replace="~{fragments/ui :: tile('fa-circle-check', ${requestStats.get('completed')}, 'dash_stat_completed', 'Completadas')}"></div>
+        <div th:replace="~{fragments/ui :: tile('list', ${requestStats.get('total')}, 'dash_stat_total', 'Total')}"></div>
+        <div th:replace="~{fragments/ui :: tile('clock', ${requestStats.get('pending')}, 'dash_stat_pending', 'Pendientes')}"></div>
+        <div th:replace="~{fragments/ui :: tile('truck', ${requestStats.get('inProgress')}, 'dash_stat_progress', 'En curso')}"></div>
+        <div th:replace="~{fragments/ui :: tile('circle-check', ${requestStats.get('completed')}, 'dash_stat_completed', 'Completadas')}"></div>
       </div>
 
       <div th:if="${requests != null and !requests.isEmpty()}" class="request-list">
@@ -31,16 +31,16 @@
           <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
           <div class="form-actions">
             <a th:href="@{/rastrear?id={id}(id=${req.id})}" class="btn btn--outline btn--sm">
-              <i class="fa-solid fa-eye"></i> <span data-i18n="req_list_view">Ver</span>
+              <svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span>
             </a>
             <a th:if="${req.canBeEdited()}" th:href="@{/solicitudes/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
-              <i class="fa-solid fa-pen"></i> <span data-i18n="req_list_edit">Editar</span>
+              <svg class="icon"><use href="/images/icons.svg#pen"/></svg> <span data-i18n="req_list_edit">Editar</span>
             </a>
             <form th:if="${req.canBeDeleted()}" th:action="@{/solicitudes/{id}(id=${req.id})}" method="post"
                   data-confirm="¿Eliminar esta solicitud?" data-i18n-attr="data-confirm:req_delete_confirm">
               <input type="hidden" name="_method" value="delete">
               <button type="submit" class="btn btn--outline btn--sm btn--danger">
-                <i class="fa-solid fa-trash"></i> <span data-i18n="req_list_delete">Eliminar</span>
+                <svg class="icon"><use href="/images/icons.svg#trash"/></svg> <span data-i18n="req_list_delete">Eliminar</span>
               </button>
             </form>
           </div>
@@ -48,10 +48,10 @@
       </div>
 
       <div th:if="${requests == null or requests.isEmpty()}">
-        <div th:replace="~{fragments/ui :: state('fa-seedling', 'Acá van a aparecer tus solicitudes')}"></div>
+        <div th:replace="~{fragments/ui :: state('seedling', 'Acá van a aparecer tus solicitudes')}"></div>
         <div class="text-center mt">
           <a href="/solicitar" class="btn btn--primary">
-            <i class="fa-solid fa-plus"></i> <span data-i18n="req_list_new">Nueva solicitud</span>
+            <svg class="icon"><use href="/images/icons.svg#plus"/></svg> <span data-i18n="req_list_new">Nueva solicitud</span>
           </a>
         </div>
       </div>

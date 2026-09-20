@@ -45,7 +45,7 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
         context.clearCookies();
 
         // Login como coopverde (Rivera, acepta PLASTICO)
-        login("coopverde", "12345678");
+        login("coopverde", "1234");
 
         page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();

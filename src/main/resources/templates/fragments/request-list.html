@@ -7,34 +7,34 @@
       <div th:replace="~{fragments/ui :: status(${req.status})}"></div>
     </div>
     <div class="info-row" th:if="${req.createdAt != null}">
-      <i class="fa-solid fa-calendar"></i>
+      <svg class="icon"><use href="/images/icons.svg#calendar"/></svg>
       <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
     </div>
     <div class="info-row" th:if="${req.contactName != null}">
-      <i class="fa-solid fa-user"></i>
+      <svg class="icon"><use href="/images/icons.svg#user"/></svg>
       <span th:text="${req.contactName}"></span>
     </div>
     <div class="info-row" th:if="${req.contactPhone != null}">
-      <i class="fa-solid fa-phone"></i>
+      <svg class="icon"><use href="/images/icons.svg#phone"/></svg>
       <span th:text="${req.contactPhone}"></span>
     </div>
     <div class="info-row" th:if="${req.city != null}">
-      <i class="fa-solid fa-location-dot"></i>
+      <svg class="icon"><use href="/images/icons.svg#location-dot"/></svg>
       <span th:text="${req.city}"></span>
     </div>
     <div class="info-row" th:if="${req.address != null and !req.address.isBlank()}">
-      <i class="fa-solid fa-route"></i>
+      <svg class="icon"><use href="/images/icons.svg#route"/></svg>
       <span th:text="${req.address}"></span>
     </div>
     <div th:if="${req.hasMaterials()}" class="request-item__materials">
       <span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}"></span>
     </div>
     <div class="info-row" th:if="${req.organization != null}">
-      <i class="fa-solid fa-building"></i>
+      <svg class="icon"><use href="/images/icons.svg#building"/></svg>
       <span th:text="${req.organization.displayName}"></span>
     </div>
     <div class="info-row" th:if="${req.organization == null}">
-      <i class="fa-solid fa-building"></i>
+      <svg class="icon"><use href="/images/icons.svg#building"/></svg>
       <span data-i18n="track_no_org">Sin asignar</span>
     </div>
   </div>

@@ -1,5 +1,8 @@
 package com.residuosolido.app.model;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -26,11 +29,11 @@ public final class PhoneNumber {
      */
     public static String normalize(String raw) {
         if (raw == null || raw.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.phone.required");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
         String normalized = raw.replaceAll("\\s+", "");
         if (raw.length() > 32 || !PHONE_PATTERN.matcher(normalized).matches()) {
-            throw new IllegalArgumentException("error.phone.invalid");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID);
         }
         return normalized;
     }
@@ -43,10 +46,10 @@ public final class PhoneNumber {
      */
     public static String normalize(String dialCode, String national, String ddd) {
         if (!COUNTRY_RULES.containsKey(dialCode)) {
-            throw new IllegalArgumentException("error.phone.unsupported_country");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_UNSUPPORTED_COUNTRY);
         }
         if (national == null || national.trim().isEmpty()) {
-            throw new IllegalArgumentException("error.phone.required");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
         String cleaned = national.trim().replaceAll("[\\s-]", "");
 
@@ -63,7 +66,7 @@ public final class PhoneNumber {
         }
 
         if (!cleaned.matches("[0-9]+")) {
-            throw new IllegalArgumentException("error.phone.invalid");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID);
         }
 
         String fullNational;
@@ -73,7 +76,7 @@ public final class PhoneNumber {
             } else {
                 String dddCleaned = (ddd == null || ddd.trim().isEmpty()) ? "55" : ddd.trim().replaceAll("[\\s-]", "");
                 if (!dddCleaned.matches("[0-9]{2}")) {
-                    throw new IllegalArgumentException("error.phone.invalid_ddd");
+                    throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_DDD);
                 }
                 fullNational = dddCleaned + cleaned;
             }
@@ -83,13 +86,13 @@ public final class PhoneNumber {
 
         int expectedLength = COUNTRY_RULES.get(dialCode);
         if (fullNational.length() != expectedLength) {
-            throw new IllegalArgumentException("error.phone.invalid_length");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_LENGTH);
         }
 
         // Validar primer dígito del número nacional (9 para celular)
         String nationalPart = "+55".equals(dialCode) ? fullNational.substring(2) : fullNational;
         if (!nationalPart.startsWith("9")) {
-            throw new IllegalArgumentException("error.phone.invalid_first_digit");
+            throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_FIRST_DIGIT);
         }
 
         return dialCode + fullNational;

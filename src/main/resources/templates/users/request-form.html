@@ -47,7 +47,7 @@
                 <p class="hint"><a href="/entrar" data-i18n="req_form_have_account">¿Ya tenés cuenta? Iniciá sesión</a></p>
               </div>
               <div th:if="${!isGuest}" class="alert alert--info">
-                <i class="fa-solid fa-circle-info"></i>
+                <svg class="icon"><use href="/images/icons.svg#circle-info"/></svg>
                 <span data-i18n="req_form_logged_in_note">Usaremos los datos de tu perfil para esta solicitud</span>
               </div>
               <div th:if="${needsPhone}">
@@ -71,7 +71,7 @@
                 <div class="field">
                   <label for="organizationId">
                     <span data-i18n="req_form_org">Organización de acopio</span> <span class="req">*</span>
-                    <i class="fa-solid fa-circle-info hint" data-i18n-attr="title:req_form_org_tip" title="Los materiales disponibles se actualizan según lo que acepta cada organización"></i>
+                    <svg class="icon hint" data-i18n-attr="title:req_form_org_tip" title="Los materiales disponibles se actualizan según lo que acepta cada organización"><use href="/images/icons.svg#circle-info"/></svg>
                   </label>
                   <select id="organizationId" name="organizationId" class="select" required th:disabled="${isEdit}">
                     <option value="" data-i18n="req_form_org_select">Primero seleccioná una ciudad</option>
@@ -90,11 +90,11 @@
               </div>
             </div>
 
-            <div class="field">
-              <label><span data-i18n="req_form_materials">Materiales</span> <span class="req">*</span></label>
-            <span class="hint is-hidden" id="materialsLoading"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="req_form_materials_loading">Actualizando materiales...</span></span>
-            <div th:replace="~{fragments/forms :: checkGrid(${materials}, 'materials', ${request.materials}, 'req_mat_')}"></div>
-          </div>
+            <fieldset class="field">
+              <legend><span data-i18n="req_form_materials">Materiales</span> <span class="req">*</span></legend>
+            <span class="hint is-hidden" id="materialsLoading"><svg class="icon icon--spin"><use href="/images/icons.svg#spinner"/></svg> <span data-i18n="req_form_materials_loading">Actualizando materiales...</span></span>
+            <div th:replace="~{fragments/forms :: checkGrid(${materials}, 'materials', ${request.materials}, 'mat_')}"></div>
+          </fieldset>
 
           <div th:if="${isEdit}" class="field">
             <label data-i18n="req_form_timeslot">Franja horaria</label>
@@ -103,7 +103,7 @@
                 <label class="radio-card">
                   <input type="radio" name="timeSlot" th:value="${slot.name()}"
                          th:checked="${request.confirmedSlot != null and request.confirmedSlot == slot}">
-                  <i th:class="${slot.name() == 'MANANA'} ? 'fa-solid fa-sun' : (${slot.name() == 'TARDE'} ? 'fa-solid fa-cloud-sun' : 'fa-solid fa-moon')}"></i>
+                  <svg class="icon" th:with="slotIcon=${slot.name() == 'MANANA'} ? 'sun' : (${slot.name() == 'TARDE'} ? 'cloud-sun' : 'moon')"><use th:attr="href=@{/images/icons.svg} + '#' + ${slotIcon}"/></svg>
                   <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(slot.name())}" th:text="${slot.name()}">MANANA</span>
                 </label>
               </th:block>
@@ -136,7 +136,7 @@
           <div th:if="${isEdit}" class="field">
             <label data-i18n="req_form_image">Foto (opcional)</label>
             <label class="file-upload" for="imageFile">
-              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <svg class="icon"><use href="/images/icons.svg#cloud-arrow-up"/></svg>
               <span data-i18n="req_form_image_choose">Click para subir</span>
               <input type="file" id="imageFile" name="imageFile" accept="image/jpeg,image/png">
               <span class="file-name" id="fileName"></span>
@@ -146,12 +146,12 @@
 
             <div class="form-actions">
               <button type="submit" class="btn btn--primary">
-                <i class="fa-solid fa-paper-plane"></i>
+                <svg class="icon"><use href="/images/icons.svg#paper-plane"/></svg>
                 <span th:if="${isEdit}" data-i18n="req_form_submit_edit">Guardar cambios</span>
                 <span th:unless="${isEdit}" data-i18n="req_form_submit_new">Pedir recolección</span>
               </button>
               <a th:href="${isEdit} ? '/mis-solicitudes' : '/'" class="btn btn--outline">
-                <i class="fa-solid fa-xmark"></i> <span data-i18n="req_form_cancel">Cancelar</span>
+                <svg class="icon"><use href="/images/icons.svg#xmark"/></svg> <span data-i18n="req_form_cancel">Cancelar</span>
               </a>
             </div>
           </form>
@@ -162,7 +162,7 @@
           <p class="hero__subtitle" data-i18n="req_form_alt_guest_desc">Buscala con tu teléfono y el código que te dimos.</p>
           <div class="hero__cta">
             <a th:href="@{/rastrear}" class="btn btn--light">
-              <i class="fa-solid fa-magnifying-glass"></i>
+              <svg class="icon"><use href="/images/icons.svg#magnifying-glass"/></svg>
               <span data-i18n="cta_track">Buscar mi solicitud</span>
             </a>
           </div>
@@ -173,7 +173,7 @@
           <p class="hero__subtitle" data-i18n="req_form_alt_user_desc">Mirá el estado de las recolecciones que ya pediste.</p>
           <div class="hero__cta">
             <a th:href="@{/mis-solicitudes}" class="btn btn--light">
-              <i class="fa-solid fa-list"></i>
+              <svg class="icon"><use href="/images/icons.svg#list"/></svg>
               <span data-i18n="nav_my_requests">Mis solicitudes</span>
             </a>
           </div>

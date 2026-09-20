@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
   <div th:fragment="state(icon, message)" class="empty-state">
-    <i aria-hidden="true" th:class="'fa-solid ' + ${icon}"></i>
+    <svg class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
     <span class="empty-state__text" th:text="${message}">No hay elementos</span>
   </div>
 
@@ -12,19 +12,22 @@
   </th:block>
 
   <div th:fragment="row(icon, label, value)" th:if="${value != null}" class="info-row">
-    <i aria-hidden="true" th:class="'fa-solid ' + ${icon}"></i>
+    <svg class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
     <span class="info-row__label" th:text="${label}">Label</span>
     <span class="info-row__value" th:text="${value}">Value</span>
   </div>
 
   <div th:fragment="tile(icon, value, labelKey, labelText)" class="stat-card">
-    <div class="stat-card__icon"><i th:class="'fa-solid ' + ${icon}"></i></div>
+    <div class="stat-card__icon"><svg class="icon"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg></div>
     <span class="stat-card__value" th:text="${value}">0</span>
     <span class="stat-card__label" th:attr="data-i18n=${labelKey}" th:text="${labelText}">Label</span>
   </div>
 
   <th:block th:fragment="options">
-    <option value="" data-i18n="req_form_org_select">Seleccioná una organización</option>
+    <option th:if="${organizations == null or organizations.isEmpty()}" value="" disabled selected
+            data-i18n="req_form_org_none">No hay organizaciones en esta ciudad</option>
+    <option th:unless="${organizations == null or organizations.isEmpty()}" value=""
+            data-i18n="req_form_org_select">Seleccioná una organización</option>
     <option th:each="org : ${organizations}" th:value="${org.id}"
             th:attr="data-materials=${org.acceptedMaterialsCsv}"
             th:text="${org.displayName}"></option>
@@ -33,8 +36,9 @@
   <div th:fragment="msg(type, text)" th:if="${type != null and text != null}"
        class="alert"
        th:classappend="'alert--' + ${type}"
-       role="alert">
-    <i aria-hidden="true" th:class="${type == 'success' ? 'fa-solid fa-circle-check' : (type == 'error' ? 'fa-solid fa-circle-exclamation' : (type == 'warning' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-info'))}"></i>
+       role="alert"
+       th:with="icon=${type == 'success' ? 'circle-check' : (type == 'error' ? 'circle-exclamation' : (type == 'warning' ? 'triangle-exclamation' : 'circle-info'))}">
+    <svg class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
     <span th:text="${text}"></span>
   </div>
 
@@ -42,7 +46,7 @@
     <th:block th:each="crumb, iter : ${crumbs}">
       <a th:if="${crumb.href != ''}" th:href="${crumb.href}" th:text="${crumb.label}">Inicio</a>
       <span th:unless="${crumb.href != ''}" th:text="${crumb.label}">Actual</span>
-      <i th:if="${!iter.last}" class="fa-solid fa-chevron-right breadcrumb__sep" aria-hidden="true"></i>
+      <svg th:if="${!iter.last}" class="icon breadcrumb__sep" aria-hidden="true"><use href="/images/icons.svg#chevron-right"/></svg>
     </th:block>
   </nav>
 

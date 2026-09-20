@@ -1,5 +1,8 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.User;
@@ -9,7 +12,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -26,17 +28,15 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public User findAuthenticatedUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
+                .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND));
     }
 
     public boolean isAnonymous(Authentication authentication) {
@@ -53,14 +53,14 @@ public class UserService {
     // NOTE: MongoDB standalone does not support multi-document transactions (requires replica set).
     // These operations are NOT atomic. If a failure occurs mid-operation, data may be left inconsistent.
     // To enable real transactions, configure a single-node replica set in MongoDB.
-    public User updateUser(User user, String newPassword) {
+    public User updateUser(User user) {
         User existing = userRepository.findById(user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("error.user.not_found"));
+                .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND));
 
         if (user.getEmail() != null) {
             String normalized = user.getEmail().trim().toLowerCase(java.util.Locale.ROOT);
             if (userRepository.findByEmailIgnoreCase(normalized).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
-                throw new IllegalArgumentException("error.register.email_exists");
+                throw new ValidationException(ServerMessage.ERROR_REGISTER_EMAIL_EXISTS);
             }
             existing.setEmail(normalized);
         }
@@ -70,11 +70,6 @@ public class UserService {
         existing.setAcceptedMaterials(user.getAcceptedMaterials());
         if (user.getProfileCompleted() != null) {
             existing.setProfileCompleted(user.getProfileCompleted());
-        }
-
-        if (newPassword != null && !newPassword.trim().isEmpty()) {
-            validatePassword(newPassword);
-            existing.setPassword(passwordEncoder.encode(newPassword));
         }
 
         return userRepository.save(existing);
@@ -94,15 +89,6 @@ public class UserService {
         if (user.isOrganization() && user.hasPhone() && user.hasCity()) {
             user.completeProfile();
         }
-        return updateUser(user, null);
-    }
-
-    private void validatePassword(String value) {
-        if (value == null || value.isBlank() || value.length() < 8) {
-            throw new IllegalArgumentException("error.register.password_min_length");
-        }
-        if (value.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
-            throw new IllegalArgumentException("error.register.password_too_long");
-        }
+        return updateUser(user);
     }
 }

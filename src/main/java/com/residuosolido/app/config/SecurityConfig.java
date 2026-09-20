@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .requestMatchers(Routes.WELL_KNOWN).permitAll()
                 // Páginas de error deben ser públicas
                 .requestMatchers(Routes.ERROR).permitAll()
-                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/robots.txt", "/sitemap.xml", "/sw.js").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/robots.txt", "/sitemap.xml", "/sw.js", "/manifest.webmanifest").permitAll()
                 // Formulario público de nueva solicitud
                 .requestMatchers(Routes.REQUESTS_NEW).permitAll()
                 .requestMatchers(Routes.TRACK).permitAll()

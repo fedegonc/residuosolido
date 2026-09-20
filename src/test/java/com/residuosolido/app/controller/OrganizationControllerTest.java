@@ -2,8 +2,8 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.Routes;
 
+import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
@@ -53,13 +53,8 @@ class OrganizationControllerTest {
 
     @BeforeEach
     void setUp() {
-        User mockOrg = new User();
-        mockOrg.setId("org1");
+        User mockOrg = TestFixtures.organization("org1", City.RIVERA);
         mockOrg.setUsername("coop");
-        mockOrg.setRole(Role.ORGANIZATION);
-        mockOrg.setProfileCompleted(true);
-        mockOrg.setCity(City.RIVERA);
-        mockOrg.setPhone("+59899123456");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(mockOrg);
         when(requestService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
