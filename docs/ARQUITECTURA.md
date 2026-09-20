@@ -47,17 +47,15 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 **Base:**
 - `BaseController` — Utilidades comunes (usuario actual, mensajes flash)
 
-### 2. Services (9 archivos)
+### 2. Services (7 archivos)
 
 - `UserService` — Gestión de usuarios y perfiles
 - `UserRegistrationService` — Registro de nuevos usuarios/organizaciones
-- `RequestService` — Creación, edición y eliminación de solicitudes
-- `RequestQueryService` — Consultas de solicitudes y validación de propiedad
-- `RequestTransitionService` — Transiciones de estado (aceptar/rechazar/completar)
+- `RequestService` — Creación, consultas, edición, eliminación y transiciones de estado de solicitudes (incluye validación de propiedad)
 - `RequestMetricsService` — Métricas de solicitudes (user + org dashboards)
-- `PublicMetricsService` — Métricas públicas por ciudad
 - `CityOrgService` — Búsqueda de organizaciones por ciudad
 - `LocalImageService` — Subida de imágenes locales
+- `MongoAggregationUtils` — Utilidades estáticas de agregación MongoDB (facets)
 
 ### 3. Modelos (3 clases + DTO)
 
@@ -91,7 +89,7 @@ CityOrgService.findOrganizationByIdAndCity  (valida org en ciudad)
 Organización
   ↓ POST /acopio/solicitudes/{id}/aceptar
 OrgRequestController
-  ↓ RequestTransitionService.acceptRequest(...)
+  ↓ RequestService.acceptRequest(...)
 Request.accept(TimeSlot)  (ciclo de estados)
   ↓ RequestRepository.save
 ```
@@ -101,7 +99,7 @@ Request.accept(TimeSlot)  (ciclo de estados)
 ```
 Organización registrada
   ↓ Login
-LoginSuccessHandler → redirige /acopio/solicitudes
+AuthenticationEventHandler → Routes.resolveHomeForRole → redirige /acopio/solicitudes
 OrgRequestController.orgRequests
   ↓ needsProfileCompletion() → Redirect /mi-organizacion
 OrgProfileController.profile (abre en modo edición)

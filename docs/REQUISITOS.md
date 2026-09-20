@@ -93,9 +93,9 @@ Decisión consciente: el modelo `Catador` existe pero no hay navegación hacia
 
 | RN | Regla | Dónde se aplica |
 |---|---|---|
-| RN-1 | Una organización no puede modificar solicitudes ajenas | `RequestTransitionService`, verificación de propiedad |
+| RN-1 | Una organización no puede modificar solicitudes ajenas | `RequestService`, verificación de propiedad |
 | RN-2 | Una solicitud no puede completarse directamente desde `PENDING` | Ciclo `PENDING → IN_PROGRESS → COMPLETED` (`REJECTED` terminal) |
-| RN-3 | El seguimiento de invitado requiere teléfono **y** código privado; el teléfono solo no devuelve resultados | `RequestQueryService` + `/rastrear` |
+| RN-3 | El seguimiento de invitado requiere teléfono **y** código privado; el teléfono solo no devuelve resultados | `RequestService` + `/rastrear` |
 | RN-4 | Solo una solicitud `PENDING` puede editarse o eliminarse | `Request.canBeEdited()`, tests RN-11 |
 | RN-5 | Una organización asignable debe estar activa, tener rol `ORGANIZATION`, perfil completo, teléfono válido, ciudad coincidente y materiales aceptados no vacíos | `CityOrgService` (resolución de organizaciones) |
 | RN-6 | Todos los materiales de la solicitud deben estar incluidos entre los aceptados por la organización | Validación en creación/asignación |
@@ -138,8 +138,8 @@ Si no, se documenta como limitación consciente (ver `docs/LIMITACIONES.md`).
   decisión consciente, no un bug — está explícitamente en `permitAll()` en
   `SecurityConfig`.
 - 🟡 **Consistencia de nombres** (baja prioridad): revisar que los nombres de
-  métodos de `RequestQueryService`/`RequestOrgService`/`RequestMetricsService`/
-  `CityOrgService` reflejen consistentemente su sub-dominio.
+  métodos de `RequestService`/`RequestMetricsService`/`CityOrgService`
+  reflejen consistentemente su sub-dominio.
 
 ---
 

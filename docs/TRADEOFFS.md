@@ -591,7 +591,7 @@ nuevo, solo lo adelanta.
 
 **En contra — límites que no se pueden ignorar:**
 - **Un PIN de 4 dígitos (10.000 combinaciones) no es apto para producción
-  real.** Sin límite de intentos más agresivo que el actual (`LoginAttemptService`,
+  real.** Sin límite de intentos más agresivo que el actual (`RateLimiter`,
   3 intentos/15 min ya existente) sería fuerza-bruteable en un sistema real
   con más usuarios.
 - El nombre como clave de login puede colisionar (dos "Juan Pérez") —
@@ -656,3 +656,84 @@ propio — hereda el de `application.properties`, que a su vez viene de `.env`.
 `.env.example` → `.env` y pedir la credencial real por un canal aparte (no
 git) antes del primer `mvn spring-boot:run`. Es fricción de onboarding a
 cambio de no volver a filtrar credenciales por accidente.
+
+## 27. Íconos: sprite SVG local en vez de icon font (Font Awesome)
+
+Los 39 íconos de la app se sirven desde `static/images/icons.svg` — un sprite
+de `<symbol>`s extraídos del propio jar de Font Awesome — referenciados con
+`<svg class="icon"><use href="/images/icons.svg#{id}"/></svg>`.
+
+**Por qué sprite y no otra alternativa:**
+
+| Alternativa | Por qué no |
+|---|---|
+| Font Awesome webjar (status quo) | ~100KB de CSS + ~1MB de webfonts por 39 íconos de ~2.000; un request extra por página |
+| Otra icon font (Bootstrap Icons, Material Symbols) | Mismo modelo, mismo peso — cambia el logo, no la arquitectura |
+| Iconify / runtime JS | Una dependencia JS para inyectar markup estático — contradice el objetivo de mínimo JS |
+| SVG inline en fragment `ui::icon(name)` | Funciona, pero los `<path>` ilegibles quedan en cada página; con `use` el path vive en un archivo cacheable |
+| Emoji | Inconsistente entre OS y sin equivalentes serios para `clipboard-list`/`route` |
+
+**Ventajas concretas:** cero JS, cero fuentes, CSP intacto (asset same-origin),
+cacheable, hereda `currentColor`, y el grep `icons.svg#` da el inventario de
+íconos usados. El costo: cada `<use>` externo hace un fetch la primera vez
+(cacheado después) y los ids se escriben a mano — mitigado extrayendo los
+símbolos de FA para que el nombre del id coincida con el `fa-*` original.
+
+El path `/images/**` se eligió porque ya está en `permitAll` de
+`SecurityConfig` — `/img/` habría requerido tocar el filter chain.
+
+## 28. `App.java` de un archivo: el núcleo del sistema como herramienta de análisis
+
+**Contexto:** después de varios bugs de "capa conectiva" (ternary en
+`th:attr`, selectores CSS huérfanos, claves i18n stale) surgió la pregunta
+de cuánto del sistema es dominio real y cuánto es plomería de framework.
+
+**Qué se hizo:** `App.java` en la raíz del repo — una UI de consola que
+**importa las clases reales del sistema** (`javac -cp "target/classes:$(cat
+cp.txt)" App.java`). No es un espejo ni una copia: llama a
+`PhoneNumber.normalize`, `Request.accept/reject/complete`,
+`Request.assignOrganization`, `ServerMessage`, y a las validaciones puras
+de `RequestService` (instanciado con repositorios `null` — solo se usan los
+métodos que no tocan persistencia). Lo único propio es lo que el contexto
+legítimamente reemplaza: persistencia en `Map`/`List` y UI con `Scanner`.
+
+**Para qué sirve:** validar casos del dominio en segundos (¿puedo completar
+una PENDING? ¿qué pasa si la org no acepta ese material?) sin levantar la
+app ni Mongo, y demostrar académicamente que el núcleo no depende del
+framework — si una regla del dominio agarrara dependencia de Spring, esta
+clase dejaría de compilar: es el test de pureza del núcleo. Un espejo
+habría introducido el mismo drift que §29 eliminó; reusar las clases hace
+la divergencia imposible por construcción.
+
+**Conclusión extraída:** todos los bugs recientes vivieron en el tejido
+(contratos implícitos entre capas), ninguno en el núcleo. La unidad del
+sistema no se mejora fusionando archivos sino haciendo los contratos
+explícitos y verificables (grep-able, testeados en sus paths de error).
+
+## 29. Claves i18n server-side tipadas: `ServerMessage` enum + excepciones `Keyed`
+
+**Contexto:** siguiendo §28, el núcleo ya era puro pero las ~60 claves i18n
+que emite el servidor viajaban como strings crudos (`throw new
+IllegalArgumentException("error.request.city_required")`). El contrato
+Java→JSON era convención, no verificable — el drift ya había picado dos
+veces (claves `login.*` stale, `mat_*` inexistentes).
+
+**Alternativas:**
+
+| Opción | Por qué sí/no |
+|---|---|
+| Strings + convención (status quo) | Cero costo de escribir, costo infinito de verificar — el typo compila |
+| Un enum por tipo (`ErrorCode` + `FlashKey`) — opción descartada | Más "correcto" semánticamente, pero dos listas para un solo contrato |
+| **`ServerMessage` único (elegida)** | Una lista = un contrato; `code()`/`serverKey()` encapsulan la convención `_server_`; el nombre no miente: son *mensajes* del servidor, no solo errores |
+
+**Excepciones:** en vez de un `DomainException` único, tres clases que
+**extienden los tipos JDK existentes** (`ValidationException`→
+`IllegalArgumentException`, `StateException`→`IllegalStateException`,
+`OwnershipException`→`SecurityException`) e implementan `Keyed`. Así los
+`catch` y el `@ExceptionHandler` existentes no cambian — el tipo sigue
+despachando, el enum solo garantiza la clave.
+
+**Ganancia medida:** el refactor encontró 7 bugs latentes (5 throws que el
+patrón no cubría + 5 claves sin traducción JSON que se habrían mostrado
+crudas). `ServerMessageContractTest` hace el drift imposible: agregar una
+constante sin traducción rompe el build.

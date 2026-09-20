@@ -31,9 +31,10 @@ Lo que el MVP reconoce como limitación consciente o quedó fuera de alcance, co
 
 ### Asignación de recolector
 
-- `InformalCollector` es una agenda interna de la organización. `Request`
-  no tiene relación con el recolector responsable.
-- No se puede responder "qué recolector atendió esta solicitud".
+- El subsistema de recolectores informales (`InformalCollector`) fue
+  **eliminado por completo**: no existe entidad, repositorio ni endpoints.
+- No se puede responder "qué recolector atendió esta solicitud" — una
+  solicitud no registra ningún recolector responsable.
 
 ### Concurrencia
 

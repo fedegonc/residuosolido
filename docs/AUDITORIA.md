@@ -28,8 +28,8 @@ Inventario auditado de copies, estilos, esquemas, endpoints y templates, con des
 
 | Fuente | Rol | Claves | ¿Usada? |
 |---|---|---|---|
-| `static/i18n/common/es.json` | i18n cliente (JS) | 39 | Sí |
-| `static/i18n/common/pt.json` | i18n cliente (JS) | 39 | Sí |
+| `static/i18n/es.json` | i18n cliente (JS) | ~229 | Sí |
+| `static/i18n/pt.json` | i18n cliente (JS) | ~229 | Sí |
 | `messages_es.properties` | i18n servidor (Thymeleaf) | 136 | Parcial |
 | `messages_pt.properties` | i18n servidor (Thymeleaf) | 109 | Parcial |
 | `messages.properties` | Fallback (sin locale) | 108 | No visible |
@@ -198,7 +198,7 @@ de `data-i18n` + `i18n/common/*.json`.
 |---|---|
 | `UserRepository` | Sí |
 | `RequestRepository` | Sí |
-| `InformalCollectorRepository` | **Latente** |
+| `InformalCollectorRepository` | **Eliminado** (subsistema removido por completo, ver MEJORAS) |
 
 ---
 
@@ -220,7 +220,7 @@ de `data-i18n` + `i18n/common/*.json`.
 | `RequestCreateController` | 2 (nueva, crear) | Sí |
 | `RequestController` | 5 (lista, detalle, editar, actualizar, eliminar) | Sí |
 | `GuestTrackingController` | 2 (rastrear GET/POST) | Sí |
-| `OrgDashboardController` | 1 (inicio) | Sí |
+| `OrgDashboardController` | — | **Eliminado** (dashboard absorbido en `OrgRequestController`, MEJORAS #130) |
 | `OrgProfileController` | 4 (completar-perfil GET/POST, perfil GET/POST) | Sí |
 | `OrgRequestController` | 4 (lista, detalle, transiciones) | Sí |
 | `OrgApiController` | 1 (by-city JSON) | Sí |
@@ -289,7 +289,7 @@ de `data-i18n` + `i18n/common/*.json`.
 
 | Problema | Impacto | Solución |
 |---|---|---|
-| `InformalCollector` + repo + controller + 4 endpoints + template latentes | Medio | Documentar o eliminar |
+| `InformalCollector` + repo + controller + 4 endpoints + template latentes | Medio | ~~Documentar o eliminar~~ **Resuelto:** eliminado por completo |
 
 ### 6.4 Endpoints
 
@@ -309,7 +309,7 @@ de `data-i18n` + `i18n/common/*.json`.
 ### Prioridad media (después de la defensa)
 
 4. **Consolidar stat-card** — 20 clases → ~8 con utilities
-5. **Decidir qué hacer con `InformalCollector`** — eliminar o activar
+5. ~~**Decidir qué hacer con `InformalCollector`**~~ — resuelto: subsistema eliminado por completo
 6. **Unificar fuentes de copies** — una sola fuente de verdad
 
 ### Prioridad baja

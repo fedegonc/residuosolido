@@ -111,7 +111,7 @@ Demo corta con datos sintéticos claramente identificados:
 
 1. Crear una solicitud como invitado (sin cuenta).
 2. Guardar su código de seguimiento.
-3. Entrar como organización (`coopverde` / `12345678`).
+3. Entrar como organización (`coopverde` / `1234`).
 4. Aceptar la solicitud → estado cambia a IN_PROGRESS.
 5. Completar la solicitud → estado cambia a COMPLETED.
 6. Mostrar una operación rechazada por una regla de negocio.

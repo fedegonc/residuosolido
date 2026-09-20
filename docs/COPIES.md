@@ -8,7 +8,10 @@ Textos de UI canónicos (claves i18n + copy en español). Extraído del anexo de
 > en un único documento para detectar inconsistencias, copies mezclados
 > y crecimientos innecesarios.
 >
-> **Fuente de verdad:** este documento. Los templates usan `data-i18n`
+> **Fuente de verdad:** `static/i18n/{lang}.json` (las claves vivas las enforzan
+> los contract tests `TemplateI18nContractTest`/`OrphanI18nKeysTest`; este doc es
+> el índice editorial de tono y copies canónicos, puede desfasarse del JSON).
+> Los templates usan `data-i18n`
 > con fallback en español. Un solo JSON por idioma (`static/i18n/{lang}.json`)
 > sirve tanto al cliente (JS, vía `UiCopyCatalog`) como al servidor
 > (Thymeleaf, vía `JsonMessageSource`) — no hay `messages_*.properties`

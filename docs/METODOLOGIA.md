@@ -37,11 +37,11 @@ las reglas de seguridad más críticas.
 - Stack: Java 21 + Spring Boot 3.2 + Thymeleaf + MongoDB.
 - `User` con roles `USER` / `ORGANIZATION` (sin rol Admin).
 - `SecurityConfig` con CSRF, login por formulario, bloqueo por intentos
-  fallidos (`LoginAttemptService`).
+  fallidos (`RateLimiter` + `AuthenticationEventHandler`).
 - `RegistrationForm` (DTO) para evitar mass-assignment.
 - Onboarding forzado de organización (`profileCompleted`).
 - Validaciones server-side de email, username y contraseña.
-- Rate limiting de invitados (`GuestRateLimiter`).
+- Rate limiting de invitados (`RateLimiter`).
 - 11 tests de seguridad crítica (`CriticalSecurityTest`).
 
 **Cierre de fase:** el sistema autentica, autoriza por rol y rechaza
@@ -61,10 +61,10 @@ invitado) crea una solicitud y una organización la gestiona.
 - `RequestCreateController` + `RequestService` (creación con imagen
   opcional).
 - `CityOrgService` — resolución de organización por ciudad y materiales.
-- `OrgRequestController` + `RequestTransitionService` (aceptar /
-  rechazar / completar).
+- `OrgRequestController` + `RequestService` (aceptar /
+  rechazar / completar — transiciones consolidadas en un solo service).
 - Rastreo de invitados por teléfono + código privado de 8 caracteres.
-- `InformalCollector` (CRUD interno de la organización).
+- ~~`InformalCollector` (CRUD interno)~~ — subsistema planificado y luego descartado/eliminado.
 - Tests de servicios (validación, transiciones, queries, métricas).
 
 **Cierre de fase:** el flujo end-to-end funciona. Un usuario puede

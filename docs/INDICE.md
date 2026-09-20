@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: reorganizacion de docs en archivos focales + gitflow  
-> Tests: 153, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
+> Tests: 158, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
 > Build: SUCCESS
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
@@ -19,6 +19,7 @@ dominio segun esta tabla.
 | Archivo | Contenido | Estado |
 |---|---|---|
 | `README.md` | Presentacion general, instalacion, stack tecnologico y enlaces a documentacion. | Actualizado |
+| `CLAUDE.md` | Instrucciones para agentes: console-driven development, convenciones de stack, git y consolidacion de docs. | Actualizado |
 | `docs/INDICE.md` | Este archivo. Mapa de toda la documentacion. | Actualizado |
 | `docs/REQUISITOS.md` | Catalogo canonico de RF, RN y criterio de alcance. Fuente de verdad para la especificacion. | Nuevo |
 | `docs/DEFENSA.md` | Guia para la defensa de tesis: argumento, estructura de exposicion, preguntas esperadas, fuentes. | Actualizado |
@@ -36,6 +37,8 @@ dominio segun esta tabla.
 | `docs/BOILERPLATE_VS_CORE.md` | Clasificación clase por clase: infraestructura genérica vs núcleo de negocio real. | Actualizado |
 | `docs/SEGURIDAD.md` | Checklist mínimo de secretos y seguridad: credenciales, `.env`/`.env.example`, índices de Mongo. | Actualizado |
 | `docs/tesis/CONTEXTO_LLM.md` | Contexto de la tesis para continuidad entre sesiones de agente. | Actualizado |
+| `docs/sincronizacion-codigo-texto.md` | Auditoría código↔tesis: tabla de afirmaciones verificadas contra el código (SYNC-XX) con estado y acción recomendada. | Nuevo |
+| `docs/gaps-detalle.md` | Detalle de lógica de negocio extraída de los hallazgos de sincronización para consolidación en `scratch/pseudoapp.java`. | Nuevo |
 
 ---
 

@@ -29,7 +29,7 @@
 - Java 21, Spring Boot 3.2, Spring Security 6
 - Thymeleaf 3 (SSR) + thymeleaf-layout-dialect
 - MongoDB (Atlas en prod, spring-data-mongodb)
-- HTMX 2.0.4 + Vanilla JS (sin frameworks frontend)
+- Vanilla JS (sin frameworks frontend; HTMX fue removido)
 - CSS puro con variables y BEM (sin Tailwind/Bootstrap)
 
 ## Comandos Frecuentes
@@ -58,7 +58,7 @@ mvn pmd:pmd pmd:check           # análisis estático
 ## Convenciones de Frontend
 
 - Componentes reutilizables en `templates/fragments/` (alert, badge, card, info-row, etc.)
-- Estados HTMX manejados vía CSS en `static/css/htmx-states.css` (sin JS extra)
+- Interacciones dinámicas con Vanilla JS + fetch (`static/js/`), sin HTMX
 - i18n: un solo JSON por idioma (`static/i18n/{lang}.json`), servido también server-side vía `JsonMessageSource` — no hay `messages_*.properties`
 - JS exclusivo de una página va en su propio archivo (`static/js/{página}.js`), cargado vía `layout:fragment="pageScripts"` en esa página — no en `app.js`. `app.js` es solo lo global o componentes reusados por 2+ páginas (ver comentario-manifiesto al inicio del archivo)
 

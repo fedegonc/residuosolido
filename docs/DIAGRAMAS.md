@@ -102,7 +102,7 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 - Solicitante (`Invitado` o `Usuario`).
 - Formulario Thymeleaf `request-form.html`.
 - `RequestCreateController`.
-- `GuestRateLimiter`.
+- `RateLimiter`.
 - `RequestService`.
 - `LocalImageService`.
 - `CityOrgService`.
@@ -149,7 +149,7 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
             │
             ▼
   ┌─────────────────────────┐
-  │ RequestTransitionService │
+  │     RequestService       │
   └────────────┬─────────────┘
                │
      ┌─────────┼─────────────┐

@@ -1,8 +1,8 @@
 # Contexto consolidado para asistencia con la tesis
 
-**Estado:** borrador parcial  
+**Estado:** borrador parcial — DERIVADO, regenerar desde los docs canónicos tras cada pasada de sincronización  
 **Última actualización:** 2026-09-17  
-**Fuente de verdad:** no (es un ensamblado derivado)  
+**Fuente de verdad:** no (es un ensamblado derivado — ver `docs/sincronizacion-codigo-texto.md` para el estado de drift conocido)  
 **Relacionado con:** `README.md`, `docs/INDICE.md`, `docs/METODOLOGIA.md`, `docs/DIAGRAMAS.md`, `docs/ENDPOINTS.md`, `docs/DEFENSA.md`, `docs/MEJORAS.md` y secciones canónicas de despliegue/observabilidad
 
 > Este archivo organiza contenido existente en los documentos canónicos. No reemplaza esas fuentes.
@@ -123,13 +123,11 @@ Incluye controllers Spring MVC, templates Thymeleaf renderizados en servidor, fr
 
 - `UserService`: usuarios y perfiles.
 - `UserRegistrationService`: registro.
-- `RequestService`: creación de solicitudes.
-- `RequestQueryService`: consultas y verificación de propiedad.
-- `RequestTransitionService`: transiciones de estado.
-- `RequestMetricsService`: estadísticas de dashboards.
-- `PublicMetricsService`: métricas públicas.
+- `RequestService`: creación, consultas, propiedad y transiciones de solicitudes (Query/Transition consolidados en un solo service).
+- `RequestMetricsService`: estadísticas de dashboards (usuario y organización).
 - `CityOrgService`: resolución de organizaciones por ciudad.
 - `LocalImageService`: imágenes locales.
+- `MongoAggregationUtils`: utilidades estáticas de agregación (facets).
 
 ### Datos
 
@@ -377,8 +375,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - Modelo de solicitud: `src/main/java/com/residuosolido/app/model/Request.java`.
 - Estados: `src/main/java/com/residuosolido/app/enums/RequestStatus.java`.
 - Creación y validación de solicitudes: `src/main/java/com/residuosolido/app/service/RequestService.java`.
-- Consultas de solicitudes: `src/main/java/com/residuosolido/app/service/RequestQueryService.java`.
-- Transiciones: `src/main/java/com/residuosolido/app/service/RequestTransitionService.java`.
+- Consultas, propiedad y transiciones de solicitudes: `src/main/java/com/residuosolido/app/service/RequestService.java`.
 - Usuarios y perfiles: `src/main/java/com/residuosolido/app/service/UserService.java`.
 - Copys server-side: `src/main/java/com/residuosolido/app/config/UiCopyCatalog.java`.
 - Endpoints HTTP: `docs/ENDPOINTS.md`.
@@ -389,7 +386,7 @@ La evaluación realizada demuestra correctitud funcional y controles técnicos. 
 - Modelo lógico: `docs/diagrams/figura2-modelo-logico.drawio`.
 - Diagrama de clases: `docs/diagrams/figura3-clases.drawio`.
 - Diagrama de secuencia UML 2.5: `docs/diagrams/figura4-secuencia.drawio`.
-- Índice visual de figuras: `docs/diagrams/figuras.html`.
+- Índice visual de figuras: `docs/DIAGRAMAS.md` (fuentes `.drawio` en `docs/diagrams/`).
 - Explicación textual y arquitectura: `docs/DIAGRAMAS.md`.
 
 [PARCIAL: `docs/diagrams/figura5-gitflow.drawio` cubre el tramo repo→Render→producción. Falta el detalle de contenedor Docker, MongoDB Atlas, Actuator y monitorización externa.]

@@ -68,7 +68,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 # Testing (anexo)
 
 
-Describe la suite de tests real del proyecto (181 tests, `mvn test`, `BUILD SUCCESS`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
+Describe la suite de tests real del proyecto (185 tests totales — 158 no-browser verdes + 27 `*BrowserTest` con fallas conocidas documentadas en `docs/MEJORAS.md` #159, `mvn test`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
 
 ---
 
@@ -102,8 +102,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | `UserServiceTest` (17) | Registro, actualización de perfil, completar perfil de organización |
 | `RequestMetricsServiceTest` (6) | Agregación Mongo faceted para estadísticas de organización y usuario (counts por estado) |
 | `LocalImageServiceTest` (7) | Validación de tipo/tamaño de imagen, guardado local |
-| `GuestRateLimiterTest` (5) | Rate limiting por IP (ventana deslizante), header `X-Forwarded-For`, limpieza de memoria |
-| `LoginAttemptServiceTest` (7) | Bloqueo tras intentos fallidos de login, expiración, limpieza de memoria |
+| `RateLimiterTest` | Rate limiting por IP (ventana deslizante), bloqueo tras intentos fallidos de login, expiración, limpieza de memoria — unifica los viejos `GuestRateLimiterTest`/`LoginAttemptServiceTest` |
 | `RoutesTest` (6) | Redirección post-login según rol (RN-05) — reemplaza a `RoleBasedLoginTargetUrlResolverTest`, fusionado en `Routes.resolveHomeForRole()` |
 | `PhoneNumberCountryCodeTest` (23) | Normalización E.164, códigos de país (UY/BR), DDD brasilero, validación de longitud |
 | `MvpRegressionTest` (9) | Regresión de reglas críticas (password corto, org inactiva, etc.) |

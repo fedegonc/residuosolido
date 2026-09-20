@@ -161,9 +161,11 @@ Build: SUCCESS
 - Se actualizaron los mensajes de error en ES y PT.
 - Se actualizó el test `I18nMessageResolutionTest`.
 - Se actualizó el hint del template de registro.
-- El demo password `12345678` (8 caracteres) sigue funcionando.
+- El demo password `12345678` (8 caracteres) seguía funcionando en ese momento.
 
 **Verificación:** Los tests existentes usan "12" (2 caracteres) y null, que siguen fallando la validación. Los tests pasan.
+
+**Superseded (ver `docs/MEJORAS.md` #155):** esta validación de 8 caracteres resultó ser código muerto — nunca hubo un caller real que pasara un password no-nulo a `UserService.updateUser`. Se borró por completo; el sistema real usa PIN de 4 dígitos (`UserRegistrationService`), no esta política. El demo password del seed hoy es `1234`.
 
 ### 1.5 Recursos PWA no autorizados
 
@@ -309,10 +311,10 @@ hay comportamiento offline de ningún tipo hoy.
 
 ## 7. Datos de demo (solo desarrollo)
 
-El seed crea 10 usuarios y 12 solicitudes. Password: `12345678`.
+El seed crea 10 usuarios y 12 solicitudes. Password: `1234`.
 
-- `juan` / `12345678` — usuario
-- `coopverde` / `12345678` — organización
+- `juan` / `1234` — usuario
+- `coopverde` / `1234` — organización
 
 **Importante:** El seed solo se ejecuta si `app.seed=true` Y la base está vacía. No borra datos existentes.
 
@@ -321,7 +323,7 @@ El seed crea 10 usuarios y 12 solicitudes. Password: `12345678`.
 ## 8. Archivos nuevos
 
 - `src/main/java/com/residuosolido/app/config/UiCopyCatalog.java` — carga JSON i18n server-side.
-- `src/main/resources/static/js/theme.js` — aplica tema antes de pintar (sin inline).
+- ~~`src/main/resources/static/js/theme.js`~~ — creado en esta iteración y **eliminado** después junto con el dark mode (SYNC-08).
 - `src/test/java/com/residuosolido/app/config/SeedSafetyTest.java` — 3 tests de seguridad del seed.
 
 ## 9. Archivos eliminados
