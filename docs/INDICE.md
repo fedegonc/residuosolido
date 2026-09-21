@@ -39,6 +39,7 @@ dominio segun esta tabla.
 | `docs/tesis/CONTEXTO_LLM.md` | Contexto de la tesis para continuidad entre sesiones de agente. | Actualizado |
 | `docs/sincronizacion-codigo-texto.md` | Auditoría código↔tesis: tabla de afirmaciones verificadas contra el código (SYNC-XX) con estado y acción recomendada. | Nuevo |
 | `docs/gaps-detalle.md` | Detalle de lógica de negocio extraída de los hallazgos de sincronización para consolidación en `scratch/pseudoapp.java`. | Nuevo |
+| `docs/USABILIDAD.md` | Instrumento de evaluación de usabilidad: formulario Likert por funcionalidad para aplicar a usuarios finales (preparado, no aplicado). | Nuevo |
 
 ---
 
@@ -60,6 +61,7 @@ dominio segun esta tabla.
 | Textos de UI (copys) | `docs/COPIES.md` |
 | Inventario auditado de superficies | `docs/AUDITORIA.md` |
 | Secretos y reglas de git config | `docs/SEGURIDAD.md` |
+| Evaluación de usabilidad (Likert por funcionalidad) | `docs/USABILIDAD.md` |
 
 ---
 

@@ -30,6 +30,15 @@ class PhoneNumberCountryCodeTest {
         }
 
         @Test
+        void stripsParentheses_bugReportedByUser() {
+            // Bug real: "(099) 123 456" tiraba error.phone.invalid ("debe incluir código
+            // de país") aunque el usuario ya había elegido +598 del select — los paréntesis
+            // no se limpiaban, quedaba texto no numérico y el mensaje no describía la causa real.
+            String pn = PhoneNumber.normalize("+598", "(099) 123 456", null);
+            assertEquals("+59899123456", pn);
+        }
+
+        @Test
         void stripsDialCodeIfIncluded() {
             String pn = PhoneNumber.normalize("+598", "+59899123456", null);
             assertEquals("+59899123456", pn);
@@ -105,6 +114,12 @@ class PhoneNumberCountryCodeTest {
         }
 
         @Test
+        void stripsParenthesesInNationalAndDdd() {
+            String pn = PhoneNumber.normalize("+55", "(912) 345-678", "(51)");
+            assertEquals("+5551912345678", pn);
+        }
+
+        @Test
         void invalidDdd_throwsInvalidDdd() {
             IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                     () -> PhoneNumber.normalize("+55", "912345678", "ABC"));
@@ -137,6 +152,11 @@ class PhoneNumberCountryCodeTest {
         @Test
         void ofStringWithSpacesStillWorks() {
             assertEquals("+59899123456", PhoneNumber.normalize(" +598 99 123 456 "));
+        }
+
+        @Test
+        void ofStringWithDashesAndParensStillWorks() {
+            assertEquals("+59899123456", PhoneNumber.normalize("+598 (99) 123-456"));
         }
 
         @Test

@@ -107,17 +107,62 @@ no demuestra esas necesidades.
 
 ### 4.5 Demostración (5 min)
 
-Demo corta con datos sintéticos claramente identificados:
-
-1. Crear una solicitud como invitado (sin cuenta).
-2. Guardar su código de seguimiento.
-3. Entrar como organización (`coopverde` / `1234`).
-4. Aceptar la solicitud → estado cambia a IN_PROGRESS.
-5. Completar la solicitud → estado cambia a COMPLETED.
-6. Mostrar una operación rechazada por una regla de negocio.
-7. Mostrar que una organización no puede ver solicitudes ajenas.
+Demo corta con datos sintéticos claramente identificados, usando el dataset
+de defensa (ver más abajo): crear una solicitud como invitado, aceptarla y
+completarla como organización, mostrar un rechazo, mostrar que una org no ve
+solicitudes ajenas, reasignar una solicitud PENDING de una org a otra.
 
 Preparar capturas o un video de respaldo por si la demo falla.
+
+### Dataset de demo para la defensa
+
+Sembrado por `DataLoader.seedDefenseDemoData()` (se agrega **después** del
+dataset genérico existente, sin tocarlo — 4 `*BrowserTest` loguean con las
+cuentas genéricas `coopverde`/`juan`/etc.). Recargar con `GET /seed?force=true`
+(borra todo y reseed limpio; solo disponible con `@Profile("dev")`).
+
+**Organizaciones (Rivera):**
+
+| Usuario | Nombre | Acepta |
+|---|---|---|
+| `renacer` | Cooperativa Renacer | Plástico, Papel, Cartón, Vidrio, Metal |
+| `vidaverde` | Vida Verde | Papel, Cartón, Vidrio |
+| `papelamigo` | Papel Amigo | Papel, Cartón (perfil reducido — ya no acepta Plástico) |
+
+Contraseña de las 3: `1234`.
+
+**Ciudadanos:** `rosaperez`, `mateosilva`, `carlanunez`, `diegoacosta` (Rivera) y
+`joaosouza` (Livramento, demuestra el bilingüismo — ver nota de modelo abajo).
+Más "Beatriz Invitada" (guest, sin cuenta, teléfono `+59899300001`, código de
+rastreo `DEMO2026`).
+
+**Las 10 solicitudes curadas** (ver comentarios numerados en el código):
+
+| # | Estado | Qué muestra |
+|---|---|---|
+| 1 | PENDING | Aceptar en vivo (Renacer) |
+| 2 | IN_PROGRESS | Completar en vivo (Renacer) |
+| 3 | COMPLETED | Historial/métricas, fecha 2 meses atrás |
+| 4 | REJECTED | Sin motivo — ver gap de modelo abajo |
+| 5 | PENDING, ESCOMBROS, sin org | Ningún org del dataset acepta escombros |
+| 6 | PENDING, Livramento | Reusa un org del dataset genérico (`reciclart`) |
+| 7 | PENDING, guest | Rastreo con código `DEMO2026` |
+| 8 | PENDING, Plástico → Papel Amigo | Trade-off: `accept()` no revalida materiales (ver `docs/LIMITACIONES.md`) |
+| 9 | PENDING (Vida Verde) | Para reasignar en vivo a otra org |
+| 10 | IN_PROGRESS, Livramento/pt | i18n — loguear como `joaosouza` cambia el idioma a pt |
+
+Más ~22 `COMPLETED` de volumen (últimos 6 meses, materiales/barrios
+aleatorios con semilla fija) solo para que el Kanban y `RequestMetricsService`
+no se vean vacíos — sin valor narrativo individual.
+
+**2 casos del dataset original sin representación en el modelo actual —
+no resueltos con código nuevo a propósito:**
+- **"REJECTED con motivo escrito":** `Request`/`RequestStatus` no tienen
+  campo de motivo de rechazo. El rechazo es hoy un booleano puro.
+- **"Usuario con locale pt":** `User` no tiene campo `locale`. El idioma se
+  resuelve en runtime por la ciudad del usuario logueado
+  (`CityAwareLocaleResolver`), no por una preferencia guardada — por eso
+  alcanza con loguear como `joaosouza` (Livramento) para demostrarlo.
 
 ### 4.6 Evaluación (3 min)
 

@@ -15,6 +15,9 @@ public final class PhoneNumber {
 
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[+][1-9][0-9]{6,14}$");
 
+    /** Separadores visuales que la gente escribe a mano (espacios, guiones, paréntesis) — nunca dígitos válidos. */
+    private static final Pattern DECORATIVE_CHARS = Pattern.compile("[\\s\\-()]");
+
     /** Reglas por país: dialCode → fullNationalLength. */
     private static final Map<String, Integer> COUNTRY_RULES = Map.of(
             "+598", 8,   // Uruguay: 8 dígitos nacionales
@@ -31,7 +34,7 @@ public final class PhoneNumber {
         if (raw == null || raw.trim().isEmpty()) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
-        String normalized = raw.replaceAll("\\s+", "");
+        String normalized = DECORATIVE_CHARS.matcher(raw).replaceAll("");
         if (raw.length() > 32 || !PHONE_PATTERN.matcher(normalized).matches()) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID);
         }
@@ -51,7 +54,7 @@ public final class PhoneNumber {
         if (national == null || national.trim().isEmpty()) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
-        String cleaned = national.trim().replaceAll("[\\s-]", "");
+        String cleaned = DECORATIVE_CHARS.matcher(national.trim()).replaceAll("");
 
         // Uruguay: quitar 0 inicial doméstico (ej: "092224955" → "92224955")
         if ("+598".equals(dialCode) && cleaned.startsWith("0")) {
@@ -74,7 +77,7 @@ public final class PhoneNumber {
             if (hadDialCode) {
                 fullNational = cleaned;
             } else {
-                String dddCleaned = (ddd == null || ddd.trim().isEmpty()) ? "55" : ddd.trim().replaceAll("[\\s-]", "");
+                String dddCleaned = (ddd == null || ddd.trim().isEmpty()) ? "55" : DECORATIVE_CHARS.matcher(ddd.trim()).replaceAll("");
                 if (!dddCleaned.matches("[0-9]{2}")) {
                     throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_DDD);
                 }

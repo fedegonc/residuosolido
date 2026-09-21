@@ -119,7 +119,10 @@ public class RequestCreateController extends BaseController {
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("warningMessage", msg(e));
-            return "redirect:" + Routes.REQUESTS;
+            // "/mis-solicitudes" exige ROLE_USER — un invitado ahí rebota a login (Security),
+            // no al mensaje de error. Mismo criterio que el resto del método: sin sesión -> REQUESTS_NEW.
+            User currentUser = userService.resolveUser(authentication);
+            return "redirect:" + (currentUser == null ? Routes.REQUESTS_NEW : Routes.REQUESTS);
         } catch (IllegalArgumentException e) {
             flashError(redirectAttributes, e);
             return "redirect:" + Routes.REQUESTS_NEW;
