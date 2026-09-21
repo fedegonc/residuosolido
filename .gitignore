@@ -29,15 +29,17 @@ env.properties
 !docs/METODOLOGIA.md
 !docs/BOILERPLATE_VS_CORE.md
 !docs/SEGURIDAD.md
-!docs/GITFLOW.md
 !docs/REQUISITOS.md
 !docs/ARQUITECTURA.md
 !docs/TRADEOFFS.md
 !docs/COPIES.md
-!docs/CORRECCIONES.md
-!docs/LIMITACIONES.md
 !docs/AUDITORIA.md
+!docs/USABILIDAD.md
 !docs/tesis/CONTEXTO_LLM.md
+# docs/referencia/: material de respaldo (auditorías, historial de
+# hardening) — fuera del INDICE principal pero versionado igual.
+!docs/referencia/CORRECCIONES.md
+!docs/referencia/GITFLOW.md
 !.agents/skills/emil-design-eng/SKILL.md
 
 # ========================================

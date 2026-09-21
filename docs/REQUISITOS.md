@@ -47,7 +47,8 @@ más cercana y genera un código de seguimiento.
 | Invitado, Usuario | Implementado |
 
 Invitado: `/rastrear` con teléfono + código privado (RN-3). Usuario: ve sus
-solicitudes en `/solicitudes` y el detalle en `users/track.html`.
+solicitudes en `/mis-solicitudes` (la lista incluye estado y datos — no hay
+página de detalle separada para el ciudadano).
 
 ### RF-5 — Gestionar solicitudes propias
 
@@ -65,8 +66,9 @@ mientras estén `PENDING` (RN-4, RN-11).
 | Organización | Implementado |
 
 Panel `/acopio/solicitudes`: estadísticas, filtro por estado, detalle y
-transiciones — aceptar con franja horaria, rechazar con motivo, completar
-(RN-1, RN-2).
+transiciones — aceptar con franja horaria, rechazar, completar (RN-1, RN-2).
+El rechazo no registra motivo escrito: el modelo no tiene ese campo (gap
+declarado en `docs/DEFENSA.md`, dataset de defensa).
 
 ### RF-7 — Completar y editar perfil
 
@@ -127,7 +129,7 @@ software puede o debe resolver.
    entidad/módulo nuevo?
 
 Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog.
-Si no, se documenta como limitación consciente (ver `docs/LIMITACIONES.md`).
+Si no, se documenta como limitación consciente (ver `docs/DEFENSA.md` §7).
 
 **Backlog pendiente (no implementado):**
 
@@ -148,4 +150,4 @@ Si no, se documenta como limitación consciente (ver `docs/LIMITACIONES.md`).
 - `docs/ENDPOINTS.md` — rutas HTTP que implementan cada RF.
 - `docs/DIAGRAMAS.md` — casos de uso por actor, secuencia RF-3, flujo RF-6.
 - `docs/ARQUITECTURA.md` — componentes que ejecutan cada RN.
-- `docs/LIMITACIONES.md` — lo que quedó fuera del alcance y por qué.
+- `docs/DEFENSA.md` §7 — lo que quedó fuera del alcance y por qué.

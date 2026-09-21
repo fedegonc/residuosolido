@@ -212,4 +212,4 @@ Para el detalle de precondiciones/postcondiciones de cada RF, ver `docs/REQUISIT
 
 - `docs/REQUISITOS.md` — catálogo RF/RN y criterio de alcance.
 - `docs/ARQUITECTURA.md` — núcleo del sistema: componentes, flujos y decisiones.
-- `docs/GITFLOW.md` — flujo de trabajo del repositorio (figura5-gitflow).
+- `docs/referencia/GITFLOW.md` — flujo de trabajo del repositorio (figura5-gitflow).

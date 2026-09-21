@@ -75,7 +75,7 @@ Livramento, Brasil).
 - `docs/ENDPOINTS.md` — Rutas HTTP del sistema, acceso por rol y OpenAPI
 - `docs/DIAGRAMAS.md` — Diagramas UML y flujos
 - `docs/ARQUITECTURA.md` — Núcleo del sistema (componentes y flujos)
-- `docs/GITFLOW.md` — Flujo de trabajo del repo (ramas, merges, deploy)
+- `docs/referencia/GITFLOW.md` — Flujo de trabajo del repo (ramas, merges, deploy)
 - `docs/DEFENSA.md` — Guía de defensa de tesis
 - `docs/TRADEOFFS.md` — Decisiones de diseño y tradeoffs
 - `docs/MEJORAS.md` — Tabla de mejoras (implementadas/descartadas/diferidas)

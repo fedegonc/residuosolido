@@ -127,6 +127,28 @@ para las páginas de `/org` (sidebar con 2 links), pero el navbar global ya mues
 mismos links para el rol ORGANIZATION — era navegación duplicada. Se eliminó y las
 páginas de org decoran `base.html` directamente (ver `docs/MEJORAS.md` #130).
 
+## i18n: fuente única de verdad de copies
+
+*(Rescatado de `docs/referencia/CORRECCIONES.md` §4 al archivarlo — ver
+`docs/MEJORAS.md` #166 sobre la duplicación de carga entre las 2 clases.)*
+
+Dos fuentes de texto, deben coincidir:
+
+1. **`static/i18n/{lang}.json`** (uno por idioma, no por página) — fuente
+   única real. `JsonMessageSource` (server-side, claves `_server_*`, usado
+   por `BaseController.msg()` y Thymeleaf `#{...}`) y `UiCopyCatalog`
+   (`@ControllerAdvice`, expone el catálogo completo como `window.uiCopies`
+   para JS y como modelo `uiCopies` para templates) parsean cada uno su
+   propia copia del JSON al arrancar. Duplicación conocida y dejada a
+   propósito sin resolver — ver `docs/MEJORAS.md` #166.
+2. **Fallback en templates** — texto visible si el JS falla (`th:text`
+   junto al `data-i18n`). Debe coincidir con el JSON; lo audita
+   `TemplateI18nContractTest`/`OrphanI18nKeysTest` (recorren los 15 `.html`
+   sin excepción).
+
+**Regla:** cuando se cambia un copy, se actualizan ambas fuentes — el
+contrato de tests lo hace build-breaking si se olvida.
+
 ## Decisiones de Arquitectura
 
 - **Sin panel Admin**: Gestión distribuida por roles (USER, ORGANIZATION).

@@ -1,5 +1,9 @@
 # Gitflow — Flujo de trabajo del repositorio
 
+> **Archivo de referencia, no canónico** (ver `docs/INDICE.md` y `docs/MEJORAS.md`
+> #173). Es evidencia de proceso, no argumento de defensa — `docs/METODOLOGIA.md`
+> cubre el encuadre académico (DSRM). Contenido vigente, se sigue actualizando.
+
 Cómo se organizan las ramas y cómo viaja un cambio desde el trabajo local
 hasta producción. Diagrama visual en `docs/diagrams/figura5-gitflow.drawio`
 (renderiza en `/docs/diagramas`).

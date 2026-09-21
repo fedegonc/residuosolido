@@ -1,5 +1,11 @@
 # Correcciones y Hardening — Eco Solicitud
 
+> **Archivo de referencia, no canónico** (ver `docs/INDICE.md` y `docs/MEJORAS.md`
+> #173). Su contenido vigente ya está en `docs/MEJORAS.md` (fixes con entrada
+> propia) y `docs/DEFENSA.md` §7 (limitaciones); la arquitectura de i18n que
+> aportaba pasó a `docs/ARQUITECTURA.md`. Se conserva como historial fechado
+> (2026-09-11 y anteriores), no se actualiza más.
+
 Registro de correcciones aplicadas, hardening y limpieza del código. Extraído de los anexos de `MEJORAS.md` (que queda como tabla de superficies).
 
 # Hardening — Correcciones aplicadas (anexo)

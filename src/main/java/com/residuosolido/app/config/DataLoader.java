@@ -168,7 +168,7 @@ public class DataLoader {
                 "Beatriz Invitada", "+59899300001", "DEMO2026", now.minusHours(1));
 
         // 8. PENDING con plástico — asignada a Papel Amigo, que ya no acepta PLASTICO.
-        // Trade-off documentado: accept() no revalida materiales (ver docs/LIMITACIONES.md).
+        // Trade-off documentado: accept() no revalida materiales (ver docs/DEFENSA.md §7).
         createRequest(requestRepo, mateo, papelAmigo, "Calle Anzani 500", "Barrio Lavalleja", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO), RequestStatus.PENDING, null,
                 null, null, null, now.minusHours(8));

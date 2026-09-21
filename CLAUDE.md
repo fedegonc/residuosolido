@@ -53,7 +53,7 @@ mvn pmd:pmd pmd:check           # análisis estático
 - `docs/ARQUITECTURA.md` — núcleo del sistema y flujos
 - `docs/ENDPOINTS.md` — rutas HTTP y OpenAPI
 - `docs/MEJORAS.md` — estado de mejoras (implementado/descartado/diferido)
-- `docs/GITFLOW.md` — flujo de ramas, commits y deploy
+- `docs/referencia/GITFLOW.md` — flujo de ramas, commits y deploy
 
 ## Convenciones de Frontend
 
