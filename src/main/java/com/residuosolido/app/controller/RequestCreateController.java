@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /** Crea nuevas solicitudes de recolección (ciudadano o invitado con rate limiting). */
@@ -114,7 +116,12 @@ public class RequestCreateController extends BaseController {
 
             flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATED);
             if (user == null && resolvedGuestPhone != null && created.getTrackingCode() != null) {
-                return "redirect:" + Routes.TRACK + "?telefono=" + resolvedGuestPhone + "&codigo=" + created.getTrackingCode();
+                // El "+" de un telefono E.164 sin codificar en una query string se lee como
+                // espacio (application/x-www-form-urlencoded) -> PhoneNumber.normalize lo
+                // rechaza en /rastrear. Bug real: rompia el 100% de las redirecciones de
+                // exito de invitado (telefono siempre empieza con "+").
+                String encodedPhone = URLEncoder.encode(resolvedGuestPhone, StandardCharsets.UTF_8);
+                return "redirect:" + Routes.TRACK + "?telefono=" + encodedPhone + "&codigo=" + created.getTrackingCode();
             }
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {

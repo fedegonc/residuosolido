@@ -201,7 +201,17 @@ public class RequestService {
         if (trackingCode == null || trackingCode.isBlank()) {
             return List.of();
         }
-        String canonicalPhone = PhoneNumber.normalize(phone);
+        // Formato de telefono invalido -> mismo resultado que "no encontrado", no una
+        // excepcion que se propague. Bug real reportado por el usuario: un invitado
+        // (siempre anonimo) que llegaba aca con un telefono mal formado terminaba
+        // rebotado a /entrar por el manejador generico de errores basado en rol —
+        // no tiene sentido mandar a loguearse a alguien que nunca tuvo cuenta.
+        String canonicalPhone;
+        try {
+            canonicalPhone = PhoneNumber.normalize(phone);
+        } catch (IllegalArgumentException e) {
+            return List.of();
+        }
         return requestRepository
                 .findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(canonicalPhone, trackingCode.trim());
     }

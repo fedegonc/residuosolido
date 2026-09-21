@@ -263,6 +263,15 @@ class RequestServiceTest {
     }
 
     @Test
+    void getGuestRequests_malformedPhone_returnsEmptyInsteadOfThrowing() {
+        // Bug real: un "+" sin codificar en la URL de redirect llega acá como espacio
+        // (" 59892224955") -> PhoneNumber.normalize tiraba ValidationException, que
+        // GlobalExceptionHandler mandaba a /entrar (mal, el invitado nunca inicio sesion).
+        assertTrue(requestService.getGuestRequests(" 59892224955", "CODE1234").isEmpty());
+        verifyNoInteractions(requestRepository);
+    }
+
+    @Test
     void getGuestRequests_valid_normalizesPhoneAndQueries() {
         Request found = new Request();
         when(requestRepository.findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234"))
