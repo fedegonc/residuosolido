@@ -11,6 +11,7 @@ import com.residuosolido.app.repository.UserRepository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +73,13 @@ public class UserService {
             existing.setProfileCompleted(user.getProfileCompleted());
         }
 
-        return userRepository.save(existing);
+        try {
+            return userRepository.save(existing);
+        } catch (DuplicateKeyException e) {
+            // El check de unicidad de email es check-then-act: si otro perfil
+            // tomó el mismo email en la ventana, el índice único sparse decide.
+            throw new ValidationException(ServerMessage.ERROR_REGISTER_EMAIL_EXISTS);
+        }
     }
 
     public User updateProfile(User user, String email, String firstName, String phone, City city) {

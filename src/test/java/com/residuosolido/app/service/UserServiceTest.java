@@ -300,6 +300,26 @@ class UserServiceTest {
     }
 
     @Test
+    void updateUser_emailTakenInRace_throwsValidationException() {
+        // check-then-act: el check pasa (email libre en T0) pero otro perfil lo
+        // tomó antes del save -> el índice único sparse tira DuplicateKeyException.
+        User existing = new User();
+        existing.setId("1");
+
+        User form = new User();
+        form.setId("1");
+        form.setEmail("mismo@test.com");
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
+        when(userRepository.findByEmailIgnoreCase("mismo@test.com")).thenReturn(Optional.empty());
+        when(userRepository.save(any(User.class)))
+                .thenThrow(new org.springframework.dao.DuplicateKeyException("email"));
+
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> userService.updateUser(form));
+    }
+
+    @Test
     void updateUser_sameEmailAsSelf_doesNotThrow() {
         User existing = new User();
         existing.setId("1");

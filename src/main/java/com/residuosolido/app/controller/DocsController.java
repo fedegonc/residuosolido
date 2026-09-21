@@ -29,6 +29,7 @@ import java.util.Map;
 public class DocsController {
 
     private static final Path DOCS_DIR = Paths.get("docs").toAbsolutePath();
+    private static final Path SCRATCH_DIR = Paths.get("scratch").toAbsolutePath();
     private static final ObjectMapper JSON = new ObjectMapper();
 
     private static final List<String[]> DIAGRAMS = List.of(
@@ -42,12 +43,22 @@ public class DocsController {
 
     @GetMapping(Routes.DOCS_FILE)
     public ResponseEntity<Resource> serveMarkdown(@PathVariable String file) {
-        return serveDoc(file + ".md", MediaType.TEXT_MARKDOWN);
+        return serveFile(DOCS_DIR, file + ".md", MediaType.TEXT_MARKDOWN);
     }
 
     @GetMapping(Routes.DOCS_DIAGRAM)
     public ResponseEntity<Resource> serveDrawio(@PathVariable String file) {
-        return serveDoc("diagrams/" + file + ".drawio", MediaType.APPLICATION_XML);
+        return serveFile(DOCS_DIR, "diagrams/" + file + ".drawio", MediaType.APPLICATION_XML);
+    }
+
+    /**
+     * Sirve scratch/{App,pseudoapp}.java como texto plano para leer desde el navegador.
+     * scratch/ está gitignoreado a propósito (ver .gitignore) — esto funciona en local/dev
+     * porque lee del disco, pero da 404 en Render porque el archivo nunca llega a subirse.
+     */
+    @GetMapping(Routes.SCRATCH_FILE)
+    public ResponseEntity<Resource> serveScratch(@PathVariable String file) {
+        return serveFile(SCRATCH_DIR, file + ".java", MediaType.TEXT_PLAIN);
     }
 
     /**
@@ -87,10 +98,10 @@ public class DocsController {
         }
     }
 
-    private ResponseEntity<Resource> serveDoc(String relativePath, MediaType mediaType) {
+    private ResponseEntity<Resource> serveFile(Path baseDir, String relativePath, MediaType mediaType) {
         try {
-            File file = DOCS_DIR.resolve(relativePath).normalize().toFile();
-            if (!file.exists() || !file.isFile() || !file.toPath().startsWith(DOCS_DIR)) {
+            File file = baseDir.resolve(relativePath).normalize().toFile();
+            if (!file.exists() || !file.isFile() || !file.toPath().startsWith(baseDir)) {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok()

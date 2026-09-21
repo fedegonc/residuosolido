@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, Routes.API_ORGANIZATIONS_BY_CITY).permitAll()
                 .requestMatchers(HttpMethod.GET, Routes.ORG_OPTIONS).permitAll()
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
+                .requestMatchers(Routes.SCRATCH_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH).permitAll()
                 .requestMatchers(Routes.SWAGGER_V3, Routes.SWAGGER_UI, Routes.SWAGGER_HTML).permitAll()
                 // API endpoints para usuarios autenticados

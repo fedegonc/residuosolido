@@ -79,7 +79,7 @@ class DocsContractTest {
     /** Términos de dominio/nombres propios citados en backticks que no son clases Java. */
     private static final Set<String> NON_CLASS_TERMS = Set.of(
             "Dockerfile", "Cuenta", "Invitado", "Usuario", "Catador", "Organización",
-            "FedericoGoncalvez", "CountryCode", "StatTile");
+            "FedericoGoncalvez", "CountryCode", "StatTile", "IndexedDB", "CacheStorage");
 
     @Test
     void mejorasIdsAreUnique() throws IOException {

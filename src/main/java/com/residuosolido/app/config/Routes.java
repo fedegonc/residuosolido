@@ -57,6 +57,9 @@ public final class Routes {
     public static final String DOCS_FILE = "/docs/{file}.md";
     public static final String DOCS_DIAGRAM = "/docs/diagrams/{file}.drawio";
     public static final String DOCS_DIAGRAMS_VIEW = "/docs/diagramas";
+    /** Sandbox de dominio (gitignored): existe en local/dev, 404 en prod porque nunca se sube al repo. */
+    public static final String SCRATCH_ANY = "/scratch/**";
+    public static final String SCRATCH_FILE = "/scratch/{file}.java";
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
 

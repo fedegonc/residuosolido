@@ -150,9 +150,11 @@ Ver sección 7 de este documento.
 | "¿Demostraste que mejora el reciclaje?" | "No. Evalué el software. El impacto requiere un piloto posterior" |
 | "¿Usaste IA?" | "Sí, como asistencia de desarrollo y revisión. Declaro su alcance y asumo la responsabilidad de explicar, verificar y corregir el resultado" |
 | "¿Por qué MongoDB y no PostgreSQL?" | "Ambos son válidos. MongoDB simplifica el modelado de materiales como array embebido. Documenté el tradeoff" |
-| "¿Por qué hay un `sw.js`?" | "Es un kill-switch, no una PWA activa: la PWA se descartó (`docs/MEJORAS.md` #11/#100) pero navegadores que la habían instalado antes seguían con el Service Worker viejo interceptando *todos* los fetches. El `sw.js` actual solo se auto-desregistra y limpia caché" |
+| "¿Por qué hay un `sw.js`?" | "Heredado del PWA descartado (#11/#100) y retomado mínimo en #143: en `activate` limpia los caches heredados del SW viejo (que interceptaba *todos* los fetches) y luego es un fetch handler pass-through — lo mínimo que Chrome exige para instalabilidad. No cachea nada: offline la app falla igual que sin SW" |
 | "¿Las notificaciones de WhatsApp son reales?" | "No. No hay notificaciones en el MVP; el teléfono queda registrado en la solicitud" |
 | "¿La contraseña de 8 caracteres es suficiente?" | "Es defendible para un MVP. Una política de producción exigiría complejidad (mayúsculas, números, símbolos) y rotación" |
+| **Familia conectividad — "¿Funciona con poca conectividad / offline?"** | "Con conectividad lenta sí: SSR entrega HTML completo en 1 request y los assets son mínimos (~640 líneas de CSS+JS, sin frameworks) — tolera redes lentas mejor que una SPA que debe descargar el bundle antes de renderizar. Con cero conectividad no funciona: es decisión deliberada, no descuido — la PWA completa se implementó y se descartó tras un incidente real (#11/#23: SW pre-cacheando HTML dinámico → usuarios con contenido stale por horas; SW huérfanos interceptando todos los fetches, `/sw.js` detrás de auth → 302 a login; kill-switch #100; instalabilidad mínima reincorporada en #143). Offline-first real pondría `IndexedDB` como fuente de verdad — pero el código de rastreo, la validación de organizaciones y el rate limiting nacen server-side: es una reescritura del modelo, no una feature" |
+| **Familia conectividad — "¿Qué pasa si se corta la conexión a mitad de uso?"** | "Falla limpio: la escritura de solicitud es atómica en Mongo (existe completa o no existe — un corte no deja estado corrupto), la sesión sobrevive (cookie local), y no hay estado atado a conexión viva (sin websockets). Huecos conocidos y declarados: (a) el form se pierde si el submit falla — la cola en `IndexedDB` con retry en evento `online` lo cubre; (b) si el POST llegó pero la respuesta se perdió, un reintento duplica la solicitud — se cubre con `clientRequestId` + índice único. Ambos son trabajo aditivo sobre el caso feliz, no correctivo" |
 
 ---
 
@@ -161,9 +163,10 @@ Ver sección 7 de este documento.
 - Que aumenta el reciclaje o los ingresos de las organizaciones.
 - Que es la primera plataforma de reciclaje.
 - Que tiene seguridad de producción (CSP usa `unsafe-inline`).
-- Que la app es instalable como PWA (se descartó, ver `docs/MEJORAS.md`
-  #11/#100 — solo queda un Service Worker "kill-switch" que se
-  autodesregistra).
+- Que funciona offline. La app es instalable (#143: manifest + SW
+  pass-through), pero el `sw.js` no cachea nada — sin conexión falla
+  igual que sin SW. La PWA completa con cache se descartó por stale-cache
+  (`docs/MEJORAS.md` #11/#23/#100).
 - Que **todos** los tests E2E son de navegador real: `EndToEndFlowsTest`
   sigue siendo MockMvc (stack simulado, sin navegador). Sí hay 6 clases
   con Playwright/Chromium real (`browser/*BrowserTest`) que cubren los
@@ -185,7 +188,7 @@ Ver sección 7 de este documento.
 | Limitación | Estado | Documentación |
 |---|---|---|
 | CSP con `unsafe-inline` | Aceptada | `docs/MEJORAS.md` §2.1 |
-| PWA descartada (kill-switch activo) | Resuelto/histórico | `docs/MEJORAS.md` #11, #100 |
+| PWA completa descartada; instalable mínimo sin offline | Resuelto/histórico | `docs/MEJORAS.md` #11, #100, #143 |
 | Mayoría de tests E2E son MockMvc | Parcialmente resuelto | 6 clases Playwright reales, `docs/MEJORAS.md` §2.3 |
 | Notificaciones WhatsApp | Descartada | Eliminadas del MVP; sin proveedor configurado |
 | Sin validación de usabilidad | Trabajo futuro | `docs/MEJORAS.md` §2.4 |

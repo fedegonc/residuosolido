@@ -20,6 +20,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/documentos` | `DocsController` | Índice de documentación técnica (docs/*.md) |
 | GET | `/diagramas` | `DocsController` | Índice de diagramas UML (docs/diagrams/*.drawio) |
 | GET | `/docs/**` | `WebConfig` (resource handler) | Archivos estáticos de docs/ y docs/diagrams/ |
+| GET | `/scratch/{file}.java` | `DocsController` | Sirve `scratch/App.java`/`pseudoapp.java` como texto plano (footer del layout). `scratch/` está gitignoreado a propósito — funciona en local/dev, 404 en Render porque el archivo nunca se sube |
 
 ## Usuario (rol `USER`)
 

@@ -114,7 +114,7 @@ public class RequestService {
         request.setAddressReference(addressReference);
         request.setMaterials(materials != null ? materials : List.of());
         request.assignOrganization(org);
-        request = requestRepository.save(request);
+        request = saveWithOptimisticLock(request);
         return imageService.attachImageToRequest(request, imageFile);
     }
 
@@ -156,9 +156,9 @@ public class RequestService {
         saveWithOptimisticLock(request);
     }
 
-    private void saveWithOptimisticLock(Request request) {
+    private Request saveWithOptimisticLock(Request request) {
         try {
-            requestRepository.save(request);
+            return requestRepository.save(request);
         } catch (OptimisticLockingFailureException e) {
             throw new StateException(ServerMessage.FLASH_REQUEST_CONCURRENT_MODIFICATION, e);
         }

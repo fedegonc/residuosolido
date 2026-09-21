@@ -440,4 +440,18 @@ class RequestServiceTest {
         assertEquals(newOrg, result.getOrganization());
         verify(requestRepository).save(existing);
     }
+
+    @Test
+    void updateRequest_concurrentModification_throwsStateException() {
+        User owner = citizen("u1");
+        Request existing = requestOf(owner, RequestStatus.PENDING);
+        when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
+        when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(org("org1"));
+        when(requestRepository.save(any(Request.class)))
+                .thenThrow(new OptimisticLockingFailureException("stale version"));
+
+        assertThrows(StateException.class, () -> requestService.updateRequest(
+                "req1", owner, City.RIVERA, "Nueva calle", null,
+                List.of(MaterialCategory.PLASTICO), "org1", null));
+    }
 }
