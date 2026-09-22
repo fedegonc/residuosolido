@@ -7,7 +7,7 @@
       "description": "Conheça o rol crucial dos coletores na cadeia de reciclagem de nossa região",
       "button": "Leia mais",
       "href": "/sobre-catadores",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%232d6a4f' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ECatadores%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%232d6a4f' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ECatadores%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "impacto",
@@ -16,7 +16,7 @@
       "description": "Descubra como EcoSolicitud gera mudança ambiental real na região",
       "button": "Leia mais",
       "href": "#impacto",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2340916c' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EImpacto%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2340916c' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EImpacto%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "sostenibilidad",
@@ -25,7 +25,7 @@
       "description": "Comprometidos com a economia circular e o cuidado do planeta",
       "button": "Leia mais",
       "href": "#sostenibilidad",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2352b788' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ESostenibilidad%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2352b788' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ESostenibilidad%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "comunidad",
@@ -34,7 +34,7 @@
       "description": "Conectamos cidadãos, organizações e coletores formais",
       "button": "Leia mais",
       "href": "#comunidad",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2374c69d' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EComunidad%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2374c69d' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EComunidad%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "proceso",
@@ -43,7 +43,7 @@
       "description": "Quatro passos simples para que seus recicláveis chegem ao destino correto",
       "button": "Leia mais",
       "href": "#como-funciona",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23a7e957' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%23222'%3EProceso%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23a7e957' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EProceso%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "compromiso",
@@ -52,7 +52,7 @@
       "description": "Transparência, equidade e sustentabilidade em cada transação",
       "button": "Leia mais",
       "href": "#compromiso",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23d8f3dc' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%23222'%3ECompromiso%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23d8f3dc' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ECompromiso%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "eventos",
@@ -61,7 +61,7 @@
       "description": "Oficinas, palestras e atividades comunitárias sobre reciclagem",
       "button": "Leia mais",
       "href": "#eventos",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%232d6a4f' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EEventos%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%232d6a4f' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EEventos%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "recursos",
@@ -70,7 +70,7 @@
       "description": "Guias, tutoriais e materiais educacionais para download",
       "button": "Leia mais",
       "href": "#recursos",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2340916c' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ERecursos%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2340916c' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ERecursos%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "faq",
@@ -79,7 +79,7 @@
       "description": "Resolvemos suas dúvidas sobre solicitações, rastreamento e recepção",
       "button": "Leia mais",
       "href": "#faq",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2352b788' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EFAQ%3C/text%3E%3C/svg%3E"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2352b788' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EFAQ%3C/text%3E%3C/svg%3E"
     }
   ]
 }
