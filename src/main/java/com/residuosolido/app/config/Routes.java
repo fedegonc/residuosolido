@@ -23,6 +23,7 @@ public final class Routes {
     public static final String INDEX = "/index";
     public static final String LANGUAGE = "/change-language";
     public static final String SEED = "/seed";
+    public static final String ABOUT_CATADORES = "/sobre-catadores";
 
     // Auth
     public static final String LOGIN = "/entrar";

@@ -288,3 +288,16 @@ fieldset.field{border:0;padding:0;margin:0;min-inline-size:0}
 .hero--dark .hero__subtitle{color:rgba(255,255,255,.72)}
 .hero--dark .stack{gap:.75rem}
 .hero--dark .field label{color:rgba(255,255,255,.9)}
+
+/* ═══ LANDING CARDS (4 columnas, responsive, alineación izquierda) ═══ */
+.landing-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin:var(--space-lg) 0;padding:0;text-align:left}
+@media(max-width:1024px){.landing-cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.landing-cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.landing-cards{grid-template-columns:1fr}}
+.landing-card{display:flex;flex-direction:column;gap:.625rem;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);transition:border-color var(--transition-base) var(--ease-base),box-shadow var(--transition-base) var(--ease-base),transform var(--transition-fast) var(--ease-out)}
+.landing-card:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);text-decoration:none}
+.landing-card:active{transform:scale(.98)}
+.landing-card__icon{width:2.5rem;height:2.5rem;background:var(--primary-light);color:var(--primary-hover);font-size:var(--text-md);display:flex;align-items:center;justify-content:center;border-radius:var(--radius);flex-shrink:0}
+.landing-card__title{font-size:var(--text-base);font-weight:700;color:var(--text)}
+.landing-card__desc{font-size:var(--text-xs);color:var(--muted);flex:1;line-height:1.5}
+.landing-card .btn{margin-top:auto;width:100%;font-size:var(--text-xs);padding:.375rem .625rem}

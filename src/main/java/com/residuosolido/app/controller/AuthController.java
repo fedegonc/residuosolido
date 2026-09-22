@@ -79,4 +79,10 @@ public class AuthController extends BaseController {
     public String rootOrIndex() {
         return "public/index";
     }
+
+    /** Página informativa: sobre los catadores (recolectores informales). */
+    @GetMapping({"/sobre-catadores"})
+    public String aboutCatadores() {
+        return "public/about-catadores";
+    }
 }

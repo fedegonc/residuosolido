@@ -1,0 +1,76 @@
+{
+  "cards": [
+    {
+      "id": "catadores",
+      "icon": "users",
+      "title": "Sobre os catadores",
+      "description": "Conheça o rol crucial dos coletores na cadeia de reciclagem de nossa região",
+      "button": "Leia mais",
+      "href": "/sobre-catadores"
+    },
+    {
+      "id": "impacto",
+      "icon": "chart-line",
+      "title": "Nosso impacto",
+      "description": "Descubra como EcoSolicitud gera mudança ambiental real na região",
+      "button": "Leia mais",
+      "href": "#impacto"
+    },
+    {
+      "id": "sostenibilidad",
+      "icon": "leaf",
+      "title": "Sustentabilidade",
+      "description": "Comprometidos com a economia circular e o cuidado do planeta",
+      "button": "Leia mais",
+      "href": "#sostenibilidad"
+    },
+    {
+      "id": "comunidad",
+      "icon": "home",
+      "title": "Comunidade",
+      "description": "Conectamos cidadãos, organizações e coletores formais",
+      "button": "Leia mais",
+      "href": "#comunidad"
+    },
+    {
+      "id": "proceso",
+      "icon": "settings",
+      "title": "Como funciona",
+      "description": "Quatro passos simples para que seus recicláveis chegem ao destino correto",
+      "button": "Leia mais",
+      "href": "#como-funciona"
+    },
+    {
+      "id": "compromiso",
+      "icon": "heart",
+      "title": "Nosso compromisso",
+      "description": "Transparência, equidade e sustentabilidade em cada transação",
+      "button": "Leia mais",
+      "href": "#compromiso"
+    },
+    {
+      "id": "eventos",
+      "icon": "calendar",
+      "title": "Eventos",
+      "description": "Oficinas, palestras e atividades comunitárias sobre reciclagem",
+      "button": "Leia mais",
+      "href": "#eventos"
+    },
+    {
+      "id": "recursos",
+      "icon": "book",
+      "title": "Recursos",
+      "description": "Guias, tutoriais e materiais educacionais para download",
+      "button": "Leia mais",
+      "href": "#recursos"
+    },
+    {
+      "id": "faq",
+      "icon": "help-circle",
+      "title": "Perguntas frequentes",
+      "description": "Resolvemos suas dúvidas sobre solicitações, rastreamento e recepção",
+      "button": "Leia mais",
+      "href": "#faq"
+    },
+  ]
+}
