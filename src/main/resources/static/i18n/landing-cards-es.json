@@ -7,7 +7,7 @@
       "description": "Conocé el rol crucial de los recolectores en la cadena de reciclaje de nuestra región",
       "button": "Leer más",
       "href": "/sobre-catadores",
-      "image": "https://images.unsplash.com/photo-1559826260-dc66d52bef19?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%232d6a4f' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ECatadores%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "impacto",
@@ -16,7 +16,7 @@
       "description": "Descubrí cómo EcoSolicitud genera cambio ambiental real en la región",
       "button": "Leer más",
       "href": "#impacto",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2340916c' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EImpacto%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "sostenibilidad",
@@ -25,7 +25,7 @@
       "description": "Comprometidos con la economía circular y el cuidado del planeta",
       "button": "Leer más",
       "href": "#sostenibilidad",
-      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2352b788' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ESostenibilidad%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "comunidad",
@@ -34,7 +34,7 @@
       "description": "Conectamos ciudadanos, organizaciones y recolectores formales",
       "button": "Leer más",
       "href": "#comunidad",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2374c69d' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EComunidad%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "proceso",
@@ -43,7 +43,7 @@
       "description": "Cuatro pasos simples para que tus reciclables lleguen al destino correcto",
       "button": "Leer más",
       "href": "#como-funciona",
-      "image": "https://images.unsplash.com/photo-1557804506-669714126472?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23a7e957' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%23222'%3EProceso%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "compromiso",
@@ -52,7 +52,7 @@
       "description": "Transparencia, equidad y sostenibilidad en cada transacción",
       "button": "Leer más",
       "href": "#compromiso",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23d8f3dc' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%23222'%3ECompromiso%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "eventos",
@@ -61,7 +61,7 @@
       "description": "Talleres, charlas y actividades comunitarias sobre reciclaje",
       "button": "Leer más",
       "href": "#eventos",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%232d6a4f' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EEventos%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "recursos",
@@ -70,7 +70,7 @@
       "description": "Guías, tutoriales y materiales educativos descargables",
       "button": "Leer más",
       "href": "#recursos",
-      "image": "https://images.unsplash.com/photo-1507842217343-583f20270319?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2340916c' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ERecursos%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "faq",
@@ -79,7 +79,7 @@
       "description": "Resolvemos tus dudas sobre solicitudes, rastreo y recepción",
       "button": "Leer más",
       "href": "#faq",
-      "image": "https://images.unsplash.com/photo-1516534775068-bb57e39c2d4b?w=400&h=300&fit=crop"
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2352b788' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3EFAQ%3C/text%3E%3C/svg%3E"
     }
   ]
 }
