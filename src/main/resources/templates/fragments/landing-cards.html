@@ -1,8 +1,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-  <!-- Contenedor escalable de cards para landing.
-       Se llena dinámicamente vía /api/landing-cards + landing-cards.js
-       Cambiar contenido = editar landing-cards-{es,pt}.json en static/i18n/ -->
-  <section th:fragment="section" class="landing-cards"></section>
+  <!-- Landing cards renderizadas server-side (Thymeleaf, sin JS) -->
+  <section th:fragment="section(cards)" class="landing-cards">
+    <a th:each="card : ${cards}" th:href="${card.href}" class="landing-card">
+      <div class="landing-card__icon">
+        <svg class="icon"><use th:href="'/images/icons.svg#' + ${card.icon}"/></svg>
+      </div>
+      <h3 class="landing-card__title" th:text="${card.title}"></h3>
+      <p class="landing-card__desc" th:text="${card.description}"></p>
+      <button class="btn btn--outline" type="button" th:text="${card.button}"></button>
+    </a>
+  </section>
 </body>
 </html>

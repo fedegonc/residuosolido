@@ -8,6 +8,7 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.dto.RegistrationForm;
 import com.residuosolido.app.config.RateLimiter;
+import com.residuosolido.app.util.LandingCardLoader;
 import org.springframework.dao.DuplicateKeyException;
 import com.residuosolido.app.service.UserRegistrationService;
 import org.slf4j.Logger;
@@ -17,8 +18,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.LocaleResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 /** Controller de autenticación: registro, login y página de inicio pública. */
 @Controller
@@ -27,11 +30,13 @@ public class AuthController extends BaseController {
 
     private final UserRegistrationService userRegistrationService;
     private final RateLimiter rateLimiter;
+    private final LocaleResolver localeResolver;
 
     @Autowired
-    public AuthController(UserRegistrationService userRegistrationService, RateLimiter rateLimiter) {
+    public AuthController(UserRegistrationService userRegistrationService, RateLimiter rateLimiter, LocaleResolver localeResolver) {
         this.userRegistrationService = userRegistrationService;
         this.rateLimiter = rateLimiter;
+        this.localeResolver = localeResolver;
     }
 
     /** Muestra el formulario de registro (ciudadano u organización). */
@@ -76,7 +81,10 @@ public class AuthController extends BaseController {
 
     /** Página de inicio pública (landing page). */
     @GetMapping({"/", "/index"})
-    public String rootOrIndex() {
+    public String rootOrIndex(Model model, HttpServletRequest request) {
+        Locale locale = localeResolver.resolveLocale(request);
+        String lang = locale.getLanguage();
+        model.addAttribute("cards", LandingCardLoader.loadCards(lang));
         return "public/index";
     }
 

@@ -1,6 +1,6 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: reorganizacion de docs en archivos focales + gitflow  
+> Fecha de sincronizacion: 2026-09-22 — landing cards v2 (server-side rendering)  
 > Tests: 211, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
 > Build: SUCCESS
 

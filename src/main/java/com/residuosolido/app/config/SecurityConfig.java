@@ -33,8 +33,6 @@ public class SecurityConfig {
                 .requestMatchers(Routes.LOGIN, Routes.REGISTER).permitAll()
                 .requestMatchers(Routes.LANGUAGE).permitAll()
                 .requestMatchers(Routes.ABOUT_CATADORES).permitAll()
-                // Contenido dinámico público (landing cards, etc) — ANTES de /api/** general
-                .requestMatchers(HttpMethod.GET, "/api/landing-cards").permitAll()
                 // Recursos especiales de navegador
                 .requestMatchers(Routes.WELL_KNOWN).permitAll()
                 // Páginas de error deben ser públicas

@@ -34,11 +34,9 @@
         </section>
       </div>
 
-      <!-- Contenedor escalable de cards educativas.
-           Agregar una nueva card = 1 línea en landing-cards.html + 3 claves i18n.
-           El grid se adapta automáticamente. -->
+      <!-- Contenedor escalable de cards educativas (renderizadas server-side). -->
       <div class="page">
-        <div th:replace="~{fragments/landing-cards :: section}"></div>
+        <div th:replace="~{fragments/landing-cards :: section(cards=${cards})}"></div>
       </div>
     </div>
   </main>
