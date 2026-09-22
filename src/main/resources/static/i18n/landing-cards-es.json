@@ -6,7 +6,8 @@
       "title": "Sobre los catadores",
       "description": "Conocé el rol crucial de los recolectores en la cadena de reciclaje de nuestra región",
       "button": "Leer más",
-      "href": "/sobre-catadores"
+      "href": "/sobre-catadores",
+      "image": "https://images.unsplash.com/photo-1559826260-dc66d52bef19?w=400&h=300&fit=crop"
     },
     {
       "id": "impacto",
@@ -14,7 +15,8 @@
       "title": "Nuestro impacto",
       "description": "Descubrí cómo EcoSolicitud genera cambio ambiental real en la región",
       "button": "Leer más",
-      "href": "#impacto"
+      "href": "#impacto",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
     },
     {
       "id": "sostenibilidad",
@@ -22,7 +24,8 @@
       "title": "Sostenibilidad",
       "description": "Comprometidos con la economía circular y el cuidado del planeta",
       "button": "Leer más",
-      "href": "#sostenibilidad"
+      "href": "#sostenibilidad",
+      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop"
     },
     {
       "id": "comunidad",
@@ -30,7 +33,8 @@
       "title": "Comunidad",
       "description": "Conectamos ciudadanos, organizaciones y recolectores formales",
       "button": "Leer más",
-      "href": "#comunidad"
+      "href": "#comunidad",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
     },
     {
       "id": "proceso",
@@ -38,7 +42,8 @@
       "title": "Cómo funciona",
       "description": "Cuatro pasos simples para que tus reciclables lleguen al destino correcto",
       "button": "Leer más",
-      "href": "#como-funciona"
+      "href": "#como-funciona",
+      "image": "https://images.unsplash.com/photo-1557804506-669714126472?w=400&h=300&fit=crop"
     },
     {
       "id": "compromiso",
@@ -46,7 +51,8 @@
       "title": "Nuestro compromiso",
       "description": "Transparencia, equidad y sostenibilidad en cada transacción",
       "button": "Leer más",
-      "href": "#compromiso"
+      "href": "#compromiso",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
     },
     {
       "id": "eventos",
@@ -54,7 +60,8 @@
       "title": "Eventos",
       "description": "Talleres, charlas y actividades comunitarias sobre reciclaje",
       "button": "Leer más",
-      "href": "#eventos"
+      "href": "#eventos",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
     },
     {
       "id": "recursos",
@@ -62,7 +69,8 @@
       "title": "Recursos",
       "description": "Guías, tutoriales y materiales educativos descargables",
       "button": "Leer más",
-      "href": "#recursos"
+      "href": "#recursos",
+      "image": "https://images.unsplash.com/photo-1507842217343-583f20270319?w=400&h=300&fit=crop"
     },
     {
       "id": "faq",
@@ -70,7 +78,8 @@
       "title": "Preguntas frecuentes",
       "description": "Resolvemos tus dudas sobre solicitudes, rastreo y recepción",
       "button": "Leer más",
-      "href": "#faq"
+      "href": "#faq",
+      "image": "https://images.unsplash.com/photo-1516534775068-bb57e39c2d4b?w=400&h=300&fit=crop"
     }
   ]
 }
