@@ -32,13 +32,18 @@ class FullLifecycleBrowserTest extends PlaywrightBaseTest {
                 "RIVERA", "Calle Lifecycle 100", "PLASTICO");
         page.locator("#requestForm button[type='submit']").click();
 
-        page.locator("[data-i18n='req_success_title']").waitFor();
+        // El invitado es redirigido a /rastrear con teléfono y código en la URL
+        page.waitForURL(url -> url.contains("/rastrear") && url.contains("codigo="));
 
-        // Capturar código de rastreo
-        Locator trackCodeEl = page.locator(".success-card__track-code-value");
-        String trackingCode = trackCodeEl.innerText().trim();
+        // Extraer el código de rastreo de la URL
+        String url = page.url();
+        String trackingCode = url.substring(url.indexOf("codigo=") + 7);
+        // Limpiar parámetros adicionales
+        if (trackingCode.contains("&")) {
+            trackingCode = trackingCode.substring(0, trackingCode.indexOf("&"));
+        }
         assertTrue(trackingCode.length() > 0,
-                "La página de éxito debe mostrar un código de rastreo");
+                "El redirect debe incluir el código de rastreo en la URL");
 
         // === 2. ORGANIZACIÓN ACEPTA LA SOLICITUD ===
         // Limpiar sesión (logout)

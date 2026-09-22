@@ -26,15 +26,11 @@ class GuestBrowserTest extends PlaywrightBaseTest {
                 "RIVERA", "Calle Guest 999", "PLASTICO");
         page.locator("#requestForm button[type='submit']").click();
 
-        page.locator("[data-i18n='req_success_title']").waitFor(
-            new Locator.WaitForOptions().setTimeout(15000));
-        assertTrue(page.locator("[data-i18n='req_success_title']").isVisible(),
-                "Debe mostrar página de éxito");
-
-        // Capturar el ID/código de rastreo para el test #8
-        Locator requestId = page.locator(".success-card__id-value");
-        assertTrue(requestId.isVisible(),
-                "Debe mostrar el ID de la solicitud creada");
+        page.waitForURL(url -> url.contains("/rastrear"));
+        assertTrue(page.url().contains("/rastrear"),
+                "Después de crear solicitud como invitado debe redirigir a rastrear");
+        assertTrue(page.url().contains("telefono=") && page.url().contains("codigo="),
+                "La URL debe contener teléfono y código de rastreo");
     }
 
     @Test
@@ -46,7 +42,7 @@ class GuestBrowserTest extends PlaywrightBaseTest {
         fillGuestRequestForm("Test Track", "+598", "98765432",
                 "RIVERA", "Calle Track 111", "PAPEL");
         page.locator("#requestForm button[type='submit']").click();
-        page.locator("[data-i18n='req_success_title']").waitFor();
+        page.waitForURL(url -> url.contains("/rastrear"));
 
         // Ir a rastrear
         page.navigate(baseUrl + "/rastrear");

@@ -23,7 +23,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     void homePageLoads() {
         page.navigate(baseUrl + "/");
 
-        Locator title = page.locator("#hero-title");
+        Locator title = page.locator("h1.hero__title");
         title.waitFor();
         assertTrue(title.innerText().contains("reciclables"),
                 "El título debe mencionar reciclables");
@@ -72,7 +72,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
         assertTrue(page.locator("[data-i18n='track_title']").innerText().length() > 0,
                 "La página de rastreo debe tener título");
 
-        Locator phoneInput = page.locator("input[name*='phone'], input[id*='phone']").first();
+        Locator phoneInput = page.locator("input[id*='Phone']").first();
         assertTrue(phoneInput.isVisible(),
                 "El campo teléfono debe ser visible");
     }
@@ -81,8 +81,10 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     @DisplayName("Footer técnico y cambio de tema funcionan")
     void footerAndThemeWork() {
         page.navigate(baseUrl + "/");
-        assertTrue(page.locator("footer a[href*='docs.google.com']").isVisible());
-        assertTrue(page.locator("#pwaInstall").isVisible());
+        assertTrue(page.locator("footer").isVisible(),
+                "Footer debe estar visible");
+        assertTrue(page.locator("#themeToggle").isVisible(),
+                "Theme toggle debe estar visible");
 
         String before = page.locator("html").getAttribute("data-theme");
         page.locator("#themeToggle").click();

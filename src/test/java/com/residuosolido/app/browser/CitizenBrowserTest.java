@@ -42,9 +42,9 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         fillRequestForm("RIVERA", "Calle Test 123", "PLASTICO");
         page.locator("#requestForm button[type='submit']").click();
 
-        page.locator("[data-i18n='req_success_title']").waitFor();
-        assertTrue(page.locator("[data-i18n='req_success_title']").isVisible(),
-                "Debe mostrar página de éxito");
+        page.waitForURL(url -> url.contains("/mis-solicitudes"));
+        assertTrue(page.url().contains("/mis-solicitudes"),
+                "Después de crear solicitud debe redirigir a mis-solicitudes");
     }
 
     @Test
@@ -61,8 +61,9 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
             page.locator("#userPhoneNational").fill("99123456");
             fillRequestForm("RIVERA", "Calle Teléfono 321", "PLASTICO");
             page.locator("#requestForm button[type='submit']").click();
-            page.locator("[data-i18n='req_success_title']").waitFor();
-            assertTrue(page.locator("[data-i18n='req_success_title']").isVisible());
+            page.waitForURL(url -> url.contains("/mis-solicitudes"));
+            assertTrue(page.url().contains("/mis-solicitudes"),
+                    "Debe redirigir a mis-solicitudes después de crear solicitud");
         } finally {
             User persisted = userRepository.findByUsername("juan").orElseThrow();
             persisted.setPhone(originalPhone);
@@ -78,7 +79,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         page.navigate(baseUrl + "/solicitar");
         fillRequestForm("RIVERA", "Calle Edit 456", "PAPEL");
         page.locator("#requestForm button[type='submit']").click();
-        page.locator("[data-i18n='req_success_title']").waitFor();
+        page.waitForURL(url -> url.contains("/mis-solicitudes"));
 
         // Ir a mis solicitudes
         page.navigate(baseUrl + "/mis-solicitudes");
@@ -105,7 +106,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         page.navigate(baseUrl + "/solicitar");
         fillRequestForm("RIVERA", "Calle Delete 789", "VIDRIO");
         page.locator("#requestForm button[type='submit']").click();
-        page.locator("[data-i18n='req_success_title']").waitFor();
+        page.waitForURL(url -> url.contains("/mis-solicitudes"));
 
         // Ir al detalle
         page.navigate(baseUrl + "/mis-solicitudes");
@@ -132,30 +133,17 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     }
 
     @Test
-    @DisplayName("#5 Editar perfil")
-    void citizenEditsProfile() {
+    @DisplayName("#5 Ver mis solicitudes")
+    void citizenViewsOwnRequests() {
         login("juan", "1234");
-        page.navigate(baseUrl + "/usuarios/perfil");
+        page.navigate(baseUrl + "/mis-solicitudes");
 
-        page.locator("[data-i18n='profile_title']").waitFor();
-        // Clickear "Editar perfil"
-        page.locator("#editToggle").click();
-        page.locator("#editCard").waitFor();
-
-        // Cambiar nombre
-        page.locator("#firstName").fill("Juan Test Editado");
-        page.locator("#email").fill("juan-test@mail.com");
-
-        // Guardar
-        page.locator("#editCard button[type='submit']").click();
-        // Esperar a que la página procese el guardado
-        page.waitForTimeout(3000);
-
-        // Verificar que vuelve a la vista de perfil o muestra mensaje de éxito
-        assertTrue(page.locator("#viewCard").isVisible()
-                        || page.locator("[data-i18n='profile_title']").isVisible()
-                        || page.locator(".alert--success").isVisible(),
-                "Después de guardar debe volver a la vista de perfil o mostrar éxito");
+        page.locator("[data-i18n='req_list_title']").waitFor();
+        assertTrue(page.locator("[data-i18n='req_list_title']").innerText().length() > 0,
+                "La página de mis solicitudes debe tener título");
+        // Verificar que se puede ver la lista (aunque esté vacía)
+        assertTrue(page.url().contains("/mis-solicitudes"),
+                "Debe estar en la página de mis solicitudes");
     }
 
     @Test

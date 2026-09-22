@@ -54,17 +54,17 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#16 Cambio de idioma es → pt")
     void switchLanguageToPortuguese() {
         page.navigate(baseUrl + "/");
-        page.locator("#hero-title").waitFor();
+        page.locator("h1.hero__title").waitFor();
 
         // Capturar texto en español
-        String titleEs = page.locator("#hero-title").innerText();
+        String titleEs = page.locator("h1.hero__title").innerText();
 
         // Clickear botón PT
         page.locator("[data-lang='pt']").first().click();
         page.waitForTimeout(2000);
 
         // Verificar que el texto cambió
-        String titlePt = page.locator("#hero-title").innerText();
+        String titlePt = page.locator("h1.hero__title").innerText();
         assertTrue(!titleEs.equals(titlePt),
                 "El texto debe cambiar al switchear a portugués");
     }
@@ -73,7 +73,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @DisplayName("#17 Cambio de tema claro → oscuro")
     void toggleTheme() {
         page.navigate(baseUrl + "/");
-        page.locator("#hero-title").waitFor();
+        page.locator("h1.hero__title").waitFor();
 
         // Capturar atributo data-theme del html o body
         String themeBefore = page.locator("html").getAttribute("data-theme");
@@ -98,7 +98,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         // Redimensionar a viewport mobile
         page.setViewportSize(375, 812);
         page.navigate(baseUrl + "/");
-        page.locator("#hero-title").waitFor();
+        page.locator("h1.hero__title").waitFor();
 
         // Verificar que el menú hamburguesa existe y es visible en mobile
         Locator menuBtn = page.locator("#menuBtn, .navbar__toggle, button[aria-label*='menu' i]");
