@@ -3,7 +3,7 @@
     {
       "slug": "catadores",
       "title": "Sobre los catadores",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%27%232d6a4f%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ECatadores%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%232d6a4f'/%3E%3C/svg%3E",
       "intro": "Los catadores son agentes fundamentales en la cadena de reciclaje de la frontera Rivera–Sant'Ana. Recogen, clasifican y comercializan materiales reciclables que de otro modo terminarían en rellenos sanitarios. Su trabajo es invisibilizado frecuentemente, aunque es esencial para que la economía circular funcione.",
       "sections": [
         {
@@ -28,7 +28,7 @@
     {
       "slug": "impacto",
       "title": "Nuestro impacto",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2740916c%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EImpacto%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2340916c'/%3E%3C/svg%3E",
       "intro": "Cada solicitud coordinada a través de EcoSolicitud es un objeto que no termina en un vertedero o a cielo abierto. El impacto ambiental se mide en volumen desviado, no en promesas.",
       "sections": [
         {
@@ -53,7 +53,7 @@
     {
       "slug": "sostenibilidad",
       "title": "Sostenibilidad",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2752b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ESostenibilidad%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2352b788'/%3E%3C/svg%3E",
       "intro": "La sostenibilidad de este proyecto no depende de un compromiso declarado, sino de que el circuito de recolección siga funcionando con el uso diario de quienes ya lo usan.",
       "sections": [
         {
@@ -78,7 +78,7 @@
     {
       "slug": "comunidad",
       "title": "Comunidad",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2774c69d%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EComunidad%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2374c69d'/%3E%3C/svg%3E",
       "intro": "Conectamos ciudadanos, organizaciones de acopio y catadores formales en un ecosistema donde cada uno cumple un rol claro.",
       "sections": [
         {
@@ -99,7 +99,7 @@
     {
       "slug": "proceso",
       "title": "Cómo funciona",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%23a7e957%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27%23333%27%3EProceso%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23a7e957'/%3E%3C/svg%3E",
       "intro": "Cuatro pasos simples. Sin aplicación móvil obligatoria, sin cuentas complicadas, sin promesas incumplidas.",
       "sections": [
         {
@@ -115,7 +115,7 @@
     {
       "slug": "compromiso",
       "title": "Nuestro compromiso",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%23d8f3dc%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27%23333%27%3ECompromiso%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23d8f3dc'/%3E%3C/svg%3E",
       "intro": "Transparencia, equidad y sostenibilidad no son palabras para nosotros, son operativas.",
       "sections": [
         {
@@ -136,7 +136,7 @@
     {
       "slug": "eventos",
       "title": "Eventos",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%232d6a4f%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EEventos%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%232d6a4f'/%3E%3C/svg%3E",
       "intro": "Talleres comunitarios, charlas con catadores y demostraciones de cómo clasificar materiales reciclables.",
       "sections": [
         {
@@ -157,7 +157,7 @@
     {
       "slug": "recursos",
       "title": "Recursos",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2340916c%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ERecursos%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2340916c'/%3E%3C/svg%3E",
       "intro": "Guías, tutoriales y carteles para imprimir. Todo disponible para descargar sin registro.",
       "sections": [
         {
@@ -178,7 +178,7 @@
     {
       "slug": "faq",
       "title": "Preguntas frecuentes",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2352b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EPreguntas%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2352b788'/%3E%3C/svg%3E",
       "intro": "Resolvemos las dudas más comunes sobre solicitudes, rastreo y recepción de materiales.",
       "sections": [
         {
