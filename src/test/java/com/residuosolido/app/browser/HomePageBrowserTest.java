@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests de navegador real con Playwright (Chromium headless).
@@ -79,19 +80,18 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     }
 
     @Test
-    @DisplayName("Footer técnico y cambio de tema funcionan")
-    void footerAndThemeWork() {
+    @DisplayName("Footer y selector de idioma funcionan")
+    void footerAndLanguageSelectorWork() {
         page.navigate(baseUrl + "/");
         assertTrue(page.locator("footer").isVisible(),
                 "Footer debe estar visible");
-        assertTrue(page.locator("#themeToggle").isVisible(),
-                "Theme toggle debe estar visible");
 
-        String before = page.locator("html").getAttribute("data-theme");
-        page.locator("#themeToggle").click();
-        String after = page.locator("html").getAttribute("data-theme");
-        assertTrue(!before.equals(after));
-        assertEquals(after, page.evaluate("localStorage.getItem('theme')"));
+        Locator langSelector = page.locator(".navbar__lang-btn").first();
+        assertTrue(langSelector.isVisible(),
+                "Selector de idioma debe estar visible");
+
+        String currentLang = page.evaluate("document.documentElement.lang");
+        assertNotNull(currentLang, "El HTML debe tener atributo lang");
     }
 
     @Test

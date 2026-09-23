@@ -59,9 +59,9 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         // Capturar texto en español
         String titleEs = page.locator("h1.hero__title").innerText();
 
-        // Clickear botón PT
-        page.locator("[data-lang='pt']").first().click();
-        page.waitForTimeout(2000);
+        // Clickear botón PT (selector correcto: .navbar__lang-btn con href ?lang=pt)
+        page.locator("a.navbar__lang-btn[href*='lang=pt']").first().click();
+        page.waitForLoadState();
 
         // Verificar que el texto cambió
         String titlePt = page.locator("h1.hero__title").innerText();
@@ -70,26 +70,15 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     }
 
     @Test
-    @DisplayName("#17 Cambio de tema claro → oscuro")
-    void toggleTheme() {
+    @DisplayName("#17 Instalación de PWA")
+    void pwaInstallButton() {
         page.navigate(baseUrl + "/");
         page.locator("h1.hero__title").waitFor();
 
-        // Capturar atributo data-theme del html o body
-        String themeBefore = page.locator("html").getAttribute("data-theme");
-        if (themeBefore == null) themeBefore = page.locator("body").getAttribute("data-theme");
-        if (themeBefore == null) themeBefore = "light";
-
-        // Clickear theme toggle
-        page.locator("#themeToggle").click();
-        page.waitForTimeout(500);
-
-        String themeAfter = page.locator("html").getAttribute("data-theme");
-        if (themeAfter == null) themeAfter = page.locator("body").getAttribute("data-theme");
-        if (themeAfter == null) themeAfter = "light";
-
-        assertTrue(!themeBefore.equals(themeAfter),
-                "El tema debe cambiar al clickear el toggle");
+        // Verificar que el botón de instalar app existe (aunque esté hidden inicialmente)
+        Locator installBtn = page.locator("[data-install-app]");
+        assertTrue(installBtn.count() > 0,
+                "Debe existir botón de instalación PWA");
     }
 
     @Test
@@ -100,18 +89,18 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.navigate(baseUrl + "/");
         page.locator("h1.hero__title").waitFor();
 
-        // Verificar que el menú hamburguesa existe y es visible en mobile
-        Locator menuBtn = page.locator("#menuBtn, .navbar__toggle, button[aria-label*='menu' i]");
-        if (menuBtn.count() > 0 && menuBtn.first().isVisible()) {
-            menuBtn.first().click();
-            page.waitForTimeout(500);
-            // Verificar que el menó se abrió
-            Locator mobileMenu = page.locator("#dropdownMenu, .navbar__mobile-menu, .navbar__menu--mobile");
-            assertTrue(mobileMenu.first().isVisible(),
-                    "El menú mobile debe abrirse al clickear hamburguesa");
-        }
-        // Test pasa si llega hasta aquí (el layout responsive está presente)
-        assertTrue(true, "Viewport mobile renderizado");
+        // Verificar que el menú hamburguesa (.navbar__toggle) existe
+        Locator menuToggle = page.locator(".navbar__toggle");
+        assertTrue(menuToggle.isVisible(), "Debe haber hamburguesa en mobile");
+
+        // Clickear para abrir
+        menuToggle.click();
+        page.waitForLoadState();
+
+        // Verificar que el menú dropdown se abrió
+        Locator dropdown = page.locator(".dropdown");
+        assertTrue(dropdown.isVisible(),
+                "El dropdown debe abrirse al clickear hamburguesa");
     }
 
     @Test
