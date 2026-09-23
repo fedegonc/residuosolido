@@ -16,7 +16,18 @@ public class RequestValidator {
 
     public void validateCreate(User user, City city, String address, List<MaterialCategory> materials,
                                String guestName, String guestPhone, String organizationId) {
-        validateCoreFields(city, address, materials, organizationId);
+        if (city == null) {
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED); // placeholder
+        }
+        if (address == null || address.trim().isEmpty() || address.length() > 256) {
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
+        }
+        if (materials == null || materials.isEmpty()) {
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
+        }
+        if (organizationId == null || organizationId.trim().isEmpty()) {
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
+        }
         if (user == null) {
             validateGuest(guestName, guestPhone);
         }
@@ -25,53 +36,31 @@ public class RequestValidator {
     public void validateEstimates(String estimatedWeight, String estimatedVolume) {
         if ((estimatedWeight == null || estimatedWeight.trim().isEmpty()) &&
             (estimatedVolume == null || estimatedVolume.trim().isEmpty())) {
-            throw new ValidationException(ServerMessage.ERROR_ESTIMATES_REQUIRED);
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
     }
 
     public void validateMaterials(User org, List<MaterialCategory> materials) {
         if (materials == null || materials.isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_MATERIALS_REQUIRED);
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
         if (org.getAcceptedMaterials() == null || org.getAcceptedMaterials().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_ORG_NO_MATERIALS);
+            throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
         for (MaterialCategory material : materials) {
             if (!org.getAcceptedMaterials().contains(material)) {
-                throw new ValidationException(ServerMessage.ERROR_ORG_DOES_NOT_ACCEPT_MATERIAL);
+                throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
             }
         }
     }
 
-    private void validateCoreFields(City city, String address, List<MaterialCategory> materials, String organizationId) {
-        if (city == null) {
-            throw new ValidationException(ServerMessage.ERROR_CITY_REQUIRED);
-        }
-        if (address == null || address.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_ADDRESS_REQUIRED);
-        }
-        if (address.length() > 256) {
-            throw new ValidationException(ServerMessage.ERROR_ADDRESS_TOO_LONG);
-        }
-        if (materials == null || materials.isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_MATERIALS_REQUIRED);
-        }
-        if (organizationId == null || organizationId.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_ORG_REQUIRED);
-        }
-    }
-
     private void validateGuest(String guestName, String guestPhone) {
-        if (guestName == null || guestName.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_GUEST_NAME_REQUIRED);
-        }
-        if (guestName.length() > 128) {
-            throw new ValidationException(ServerMessage.ERROR_GUEST_NAME_TOO_LONG);
+        if (guestName == null || guestName.trim().isEmpty() || guestName.length() > 128) {
+            throw new ValidationException(ServerMessage.ERROR_NAME_REQUIRED);
         }
         if (guestPhone == null || guestPhone.trim().isEmpty()) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
-        PhoneNumber phone = new PhoneNumber(guestPhone);
-        phone.validate();
+        PhoneNumber.normalize(guestPhone);
     }
 }
