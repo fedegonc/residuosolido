@@ -13,6 +13,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.io.IOException;
 
@@ -42,7 +43,7 @@ public class AuthenticationEventHandler implements AuthenticationSuccessHandler,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         rateLimiter.loginSucceeded(authentication.getName());
-        request.getSession().removeAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE");
+        request.getSession().removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
         String targetUrl = Routes.resolveHomeForRole(authentication);
         logger.info("Usuario '{}' autenticado. Redirigiendo a '{}'", authentication.getName(), targetUrl);
         redirectStrategy.sendRedirect(request, response, targetUrl);

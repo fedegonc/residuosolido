@@ -57,14 +57,10 @@ public class RequestService {
                                   String organizationId) {
         validateCreate(user, city, address, materials, guestName, guestPhone, organizationId);
 
-        Request request = new Request();
-        if (user != null) {
-            request.setContactUser(user);
-        } else {
-            request.setGuestContact(guestName, guestPhone, generateTrackingCode());
-        }
+        Request request = user != null
+                ? Request.forCitizen(user)
+                : Request.forGuest(guestName, guestPhone, generateTrackingCode());
         request.updateDraft(city, address, addressReference, materials);
-        request.markCreatedNow();
 
         User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         validateMaterials(org, request.getMaterials());

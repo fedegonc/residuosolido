@@ -53,8 +53,7 @@ public class RequestCreateController extends BaseController {
                                   Model model, Authentication authentication) {
         User user = userService.resolveUser(authentication);
         Request request = new Request();
-        if (nombre != null) request.setGuestName(nombre);
-        if (telefono != null) request.setGuestPhone(telefono);
+        if (nombre != null || telefono != null) request.setGuestContact(nombre, telefono, null);
         model.addAttribute("request", request);
         model.addAttribute("isEdit", false);
         model.addAttribute("isGuest", user == null);

@@ -5,7 +5,6 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.ServerMessage;
-import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;

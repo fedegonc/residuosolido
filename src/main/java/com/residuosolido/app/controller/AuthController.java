@@ -5,7 +5,6 @@ import com.residuosolido.app.exception.ValidationException;
 
 import com.residuosolido.app.config.Routes;
 
-import com.residuosolido.app.model.User;
 import com.residuosolido.app.dto.RegistrationForm;
 import com.residuosolido.app.config.RateLimiter;
 import com.residuosolido.app.util.LandingCardLoader;
