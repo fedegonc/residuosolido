@@ -1,0 +1,61 @@
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title th:text="${page.title}">Página</title></head>
+<body>
+  <main layout:fragment="content">
+    <article class="page-content">
+      <!-- Hero image -->
+      <div class="page-content__hero">
+        <img th:if="${page.image}" th:src="${page.image}" class="page-content__image" th:alt="${page.title}">
+      </div>
+
+      <!-- Title and intro -->
+      <div class="page-content__header">
+        <h1 class="page-content__title" th:text="${page.title}"></h1>
+        <p class="page-content__intro" th:text="${page.intro}"></p>
+      </div>
+
+      <!-- Main content sections -->
+      <div class="page-content__body">
+        <div class="page-content__sections">
+          <section th:each="section : ${page.sections}" class="page-content__section">
+            <h2 class="page-content__section-title" th:text="${section.title}"></h2>
+            <p class="page-content__section-body" th:text="${section.body}"></p>
+          </section>
+        </div>
+
+        <!-- Closing section -->
+        <section class="page-content__closing">
+          <h2 class="page-content__closing-title" th:text="${page.closingTitle}"></h2>
+          <p class="page-content__closing-body" th:text="${page.closingBody}"></p>
+        </section>
+      </div>
+
+      <!-- Footer: date and sources -->
+      <footer class="page-content__footer">
+        <div class="page-content__meta" th:if="${page.date}">
+          <span class="page-content__date">
+            <strong>Actualizado:</strong> <span th:text="${page.date}"></span>
+          </span>
+        </div>
+
+        <div class="page-content__sources" th:if="${page.sources != null && !page.sources.isEmpty()}">
+          <h3 class="page-content__sources-title">Fuentes</h3>
+          <ul class="page-content__sources-list">
+            <li th:each="source : ${page.sources}" class="page-content__source-item" th:text="${source}"></li>
+          </ul>
+        </div>
+      </footer>
+
+      <!-- Back button -->
+      <div class="page-content__back">
+        <a href="/" class="btn btn--outline">
+          <svg class="icon"><use href="/images/icons.svg#arrow-left"/></svg>
+          <span data-i18n="nav_home">Inicio</span>
+        </a>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

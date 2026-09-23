@@ -87,10 +87,4 @@ public class AuthController extends BaseController {
         model.addAttribute("cards", LandingCardLoader.loadCards(lang));
         return "public/index";
     }
-
-    /** Página informativa: sobre los catadores (recolectores informales). */
-    @GetMapping({"/sobre-catadores"})
-    public String aboutCatadores() {
-        return "public/about-catadores";
-    }
 }

@@ -11,9 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /** msg()/msg(Throwable) heredados de BaseController — antes duplicados acá a mano. */
 @ControllerAdvice
@@ -24,6 +26,19 @@ public class GlobalExceptionHandler extends BaseController {
     @ExceptionHandler(NoResourceFoundException.class)
     public String handleNotFound(HttpServletRequest request) {
         logger.debug("Recurso no encontrado: {}", request.getRequestURI());
+        return "error/404";
+    }
+
+    /**
+     * Sin este handler, ResponseStatusException(NOT_FOUND) (ej. PageController
+     * con un slug sin template) caía en el catch-all de Exception y redirigía
+     * a /entrar en vez de mostrar un 404 real — bug detectado por
+     * LandingCardsTest.RenderingLayer#unknownSlug_returns404.
+     */
+    @ExceptionHandler(ResponseStatusException.class)
+    public String handleResponseStatus(ResponseStatusException e, HttpServletResponse response) {
+        logger.debug("ResponseStatusException: {} {}", e.getStatusCode(), e.getReason());
+        response.setStatus(e.getStatusCode().value());
         return "error/404";
     }
 

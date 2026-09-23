@@ -23,7 +23,12 @@ public final class Routes {
     public static final String INDEX = "/index";
     public static final String LANGUAGE = "/change-language";
     public static final String SEED = "/seed";
-    public static final String ABOUT_CATADORES = "/sobre-catadores";
+    /** Página de contenido genérica por slug (ver PageController). Agregar una página nueva = 1 entrada en su registro, sin tocar rutas. */
+    public static final String PAGE_BY_SLUG = "/pagina/{slug}";
+
+    public static String pageUrl(String slug) {
+        return "/pagina/" + slug;
+    }
 
     // Auth
     public static final String LOGIN = "/entrar";

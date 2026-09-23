@@ -10,6 +10,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.util.LandingCardLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,8 +19,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.LocaleResolver;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Controller unificado de solicitudes del ciudadano:
@@ -34,14 +38,17 @@ public class RequestController extends BaseController {
     private final RequestService requestService;
     private final RequestMetricsService requestMetricsService;
     private final CityOrgService cityOrgService;
+    private final LocaleResolver localeResolver;
 
     @Autowired
     public RequestController(RequestService requestService,
                              RequestMetricsService requestMetricsService,
-                             CityOrgService cityOrgService) {
+                             CityOrgService cityOrgService,
+                             LocaleResolver localeResolver) {
         this.requestService = requestService;
         this.requestMetricsService = requestMetricsService;
         this.cityOrgService = cityOrgService;
+        this.localeResolver = localeResolver;
     }
 
     /** Lista las solicitudes del usuario autenticado con stats. */
@@ -49,13 +56,16 @@ public class RequestController extends BaseController {
     @GetMapping(Routes.REQUESTS)
     public String listUserRequests(@RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "20") int size,
-                                    Authentication authentication, Model model) {
+                                    Authentication authentication, Model model,
+                                    HttpServletRequest request) {
         User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
         model.addAttribute("requests", requestService.getRequestsByUser(user, page, size));
         model.addAttribute("requestStats", requestMetricsService.getUserRequestStats(user));
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
+        Locale locale = localeResolver.resolveLocale(request);
+        model.addAttribute("cards", LandingCardLoader.loadCards(locale.getLanguage()));
         return "users/requests";
     }
 

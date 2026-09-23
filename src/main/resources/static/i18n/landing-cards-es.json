@@ -6,8 +6,8 @@
       "title": "Sobre los catadores",
       "description": "Conocé el rol crucial de los recolectores en la cadena de reciclaje de nuestra región",
       "button": "Leer más",
-      "href": "/sobre-catadores",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%232d6a4f' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ECatadores%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/catadores",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%232d6a4f%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3ECatadores%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "impacto",
@@ -15,8 +15,8 @@
       "title": "Nuestro impacto",
       "description": "Descubrí cómo EcoSolicitud genera cambio ambiental real en la región",
       "button": "Leer más",
-      "href": "#impacto",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2340916c' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EImpacto%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/impacto",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%2340916c%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3EImpacto%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "sostenibilidad",
@@ -24,8 +24,8 @@
       "title": "Sostenibilidad",
       "description": "Comprometidos con la economía circular y el cuidado del planeta",
       "button": "Leer más",
-      "href": "#sostenibilidad",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2352b788' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ESostenibilidad%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/sostenibilidad",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%2352b788%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3ESostenibilidad%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "comunidad",
@@ -33,8 +33,8 @@
       "title": "Comunidad",
       "description": "Conectamos ciudadanos, organizaciones y recolectores formales",
       "button": "Leer más",
-      "href": "#comunidad",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2374c69d' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EComunidad%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/comunidad",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%2374c69d%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3EComunidad%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "proceso",
@@ -42,8 +42,8 @@
       "title": "Cómo funciona",
       "description": "Cuatro pasos simples para que tus reciclables lleguen al destino correcto",
       "button": "Leer más",
-      "href": "#como-funciona",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23a7e957' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EProceso%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/proceso",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%23a7e957%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3EProceso%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "compromiso",
@@ -51,8 +51,8 @@
       "title": "Nuestro compromiso",
       "description": "Transparencia, equidad y sostenibilidad en cada transacción",
       "button": "Leer más",
-      "href": "#compromiso",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23d8f3dc' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ECompromiso%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/compromiso",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%23d8f3dc%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3ECompromiso%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "eventos",
@@ -60,8 +60,8 @@
       "title": "Eventos",
       "description": "Talleres, charlas y actividades comunitarias sobre reciclaje",
       "button": "Leer más",
-      "href": "#eventos",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%232d6a4f' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EEventos%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/eventos",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%232d6a4f%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3EEventos%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "recursos",
@@ -69,8 +69,8 @@
       "title": "Recursos",
       "description": "Guías, tutoriales y materiales educativos descargables",
       "button": "Leer más",
-      "href": "#recursos",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2340916c' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3ERecursos%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/recursos",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%2340916c%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3ERecursos%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "faq",
@@ -78,8 +78,8 @@
       "title": "Preguntas frecuentes",
       "description": "Resolvemos tus dudas sobre solicitudes, rastreo y recepción",
       "button": "Leer más",
-      "href": "#faq",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2352b788' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='white'%3EFAQ%3C/text%3E%3C/svg%3E"
+      "href": "/pagina/faq",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect fill=%27%2352b788%27 width=%27400%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2732%27 font-weight=%27bold%27 fill=%27white%27%3EFAQ%3C/text%3E%3C/svg%3E"
     }
   ]
 }

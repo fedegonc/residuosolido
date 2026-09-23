@@ -1,8 +1,8 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-22 — landing cards v2 (server-side rendering)  
-> Tests: 211, 0 failures, 0 errors, 0 skipped (medium loop, sin browser)
-> Build: SUCCESS
+> Fecha de sincronizacion: 2026-09-22 — landing cards v2 + páginas por slug (`/pagina/{slug}`)  
+> Tests: 243, 2 failures conocidos (huérfanos i18n `profile_title`/`req_success_title`, diferido — ver MEJORAS.md #180), 0 errors, 0 skipped (medium loop, sin browser)
+> Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
 Los documentos tecnicos estan concentrados en `docs/` y estan actualizados al estado actual del codigo.

@@ -69,7 +69,7 @@ class DocsContractTest {
             "UserDetailsService", "WebMvcConfigurer", "AccessDeniedException",
             "AnonymousAuthenticationToken", "BCryptPasswordEncoder", "ControllerAdvice",
             "ExceptionHandler", "GetMapping", "PostMapping", "PutMapping", "SpringBootTest",
-            "WithMockUser", "DocumentReference", "ResponseEntity", "ObjectMapper",
+            "WithMockUser", "DocumentReference", "ResponseEntity", "ResponseStatusException", "ObjectMapper",
             "JsonNode", "InputStream", "TestRestTemplate", "Page", "Pageable",
             "Scanner", "ConcurrentHashMap", "AtomicLong", "AtomicInteger", "Duration",
             "Instant", "LocalDateTime", "SecureRandom", "UUID", "ServletContext",

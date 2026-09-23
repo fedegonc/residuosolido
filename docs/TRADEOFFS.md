@@ -737,3 +737,51 @@ despachando, el enum solo garantiza la clave.
 patrón no cubría + 5 claves sin traducción JSON que se habrían mostrado
 crudas). `ServerMessageContractTest` hace el drift imposible: agregar una
 constante sin traducción rompe el build.
+
+## 30. Landing cards: server-side rendering (Thymeleaf) en vez de REST API + fetch
+
+**Contexto:** la primera implementación de las landing cards (contenedor
+escalable en el home, ver `docs/MEJORAS.md` #178) fue un endpoint
+`GET /api/landing-cards?lang=` que devolvía JSON, más `landing-cards.js`
+haciendo `fetch` + render en el DOM al cargar la página.
+
+**Alternativas:**
+
+| Opción | Por qué sí/no |
+|---|---|
+| REST API + fetch client-side (descartada, se implementó y se sacó) | Requiere reglas de seguridad propias (`permitAll` sobre `/api/**`, que además colisiona con el matcher genérico de la API autenticada); si JS falla o no corre, el contenedor queda vacío sin ningún fallback |
+| **Server-side rendering con Thymeleaf (elegida)** | El HTML llega completo en la respuesta inicial — funciona sin JavaScript, sin request adicional, sin reglas de seguridad nuevas (la ruta ya es pública). El modelo (`AuthController.rootOrIndex()`) hace `model.addAttribute("cards", LandingCardLoader.loadCards(lang))`, el fragment itera con `th:each` |
+
+**Costo real encontrado:** `LandingCardLoader.loadCards()` atrapa cualquier
+`Exception` del parseo JSON y devuelve `List.of()` en silencio — un JSON
+malformado (una coma de más) no tira ningún error, el contenedor
+simplemente queda vacío. El bug se vivió en esta misma feature: JSON con
+coma final antes del `]`, cards invisibles en el navegador, cero mensaje de
+error en ningún log. La capa de tests (`LandingCardsTest.JsonDataLayer`)
+existe específicamente para atrapar esto en CI en vez de en el navegador.
+
+## 31. Página de contenido por slug (`/pagina/{slug}`) en vez de un endpoint fijo por página
+
+**Contexto:** la página "Sobre los catadores" empezó como
+`@GetMapping("/sobre-catadores")` fijo en `AuthController`. Con el sistema
+de landing cards ya pensado para crecer (#178: 9 cards), cada card que
+ganara una página propia habría significado un `@GetMapping` nuevo, una
+entrada nueva en `SecurityConfig` y un `Routes.XXX` nuevo — repetido por
+cada página. Terminaron siendo 9 páginas reales de una (ver #179), lo que
+confirmó rápido que el registro fijo por página no iba a escalar.
+
+**Alternativas:**
+
+| Opción | Por qué sí/no |
+|---|---|
+| Un `@GetMapping` fijo por página (status quo) | Cero indirección, pero no escala: cada página nueva = 1 método + 1 regla de seguridad + 1 constante en `Routes`. Con 9 páginas ya hubieran sido 9 de cada cosa |
+| **`PageController.showPage(@PathVariable slug)` + `PageContentLoader` (elegida)** | Una sola ruta (`Routes.PAGE_BY_SLUG = "/pagina/{slug}"`), un solo permiso en `SecurityConfig`, un solo template genérico (`public/page-content.html`). Agregar una página = 1 entrada en `pages-{es,pt}.json`, sin tocar rutas, seguridad ni Java. El `slug` es el mismo `id` que ya traen las cards del JSON — no es un concepto nuevo, es el mismo identificador reutilizado |
+| Contenido 100% en Mongo, sin JSON en disco | Sobre-ingeniería para contenido que cambia poco y no lo edita un usuario final — el JSON versionado en git ya da historial de cambios gratis |
+
+**Consecuencia de diseño:** un slug sin entrada en `SLUG_TEMPLATES` devuelve
+404 real (`ResponseStatusException`), no una redirección disfrazada. Esto
+expuso un bug en `GlobalExceptionHandler`: no existía un
+`@ExceptionHandler(ResponseStatusException.class)`, así que el 404 caía en
+el catch-all de `Exception` y redirigía a `/entrar` — comportamiento
+incorrecto detectado por `LandingCardsTest$RenderingLayer#unknownSlug_returns404`
+antes de llegar a producción, no después.

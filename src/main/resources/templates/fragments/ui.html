@@ -57,5 +57,15 @@
     </h1>
     <p class="hint" th:attr="data-i18n=${subtitleKey}" th:text="${subtitleText}"></p>
   </div>
+
+  <!-- Links compactos a las páginas de contenido educativo (/pagina/{slug}), menor
+       jerarquía que el contenido principal del dashboard — mismo dato que las landing
+       cards de "/" (LandingCardLoader), un usuario logueado nunca ve esa página. -->
+  <section th:fragment="educationalLinks(cards)" class="edu-links" th:if="${cards != null and !cards.isEmpty()}">
+    <span class="edu-links__label" data-i18n="dash_learn_more">También te puede interesar</span>
+    <nav class="edu-links__nav">
+      <a th:each="card : ${cards}" th:href="${card.href}" th:text="${card.title}" class="edu-links__link"></a>
+    </nav>
+  </section>
 </body>
 </html>

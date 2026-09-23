@@ -21,6 +21,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/diagramas` | `DocsController` | Índice de diagramas UML (docs/diagrams/*.drawio) |
 | GET | `/docs/**` | `WebConfig` (resource handler) | Archivos estáticos de docs/ y docs/diagrams/ |
 | GET | `/scratch/{file}.java` | `DocsController` | Sirve `scratch/App.java`/`pseudoapp.java` como texto plano (footer del layout). `scratch/` está gitignoreado a propósito — funciona en local/dev, 404 en Render porque el archivo nunca se sube |
+| GET | `/pagina/{slug}` | `PageController` | Páginas de contenido genéricas por slug, contenido en `pages-{es,pt}.json` vía `PageContentLoader`. Las 9 landing cards (catadores, impacto, sostenibilidad, comunidad, proceso, compromiso, eventos, recursos, faq) tienen su página. Slug sin entrada en el JSON → 404 real (`ResponseStatusException` + `GlobalExceptionHandler`) |
 
 ## Usuario (rol `USER`)
 

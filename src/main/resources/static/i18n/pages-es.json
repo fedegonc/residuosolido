@@ -1,0 +1,217 @@
+{
+  "pages": [
+    {
+      "slug": "catadores",
+      "title": "Sobre los catadores",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%27%232d6a4f%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ECatadores%3C/text%3E%3C/svg%3E",
+      "intro": "Los catadores son agentes fundamentales en la cadena de reciclaje de la frontera Rivera–Sant'Ana. Recogen, clasifican y comercializan materiales reciclables que de otro modo terminarían en rellenos sanitarios. Su trabajo es invisibilizado frecuentemente, aunque es esencial para que la economía circular funcione.",
+      "sections": [
+        {
+          "title": "Su rol en la cadena",
+          "body": "Los catadores ejecutan tres funciones simultáneamente: recolección (buscan materiales en origen), clasificación (separan por tipo y calidad) y comercialización (venden a centros de acopio o industria recicladora). Sin este eslabón, los centros de acopio formales no tendrían suficientes volúmenes de material procesado."
+        },
+        {
+          "title": "Por qué importa fortalecer su labor",
+          "body": "Fortalecer la labor de los catadores significa: mejorar sus condiciones de seguridad y acceso a mercados, garantizar precios justos por el material entregado, y reconocer formalmente su aporte a la sostenibilidad regional."
+        }
+      ],
+      "closingTitle": "Cómo EcoSolicitud los apoya",
+      "closingBody": "EcoSolicitud conecta ciudadanos con centros de acopio. Esos centros, a su vez, compran y reciben material de catadores. Al agilizar la coordinación entre ciudadanos y centros formales, indirectamente aumentamos la demanda de material procesado y, con él, las oportunidades de ingresos para los catadores.",
+      "date": "2026-09-22",
+      "sources": [
+        "PNUD — Informe sobre economía circular en América Latina",
+        "Red Latinoamericana de Catadores — Diagnóstico regional"
+      ]
+    },
+    {
+      "slug": "impacto",
+      "title": "Nuestro impacto",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2740916c%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EImpacto%3C/text%3E%3C/svg%3E",
+      "intro": "Cada solicitud coordinada a través de EcoSolicitud es un objeto que no termina en un vertedero o a cielo abierto. El impacto ambiental se mide en volumen desviado, no en promesas.",
+      "sections": [
+        {
+          "title": "Qué medimos",
+          "body": "Registramos cada solicitud completada por ciudad, tipo de material y organización receptora. Esos datos alimentan las métricas públicas visibles sin necesidad de iniciar sesión — no son cifras de marketing, son el registro real de lo que se coordinó."
+        },
+        {
+          "title": "Por qué la frontera importa",
+          "body": "Rivera y Sant'Ana do Livramento comparten geografía pero no siempre infraestructura de gestión de residuos. Coordinar recolecciones de los dos lados de la frontera reduce la fricción logística que normalmente hace que el material reciclable termine descartado."
+        }
+      ],
+      "closingTitle": "El rol de EcoSolicitud",
+      "closingBody": "La plataforma no genera impacto por sí sola — lo genera cada ciudadano que pide una recolección y cada organización que la acepta. Nuestro trabajo es sacar la fricción del medio.",
+      "date": "2026-09-22",
+      "sources": [
+        "Banco Interamericano de Desarrollo — Gestión integral de residuos",
+        "World Bank — Waste Management Overview"
+      ]
+    },
+    {
+      "slug": "sostenibilidad",
+      "title": "Sostenibilidad",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2752b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ESostenibilidad%3C/text%3E%3C/svg%3E",
+      "intro": "La sostenibilidad de este proyecto no depende de un compromiso declarado, sino de que el circuito de recolección siga funcionando con el uso diario de quienes ya lo usan.",
+      "sections": [
+        {
+          "title": "Economía circular real",
+          "body": "Cada material que se recolecta vuelve a entrar a una cadena productiva en vez de ocupar espacio en un relleno sanitario. Ese circuito ya existe informalmente en la región — la plataforma lo hace más fácil de coordinar, no lo inventa de cero."
+        },
+        {
+          "title": "Sostenibilidad técnica",
+          "body": "El sistema está pensado para operar con la infraestructura mínima necesaria: sin dependencias pesadas, sin costos de mantenimiento que no se puedan sostener con el uso real del proyecto."
+        }
+      ],
+      "closingTitle": "Un proyecto pensado para durar",
+      "closingBody": "EcoSolicitud no es una moda pasajera. Está construido sobre procesos que ya funcionan en la región, no sobre cambios de comportamiento que requieran campañas permanentes. Mientras haya ciudadanos dispuestos a reciclar y organizaciones a recibirlo, el sistema sigue activo.",
+      "date": "2026-09-22",
+      "sources": [
+        "ONU — Objetivos de Desarrollo Sostenible 12",
+        "Ellen MacArthur Foundation — Circular Economy Framework"
+      ]
+    },
+    {
+      "slug": "comunidad",
+      "title": "Comunidad",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2774c69d%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EComunidad%3C/text%3E%3C/svg%3E",
+      "intro": "Conectamos ciudadanos, organizaciones de acopio y catadores formales en un ecosistema donde cada uno cumple un rol claro.",
+      "sections": [
+        {
+          "title": "Ciudadanos: el punto de origen",
+          "body": "Los ciudadanos tienen materiales reciclables pero no saben a quién contactar. EcoSolicitud resuelve esa fricción: ven una lista de organizaciones cercanas, eligen dónde enviar su material, y reciben confirmación de entrega."
+        },
+        {
+          "title": "Organizaciones: receptoras coordenadas",
+          "body": "Los centros de acopio reciben solicitudes de recolección. Conocen de antemano qué material irá a buscar, desde dónde, a qué hora. Eso permite optimizar rutas, horarios y personal."
+        }
+      ],
+      "closingTitle": "Valor de la coordinación",
+      "closingBody": "La comunidad más fuerte no es la que consume menos, sino la que coordinadamente aprovecha al máximo lo que ya tiene. EcoSolicitud es el puente que faltaba.",
+      "date": "2026-09-22",
+      "sources": [
+        "Programa de las Naciones Unidas para el Desarrollo — Ciudades sostenibles"
+      ]
+    },
+    {
+      "slug": "proceso",
+      "title": "Cómo funciona",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%23a7e957%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27%23333%27%3EProceso%3C/text%3E%3C/svg%3E",
+      "intro": "Cuatro pasos simples. Sin aplicación móvil obligatoria, sin cuentas complicadas, sin promesas incumplidas.",
+      "sections": [
+        {
+          "title": "1. Pedir una recolección",
+          "body": "Escribis tu dirección, qué material tenés, qué franja horaria te conviene. Opcionalmente subis una foto. Eso es todo."
+        },
+        {
+          "title": "2. Elegir organización",
+          "body": "Ves qué organizaciones de tu ciudad aceptan ese material. Elegis una. No hay cola virtual, no hay espera en lista."
+        },
+        {
+          "title": "3. Confirmar recolección",
+          "body": "La organización recibe tu solicitud. Si puede, te envía el día y hora en que van a buscar. Si no puede, te lo comunica."
+        },
+        {
+          "title": "4. Entregar material",
+          "body": "En el día y hora acordado, los recolectores van a tu domicilio, levantan el material y se lo llevan a su centro de acopio."
+        }
+      ],
+      "closingTitle": "Sin fricción innecesaria",
+      "closingBody": "El proceso es tan simple como debería ser. Todos ganan: ciudadanos se descargan de sus reciclables, organizaciones reciben volumen predecible, catadores tienen materiales para procesar.",
+      "date": "2026-09-22",
+      "sources": []
+    },
+    {
+      "slug": "compromiso",
+      "title": "Nuestro compromiso",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%23d8f3dc%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27%23333%27%3ECompromiso%3C/text%3E%3C/svg%3E",
+      "intro": "Transparencia, equidad y sostenibilidad no son palabras para nosotros, son operativas.",
+      "sections": [
+        {
+          "title": "Transparencia radical",
+          "body": "Publicamos públicamente el volumen de material coordinado, desglozado por ciudad, tipo y fecha. No hay cifras de marketing escondidas. Los datos están a disposición de cualquiera."
+        },
+        {
+          "title": "Equidad en precios",
+          "body": "Las organizaciones pagan precios justos por el material. Los catadores reciben lo que les corresponde. Nuestro rol es eliminar intermediarios innecesarios, no crear nuevos."
+        },
+        {
+          "title": "Sostenibilidad operativa",
+          "body": "El sistema fue diseñado para operar con los costos más bajos posibles. No dependemos de financiamiento perpetuo que no vendrá. Dependemos de que la gente lo use."
+        }
+      ],
+      "closingTitle": "Confianza a través de hechos",
+      "closingBody": "No pedimos que nos crean. Pedimos que vean los datos, que prueben el sistema, que nos critiquen si algo está mal. La confianza se construye con actos, no con promesas.",
+      "date": "2026-09-22",
+      "sources": [
+        "International Transparency Initiative — Standard de publicación abierta"
+      ]
+    },
+    {
+      "slug": "eventos",
+      "title": "Eventos",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%232d6a4f%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EEventos%3C/text%3E%3C/svg%3E",
+      "intro": "Talleres comunitarios, charlas con catadores y demostraciones de cómo clasificar materiales reciclables.",
+      "sections": [
+        {
+          "title": "Próximos talleres",
+          "body": "Octubre 2026: Taller de clasificación de residuos en el Espacio Joven de Rivera. Noviembre 2026: Charla con catadores en Sant'Ana. Participación libre, previa inscripción."
+        },
+        {
+          "title": "Educación práctica",
+          "body": "No queremos conferencias abstractas. Cada taller incluye práctica real: clasificás plástico, vidrio, metal. Aprendés por qué algunos materiales se aceptan y otros no."
+        }
+      ],
+      "closingTitle": "Aprender haciendo",
+      "closingBody": "La mejor educación ambiental es la que podés tocar con las manos. Por eso invitamos a que vengas a los eventos y experimentes de primera mano cómo funciona el reciclaje en tu región.",
+      "date": "2026-09-22",
+      "sources": [
+        "Programa de Educación Ambiental — PNUD"
+      ]
+    },
+    {
+      "slug": "recursos",
+      "title": "Recursos",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2340916c%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ERecursos%3C/text%3E%3C/svg%3E",
+      "intro": "Guías, tutoriales y carteles para imprimir. Todo disponible para descargar sin registro.",
+      "sections": [
+        {
+          "title": "Guía de clasificación",
+          "body": "PDF de una página, imprimible, que muestra cómo clasificar cada tipo de material. Incluye qué sí y qué no entra en cada categoría."
+        },
+        {
+          "title": "Carteles para espacios públicos",
+          "body": "Imágenes en alta resolución que podés imprimir y pegar en tu barrio, escuela u oficina. Diseñadas para ser simples y efectivas."
+        }
+      ],
+      "closingTitle": "Descarga lo que necesites",
+      "closingBody": "Todos los materiales están bajo licencia Creative Commons. Usalos, modifica los y comparte los. Queremos que la información sobre reciclaje sea accesible para todos.",
+      "date": "2026-09-22",
+      "sources": [
+        "Creative Commons — Recursos educativos abiertos"
+      ]
+    },
+    {
+      "slug": "faq",
+      "title": "Preguntas frecuentes",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2352b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EPreguntas%3C/text%3E%3C/svg%3E",
+      "intro": "Resolvemos las dudas más comunes sobre solicitudes, rastreo y recepción de materiales.",
+      "sections": [
+        {
+          "title": "¿Cuánto tiempo tarda la recolección?",
+          "body": "Depende de la organización. Algunos responden el mismo día, otros dentro de 48 horas. Siempre te avisan antes de ir a tu domicilio."
+        },
+        {
+          "title": "¿Qué pasa si no puedo recibir en la fecha acordada?",
+          "body": "Podés reprogramar la fecha desde la plataforma, o rechazar la solicitud. No hay penalizaciones."
+        },
+        {
+          "title": "¿Puedo pedir recolección sin crear cuenta?",
+          "body": "Sí. Podés pedir sin cuenta. Te damos un código de rastreo para seguir tu solicitud sin necesidad de usuario y contraseña."
+        }
+      ],
+      "closingTitle": "¿Pregunta no resuelta?",
+      "closingBody": "Escribinos a cualquier hora. Respondemos en la franja horaria local de lunes a viernes, 9 a 18 horas.",
+      "date": "2026-09-22",
+      "sources": []
+    }
+  ]
+}

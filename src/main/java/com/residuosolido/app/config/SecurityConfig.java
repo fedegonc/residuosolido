@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .requestMatchers(Routes.SEED).permitAll()
                 .requestMatchers(Routes.LOGIN, Routes.REGISTER).permitAll()
                 .requestMatchers(Routes.LANGUAGE).permitAll()
-                .requestMatchers(Routes.ABOUT_CATADORES).permitAll()
+                .requestMatchers(Routes.PAGE_BY_SLUG).permitAll()
                 // Recursos especiales de navegador
                 .requestMatchers(Routes.WELL_KNOWN).permitAll()
                 // Páginas de error deben ser públicas
