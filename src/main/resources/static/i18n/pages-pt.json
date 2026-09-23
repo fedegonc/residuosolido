@@ -19,8 +19,14 @@
       "closingBody": "EcoSolicitud conecta cidadãos com centros de acomodação. Esses centros, por sua vez, compram e recebem material dos catadores. Ao agilizar a coordenação entre cidadãos e centros formais, indiretamente aumentamos a demanda por material processado e, com ele, as oportunidades de renda para os catadores.",
       "date": "2026-09-22",
       "sources": [
-        "PNUD — Relatório sobre economia circular na América Latina",
-        "Rede Latino-americana de Catadores — Diagnóstico regional"
+        {
+          "title": "PNUD — Relatório sobre economia circular na América Latina",
+          "url": "https://www.undp.org/pt/publications"
+        },
+        {
+          "title": "Rede Latino-americana de Catadores — Diagnóstico regional",
+          "url": "https://www.redlac.org"
+        }
       ]
     },
     {
@@ -42,8 +48,14 @@
       "closingBody": "A plataforma não gera impacto por si só — é gerado por cada cidadão que solicita uma coleta e cada organização que a aceita. Nosso trabalho é remover o atrito do meio.",
       "date": "2026-09-22",
       "sources": [
-        "Banco Interamericano de Desenvolvimento — Gestão integrada de resíduos",
-        "World Bank — Visão geral da gestão de resíduos"
+        {
+          "title": "Banco Interamericano de Desenvolvimento — Gestão integrada de resíduos",
+          "url": "https://www.iadb.org"
+        },
+        {
+          "title": "World Bank — Visão geral da gestão de resíduos",
+          "url": "https://www.worldbank.org"
+        }
       ]
     },
     {
@@ -65,8 +77,14 @@
       "closingBody": "EcoSolicitud não é uma moda passageira. Foi construído sobre processos que já funcionam na região, não sobre mudanças de comportamento que exijam campanhas permanentes. Enquanto houver cidadãos dispostos a reciclar e organizações dispostas a receber, o sistema permanece ativo.",
       "date": "2026-09-22",
       "sources": [
-        "ONU — Objetivos de Desenvolvimento Sustentável 12",
-        "Ellen MacArthur Foundation — Estrutura de Economia Circular"
+        {
+          "title": "ONU — Objetivos de Desenvolvimento Sustentável 12",
+          "url": "https://www.un.org/sustainabledevelopment/pt/sustainable-consumption-production/"
+        },
+        {
+          "title": "Ellen MacArthur Foundation — Estrutura de Economia Circular",
+          "url": "https://www.ellenmacarthurfoundation.org"
+        }
       ]
     },
     {
@@ -88,7 +106,10 @@
       "closingBody": "A comunidade mais forte não é aquela que consome menos, mas sim aquela que coordenadamente aproveita ao máximo o que já tem. EcoSolicitud é a ponte que faltava.",
       "date": "2026-09-22",
       "sources": [
-        "Programa das Nações Unidas para o Desenvolvimento — Cidades sustentáveis"
+        {
+          "title": "Programa das Nações Unidas para o Desenvolvimento — Cidades sustentáveis",
+          "url": "https://www.undp.org/pt"
+        }
       ]
     },
     {
@@ -142,7 +163,10 @@
       "closingBody": "Não pedimos que nos creiam. Pedimos que vejam os dados, que testem o sistema, que nos critiquem se algo está errado. A confiança se constrói com atos, não com promessas.",
       "date": "2026-09-22",
       "sources": [
-        "International Transparency Initiative — Padrão de publicação aberta"
+        {
+          "title": "International Transparency Initiative — Padrão de publicação aberta",
+          "url": "https://www.transparency-initiative.org"
+        }
       ]
     },
     {
@@ -164,7 +188,10 @@
       "closingBody": "A melhor educação ambiental é aquela que você pode tocar com as mãos. Por isso convidamos você a vir aos eventos e vivenciar em primeira mão como funciona a reciclagem em sua região.",
       "date": "2026-09-22",
       "sources": [
-        "Programa de Educação Ambiental — PNUD"
+        {
+          "title": "Programa de Educação Ambiental — PNUD",
+          "url": "https://www.undp.org/pt"
+        }
       ]
     },
     {
@@ -186,7 +213,10 @@
       "closingBody": "Todos os materiais estão sob licença Creative Commons. Use-os, modifique-os e compartilhe-os. Queremos que a informação sobre reciclagem seja acessível para todos.",
       "date": "2026-09-22",
       "sources": [
-        "Creative Commons — Recursos educacionais abertos"
+        {
+          "title": "Creative Commons — Recursos educacionais abertos",
+          "url": "https://creativecommons.org"
+        }
       ]
     },
     {

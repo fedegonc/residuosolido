@@ -43,7 +43,9 @@
         <div class="page-content__sources" th:if="${page.sources != null && !page.sources.isEmpty()}">
           <h3 class="page-content__sources-title">Fuentes</h3>
           <ul class="page-content__sources-list">
-            <li th:each="source : ${page.sources}" class="page-content__source-item" th:text="${source}"></li>
+            <li th:each="source : ${page.sources}" class="page-content__source-item">
+              <a th:href="${source.url}" th:text="${source.title}" target="_blank" rel="noopener noreferrer"></a>
+            </li>
           </ul>
         </div>
       </footer>
