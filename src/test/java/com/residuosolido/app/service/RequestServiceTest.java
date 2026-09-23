@@ -57,7 +57,7 @@ class RequestServiceTest {
         Request r = new Request();
         r.setId("req1");
         r.setUser(owner);
-        r.setStatus(status);
+        r.restoreStatus(status);
         return r;
     }
 
@@ -65,7 +65,7 @@ class RequestServiceTest {
         Request r = new Request();
         r.setId("req1");
         r.setOrganization(org);
-        r.setStatus(status);
+        r.restoreStatus(status);
         return r;
     }
 
@@ -91,7 +91,7 @@ class RequestServiceTest {
         Request existing = new Request();
         existing.setId("req1");
         existing.setGuestName("Juan");
-        existing.setStatus(RequestStatus.PENDING);
+        existing.restoreStatus(RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         assertThrows(OwnershipException.class,
                 () -> requestService.getOwnedRequest("req1", citizen("u1")));
@@ -145,7 +145,7 @@ class RequestServiceTest {
     void getOwnedOrgRequest_unassigned_throwsOwnershipException() {
         Request existing = new Request();
         existing.setId("req1");
-        existing.setStatus(RequestStatus.PENDING);
+        existing.restoreStatus(RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         assertThrows(OwnershipException.class,
                 () -> requestService.getOwnedOrgRequest("req1", org("org1")));
@@ -309,28 +309,6 @@ class RequestServiceTest {
         verify(requestRepository, never()).findByOrganizationAndStatusOrderByCreatedAtDesc(any(), any(), any());
     }
 
-    // ───────────────────── validateEstimates ─────────────────────
-
-    @Test
-    void createRequest_invalidWeight_throwsValidationException() {
-        User citizen = citizen("u1");
-        when(cityOrgService.findOrganizationByIdAndCity(any(), any())).thenReturn(org("org1"));
-
-        assertThrows(ValidationException.class, () -> requestService.createRequest(
-                citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", "999", null));
-    }
-
-    @Test
-    void createRequest_invalidVolume_throwsValidationException() {
-        User citizen = citizen("u1");
-        when(cityOrgService.findOrganizationByIdAndCity(any(), any())).thenReturn(org("org1"));
-
-        assertThrows(ValidationException.class, () -> requestService.createRequest(
-                citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, "container"));
-    }
-
     // ───────────────────── validateGuest ─────────────────────
 
     @Test
@@ -338,7 +316,7 @@ class RequestServiceTest {
         String longName = "a".repeat(101);
         ValidationException ex = assertThrows(ValidationException.class, () -> requestService.createRequest(
                 null, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), longName, "+59899123456", "org1", null, null));
+                List.of(MaterialCategory.PLASTICO), longName, "+59899123456", "org1"));
         assertNotNull(ex);
     }
 
@@ -346,7 +324,7 @@ class RequestServiceTest {
     void createRequest_guestInvalidPhone_throwsValidationException() {
         assertThrows(ValidationException.class, () -> requestService.createRequest(
                 null, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), "Juan", "123", "org1", null, null));
+                List.of(MaterialCategory.PLASTICO), "Juan", "123", "org1"));
     }
 
     // ───────────────────── validateMaterials ─────────────────────
@@ -360,7 +338,7 @@ class RequestServiceTest {
 
         assertThrows(ValidationException.class, () -> requestService.createRequest(
                 citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null));
+                List.of(MaterialCategory.PLASTICO), null, null, "org1"));
     }
 
     // ───────────────────── createRequestWithImage ─────────────────────
@@ -373,7 +351,7 @@ class RequestServiceTest {
 
         assertThrows(ValidationException.class, () -> requestService.createRequestWithImage(
                 citizen("u1"), City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null, file));
+                List.of(MaterialCategory.PLASTICO), null, null, "org1", file));
         verifyNoInteractions(requestRepository);
     }
 
@@ -389,7 +367,7 @@ class RequestServiceTest {
         when(imageService.attachImageToRequest(any(Request.class), eq(file))).thenReturn(withImage);
 
         Request result = requestService.createRequestWithImage(citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null, file);
+                List.of(MaterialCategory.PLASTICO), null, null, "org1", file);
 
         assertEquals("uploads/photo.jpg", result.getImageUrl());
         verify(imageService).attachImageToRequest(any(Request.class), eq(file));
@@ -404,7 +382,7 @@ class RequestServiceTest {
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
 
         requestService.createRequestWithImage(citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null, emptyFile);
+                List.of(MaterialCategory.PLASTICO), null, null, "org1", emptyFile);
 
         verify(imageService, never()).attachImageToRequest(any(), any());
     }

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,26 +54,17 @@ public class RequestService {
 
     public Request createRequest(User user, City city, String address, String addressReference,
                                   List<MaterialCategory> materials, String guestName, String guestPhone,
-                                  String organizationId, String estimatedWeight, String estimatedVolume) {
+                                  String organizationId) {
         validateCreate(user, city, address, materials, guestName, guestPhone, organizationId);
-        validateEstimates(estimatedWeight, estimatedVolume);
 
         Request request = new Request();
         if (user != null) {
-            request.setUser(user);
+            request.setContactUser(user);
         } else {
-            request.setGuestName(guestName);
-            request.setGuestPhone(guestPhone);
-            request.setTrackingCode(generateTrackingCode());
+            request.setGuestContact(guestName, guestPhone, generateTrackingCode());
         }
-        request.setCity(city);
-        request.setAddress(address);
-        request.setAddressReference(addressReference);
-        request.setMaterials(materials != null ? materials : List.of());
-        request.setEstimatedWeight(estimatedWeight);
-        request.setEstimatedVolume(estimatedVolume);
-        request.setStatus(RequestStatus.PENDING);
-        request.setCreatedAt(LocalDateTime.now());
+        request.updateDraft(city, address, addressReference, materials);
+        request.markCreatedNow();
 
         User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         validateMaterials(org, request.getMaterials());
@@ -85,12 +75,12 @@ public class RequestService {
 
     public Request createRequestWithImage(User user, City city, String address, String addressReference,
                                             List<MaterialCategory> materials, String guestName, String guestPhone,
-                                            String organizationId, String estimatedWeight, String estimatedVolume,
+                                            String organizationId,
                                             MultipartFile imageFile) {
         imageService.validateImage(imageFile);
 
         Request request = createRequest(user, city, address, addressReference, materials,
-                guestName, guestPhone, organizationId, estimatedWeight, estimatedVolume);
+                guestName, guestPhone, organizationId);
 
         if (imageFile != null && !imageFile.isEmpty()) {
             return imageService.attachImageToRequest(request, imageFile);
@@ -109,10 +99,7 @@ public class RequestService {
         User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         validateMaterials(org, materials != null ? materials : List.of());
 
-        request.setCity(city);
-        request.setAddress(address);
-        request.setAddressReference(addressReference);
-        request.setMaterials(materials != null ? materials : List.of());
+        request.updateDraft(city, address, addressReference, materials);
         request.assignOrganization(org);
         request = saveWithOptimisticLock(request);
         return imageService.attachImageToRequest(request, imageFile);
@@ -286,15 +273,6 @@ public class RequestService {
         if (organization.getAcceptedMaterials() == null || materials == null || materials.isEmpty()
                 || materials.stream().anyMatch(m -> m == null || !organization.getAcceptedMaterials().contains(m))) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_NOT_ACCEPTED);
-        }
-    }
-
-    void validateEstimates(String weight, String volume) {
-        if (weight != null && !weight.isBlank() && !List.of("0-5", "5-20", "20-50", "50+").contains(weight)) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_INVALID_WEIGHT);
-        }
-        if (volume != null && !volume.isBlank() && !List.of("bag", "box", "trunk", "pickup").contains(volume)) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_INVALID_VOLUME);
         }
     }
 

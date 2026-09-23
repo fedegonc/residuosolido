@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-23 — optimización frontend selectiva (#181: fragment altCta, CSS :has(), CSS muerto, auditoría i18n)  
-> Tests: 251 no-browser, 0 failures, 0 errors, 0 skipped (browser tests con fallos conocidos por selectores desincronizados — ver MEJORAS.md #180)
+> Fecha de sincronizacion: 2026-09-23 — borrado de peso/volumen estimados y `RequestValidator` muerto (#182)  
+> Tests: 251 no-browser, 7 failures conocidos (`PageContentImagesTest`/`PageContentRenderingTest` sobre `catadores`, pre-existentes #177; browser tests con fallos por selectores desincronizados — ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  

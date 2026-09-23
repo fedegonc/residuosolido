@@ -26,8 +26,8 @@ public class CityOrgService {
     /**
      * Resuelve la organización de una solicitud a partir de la elección explícita
      * del usuario. No existe asignación automática por proximidad ni por "primera
-     * organización disponible": si no se eligió organización, se rechaza (ver
-     * RequestValidator).
+     * organización disponible": si no se eligió organización, se rechaza desde
+     * RequestService.validateCoreFields.
      */
     public User findOrganizationByIdAndCity(String organizationId, City city) {
         if (organizationId == null || organizationId.isBlank()) {

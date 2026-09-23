@@ -111,7 +111,7 @@ class MvpRegressionTest {
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, mock(LocalImageService.class), cities);
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
-                "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org", null, null));
+                "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org"));
         verifyNoInteractions(repo);
     }
 
@@ -125,7 +125,7 @@ class MvpRegressionTest {
                 cities);
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
-                "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", null, null, file));
+                "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", file));
         verify(repo, never()).save(any(Request.class));
     }
 

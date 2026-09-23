@@ -259,7 +259,7 @@ public class DataLoader {
         r.setAddressReference(ref);
         r.setCity(city);
         r.setMaterials(materials);
-        r.setStatus(status);
+        r.restoreStatus(status);
         r.setConfirmedSlot(slot);
         r.setCreatedAt(createdAt != null ? createdAt : LocalDateTime.now().minusDays((long)(Math.random() * 10)));
         repo.save(r);

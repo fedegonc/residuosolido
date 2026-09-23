@@ -44,7 +44,6 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │ city: City                                            │
 │ address / addressReference: String                    │
 │ materials: List<MaterialCategory>                     │
-│ estimatedWeight / estimatedVolume: String (opcional)   │
 │ imageUrl: String (opcional)                            │
 │ confirmedSlot: TimeSlot                                │
 │ status: RequestStatus = PENDING (indexado)             │
