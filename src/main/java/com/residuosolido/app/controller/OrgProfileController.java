@@ -4,7 +4,7 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.PhoneNumber;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.Keyed;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.enums.City;
@@ -69,7 +69,7 @@ public class OrgProfileController extends BaseController {
         try {
             User currentOrg = getCurrentUser(authentication);
             City oldCity = currentOrg.getCity();
-            String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
+            String resolvedPhone = PhoneNumber.resolve(countryCode, phoneNational, ddd, phone);
             // Ciudad y telefono son obligatorios SIEMPRE en este form (no solo mientras el
             // perfil esta incompleto) — antes el <select>/input no tenian required y el
             // guardado pasaba igual sin avisar, dejando el perfil incompleto en silencio.
@@ -90,12 +90,5 @@ public class OrgProfileController extends BaseController {
             flashError(redirectAttributes, e instanceof Keyed k ? k.key() : ServerMessage.FLASH_PROFILE_UPDATE_ERROR);
         }
         return "redirect:" + Routes.ORG_PROFILE;
-    }
-
-    private String resolvePhone(String rawPhone, String countryCode, String phoneNational, String ddd) {
-        if (phoneNational != null && !phoneNational.trim().isEmpty() && countryCode != null && !countryCode.trim().isEmpty()) {
-            return PhoneNumber.normalize(countryCode, phoneNational, ddd);
-        }
-        return rawPhone;
     }
 }

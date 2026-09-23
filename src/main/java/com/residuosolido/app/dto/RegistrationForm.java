@@ -22,10 +22,7 @@ public class RegistrationForm {
     public User toUser() {
         User user = new User();
         user.setUsername(username);
-        if (phoneNational != null && !phoneNational.trim().isEmpty()
-                && countryCode != null && !countryCode.trim().isEmpty()) {
-            user.setPhone(PhoneNumber.normalize(countryCode, phoneNational, ddd));
-        }
+        user.setPhone(PhoneNumber.resolve(countryCode, phoneNational, ddd, null));
         user.setPassword(password);
         return user;
     }

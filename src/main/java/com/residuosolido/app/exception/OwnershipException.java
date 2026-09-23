@@ -1,6 +1,5 @@
 package com.residuosolido.app.exception;
 
-import com.residuosolido.app.enums.ServerMessage;
 
 /**
  * Intento de operar sobre un recurso que no pertenece al actor (solicitud

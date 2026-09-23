@@ -1,6 +1,6 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 
 import com.residuosolido.app.config.Routes;

@@ -346,7 +346,7 @@ class RequestServiceTest {
     @Test
     void createRequestWithImage_validatesImageBeforeCreating() {
         MockMultipartFile file = new MockMultipartFile("imageFile", "photo.jpg", "image/jpeg", new byte[]{1, 2, 3});
-        doThrow(new ValidationException(com.residuosolido.app.enums.ServerMessage.ERROR_IMAGE_TOO_LARGE))
+        doThrow(new ValidationException(com.residuosolido.app.exception.ServerMessage.ERROR_IMAGE_TOO_LARGE))
                 .when(imageService).validateImage(file);
 
         assertThrows(ValidationException.class, () -> requestService.createRequestWithImage(

@@ -6,7 +6,7 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.Role;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.TimeSlot;
 import org.junit.jupiter.api.Test;
 

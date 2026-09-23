@@ -1,6 +1,6 @@
 package com.residuosolido.app.model;
 
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.exception.StateException;
 
@@ -119,7 +119,13 @@ public class User {
     }
 
     public boolean isProfileComplete() {
-        return role != null && role.isProfileComplete(this);
+        if (role == null) {
+            return false;
+        }
+        if (role == Role.ORGANIZATION) {
+            return hasPhone() && city != null && Boolean.TRUE.equals(profileCompleted);
+        }
+        return true;
     }
 
     public boolean hasPhone() {

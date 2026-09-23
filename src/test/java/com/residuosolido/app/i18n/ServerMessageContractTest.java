@@ -2,7 +2,7 @@ package com.residuosolido.app.i18n;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;

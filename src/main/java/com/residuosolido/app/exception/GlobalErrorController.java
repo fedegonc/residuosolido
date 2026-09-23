@@ -2,7 +2,6 @@ package com.residuosolido.app.exception;
 
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.controller.BaseController;
-import com.residuosolido.app.enums.ServerMessage;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
