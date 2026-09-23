@@ -8,7 +8,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +22,13 @@ import java.util.Locale;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private AuthNavigationInterceptor authNavigationInterceptor;
+    private final AuthNavigationInterceptor authNavigationInterceptor;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public WebConfig(AuthNavigationInterceptor authNavigationInterceptor, UserRepository userRepository) {
+        this.authNavigationInterceptor = authNavigationInterceptor;
+        this.userRepository = userRepository;
+    }
 
     // ========== INTERNACIONALIZACIÓN ==========
 

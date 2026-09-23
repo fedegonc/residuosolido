@@ -49,6 +49,8 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │ status: RequestStatus = PENDING (indexado)             │
 │ createdAt: LocalDateTime                               │
 ├──────────────────────────────────────────────────────┤
+│ forCitizen(User) / forGuest(name, phone, code)         │
+│ updateDraft(city, address, ref, materials)             │
 │ accept(TimeSlot) / reject() / complete()               │
 │ canBeEdited() / isGuest() / hasMaterials()             │
 │ assignOrganization(User)                                │

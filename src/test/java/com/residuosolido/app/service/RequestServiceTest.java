@@ -56,7 +56,7 @@ class RequestServiceTest {
     private Request requestOf(User owner, RequestStatus status) {
         Request r = new Request();
         r.setId("req1");
-        r.setUser(owner);
+        r.setContactUser(owner);
         r.restoreStatus(status);
         return r;
     }
@@ -64,7 +64,7 @@ class RequestServiceTest {
     private Request orgRequestOf(User org, RequestStatus status) {
         Request r = new Request();
         r.setId("req1");
-        r.setOrganization(org);
+        r.assignOrganization(org);
         r.restoreStatus(status);
         return r;
     }
@@ -90,7 +90,7 @@ class RequestServiceTest {
     void getOwnedRequest_guestRequest_throwsOwnershipException() {
         Request existing = new Request();
         existing.setId("req1");
-        existing.setGuestName("Juan");
+        existing.setGuestContact("Juan", null, null);
         existing.restoreStatus(RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         assertThrows(OwnershipException.class,

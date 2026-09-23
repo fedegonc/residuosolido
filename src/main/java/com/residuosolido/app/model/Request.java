@@ -13,11 +13,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.AccessLevel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,6 @@ import java.util.List;
  */
 @Document(collection = "requests")
 @Getter
-@Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString
@@ -57,10 +54,25 @@ public class Request {
     private String imageUrl;
     private TimeSlot confirmedSlot;
     @Indexed
-    @Setter(AccessLevel.NONE)
     private RequestStatus status = RequestStatus.PENDING;
     private LocalDateTime createdAt;
     private String trackingCode;
+
+    /** Solicitud de un ciudadano registrado. El estado arranca en PENDING. */
+    public static Request forCitizen(User user) {
+        Request r = new Request();
+        r.setContactUser(user);
+        r.markCreatedNow();
+        return r;
+    }
+
+    /** Solicitud de invitado: requiere contacto y código de seguimiento. */
+    public static Request forGuest(String name, String phone, String trackingCode) {
+        Request r = new Request();
+        r.setGuestContact(name, phone, trackingCode);
+        r.markCreatedNow();
+        return r;
+    }
 
     public void accept(TimeSlot slot) {
         if (slot == null) throw new ValidationException(ServerMessage.ERROR_REQUEST_SLOT_REQUIRED);
@@ -97,15 +109,40 @@ public class Request {
         this.user = user;
     }
 
+    /** Campos editables del borrador. Valida lo que la entidad es dueña de validar. */
     public void updateDraft(City city, String address, String addressReference, List<MaterialCategory> materials) {
+        if (city == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
+        }
+        if (address == null || address.isBlank()) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ADDRESS_REQUIRED);
+        }
+        if (materials == null || materials.isEmpty()) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_REQUIRED);
+        }
         this.city = city;
         this.address = address;
         this.addressReference = addressReference;
-        this.materials = materials != null ? materials : List.of();
+        this.materials = materials;
     }
 
     public void markCreatedNow() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    // ─── Reconstrucción de datos persistidos (Mongo, seeds, tests) ───
+    // No usar en flujos de negocio: el estado cambia solo por transiciones.
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setConfirmedSlot(TimeSlot confirmedSlot) {
+        this.confirmedSlot = confirmedSlot;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setImageUrl(String imageUrl) {

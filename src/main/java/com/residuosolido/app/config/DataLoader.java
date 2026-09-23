@@ -250,15 +250,10 @@ public class DataLoader {
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
                                       String guestName, String guestPhone, String trackingCode, LocalDateTime createdAt) {
         Request r = new Request();
-        r.setUser(user);
-        r.setOrganization(org);
-        r.setGuestName(guestName);
-        r.setGuestPhone(guestPhone);
-        r.setTrackingCode(trackingCode);
-        r.setAddress(address);
-        r.setAddressReference(ref);
-        r.setCity(city);
-        r.setMaterials(materials);
+        if (user != null) r.setContactUser(user);
+        if (org != null) r.assignOrganization(org);
+        r.setGuestContact(guestName, guestPhone, trackingCode);
+        r.updateDraft(city, address, ref, materials);
         r.restoreStatus(status);
         r.setConfirmedSlot(slot);
         r.setCreatedAt(createdAt != null ? createdAt : LocalDateTime.now().minusDays((long)(Math.random() * 10)));

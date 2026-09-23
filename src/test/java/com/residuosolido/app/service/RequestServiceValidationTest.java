@@ -82,7 +82,7 @@ class RequestServiceValidationTest {
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
-        existing.setUser(user);
+        existing.setContactUser(user);
         existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
@@ -105,7 +105,7 @@ class RequestServiceValidationTest {
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
-        existing.setUser(user);
+        existing.setContactUser(user);
         existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
@@ -140,7 +140,7 @@ class RequestServiceValidationTest {
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
-        existing.setUser(user);
+        existing.setContactUser(user);
         existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
@@ -238,7 +238,7 @@ class RequestServiceValidationTest {
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
-        existing.setUser(user);
+        existing.setContactUser(user);
         existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.IN_PROGRESS);
 
         when(requestRepository.findById("req1"))
@@ -254,7 +254,7 @@ class RequestServiceValidationTest {
 
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
-        existing.setUser(user);
+        existing.setContactUser(user);
         existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))

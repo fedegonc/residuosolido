@@ -81,13 +81,10 @@ class EndToEndFlowsTest {
     void flujo6_guestTracking_searchByPhoneAndCode_returnsResults() throws Exception {
         Request req = new Request();
         req.setId("abc123");
-        req.setGuestName("Juan");
-        req.setGuestPhone("+59899123456");
-        req.setTrackingCode("AB12CD34");
+        req.setGuestContact("Juan", "+59899123456", "AB12CD34");
         req.restoreStatus(RequestStatus.PENDING);
         req.setCreatedAt(LocalDateTime.now());
-        req.setCity(City.RIVERA);
-        req.setMaterials(List.of(MaterialCategory.PLASTICO));
+        req.updateDraft(City.RIVERA, "Calle 1", null, List.of(MaterialCategory.PLASTICO));
 
         when(requestService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
 
@@ -239,10 +236,8 @@ class EndToEndFlowsTest {
         req.setId("req1");
         req.restoreStatus(RequestStatus.PENDING);
         req.setCreatedAt(LocalDateTime.now());
-        req.setCity(City.RIVERA);
-        req.setMaterials(List.of(MaterialCategory.PLASTICO));
-        req.setGuestName("Juan");
-        req.setGuestPhone("+59899123456");
+        req.updateDraft(City.RIVERA, "Calle 1", null, List.of(MaterialCategory.PLASTICO));
+        req.setGuestContact("Juan", "+59899123456", null);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(requestService.getOwnedOrgRequest("req1", org)).thenReturn(req);
