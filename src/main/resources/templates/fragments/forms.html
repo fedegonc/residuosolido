@@ -98,5 +98,20 @@
     <svg th:if="${icon != null}" class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
     <span th:attr="data-i18n=${labelKey}" th:text="${labelText}"></span>
   </button>
+
+  <!-- CTA alternativa: panel oscuro con título + descripción + botón.
+       Usado en register, login, request-form (variantes guest/user).
+       icon = nombre del ícono sin path (ej. 'arrow-right'), igual que submit. -->
+  <section th:fragment="altCta(titleKey, descKey, href, icon, buttonKey)"
+           class="hero hero--dark">
+    <h2 class="hero__title hero__title--sm" th:attr="data-i18n=${titleKey}"></h2>
+    <p class="hero__subtitle" th:attr="data-i18n=${descKey}"></p>
+    <div class="hero__cta">
+      <a th:href="${href}" class="btn btn--light">
+        <svg class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
+        <span th:attr="data-i18n=${buttonKey}"></span>
+      </a>
+    </div>
+  </section>
 </body>
 </html>

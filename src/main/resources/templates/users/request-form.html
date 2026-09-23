@@ -157,27 +157,9 @@
           </form>
         </section>
 
-        <section class="hero hero--dark" th:if="${isGuest}">
-          <h2 class="hero__title hero__title--sm" data-i18n="req_form_alt_guest_title">¿Ya pediste una recolección?</h2>
-          <p class="hero__subtitle" data-i18n="req_form_alt_guest_desc">Buscala con tu teléfono y el código que te dimos.</p>
-          <div class="hero__cta">
-            <a th:href="@{/rastrear}" class="btn btn--light">
-              <svg class="icon"><use href="/images/icons.svg#magnifying-glass"/></svg>
-              <span data-i18n="cta_track">Buscar mi solicitud</span>
-            </a>
-          </div>
-        </section>
+        <th:block th:if="${isGuest}" th:replace="~{fragments/forms :: altCta('req_form_alt_guest_title', 'req_form_alt_guest_desc', '/rastrear', 'magnifying-glass', 'cta_track')}"></th:block>
 
-        <section class="hero hero--dark" th:unless="${isGuest}">
-          <h2 class="hero__title hero__title--sm" data-i18n="req_form_alt_user_title">Tus solicitudes</h2>
-          <p class="hero__subtitle" data-i18n="req_form_alt_user_desc">Mirá el estado de las recolecciones que ya pediste.</p>
-          <div class="hero__cta">
-            <a th:href="@{/mis-solicitudes}" class="btn btn--light">
-              <svg class="icon"><use href="/images/icons.svg#list"/></svg>
-              <span data-i18n="nav_my_requests">Mis solicitudes</span>
-            </a>
-          </div>
-        </section>
+        <th:block th:unless="${isGuest}" th:replace="~{fragments/forms :: altCta('req_form_alt_user_title', 'req_form_alt_user_desc', '/mis-solicitudes', 'list', 'nav_my_requests')}"></th:block>
       </div>
     </div>
   </main>
