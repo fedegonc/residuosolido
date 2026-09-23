@@ -48,7 +48,7 @@
       </div>
 
       <div th:if="${requests == null or requests.isEmpty()}">
-        <div th:replace="~{fragments/ui :: state('seedling', 'Acá van a aparecer tus solicitudes')}"></div>
+        <div th:replace="~{fragments/ui :: state('seedling', 'user_requests_empty', 'Acá van a aparecer tus solicitudes')}"></div>
         <div class="text-center mt">
           <a href="/solicitar" class="btn btn--primary">
             <svg class="icon"><use href="/images/icons.svg#plus"/></svg> <span data-i18n="req_list_new">Nueva solicitud</span>

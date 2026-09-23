@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-22 — landing cards v2 + páginas por slug (`/pagina/{slug}`)  
-> Tests: 243, 2 failures conocidos (huérfanos i18n `profile_title`/`req_success_title`, diferido — ver MEJORAS.md #180), 0 errors, 0 skipped (medium loop, sin browser)
+> Fecha de sincronizacion: 2026-09-23 — optimización frontend selectiva (#181: fragment altCta, CSS :has(), CSS muerto, auditoría i18n)  
+> Tests: 251 no-browser, 0 failures, 0 errors, 0 skipped (browser tests con fallos conocidos por selectores desincronizados — ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  

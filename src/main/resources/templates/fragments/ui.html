@@ -1,8 +1,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-  <div th:fragment="state(icon, message)" class="empty-state">
+  <div th:fragment="state(icon, messageKey, message)" class="empty-state">
     <svg class="icon" aria-hidden="true"><use th:attr="href=@{/images/icons.svg} + '#' + ${icon}"/></svg>
-    <span class="empty-state__text" th:text="${message}">No hay elementos</span>
+    <span class="empty-state__text" th:attr="data-i18n=${messageKey}" th:text="${message}">No hay elementos</span>
   </div>
 
   <th:block th:fragment="status(status)">

@@ -24,16 +24,7 @@
           </p>
         </section>
 
-        <section class="hero hero--dark">
-          <h2 class="hero__title hero__title--sm" data-i18n="auth_nocount_title">¿No querés crear cuenta?</h2>
-          <p class="hero__subtitle" data-i18n="auth_nocount_desc">Podés pedir la recolección solo con tu nombre y celular — te damos un código para seguirla.</p>
-          <div class="hero__cta">
-            <a th:href="@{/solicitar}" class="btn btn--light">
-              <svg class="icon"><use href="/images/icons.svg#arrow-right"/></svg>
-              <span data-i18n="auth_nocount_cta">Pedir sin cuenta</span>
-            </a>
-          </div>
-        </section>
+        <div th:replace="~{fragments/forms :: altCta('auth_nocount_title', 'auth_nocount_desc', '/solicitar', 'arrow-right', 'auth_nocount_cta')}"></div>
       </div>
     </div>
   </main>

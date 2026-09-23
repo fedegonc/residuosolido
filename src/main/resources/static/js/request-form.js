@@ -34,7 +34,6 @@
       input.disabled = !isAllowed;
       if (!isAllowed && input.checked) {
         input.checked = false;
-        card.classList.remove('check-card--checked');
       }
     });
   }

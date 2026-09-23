@@ -16,7 +16,6 @@
   "modal_track_guest_desc": "Ingresá tu teléfono y el código que te dimos.",
   "modal_track_login_title": "Entrar a mi cuenta",
   "modal_track_login_desc": "Si ya tenés cuenta, entrá para ver todas tus solicitudes en un solo lugar.",
-  "badge": "Rivera · Sant'Ana do Livramento",
   "title": "Pedí que pasen a buscar tus reciclables",
   "subtitle": "Enviá una solicitud a una organización de tu ciudad y consultá su estado.",
   "cta_request": "Pedir recolección",
@@ -123,7 +122,6 @@
   "req_status_in_progress": "En curso",
   "req_status_completed": "Completado",
   "req_status_rejected": "Rechazado",
-  "req_success_title": "¡Solicitud creada!",
   "track_title": "Buscar mi solicitud",
   "track_subtitle": "Si pediste recolección sin cuenta, ingresá tu teléfono y el código que recibiste.",
   "track_phone_label": "Teléfono",
@@ -142,7 +140,6 @@
   "dash_stat_completed": "Completadas",
   "dash_subtitle": "Acompañá tus solicitudes y contribuí a una ciudad más limpia y sustentable.",
   "dash_learn_more": "También te puede interesar",
-  "profile_title": "Mi perfil",
   "profile_email_label": "Email",
   "profile_phone_label": "Teléfono",
   "profile_city_label": "Ciudad",
@@ -233,5 +230,7 @@
   "_server_error_name_required": "El nombre es obligatorio.",
   "_server_error_name_too_long": "El nombre es demasiado largo (máximo 100 caracteres).",
   "_server_error_user_not_found": "No se encontró el usuario.",
-  "hero_img_alt": "Plaza Internacional — frontera Rivera–Sant'Ana do Livramento"
+  "hero_img_alt": "Plaza Internacional — frontera Rivera–Sant'Ana do Livramento",
+  "org_requests_empty": "No hay solicitudes",
+  "user_requests_empty": "Acá van a aparecer tus solicitudes"
 }

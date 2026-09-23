@@ -36,7 +36,7 @@
           </div>
         </div>
         <div th:if="${requests == null or requests.isEmpty()}">
-          <div th:replace="~{fragments/ui :: state('inbox', 'No hay solicitudes')}"></div>
+          <div th:replace="~{fragments/ui :: state('inbox', 'org_requests_empty', 'No hay solicitudes')}"></div>
         </div>
 
         <div th:replace="~{fragments/ui :: educationalLinks(cards=${cards})}"></div>

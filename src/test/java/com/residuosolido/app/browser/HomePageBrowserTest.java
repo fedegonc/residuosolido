@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HomePageBrowserTest extends PlaywrightBaseTest {
 
     @Test
-    @DisplayName("Home page renderiza con título y badge de ciudad")
+    @DisplayName("Home page renderiza con título y referencia de ciudad")
     void homePageLoads() {
         page.navigate(baseUrl + "/");
 
@@ -28,9 +28,10 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
         assertTrue(title.innerText().contains("reciclables"),
                 "El título debe mencionar reciclables");
 
-        Locator badge = page.locator("[data-i18n='badge']");
-        assertTrue(badge.innerText().contains("Rivera"),
-                "El badge debe mostrar Rivera");
+        Locator subtitle = page.locator("[data-i18n='subtitle']");
+        subtitle.waitFor();
+        assertTrue(subtitle.innerText().toLowerCase().contains("ciudad"),
+                "El subtítulo debe mencionar ciudad");
     }
 
     @Test

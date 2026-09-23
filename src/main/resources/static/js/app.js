@@ -9,12 +9,11 @@
    abre con [data-modal-open] y se cierra con .modal__close / overlay / Escape.
 
    Componentes globales activados por markup (usados en más de una página):
-     .check-card       → request-form.html, org/profile.html
      .password-field__toggle (PIN) → auth/login.html, auth/register.html
-     .radio-card       → request-form.html
      #imageFile/#fileName → request-form.html
      selector de país (#*CountryCode) → index, request-form (guestPhone/userPhone),
-     register, org/profile (phone), track (trackPhone) — markup canónico en fragments/forms.html */
+     register, org/profile (phone), track (trackPhone) — markup canónico en fragments/forms.html
+     .check-card / .radio-card → estado visual con CSS :has(input:checked), sin JS */
 
 (function () {
   'use strict';
@@ -41,13 +40,6 @@
     });
   }
   applyTranslations();
-
-  /* ─── Check-card visual state (componente) ─── */
-  document.querySelectorAll('.check-card input[type="checkbox"]').forEach(function (cb) {
-    function update() { cb.closest('.check-card').classList.toggle('check-card--checked', cb.checked); }
-    cb.addEventListener('change', update);
-    update();
-  });
 
   /* ─── Password visibility toggle (componente) ─── */
   document.querySelectorAll('.password-field__toggle').forEach(function (toggleBtn) {
@@ -147,17 +139,6 @@
   document.addEventListener('submit', function (e) {
     var msg = e.target.getAttribute && e.target.getAttribute('data-confirm');
     if (msg && !window.confirm(msg)) e.preventDefault();
-  });
-
-  /* ─── Radio card visual state (componente) ─── */
-  document.querySelectorAll('.radio-card input[type="radio"]').forEach(function (rb) {
-    rb.addEventListener('change', function () {
-      document.querySelectorAll('.radio-card').forEach(function (card) {
-        card.classList.remove('radio-card--checked');
-      });
-      rb.closest('.radio-card').classList.add('radio-card--checked');
-    });
-    if (rb.checked) rb.closest('.radio-card').classList.add('radio-card--checked');
   });
 
   /* ─── File upload name display (componente) ─── */
