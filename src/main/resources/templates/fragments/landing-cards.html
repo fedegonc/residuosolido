@@ -5,12 +5,8 @@
     <a th:each="card : ${cards}" th:href="${card.href}" class="landing-card">
       <img th:if="${card.image}" th:src="${card.image}" th:alt="${card.title}" class="landing-card__img" loading="lazy">
       <div class="landing-card__content">
-        <div class="landing-card__icon">
-          <svg class="icon"><use th:href="'/images/icons.svg#' + ${card.icon}"/></svg>
-        </div>
         <h3 class="landing-card__title" th:text="${card.title}"></h3>
         <p class="landing-card__desc" th:text="${card.description}"></p>
-        <button class="btn btn--outline" type="button" th:text="${card.button}"></button>
       </div>
     </a>
   </section>
