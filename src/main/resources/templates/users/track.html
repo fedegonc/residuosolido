@@ -26,7 +26,7 @@
 
       <div th:if="${searched}">
         <div th:if="${requests != null and requests.isEmpty()}">
-          <div th:replace="~{fragments/ui :: state('magnifying-glass', 'No encontramos solicitudes con esos datos')}"></div>
+          <div th:replace="~{fragments/ui :: state('magnifying-glass', 'track_no_results', 'No encontramos solicitudes con esos datos')}"></div>
           <div class="text-center mt">
             <a href="/solicitar" class="btn btn--primary">
               <svg class="icon"><use href="/images/icons.svg#plus"/></svg> <span data-i18n="track_empty_cta">Crear una solicitud</span>

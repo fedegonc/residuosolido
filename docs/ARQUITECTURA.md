@@ -149,6 +149,44 @@ Dos fuentes de texto, deben coincidir:
 **Regla:** cuando se cambia un copy, se actualizan ambas fuentes — el
 contrato de tests lo hace build-breaking si se olvida.
 
+## Contrato de Fragments
+
+Los fragments son la raíz única de la UI. Cada uno tiene una firma fija;
+cambiar un parámetro es un contrato que rompe los templates que lo llaman.
+
+### `fragments/forms.html`
+
+| Fragment | Parámetros | Usado en |
+|---|---|---|
+| `text(id, name, type, labelKey, labelText, phKey, phText, required, value)` | 9 | index, register, request-form |
+| `phone(prefix, ccName, natName, dddName, labelKey, labelText, required, nationalValue, selectedCode, dddValue, hintKey, hintText)` | 12 | index, register, request-form, org/profile, track |
+| `checkGrid(items, name, selected, i18nPrefix)` | 4 | request-form, org/profile |
+| `check(id, name, labelKey, labelText, hintKey, hintText)` | 6 | register |
+| `pin(id, name, hintKey, hintText)` | 4 | login, register |
+| `submit(icon, labelKey, labelText, variant)` | 4 | 6 páginas |
+| `altCta(titleKey, descKey, href, icon, buttonKey)` | 5 | register, login, request-form |
+
+### `fragments/ui.html`
+
+| Fragment | Parámetros | Usado en |
+|---|---|---|
+| `state(icon, messageKey, message)` | 3 | org/requests, users/requests, track |
+| `status(status)` | 1 | request-list, track |
+| `row(icon, label, value)` | 3 | org/profile |
+| `tile(icon, value, labelKey, labelText)` | 4 | org/requests, users/requests |
+| `options` | 0 | request-form |
+| `msg(type, text)` | 2 | flash messages |
+| `trail(crumbs)` | 1 | org/requests, users/requests |
+| `greeting(greetingKey, greetingText, name, exclamation, subtitleKey, subtitleText)` | 6 | users/requests |
+| `educationalLinks(cards)` | 1 | org/requests, users/requests |
+
+### `fragments/landing-cards.html`
+
+| Fragment | Parámetros | Usado en |
+|---|---|---|
+| `card(icon, titleKey, descKey, buttonKey, href)` | 5 | index |
+| `section` | 0 | index |
+
 ## Decisiones de Arquitectura
 
 - **Sin panel Admin**: Gestión distribuida por roles (USER, ORGANIZATION).
