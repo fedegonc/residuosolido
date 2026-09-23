@@ -7,7 +7,7 @@
       "description": "Conheça o rol crucial dos coletores na cadeia de reciclagem de nossa região",
       "button": "Leia mais",
       "href": "/pagina/catadores",
-      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
+      "image": "https://images.pexels.com/photos/3836573/pexels-photo-3836573.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "impacto",
@@ -16,7 +16,7 @@
       "description": "Descubra como EcoSolicitud gera mudança ambiental real na região",
       "button": "Leia mais",
       "href": "/pagina/impacto",
-      "image": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5"
+      "image": "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "sostenibilidad",
@@ -25,7 +25,7 @@
       "description": "Comprometidos com a economia circular e o cuidado do planeta",
       "button": "Leia mais",
       "href": "/pagina/sostenibilidad",
-      "image": "https://images.unsplash.com/photo-1511632765486-a01980e01a18"
+      "image": "https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "comunidad",
@@ -34,7 +34,7 @@
       "description": "Conectamos cidadãos, organizações e coletores formais",
       "button": "Leia mais",
       "href": "/pagina/comunidad",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978"
+      "image": "https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "proceso",
@@ -43,7 +43,7 @@
       "description": "Quatro passos simples para que seus recicláveis chegem ao destino correto",
       "button": "Leia mais",
       "href": "/pagina/proceso",
-      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
+      "image": "https://images.pexels.com/photos/3836573/pexels-photo-3836573.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "compromiso",
@@ -52,7 +52,7 @@
       "description": "Transparência, equidade e sustentabilidade em cada transação",
       "button": "Leia mais",
       "href": "/pagina/compromiso",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978"
+      "image": "https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "eventos",
@@ -61,7 +61,7 @@
       "description": "Oficinas, palestras e atividades comunitárias sobre reciclagem",
       "button": "Leia mais",
       "href": "/pagina/eventos",
-      "image": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5"
+      "image": "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "recursos",
@@ -70,7 +70,7 @@
       "description": "Guias, tutoriais e materiais educacionais para download",
       "button": "Leia mais",
       "href": "/pagina/recursos",
-      "image": "https://images.unsplash.com/photo-1511632765486-a01980e01a18"
+      "image": "https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=400"
     },
     {
       "id": "faq",
@@ -79,7 +79,7 @@
       "description": "Resolvemos suas dúvidas sobre solicitações, rastreamento e recepção",
       "button": "Leia mais",
       "href": "/pagina/faq",
-      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
+      "image": "https://images.pexels.com/photos/3836573/pexels-photo-3836573.jpeg?auto=compress&cs=tinysrgb&w=400"
     }
   ]
 }

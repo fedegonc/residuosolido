@@ -78,11 +78,11 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
-                    "img-src 'self' data: https: https://tile.openstreetmap.org https://images.unsplash.com; " +
+                    "img-src 'self' data: https: https://tile.openstreetmap.org https://images.pexels.com; " +
                     "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
                     "font-src 'self' data; " +
                     "script-src 'self' https://www.draw.io https://viewer.diagrams.net; " +
-                    "connect-src 'self' https://images.unsplash.com; " +
+                    "connect-src 'self' https://images.pexels.com; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
