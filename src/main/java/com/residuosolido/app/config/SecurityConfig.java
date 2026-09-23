@@ -82,7 +82,7 @@ public class SecurityConfig {
                     "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
                     "font-src 'self' data; " +
                     "script-src 'self' https://www.draw.io https://viewer.diagrams.net; " +
-                    "connect-src 'self'; " +
+                    "connect-src 'self' https://images.unsplash.com; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
