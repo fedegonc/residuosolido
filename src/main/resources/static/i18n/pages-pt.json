@@ -3,7 +3,7 @@
     {
       "slug": "catadores",
       "title": "Sobre os catadores",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%232d6a4f'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
       "intro": "Os catadores são agentes fundamentais na cadeia de reciclagem da fronteira Rivera–Sant'Ana. Coletam, classificam e comercializam materiais recicláveis que de outro modo terminariam em aterros sanitários. Seu trabalho é frequentemente invisibilizado, mas essencial para que a economia circular funcione.",
       "sections": [
         {
@@ -28,7 +28,7 @@
     {
       "slug": "impacto",
       "title": "Nosso impacto",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2340916c'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5",
       "intro": "Cada solicitação coordenada através de EcoSolicitud é um objeto que não termina em um aterro ou céu aberto. O impacto ambiental se mede em volume desviado, não em promessas.",
       "sections": [
         {
@@ -53,7 +53,7 @@
     {
       "slug": "sostenibilidad",
       "title": "Sustentabilidade",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2352b788'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1511632765486-a01980e01a18",
       "intro": "A sustentabilidade deste projeto não depende de um compromisso declarado, mas sim de que o circuito de coleta continue funcionando com o uso diário dos seus usuários.",
       "sections": [
         {
@@ -78,7 +78,7 @@
     {
       "slug": "comunidad",
       "title": "Comunidade",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2374c69d'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978",
       "intro": "Conectamos cidadãos, organizações de acomodação e catadores formais em um ecossistema onde cada um cumpre um papel claro.",
       "sections": [
         {
@@ -99,7 +99,7 @@
     {
       "slug": "proceso",
       "title": "Como funciona",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23a7e957'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
       "intro": "Quatro passos simples. Sem aplicativo móvel obrigatório, sem contas complicadas, sem promessas não cumpridas.",
       "sections": [
         {
@@ -115,7 +115,7 @@
     {
       "slug": "compromiso",
       "title": "Nosso compromisso",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23d8f3dc'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978",
       "intro": "Transparência, equidade e sustentabilidade não são palavras para nós, são operacionais.",
       "sections": [
         {
@@ -136,7 +136,7 @@
     {
       "slug": "eventos",
       "title": "Eventos",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%232d6a4f'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5",
       "intro": "Oficinas comunitárias, palestras com catadores e demonstrações de como classificar materiais recicláveis.",
       "sections": [
         {
@@ -157,7 +157,7 @@
     {
       "slug": "recursos",
       "title": "Recursos",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2340916c'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1511632765486-a01980e01a18",
       "intro": "Guias, tutoriais e cartazes para imprimir. Tudo disponível para download sem registro.",
       "sections": [
         {
@@ -178,7 +178,7 @@
     {
       "slug": "faq",
       "title": "Perguntas frequentes",
-      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2352b788'/%3E%3C/svg%3E",
+      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
       "intro": "Resolvemos as dúvidas mais comuns sobre solicitações, rastreamento e recepção de materiais.",
       "sections": [
         {

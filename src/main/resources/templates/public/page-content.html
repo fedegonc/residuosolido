@@ -6,7 +6,9 @@
   <main layout:fragment="content">
     <article class="page-content">
       <!-- Hero image -->
-      <div class="page-content__hero" th:if="${page.image}" th:style="'background-image: url(' + ${page.image} + ');'"></div>
+      <div class="page-content__hero">
+        <img th:if="${page.image}" th:src="${page.image}" class="page-content__image" th:alt="${page.title}">
+      </div>
 
       <!-- Title and intro -->
       <div class="page-content__header">
