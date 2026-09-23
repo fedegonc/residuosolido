@@ -1,6 +1,7 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.Routes;
+import com.residuosolido.app.util.LandingCardLoader;
 import com.residuosolido.app.util.PageContentLoader;
 
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,14 @@ public class PageController {
 
     public PageController(LocaleResolver localeResolver) {
         this.localeResolver = localeResolver;
+    }
+
+    /** Página de inicio pública (landing page). */
+    @GetMapping({Routes.HOME, Routes.INDEX})
+    public String rootOrIndex(Model model, HttpServletRequest request) {
+        Locale locale = localeResolver.resolveLocale(request);
+        model.addAttribute("cards", LandingCardLoader.loadCards(locale.getLanguage()));
+        return "public/index";
     }
 
     @GetMapping(Routes.PAGE_BY_SLUG)

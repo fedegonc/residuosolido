@@ -66,7 +66,6 @@ public enum ServerMessage {
     FLASH_ORG_PROFILE_LOAD_ERROR("flash.org.profile_load_error"),
     FLASH_ORG_REQUEST_ACCEPTED("flash.org.request_accepted"),
     FLASH_ORG_REQUEST_COMPLETED("flash.org.request_completed"),
-    FLASH_ORG_REQUEST_INVALID_ACTION("flash.org.request_invalid_action"),
     FLASH_ORG_REQUEST_NOT_FOUND("flash.org.request_not_found"),
     FLASH_ORG_REQUEST_NOT_OWNED("flash.org.request_not_owned"),
     FLASH_ORG_REQUEST_REJECTED("flash.org.request_rejected"),

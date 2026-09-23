@@ -164,8 +164,8 @@
         <configuration>
           <excludes>
             <exclude>com/residuosolido/app/config/DataLoader.class</exclude>
-            <exclude>com/residuosolido/app/exception/GlobalExceptionHandler.class</exclude>
-            <exclude>com/residuosolido/app/exception/GlobalErrorController.class</exclude>
+            <exclude>com/residuosolido/app/controller/GlobalExceptionHandler.class</exclude>
+            <exclude>com/residuosolido/app/controller/GlobalErrorController.class</exclude>
             <exclude>com/residuosolido/app/ResiduoSolidoApplication.class</exclude>
           </excludes>
         </configuration>

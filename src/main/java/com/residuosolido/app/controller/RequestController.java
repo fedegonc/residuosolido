@@ -11,9 +11,7 @@ import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.util.LandingCardLoader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,22 +31,24 @@ import java.util.Locale;
  * La creación de solicitudes (con rate limiting de invitados) vive en RequestCreateController.
  */
 @Controller
-public class RequestController extends BaseController {
+public class RequestController {
 
     private final RequestService requestService;
     private final RequestMetricsService requestMetricsService;
     private final CityOrgService cityOrgService;
     private final LocaleResolver localeResolver;
+    private final Messages messages;
 
-    @Autowired
     public RequestController(RequestService requestService,
                              RequestMetricsService requestMetricsService,
                              CityOrgService cityOrgService,
-                             LocaleResolver localeResolver) {
+                             LocaleResolver localeResolver,
+                             Messages messages) {
         this.requestService = requestService;
         this.requestMetricsService = requestMetricsService;
         this.cityOrgService = cityOrgService;
         this.localeResolver = localeResolver;
+        this.messages = messages;
     }
 
     /** Lista las solicitudes del usuario autenticado con stats. */
@@ -56,9 +56,8 @@ public class RequestController extends BaseController {
     @GetMapping(Routes.REQUESTS)
     public String listUserRequests(@RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "20") int size,
-                                    Authentication authentication, Model model,
+                                    @CurrentUser User user, Model model,
                                     HttpServletRequest request) {
-        User user = getCurrentUser(authentication);
         model.addAttribute("user", user);
         model.addAttribute("requests", requestService.getRequestsByUser(user, page, size));
         model.addAttribute("requestStats", requestMetricsService.getUserRequestStats(user));
@@ -72,31 +71,29 @@ public class RequestController extends BaseController {
     /** Elimina una solicitud del usuario (solo si está pendiente). */
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping(Routes.REQUEST)
-    public String deleteRequest(@PathVariable String id, Authentication authentication,
+    public String deleteRequest(@PathVariable String id, @CurrentUser User user,
                                 RedirectAttributes redirectAttributes) {
-        User user = getCurrentUser(authentication);
         requestService.deleteOwnedRequest(id, user);
-        flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_DELETED);
+        messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_DELETED);
         return "redirect:" + Routes.REQUESTS;
     }
 
     /** Muestra el formulario de edición con los datos actuales. */
     @PreAuthorize("hasRole('USER')")
     @GetMapping(Routes.REQUEST_EDIT)
-    public String editRequestForm(@PathVariable String id, Authentication authentication, Model model,
+    public String editRequestForm(@PathVariable String id, @CurrentUser User user, Model model,
                                   RedirectAttributes redirectAttributes) {
         try {
-            User user = getCurrentUser(authentication);
             Request request = requestService.getEditableOwnedRequest(id, user);
             model.addAttribute("request", request);
             model.addAttribute("isEdit", true);
             model.addAttribute("isGuest", false);
             model.addAttribute("cities", cityOrgService.getAvailableCities());
             model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(request.getCity()));
-            addFormAttributes(model);
+            messages.addFormAttributes(model);
             return "users/request-form";
         } catch (IllegalStateException e) {
-            flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_EDIT_PENDING_ONLY);
+            messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_EDIT_PENDING_ONLY);
             return "redirect:" + Routes.REQUESTS;
         }
     }
@@ -111,15 +108,14 @@ public class RequestController extends BaseController {
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
                                 @RequestParam(value = "organizationId", required = false) String organizationId,
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                                Authentication authentication,
+                                @CurrentUser User user,
                                 RedirectAttributes redirectAttributes) {
         try {
-            User user = getCurrentUser(authentication);
             requestService.updateRequest(id, user, ciudad, address, addressReference, materials, organizationId, imageFile);
-            flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_UPDATED);
+            messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_UPDATED);
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("warningMessage", msg(e));
+            redirectAttributes.addFlashAttribute("warningMessage", messages.msg(e));
             return "redirect:" + Routes.REQUESTS;
         }
     }
@@ -127,7 +123,7 @@ public class RequestController extends BaseController {
     /** Toda operación de este controller que falle por no ser dueño de la solicitud cae acá. */
     @ExceptionHandler(SecurityException.class)
     public String handleNotOwned(RedirectAttributes redirectAttributes) {
-        flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_NOT_OWNED);
+        messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_NOT_OWNED);
         return "redirect:" + Routes.REQUESTS;
     }
 }

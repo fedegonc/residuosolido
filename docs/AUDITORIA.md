@@ -225,7 +225,7 @@ de `data-i18n` + `i18n/common/*.json`.
 | `OrgRequestController` | 4 (lista, detalle, transiciones) | Sí |
 | `OrgApiController` | 1 (by-city JSON) | Sí |
 | `DocsController` | 2 (documentos, diagramas) | Sí |
-| `BaseController` | (abstracto, sin endpoints) | Sí |
+| `BaseController` | (eliminado — reemplazado por `Messages` + `@CurrentUser`) | — |
 
 
 ## 5. Templates

@@ -44,8 +44,11 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 **API:**
 - `OrgApiController` — Listado de organizaciones por ciudad (JSON)
 
-**Base:**
-- `BaseController` — Utilidades comunes (usuario actual, mensajes flash)
+**Soporte:**
+- `Messages` — Mensajes i18n/flash compartidos, inyectado por constructor
+- `@CurrentUser` + `CurrentUserArgumentResolver` — Inyección del usuario
+  autenticado en parámetros de handler (reemplazaron a `BaseController`,
+  eliminado: los controllers ya no hereden utilidades)
 
 ### 2. Services (7 archivos)
 
@@ -136,7 +139,7 @@ Dos fuentes de texto, deben coincidir:
 
 1. **`static/i18n/{lang}.json`** (uno por idioma, no por página) — fuente
    única real. `JsonMessageSource` (server-side, claves `_server_*`, usado
-   por `BaseController.msg()` y Thymeleaf `#{...}`) y `UiCopyCatalog`
+   por `Messages.msg()` y Thymeleaf `#{...}`) y `UiCopyCatalog`
    (`@ControllerAdvice`, expone el catálogo completo como `window.uiCopies`
    para JS y como modelo `uiCopies` para templates) parsean cada uno su
    propia copia del JSON al arrancar. Duplicación conocida y dejada a

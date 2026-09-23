@@ -210,7 +210,6 @@
   "_server_flash_org_request_rejected": "Solicitação rejeitada.",
   "_server_flash_org_request_completed": "Solicitação concluída com sucesso.",
   "_server_flash_org_request_not_owned": "Esta solicitação não pertence à sua organização.",
-  "_server_flash_org_request_invalid_action": "Ação inválida.",
   "_server_error_image_invalid_type": "Tipo de arquivo não permitido. Apenas JPG, PNG e GIF.",
   "_server_error_image_invalid_extension": "Extensão de arquivo não permitida. Use .jpg, .png ou .gif.",
   "_server_error_image_too_large": "O arquivo é muito grande. O tamanho máximo é 5MB.",

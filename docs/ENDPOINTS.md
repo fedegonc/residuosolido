@@ -8,7 +8,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/`, `/index` | `AuthController` | Landing page pública |
+| GET | `/`, `/index` | `PageController` | Landing page pública |
 | GET | `/registrarse` | `AuthController` | Formulario de registro |
 | POST | `/registrarse` | `AuthController` | Procesa registro (Usuario u Organización) |
 | GET | `/entrar` | `AuthController` | Formulario de login (POST procesado por Spring Security en la misma URL) |
