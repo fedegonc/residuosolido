@@ -53,7 +53,7 @@
     {
       "slug": "sostenibilidad",
       "title": "Sustentabilidade",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2752b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ESustentabilidade%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2752b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ESostenibilidad%3C/text%3E%3C/svg%3E",
       "intro": "A sustentabilidade deste projeto não depende de um compromisso declarado, mas sim de que o circuito de coleta continue funcionando com o uso diário dos seus usuários.",
       "sections": [
         {
@@ -78,7 +78,7 @@
     {
       "slug": "comunidad",
       "title": "Comunidade",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2774c69d%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EComunidade%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2774c69d%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EComunidad%3C/text%3E%3C/svg%3E",
       "intro": "Conectamos cidadãos, organizações de acomodação e catadores formais em um ecossistema onde cada um cumpre um papel claro.",
       "sections": [
         {
@@ -136,7 +136,7 @@
     {
       "slug": "eventos",
       "title": "Eventos",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%272d6a4f%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EEventos%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%232d6a4f%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EEventos%3C/text%3E%3C/svg%3E",
       "intro": "Oficinas comunitárias, palestras com catadores e demonstrações de como classificar materiais recicláveis.",
       "sections": [
         {
@@ -157,7 +157,7 @@
     {
       "slug": "recursos",
       "title": "Recursos",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2740916c%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ERecursos%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2340916c%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3ERecursos%3C/text%3E%3C/svg%3E",
       "intro": "Guias, tutoriais e cartazes para imprimir. Tudo disponível para download sem registro.",
       "sections": [
         {
@@ -178,7 +178,7 @@
     {
       "slug": "faq",
       "title": "Perguntas frequentes",
-      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2352b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EPerguntas%3C/text%3E%3C/svg%3E",
+      "image": "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27%3E%3Crect fill=%2352b788%27 width=%27800%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27sans-serif%27 font-size=%2748%27 font-weight=%27bold%27 fill=%27white%27%3EPreguntas%3C/text%3E%3C/svg%3E",
       "intro": "Resolvemos as dúvidas mais comuns sobre solicitações, rastreamento e recepção de materiais.",
       "sections": [
         {
