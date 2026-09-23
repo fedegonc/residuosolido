@@ -78,7 +78,7 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
-                    "img-src 'self' data: https: https://tile.openstreetmap.org; " +
+                    "img-src 'self' data: https: https://tile.openstreetmap.org https://images.unsplash.com; " +
                     "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
                     "font-src 'self' data; " +
                     "script-src 'self' https://www.draw.io https://viewer.diagrams.net; " +
