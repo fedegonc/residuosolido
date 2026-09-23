@@ -66,7 +66,7 @@
   });
 
   /* ─── PWA: SW pass-through + prompt de instalación ─── */
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js?v=1');
   var deferredInstall = null;
   function setInstallVisible(v) {
     document.querySelectorAll('[data-install-app]').forEach(function (b) { b.classList.toggle('is-hidden', !v); });
