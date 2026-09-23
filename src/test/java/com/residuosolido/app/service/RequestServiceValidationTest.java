@@ -55,7 +55,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "Calle 123", null,
-                        null, null, null, "org1", null, null)
+                        null, null, null, "org1")
         );
         assertEquals("error.request.materials_required", ex.getMessage());
     }
@@ -69,7 +69,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "Calle 123", null,
-                        Collections.emptyList(), null, null, "org1", null, null)
+                        Collections.emptyList(), null, null, "org1")
         );
         assertEquals("error.request.materials_required", ex.getMessage());
     }
@@ -83,7 +83,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
         existing.setUser(user);
-        existing.setStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
+        existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
                 .thenReturn(java.util.Optional.of(existing));
@@ -106,7 +106,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
         existing.setUser(user);
-        existing.setStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
+        existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
                 .thenReturn(java.util.Optional.of(existing));
@@ -129,7 +129,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, null, null, null)
+                        List.of(MaterialCategory.PLASTICO), null, null, null)
         );
         assertEquals("error.request.organization_required", ex.getMessage());
     }
@@ -141,7 +141,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
         existing.setUser(user);
-        existing.setStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
+        existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
                 .thenReturn(java.util.Optional.of(existing));
@@ -164,7 +164,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null)
+                        List.of(MaterialCategory.PLASTICO), null, null, "org1")
         );
         assertEquals("error.request.address_required", ex.getMessage());
     }
@@ -178,7 +178,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, null, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null)
+                        List.of(MaterialCategory.PLASTICO), null, null, "org1")
         );
         assertEquals("error.request.city_required", ex.getMessage());
     }
@@ -191,7 +191,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         null, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), "", "+59899123456", "org1", null, null)
+                        List.of(MaterialCategory.PLASTICO), "", "+59899123456", "org1")
         );
         assertEquals("error.name.required", ex.getMessage());
     }
@@ -204,7 +204,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         null, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), "Juan", "", "org1", null, null)
+                        List.of(MaterialCategory.PLASTICO), "Juan", "", "org1")
         );
         assertEquals("error.phone.required", ex.getMessage());
     }
@@ -224,7 +224,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request result = requestService.createRequest(
                 user, City.RIVERA, "Calle 123", null,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL),
-                null, null, "org1", null, null);
+                null, null, "org1");
 
         assertNotNull(result);
         assertEquals(2, result.getMaterials().size());
@@ -239,7 +239,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
         existing.setUser(user);
-        existing.setStatus(com.residuosolido.app.enums.RequestStatus.IN_PROGRESS);
+        existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.IN_PROGRESS);
 
         when(requestRepository.findById("req1"))
                 .thenReturn(java.util.Optional.of(existing));
@@ -255,7 +255,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request existing = new com.residuosolido.app.model.Request();
         existing.setId("req1");
         existing.setUser(user);
-        existing.setStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
+        existing.restoreStatus(com.residuosolido.app.enums.RequestStatus.PENDING);
 
         when(requestRepository.findById("req1"))
                 .thenReturn(java.util.Optional.of(existing));

@@ -48,8 +48,6 @@ public enum ServerMessage {
     ERROR_REQUEST_CITIZEN_REQUIRED("error.request.citizen_required"),
     ERROR_REQUEST_CITY_REQUIRED("error.request.city_required"),
     ERROR_REQUEST_COMPLETE_NOT_IN_PROGRESS("error.request.complete_not_in_progress"),
-    ERROR_REQUEST_INVALID_VOLUME("error.request.invalid_volume"),
-    ERROR_REQUEST_INVALID_WEIGHT("error.request.invalid_weight"),
     ERROR_REQUEST_MATERIALS_NOT_ACCEPTED("error.request.materials_not_accepted"),
     ERROR_REQUEST_MATERIALS_REQUIRED("error.request.materials_required"),
     ERROR_REQUEST_ORGANIZATION_NOT_FOUND("error.request.organization_not_found"),

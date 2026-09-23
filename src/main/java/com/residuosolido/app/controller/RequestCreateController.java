@@ -81,8 +81,6 @@ public class RequestCreateController extends BaseController {
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
-                                @RequestParam(value = "estimatedWeight", required = false) String estimatedWeight,
-                                @RequestParam(value = "estimatedVolume", required = false) String estimatedVolume,
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(value = "guestName", required = false) String guestName,
                                 @RequestParam(value = "guestPhone", required = false) String guestPhone,
@@ -112,7 +110,7 @@ public class RequestCreateController extends BaseController {
                 userService.updateProfile(user, null, null, phone, null);
             }
             Request created = requestService.createRequestWithImage(user, ciudad, address, addressReference,
-                    materials, guestName, resolvedGuestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
+                    materials, guestName, resolvedGuestPhone, organizationId, imageFile);
 
             flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATED);
             if (user == null && resolvedGuestPhone != null && created.getTrackingCode() != null) {

@@ -84,7 +84,7 @@ class EndToEndFlowsTest {
         req.setGuestName("Juan");
         req.setGuestPhone("+59899123456");
         req.setTrackingCode("AB12CD34");
-        req.setStatus(RequestStatus.PENDING);
+        req.restoreStatus(RequestStatus.PENDING);
         req.setCreatedAt(LocalDateTime.now());
         req.setCity(City.RIVERA);
         req.setMaterials(List.of(MaterialCategory.PLASTICO));
@@ -237,7 +237,7 @@ class EndToEndFlowsTest {
 
         Request req = new Request();
         req.setId("req1");
-        req.setStatus(RequestStatus.PENDING);
+        req.restoreStatus(RequestStatus.PENDING);
         req.setCreatedAt(LocalDateTime.now());
         req.setCity(City.RIVERA);
         req.setMaterials(List.of(MaterialCategory.PLASTICO));
@@ -280,7 +280,7 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(userService.resolveUser(any())).thenReturn(user);
-        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("error.request.address_required"));
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())

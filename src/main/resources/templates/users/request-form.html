@@ -9,7 +9,7 @@
       needsPhone = true  → usuario logueado SIN teléfono guardado. Muestra userPhone.
                    (mutuamente excluyente con isGuest: needsPhone solo aplica a logueados)
       isEdit     = true  → editando una solicitud existente. Habilita addressReference,
-                   timeSlot, estimatedWeight/Volume e imageFile (NO disponibles al crear,
+                   timeSlot e imageFile (NO disponibles al crear,
                    ver MEJORAS.md #103). Deshabilita city/organizationId.
     Combinaciones reales:
       isGuest=true,  needsPhone=false, isEdit=false → alta como invitado
@@ -107,29 +107,6 @@
                   <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(slot.name())}" th:text="${slot.name()}">MANANA</span>
                 </label>
               </th:block>
-            </div>
-          </div>
-
-          <div th:if="${isEdit}" class="grid grid--2">
-            <div class="field">
-              <label data-i18n="req_form_weight">Peso (opcional)</label>
-              <select id="estimatedWeight" name="estimatedWeight" class="select">
-                <option value="" data-i18n="req_form_select_default">— Sin especificar —</option>
-                <option value="0-5" th:selected="${request.estimatedWeight == '0-5'}" data-i18n="req_form_weight_0_5">Menos de 5 kg</option>
-                <option value="5-20" th:selected="${request.estimatedWeight == '5-20'}" data-i18n="req_form_weight_5_20">5 a 20 kg</option>
-                <option value="20-50" th:selected="${request.estimatedWeight == '20-50'}" data-i18n="req_form_weight_20_50">20 a 50 kg</option>
-                <option value="50+" th:selected="${request.estimatedWeight == '50+'}" data-i18n="req_form_weight_50_plus">Más de 50 kg</option>
-              </select>
-            </div>
-            <div class="field">
-              <label data-i18n="req_form_volume">Volumen (opcional)</label>
-              <select id="estimatedVolume" name="estimatedVolume" class="select">
-                <option value="" data-i18n="req_form_select_default">— Sin especificar —</option>
-                <option value="bag" th:selected="${request.estimatedVolume == 'bag'}" data-i18n="req_form_volume_bag">Una bolsa</option>
-                <option value="box" th:selected="${request.estimatedVolume == 'box'}" data-i18n="req_form_volume_box">Una caja</option>
-                <option value="trunk" th:selected="${request.estimatedVolume == 'trunk'}" data-i18n="req_form_volume_trunk">Un baúl</option>
-                <option value="pickup" th:selected="${request.estimatedVolume == 'pickup'}" data-i18n="req_form_volume_pickup">Camioneta</option>
-              </select>
             </div>
           </div>
 

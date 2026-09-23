@@ -143,7 +143,7 @@ class MongoAggregationUtilsIntegrationTest {
         r.setAddress("Test Address");
         r.setCity(City.RIVERA);
         r.setMaterials(List.of(MaterialCategory.PLASTICO));
-        r.setStatus(status);
+        r.restoreStatus(status);
         if (status == RequestStatus.IN_PROGRESS || status == RequestStatus.COMPLETED) {
             r.setConfirmedSlot(TimeSlot.MANANA);
         }
