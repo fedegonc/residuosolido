@@ -86,7 +86,7 @@ public class SecurityConfig {
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())
-                .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
             )
             // Protección de sesión: cambiar ID en autenticación
             .sessionManagement(session -> session
