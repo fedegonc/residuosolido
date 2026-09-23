@@ -1,4 +1,4 @@
-package com.residuosolido.app.enums;
+package com.residuosolido.app.exception;
 
 /**
  * Fuente única de verdad para TODAS las claves i18n que nacen en el servidor:

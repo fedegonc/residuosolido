@@ -61,7 +61,7 @@ class MvpRegressionTest {
     void registrationRejectsInvalidPin() {
         User input = citizen();
         input.setPassword("12");
-        assertEquals(com.residuosolido.app.enums.ServerMessage.ERROR_REGISTER_PIN_INVALID, new UserRegistrationService(
+        assertEquals(com.residuosolido.app.exception.ServerMessage.ERROR_REGISTER_PIN_INVALID, new UserRegistrationService(
                 mock(UserRepository.class), mock(PasswordEncoder.class)).validateUserRegistration(input));
     }
 

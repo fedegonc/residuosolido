@@ -1,6 +1,6 @@
 package com.residuosolido.app.enums;
 
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.StateException;
 
 /**

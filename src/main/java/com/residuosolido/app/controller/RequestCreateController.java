@@ -3,7 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.config.RateLimiter;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
@@ -99,11 +99,7 @@ public class RequestCreateController extends BaseController {
                 flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_RATE_LIMITED);
                 return "redirect:" + Routes.REQUESTS_NEW + "?error";
             }
-            String resolvedGuestPhone = guestPhone;
-            if (guestPhoneNational != null && !guestPhoneNational.trim().isEmpty()
-                    && guestCountryCode != null && !guestCountryCode.trim().isEmpty()) {
-                resolvedGuestPhone = PhoneNumber.normalize(guestCountryCode, guestPhoneNational, guestDdd);
-            }
+            String resolvedGuestPhone = PhoneNumber.resolve(guestCountryCode, guestPhoneNational, guestDdd, guestPhone);
             if (user != null && !user.hasPhone()) {
                 String phone = PhoneNumber.normalize(userCountryCode, userPhoneNational, userDdd);
                 userService.updateProfile(user, null, null, phone, null);

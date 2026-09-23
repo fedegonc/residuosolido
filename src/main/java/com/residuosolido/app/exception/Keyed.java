@@ -1,6 +1,5 @@
 package com.residuosolido.app.exception;
 
-import com.residuosolido.app.enums.ServerMessage;
 
 /**
  * Contrato tipado para excepciones cuyo mensaje es una clave i18n server-side.

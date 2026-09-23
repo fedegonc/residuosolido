@@ -2,7 +2,6 @@ package com.residuosolido.app.exception;
 
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.controller.BaseController;
-import com.residuosolido.app.enums.ServerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
