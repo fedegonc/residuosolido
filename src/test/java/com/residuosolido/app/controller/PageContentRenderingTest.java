@@ -26,9 +26,9 @@ class PageContentRenderingTest {
 
         assertTrue(html.contains("page-content__hero"), "Should have hero container");
         assertTrue(html.contains("page-content__image"), "Should have image class");
-        assertTrue(html.contains("data:image/svg+xml,%3Csvg"), "Should have SVG data URI");
-        assertFalse(html.contains("&#39;svg"), "Should not have HTML entity escapes");
-        assertFalse(html.contains("&quot;svg"), "Should not have quote escapes");
+        assertTrue(html.contains("src=\"https://"), "Should have https image URL");
+        assertFalse(html.contains("&#39;"), "Should not have HTML entity escapes");
+        assertFalse(html.contains("&quot;"), "Should not have quote escapes");
     }
 
     @Test
@@ -38,7 +38,7 @@ class PageContentRenderingTest {
             .andReturn().getResponse().getContentAsString();
 
         assertTrue(html.contains("class=\"page-content__image\""), "Should have image class attribute");
-        assertTrue(html.contains("src=\"data:image/svg+xml,"), "Should have valid src attribute");
+        assertTrue(html.contains("src=\"https://"), "Should have valid src attribute");
     }
 
     @Test
@@ -53,8 +53,8 @@ class PageContentRenderingTest {
 
             assertTrue(html.contains("page-content__image"),
                 "Page '" + page + "' should have image");
-            assertTrue(html.contains("data:image/svg+xml,"),
-                "Page '" + page + "' should have SVG data URI");
+            assertTrue(html.contains("src=\"https://"),
+                "Page '" + page + "' should have https image URL");
         }
     }
 
@@ -81,11 +81,12 @@ class PageContentRenderingTest {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(html.contains("data:image/svg+xml,%3Csvg xmlns=%27"),
-            "SVG should have URL-encoded quotes (%27)");
+        String src = extractSrcFromHtml(html);
+        assertTrue(src.startsWith("https://"), "Image src should be an https URL");
 
-        assertFalse(html.contains("&#39;svg"), "Should not have HTML entity escapes");
-        assertFalse(html.contains("%2527"), "Should not have double-encoded quotes");
+        assertFalse(src.contains("&#39;") || src.contains("&quot;"),
+            "Image src should not have HTML entity escapes");
+        assertFalse(src.contains("%25"), "Image src should not have double-encoded characters");
     }
 
     private String extractSrcFromHtml(String html) {

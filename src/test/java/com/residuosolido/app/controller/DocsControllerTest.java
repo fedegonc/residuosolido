@@ -55,7 +55,7 @@ class DocsControllerTest {
 
     @Test
     void markdownView_rendersHtmlInsideLayout() throws Exception {
-        mockMvc.perform(get(Routes.DOCS_VIEW, "REQUERIMIENTOS"))
+        mockMvc.perform(get(Routes.DOCS_VIEW, "REQUISITOS"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("doc-content")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("<h")));

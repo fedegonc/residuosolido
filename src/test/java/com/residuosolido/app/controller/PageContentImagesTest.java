@@ -6,11 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,18 +47,15 @@ class PageContentImagesTest {
     }
 
     @Test
-    void imagesAreValidDataUris() {
+    void imagesAreValidUrls() {
         List<Map<String, Object>> pagesList = (List<Map<String, Object>>) pagesEs.get("pages");
 
         for (Map<String, Object> page : pagesList) {
             String slug = (String) page.get("slug");
             String image = (String) page.get("image");
 
-            assertTrue(image.startsWith("data:image/svg+xml,"),
-                "Image for '" + slug + "' must be data:image/svg+xml");
-
-            assertTrue(image.contains("%3Csvg"),
-                "Image for '" + slug + "' must contain URL-encoded SVG tag");
+            assertTrue(image.startsWith("https://"),
+                "Image for '" + slug + "' must be an https URL");
 
             assertFalse(image.contains("&#39;") || image.contains("&quot;"),
                 "Image for '" + slug + "' must NOT have HTML entity escapes");
@@ -69,27 +63,18 @@ class PageContentImagesTest {
     }
 
     @Test
-    void dataUrisCanBeDecoded() {
+    void imageUrlsAreWellFormed() {
         List<Map<String, Object>> pagesList = (List<Map<String, Object>>) pagesEs.get("pages");
-
-        Pattern svgPattern = Pattern.compile("data:image/svg\\+xml,(.+)");
 
         for (Map<String, Object> page : pagesList) {
             String slug = (String) page.get("slug");
             String image = (String) page.get("image");
 
-            var matcher = svgPattern.matcher(image);
-            assertTrue(matcher.find(), "Image for '" + slug + "' must match SVG data URI pattern");
-
-            String encodedSvg = matcher.group(1);
             try {
-                String decodedSvg = URLDecoder.decode(encodedSvg, StandardCharsets.UTF_8);
-                assertTrue(decodedSvg.contains("<svg"),
-                    "Decoded SVG for '" + slug + "' must contain <svg tag");
-                assertTrue(decodedSvg.contains("</svg>"),
-                    "Decoded SVG for '" + slug + "' must contain closing </svg>");
-            } catch (Exception e) {
-                fail("Cannot decode image for '" + slug + "': " + e.getMessage());
+                var uri = new java.net.URI(image);
+                assertNotNull(uri.getHost(), "Image for '" + slug + "' must have a host");
+            } catch (java.net.URISyntaxException e) {
+                fail("Malformed image URL for '" + slug + "': " + e.getMessage());
             }
         }
     }
@@ -102,17 +87,11 @@ class PageContentImagesTest {
             String slug = (String) page.get("slug");
             String image = (String) page.get("image");
 
-            // %27 is correct (URL-encoded single quote)
-            // &#39; or %2527 would be wrong (double-encoded)
-            assertFalse(image.contains("%2527"),
-                "Image for '" + slug + "' has double-encoded quotes (%2527)");
+            assertFalse(image.contains("%25"),
+                "Image for '" + slug + "' has double-encoded characters (%25)");
 
-            assertFalse(image.contains("&#39;"),
-                "Image for '" + slug + "' has HTML entity escapes (&#39;)");
-
-            // Should have %27 for single quotes
-            assertTrue(image.contains("%27"),
-                "Image for '" + slug + "' must have URL-encoded quotes (%27)");
+            assertFalse(image.contains("&#39;") || image.contains("&quot;"),
+                "Image for '" + slug + "' has HTML entity escapes");
         }
     }
 
