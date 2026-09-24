@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
@@ -131,26 +132,50 @@ public class RequestService {
 
     // ========== Transiciones de estado (organización) ==========
 
+    @Transactional
     public void acceptRequest(String id, User org, TimeSlot slot) {
-        Request request = getOwnedOrgRequest(id, org);
-        stateMachine.accept(request, slot);
-        saveWithOptimisticLock(request);
-        // Después del save: si la transición falla por concurrencia, no se
-        // notifica un estado que no quedó persistido.
-        notificationService.notifyRequester(request, NotificationType.ACCEPTED);
+        logger.info("REQUEST_ACCEPT_STARTED: id={}, orgId={}, slot={}", id, org.getId(), slot);
+        try {
+            Request request = getOwnedOrgRequest(id, org);
+            stateMachine.accept(request, slot);
+            saveWithOptimisticLock(request);
+            logger.info("REQUEST_ACCEPT_SAVED: id={}, newStatus={}", id, request.getStatus());
+            notificationService.notifyRequester(request, NotificationType.ACCEPTED);
+            logger.info("REQUEST_ACCEPT_SUCCESS: id={}, notified", id);
+        } catch (Exception e) {
+            logger.error("REQUEST_ACCEPT_FAILED: id={}, error={}", id, e.getMessage(), e);
+            throw e;
+        }
     }
 
+    @Transactional
     public void rejectRequest(String id, User org) {
-        Request request = getOwnedOrgRequest(id, org);
-        stateMachine.reject(request);
-        saveWithOptimisticLock(request);
-        notificationService.notifyRequester(request, NotificationType.REJECTED);
+        logger.info("REQUEST_REJECT_STARTED: id={}, orgId={}", id, org.getId());
+        try {
+            Request request = getOwnedOrgRequest(id, org);
+            stateMachine.reject(request);
+            saveWithOptimisticLock(request);
+            logger.info("REQUEST_REJECT_SAVED: id={}, newStatus={}", id, request.getStatus());
+            notificationService.notifyRequester(request, NotificationType.REJECTED);
+            logger.info("REQUEST_REJECT_SUCCESS: id={}, notified", id);
+        } catch (Exception e) {
+            logger.error("REQUEST_REJECT_FAILED: id={}, error={}", id, e.getMessage(), e);
+            throw e;
+        }
     }
 
+    @Transactional
     public void completeRequest(String id, User org) {
-        Request request = getOwnedOrgRequest(id, org);
-        stateMachine.complete(request);
-        saveWithOptimisticLock(request);
+        logger.info("REQUEST_COMPLETE_STARTED: id={}, orgId={}", id, org.getId());
+        try {
+            Request request = getOwnedOrgRequest(id, org);
+            stateMachine.complete(request);
+            saveWithOptimisticLock(request);
+            logger.info("REQUEST_COMPLETE_SUCCESS: id={}, newStatus={}", id, request.getStatus());
+        } catch (Exception e) {
+            logger.error("REQUEST_COMPLETE_FAILED: id={}, error={}", id, e.getMessage(), e);
+            throw e;
+        }
     }
 
     private Request saveWithOptimisticLock(Request request) {
