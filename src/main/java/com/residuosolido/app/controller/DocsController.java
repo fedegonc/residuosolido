@@ -110,6 +110,12 @@ public class DocsController {
         return "docs/diagramas";
     }
 
+    @GetMapping(Routes.DOCS_HUB)
+    public String viewHub(Model model) {
+        model.addAttribute("diagrams", DIAGRAMS);
+        return "docs/hub";
+    }
+
     private String toMxgraphAttr(String baseName) {
         try {
             File file = DOCS_DIR.resolve("diagrams/" + baseName + ".drawio").normalize().toFile();
