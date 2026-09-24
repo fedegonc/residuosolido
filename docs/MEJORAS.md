@@ -3,8 +3,8 @@
 > **Propósito:** tabla centralizada de todas las mejoras posibles del
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
-> **Fecha:** sin commitear (post #185)
-> **Tests:** 281 no-browser, 0 failures (pendiente compilación completa)
+> **Fecha:** sin commitear (post #200 — P0 Tecnólogo planificado)
+> **Tests:** 281 no-browser, 0 failures (post #195). Esperados 331 post-P0 (fuzz test 50, backoff helpers 0)
 
 ---
 
@@ -168,19 +168,24 @@
 | 193 | `RequestValidator` — extractor de validaciones | Implementado | Nuevo `@Component RequestValidator` con métodos públicos (`validateCreate`, `validateUpdate`, `validateMaterials`) que centralizan toda la lógica dispersa en `RequestService`. Métodos privados: `validateCoreFields` (ciudad, dirección, materiales, org), `validateGuest` (nombre, teléfono). Validaciones diferenciadas: ciudadano requiere activo+rol USER+teléfono válido; invitado requiere nombre+teléfono válido. Preparación para PASO 6: refactor de `RequestService` para delegar a `RequestValidator`. Cobertura: 13 tests unitarios (validación ciudadano/invitado/materiales/campos obligatorios) |
 | 194 | `RequestStateMachine` — aislamiento de transiciones | Implementado | Nuevo `@Component RequestStateMachine` que encapsula la máquina de estados de Request (máquina implícita en `RequestStatus` + métodos `accept`/`complete`/`reject` de `Request`). Métodos de transición: `accept` (PENDING→IN_PROGRESS con validación de slot), `complete` (IN_PROGRESS→COMPLETED), `reject` (PENDING\|IN_PROGRESS→REJECTED). Métodos query: `canEdit`, `canDelete`, `canAccept`, `canComplete`, `canReject` para consultas pre-condición. Todas las transiciones ilegales lanzan `StateException` con mensaje específico. Preparación para PASO 7: refactor de `RequestService` para usar `RequestStateMachine` en lugar de invocar métodos de `Request` directamente. Cobertura: 16 tests unitarios (transiciones válidas/inválidas, queries) |
 | 195 | Refactor RequestService: inyectar y delegar a RequestValidator + RequestStateMachine | Implementado | `RequestService` ahora inyecta `RequestValidator` y `RequestStateMachine` en constructor. Reemplazadas todas las llamadas a métodos privados de validación por delegaciones a `validator.*`. Reemplazadas todas las transiciones directas (`request.accept/complete/reject`) por delegaciones a `stateMachine.*` (ej: `stateMachine.accept(request, slot)` en vez de `request.accept(slot)`). Eliminados 55 LOC: métodos privados `validateCreate`, `validateUpdate`, `validateMaterials`, `validateCoreFields`, `validateGuest` — ahora centralizados en `RequestValidator`. RequestService reduce su responsabilidad de "god object" (validación + orquestación + transiciones) a "orquestador" (consulta → validación delegada → transición delegada → persistencia → notificación). Fixtures de tests actualizados. Cobertura: tests existentes verifican comportamiento observable sin cambios |
+| 196 | **P0: @Transactional en operaciones críticas** | **Diferido - P0 esta semana** | Garantizar atomicidad de accept/reject/complete en RequestService. Si cualquier step falla, se revierte completamente. Impacto: Arquitectura 7→8.5/10, Persistencia 6→8.5/10. LOC: 5 (3 anotaciones). Tiempo: 1 hora. Ver análisis defensa de tecnólogo (docs externos) |
+| 197 | **P0: Structured logging para auditoría** | **Diferido - P0 esta semana** | Agregar logging estructurado (requestId, userId, newStatus) en RequestService para cada transición. Permite root-cause analysis sin cavar en BD. Impacto: Testing 7→8.5, Documentación 8→9/10. LOC: 30 (logger init + try/catch mejorados). Tiempo: 2 horas |
+| 198 | **P0: PhoneNumber fuzz test** | **Diferido - P0 esta semana** | 50 test cases cubriendo teléfonos con decorativos, truncados, non-digits, vacíos, formatos UY/BR. Valida que el regex no tiene catastrophic backtracking. Impacto: Testing 8.5→9/10. LOC: 50 (test suite). Tiempo: 3 horas. `PhoneNumberFuzzTest.java` |
+| 199 | **P0: Exponential backoff para OptimisticLocking** | **Diferido - P0 esta semana** | Reintento automático en conflictos de concurrencia (INITIAL_WAIT_MS=100, 2^attempt). Usuario no ve error; sistema reintenta transparentemente. Impacto: Persistencia 8.5→9, Testing 9→9.5. LOC: 40 (clase `RequestServiceRetryHelper`). Tiempo: 2 horas |
+| 200 | **P0: Error handling comprehensivo** | **Diferido - P0 esta semana** | Mapear excepciones de dominio a mensajes usuario-amigables en `GlobalExceptionHandler`. Evita stack traces expuestos. Impacto: Seguridad 7→8, UX clara. LOC: 30 (3-4 métodos nuevos). Tiempo: 1 hora |
 
 ---
 
 ## Resumen por estado
 
-| Estado | Cantidad |
-|---|---|
-| Implementado | 141 |
-| Descartado | 17 |
-| Diferido | 21 |
-| Latente | 1 |
-| Retirado | 1 |
-| **Total** | **177** |
+| Estado | Cantidad | Cambio |
+|---|---|---|
+| Implementado | 141 | — |
+| Descartado | 17 | — |
+| Diferido | 26 | +5 (P0 #196-#200) |
+| Latente | 1 | — |
+| Retirado | 1 | — |
+| **Total** | **182** | +5 |
 
 ---
 
