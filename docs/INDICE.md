@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: 2026-09-23 — borrado de peso/volumen estimados y RequestValidator muerto (#182)  
-> Tests: 251 no-browser, 7 failures conocidos (`PageContentImagesTest`/`PageContentRenderingTest` sobre `catadores`, pre-existentes #177; browser tests con fallos por selectores desincronizados — ver MEJORAS.md #180)
+> Tests: 383 no-browser, 7 failures conocidos (`PageContentImagesTest`/`PageContentRenderingTest` sobre `catadores`, pre-existentes #177; browser tests con fallos por selectores desincronizados — ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
@@ -26,6 +26,7 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `README.md` | Presentacion general, instalacion, stack tecnologico y enlaces a documentacion. | Actualizado |
 | `docs/INDICE.md` | Este archivo. Mapa de toda la documentacion. | Actualizado |
 | `docs/REQUISITOS.md` | Catalogo canonico de RF, RN y criterio de alcance. Fuente de verdad para la especificacion. | Actualizado |
+| `docs/REQUERIMIENTOS.md` | Trazabilidad RF/RN → implementación (clases/rutas/templates) → verificación (tests/escenarios del sandbox). | Actualizado |
 | `docs/DEFENSA.md` | Guia para la defensa de tesis: argumento, exposicion, preguntas esperadas, limitaciones (§7, fusionado desde `LIMITACIONES.md`). | Actualizado |
 | `docs/TRADEOFFS.md` | Las 26 decisiones de diseno con alternativas y justificacion. | Actualizado |
 | `docs/DIAGRAMAS.md` | Diagramas UML (clases, ER, secuencia, estados, casos de uso) y flujos. | Actualizado |

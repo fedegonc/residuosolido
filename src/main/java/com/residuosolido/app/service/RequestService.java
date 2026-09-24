@@ -7,6 +7,7 @@ import com.residuosolido.app.exception.OwnershipException;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.NotificationType;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
@@ -41,13 +42,22 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final LocalImageService imageService;
     private final CityOrgService cityOrgService;
+    private final NotificationService notificationService;
+    private final RequestValidator validator;
+    private final RequestStateMachine stateMachine;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
-                          CityOrgService cityOrgService) {
+                          CityOrgService cityOrgService,
+                          NotificationService notificationService,
+                          RequestValidator validator,
+                          RequestStateMachine stateMachine) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.cityOrgService = cityOrgService;
+        this.notificationService = notificationService;
+        this.validator = validator;
+        this.stateMachine = stateMachine;
     }
 
     // ========== Crear ==========
@@ -55,7 +65,7 @@ public class RequestService {
     public Request createRequest(User user, City city, String address, String addressReference,
                                   List<MaterialCategory> materials, String guestName, String guestPhone,
                                   String organizationId) {
-        validateCreate(user, city, address, materials, guestName, guestPhone, organizationId);
+        validator.validateCreate(user, city, address, materials, guestName, guestPhone, organizationId);
 
         Request request = user != null
                 ? Request.forCitizen(user)
@@ -63,7 +73,7 @@ public class RequestService {
         request.updateDraft(city, address, addressReference, materials);
 
         User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
-        validateMaterials(org, request.getMaterials());
+        validator.validateMaterials(org, request.getMaterials());
         request.assignOrganization(org);
 
         return requestRepository.save(request);
@@ -90,10 +100,10 @@ public class RequestService {
                                   String addressReference, List<MaterialCategory> materials,
                                   String organizationId, MultipartFile imageFile) {
         Request request = getEditableOwnedRequest(id, user);
-        validateUpdate(city, address, materials, organizationId);
+        validator.validateUpdate(city, address, materials, organizationId);
 
         User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
-        validateMaterials(org, materials != null ? materials : List.of());
+        validator.validateMaterials(org, materials != null ? materials : List.of());
 
         request.updateDraft(city, address, addressReference, materials);
         request.assignOrganization(org);
@@ -123,19 +133,23 @@ public class RequestService {
 
     public void acceptRequest(String id, User org, TimeSlot slot) {
         Request request = getOwnedOrgRequest(id, org);
-        request.accept(slot);
+        stateMachine.accept(request, slot);
         saveWithOptimisticLock(request);
+        // Después del save: si la transición falla por concurrencia, no se
+        // notifica un estado que no quedó persistido.
+        notificationService.notifyRequester(request, NotificationType.ACCEPTED);
     }
 
     public void rejectRequest(String id, User org) {
         Request request = getOwnedOrgRequest(id, org);
-        request.reject();
+        stateMachine.reject(request);
         saveWithOptimisticLock(request);
+        notificationService.notifyRequester(request, NotificationType.REJECTED);
     }
 
     public void completeRequest(String id, User org) {
         Request request = getOwnedOrgRequest(id, org);
-        request.complete();
+        stateMachine.complete(request);
         saveWithOptimisticLock(request);
     }
 
@@ -226,60 +240,6 @@ public class RequestService {
             logger.warn("Filtro de status inválido ignorado: {}", status);
             return getRequestsByOrganization(organization, page, size);
         }
-    }
-
-    // ========== Validación ==========
-
-    void validateCreate(User user, City city, String address,
-                                List<MaterialCategory> materials, String guestName, String guestPhone,
-                                String organizationId) {
-        validateCoreFields(city, address, materials, organizationId);
-        if (user == null) {
-            validateGuest(guestName, guestPhone);
-        } else {
-            if (!user.isActive() || user.getRole() != Role.USER) {
-                throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
-            }
-            if (!PhoneNumber.isValid(user.getPhone())) {
-                throw new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
-            }
-        }
-    }
-
-    void validateUpdate(City city, String address, List<MaterialCategory> materials, String organizationId) {
-        validateCoreFields(city, address, materials, organizationId);
-    }
-
-    private void validateCoreFields(City city, String address, List<MaterialCategory> materials, String organizationId) {
-        if (city == null) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
-        }
-        if (address == null || address.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_ADDRESS_REQUIRED);
-        }
-        if (materials == null || materials.isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_REQUIRED);
-        }
-        if (organizationId == null || organizationId.isBlank()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
-        }
-    }
-
-    void validateMaterials(User organization, List<MaterialCategory> materials) {
-        if (organization.getAcceptedMaterials() == null || materials == null || materials.isEmpty()
-                || materials.stream().anyMatch(m -> m == null || !organization.getAcceptedMaterials().contains(m))) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_NOT_ACCEPTED);
-        }
-    }
-
-    private void validateGuest(String guestName, String guestPhone) {
-        if (guestName == null || guestName.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_NAME_REQUIRED);
-        }
-        if (guestName.trim().length() > 100) {
-            throw new ValidationException(ServerMessage.ERROR_NAME_TOO_LONG);
-        }
-        PhoneNumber.normalize(guestPhone);
     }
 
     // ========== Util ==========

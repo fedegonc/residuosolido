@@ -54,6 +54,28 @@ class DocsControllerTest {
     }
 
     @Test
+    void markdownView_rendersHtmlInsideLayout() throws Exception {
+        mockMvc.perform(get(Routes.DOCS_VIEW, "REQUERIMIENTOS"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("doc-content")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<h")));
+    }
+
+    @Test
+    void markdownView_nonExistent_returns404() throws Exception {
+        mockMvc.perform(get(Routes.DOCS_VIEW, "NO-EXISTE"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void markdownView_doesNotBreakOnDiagramsRoute() throws Exception {
+        // /docs/diagramas es una ruta literal, no un {file}: no debe caer en viewMarkdown.
+        mockMvc.perform(get(Routes.DOCS_DIAGRAMS_VIEW))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("mxgraph")));
+    }
+
+    @Test
     void drawioFile_servedWithXmlContentType() throws Exception {
         mockMvc.perform(get(Routes.DOCS_DIAGRAM, "figura4-secuencia"))
                 .andExpect(status().isOk())
@@ -63,7 +85,8 @@ class DocsControllerTest {
     @Test
     void allDrawioFiles_servedCorrectly() throws Exception {
         for (String fig : new String[]{"figura1-casos-uso", "figura2-modelo-logico",
-                "figura3-clases", "figura4-secuencia"}) {
+                "figura3-clases", "figura4-secuencia", "figura4-estados",
+                "figura5-gitflow", "figura6-notificaciones"}) {
             mockMvc.perform(get("/docs/diagrams/" + fig + ".drawio"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(org.springframework.http.MediaType.APPLICATION_XML));

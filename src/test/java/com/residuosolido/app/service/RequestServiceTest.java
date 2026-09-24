@@ -3,6 +3,7 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.NotificationType;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.exception.OwnershipException;
@@ -35,6 +36,7 @@ class RequestServiceTest {
     private RequestRepository requestRepository;
     private LocalImageService imageService;
     private CityOrgService cityOrgService;
+    private NotificationService notificationService;
     private RequestService requestService;
 
     @BeforeEach
@@ -42,7 +44,8 @@ class RequestServiceTest {
         requestRepository = mock(RequestRepository.class);
         imageService = mock(LocalImageService.class);
         cityOrgService = mock(CityOrgService.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService);
+        notificationService = mock(NotificationService.class);
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, notificationService, new RequestValidator(), new RequestStateMachine());
     }
 
     private User citizen(String id) {
@@ -67,6 +70,32 @@ class RequestServiceTest {
         r.assignOrganization(org);
         r.restoreStatus(status);
         return r;
+    }
+
+    // ───────────────────── Listados (delegación al repositorio) ─────────────────────
+
+    @Test
+    void getRequestsByUser_delegatesWithPagination() {
+        User user = citizen("u1");
+        when(requestRepository.findByUser(user,
+                org.springframework.data.domain.PageRequest.of(0, 10)))
+                .thenReturn(List.of());
+
+        assertTrue(requestService.getRequestsByUser(user, 0, 10).isEmpty());
+        verify(requestRepository).findByUser(user,
+                org.springframework.data.domain.PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getRequestsByOrganization_delegatesWithPagination() {
+        User o = org("o1");
+        when(requestRepository.findByOrganizationOrderByCreatedAtDesc(o,
+                org.springframework.data.domain.PageRequest.of(1, 5)))
+                .thenReturn(List.of());
+
+        assertTrue(requestService.getRequestsByOrganization(o, 1, 5).isEmpty());
+        verify(requestRepository).findByOrganizationOrderByCreatedAtDesc(o,
+                org.springframework.data.domain.PageRequest.of(1, 5));
     }
 
     // ───────────────────── getOwnedRequest ─────────────────────
@@ -165,6 +194,21 @@ class RequestServiceTest {
         assertEquals(RequestStatus.IN_PROGRESS, existing.getStatus());
         assertEquals(TimeSlot.MANANA, existing.getConfirmedSlot());
         verify(requestRepository).save(existing);
+        verify(notificationService).notifyRequester(existing, NotificationType.ACCEPTED);
+    }
+
+    @Test
+    void acceptRequest_concurrentConflict_doesNotNotify() {
+        User organization = org("org1");
+        Request existing = orgRequestOf(organization, RequestStatus.PENDING);
+        when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
+        when(requestRepository.save(any(Request.class)))
+                .thenThrow(new OptimisticLockingFailureException("stale version"));
+
+        assertThrows(StateException.class,
+                () -> requestService.acceptRequest("req1", organization, TimeSlot.MANANA));
+        // regla del dominio: si el save falla, no se notifica un estado no persistido
+        verify(notificationService, never()).notifyRequester(any(), any());
     }
 
     @Test
@@ -200,6 +244,7 @@ class RequestServiceTest {
         requestService.rejectRequest("req1", organization);
 
         assertEquals(RequestStatus.REJECTED, existing.getStatus());
+        verify(notificationService).notifyRequester(existing, NotificationType.REJECTED);
     }
 
     @Test

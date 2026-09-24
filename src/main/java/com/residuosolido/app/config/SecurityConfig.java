@@ -50,7 +50,7 @@ public class SecurityConfig {
                 // API endpoints para usuarios autenticados
                 .requestMatchers(Routes.API_ANY).authenticated()
                 // Rutas de usuarios regulares
-                .requestMatchers(Routes.REQUESTS, "/solicitudes/**").hasRole("USER")
+                .requestMatchers(Routes.REQUESTS, "/solicitudes/**", Routes.NOTIFICATIONS).hasRole("USER")
                 // Rutas de organización
                 .requestMatchers("/acopio/**", Routes.ORG_PROFILE).hasRole("ORGANIZATION")
                 // Otras rutas requieren autenticación (ÚLTIMO)
@@ -80,9 +80,9 @@ public class SecurityConfig {
                     "default-src 'self'; " +
                     "img-src 'self' data: https: https://tile.openstreetmap.org https://images.unsplash.com; " +
                     "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
-                    "font-src 'self' data; " +
+                    "font-src 'self' data: https://viewer.diagrams.net; " +
                     "script-src 'self' https://www.draw.io https://viewer.diagrams.net; " +
-                    "connect-src 'self' https://images.unsplash.com; " +
+                    "connect-src 'self' https://images.unsplash.com https://viewer.diagrams.net; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
                 .frameOptions(frame -> frame.sameOrigin())

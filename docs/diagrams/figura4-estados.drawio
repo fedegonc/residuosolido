@@ -10,7 +10,7 @@
         <mxCell id="title" value="Figura 4. Máquina de estados UML 2.5 — ciclo de vida de Request" style="text;html=0;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#173d2b;align=left;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40" y="25" width="1220" height="38" />
         </mxCell>
-        <mxCell id="subtitle" value="UML 2.5 State Machine · Sección 14 · Fuente: RequestStatus.java (patrón State) y RequestTransitionService.java" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
+        <mxCell id="subtitle" value="UML 2.5 State Machine · Sección 14 · Fuente: RequestStatus.java (máquina de estados) y RequestService.java" style="text;html=0;fontFamily=Helvetica;fontSize=14;fontColor=#48564d;align=left;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40" y="65" width="1220" height="25" />
         </mxCell>
 
@@ -130,8 +130,8 @@
           <mxGeometry as="geometry" x="530" y="640" width="360" height="110" />
         </mxCell>
 
-        <mxCell id="note_notify" value="Nota — Notificaciones:&#10;las notificaciones automáticas están fuera&#10;del alcance del MVP. El teléfono queda&#10;como dato de contacto manual." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#ffffff;strokeColor=#dce5de;strokeWidth=1;rounded=0;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="930" y="640" width="240" height="90" />
+        <mxCell id="note_notify" value="Nota — Notificaciones:&#10;accept() y reject() persisten una Notification&#10;in-app para el solicitante registrado DESPUÉS&#10;del save (si el save falla por concurrencia,&#10;no se notifica). complete() no notifica.&#10;El invitado no tiene bandeja: consulta por&#10;teléfono + código de rastreo." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#ffffff;strokeColor=#dce5de;strokeWidth=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="930" y="630" width="280" height="130" />
         </mxCell>
 
       </root>

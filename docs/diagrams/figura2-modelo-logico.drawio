@@ -20,7 +20,7 @@
         <mxCell id="request" value="SOLICITUD" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="810.0" y="150.0" width="380.0" height="370.0" />
         </mxCell>
-        <mxCell id="request-data" value="id {identificador}&#10;estado&#10;dirección; referencia de dirección&#10;ciudad&#10;materiales [colección]&#10;peso estimado; volumen estimado&#10;nombre y teléfono del invitado&#10;código de rastreo (invitados)&#10;franja horaria confirmada&#10;imagen [opcional]&#10;fecha de creación" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="request" vertex="1">
+        <mxCell id="request-data" value="id {identificador}&#10;estado&#10;dirección; referencia de dirección&#10;ciudad&#10;materiales [colección]&#10;nombre y teléfono del invitado&#10;código de rastreo (invitados)&#10;franja horaria confirmada&#10;imagen [opcional]&#10;versión (locking optimista)&#10;fecha de creación" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="request" vertex="1">
           <mxGeometry as="geometry" x="0.0" y="42.0" width="380.0" height="328.0" />
         </mxCell>
         <mxCell id="creates" value="crea" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=14;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.27;entryX=0;entryY=0.226;exitX=1.0;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.226;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.0;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0;entryY=0.226;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" source="account" target="request">
@@ -49,14 +49,46 @@
             <mxPoint x="-192.0" y="-50.0" as="offset" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="notification" value="NOTIFICACIÓN" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60.0" y="560.0" width="330.0" height="190.0" />
+        </mxCell>
+        <mxCell id="notification-data" value="id {identificador}&#10;tipo: ACCEPTED | REJECTED&#10;solicitudId [referencia por valor]&#10;franja confirmada [opcional]&#10;leída&#10;fecha de creación" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=15;fontColor=#25362b;" parent="notification" vertex="1">
+          <mxGeometry as="geometry" x="0.0" y="42.0" width="330.0" height="148.0" />
+        </mxCell>
+        <mxCell id="notifies" value="recibe" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=14;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="account" target="notification">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="notifies-a" value="1&#10;destinatario" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="notifies" vertex="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="12.0" y="-40.0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="notifies-b" value="0..*&#10;notificaciones" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=left;" parent="notifies" vertex="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="12.0" y="10.0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="references" value="referencia" style="endArrow=none;startArrow=none;html=0;fontFamily=Helvetica;fontSize=14;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;dashed=1;exitX=1;exitY=0.3;entryX=0;entryY=0.85;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="notification" target="request">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="references-a" value="0..1&#10;solicitudId&#10;(por valor, no FK)" style="text;html=0;fontFamily=Helvetica;fontSize=13;align=left;" parent="references" vertex="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="12.0" y="-30.0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="references-b" value="0..*" style="text;html=0;fontFamily=Helvetica;fontSize=14;align=right;" parent="references" vertex="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint x="-40.0" y="10.0" as="offset" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="roles" value="RESTRICCIÓN DE ROLES&#10;Cada cuenta válida tiene un único rol.&#10;Usuario: USER. Organización: ORGANIZATION.&#10;Son alternativas excluyentes, no entidades&#10;ni colecciones independientes.&#10;La relación «recibe» corresponde&#10;al rol ORGANIZATION." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fillColor=#fafbf9;strokeColor=#87948a;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="60.0" y="510.0" width="440.0" height="185.0" />
+          <mxGeometry as="geometry" x="810.0" y="545.0" width="380.0" height="160.0" />
         </mxCell>
-        <mxCell id="guest-note" value="SOLICITUD SIN CUENTA&#10;Invitado no es una entidad independiente.&#10;Si no existe solicitante registrado (0), se&#10;guardan guestName, guestPhone y trackingCode&#10;en Solicitud. El código de rastreo es privado&#10;y se entrega al invitado al crear la solicitud.&#10;El rastreo requiere teléfono + código; el&#10;teléfono solo no expone solicitudes." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fillColor=#fafbf9;strokeColor=#87948a;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="60.0" y="720.0" width="440.0" height="175.0" />
+        <mxCell id="guest-note" value="SOLICITUD SIN CUENTA&#10;Invitado no es una entidad independiente.&#10;Si no existe solicitante registrado (0), se&#10;guardan guestName, guestPhone y trackingCode&#10;en Solicitud. El rastreo requiere teléfono +&#10;código; el teléfono solo no expone solicitudes.&#10;El invitado no recibe notificaciones: sin&#10;cuenta no tiene bandeja (canal externo diferido)." style="shape=note;size=15;whiteSpace=wrap;html=0;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fillColor=#fafbf9;strokeColor=#87948a;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="810.0" y="720.0" width="380.0" height="170.0" />
         </mxCell>
-        <mxCell id="legend" value="Lectura: una solicitud tiene 0..1 usuario registrado y 1 organización; una organización puede tener 0..* solicitudes.&#10;Las cardinalidades describen registros válidos creados por la aplicación; MongoDB no impone claves foráneas.&#10;No se modelan coordenadas de la organización ni cantidades por material: el código guarda ciudad y estimaciones globales de peso/volumen." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=13;fontColor=#344239;" parent="1" vertex="1">
-          <mxGeometry as="geometry" x="40.0" y="900.0" width="1180.0" height="65.0" />
+        <mxCell id="legend" value="Lectura: una solicitud tiene 0..1 usuario registrado y 1 organización; una organización puede tener 0..* solicitudes.&#10;Un usuario recibe 0..* notificaciones; cada notificación referencia su solicitud por valor (sobrevive si se borra).&#10;Las cardinalidades describen registros válidos creados por la aplicación; MongoDB no impone claves foráneas." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=13;fontColor=#344239;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="40.0" y="905.0" width="1180.0" height="60.0" />
         </mxCell>
         <mxCell id="source" value="Fuente: elaboración propia a partir de User, Request y RequestService. Se omiten detalles físicos de MongoDB." style="text;html=0;whiteSpace=wrap;align=left;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="40.0" y="970.0" width="1180.0" height="28.0" />

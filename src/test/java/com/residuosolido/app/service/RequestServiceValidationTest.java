@@ -35,7 +35,8 @@ class RequestServiceValidationTest {
         requestRepository = mock(RequestRepository.class);
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService);
+        requestService = new RequestService(requestRepository, imageService, cityOrgService,
+                mock(NotificationService.class), new RequestValidator(), new RequestStateMachine());
     }
 
     private User citizen() {

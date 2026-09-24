@@ -59,7 +59,7 @@ public final class PhoneNumber {
      * Devuelve un String en formato E.164 completo.
      */
     public static String normalize(String dialCode, String national, String ddd) {
-        if (!COUNTRY_RULES.containsKey(dialCode)) {
+        if (dialCode == null || !COUNTRY_RULES.containsKey(dialCode)) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_UNSUPPORTED_COUNTRY);
         }
         if (national == null || national.trim().isEmpty()) {

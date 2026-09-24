@@ -98,9 +98,8 @@ class MvpRegressionTest {
     void authenticatedRequestRequiresContactPhone() {
         User user = citizen();
         user.setPhone(null);
-        RequestService svc = new RequestService(mock(RequestRepository.class), mock(LocalImageService.class),
-                mock(CityOrgService.class));
-        assertThrows(IllegalArgumentException.class, () -> svc.validateCreate(
+        RequestValidator validator = new RequestValidator();
+        assertThrows(IllegalArgumentException.class, () -> validator.validateCreate(
                 user, City.RIVERA, "Dirección de prueba", List.of(MaterialCategory.PAPEL), null, null, "org"));
     }
 
@@ -109,7 +108,8 @@ class MvpRegressionTest {
         RequestRepository repo = mock(RequestRepository.class);
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
-        RequestService service = new RequestService(repo, mock(LocalImageService.class), cities);
+        RequestService service = new RequestService(repo, mock(LocalImageService.class), cities,
+                mock(NotificationService.class), new RequestValidator(), new RequestStateMachine());
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org"));
         verifyNoInteractions(repo);
@@ -122,7 +122,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, new LocalImageService(images.toString(), repo),
-                cities);
+                cities, mock(NotificationService.class), new RequestValidator(), new RequestStateMachine());
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", file));

@@ -69,6 +69,55 @@ class CityOrgServiceTest {
     }
 
     @Test
+    void findOrganizationByIdAndCity_orgWithoutCity_throwsNotInCity() {
+        User org = org("org1", City.RIVERA);
+        org.setCity(null);
+        when(userRepository.findById("org1")).thenReturn(Optional.of(org));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.findOrganizationByIdAndCity("org1", City.RIVERA));
+    }
+
+    @Test
+    void findOrganizationByIdAndCity_unavailableOrg_throws() {
+        // Org existe y es de la ciudad, pero no está disponible
+        // (perfil incompleto, sin materiales, teléfono inválido o inactiva).
+        User org = org("org1", City.RIVERA);
+        org.setAcceptedMaterials(List.of());
+        when(userRepository.findById("org1")).thenReturn(Optional.of(org));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.findOrganizationByIdAndCity("org1", City.RIVERA));
+    }
+
+    @Test
+    void findOrganizationByIdAndCity_inactiveOrg_throwsUnavailable() {
+        User org = org("org1", City.RIVERA);
+        org.setActive(false);
+        when(userRepository.findById("org1")).thenReturn(Optional.of(org));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.findOrganizationByIdAndCity("org1", City.RIVERA));
+    }
+
+    @Test
+    void findOrganizationByIdAndCity_orgWithoutPhone_throwsUnavailable() {
+        // setPhone valida al setear: el único teléfono "inválido" persistible
+        // es null (dato legacy anterior a la validación).
+        User org = org("org1", City.RIVERA);
+        org.setPhone(null);
+        when(userRepository.findById("org1")).thenReturn(Optional.of(org));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.findOrganizationByIdAndCity("org1", City.RIVERA));
+    }
+
+    @Test
+    void getOrganizationsByCity_filtersOutOrgWithoutMaterials() {
+        User noMaterials = org("org3", City.RIVERA);
+        noMaterials.setAcceptedMaterials(List.of());
+        when(userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, City.RIVERA, true))
+                .thenReturn(List.of(noMaterials));
+        assertTrue(service.getOrganizationsByCity(City.RIVERA).isEmpty());
+    }
+
+    @Test
     void findOrganizationByIdAndCity_valid_returnsOrg() {
         User org = org("org1", City.RIVERA);
         when(userRepository.findById("org1")).thenReturn(Optional.of(org));

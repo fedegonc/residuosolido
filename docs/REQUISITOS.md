@@ -35,8 +35,8 @@ usuario → `/mis-solicitudes`, organización → `/acopio/solicitudes`.
 |---|---|
 | Invitado, Usuario | Implementado |
 
-Formulario en `/solicitar`: ciudad, dirección, materiales, peso/volumen
-estimado, imagen opcional. Invitados ingresan nombre + teléfono (los campos se
+Formulario en `/solicitar`: ciudad, dirección, materiales, imagen opcional.
+Invitados ingresan nombre + teléfono (los campos se
 pueden precargar desde el index). El sistema asigna la organización elegible
 más cercana y genera un código de seguimiento.
 
@@ -46,9 +46,9 @@ más cercana y genera un código de seguimiento.
 |---|---|
 | Invitado, Usuario | Implementado |
 
-Invitado: `/rastrear` con teléfono + código privado (RN-3). Usuario: ve sus
-solicitudes en `/mis-solicitudes` (la lista incluye estado y datos — no hay
-página de detalle separada para el ciudadano).
+Invitado: `/rastrear` con teléfono + código privado (RN-3). Usuario: lista
+en `/mis-solicitudes` y detalle propio en `GET /solicitudes/{id}` — lectura
+en cualquier estado (RN-4 solo restringe editar/eliminar).
 
 ### RF-5 — Gestionar solicitudes propias
 
@@ -84,10 +84,24 @@ incompleto (sin teléfono o ciudad), el formulario abre en modo edición y
 
 | Actor | Estado |
 |---|---|
-| Organización | Latente — CRUD implementado sin acceso visible en la UI |
+| Organización | Descartado — CRUD planificado y no implementado |
 
-Decisión consciente: el modelo `Catador` existe pero no hay navegación hacia
-él en el MVP (ver `docs/TRADEOFFS.md` §6).
+Decisión consciente: el CRUD de `InformalCollector` no se implementó (no
+existe modelo, controller ni servicio) — ver `docs/TRADEOFFS.md` §6.
+
+### RF-9 — Notificar al solicitante
+
+| Actor | Estado |
+|---|---|
+| Usuario | Implementado |
+
+Cuando la organización acepta o rechaza una solicitud, se persiste una
+`Notification` in-app (solo usuarios registrados). Bandeja en
+`/notificaciones` + badge de no-leídas en el navbar; abrir la bandeja marca
+todo como leído. El invitado no tiene bandeja (sin cuenta): sigue consultando
+por teléfono + código; su canal externo (SMS/WhatsApp) es un adapter
+diferido. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
+(ver `docs/TRADEOFFS.md` §33).
 
 ---
 
@@ -106,8 +120,9 @@ Decisión consciente: el modelo `Catador` existe pero no hay navegación hacia
 | RN-9 | Una organización con perfil incompleto es redirigida a `/mi-organizacion` antes de gestionar solicitudes | `OrgRequestController` |
 | RN-10 | Materiales, dirección y ciudad son obligatorios al crear/editar | `RequestServiceValidationTest` (13 tests) |
 | RN-11 | Borrado permitido solo si `PENDING` y propiedad del solicitante | `deleteOwnedRequest` + tests de regresión |
+| RN-12 | La notificación se emite solo DESPUÉS de persistir la transición | `RequestService.acceptRequest`/`rejectRequest` → `NotificationService.notifyRequester` |
 
-> **Nota:** el conteo canónico de la especificación declara 14 RN; las 11
+> **Nota:** el conteo canónico de la especificación declara 14 RN; las 12
 > anteriores están verificadas en código y tests. Las restantes son variantes
 > de validación cubiertas por RN-5, RN-6 y RN-10.
 

@@ -68,6 +68,20 @@ public class RequestController {
         return "users/requests";
     }
 
+    /** Detalle de una solicitud propia: lectura en cualquier estado (a diferencia de editar, que exige PENDING). */
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping(Routes.REQUEST)
+    public String requestDetail(@PathVariable String id, @CurrentUser User user, Model model,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("request", requestService.getOwnedRequest(id, user));
+            return "users/request-detail";
+        } catch (IllegalArgumentException e) {
+            messages.flashError(redirectAttributes, e);
+            return "redirect:" + Routes.REQUESTS;
+        }
+    }
+
     /** Elimina una solicitud del usuario (solo si está pendiente). */
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping(Routes.REQUEST)

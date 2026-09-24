@@ -38,10 +38,13 @@
         <mxCell id="cu06" value="CU-06&#10;Gestionar solicitudes asignadas" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="system" vertex="1">
           <mxGeometry as="geometry" x="635" y="235" width="210" height="75" />
         </mxCell>
+        <mxCell id="cu08" value="CU-08&#10;Consultar notificaciones" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=14;fillColor=#f2f7f3;strokeColor=#395e48;strokeWidth=1.3;" parent="system" vertex="1">
+          <mxGeometry as="geometry" x="635" y="75" width="210" height="75" />
+        </mxCell>
         <mxCell id="validate" value="Validar organización&#10;y materiales" style="ellipse;whiteSpace=wrap;html=0;fontFamily=Helvetica;fontSize=13;fillColor=#eef5f0;strokeColor=#5a7a66;strokeWidth=1.1;" parent="system" vertex="1">
           <mxGeometry as="geometry" x="655" y="400" width="170" height="70" />
         </mxCell>
-        <mxCell id="scope" value="Alcance: siete casos de uso. Asociación = participación del actor. «include» = validación obligatoria reutilizada." style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;strokeColor=none;fillColor=none;" parent="system" vertex="1">
+        <mxCell id="scope" value="Alcance: ocho casos de uso. Asociación = participación del actor. «include» = validación obligatoria reutilizada." style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#48564d;strokeColor=none;fillColor=none;" parent="system" vertex="1">
           <mxGeometry as="geometry" x="45" y="520" width="810" height="30" />
         </mxCell>
         <mxCell id="guest-cu01" style="endArrow=none;startArrow=none;edgeStyle=none;html=0;strokeColor=#344239;strokeWidth=1.3;" parent="1" edge="1" source="guest" target="cu01"><mxGeometry relative="1" as="geometry" /></mxCell>
@@ -54,6 +57,7 @@
         <mxCell id="org-cu02" style="endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;strokeColor=#344239;strokeWidth=1.3;exitX=0;exitY=0.2;entryX=1;entryY=0.5;" parent="1" edge="1" source="organization" target="cu02"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1110" y="295" /><mxPoint x="1110" y="100" /><mxPoint x="745" y="100" /></Array></mxGeometry></mxCell>
         <mxCell id="org-cu07" style="endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;strokeColor=#344239;strokeWidth=1.3;exitX=0;exitY=0.45;entryX=0.5;entryY=0;" parent="1" edge="1" source="organization" target="cu07"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1110" y="325" /><mxPoint x="1110" y="255" /><mxPoint x="640" y="255" /></Array></mxGeometry></mxCell>
         <mxCell id="org-cu06" style="endArrow=none;startArrow=none;edgeStyle=none;html=0;strokeColor=#344239;strokeWidth=1.3;" parent="1" edge="1" source="organization" target="cu06"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="user-cu08" style="endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;strokeColor=#344239;strokeWidth=1.3;exitX=0.7;exitY=0;entryX=0.5;entryY=1;" parent="1" edge="1" source="user" target="cu08"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="745" y="650" /></Array></mxGeometry></mxCell>
         <mxCell id="cu03-validate" value="«include»" style="endArrow=open;startArrow=none;edgeStyle=none;dashed=1;html=0;fontFamily=Helvetica;fontSize=11;fontColor=#344239;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.2;" parent="system" edge="1" source="cu03" target="validate"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="cu05-validate" value="«include»" style="endArrow=open;startArrow=none;edgeStyle=none;dashed=1;html=0;fontFamily=Helvetica;fontSize=11;fontColor=#344239;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.2;" parent="system" edge="1" source="cu05" target="validate"><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>
