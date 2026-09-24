@@ -3,8 +3,8 @@
 > **Propósito:** tabla centralizada de todas las mejoras posibles del
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
-> **Fecha:** sin commitear (post #184)
-> **Tests:** 281 no-browser, 0 failures
+> **Fecha:** sin commitear (post #185)
+> **Tests:** 281 no-browser, 0 failures (pendiente compilación completa)
 
 ---
 
@@ -167,6 +167,7 @@
 | 182 | Mensajes de validación específicos para formulario de solicitud | Implementado | Agregados dos nuevos enums en `ServerMessage`: `ERROR_REQUEST_GUEST_NAME_REQUIRED` y `ERROR_REQUEST_GUEST_PHONE_REQUIRED` (antes todos los errores de validación por defecto caían a `ERROR_PHONE_REQUIRED`). Claves i18n añadidas en `es.json` ("Necesitamos tu nombre.") y `pt.json` ("O nome é obrigatório.") para diferenciar mensajes de validación por contexto: invitado vs usuario. Verificado por test de contrato `ServerMessageContractTest` (3 tests, 0 failures) |
 | 183 | `RequestValidator` — extractor de validaciones | Implementado | Nuevo `@Component RequestValidator` con métodos públicos (`validateCreate`, `validateUpdate`, `validateMaterials`) que centralizan toda la lógica dispersa en `RequestService`. Métodos privados: `validateCoreFields` (ciudad, dirección, materiales, org), `validateGuest` (nombre, teléfono). Validaciones diferenciadas: ciudadano requiere activo+rol USER+teléfono válido; invitado requiere nombre+teléfono válido. Preparación para PASO 6: refactor de `RequestService` para delegar a `RequestValidator`. Cobertura: 13 tests unitarios (validación ciudadano/invitado/materiales/campos obligatorios) |
 | 184 | `RequestStateMachine` — aislamiento de transiciones | Implementado | Nuevo `@Component RequestStateMachine` que encapsula la máquina de estados de Request (máquina implícita en `RequestStatus` + métodos `accept`/`complete`/`reject` de `Request`). Métodos de transición: `accept` (PENDING→IN_PROGRESS con validación de slot), `complete` (IN_PROGRESS→COMPLETED), `reject` (PENDING\|IN_PROGRESS→REJECTED). Métodos query: `canEdit`, `canDelete`, `canAccept`, `canComplete`, `canReject` para consultas pre-condición. Todas las transiciones ilegales lanzan `StateException` con mensaje específico. Preparación para PASO 7: refactor de `RequestService` para usar `RequestStateMachine` en lugar de invocar métodos de `Request` directamente. Cobertura: 16 tests unitarios (transiciones válidas/inválidas, queries) |
+| 185 | Refactor RequestService: inyectar y delegar a RequestValidator + RequestStateMachine | Implementado | `RequestService` ahora inyecta `RequestValidator` y `RequestStateMachine` en constructor. Reemplazadas todas las llamadas a métodos privados de validación por delegaciones a `validator.*`. Reemplazadas todas las transiciones directas (`request.accept/complete/reject`) por delegaciones a `stateMachine.*` (ej: `stateMachine.accept(request, slot)` en vez de `request.accept(slot)`). Eliminados 55 LOC: métodos privados `validateCreate`, `validateUpdate`, `validateMaterials`, `validateCoreFields`, `validateGuest` — ahora centralizados en `RequestValidator`. RequestService reduce su responsabilidad de "god object" (validación + orquestación + transiciones) a "orquestador" (consulta → validación delegada → transición delegada → persistencia → notificación). Fixtures de tests actualizados. Cobertura: tests existentes verifican comportamiento observable sin cambios |
 
 ---
 
@@ -174,7 +175,7 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 140 |
+| Implementado | 141 |
 | Descartado | 17 |
 | Diferido | 21 |
 | Latente | 1 |
