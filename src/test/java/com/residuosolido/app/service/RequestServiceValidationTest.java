@@ -194,7 +194,7 @@ class RequestServiceValidationTest {
                         null, City.RIVERA, "Calle 123", null,
                         List.of(MaterialCategory.PLASTICO), "", "+59899123456", "org1")
         );
-        assertEquals("error.name.required", ex.getMessage());
+        assertEquals("error.request.guest_name_required", ex.getMessage());
     }
 
     // ─── guest sin teléfono ───
