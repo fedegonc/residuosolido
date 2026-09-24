@@ -3,8 +3,8 @@
 > **Propósito:** tabla centralizada de todas las mejoras posibles del
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
-> **Fecha:** sin commitear (post #183)
-> **Tests:** 265 no-browser, 0 failures
+> **Fecha:** sin commitear (post #184)
+> **Tests:** 281 no-browser, 0 failures
 
 ---
 
@@ -166,6 +166,7 @@
 | 131 | Reorganizar docs: un archivo por tema + gitflow documentado | Implementado | Los 4 docs grandes eran varios documentos pegados (patrón "doc + anexos"). Extraídos a archivos propios: `REQUISITOS.md` (catálogo RF/RN nuevo — cubría un hueco: el canonical doc `RF-RN.md` se referenciaba pero no existía), `ARQUITECTURA.md` (núcleo del sistema), `COPIES.md` (copys i18n), `TRADEOFFS.md` (26 decisiones), `CORRECCIONES.md` (hardening + limpieza), `LIMITACIONES.md` (fusionado en `DEFENSA.md` §7 desde #173, ver ese registro), `AUDITORIA.md` (inventario de superficies). MEJORAS 966→267, DEFENSA 922→271, METODOLOGIA 613→180, DIAGRAMAS 374→215 líneas. Nuevo `GITFLOW.md` + `docs/diagrams/figura5-gitflow.drawio` (registrada en `DocsController.DIAGRAMS`, visible en `/docs/diagramas` y linkeada en el footer). Cross-refs actualizados: `DEFENSA.md §N` de tradeoffs → `TRADEOFFS.md §N` (14 refs), `RF-RN.md` → `REQUISITOS.md`, convenciones en `CLAUDE.md`, 2 [FALTA] de `CONTEXTO_LLM.md` resueltos |
 | 182 | Mensajes de validación específicos para formulario de solicitud | Implementado | Agregados dos nuevos enums en `ServerMessage`: `ERROR_REQUEST_GUEST_NAME_REQUIRED` y `ERROR_REQUEST_GUEST_PHONE_REQUIRED` (antes todos los errores de validación por defecto caían a `ERROR_PHONE_REQUIRED`). Claves i18n añadidas en `es.json` ("Necesitamos tu nombre.") y `pt.json` ("O nome é obrigatório.") para diferenciar mensajes de validación por contexto: invitado vs usuario. Verificado por test de contrato `ServerMessageContractTest` (3 tests, 0 failures) |
 | 183 | `RequestValidator` — extractor de validaciones | Implementado | Nuevo `@Component RequestValidator` con métodos públicos (`validateCreate`, `validateUpdate`, `validateMaterials`) que centralizan toda la lógica dispersa en `RequestService`. Métodos privados: `validateCoreFields` (ciudad, dirección, materiales, org), `validateGuest` (nombre, teléfono). Validaciones diferenciadas: ciudadano requiere activo+rol USER+teléfono válido; invitado requiere nombre+teléfono válido. Preparación para PASO 6: refactor de `RequestService` para delegar a `RequestValidator`. Cobertura: 13 tests unitarios (validación ciudadano/invitado/materiales/campos obligatorios) |
+| 184 | `RequestStateMachine` — aislamiento de transiciones | Implementado | Nuevo `@Component RequestStateMachine` que encapsula la máquina de estados de Request (máquina implícita en `RequestStatus` + métodos `accept`/`complete`/`reject` de `Request`). Métodos de transición: `accept` (PENDING→IN_PROGRESS con validación de slot), `complete` (IN_PROGRESS→COMPLETED), `reject` (PENDING\|IN_PROGRESS→REJECTED). Métodos query: `canEdit`, `canDelete`, `canAccept`, `canComplete`, `canReject` para consultas pre-condición. Todas las transiciones ilegales lanzan `StateException` con mensaje específico. Preparación para PASO 7: refactor de `RequestService` para usar `RequestStateMachine` en lugar de invocar métodos de `Request` directamente. Cobertura: 16 tests unitarios (transiciones válidas/inválidas, queries) |
 
 ---
 
@@ -173,7 +174,7 @@
 
 | Estado | Cantidad |
 |---|---|
-| Implementado | 139 |
+| Implementado | 140 |
 | Descartado | 17 |
 | Diferido | 21 |
 | Latente | 1 |
