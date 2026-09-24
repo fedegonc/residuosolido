@@ -90,7 +90,7 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
         assertTrue(langSelector.isVisible(),
                 "Selector de idioma debe estar visible");
 
-        String currentLang = page.evaluate("document.documentElement.lang");
+        String currentLang = (String) page.evaluate("document.documentElement.lang");
         assertNotNull(currentLang, "El HTML debe tener atributo lang");
     }
 
