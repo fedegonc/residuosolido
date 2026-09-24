@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Tag("unit")
@@ -53,6 +54,22 @@ class RequestMetricsServiceTest {
     }
 
     // ─── getOrgRequestStats (stats del panel de acopio) ───
+
+    @Test
+    void getUserRequestStats_objectIdString_usesObjectIdInCriteria() {
+        // ID en formato ObjectId válido (24 hex) → el match usa ObjectId, no String.
+        mockAggregationResult(null);
+        Map<String, Long> data = service.getUserRequestStats(user("507f1f77bcf86cd799439011"));
+        assertNotNull(data);
+        verify(mongoTemplate).aggregate(any(Aggregation.class), eq("requests"), eq(Map.class));
+    }
+
+    @Test
+    void getUserRequestStats_nullId_usesStringInCriteria() {
+        mockAggregationResult(null);
+        Map<String, Long> data = service.getUserRequestStats(user(null));
+        assertNotNull(data);
+    }
 
     @Test
     void getOrgRequestStats_noResults_returnsZeroedCounts() {

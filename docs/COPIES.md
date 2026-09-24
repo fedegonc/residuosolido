@@ -233,17 +233,6 @@ Textos de UI canónicos (claves i18n + copy en español). Extraído del anexo de
 | `req_form_org_loading` | Cargando organizaciones... |
 | `req_form_org_none` | No hay organizaciones en esta ciudad |
 | `req_form_timeslot` | Franja horaria |
-| `req_form_select_default` | — Sin especificar — |
-| `req_form_weight` | Peso aproximado (opcional) |
-| `req_form_weight_0_5` | Menos de 5 kg |
-| `req_form_weight_5_20` | 5 a 20 kg |
-| `req_form_weight_20_50` | 20 a 50 kg |
-| `req_form_weight_50_plus` | Más de 50 kg |
-| `req_form_volume` | Volumen aproximado (opcional) |
-| `req_form_volume_bag` | Una bolsa |
-| `req_form_volume_box` | Una caja |
-| `req_form_volume_trunk` | Un baúl de auto |
-| `req_form_volume_pickup` | Carga de camioneta |
 | `req_form_image` | Foto (opcional) |
 | `req_form_image_choose` | Click para subir |
 

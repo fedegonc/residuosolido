@@ -44,18 +44,39 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │ city: City                                            │
 │ address / addressReference: String                    │
 │ materials: List<MaterialCategory>                     │
-│ estimatedWeight / estimatedVolume: String (opcional)   │
 │ imageUrl: String (opcional)                            │
 │ confirmedSlot: TimeSlot                                │
 │ status: RequestStatus = PENDING (indexado)             │
 │ createdAt: LocalDateTime                               │
 ├──────────────────────────────────────────────────────┤
+│ forCitizen(User) / forGuest(name, phone, code)         │
+│ updateDraft(city, address, ref, materials)             │
 │ accept(TimeSlot) / reject() / complete()               │
 │ canBeEdited() / isGuest() / hasMaterials()             │
 │ assignOrganization(User)                                │
 └──────────────────────────────────────────────────────┘
 
+┌─────────────────────────────┐
+│        Notification         │
+├─────────────────────────────┤
+│ id: String                  │
+│ user: User (@DocumentReference, lazy) │
+│ requestId: String  (por valor, sobrevive al borrado) │
+│ type: NotificationType      │
+│ confirmedSlot: TimeSlot (solo ACCEPTED) │
+│ read: boolean = false       │
+│ createdAt: LocalDateTime    │
+├─────────────────────────────┤
+│ markRead()                  │
+└──────────────┬──────────────┘
+               │ N            │
+               ▼ 1            │
+             User (destinatario — solo registrados)
 ```
+
+**Relaciones:** `User` 1 ─── 0..N `Notification` (destinatario);
+`Notification` 0..N ─── 0..1 `Request` por `requestId` (referencia por
+valor, no `@DocumentReference`).
 
 **Notas del modelo real (MongoDB, no relacional):**
 - `Request.user` y `Request.organization` son `@DocumentReference(lazy = true)` — referencias a documentos `User`, no joins SQL.
@@ -74,6 +95,7 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 | `City` | `RIVERA`, `LIVRAMENTO` |
 | `TimeSlot` | `MANANA`, `TARDE`, `NOCHE` |
 | `MaterialCategory` | `PLASTICO`, `PAPEL`, `CARTON`, `VIDRIO`, `METAL`, `MADERA`, `ESCOMBROS` |
+| `NotificationType` | `ACCEPTED`, `REJECTED` |
 
 ---
 
@@ -84,12 +106,19 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │   users    │ 1     0..N│   requests   │  0..N  1 │        users         │
 │ (Usuario / │──────────▶│ (creador)    │◀─────────│    (organización)    │
 │Organización)│          │              │          │                       │
-└────────────┘          └──────────────┘          └───────────────────────┘
+└─────┬──────┘          └──────┬───────┘          └───────────────────────┘
+      │ 1                      │ 0..1 (requestId por valor)
+      │               ┌────────▼───────┐
+      └──────────────▶│ notifications  │
+        0..N          │ (destinatario) │
+                      └────────────────┘
 ```
 
-- 2 colecciones Mongo: `users` y `requests`.
+- 3 colecciones Mongo: `users`, `requests` y `notifications`.
 - `requests.user` → referencia a `users` (opcional, null si es invitado).
 - `requests.organization` → referencia a `users` con `role=ORGANIZATION` (obligatoria tras crear/editar).
+- `notifications.user` → referencia a `users` (solo registrados; el invitado no tiene bandeja).
+- `notifications.requestId` → id de la solicitud **por valor** (String, no `@DocumentReference`): la notificación histórica sobrevive si la solicitud se borra.
 
 ---
 
@@ -117,7 +146,7 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 5. `CityOrgService` valida la organización seleccionada y su ciudad.
 6. `RequestRepository` persiste la solicitud.
 7. Si existe imagen, `LocalImageService` la guarda y actualiza `imageUrl`.
-8. El controller redirige a `/solicitudes/exito`.
+8. El controller redirige: invitado → `/rastrear?telefono&codigo`; registrado → `/mis-solicitudes`.
 
 ---
 
@@ -129,10 +158,11 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
    └────────reject()────────> REJECTED <──reject()───┘
 ```
 
-- Solo `PENDING` puede editarse o eliminarse.
+- Solo `PENDING` puede editarse o eliminarse (el detalle se puede VER en cualquier estado).
 - `accept` requiere una franja horaria.
 - `REJECTED` y `COMPLETED` son estados finales.
 - Las transiciones se protegen con `@Version` y optimistic locking.
+- `accept`/`reject` notifican al solicitante registrado DESPUÉS del save (RN-12): si la persistencia falla por concurrencia, no se notifica. `complete` no notifica.
 
 ---
 
@@ -182,8 +212,10 @@ Usuario
   ├─ CU: Iniciar sesión (RF-2)
   ├─ CU: Crear solicitud de recolección (RF-3)
   ├─ CU: Ver dashboard e historial (RF-5)
+  ├─ CU: Ver detalle de solicitud propia — cualquier estado (RF-5)
   ├─ CU: Editar solicitud propia pendiente (RF-5)
   ├─ CU: Eliminar solicitud propia pendiente (RF-5)
+  ├─ CU: Consultar notificaciones — bandeja + badge (RF-9)
   └─ CU: Editar perfil (RF-7 — vía RequestController)
 ```
 

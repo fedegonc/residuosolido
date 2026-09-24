@@ -6,12 +6,14 @@ import com.residuosolido.app.config.Routes;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -31,6 +33,10 @@ public class DocsController {
     private static final Path DOCS_DIR = Paths.get("docs").toAbsolutePath();
     private static final Path SCRATCH_DIR = Paths.get("scratch").toAbsolutePath();
     private static final ObjectMapper JSON = new ObjectMapper();
+    private static final org.commonmark.parser.Parser MARKDOWN_PARSER =
+            org.commonmark.parser.Parser.builder().build();
+    private static final org.commonmark.renderer.html.HtmlRenderer HTML_RENDERER =
+            org.commonmark.renderer.html.HtmlRenderer.builder().escapeHtml(true).build();
 
     private static final List<String[]> DIAGRAMS = List.of(
             new String[]{"figura1-casos-uso", "Casos de uso"},
@@ -38,12 +44,35 @@ public class DocsController {
             new String[]{"figura3-clases", "Diagrama de clases"},
             new String[]{"figura4-secuencia", "Diagrama de secuencia"},
             new String[]{"figura4-estados", "Diagrama de estados"},
-            new String[]{"figura5-gitflow", "Gitflow del proyecto"}
+            new String[]{"figura5-gitflow", "Gitflow del proyecto"},
+            new String[]{"figura6-notificaciones", "Secuencia — aceptar y notificar"}
     );
 
     @GetMapping(Routes.DOCS_FILE)
     public ResponseEntity<Resource> serveMarkdown(@PathVariable String file) {
         return serveFile(DOCS_DIR, file + ".md", MediaType.TEXT_MARKDOWN);
+    }
+
+    /**
+     * Vista HTML del .md: mismo archivo que {@link #serveMarkdown} pero parseado
+     * con CommonMark y envuelto en el layout. escapeHtml evita que HTML crudo
+     * embebido en el markdown se inyecte tal cual (los .md son contenido del
+     * repo, pero una tabla con markup accidental no debe romperse tampoco).
+     */
+    @GetMapping(Routes.DOCS_VIEW)
+    public String viewMarkdown(@PathVariable String file, Model model) {
+        File doc = DOCS_DIR.resolve(file + ".md").normalize().toFile();
+        if (!doc.exists() || !doc.isFile() || !doc.toPath().startsWith(DOCS_DIR)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doc no encontrado: " + file);
+        }
+        try {
+            org.commonmark.node.Node document = MARKDOWN_PARSER.parse(Files.readString(doc.toPath()));
+            model.addAttribute("docName", file);
+            model.addAttribute("docHtml", HTML_RENDERER.render(document));
+            return "docs/markdown";
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doc no encontrado: " + file);
+        }
     }
 
     @GetMapping(Routes.DOCS_DIAGRAM)

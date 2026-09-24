@@ -30,7 +30,7 @@
         <div th:each="req : ${requests}" class="request-item">
           <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
           <div class="form-actions">
-            <a th:href="@{/rastrear?id={id}(id=${req.id})}" class="btn btn--outline btn--sm">
+            <a th:href="@{/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
               <svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span>
             </a>
             <a th:if="${req.canBeEdited()}" th:href="@{/solicitudes/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">

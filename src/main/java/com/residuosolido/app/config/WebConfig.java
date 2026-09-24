@@ -5,16 +5,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.residuosolido.app.controller.CurrentUserArgumentResolver;
 import com.residuosolido.app.repository.UserRepository;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -23,11 +25,17 @@ import java.util.Locale;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private AuthNavigationInterceptor authNavigationInterceptor;
+    private final AuthNavigationInterceptor authNavigationInterceptor;
+    private final CurrentUserArgumentResolver currentUserArgumentResolver;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public WebConfig(AuthNavigationInterceptor authNavigationInterceptor,
+                     CurrentUserArgumentResolver currentUserArgumentResolver,
+                     UserRepository userRepository) {
+        this.authNavigationInterceptor = authNavigationInterceptor;
+        this.currentUserArgumentResolver = currentUserArgumentResolver;
+        this.userRepository = userRepository;
+    }
 
     // ========== INTERNACIONALIZACIÓN ==========
 
@@ -58,6 +66,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(authNavigationInterceptor)
                 .addPathPatterns(Routes.GUEST_ONLY_PATHS.toArray(String[]::new));
+    }
+
+    @Override
+    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(currentUserArgumentResolver);
     }
 
     @Override

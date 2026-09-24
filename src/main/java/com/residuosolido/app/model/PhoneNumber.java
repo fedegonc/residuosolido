@@ -1,6 +1,6 @@
 package com.residuosolido.app.model;
 
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 
 import java.util.Map;
@@ -42,63 +42,80 @@ public final class PhoneNumber {
     }
 
     /**
+     * Selector binacional del formulario: si vienen código de país y número
+     * nacional, normaliza con las reglas del país; si no, devuelve el valor
+     * crudo tal cual (null-safe). Única fuente para la resolución de teléfono
+     * en formularios (registro, perfil de org, solicitud).
+     */
+    public static String resolve(String dialCode, String national, String ddd, String raw) {
+        if (national != null && !national.isBlank() && dialCode != null && !dialCode.isBlank()) {
+            return normalize(dialCode, national, ddd);
+        }
+        return raw;
+    }
+
+    /**
      * Factory country-aware: valida el número nacional según las reglas del país.
-     * - Uruguay (+598): quita el 0 inicial doméstico, exige 8 dígitos con primer dígito 9.
-     * - Brasil (+55): antepone el DDD (2 dígitos), exige 9 dígitos nacionales con primer dígito 9.
      * Devuelve un String en formato E.164 completo.
      */
     public static String normalize(String dialCode, String national, String ddd) {
-        if (!COUNTRY_RULES.containsKey(dialCode)) {
+        if (dialCode == null || !COUNTRY_RULES.containsKey(dialCode)) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_UNSUPPORTED_COUNTRY);
         }
         if (national == null || national.trim().isEmpty()) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_REQUIRED);
         }
         String cleaned = DECORATIVE_CHARS.matcher(national.trim()).replaceAll("");
+        String fullNational = "+598".equals(dialCode)
+                ? normalizeUruguay(cleaned)
+                : normalizeBrazil(cleaned, ddd);
+        return dialCode + fullNational;
+    }
 
-        // Uruguay: quitar 0 inicial doméstico (ej: "092224955" → "92224955")
-        if ("+598".equals(dialCode) && cleaned.startsWith("0")) {
+    /** Uruguay (+598): quita el 0 inicial doméstico y un prefijo +598 repetido; exige 8 dígitos. */
+    private static String normalizeUruguay(String cleaned) {
+        if (cleaned.startsWith("0")) {
             cleaned = cleaned.substring(1);
         }
-
-        // Quitar prefijo internacional si el usuario lo incluyó
-        boolean hadDialCode = false;
-        if (cleaned.startsWith(dialCode)) {
-            cleaned = cleaned.substring(dialCode.length());
-            hadDialCode = true;
+        if (cleaned.startsWith("+598")) {
+            cleaned = cleaned.substring(4);
         }
+        return validateNational(cleaned, 8, 0);
+    }
 
+    /** Brasil (+55): si no vino el código de país, antepone el DDD (default "55"); exige 11 dígitos. */
+    private static String normalizeBrazil(String cleaned, String ddd) {
+        boolean hadDialCode = cleaned.startsWith("+55");
+        if (hadDialCode) {
+            cleaned = cleaned.substring(3);
+        }
         if (!cleaned.matches("[0-9]+")) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID);
         }
-
-        String fullNational;
-        if ("+55".equals(dialCode)) {
-            if (hadDialCode) {
-                fullNational = cleaned;
-            } else {
-                String dddCleaned = (ddd == null || ddd.trim().isEmpty()) ? "55" : DECORATIVE_CHARS.matcher(ddd.trim()).replaceAll("");
-                if (!dddCleaned.matches("[0-9]{2}")) {
-                    throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_DDD);
-                }
-                fullNational = dddCleaned + cleaned;
-            }
-        } else {
-            fullNational = cleaned;
+        if (hadDialCode) {
+            return validateNational(cleaned, 11, 2);
         }
+        String dddCleaned = (ddd == null || ddd.trim().isEmpty())
+                ? "55"
+                : DECORATIVE_CHARS.matcher(ddd.trim()).replaceAll("");
+        if (!dddCleaned.matches("[0-9]{2}")) {
+            throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_DDD);
+        }
+        return validateNational(dddCleaned + cleaned, 11, 2);
+    }
 
-        int expectedLength = COUNTRY_RULES.get(dialCode);
-        if (fullNational.length() != expectedLength) {
+    /** Largo exacto, solo dígitos y primer dígito nacional 9 (celular). {@code skip} saltea el DDD. */
+    private static String validateNational(String digits, int expectedLength, int skip) {
+        if (!digits.matches("[0-9]+")) {
+            throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID);
+        }
+        if (digits.length() != expectedLength) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_LENGTH);
         }
-
-        // Validar primer dígito del número nacional (9 para celular)
-        String nationalPart = "+55".equals(dialCode) ? fullNational.substring(2) : fullNational;
-        if (!nationalPart.startsWith("9")) {
+        if (!digits.substring(skip).startsWith("9")) {
             throw new ValidationException(ServerMessage.ERROR_PHONE_INVALID_FIRST_DIGIT);
         }
-
-        return dialCode + fullNational;
+        return digits;
     }
 
     public static boolean isValid(String raw) {

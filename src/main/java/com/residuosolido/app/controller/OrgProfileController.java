@@ -4,16 +4,15 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.PhoneNumber;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.Keyed;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,31 +28,29 @@ import java.util.List;
  */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class OrgProfileController extends BaseController {
+public class OrgProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgProfileController.class);
 
-    @Autowired
-    public OrgProfileController() {
+    private final UserService userService;
+    private final Messages messages;
+
+    public OrgProfileController(UserService userService, Messages messages) {
+        this.userService = userService;
+        this.messages = messages;
     }
 
     /** Muestra el perfil de la organización (o el formulario si está incompleto). */
     @GetMapping(Routes.ORG_PROFILE)
-    public String orgProfile(Authentication authentication, Model model) {
-        try {
-            User currentOrg = getCurrentUser(authentication);
-            model.addAttribute("organization", currentOrg);
-            model.addAttribute("cities", City.values());
-            model.addAttribute("materials", MaterialCategory.values());
-            model.addAttribute("breadcrumbs", List.of(
-                    java.util.Map.of("label", "Inicio", "href", "/"),
-                    java.util.Map.of("label", "Panel de acopio", "href", Routes.ORG_REQUESTS),
-                    java.util.Map.of("label", "Perfil", "href", "")
-            ));
-        } catch (Exception e) {
-            logger.error("Error al cargar perfil de organización: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", msg(ServerMessage.FLASH_ORG_PROFILE_LOAD_ERROR));
-        }
+    public String orgProfile(@CurrentUser User currentOrg, Model model) {
+        model.addAttribute("organization", currentOrg);
+        model.addAttribute("cities", City.values());
+        model.addAttribute("materials", MaterialCategory.values());
+        model.addAttribute("breadcrumbs", List.of(
+                java.util.Map.of("label", "Inicio", "href", "/"),
+                java.util.Map.of("label", "Panel de acopio", "href", Routes.ORG_REQUESTS),
+                java.util.Map.of("label", "Perfil", "href", "")
+        ));
         return "org/profile";
     }
 
@@ -68,13 +65,12 @@ public class OrgProfileController extends BaseController {
             @RequestParam(required = false) String ddd,
             @RequestParam(value = "ciudad", required = false) City ciudad,
             @RequestParam(value = "materiales", required = false) List<MaterialCategory> materiales,
-            Authentication authentication,
+            @CurrentUser User currentOrg,
             jakarta.servlet.http.HttpSession session,
             RedirectAttributes redirectAttributes) {
         try {
-            User currentOrg = getCurrentUser(authentication);
             City oldCity = currentOrg.getCity();
-            String resolvedPhone = resolvePhone(phone, countryCode, phoneNational, ddd);
+            String resolvedPhone = PhoneNumber.resolve(countryCode, phoneNational, ddd, phone);
             // Ciudad y telefono son obligatorios SIEMPRE en este form (no solo mientras el
             // perfil esta incompleto) — antes el <select>/input no tenian required y el
             // guardado pasaba igual sin avisar, dejando el perfil incompleto en silencio.
@@ -89,18 +85,11 @@ public class OrgProfileController extends BaseController {
             if (ciudad != null && !ciudad.equals(oldCity)) {
                 session.removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
             }
-            flashSuccess(redirectAttributes, ServerMessage.FLASH_PROFILE_UPDATED);
+            messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_PROFILE_UPDATED);
         } catch (Exception e) {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
-            flashError(redirectAttributes, e instanceof Keyed k ? k.key() : ServerMessage.FLASH_PROFILE_UPDATE_ERROR);
+            messages.flashError(redirectAttributes, e instanceof Keyed k ? k.key() : ServerMessage.FLASH_PROFILE_UPDATE_ERROR);
         }
         return "redirect:" + Routes.ORG_PROFILE;
-    }
-
-    private String resolvePhone(String rawPhone, String countryCode, String phoneNational, String ddd) {
-        if (phoneNational != null && !phoneNational.trim().isEmpty() && countryCode != null && !countryCode.trim().isEmpty()) {
-            return PhoneNumber.normalize(countryCode, phoneNational, ddd);
-        }
-        return rawPhone;
     }
 }

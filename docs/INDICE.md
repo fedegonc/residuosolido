@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-23 — optimización frontend selectiva (#181: fragment altCta, CSS :has(), CSS muerto, auditoría i18n)  
-> Tests: 251 no-browser, 0 failures, 0 errors, 0 skipped (browser tests con fallos conocidos por selectores desincronizados — ver MEJORAS.md #180)
+> Fecha de sincronizacion: 2026-09-23 — borrado de peso/volumen estimados y RequestValidator muerto (#182)  
+> Tests: 423 no-browser, 7 failures conocidos (`PageContentImagesTest`/`PageContentRenderingTest` sobre `catadores`, pre-existentes #177; browser tests con fallos por selectores desincronizados — ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
@@ -26,6 +26,7 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `README.md` | Presentacion general, instalacion, stack tecnologico y enlaces a documentacion. | Actualizado |
 | `docs/INDICE.md` | Este archivo. Mapa de toda la documentacion. | Actualizado |
 | `docs/REQUISITOS.md` | Catalogo canonico de RF, RN y criterio de alcance. Fuente de verdad para la especificacion. | Actualizado |
+| `docs/REQUERIMIENTOS.md` | Trazabilidad RF/RN → implementación (clases/rutas/templates) → verificación (tests/escenarios del sandbox). | Actualizado |
 | `docs/DEFENSA.md` | Guia para la defensa de tesis: argumento, exposicion, preguntas esperadas, limitaciones (§7, fusionado desde `LIMITACIONES.md`). | Actualizado |
 | `docs/TRADEOFFS.md` | Las 26 decisiones de diseno con alternativas y justificacion. | Actualizado |
 | `docs/DIAGRAMAS.md` | Diagramas UML (clases, ER, secuencia, estados, casos de uso) y flujos. | Actualizado |
@@ -48,6 +49,7 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `docs/sincronizacion-codigo-texto.md` | Auditoría código↔tesis (SYNC-XX). | Gitignored, insumo de trabajo |
 | `docs/gaps-detalle.md` | Lógica de negocio extraída para `scratch/pseudoapp.java`. | Gitignored, insumo de trabajo |
 | `docs/tesis/CONTEXTO_LLM.md` | Contexto de continuidad entre sesiones de agente. | Es para el agente, no para lectura humana |
+| `docs/REFACTOR_PLAN.md` | Plan de refactorización por fases (dominio, máquina de estados, web). | Plan de trabajo, no narrativa de defensa — lo ejecutado queda asentado en `MEJORAS.md` |
 
 CLAUDE.md (raíz del repo) queda fuera de esta clasificación — son instrucciones para agentes, no documentación de la tesis.
 

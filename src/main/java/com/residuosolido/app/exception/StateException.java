@@ -1,6 +1,5 @@
 package com.residuosolido.app.exception;
 
-import com.residuosolido.app.enums.ServerMessage;
 
 /**
  * Violación de estado o invariante del dominio (transición ilegal, perfil

@@ -3,7 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.config.RateLimiter;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Request;
@@ -11,10 +11,10 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.service.CityOrgService;
 import com.residuosolido.app.service.RequestService;
+import com.residuosolido.app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,21 +28,26 @@ import java.util.List;
 
 /** Crea nuevas solicitudes de recolección (ciudadano o invitado con rate limiting). */
 @Controller
-public class RequestCreateController extends BaseController {
+public class RequestCreateController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestCreateController.class);
 
     private final RequestService requestService;
     private final CityOrgService cityOrgService;
     private final RateLimiter guestRateLimiter;
+    private final UserService userService;
+    private final Messages messages;
 
-    @Autowired
     public RequestCreateController(RequestService requestService,
                                    CityOrgService cityOrgService,
-                                   RateLimiter guestRateLimiter) {
+                                   RateLimiter guestRateLimiter,
+                                   UserService userService,
+                                   Messages messages) {
         this.requestService = requestService;
         this.cityOrgService = cityOrgService;
         this.guestRateLimiter = guestRateLimiter;
+        this.userService = userService;
+        this.messages = messages;
     }
 
     /** Muestra el formulario para crear una solicitud (acepta prefill de nombre/teléfono desde la home). */
@@ -53,14 +58,13 @@ public class RequestCreateController extends BaseController {
                                   Model model, Authentication authentication) {
         User user = userService.resolveUser(authentication);
         Request request = new Request();
-        if (nombre != null) request.setGuestName(nombre);
-        if (telefono != null) request.setGuestPhone(telefono);
+        if (nombre != null || telefono != null) request.setGuestContact(nombre, telefono, null);
         model.addAttribute("request", request);
         model.addAttribute("isEdit", false);
         model.addAttribute("isGuest", user == null);
         model.addAttribute("needsPhone", user != null && !user.hasPhone());
         model.addAttribute("cities", cityOrgService.getAvailableCities());
-        addFormAttributes(model);
+        messages.addFormAttributes(model);
         if (ciudad != null) {
             model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(ciudad));
             model.addAttribute("selectedCity", ciudad);
@@ -81,8 +85,6 @@ public class RequestCreateController extends BaseController {
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
-                                @RequestParam(value = "estimatedWeight", required = false) String estimatedWeight,
-                                @RequestParam(value = "estimatedVolume", required = false) String estimatedVolume,
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(value = "guestName", required = false) String guestName,
                                 @RequestParam(value = "guestPhone", required = false) String guestPhone,
@@ -99,22 +101,18 @@ public class RequestCreateController extends BaseController {
         try {
             User user = userService.resolveUser(authentication);
             if (user == null && !guestRateLimiter.isAllowed(httpRequest)) {
-                flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_RATE_LIMITED);
+                messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_RATE_LIMITED);
                 return "redirect:" + Routes.REQUESTS_NEW + "?error";
             }
-            String resolvedGuestPhone = guestPhone;
-            if (guestPhoneNational != null && !guestPhoneNational.trim().isEmpty()
-                    && guestCountryCode != null && !guestCountryCode.trim().isEmpty()) {
-                resolvedGuestPhone = PhoneNumber.normalize(guestCountryCode, guestPhoneNational, guestDdd);
-            }
+            String resolvedGuestPhone = PhoneNumber.resolve(guestCountryCode, guestPhoneNational, guestDdd, guestPhone);
             if (user != null && !user.hasPhone()) {
                 String phone = PhoneNumber.normalize(userCountryCode, userPhoneNational, userDdd);
                 userService.updateProfile(user, null, null, phone, null);
             }
             Request created = requestService.createRequestWithImage(user, ciudad, address, addressReference,
-                    materials, guestName, resolvedGuestPhone, organizationId, estimatedWeight, estimatedVolume, imageFile);
+                    materials, guestName, resolvedGuestPhone, organizationId, imageFile);
 
-            flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATED);
+            messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATED);
             if (user == null && resolvedGuestPhone != null && created.getTrackingCode() != null) {
                 // El "+" de un telefono E.164 sin codificar en una query string se lee como
                 // espacio (application/x-www-form-urlencoded) -> PhoneNumber.normalize lo
@@ -125,17 +123,17 @@ public class RequestCreateController extends BaseController {
             }
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("warningMessage", msg(e));
+            redirectAttributes.addFlashAttribute("warningMessage", messages.msg(e));
             // "/mis-solicitudes" exige ROLE_USER — un invitado ahí rebota a login (Security),
             // no al mensaje de error. Mismo criterio que el resto del método: sin sesión -> REQUESTS_NEW.
             User currentUser = userService.resolveUser(authentication);
             return "redirect:" + (currentUser == null ? Routes.REQUESTS_NEW : Routes.REQUESTS);
         } catch (IllegalArgumentException e) {
-            flashError(redirectAttributes, e);
+            messages.flashError(redirectAttributes, e);
             return "redirect:" + Routes.REQUESTS_NEW;
         } catch (Exception e) {
             logger.error("Error al crear solicitud: {}", e.getMessage());
-            flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATE_ERROR);
+            messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATE_ERROR);
             return "redirect:" + Routes.REQUESTS_NEW;
         }
     }

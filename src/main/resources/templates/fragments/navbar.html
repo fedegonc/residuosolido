@@ -23,6 +23,9 @@
         <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitar" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
         <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
         <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="navbar__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+        <a sec:authorize="hasRole('USER')" href="/notificaciones" class="navbar__link" data-i18n="nav_notifications">Notificaciones
+          <span th:if="${unreadNotifications != null and unreadNotifications > 0}" class="badge badge--pending" th:text="${unreadNotifications}"></span>
+        </a>
         <th:block th:replace="~{::trackButtonDesktop}"></th:block>
       </div>
 
@@ -50,6 +53,9 @@
             <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" data-i18n="nav_org_panel">Panel acopio</a>
             <a sec:authorize="hasRole('ORGANIZATION')" href="/mi-organizacion" data-i18n="nav_org_profile">Perfil</a>
             <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" data-i18n="nav_my_requests">Mis solicitudes</a>
+            <a sec:authorize="hasRole('USER')" href="/notificaciones"><span data-i18n="nav_notifications">Notificaciones</span>
+              <span th:if="${unreadNotifications != null and unreadNotifications > 0}" class="badge badge--pending" th:text="${unreadNotifications}"></span>
+            </a>
             <form th:action="@{/salir}" method="post">
               <button type="submit" class="btn btn--block" data-i18n="nav_logout">Cerrar sesión</button>
             </form>
@@ -66,6 +72,9 @@
           <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitar" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
           <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
           <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+          <a sec:authorize="hasRole('USER')" href="/notificaciones" class="dropdown__link"><span data-i18n="nav_notifications">Notificaciones</span>
+            <span th:if="${unreadNotifications != null and unreadNotifications > 0}" class="badge badge--pending" th:text="${unreadNotifications}"></span>
+          </a>
           <th:block th:replace="~{::trackButtonMobile}"></th:block>
           <button type="button" class="dropdown__link dropdown__link--btn is-hidden" data-install-app data-i18n="nav_install">Instalar app</button>
           <div class="dropdown__divider">
@@ -82,6 +91,9 @@
             <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
             <a sec:authorize="hasRole('ORGANIZATION')" href="/mi-organizacion" class="dropdown__link" data-i18n="nav_org_profile">Perfil</a>
             <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
+            <a sec:authorize="hasRole('USER')" href="/notificaciones" class="dropdown__link"><span data-i18n="nav_notifications">Notificaciones</span>
+              <span th:if="${unreadNotifications != null and unreadNotifications > 0}" class="badge badge--pending" th:text="${unreadNotifications}"></span>
+            </a>
             <form th:action="@{/salir}" method="post">
               <button type="submit" class="btn btn--outline btn--block" data-i18n="nav_logout">Cerrar sesión</button>
             </form>

@@ -8,7 +8,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
-| GET | `/`, `/index` | `AuthController` | Landing page pública |
+| GET | `/`, `/index` | `PageController` | Landing page pública |
 | GET | `/registrarse` | `AuthController` | Formulario de registro |
 | POST | `/registrarse` | `AuthController` | Procesa registro (Usuario u Organización) |
 | GET | `/entrar` | `AuthController` | Formulario de login (POST procesado por Spring Security en la misma URL) |
@@ -17,9 +17,10 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | POST | `/solicitar` | `RequestCreateController` | Crea la solicitud (con imagen opcional, rate limit para invitados) |
 | GET | `/rastrear?telefono=&codigo=` | `GuestTrackingController` | Rastreo de solicitudes de invitado por teléfono + código privado |
 | GET | `/organizaciones?ciudad=&material=` | `OrgApiController` | JSON de organizaciones activas en una ciudad, filtro opcional por material (combo del formulario) |
-| GET | `/documentos` | `DocsController` | Índice de documentación técnica (docs/*.md) |
-| GET | `/diagramas` | `DocsController` | Índice de diagramas UML (docs/diagrams/*.drawio) |
-| GET | `/docs/**` | `WebConfig` (resource handler) | Archivos estáticos de docs/ y docs/diagrams/ |
+| GET | `/docs/diagramas` | `DocsController` | Visor de diagramas UML: renderiza cada `docs/diagrams/*.drawio` con viewer-static de draw.io |
+| GET | `/docs/{file}` | `DocsController` | Vista HTML de `docs/{file}.md` renderizada con CommonMark (layout + `.doc-content`); inexistente → 404 |
+| GET | `/docs/{file}.md` | `DocsController` | Sirve el `.md` crudo como `text/markdown` (fuente del doc) |
+| GET | `/docs/diagrams/{file}.drawio` | `DocsController` | Sirve el `.drawio` fuente como `application/xml` |
 | GET | `/scratch/{file}.java` | `DocsController` | Sirve `scratch/App.java`/`pseudoapp.java` como texto plano (footer del layout). `scratch/` está gitignoreado a propósito — funciona en local/dev, 404 en Render porque el archivo nunca se sube |
 | GET | `/pagina/{slug}` | `PageController` | Páginas de contenido genéricas por slug, contenido en `pages-{es,pt}.json` vía `PageContentLoader`. Las 9 landing cards (catadores, impacto, sostenibilidad, comunidad, proceso, compromiso, eventos, recursos, faq) tienen su página. Slug sin entrada en el JSON → 404 real (`ResponseStatusException` + `GlobalExceptionHandler`) |
 
@@ -28,9 +29,11 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | Método | Ruta | Controller | Descripción |
 |---|---|---|---|
 | GET | `/mis-solicitudes` | `RequestController` | Lista de solicitudes propias con stats |
+| GET | `/solicitudes/{id}` | `RequestController` | Detalle de una solicitud propia (lectura en cualquier estado) |
 | GET | `/solicitudes/{id}/editar` | `RequestController` | Formulario de edición (solo si `PENDING`) |
 | PUT | `/solicitudes/{id}` | `RequestController` | Actualiza la solicitud (solo si `PENDING`) |
 | DELETE | `/solicitudes/{id}` | `RequestController` | Elimina la solicitud (solo si `PENDING`) |
+| GET | `/notificaciones` | `NotificationController` | Bandeja in-app: lista notificaciones propias (aceptada/rechazada) y marca todas como leídas |
 
 ## Organización (rol `ORGANIZATION`)
 
@@ -118,7 +121,7 @@ La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Rep
 | `OrganizationControllerTest` (5) | Flujo completo de organización vía `MockMvc` |
  `EndToEndFlowsTest` (11) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |
  `I18nMessageResolutionTest` (8) | Resolución de mensajes en español/portugués |
- `DocsControllerTest` (8) | `/docs/{file}.md` y `/docs/diagrams/{file}.drawio`: content-type, `Content-Disposition: inline`, 404 en inexistentes, path traversal bloqueado. **No cubre** el visor `/docs/diagramas` (nuevo, sin test todavía) |
+ `DocsControllerTest` (11) | `/docs/{file}.md` y `/docs/diagrams/{file}.drawio`: content-type, `Content-Disposition: inline`, 404 en inexistentes, path traversal bloqueado; vista renderizada `/docs/{file}` (HTML en layout, 404 en inexistente, `/docs/diagramas` literal no cae en `{file}`) |
 | `MongoAggregationUtilsIntegrationTest` (5) | Agregación faceted con MongoDB real — counts por estado, total, sin solicitudes, REJECTED incluido en total |
 
 ### Browser tests — Playwright (tag `browser`)

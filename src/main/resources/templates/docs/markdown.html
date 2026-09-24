@@ -1,0 +1,18 @@
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title th:text="${docName}">Doc</title></head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+      <section class="card">
+        <p class="doc-meta">
+          <a th:href="@{'/docs/' + ${docName} + '.md'}" target="_blank" rel="noopener noreferrer"
+             th:text="${docName} + '.md'">DOC.md</a>
+        </p>
+        <article class="doc-content" th:utext="${docHtml}"></article>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

@@ -139,11 +139,9 @@ class MongoAggregationUtilsIntegrationTest {
 
     private void createRequest(RequestStatus status) {
         Request r = new Request();
-        r.setUser(testUser);
-        r.setAddress("Test Address");
-        r.setCity(City.RIVERA);
-        r.setMaterials(List.of(MaterialCategory.PLASTICO));
-        r.setStatus(status);
+        r.setContactUser(testUser);
+        r.updateDraft(City.RIVERA, "Test Address", null, List.of(MaterialCategory.PLASTICO));
+        r.restoreStatus(status);
         if (status == RequestStatus.IN_PROGRESS || status == RequestStatus.COMPLETED) {
             r.setConfirmedSlot(TimeSlot.MANANA);
         }

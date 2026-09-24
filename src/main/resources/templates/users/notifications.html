@@ -1,0 +1,53 @@
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Notificaciones</title></head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+      <nav class="breadcrumb">
+        <a href="/">Inicio</a>
+        <svg class="icon breadcrumb__sep"><use href="/images/icons.svg#chevron-right"/></svg>
+        <span data-i18n="notif_title">Notificaciones</span>
+      </nav>
+
+      <div th:if="${notifications != null and !notifications.isEmpty()}" class="request-list">
+        <div th:each="n : ${notifications}" class="request-item">
+          <div class="request-item__header">
+            <div class="info-row">
+              <svg th:if="${n.type.name() == 'ACCEPTED'}" class="icon"><use href="/images/icons.svg#circle-check"/></svg>
+              <svg th:if="${n.type.name() == 'REJECTED'}" class="icon"><use href="/images/icons.svg#xmark"/></svg>
+              <span>
+                <span th:if="${n.type.name() == 'ACCEPTED'}" data-i18n="notif_accepted">Tu solicitud fue aceptada</span>
+                <span th:if="${n.type.name() == 'REJECTED'}" data-i18n="notif_rejected">Tu solicitud fue rechazada</span>
+                #<span th:text="${n.requestId}"></span>
+              </span>
+            </div>
+            <span th:if="${freshIds.contains(n.id)}" class="badge badge--pending" data-i18n="notif_new">Nueva</span>
+          </div>
+          <div class="info-row" th:if="${n.confirmedSlot != null}">
+            <svg class="icon"><use href="/images/icons.svg#clock"/></svg>
+            <span>
+              <span data-i18n="req_detail_slot">Franja confirmada</span>:
+              <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(n.confirmedSlot.name())}" th:text="${n.confirmedSlot}"></span>
+            </span>
+          </div>
+          <div class="info-row" th:if="${n.createdAt != null}">
+            <svg class="icon"><use href="/images/icons.svg#calendar"/></svg>
+            <span th:text="${#temporals.format(n.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+          </div>
+          <div class="form-actions">
+            <a th:href="@{/solicitudes/{id}(id=${n.requestId})}" class="btn btn--outline btn--sm">
+              <svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div th:if="${notifications == null or notifications.isEmpty()}">
+        <div th:replace="~{fragments/ui :: state('inbox', 'notif_empty', 'Todavía no tenés notificaciones')}"></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

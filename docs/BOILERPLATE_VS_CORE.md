@@ -24,7 +24,7 @@ las reglas de negocio antes de tocar (core).
 | Clase | Clasificación | Por qué |
 |---|---|---|
 | `AuthController` | Boilerplate | Login/registro — mecanismo genérico de cualquier app con auth |
-| `BaseController` | Boilerplate | Helpers compartidos (flash messages), sin conocimiento de negocio |
+| `Messages` | Boilerplate | Mensajes i18n/flash compartidos, sin conocimiento de negocio |
 | `DocsController` | Boilerplate | Sirve archivos estáticos de `docs/`, no toca el dominio |
 | `I18nScriptController` | Boilerplate | Sirve el catálogo JSON de traducciones |
 | `SeedController` | Boilerplate | Carga de datos demo, solo dev |

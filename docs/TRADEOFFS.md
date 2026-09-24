@@ -785,3 +785,63 @@ expuso un bug en `GlobalExceptionHandler`: no existía un
 el catch-all de `Exception` y redirigía a `/entrar` — comportamiento
 incorrecto detectado por `LandingCardsTest$RenderingLayer#unknownSlug_returns404`
 antes de llegar a producción, no después.
+
+## 32. Sandbox multi-archivo con puertos (`scratch/sim/`) vs. un solo `App.java`
+
+**Contexto:** `scratch/App.java` había crecido a ~1600 líneas y, aunque ya
+fluía de general a específico, reproducía la estructura antigua
+models→services→tests: las entidades `User`/`Request` estaban declaradas
+después de los servicios que las usaban, no existían puertos (los servicios
+recibían `Map` crudos) y había un modo consola interactivo que nadie usaba.
+
+**Alternativas:**
+
+| Opción | Por qué sí/no |
+|---|---|
+| Un solo archivo reorganizado por niveles | Conserva `java scratch/App.java` en un paso, pero el límite hexagonal queda solo en comentarios — nada impide que un servicio vuelva a tocar un `Map` |
+| **Multi-archivo por nivel + interfaces de puerto (elegida)** | `scratch/sim/`: `Domain.java` (enums, `PhoneNumber`, `User`, `Request`), `Ports.java` (`UserRepository`/`RequestRepository`/`CityOrgPort` + impls `InMemory*`), `Services.java` (`Auth`, `Registration`, `Profiles`, `Images`, `RequestService`), `Harness.java` (`Check`+`Fixtures`), `Scenarios.java`, `Collisions.java`, `Landing.java`, `App.java`. Los servicios compilan contra las interfaces — el límite es estructural, no declarativo. Pedagógicamente muestra la dirección de dependencias completa (dominio→puertos←adapters) |
+| Interfaces también en la app real | YAGNI: los repositorios Spring Data ya son interfaces; agregar otra capa para una sola implementación no paga. Las interfaces acá existen porque el sandbox *demuestra* la arquitectura, no porque el diseño las exija en producción |
+
+**Costo aceptado:** `java App.java` (single-file launcher) NO compila archivos
+hermanos — el run pasa a `javac -d bin *.java && java -cp bin App`, empaquetado
+en `scratch/sim/run.sh` para que siga siendo un solo comando.
+
+**Decisión sobre el modo consola:** eliminado (~150 líneas de menús/`Scanner`).
+No aportaba sobre la especificación ejecutable: los escenarios ya ejercitan
+cada regla del dominio en segundos y la vista pública la sirve Spring. Cada
+línea extra en el sandbox es otra cosa que mantener sincronizada a mano con el
+dominio real — mismo criterio que #182 (borrar lo que no se usa).
+
+**Resultado:** 86 PASS / 0 FAIL, 44/44 error-keys, 33/33 branches (misma
+checklist que el archivo único) + matriz de colisiones sin cambios de
+comportamiento. El hexágono queda demostrable archivo por archivo en la
+defensa.
+
+## 33. Notificación in-app (bandeja Mongo) vs. email/SMS al aceptar o rechazar
+
+Contexto: el usuario pidió "que le llegue un mensaje" al ciudadano cuando la
+organización acepta o rechaza su solicitud. El canal define la arquitectura:
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Bandeja in-app persistida en Mongo (elegida)** | Cero infraestructura nueva: reusa SSR + Spring Data. La notificación es un dato del dominio (colección `notifications`: user, requestId, `NotificationType`, `confirmedSlot`, `read`, `createdAt`) — queda historial auditable, badge de no-leídas en navbar vía `@ModelAttribute` global, y la página `/notificaciones` marca todo como leído al listar (las recién vistas se sellan "nueva" en esa carga) |
+| Email | `User.email` es opcional — la mayoría no lo tiene. SMTP agrega credenciales, deliverability y un canal asíncrono sin valor si el usuario ya entra a la app. DIFERIDO |
+| SMS/WhatsApp sobre `guestPhone` | Único canal que alcanzaría al **invitado** (sin cuenta, sin bandeja). Requiere gateway pago (Twilio u otro). El contrato ya quedó modelado en el sandbox (`NotificationPort`, recipient = `user.id` o `guestPhone`) — el adapter externo queda preparado pero DIFERIDO; el invitado sigue consultando estado por teléfono + código de rastreo |
+
+**Invariante de orden:** `RequestService` notifica DESPUÉS del save de la
+request — si el save falla por locking optimista (dos actores sobre la misma
+solicitud), no se notifica un estado que nunca se persistió. El test
+`acceptRequest_concurrentConflict_doesNotNotify` lo fija.
+
+**Decisión sobre el alcance:** solo `ACCEPTED`/`REJECTED` notifican. La org no
+recibe notificación por solicitud nueva (ya tiene su panel `/acopio/solicitudes`
+con filtro PENDING — duplicaría señal) y `COMPLETED` tampoco notifica (la
+franja confirmada ya se comunicó al aceptar; completar es el cierre esperado).
+
+**Resultado:** feature validada primero en `scratch/sim` (`NotificationPort` +
+3 branches nuevos: `notify.accepted.citizen`, `notify.accepted.guest`,
+`notify.rejected.guest` → 89 checks, 36 branches) y portada a Spring: `Notification`,
+`NotificationRepository`, `NotificationService`, `NotificationController`,
+`GlobalModelAttributes.unreadNotifications` (tolerante a sesión stale → null),
+link + badge en navbar (desktop, menú usuario, mobile), `users/notifications.html`,
+i18n es/pt. Tests: 252 no-browser.

@@ -1,6 +1,5 @@
 package com.residuosolido.app.exception;
 
-import com.residuosolido.app.enums.ServerMessage;
 
 /**
  * Error de validación de input (teléfono, campos requeridos, formato).

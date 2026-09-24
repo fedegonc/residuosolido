@@ -12,6 +12,8 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @Tag("unit")
 class LocalImageServiceTest {
@@ -20,10 +22,12 @@ class LocalImageServiceTest {
     Path tempDir;
 
     private LocalImageService service;
+    private RequestRepository requestRepository;
 
     @BeforeEach
     void setUp() {
-        service = new LocalImageService(tempDir.toString(), mock(RequestRepository.class));
+        requestRepository = mock(RequestRepository.class);
+        service = new LocalImageService(tempDir.toString(), requestRepository);
     }
 
     @Test
@@ -96,5 +100,43 @@ class LocalImageServiceTest {
         String url2 = service.uploadFile(file);
 
         assertNotEquals(url1, url2);
+    }
+
+    // ===== attachImageToRequest =====
+
+    @Test
+    void attachImageToRequest_nullOrEmpty_returnsRequestUnchanged() {
+        com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
+
+        assertSame(request, service.attachImageToRequest(request, null));
+
+        MockMultipartFile empty = new MockMultipartFile(
+                "imageFile", "foto.jpg", "image/jpeg", new byte[0]);
+        assertSame(request, service.attachImageToRequest(request, empty));
+        assertNull(request.getImageUrl());
+    }
+
+    @Test
+    void attachImageToRequest_validFile_savesRequestWithUrl() {
+        com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
+        MockMultipartFile file = new MockMultipartFile(
+                "imageFile", "foto.png", "image/png", "bytes".getBytes());
+        when(requestRepository.save(request)).thenAnswer(inv -> inv.getArgument(0));
+
+        com.residuosolido.app.model.Request result = service.attachImageToRequest(request, file);
+
+        assertNotNull(result.getImageUrl());
+        assertTrue(result.getImageUrl().startsWith("/uploads/"));
+        verify(requestRepository).save(request);
+    }
+
+    @Test
+    void attachImageToRequest_uploadFails_throwsStateException() {
+        com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
+        MockMultipartFile invalid = new MockMultipartFile(
+                "imageFile", "doc.pdf", "application/pdf", "pdf".getBytes());
+
+        assertThrows(com.residuosolido.app.exception.StateException.class,
+                () -> service.attachImageToRequest(request, invalid));
     }
 }

@@ -4,16 +4,13 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
-import com.residuosolido.app.enums.ServerMessage;
-import com.residuosolido.app.enums.RequestStatus;
+import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.util.LandingCardLoader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,19 +32,21 @@ import java.util.Map;
  */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
-public class OrgRequestController extends BaseController {
+public class OrgRequestController {
 
     private final RequestMetricsService requestMetricsService;
     private final RequestService requestService;
     private final LocaleResolver localeResolver;
+    private final Messages messages;
 
-    @Autowired
     public OrgRequestController(RequestMetricsService requestMetricsService,
-                                 RequestService requestService,
-                                 LocaleResolver localeResolver) {
+                                RequestService requestService,
+                                LocaleResolver localeResolver,
+                                Messages messages) {
         this.requestMetricsService = requestMetricsService;
         this.requestService = requestService;
         this.localeResolver = localeResolver;
+        this.messages = messages;
     }
 
     /** Lista las solicitudes de la organización, con filtro opcional por estado. */
@@ -55,10 +54,8 @@ public class OrgRequestController extends BaseController {
     public String orgRequests(@RequestParam(value = "estado", required = false) String estado,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            Authentication authentication, Model model,
+            @CurrentUser User currentOrg, Model model,
             HttpServletRequest request) {
-        User currentOrg = getCurrentUser(authentication);
-
         if (currentOrg.needsProfileCompletion()) {
             return "redirect:" + Routes.ORG_PROFILE;
         }
@@ -87,9 +84,8 @@ public class OrgRequestController extends BaseController {
 
     /** Carga una solicitud individual con sus datos completos. */
     @GetMapping(Routes.ORG_REQUEST)
-    public String orgRequestDetail(@PathVariable String id, Authentication authentication,
+    public String orgRequestDetail(@PathVariable String id, @CurrentUser User org,
                                     Model model) {
-        User org = getCurrentUser(authentication);
         Request request = requestService.getOwnedOrgRequest(id, org);
         model.addAttribute("request", request);
         model.addAttribute("viewType", RequestViewType.DETAIL);
@@ -101,49 +97,41 @@ public class OrgRequestController extends BaseController {
     @PostMapping(Routes.ORG_REQUEST_ACCEPT)
     public String acceptRequest(@PathVariable String id,
                                 @RequestParam(value = "confirmedSlot", required = false) TimeSlot confirmedSlot,
-                                Authentication authentication,
+                                @CurrentUser User org,
                                 RedirectAttributes redirectAttributes) {
-        return transition(id, "aceptar", confirmedSlot, authentication, redirectAttributes);
+        try {
+            requestService.acceptRequest(id, org, confirmedSlot);
+            messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_ACCEPTED);
+        } catch (IllegalStateException e) {
+            messages.flashError(redirectAttributes, e);
+        }
+        return "redirect:" + Routes.ORG_REQUESTS;
     }
 
     /** Rechaza una solicitud pendiente. */
     @PostMapping(Routes.ORG_REQUEST_REJECT)
     public String rejectRequest(@PathVariable String id,
-                                Authentication authentication,
+                                @CurrentUser User org,
                                 RedirectAttributes redirectAttributes) {
-        return transition(id, "rechazar", null, authentication, redirectAttributes);
+        try {
+            requestService.rejectRequest(id, org);
+            messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_REJECTED);
+        } catch (IllegalStateException e) {
+            messages.flashError(redirectAttributes, e);
+        }
+        return "redirect:" + Routes.ORG_REQUESTS;
     }
 
     /** Marca una solicitud aceptada como completada. */
     @PostMapping(Routes.ORG_REQUEST_COMPLETE)
     public String completeRequest(@PathVariable String id,
-                                  Authentication authentication,
+                                  @CurrentUser User org,
                                   RedirectAttributes redirectAttributes) {
-        return transition(id, "completar", null, authentication, redirectAttributes);
-    }
-
-    private String transition(String id, String action, TimeSlot confirmedSlot,
-                              Authentication authentication,
-                              RedirectAttributes redirectAttributes) {
         try {
-            User org = getCurrentUser(authentication);
-            switch (action) {
-                case "aceptar" -> {
-                    requestService.acceptRequest(id, org, confirmedSlot);
-                    flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_ACCEPTED);
-                }
-                case "rechazar" -> {
-                    requestService.rejectRequest(id, org);
-                    flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_REJECTED);
-                }
-                case "completar" -> {
-                    requestService.completeRequest(id, org);
-                    flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_COMPLETED);
-                }
-                default -> flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_INVALID_ACTION);
-            }
+            requestService.completeRequest(id, org);
+            messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_COMPLETED);
         } catch (IllegalStateException e) {
-            flashError(redirectAttributes, e);
+            messages.flashError(redirectAttributes, e);
         }
         return "redirect:" + Routes.ORG_REQUESTS;
     }
@@ -151,7 +139,7 @@ public class OrgRequestController extends BaseController {
     /** Toda operación de este controller que falle por no ser dueño de la solicitud cae acá. */
     @ExceptionHandler(SecurityException.class)
     public String handleNotOwned(RedirectAttributes redirectAttributes) {
-        flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_NOT_OWNED);
+        messages.flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_NOT_OWNED);
         return "redirect:" + Routes.ORG_REQUESTS;
     }
 }

@@ -44,6 +44,8 @@ public final class Routes {
     public static final String REQUEST_EDIT = "/solicitudes/{id}/editar";
     public static final String REQUEST = "/solicitudes/{id}";
     public static final String TRACK = "/rastrear";
+    /** Bandeja in-app del ciudadano (notificaciones de aceptada/rechazada). */
+    public static final String NOTIFICATIONS = "/notificaciones";
 
     // Organización
     public static final String ORG_PROFILE = "/mi-organizacion";
@@ -61,6 +63,7 @@ public final class Routes {
     // Documentación y estáticos
     public static final String DOCS_ANY = "/docs/**";
     public static final String DOCS_FILE = "/docs/{file}.md";
+    public static final String DOCS_VIEW = "/docs/{file}";
     public static final String DOCS_DIAGRAM = "/docs/diagrams/{file}.drawio";
     public static final String DOCS_DIAGRAMS_VIEW = "/docs/diagramas";
     /** Sandbox de dominio (gitignored): existe en local/dev, 404 en prod porque nunca se sube al repo. */

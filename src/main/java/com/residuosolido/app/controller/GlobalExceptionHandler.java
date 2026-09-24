@@ -1,8 +1,7 @@
-package com.residuosolido.app.exception;
+package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.Routes;
-import com.residuosolido.app.controller.BaseController;
-import com.residuosolido.app.enums.ServerMessage;
+import com.residuosolido.app.exception.ServerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,11 +16,16 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/** msg()/msg(Throwable) heredados de BaseController — antes duplicados acá a mano. */
 @ControllerAdvice
-public class GlobalExceptionHandler extends BaseController {
+public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    private final Messages messages;
+
+    public GlobalExceptionHandler(Messages messages) {
+        this.messages = messages;
+    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public String handleNotFound(HttpServletRequest request) {
@@ -45,7 +49,7 @@ public class GlobalExceptionHandler extends BaseController {
     @ExceptionHandler(AccessDeniedException.class)
     public String handleAccessDenied(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         logger.warn("Acceso denegado a: {}", request.getRequestURI());
-        redirectAttributes.addFlashAttribute("errorMessage", msg(ServerMessage.FLASH_ERROR_ACCESS_DENIED));
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(ServerMessage.FLASH_ERROR_ACCESS_DENIED));
         return redirectOrError(request);
     }
 
@@ -53,7 +57,7 @@ public class GlobalExceptionHandler extends BaseController {
     public String handleIllegalArgument(HttpServletRequest request, IllegalArgumentException e,
                                         RedirectAttributes redirectAttributes) {
         logger.warn("Argumento inválido en {}: {}", request.getRequestURI(), e.getMessage());
-        redirectAttributes.addFlashAttribute("errorMessage", msg(e));
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(e));
         // Un error de validación (ej. teléfono mal formado) debe devolver al formulario
         // donde ocurrió, no a un destino "genérico" por rol — si no, el usuario ve el
         // error en una pantalla sin el campo que lo causó (ej. termina en /entrar).
@@ -67,7 +71,7 @@ public class GlobalExceptionHandler extends BaseController {
     @ExceptionHandler(Exception.class)
     public String handleGeneric(HttpServletRequest request, Exception e, RedirectAttributes redirectAttributes) {
         logger.error("Error no manejado en {}: {}", request.getRequestURI(), e.getMessage(), e);
-        redirectAttributes.addFlashAttribute("errorMessage", msg(ServerMessage.FLASH_ERROR_GENERIC));
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(ServerMessage.FLASH_ERROR_GENERIC));
         return redirectOrError(request);
     }
 

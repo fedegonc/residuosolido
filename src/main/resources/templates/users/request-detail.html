@@ -1,0 +1,79 @@
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Solicitud</title></head>
+<body>
+  <main layout:fragment="content">
+    <div class="page">
+
+      <div class="row row--between mb">
+        <div>
+          <h1 class="card__title"><span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span></h1>
+          <div th:replace="~{fragments/ui :: status(${request.status})}"></div>
+        </div>
+        <a href="/mis-solicitudes" class="btn btn--outline"><svg class="icon"><use href="/images/icons.svg#arrow-left"/></svg> <span data-i18n="req_detail_back">Volver</span></a>
+      </div>
+
+      <div class="card mb">
+        <h2 class="card__subtitle" data-i18n="req_detail_org">Organización</h2>
+        <div th:if="${request.organization != null}" class="info-row">
+          <svg class="icon"><use href="/images/icons.svg#building"/></svg>
+          <span th:text="${request.organization.displayName}"></span>
+        </div>
+        <div th:if="${request.organization == null}" class="info-row">
+          <svg class="icon"><use href="/images/icons.svg#building"/></svg>
+          <span data-i18n="track_no_org">Sin asignar</span>
+        </div>
+
+        <div class="divider">
+          <h2 class="card__subtitle" data-i18n="req_detail_address">Dirección</h2>
+          <div th:replace="~{fragments/ui :: row('location-dot', 'Ciudad', ${request.city != null ? request.city.toString() : null})}"></div>
+          <div th:replace="~{fragments/ui :: row('route', 'Dirección', ${request.address})}"></div>
+          <div th:replace="~{fragments/ui :: row('flag', 'Referencia', ${request.addressReference})}"></div>
+        </div>
+
+        <div class="divider">
+          <h2 class="card__subtitle" data-i18n="req_detail_materials">Materiales</h2>
+          <div th:if="${request.hasMaterials()}" class="request-item__materials">
+            <span th:each="mat : ${request.materials}" class="tag" th:text="${mat.name()}"></span>
+          </div>
+          <span th:unless="${request.hasMaterials()}">—</span>
+        </div>
+
+        <div th:if="${request.hasImage()}" class="divider">
+          <h2 class="card__subtitle" data-i18n="req_detail_image">Foto</h2>
+          <img th:src="${request.imageUrl}" th:alt="'Foto de la solicitud #' + ${request.id}" class="img-detail">
+        </div>
+
+        <div th:if="${request.confirmedSlot != null}" class="divider">
+          <h2 class="card__subtitle" data-i18n="req_detail_slot">Franja confirmada</h2>
+          <div class="info-row"><svg class="icon"><use href="/images/icons.svg#clock"/></svg>
+            <span th:attr="data-i18n=${'req_form_slot_' + #strings.toLowerCase(request.confirmedSlot.name())}" th:text="${request.confirmedSlot}"></span>
+          </div>
+        </div>
+
+        <div th:if="${request.createdAt != null}" class="divider">
+          <div class="info-row">
+            <svg class="icon"><use href="/images/icons.svg#calendar"/></svg>
+            <span th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+          </div>
+        </div>
+      </div>
+
+      <div th:if="${request.canBeEdited() or request.canBeDeleted()}" class="form-actions">
+        <a th:if="${request.canBeEdited()}" th:href="@{/solicitudes/{id}/editar(id=${request.id})}" class="btn btn--outline">
+          <svg class="icon"><use href="/images/icons.svg#pen"/></svg> <span data-i18n="req_list_edit">Editar</span>
+        </a>
+        <form th:if="${request.canBeDeleted()}" th:action="@{/solicitudes/{id}(id=${request.id})}" method="post"
+              data-confirm="¿Eliminar esta solicitud?" data-i18n-attr="data-confirm:req_delete_confirm">
+          <input type="hidden" name="_method" value="delete">
+          <button type="submit" class="btn btn--outline btn--danger">
+            <svg class="icon"><use href="/images/icons.svg#trash"/></svg> <span data-i18n="req_list_delete">Eliminar</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

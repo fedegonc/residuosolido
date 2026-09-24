@@ -3,6 +3,7 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.NotificationType;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.exception.OwnershipException;
@@ -35,6 +36,7 @@ class RequestServiceTest {
     private RequestRepository requestRepository;
     private LocalImageService imageService;
     private CityOrgService cityOrgService;
+    private NotificationService notificationService;
     private RequestService requestService;
 
     @BeforeEach
@@ -42,7 +44,8 @@ class RequestServiceTest {
         requestRepository = mock(RequestRepository.class);
         imageService = mock(LocalImageService.class);
         cityOrgService = mock(CityOrgService.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService);
+        notificationService = mock(NotificationService.class);
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, notificationService, new RequestValidator(), new RequestStateMachine());
     }
 
     private User citizen(String id) {
@@ -56,17 +59,43 @@ class RequestServiceTest {
     private Request requestOf(User owner, RequestStatus status) {
         Request r = new Request();
         r.setId("req1");
-        r.setUser(owner);
-        r.setStatus(status);
+        r.setContactUser(owner);
+        r.restoreStatus(status);
         return r;
     }
 
     private Request orgRequestOf(User org, RequestStatus status) {
         Request r = new Request();
         r.setId("req1");
-        r.setOrganization(org);
-        r.setStatus(status);
+        r.assignOrganization(org);
+        r.restoreStatus(status);
         return r;
+    }
+
+    // ───────────────────── Listados (delegación al repositorio) ─────────────────────
+
+    @Test
+    void getRequestsByUser_delegatesWithPagination() {
+        User user = citizen("u1");
+        when(requestRepository.findByUser(user,
+                org.springframework.data.domain.PageRequest.of(0, 10)))
+                .thenReturn(List.of());
+
+        assertTrue(requestService.getRequestsByUser(user, 0, 10).isEmpty());
+        verify(requestRepository).findByUser(user,
+                org.springframework.data.domain.PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getRequestsByOrganization_delegatesWithPagination() {
+        User o = org("o1");
+        when(requestRepository.findByOrganizationOrderByCreatedAtDesc(o,
+                org.springframework.data.domain.PageRequest.of(1, 5)))
+                .thenReturn(List.of());
+
+        assertTrue(requestService.getRequestsByOrganization(o, 1, 5).isEmpty());
+        verify(requestRepository).findByOrganizationOrderByCreatedAtDesc(o,
+                org.springframework.data.domain.PageRequest.of(1, 5));
     }
 
     // ───────────────────── getOwnedRequest ─────────────────────
@@ -90,8 +119,8 @@ class RequestServiceTest {
     void getOwnedRequest_guestRequest_throwsOwnershipException() {
         Request existing = new Request();
         existing.setId("req1");
-        existing.setGuestName("Juan");
-        existing.setStatus(RequestStatus.PENDING);
+        existing.setGuestContact("Juan", null, null);
+        existing.restoreStatus(RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         assertThrows(OwnershipException.class,
                 () -> requestService.getOwnedRequest("req1", citizen("u1")));
@@ -145,7 +174,7 @@ class RequestServiceTest {
     void getOwnedOrgRequest_unassigned_throwsOwnershipException() {
         Request existing = new Request();
         existing.setId("req1");
-        existing.setStatus(RequestStatus.PENDING);
+        existing.restoreStatus(RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         assertThrows(OwnershipException.class,
                 () -> requestService.getOwnedOrgRequest("req1", org("org1")));
@@ -165,6 +194,21 @@ class RequestServiceTest {
         assertEquals(RequestStatus.IN_PROGRESS, existing.getStatus());
         assertEquals(TimeSlot.MANANA, existing.getConfirmedSlot());
         verify(requestRepository).save(existing);
+        verify(notificationService).notifyRequester(existing, NotificationType.ACCEPTED);
+    }
+
+    @Test
+    void acceptRequest_concurrentConflict_doesNotNotify() {
+        User organization = org("org1");
+        Request existing = orgRequestOf(organization, RequestStatus.PENDING);
+        when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
+        when(requestRepository.save(any(Request.class)))
+                .thenThrow(new OptimisticLockingFailureException("stale version"));
+
+        assertThrows(StateException.class,
+                () -> requestService.acceptRequest("req1", organization, TimeSlot.MANANA));
+        // regla del dominio: si el save falla, no se notifica un estado no persistido
+        verify(notificationService, never()).notifyRequester(any(), any());
     }
 
     @Test
@@ -200,6 +244,7 @@ class RequestServiceTest {
         requestService.rejectRequest("req1", organization);
 
         assertEquals(RequestStatus.REJECTED, existing.getStatus());
+        verify(notificationService).notifyRequester(existing, NotificationType.REJECTED);
     }
 
     @Test
@@ -309,28 +354,6 @@ class RequestServiceTest {
         verify(requestRepository, never()).findByOrganizationAndStatusOrderByCreatedAtDesc(any(), any(), any());
     }
 
-    // ───────────────────── validateEstimates ─────────────────────
-
-    @Test
-    void createRequest_invalidWeight_throwsValidationException() {
-        User citizen = citizen("u1");
-        when(cityOrgService.findOrganizationByIdAndCity(any(), any())).thenReturn(org("org1"));
-
-        assertThrows(ValidationException.class, () -> requestService.createRequest(
-                citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", "999", null));
-    }
-
-    @Test
-    void createRequest_invalidVolume_throwsValidationException() {
-        User citizen = citizen("u1");
-        when(cityOrgService.findOrganizationByIdAndCity(any(), any())).thenReturn(org("org1"));
-
-        assertThrows(ValidationException.class, () -> requestService.createRequest(
-                citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, "container"));
-    }
-
     // ───────────────────── validateGuest ─────────────────────
 
     @Test
@@ -338,7 +361,7 @@ class RequestServiceTest {
         String longName = "a".repeat(101);
         ValidationException ex = assertThrows(ValidationException.class, () -> requestService.createRequest(
                 null, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), longName, "+59899123456", "org1", null, null));
+                List.of(MaterialCategory.PLASTICO), longName, "+59899123456", "org1"));
         assertNotNull(ex);
     }
 
@@ -346,7 +369,7 @@ class RequestServiceTest {
     void createRequest_guestInvalidPhone_throwsValidationException() {
         assertThrows(ValidationException.class, () -> requestService.createRequest(
                 null, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), "Juan", "123", "org1", null, null));
+                List.of(MaterialCategory.PLASTICO), "Juan", "123", "org1"));
     }
 
     // ───────────────────── validateMaterials ─────────────────────
@@ -360,7 +383,7 @@ class RequestServiceTest {
 
         assertThrows(ValidationException.class, () -> requestService.createRequest(
                 citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null));
+                List.of(MaterialCategory.PLASTICO), null, null, "org1"));
     }
 
     // ───────────────────── createRequestWithImage ─────────────────────
@@ -368,12 +391,12 @@ class RequestServiceTest {
     @Test
     void createRequestWithImage_validatesImageBeforeCreating() {
         MockMultipartFile file = new MockMultipartFile("imageFile", "photo.jpg", "image/jpeg", new byte[]{1, 2, 3});
-        doThrow(new ValidationException(com.residuosolido.app.enums.ServerMessage.ERROR_IMAGE_TOO_LARGE))
+        doThrow(new ValidationException(com.residuosolido.app.exception.ServerMessage.ERROR_IMAGE_TOO_LARGE))
                 .when(imageService).validateImage(file);
 
         assertThrows(ValidationException.class, () -> requestService.createRequestWithImage(
                 citizen("u1"), City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null, file));
+                List.of(MaterialCategory.PLASTICO), null, null, "org1", file));
         verifyNoInteractions(requestRepository);
     }
 
@@ -389,7 +412,7 @@ class RequestServiceTest {
         when(imageService.attachImageToRequest(any(Request.class), eq(file))).thenReturn(withImage);
 
         Request result = requestService.createRequestWithImage(citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null, file);
+                List.of(MaterialCategory.PLASTICO), null, null, "org1", file);
 
         assertEquals("uploads/photo.jpg", result.getImageUrl());
         verify(imageService).attachImageToRequest(any(Request.class), eq(file));
@@ -404,7 +427,7 @@ class RequestServiceTest {
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
 
         requestService.createRequestWithImage(citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", null, null, emptyFile);
+                List.of(MaterialCategory.PLASTICO), null, null, "org1", emptyFile);
 
         verify(imageService, never()).attachImageToRequest(any(), any());
     }
