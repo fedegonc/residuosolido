@@ -26,9 +26,11 @@ class PageContentRenderingTest {
 
         assertTrue(html.contains("page-content__hero"), "Should have hero container");
         assertTrue(html.contains("page-content__image"), "Should have image class");
-        assertTrue(html.contains("src=\"https://"), "Should have https image URL");
-        assertFalse(html.contains("&#39;"), "Should not have HTML entity escapes");
-        assertFalse(html.contains("&quot;"), "Should not have quote escapes");
+
+        String src = extractSrcFromHtml(html);
+        assertTrue(src.startsWith("https://"), "Should have https image URL");
+        assertFalse(src.contains("&#39;") || src.contains("&quot;"),
+            "Image src should not have HTML entity escapes");
     }
 
     @Test

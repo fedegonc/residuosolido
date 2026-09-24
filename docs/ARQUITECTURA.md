@@ -132,7 +132,7 @@ páginas de org decoran `base.html` directamente (ver `docs/MEJORAS.md` #130).
 
 ## i18n: fuente única de verdad de copies
 
-*(Rescatado de `docs/referencia/CORRECCIONES.md` §4 al archivarlo — ver
+*(Rescatado de `docs/CORRECCIONES.md` §4 al archivarlo — ver
 `docs/MEJORAS.md` #166 sobre la duplicación de carga entre las 2 clases.)*
 
 Dos fuentes de texto, deben coincidir:
