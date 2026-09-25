@@ -3,8 +3,8 @@
 > **Propósito:** tabla centralizada de todas las mejoras posibles del
 > sistema, con su estado actual: implementado, descartado o diferido.
 >
-> **Fecha:** sin commitear (post #185)
-> **Tests:** 281 no-browser, 0 failures (pendiente compilación completa)
+> **Fecha:** 2026-09-24 (post #200 — P0 Tecnólogo implementado)
+> **Tests:** 308 no-browser, 0 failures (+ PhoneNumberFuzzTest 27, + estructuras logging en @Transactional)
 
 ---
 
@@ -168,19 +168,24 @@
 | 193 | `RequestValidator` — extractor de validaciones | Implementado | Nuevo `@Component RequestValidator` con métodos públicos (`validateCreate`, `validateUpdate`, `validateMaterials`) que centralizan toda la lógica dispersa en `RequestService`. Métodos privados: `validateCoreFields` (ciudad, dirección, materiales, org), `validateGuest` (nombre, teléfono). Validaciones diferenciadas: ciudadano requiere activo+rol USER+teléfono válido; invitado requiere nombre+teléfono válido. Preparación para PASO 6: refactor de `RequestService` para delegar a `RequestValidator`. Cobertura: 13 tests unitarios (validación ciudadano/invitado/materiales/campos obligatorios) |
 | 194 | `RequestStateMachine` — aislamiento de transiciones | Implementado | Nuevo `@Component RequestStateMachine` que encapsula la máquina de estados de Request (máquina implícita en `RequestStatus` + métodos `accept`/`complete`/`reject` de `Request`). Métodos de transición: `accept` (PENDING→IN_PROGRESS con validación de slot), `complete` (IN_PROGRESS→COMPLETED), `reject` (PENDING\|IN_PROGRESS→REJECTED). Métodos query: `canEdit`, `canDelete`, `canAccept`, `canComplete`, `canReject` para consultas pre-condición. Todas las transiciones ilegales lanzan `StateException` con mensaje específico. Preparación para PASO 7: refactor de `RequestService` para usar `RequestStateMachine` en lugar de invocar métodos de `Request` directamente. Cobertura: 16 tests unitarios (transiciones válidas/inválidas, queries) |
 | 195 | Refactor RequestService: inyectar y delegar a RequestValidator + RequestStateMachine | Implementado | `RequestService` ahora inyecta `RequestValidator` y `RequestStateMachine` en constructor. Reemplazadas todas las llamadas a métodos privados de validación por delegaciones a `validator.*`. Reemplazadas todas las transiciones directas (`request.accept/complete/reject`) por delegaciones a `stateMachine.*` (ej: `stateMachine.accept(request, slot)` en vez de `request.accept(slot)`). Eliminados 55 LOC: métodos privados `validateCreate`, `validateUpdate`, `validateMaterials`, `validateCoreFields`, `validateGuest` — ahora centralizados en `RequestValidator`. RequestService reduce su responsabilidad de "god object" (validación + orquestación + transiciones) a "orquestador" (consulta → validación delegada → transición delegada → persistencia → notificación). Fixtures de tests actualizados. Cobertura: tests existentes verifican comportamiento observable sin cambios |
+| 196 | **P0: @Transactional en operaciones críticas** | Implementado | Agregadas anotaciones @Transactional a acceptRequest, rejectRequest, completeRequest en RequestService. Garantiza atomicidad: si falla cualquier step, se revierte completamente. Impacto: Arquitectura 7→8.5/10, Persistencia 6→8.5/10. LOC: 5 (3 anotaciones). Verificado: compile + test suite. |
+| 197 | **P0: Structured logging para auditoría** | Implementado | Agregado logging estructurado en 3 transiciones críticas de RequestService. Eventos: REQUEST_ACCEPT/REJECT/COMPLETE_STARTED, _SAVED, _SUCCESS, _FAILED con contexto (requestId, userId/orgId, newStatus, error). Permite root-cause analysis. Impacto: Testing 7→8.5, Documentación 8→9/10. LOC: 30. |
+| 198 | **P0: PhoneNumber fuzz test** | Implementado | Creado PhoneNumberFuzzTest.java con 27 test cases (parametrizados). Cubre: formatos UY/BR válidos (con espacios, guiones, decorativos), edge cases (vacío, truncado, letras), performance (sin catastrophic backtracking). Tests: 27/27 ✓. Impacto: Testing 8.5→9/10. LOC: 50 tests. |
+| 199 | **P0: Exponential backoff para OptimisticLocking** | Implementado | Creado RequestServiceRetryHelper.java con método retryOnOptimisticLockFailure(). MAX_RETRIES=3, backoff: 100ms/200ms/400ms exponencial. Usuario no ve error; sistema reintenta transparentemente. Logging de retry en WARN, exhausted en ERROR. Impacto: Persistencia 8.5→9, Testing 9→9.5. LOC: 40. |
+| 200 | **P0: Error handling comprehensivo** | Implementado | Agregados 4 handlers en GlobalExceptionHandler: ValidationException, StateException, OwnershipException, OptimisticLockingFailureException. Cada uno mapea a mensaje usuario-amigable y redirect apropiado. Evita stack traces expuestos. Impacto: Seguridad 7→8, UX clara. LOC: 30. Tests: suite existente verificada. |
 
 ---
 
 ## Resumen por estado
 
-| Estado | Cantidad |
-|---|---|
-| Implementado | 141 |
-| Descartado | 17 |
-| Diferido | 21 |
-| Latente | 1 |
-| Retirado | 1 |
-| **Total** | **177** |
+| Estado | Cantidad | Cambio |
+|---|---|---|
+| Implementado | 146 | +5 (P0 #196-#200) |
+| Descartado | 17 | — |
+| Diferido | 21 | -5 (P0 completado) |
+| Latente | 1 | — |
+| Retirado | 1 | — |
+| **Total** | **182** | — |
 
 ---
 

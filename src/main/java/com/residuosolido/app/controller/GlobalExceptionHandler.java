@@ -2,8 +2,12 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.exception.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.exception.StateException;
+import com.residuosolido.app.exception.OwnershipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +54,46 @@ public class GlobalExceptionHandler {
     public String handleAccessDenied(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         logger.warn("Acceso denegado a: {}", request.getRequestURI());
         redirectAttributes.addFlashAttribute("errorMessage", messages.msg(ServerMessage.FLASH_ERROR_ACCESS_DENIED));
+        return redirectOrError(request);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public String handleValidationException(HttpServletRequest request, ValidationException e,
+                                           RedirectAttributes redirectAttributes) {
+        logger.warn("Validación fallida en {}: {}", request.getRequestURI(), e.key());
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(e.key()));
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.isBlank()) {
+            return "redirect:" + referer;
+        }
+        return redirectOrError(request);
+    }
+
+    @ExceptionHandler(StateException.class)
+    public String handleStateException(HttpServletRequest request, StateException e,
+                                      RedirectAttributes redirectAttributes) {
+        logger.warn("Error de estado en {}: {}", request.getRequestURI(), e.key());
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(e.key()));
+        return "redirect:" + Routes.REQUESTS;
+    }
+
+    @ExceptionHandler(OwnershipException.class)
+    public String handleOwnershipException(HttpServletRequest request, OwnershipException e,
+                                          RedirectAttributes redirectAttributes) {
+        logger.warn("Acceso denegado (propiedad) en {}: {}", request.getRequestURI(), e.key());
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(e.key()));
+        return "redirect:" + Routes.REQUESTS;
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public String handleOptimisticLocking(HttpServletRequest request, OptimisticLockingFailureException e,
+                                         RedirectAttributes redirectAttributes) {
+        logger.warn("Conflicto de concurrencia en {}", request.getRequestURI());
+        redirectAttributes.addFlashAttribute("warningMessage", messages.msg(ServerMessage.FLASH_REQUEST_CONCURRENT_MODIFICATION));
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.isBlank()) {
+            return "redirect:" + referer;
+        }
         return redirectOrError(request);
     }
 

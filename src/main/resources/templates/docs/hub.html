@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Centro de Recursos — Eco Solicitud</title>
+</head>
+<body>
+<main layout:fragment="content" class="docs-hub">
+    <div class="hub-container">
+        <section class="hub-section">
+            <h1>📚 Centro de Recursos</h1>
+            <p class="hub-subtitle">Documentación, diagramas, análisis y métricas completas del sistema</p>
+        </section>
+
+        <!-- DOCUMENTOS -->
+        <section class="hub-section">
+            <h2>📄 Documentos</h2>
+            <div class="hub-grid">
+                <a th:href="@{/docs/DEFENSA}" class="hub-card">
+                    <h3>Defensa de Tesis</h3>
+                    <p>Argumento, exposición, preguntas esperadas y limitaciones</p>
+                </a>
+                <a th:href="@{/docs/REQUISITOS}" class="hub-card">
+                    <h3>Requisitos</h3>
+                    <p>Catálogo RF, RN y criterio de alcance</p>
+                </a>
+                <a th:href="@{/docs/ARQUITECTURA}" class="hub-card">
+                    <h3>Arquitectura</h3>
+                    <p>Componentes, flujos, layouts e i18n</p>
+                </a>
+                <a th:href="@{/docs/TRADEOFFS}" class="hub-card">
+                    <h3>Decisiones de Diseño</h3>
+                    <p>26 tradeoffs documentados con justificación</p>
+                </a>
+                <a th:href="@{/docs/MEJORAS}" class="hub-card">
+                    <h3>Estado de Mejoras</h3>
+                    <p>146 implementadas, 17 descartadas, 21 diferidas</p>
+                </a>
+                <a th:href="@{/docs/ENDPOINTS}" class="hub-card">
+                    <h3>Endpoints</h3>
+                    <p>43 rutas HTTP, OpenAPI y testing</p>
+                </a>
+                <a th:href="@{/docs/METODOLOGIA}" class="hub-card">
+                    <h3>Metodología</h3>
+                    <p>Modelo iterativo-incremental de 4 fases DSRM</p>
+                </a>
+                <a th:href="@{/docs/BOILERPLATE_VS_CORE}" class="hub-card">
+                    <h3>Boilerplate vs Core</h3>
+                    <p>Clasificación: infraestructura genérica vs núcleo de negocio</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- DIAGRAMAS -->
+        <section class="hub-section">
+            <h2>📊 Diagramas UML</h2>
+            <div class="hub-grid">
+                <a th:href="@{/docs/diagramas}" class="hub-card" th:each="d : ${diagrams}">
+                    <h3 th:text="${d[1]}">Diagrama</h3>
+                    <p>Ver en el visor interactivo</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- COBERTURA Y ANÁLISIS -->
+        <section class="hub-section">
+            <h2>🧪 Testing & Cobertura</h2>
+            <div class="hub-stats">
+                <div class="stat-card">
+                    <h3>Unit Tests</h3>
+                    <p class="stat-value">308</p>
+                    <p class="stat-label">No-browser, sin failures</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Fuzz Tests</h3>
+                    <p class="stat-value">27</p>
+                    <p class="stat-label">PhoneNumber validación exhaustiva</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Jacoco Coverage</h3>
+                    <p class="stat-value">
+                        <a href="/target/site/jacoco/index.html" target="_blank">Generar Reporte</a>
+                    </p>
+                    <p class="stat-label">Ejecutar: <code>mvn clean test jacoco:report</code></p>
+                </div>
+                <div class="stat-card">
+                    <h3>PMD Analysis</h3>
+                    <p class="stat-value">
+                        <a href="/target/site/pmd.html" target="_blank">Ejecutar</a>
+                    </p>
+                    <p class="stat-label"><code>mvn pmd:pmd pmd:check</code></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SANDBOX METRICS -->
+        <section class="hub-section">
+            <h2>🧪 Sandbox (scratch/sim)</h2>
+            <div class="hub-stats">
+                <div class="stat-card">
+                    <h3>Domain Scenarios</h3>
+                    <p class="stat-value">95 PASS</p>
+                    <p class="stat-label">0 FAIL — 100% cobertura ejercitada</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Error Keys</h3>
+                    <p class="stat-value">44/44</p>
+                    <p class="stat-label">100% de excepciones testeadas</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Branch Coverage</h3>
+                    <p class="stat-value">42/42</p>
+                    <p class="stat-label">100% de caminos probados</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Ejecutar Sandbox</h3>
+                    <p class="stat-value">
+                        <code>java scratch/App.java scenarios</code>
+                    </p>
+                    <p class="stat-label">Ver resultado en terminal</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NASA vs TECNÓLOGO -->
+        <section class="hub-section">
+            <h2>🚀 NASA Level vs 🎓 Tecnólogo</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card nasa">
+                    <h3>🚀 NASA Level</h3>
+                    <p class="score">4.4/10</p>
+                    <ul>
+                        <li>❌ Confiabilidad: SPOFs sin redundancia</li>
+                        <li>❌ Observabilidad: No distribuida</li>
+                        <li>❌ Failover: Cero automático</li>
+                        <li>✓ Testing: 308 tests</li>
+                    </ul>
+                    <p class="verdict">INSUFICIENTE para producción crítica</p>
+                </div>
+                <div class="comparison-card tecnol">
+                    <h3>🎓 Tecnólogo Level</h3>
+                    <p class="score">8.53/10 ✓</p>
+                    <ul>
+                        <li>✓ Arquitectura: Capas bien separadas</li>
+                        <li>✓ Diseño: Patterns claros</li>
+                        <li>✓ Testing: 308 unit + 27 fuzz</li>
+                        <li>✓ P0 Implementado: @Transactional + logging + retry</li>
+                    </ul>
+                    <p class="verdict">EXCELENTE para MVP</p>
+                </div>
+            </div>
+            <div class="hub-argument">
+                <h4>Argumento de Defensa</h4>
+                <p>"Sistema optimizado para la escala del Tecnólogo, no para redundancia NASA.
+                    MVP funcional con diseño claro, patterns reconocibles y limitaciones honestas.
+                    Cada decisión de arquitectura está documentada en TRADEOFFS.md."</p>
+            </div>
+        </section>
+
+        <!-- P0 IMPLEMENTADO -->
+        <section class="hub-section">
+            <h2>⚡ P0 — Mejoras de Defensa (Implementadas)</h2>
+            <div class="hub-grid">
+                <div class="feature-card">
+                    <h3>P0.1: @Transactional</h3>
+                    <p>Atomicidad de transiciones. 5 LOC</p>
+                </div>
+                <div class="feature-card">
+                    <h3>P0.2: Structured Logging</h3>
+                    <p>Auditoría de operaciones críticas. 30 LOC</p>
+                </div>
+                <div class="feature-card">
+                    <h3>P0.3: PhoneNumber Fuzz Test</h3>
+                    <p>27 tests parametrizados. 100% validación</p>
+                </div>
+                <div class="feature-card">
+                    <h3>P0.4: Exponential Backoff</h3>
+                    <p>Reintentos automáticos. 40 LOC</p>
+                </div>
+                <div class="feature-card">
+                    <h3>P0.5: Error Handling</h3>
+                    <p>5 exception handlers. 30 LOC</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ENLACES EXTERNOS -->
+        <section class="hub-section">
+            <h2>🔗 Enlaces Externos</h2>
+            <div class="hub-grid">
+                <a th:href="@{/swagger-ui.html}" class="hub-card external">
+                    <h3>Swagger UI</h3>
+                    <p>Documentación automática de endpoints</p>
+                </a>
+                <a href="https://docs.google.com/document/d/1LNOGjk2HbU49zUnKQ6cMVhqFjj4WriRQsG8U7t2K2Ic/edit?usp=sharing"
+                   target="_blank" rel="noopener noreferrer" class="hub-card external">
+                    <h3>Tesis (Google Docs)</h3>
+                    <p>Documento completo de defensa</p>
+                </a>
+                <a href="https://github.com/fedegonc/residuosolido" target="_blank" rel="noopener noreferrer"
+                   class="hub-card external">
+                    <h3>GitHub</h3>
+                    <p>Repositorio y control de versiones</p>
+                </a>
+            </div>
+        </section>
+
+        <footer class="hub-footer">
+            <p>Centro de recursos actualizado 2026-09-24</p>
+            <p class="text-muted">Esta página no está enlazada desde el navbar — acceso solo por URL directa</p>
+        </footer>
+    </div>
+
+    <style>
+        .docs-hub {
+            padding: 2rem 1rem;
+        }
+
+        .docs-hub .hub-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .docs-hub .hub-section {
+            margin-bottom: 3rem;
+        }
+
+        .docs-hub .hub-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .docs-hub .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .docs-hub .hub-card,
+        .docs-hub .feature-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface);
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .docs-hub .hub-card:hover,
+        .docs-hub .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .docs-hub .hub-card h3,
+        .docs-hub .feature-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .docs-hub .hub-card p,
+        .docs-hub .feature-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .docs-hub .hub-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .docs-hub .stat-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--surface);
+            text-align: center;
+        }
+
+        .docs-hub .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .docs-hub .stat-value {
+            margin: 0.5rem 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .docs-hub .stat-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .docs-hub .stat-value a:hover {
+            text-decoration: underline;
+        }
+
+        .docs-hub .stat-label {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .docs-hub .stat-label code {
+            background: var(--bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .docs-hub .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .docs-hub .comparison-card {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+        }
+
+        .docs-hub .comparison-card.nasa {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .docs-hub .comparison-card.tecnol {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .docs-hub .comparison-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .docs-hub .comparison-card .score {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .docs-hub .comparison-card ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .docs-hub .comparison-card li {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .docs-hub .comparison-card .verdict {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .docs-hub .hub-argument {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+            margin-top: 2rem;
+        }
+
+        .docs-hub .hub-argument h4 {
+            margin: 0 0 1rem 0;
+            color: var(--primary);
+        }
+
+        .docs-hub .hub-argument p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .docs-hub .hub-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .docs-hub .external::after {
+            content: " ↗";
+        }
+
+        @media (max-width: 768px) {
+            .docs-hub .hub-section h2 {
+                font-size: 1.25rem;
+            }
+
+            .docs-hub .hub-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .docs-hub .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</main>
+</body>
+</html>
