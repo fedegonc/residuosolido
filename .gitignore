@@ -312,10 +312,10 @@ work/
 # ========================================
 # ESPECÍFICO DEL PROYECTO
 # ========================================
-# Agrega aquí archivos específicos de tu proyecto
-# Ejemplo:
-# /custom-config/
-# /private-data/
+# Carpetas ocultas (dotfiles) — herramientas, config local, skills
+.agents/
+.claude/
+.config/
 
 # Sandbox de diseño: núcleo duro en un solo archivo Java, sin Spring/Mongo,
 # para prototipar flujos/tests a velocidad récord (java scratch/App.java).
