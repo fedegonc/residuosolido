@@ -36,6 +36,8 @@ env.properties
 !docs/COPIES.md
 !docs/AUDITORIA.md
 !docs/USABILIDAD.md
+!docs/VISUAL_PERFORMANCE_PATTERNS.md
+!docs/PROBABLE_BUGS_ANALYSIS.md
 !docs/tesis/CONTEXTO_LLM.md
 # docs/referencia/: material de respaldo (auditorías, historial de
 # hardening) — fuera del INDICE principal pero versionado igual.
@@ -312,10 +314,13 @@ work/
 # ========================================
 # ESPECÍFICO DEL PROYECTO
 # ========================================
-# Agrega aquí archivos específicos de tu proyecto
-# Ejemplo:
-# /custom-config/
-# /private-data/
+# Carpetas ocultas (dotfiles) — herramientas, config local, skills.
+# Restaurado tras perderse en un merge (ver ea11e5b: "ocultar carpetas con
+# punto en GitHub"). Raíz visible para tribunal: README.md, pom.xml,
+# Dockerfile, .gitignore, src/, docs/, scratch/.
+.agents/
+.claude/
+.config/
 
 # Sandbox de diseño: núcleo duro en un solo archivo Java, sin Spring/Mongo,
 # para prototipar flujos/tests a velocidad récord (java scratch/App.java).
