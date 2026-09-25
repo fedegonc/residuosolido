@@ -20,7 +20,6 @@ env.properties
 # de docs canónico (ver docs/INDICE.md).
 *.md
 !README.md
-!CLAUDE.md
 !docs/INDICE.md
 !docs/DEFENSA.md
 !docs/DIAGRAMAS.md
@@ -36,6 +35,7 @@ env.properties
 !docs/COPIES.md
 !docs/AUDITORIA.md
 !docs/USABILIDAD.md
+!docs/SRS.md
 !docs/tesis/CONTEXTO_LLM.md
 # docs/referencia/: material de respaldo (auditorías, historial de
 # hardening) — fuera del INDICE principal pero versionado igual.

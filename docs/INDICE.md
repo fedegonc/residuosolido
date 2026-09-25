@@ -1,6 +1,6 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-23 — borrado de peso/volumen estimados y RequestValidator muerto (#182)  
+> Fecha de sincronizacion: 2026-09-24 — SRS IEEE 830 agregado, estructura limpiada  
 > Tests: 423 no-browser, 7 failures conocidos (`PageContentImagesTest`/`PageContentRenderingTest` sobre `catadores`, pre-existentes #177; browser tests con fallos por selectores desincronizados — ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
@@ -26,6 +26,7 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `README.md` | Presentacion general, instalacion, stack tecnologico y enlaces a documentacion. | Actualizado |
 | `docs/INDICE.md` | Este archivo. Mapa de toda la documentacion. | Actualizado |
 | `docs/REQUISITOS.md` | Catalogo canonico de RF, RN y criterio de alcance. Fuente de verdad para la especificacion. | Actualizado |
+| `docs/SRS.md` | Software Requirements Specification (IEEE 830 style): 9 secciones, matriz de trazabilidad, interfaces externas, restricciones de diseño. Documento formal para tribunal. | Nuevo |
 | `docs/DEFENSA.md` | Guia para la defensa de tesis: argumento, exposicion, preguntas esperadas, limitaciones (§7, fusionado desde `LIMITACIONES.md`). | Actualizado |
 | `docs/TRADEOFFS.md` | Las 26 decisiones de diseno con alternativas y justificacion. | Actualizado |
 | `docs/DIAGRAMAS.md` | Diagramas UML (clases, ER, secuencia, estados, casos de uso) y flujos. | Actualizado |
