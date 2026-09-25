@@ -216,31 +216,31 @@
             padding: 2rem 1rem;
         }
 
-        .hub-container {
+        .docs-hub .hub-container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .hub-section {
+        .docs-hub .hub-section {
             margin-bottom: 3rem;
         }
 
-        .hub-section h2 {
+        .docs-hub .hub-section h2 {
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--primary);
             padding-bottom: 0.5rem;
         }
 
-        .hub-grid {
+        .docs-hub .hub-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .hub-card,
-        .feature-card {
+        .docs-hub .hub-card,
+        .docs-hub .feature-card {
             padding: 1.5rem;
             border: 1px solid var(--border);
             border-radius: 0.5rem;
@@ -250,34 +250,34 @@
             color: inherit;
         }
 
-        .hub-card:hover,
-        .feature-card:hover {
+        .docs-hub .hub-card:hover,
+        .docs-hub .feature-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-color: var(--primary);
         }
 
-        .hub-card h3,
-        .feature-card h3 {
+        .docs-hub .hub-card h3,
+        .docs-hub .feature-card h3 {
             margin: 0 0 0.5rem 0;
             font-size: 1.1rem;
             color: var(--primary);
         }
 
-        .hub-card p,
-        .feature-card p {
+        .docs-hub .hub-card p,
+        .docs-hub .feature-card p {
             margin: 0;
             font-size: 0.9rem;
             color: var(--text-muted);
         }
 
-        .hub-stats {
+        .docs-hub .hub-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
         }
 
-        .stat-card {
+        .docs-hub .stat-card {
             padding: 1.5rem;
             border: 1px solid var(--border);
             border-radius: 0.5rem;
@@ -285,86 +285,86 @@
             text-align: center;
         }
 
-        .stat-card h3 {
+        .docs-hub .stat-card h3 {
             margin: 0 0 0.5rem 0;
             font-size: 0.95rem;
             color: var(--text-muted);
         }
 
-        .stat-value {
+        .docs-hub .stat-value {
             margin: 0.5rem 0;
             font-size: 1.8rem;
             font-weight: bold;
             color: var(--primary);
         }
 
-        .stat-value a {
+        .docs-hub .stat-value a {
             color: var(--primary);
             text-decoration: none;
         }
 
-        .stat-value a:hover {
+        .docs-hub .stat-value a:hover {
             text-decoration: underline;
         }
 
-        .stat-label {
+        .docs-hub .stat-label {
             margin: 0;
             font-size: 0.8rem;
             color: var(--text-muted);
         }
 
-        .stat-label code {
+        .docs-hub .stat-label code {
             background: var(--bg);
             padding: 0.2rem 0.4rem;
             border-radius: 0.25rem;
             font-size: 0.75rem;
         }
 
-        .comparison-grid {
+        .docs-hub .comparison-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .comparison-card {
+        .docs-hub .comparison-card {
             padding: 1.5rem;
             border-radius: 0.5rem;
             border: 2px solid;
         }
 
-        .comparison-card.nasa {
+        .docs-hub .comparison-card.nasa {
             background: #fff3cd;
             border-color: #ffc107;
         }
 
-        .comparison-card.tecnol {
+        .docs-hub .comparison-card.tecnol {
             background: #d4edda;
             border-color: #28a745;
         }
 
-        .comparison-card h3 {
+        .docs-hub .comparison-card h3 {
             margin: 0 0 0.5rem 0;
             font-size: 1.2rem;
         }
 
-        .comparison-card .score {
+        .docs-hub .comparison-card .score {
             font-size: 2rem;
             font-weight: bold;
             margin: 0.5rem 0;
         }
 
-        .comparison-card ul {
+        .docs-hub .comparison-card ul {
             margin: 1rem 0;
             padding-left: 1.5rem;
         }
 
-        .comparison-card li {
+        .docs-hub .comparison-card li {
             margin: 0.5rem 0;
             font-size: 0.9rem;
         }
 
-        .comparison-card .verdict {
+        .docs-hub .comparison-card .verdict {
             margin-top: 1rem;
             padding-top: 1rem;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -372,24 +372,24 @@
             font-size: 0.95rem;
         }
 
-        .hub-argument {
+        .docs-hub .hub-argument {
             background: var(--surface);
             padding: 1.5rem;
             border-left: 4px solid var(--primary);
             margin-top: 2rem;
         }
 
-        .hub-argument h4 {
+        .docs-hub .hub-argument h4 {
             margin: 0 0 1rem 0;
             color: var(--primary);
         }
 
-        .hub-argument p {
+        .docs-hub .hub-argument p {
             margin: 0;
             line-height: 1.6;
         }
 
-        .hub-footer {
+        .docs-hub .hub-footer {
             margin-top: 3rem;
             padding-top: 2rem;
             border-top: 1px solid var(--border);
@@ -398,20 +398,20 @@
             font-size: 0.9rem;
         }
 
-        .external::after {
+        .docs-hub .external::after {
             content: " ↗";
         }
 
         @media (max-width: 768px) {
-            .hub-section h2 {
+            .docs-hub .hub-section h2 {
                 font-size: 1.25rem;
             }
 
-            .hub-grid {
+            .docs-hub .hub-grid {
                 grid-template-columns: 1fr;
             }
 
-            .comparison-grid {
+            .docs-hub .comparison-grid {
                 grid-template-columns: 1fr;
             }
         }
