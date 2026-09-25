@@ -120,6 +120,19 @@ mvn pmd:pmd pmd:check           # análisis estático
   `refactor`, `chore`, `style`. El motivo extendido (qué y por qué) va en el
   body del commit si hace falta, no amontonado en el título.
   Ejemplo: `sec: sacar token de la url del remote` en vez de un párrafo.
+- **Política de squashing (IMPORTANTE):**
+  - En ramas de tópico: commits pequeños e iterativos OK (1-3 cambios por commit).
+  - Antes de mergear a `developer`: **squashear en commits LÓGICOS** (1 por feature).
+    Ejemplo:
+    ```
+    feat: P0 defensa + hub centralizado (155 + 429 LOC, 5 mejoras)
+    fix: markdown rendering en hub (CSS scope)
+    docs: auditar y sincronizar diagramas
+    ```
+  - Antes de mergear a `main`: idealmente 1 commit = 1 release notable
+    (o merge --squash si el historio de developer es muy detallado).
+  - **Nunca mergear a main con commits triviales** ("fix: typo", "fix: whitespace")
+    mezclados con features — agrupar por cambio lógico.
 - **Nunca modificar `git config`** (remote URL, credential.helper, etc.)
   vía Claude Code — es una acción que el usuario ejecuta directamente en su
   terminal (ver `docs/SEGURIDAD.md`).
