@@ -102,7 +102,12 @@ java scratch/App.java landing-cards # Carga de landing cards
 
 ## Configuración
 
-Copiar `.env.example` a `.env` (gitignored):
+Copiar `.config/.env.example` a `.env` (gitignored):
+```bash
+cp .config/.env.example .env
+```
+
+Completar con valores reales:
 ```bash
 SPRING_DATA_MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/residuosolido
 UPLOAD_DIR=/tmp/uploads
