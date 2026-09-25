@@ -16,35 +16,35 @@
         <section class="hub-section">
             <h2>📄 Documentos</h2>
             <div class="hub-grid">
-                <a href="/docs/DEFENSA" class="hub-card">
+                <a th:href="@{/docs/DEFENSA}" class="hub-card">
                     <h3>Defensa de Tesis</h3>
                     <p>Argumento, exposición, preguntas esperadas y limitaciones</p>
                 </a>
-                <a href="/docs/REQUISITOS" class="hub-card">
+                <a th:href="@{/docs/REQUISITOS}" class="hub-card">
                     <h3>Requisitos</h3>
                     <p>Catálogo RF, RN y criterio de alcance</p>
                 </a>
-                <a href="/docs/ARQUITECTURA" class="hub-card">
+                <a th:href="@{/docs/ARQUITECTURA}" class="hub-card">
                     <h3>Arquitectura</h3>
                     <p>Componentes, flujos, layouts e i18n</p>
                 </a>
-                <a href="/docs/TRADEOFFS" class="hub-card">
+                <a th:href="@{/docs/TRADEOFFS}" class="hub-card">
                     <h3>Decisiones de Diseño</h3>
                     <p>26 tradeoffs documentados con justificación</p>
                 </a>
-                <a href="/docs/MEJORAS" class="hub-card">
+                <a th:href="@{/docs/MEJORAS}" class="hub-card">
                     <h3>Estado de Mejoras</h3>
                     <p>146 implementadas, 17 descartadas, 21 diferidas</p>
                 </a>
-                <a href="/docs/ENDPOINTS" class="hub-card">
+                <a th:href="@{/docs/ENDPOINTS}" class="hub-card">
                     <h3>Endpoints</h3>
                     <p>43 rutas HTTP, OpenAPI y testing</p>
                 </a>
-                <a href="/docs/METODOLOGIA" class="hub-card">
+                <a th:href="@{/docs/METODOLOGIA}" class="hub-card">
                     <h3>Metodología</h3>
                     <p>Modelo iterativo-incremental de 4 fases DSRM</p>
                 </a>
-                <a href="/docs/BOILERPLATE_VS_CORE" class="hub-card">
+                <a th:href="@{/docs/BOILERPLATE_VS_CORE}" class="hub-card">
                     <h3>Boilerplate vs Core</h3>
                     <p>Clasificación: infraestructura genérica vs núcleo de negocio</p>
                 </a>
@@ -55,7 +55,7 @@
         <section class="hub-section">
             <h2>📊 Diagramas UML</h2>
             <div class="hub-grid">
-                <a href="/docs/diagramas" class="hub-card" th:each="d : ${diagrams}">
+                <a th:href="@{/docs/diagramas}" class="hub-card" th:each="d : ${diagrams}">
                     <h3 th:text="${d[1]}">Diagrama</h3>
                     <p>Ver en el visor interactivo</p>
                 </a>
@@ -188,7 +188,7 @@
         <section class="hub-section">
             <h2>🔗 Enlaces Externos</h2>
             <div class="hub-grid">
-                <a href="/swagger-ui.html" class="hub-card external">
+                <a th:href="@{/swagger-ui.html}" class="hub-card external">
                     <h3>Swagger UI</h3>
                     <p>Documentación automática de endpoints</p>
                 </a>
