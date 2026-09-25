@@ -1,8 +1,13 @@
-/* Self-hosted Plus Jakarta Sans (variable font, all weights in one file) */
+/* Self-hosted Plus Jakarta Sans (variable font, all weights in one file)
+   font-display: fallback: espera 0.1s (invisible), si no está lista usa fallback,
+   cuando carga reemplaza (sin Layout Shift abrupto). Mejor que swap (cambio visible). */
 @font-face {
   font-family: 'Plus Jakarta Sans';
   font-style: normal;
   font-weight: 400 800;
-  font-display: swap;
+  font-display: fallback;
   src: url('/fonts/plus-jakarta-sans-400.woff2') format('woff2');
+  /* size-adjust normaliza altura del fallback (Arial/system-ui) a la web font.
+     Evita cambios de altura cuando la fuente real carga. */
+  size-adjust: 98%;
 }
