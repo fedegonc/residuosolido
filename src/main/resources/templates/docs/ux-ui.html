@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>UX/UI &amp; Calidad — Eco Solicitud</title>
+</head>
+<body>
+<main layout:fragment="content" class="docs-hub">
+    <div class="hub-container">
+        <section class="hub-section">
+            <h1>🧭 UX/UI &amp; Calidad</h1>
+            <p class="hub-subtitle">Decisiones de experiencia + cómo se verifica que el sistema funciona: tests unitarios, carga y usabilidad</p>
+        </section>
+
+        <!-- UX PRINCIPLES -->
+        <section class="hub-section">
+            <h2>🎯 Principios de UX aplicados</h2>
+            <div class="hub-grid">
+                <div class="feature-card">
+                    <h3>Mobile-first</h3>
+                    <p>Breakpoints: 640px (grids), 768px (navbar__lang), 1024px (navbar mobile) — el layout base es de una columna</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Feedback inmediato</h3>
+                    <p>Flash messages tipados (success/error/warning/info) sobreviven un redirect — el usuario nunca se queda sin saber qué pasó</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Accesibilidad básica</h3>
+                    <p>Skip-link, <code>:focus-visible</code> visible, 12 <code>aria-label</code> + 7 <code>aria-hidden</code> en los fragments compartidos (heredado por todas las páginas que los usan)</p>
+                </div>
+                <div class="feature-card">
+                    <h3>PWA instalable</h3>
+                    <p>Manifest + Service Worker — funciona como app en el celular sin tienda de aplicaciones</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Sin Layout Shift</h3>
+                    <p>Fuente con <code>font-display:fallback</code> + preload, i18n aplicado post-paint — ver <a th:href="@{/docs/VISUAL_PERFORMANCE_PATTERNS}">patrones de performance</a></p>
+                </div>
+                <div class="feature-card">
+                    <h3>Guest-first</h3>
+                    <p>Solicitar y rastrear una recolección no exige crear cuenta — la fricción de registro queda para quien de verdad la necesita</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALIDAD -->
+        <section class="hub-section">
+            <h2>✅ Cómo se verifica que funciona</h2>
+            <div class="hub-grid">
+                <a th:href="@{/docs/MEJORAS}" class="hub-card">
+                    <h3>Tests Unitarios &amp; Integración</h3>
+                    <p>Suite completa vía <code>mvn test -DexcludedGroups=browser</code> — el conteo cambia con cada mejora, ver histórico en MEJORAS.md</p>
+                </a>
+                <a th:href="@{/docs/MEJORAS}" class="hub-card">
+                    <h3>Smoke Test de Carga</h3>
+                    <p>20 usuarios concurrentes × 15 requests contra endpoints reales (home, formulario, health) — sin herramienta externa, corre con <code>mvn test</code>. Ver mejora #202</p>
+                </a>
+                <a th:href="@{/docs/USABILIDAD}" class="hub-card">
+                    <h3>Instrumento de Usabilidad</h3>
+                    <p>Encuesta Likert por funcionalidad, preparada para aplicar con usuarios reales — estado: preparado, aún no aplicado</p>
+                </a>
+                <a th:href="@{/docs/PROBABLE_BUGS_ANALYSIS}" class="hub-card">
+                    <h3>Auditoría de Bugs Visuales</h3>
+                    <p>3 bugs específicos encontrados por barrido sistemático (imágenes sin dimensiones, modal sin scrollbar-gutter, fetch sin loading state)</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- HONESTIDAD -->
+        <section class="hub-section">
+            <h2>⚠️ Lo que falta (depende de datos reales)</h2>
+            <div class="hub-argument">
+                <h4>Pendiente, no se puede simular</h4>
+                <p>La usabilidad real y las métricas de uso en producción (Render) requieren usuarios reales interactuando con el sistema — con 0 usuarios activos hoy, esto queda como trabajo futuro declarado, no como un gap oculto. El instrumento Likert ya está preparado para aplicarse apenas haya usuarios; las métricas de Render (latencia real, errores en producción) se miden pasivamente vía <code>/actuator/health</code> una vez que haya tráfico que observar.</p>
+            </div>
+        </section>
+
+        <footer class="hub-footer">
+            <p><a th:href="@{/docs/hub}">← Volver al Centro de Recursos</a> · <a th:href="@{/docs/design-system}">← Ver Design System</a></p>
+        </footer>
+    </div>
+</main>
+</body>
+</html>

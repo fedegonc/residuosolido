@@ -133,6 +133,16 @@ public class DocsController {
         return "docs/hub";
     }
 
+    @GetMapping(Routes.DOCS_DESIGN_SYSTEM)
+    public String viewDesignSystem() {
+        return "docs/design-system";
+    }
+
+    @GetMapping(Routes.DOCS_UX_UI)
+    public String viewUxUi() {
+        return "docs/ux-ui";
+    }
+
     private Map<String, Long> countMejorasByEstado() {
         Map<String, Long> counts = new LinkedHashMap<>();
         counts.put("implementado", 0L);

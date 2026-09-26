@@ -131,4 +131,16 @@ class DocsControllerTest {
                 .andExpect(content().string(org.hamcrest.Matchers.not(
                         org.hamcrest.Matchers.containsString("0 implementadas"))));
     }
+
+    @Test
+    void designSystemPage_rendersOk() throws Exception {
+        mockMvc.perform(get(Routes.DOCS_DESIGN_SYSTEM))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void uxUiPage_rendersOk() throws Exception {
+        mockMvc.perform(get(Routes.DOCS_UX_UI))
+                .andExpect(status().isOk());
+    }
 }
