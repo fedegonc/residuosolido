@@ -11,16 +11,17 @@ import com.residuosolido.app.enums.NotificationType;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.event.RequestStatusChangedEvent;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
@@ -43,20 +44,20 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final LocalImageService imageService;
     private final CityOrgService cityOrgService;
-    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
     private final RequestValidator validator;
     private final RequestStateMachine stateMachine;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
                           CityOrgService cityOrgService,
-                          NotificationService notificationService,
+                          ApplicationEventPublisher eventPublisher,
                           RequestValidator validator,
                           RequestStateMachine stateMachine) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.cityOrgService = cityOrgService;
-        this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
         this.validator = validator;
         this.stateMachine = stateMachine;
     }
@@ -131,8 +132,15 @@ public class RequestService {
     }
 
     // ========== Transiciones de estado (organización) ==========
+    //
+    // Sin @Transactional a propósito: no hay ningún PlatformTransactionManager
+    // configurado en el proyecto (verificado — 0 beans, RequestService no es
+    // un proxy transaccional), así que la anotación que tenían estos métodos
+    // antes no hacía nada real. No hace falta agregar uno: cada transición
+    // hace una sola escritura a un único documento Mongo (atómica por
+    // diseño del motor), que es exactamente la garantía que estos métodos
+    // necesitan. Ver docs/TRADEOFFS.md §36.
 
-    @Transactional
     public void acceptRequest(String id, User org, TimeSlot slot) {
         logger.info("REQUEST_ACCEPT_STARTED: id={}, orgId={}, slot={}", id, org.getId(), slot);
         try {
@@ -140,15 +148,14 @@ public class RequestService {
             stateMachine.accept(request, slot);
             saveWithOptimisticLock(request);
             logger.info("REQUEST_ACCEPT_SAVED: id={}, newStatus={}", id, request.getStatus());
-            notificationService.notifyRequester(request, NotificationType.ACCEPTED);
-            logger.info("REQUEST_ACCEPT_SUCCESS: id={}, notified", id);
+            eventPublisher.publishEvent(new RequestStatusChangedEvent(request, NotificationType.ACCEPTED));
+            logger.info("REQUEST_ACCEPT_SUCCESS: id={}, notification event published", id);
         } catch (Exception e) {
             logger.error("REQUEST_ACCEPT_FAILED: id={}, error={}", id, e.getMessage(), e);
             throw e;
         }
     }
 
-    @Transactional
     public void rejectRequest(String id, User org) {
         logger.info("REQUEST_REJECT_STARTED: id={}, orgId={}", id, org.getId());
         try {
@@ -156,15 +163,14 @@ public class RequestService {
             stateMachine.reject(request);
             saveWithOptimisticLock(request);
             logger.info("REQUEST_REJECT_SAVED: id={}, newStatus={}", id, request.getStatus());
-            notificationService.notifyRequester(request, NotificationType.REJECTED);
-            logger.info("REQUEST_REJECT_SUCCESS: id={}, notified", id);
+            eventPublisher.publishEvent(new RequestStatusChangedEvent(request, NotificationType.REJECTED));
+            logger.info("REQUEST_REJECT_SUCCESS: id={}, notification event published", id);
         } catch (Exception e) {
             logger.error("REQUEST_REJECT_FAILED: id={}, error={}", id, e.getMessage(), e);
             throw e;
         }
     }
 
-    @Transactional
     public void completeRequest(String id, User org) {
         logger.info("REQUEST_COMPLETE_STARTED: id={}, orgId={}", id, org.getId());
         try {

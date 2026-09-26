@@ -897,3 +897,60 @@ controller eliminado) y su test.
 JSON de cara a un consumidor externo, ni una dependencia que sugiera lo
 contrario. `docs/ARQUITECTURA.md` y `docs/ENDPOINTS.md` actualizados. Ver
 `docs/MEJORAS.md` #205.
+
+## 36. Notificación desacoplada del camino crítico vía evento + `@Async` (sin `@TransactionalEventListener`)
+
+Contexto: `RequestService.acceptRequest`/`rejectRequest` tenían `@Transactional`
+y llamaban directo a `NotificationService.notifyRequester(...)` en el mismo
+hilo HTTP, después del `save()`. La intención original era correcta (no
+notificar un estado que no se persistió), pero la implementación tenía dos
+problemas verificados, no supuestos:
+
+1. **`@Transactional` no hacía nada.** Verificado empíricamente (test de
+   sondeo, ver `docs/MEJORAS.md` #208): 0 beans `PlatformTransactionManager`
+   en todo el contexto, `RequestService` no es un proxy AOP transaccional.
+   La anotación era decorativa desde que se agregó.
+2. **La notificación bloqueaba el hilo HTTP.** Si la escritura de la
+   notificación tardaba (o la base estaba lenta), el usuario que acepta/
+   rechaza una solicitud esperaba por una escritura que no debería afectar
+   la respuesta de su acción principal.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **`ApplicationEventPublisher` + `@EventListener` `@Async` (elegida)** | Publica `RequestStatusChangedEvent` inmediatamente después del `save()` exitoso (nunca antes — la garantía de orden se mantiene). El listener corre en un pool chico y acotado (`AsyncConfig`, 2-4 hilos) — una notificación lenta o que falla no afecta la respuesta al usuario ni el estado ya persistido. Cero dependencias nuevas, usa infraestructura de Spring ya presente |
+| `@TransactionalEventListener(phase = AFTER_COMMIT)` | Era el plan original — **descartado al verificar que no hay transacción real de la cual colgarse.** Sin un `PlatformTransactionManager`, el evento nunca se publicaría (no hay commit que dispare la sincronización). Habría roto las notificaciones en silencio |
+| Configurar un `MongoTransactionManager` real primero | Correcto a mediano plazo (le daría sentido real a `@Transactional` en todo el proyecto, no solo acá), pero es un cambio de mayor alcance — afecta semántica de escritura en todo el codebase, necesita revisión propia. Fuera de alcance de este ítem puntual |
+
+**Efecto colateral honesto:** `@Transactional` se **removió** de `acceptRequest`/
+`rejectRequest`/`completeRequest` en vez de dejarlo como decoración. Cada
+método sigue siendo seguro porque hace una sola escritura a un único
+documento Mongo (atómica por diseño del motor) — la garantía que necesitan
+hoy no requiere una transacción distribuida.
+
+**Resultado:** `RequestStatusChangedEvent` (record) + `NotificationEventListener`
+(`@Async("notificationExecutor")`) + `AsyncConfig` (`@EnableAsync`, pool 2-4
+hilos). `RequestService` ya no depende de `NotificationService` — el punto de
+extensión para email/SMS declarado en §33 ahora es "agregar otro
+`@EventListener`", no "tocar `RequestService`". Ver `docs/MEJORAS.md` #208.
+
+## 37. Deuda técnica diferida: de "documentada" a "con trigger medible"
+
+Contexto: `TRADEOFFS.md` documenta bien el *por qué* de cada decisión
+diferida, pero ninguna tenía una condición objetiva de cuándo deja de ser
+aceptable. "Cache diferido" o "PIN provisorio" sin fecha ni umbral tienden a
+volverse permanentes por inercia, no por decisión.
+
+**Triggers agregados** (a cada ítem correspondiente, no solo acá):
+
+| Decisión diferida | Trigger objetivo | Cómo se mide |
+|---|---|---|
+| Cache en `CityOrgService.getOrganizationsByCity` (§?) | `http.server.requests` p95 de `/solicitudes/org-options` > 200ms sostenido, o > 1000 requests/día | `/actuator/metrics/http.server.requests` (ya expuesto, hoy sin monitorear) |
+| Autenticación PIN "provisoria" (`fragments/forms::pin`, comentario explícito en el HTML) | Antes de que el primer usuario real complete un registro en producción — no "cuando haya tiempo" | Gate manual: revisar antes de anunciar el sistema a usuarios reales, no una métrica automática |
+| Escalado horizontal / imágenes en disco local (§ imágenes locales, `ARQUITECTURA.md`) | Segunda instancia de Render, o `LocalImageService` supera el disco disponible del tier actual | Alerta de disco vía `/actuator/health` → `diskSpace.status` (ya expuesto) |
+| Redundancia de la instancia (single point of failure, ver §34) | Primer incidente real de downtime reportado por un usuario, o SLA formal comprometido | No medible preventivamente — es un gate de "primera vez que duele de verdad" |
+
+**Resultado:** la deuda técnica documentada pasa de ser una lista de "sabemos
+que esto es una limitación" a una lista con una condición verificable de
+cuándo se vuelve prioridad — usando la instrumentación que ya existe
+(`/actuator/metrics`, `/actuator/health`) en vez de agregar herramienta nueva.
+Ver `docs/MEJORAS.md` #209.

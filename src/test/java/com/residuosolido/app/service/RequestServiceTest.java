@@ -9,12 +9,14 @@ import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.exception.OwnershipException;
 import com.residuosolido.app.exception.StateException;
 import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.event.RequestStatusChangedEvent;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -36,7 +38,7 @@ class RequestServiceTest {
     private RequestRepository requestRepository;
     private LocalImageService imageService;
     private CityOrgService cityOrgService;
-    private NotificationService notificationService;
+    private ApplicationEventPublisher eventPublisher;
     private RequestService requestService;
 
     @BeforeEach
@@ -44,8 +46,8 @@ class RequestServiceTest {
         requestRepository = mock(RequestRepository.class);
         imageService = mock(LocalImageService.class);
         cityOrgService = mock(CityOrgService.class);
-        notificationService = mock(NotificationService.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService, notificationService, new RequestValidator(), new RequestStateMachine());
+        eventPublisher = mock(ApplicationEventPublisher.class);
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator(), new RequestStateMachine());
     }
 
     private User citizen(String id) {
@@ -194,7 +196,7 @@ class RequestServiceTest {
         assertEquals(RequestStatus.IN_PROGRESS, existing.getStatus());
         assertEquals(TimeSlot.MANANA, existing.getConfirmedSlot());
         verify(requestRepository).save(existing);
-        verify(notificationService).notifyRequester(existing, NotificationType.ACCEPTED);
+        verify(eventPublisher).publishEvent(new RequestStatusChangedEvent(existing, NotificationType.ACCEPTED));
     }
 
     @Test
@@ -208,7 +210,7 @@ class RequestServiceTest {
         assertThrows(StateException.class,
                 () -> requestService.acceptRequest("req1", organization, TimeSlot.MANANA));
         // regla del dominio: si el save falla, no se notifica un estado no persistido
-        verify(notificationService, never()).notifyRequester(any(), any());
+        verify(eventPublisher, never()).publishEvent(any());
     }
 
     @Test
@@ -244,7 +246,7 @@ class RequestServiceTest {
         requestService.rejectRequest("req1", organization);
 
         assertEquals(RequestStatus.REJECTED, existing.getStatus());
-        verify(notificationService).notifyRequester(existing, NotificationType.REJECTED);
+        verify(eventPublisher).publishEvent(new RequestStatusChangedEvent(existing, NotificationType.REJECTED));
     }
 
     @Test

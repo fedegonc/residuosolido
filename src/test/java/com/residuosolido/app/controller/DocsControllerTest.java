@@ -125,11 +125,19 @@ class DocsControllerTest {
      */
     @Test
     void hub_mejorasStatsComeFromRealFile() throws Exception {
-        mockMvc.perform(get(Routes.DOCS_HUB))
+        // Antes comparaba el HTML renderizado con containsString("0 implementadas") —
+        // bug latente: "110 implementadas" también contiene esa substring ("11[0
+        // implementadas]"), así que el test hubiera fallado con cualquier conteo
+        // que terminara en cero (10, 20, 100, 110...). Se detectó cuando el conteo
+        // real llegó a 110. Fix: verificar el valor real del modelo, no el texto.
+        var result = mockMvc.perform(get(Routes.DOCS_HUB))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("mejorasStats"))
-                .andExpect(content().string(org.hamcrest.Matchers.not(
-                        org.hamcrest.Matchers.containsString("0 implementadas"))));
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        var stats = (java.util.Map<String, Long>) result.getModelAndView().getModel().get("mejorasStats");
+        org.junit.jupiter.api.Assertions.assertTrue(stats.get("implementado") > 0,
+                "mejorasStats.implementado debería ser > 0 si el parseo de MEJORAS.md funcionó");
     }
 
     @Test
