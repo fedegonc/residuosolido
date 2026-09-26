@@ -74,7 +74,7 @@
 | 50 | Consolidar stat-card (20→8 clases) | Diferido | Posible sobre-diseño |
 | 51 | Simplificar kanban (22→15 clases) | Diferido | Componente más complejo |
 | 52 | Unificar fuentes de copies (3→1) | Diferido | data-i18n + messages_* + JSON |
-| 53 | Catadores CRUD (InformalCollector) | Descartado | Planificado pero nunca implementado en este estado; subsistema eliminado por completo (ver nota más abajo) |
+| 53 | Catadores CRUD (InformalCollector) | Descartado | **Corregido 2026-09-26:** esta fila decía "nunca implementado", pero se verificó con `scratch/mongo/MongoDump.java` (conexión real a Atlas) que existían 2 documentos reales `com.residuosolido.app.model.InformalCollector` (creados 2026-08-02) en la colección `informal_collectors` — la clase sí existió y se usó, y después se eliminó del código sin migrar/limpiar esos datos. Registro corregido: **se implementó, se usó brevemente, y se eliminó por completo** (código + controller + servicio ya no existen), dejando 2 documentos huérfanos que se limpiaron en esta misma fecha. Ver nota más abajo |
 | 54 | Contraseña mínima 8+ (producción) | Diferido | 3 chars para MVP. Ver docs/TRADEOFFS.md §4 |
 | 55 | Asignación de recolector a solicitud (RF-8) | Diferido | Catadores latentes |
 | 56 | Transiciones suaves entre temas | Diferido | Intencional: evitar parpadeo |
@@ -266,17 +266,28 @@
   (colección `posts` en MongoDB, editor en panel, slug único, fecha
   de publicación, borrador/publicado).
 
-### 13. Catadores — CRUD descartado
+### 13. Catadores — CRUD implementado brevemente y descartado
 
-- El CRUD de `InformalCollector` (`/acopio/catadores/**`) fue
-  planificado pero **no se implementó**: no existe `InformalCollectorController`
-  ni servicio. Quedó documentado como decisión de diseño.
-- **Razón:** exponer una tabla de recolectores informales en el panel
-  mezcla responsabilidades (gestión interna vs. comunicación pública) y
-  no aporta al flujo principal del MVP.
-- **Para producción:** decidir si el CRUD se implementa como herramienta
-  interna (asignación de recolector a solicitud, RF-8 completo) o si
-  se elimina definitivamente.
+- **Corrección (2026-09-26):** este ítem decía que el CRUD de
+  `InformalCollector` "nunca se implementó". Falso — se verificó con
+  `scratch/mongo/MongoDump.java` (conexión directa a la Atlas real del
+  proyecto) que existían 2 documentos `com.residuosolido.app.model
+  .InformalCollector` persistidos el 2026-08-02, con campos reales
+  (`organizationId`, `name`, `phone`, `city`, `materials`, `notes`,
+  `active`, `createdAt`). La clase, el controller y el servicio existieron
+  en algún momento anterior del proyecto y se eliminaron por completo del
+  código sin migrar ni borrar esos 2 documentos — quedaron huérfanos en
+  Mongo, invisibles para cualquier query de la app actual (ningún
+  repositorio los referencia). Se limpiaron en esta misma fecha.
+- Hoy: no existe `InformalCollectorController` ni servicio en el código
+  actual — eso sí sigue siendo cierto, la corrección es sobre el
+  historial, no sobre el estado presente.
+- **Razón del descarte:** exponer una tabla de recolectores informales en
+  el panel mezcla responsabilidades (gestión interna vs. comunicación
+  pública) y no aporta al flujo principal del MVP.
+- **Para producción:** decidir si el CRUD se reimplementa como herramienta
+  interna (asignación de recolector a solicitud, RF-8 completo) o si se
+  descarta definitivamente la idea.
 | 140 | Font Awesome WebJar → sprite SVG local (`/images/icons.svg`) | Implementado | FA costaba `all.min.css` (~100KB) + webfonts (~1MB) + webjar por 39 íconos de ~2.000. Los símbolos se extrajeron del propio jar (`sprites/solid.svg`) → `static/images/icons.svg` (18.8KB, 40 `<symbol>`) — íconos **idénticos**, cero cambio visual. Uso: `<svg class="icon"><use href="/images/icons.svg#{id}"/></svg>`; `.icon{width:1em;height:1em;fill:currentColor}` + `.icon--spin` reemplaza `fa-spin` (CSS propio). Dinámicos: los fragments `ui::state/row/tile` y `forms::submit` reciben el arg `icon` como id bare (`'check'`, no `'fa-check'`) y arman el href con `th:attr`; `ui::msg` mapea type→id explícito; slots de request-form mapean MANANA/TARDE/NOCHE→sun/cloud-sun/moon. JS: el PIN toggle cambia `use[href]` en vez de clases; el toast de request-form inyecta el mismo markup svg. El sprite vive en `/images/**` (ya permitAll en SecurityConfig — `/img/` habría dado 302 a login). Eliminados: webjar `fortawesome__fontawesome-free` del pom + `<link>` en base.html. Verificado: los 39 ids referenciados existen en el sprite, Playwright 27/27 (iconos con bounding box real, eye→eye-slash swap, cero requests a webjars/fontawesome), 404 sirve `compass-drafting` |
 | 141 | Semántica e i18n de materiales: `fieldset/legend` + claves `mat_*` | Implementado | El grupo "Materiales" era `<div class="field">` + `<label>` sin control (inválido — los lectores de pantalla no anunciaban el grupo) → ahora `<fieldset class="field">` + `<legend>` en request-form y org/profile (reset `fieldset.field` + `.field legend` hereda estilo de label). Las claves `req_mat_*`/`mat_*` no existían en es/pt.json — las cards mostraban el enum crudo (`PLASTICO`). Agregadas `mat_*` ×7 en ambos idiomas y unificado el prefijo a `mat_` (request-form usaba `req_mat_`) — mismo material, misma palabra, misma clave |
 | 142 | UX de estados vacíos y mobile: dropdown navbar, empty orgs, PIN OTP | Implementado | (a) **Dropdown mobile aplastado**: `.dropdown` usaba `left:0;right:0` dentro del `<details>` (34px de ancho = solo el toggle) → el menú salía de 34px. Ahora `right:0;width:min(20rem,100vw-2rem)` + `flex-shrink:0` en el svg del toggle. Selector huérfano `.password-field>i` → `>.icon` (quedó de la migración #140 — el candado rompía el layout del PIN). (b) **Ciudad sin organizaciones**: el select quedaba con el placeholder y `required` trancaba el submit sin explicación — `ui::options` ahora renderiza `<option disabled selected>` con `req_form_org_none` ("No hay organizaciones en esta ciudad", la clave ya existía sin uso). (c) **PIN estilo OTP**: 4 casillas `.pin-boxes__digit` + hidden `.pin-boxes__value` que JS compone (auto-avance, backspace vuelve, paste distribuye); toggle de visibilidad flipea las 4; hint `auth_pin_preview` aclara que es método provisorio de preview |
