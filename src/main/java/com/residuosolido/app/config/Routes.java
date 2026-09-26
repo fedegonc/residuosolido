@@ -55,9 +55,8 @@ public final class Routes {
     public static final String ORG_REQUEST_REJECT = "/acopio/solicitudes/{id}/rechazar";
     public static final String ORG_REQUEST_COMPLETE = "/acopio/solicitudes/{id}/completar";
 
-    // API
+    // Opciones de formulario (fragmentos HTML server-side, no API REST)
     public static final String ORG_OPTIONS = "/solicitudes/org-options";
-    public static final String API_ANY = "/api/**";
 
     // Documentación y estáticos
     public static final String DOCS_ANY = "/docs/**";

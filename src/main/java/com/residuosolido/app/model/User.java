@@ -61,9 +61,12 @@ public class User {
     private LocalDateTime createdAt;
     private boolean active = true;
 
-    private Boolean profileCompleted = false;
-
-    private List<MaterialCategory> acceptedMaterials = new ArrayList<>();
+    /**
+     * Solo relevante si role == ORGANIZATION; null para ciudadanos. Ver
+     * {@link OrganizationProfile} para el porqué de la extracción y
+     * OrganizationProfileMigration para la migración de datos existentes.
+     */
+    private OrganizationProfile organizationProfile;
 
     /**
      * Setea el email validándolo y normalizándolo a minúsculas.
@@ -123,9 +126,37 @@ public class User {
             return false;
         }
         if (role == Role.ORGANIZATION) {
-            return hasPhone() && city != null && Boolean.TRUE.equals(profileCompleted);
+            return hasPhone() && city != null && Boolean.TRUE.equals(getProfileCompleted());
         }
         return true;
+    }
+
+    // ── Delegados a OrganizationProfile: mismo nombre/firma que antes tenían
+    //    los campos directos en User, para no tocar ningún caller (services,
+    //    templates Thymeleaf, tests) — solo cambia dónde vive el dato. ──
+
+    public List<MaterialCategory> getAcceptedMaterials() {
+        return organizationProfile != null ? organizationProfile.getAcceptedMaterials() : List.of();
+    }
+
+    public void setAcceptedMaterials(List<MaterialCategory> acceptedMaterials) {
+        ensureOrganizationProfile().setAcceptedMaterials(
+                acceptedMaterials != null ? acceptedMaterials : new ArrayList<>());
+    }
+
+    public Boolean getProfileCompleted() {
+        return organizationProfile != null ? organizationProfile.getProfileCompleted() : Boolean.FALSE;
+    }
+
+    public void setProfileCompleted(Boolean profileCompleted) {
+        ensureOrganizationProfile().setProfileCompleted(profileCompleted);
+    }
+
+    private OrganizationProfile ensureOrganizationProfile() {
+        if (organizationProfile == null) {
+            organizationProfile = new OrganizationProfile();
+        }
+        return organizationProfile;
     }
 
     public boolean hasPhone() {
@@ -140,7 +171,7 @@ public class User {
      * No usar acceptedMaterials.toString() directamente: su formato es un detalle de
      * implementación de List, no una API — este método es la única fuente de verdad. */
     public String getAcceptedMaterialsCsv() {
-        return acceptedMaterials.stream().map(Enum::name).collect(java.util.stream.Collectors.joining(","));
+        return getAcceptedMaterials().stream().map(Enum::name).collect(java.util.stream.Collectors.joining(","));
     }
 
     public void completeProfile() {
@@ -150,7 +181,7 @@ public class User {
         if (city == null) {
             throw new StateException(ServerMessage.ERROR_PROFILE_CITY_REQUIRED);
         }
-        this.profileCompleted = true;
+        setProfileCompleted(true);
     }
 
     public boolean needsProfileCompletion() {

@@ -954,3 +954,40 @@ que esto es una limitación" a una lista con una condición verificable de
 cuándo se vuelve prioridad — usando la instrumentación que ya existe
 (`/actuator/metrics`, `/actuator/health`) en vez de agregar herramienta nueva.
 Ver `docs/MEJORAS.md` #209.
+
+## 38. Extraer `OrganizationProfile` embebido en `User` (con migración de datos reales)
+
+Contexto: `User` modela ciudadano y organización en la misma colección
+(§ mono-modelo, `ARQUITECTURA.md`). De los campos que solo tienen sentido
+para organización, solo 2 son genuinamente exclusivos: `acceptedMaterials`
+y `profileCompleted` — `city` resultó ser compartido (lo usa también
+`CityAwareLocaleResolver` para ciudadanos), corrigiendo una imprecisión del
+análisis de arquitectura original.
+
+El riesgo real no era el código, era el **dato ya persistido en Atlas**:
+mover estos campos a un subdocumento `organizationProfile` en el modelo Java
+sin migrar los documentos existentes los habría dejado leyendo `[]`/`false`
+silenciosamente — cualquier organización real que ya tuviera materiales
+aceptados los habría "perdido" al primer deploy.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Extraer + migrar con `CommandLineRunner` idempotente (elegida)** | Mismo patrón ya probado en `MongoIndexMigration` (que resolvió un problema real de índice roto). Opera con BSON crudo, no con el mapper de `User` — evita el problema de "leer con el modelo nuevo antes de migrar". Corre una vez, después es no-op |
+| Convertirlo en trigger diferido (documentar, no migrar todavía) | Válido si el dolor fuera bajo, pero acá había un ciudadano-cero: no había ningún caso donde "no migrar" fuera más seguro que "migrar" — los datos existentes de organización son pocos (seed de desarrollo) y el patrón de migración ya estaba probado en el proyecto |
+| Partir `User` en 2 colecciones (una nueva para organización) | Cambio de mucho mayor alcance — reescribe queries, relaciones (`Request.organization` referencia un `User`), y tests. Desproporcionado para 2 campos; el embebido resuelve la asimetría real sin ese costo |
+
+**API pública de `User` sin cambios:** `getAcceptedMaterials()`/
+`setAcceptedMaterials()`/`getProfileCompleted()`/`setProfileCompleted()`
+siguen existiendo con la misma firma, ahora delegando a
+`organizationProfile` (lazy-init en el setter). Ningún caller — servicios,
+templates Thymeleaf, 8 archivos de test — necesitó cambiar.
+
+**Verificación real, no solo mocks:** `OrganizationProfileMigrationTest`
+inserta un documento con la forma vieja directo en Mongo real (Atlas),
+corre la migración, confirma el subdocumento nuevo y que los campos viejos
+desaparecieron (`$unset`), y prueba idempotencia (correrla 2 veces no rompe
+nada). Limpia el documento de prueba después — no ensucia la base
+compartida.
+
+**Resultado:** `OrganizationProfile` (embebido, no `@Document` propio) +
+`OrganizationProfileMigration`. Ver `docs/MEJORAS.md` #210.

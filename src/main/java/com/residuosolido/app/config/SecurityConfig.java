@@ -45,8 +45,6 @@ public class SecurityConfig {
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
                 .requestMatchers(Routes.SCRATCH_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH, Routes.ACTUATOR_INFO).permitAll()
-                // API endpoints para usuarios autenticados
-                .requestMatchers(Routes.API_ANY).authenticated()
                 // Rutas de usuarios regulares
                 .requestMatchers(Routes.REQUESTS, "/solicitudes/**", Routes.NOTIFICATIONS).hasRole("USER")
                 // Rutas de organización
