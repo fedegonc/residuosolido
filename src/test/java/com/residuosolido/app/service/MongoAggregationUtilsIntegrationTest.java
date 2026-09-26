@@ -36,6 +36,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("integration")
 @SpringBootTest(properties = {
         "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
+        // Base de test AISLADA, a propósito distinta de la real ("fedelabs").
+        // Bug real encontrado 2026-09-26: este test hacía deleteAll() de
+        // users/requests en @BeforeEach asumiendo un Mongo local descartable,
+        // pero SPRING_DATA_MONGODB_URI (vía .env) siempre resuelve a la Atlas
+        // real compartida — cada `mvn test` borraba TODOS los usuarios y
+        // solicitudes reales en silencio. Con database explícito acá, el
+        // deleteAll() solo toca esta base de test, nunca la real. Ver
+        // docs/TRADEOFFS.md §39 y docs/MEJORAS.md #211.
+        "spring.data.mongodb.database=residuosolido_test_aggregation",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=false"
 })

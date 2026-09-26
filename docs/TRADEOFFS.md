@@ -1036,3 +1036,40 @@ ciudad y materiales aceptados". El embebido de §38 ya resuelve la asimetría
 real sin ese costo. **Trigger objetivo para revisitar** (mismo criterio que
 §37): el día que una organización necesite más de un operador, más de una
 sede, o el perfil embebido crezca a 4+ campos exclusivos.
+
+## 39. Tests de integración aislados de la base real (bug encontrado sembrando datos)
+
+Contexto: al sembrar datos de prueba manualmente en Atlas para pruebas de
+carga (`scratch/mongo/SeedTestData.java`, ver `docs/MEJORAS.md` #211),
+los datos **desaparecieron** después de correr `mvn clean test`. Investigado:
+`MongoAggregationUtilsIntegrationTest` y `PlaywrightBaseTest` (vía
+`BrowserTestSeed`) usaban `@SpringBootTest(properties = {"spring.data
+.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb..."`
+— la intención era "si no hay env var, usar un Mongo local descartable". El
+problema real: `SPRING_DATA_MONGODB_URI` **siempre** está seteada en este
+proyecto (vía `.env`), así que el fallback local nunca se usa — el test
+corría contra la Atlas real compartida (`fedelabs`) y hacía `deleteAll()`
+de `users`/`requests` en cada `@BeforeEach`, borrando en silencio cualquier
+dato real que hubiera.
+
+**Esto probablemente explica** por qué la base estaba casi vacía (1 usuario,
+0 solicitudes) las primeras veces que se inspeccionó con `scratch/mongo
+/MongoDump.java` — no es que nunca hubiera datos reales, es que cada
+corrida de tests los borraba.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **`spring.data.mongodb.database` explícito, distinto al real (elegida)** | Cada test de integración que necesita una colección "limpia" para empezar (agregaciones, seed de browser tests) declara su propia base dedicada (`residuosolido_test_aggregation`, `residuosolido_test_browser`) en el mismo cluster Atlas. Sigue siendo Mongo real (no mock, no embebido) — solo aislado del dato compartido |
+| Mongo embebido (Flapdoodle) o Testcontainers | Más correcto en abstracto (aislamiento total, sin depender de red/Atlas), pero es una dependencia nueva y un cambio de infraestructura de testing más grande — desproporcionado para arreglar 2 archivos con un problema puntual y bien entendido |
+| Dejar el fallback como estaba, documentar el riesgo | Ya estaba "documentado" implícitamente en el propio código (`${VAR:default}` sugiere que el default se usa alguna vez) — pero en la práctica nunca se cumplía, así que era una falsa sensación de seguridad. No corregirlo dejaba el bug activo |
+
+**Resultado:** 2 archivos corregidos (`MongoAggregationUtilsIntegrationTest`,
+`PlaywrightBaseTest`) con `spring.data.mongodb.database` explícito. Barrido
+completo de los 18 archivos de test que referencian `SPRING_DATA_MONGODB_URI`
+confirmó que ningún otro hace escrituras destructivas contra el repositorio
+real sin acotar por `_id` (`OrganizationProfileMigrationTest`, escrito ayer,
+ya lo hacía bien desde el principio). **Verificado con datos reales, no
+teoría:** se sembraron 25 usuarios + 23 solicitudes, se corrió la suite
+completa (458 tests), y los datos sobrevivieron intactos — antes del fix,
+la misma corrida los borraba a 1 usuario + 0 solicitudes. Ver
+`docs/MEJORAS.md` #212.
