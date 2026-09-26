@@ -75,6 +75,7 @@ public final class Routes {
 
     // Actuator y OpenAPI
     public static final String ACTUATOR_HEALTH = "/actuator/health";
+    public static final String ACTUATOR_INFO = "/actuator/info";
     public static final String SWAGGER_V3 = "/v3/api-docs/**";
     public static final String SWAGGER_UI = "/swagger-ui/**";
     public static final String SWAGGER_HTML = "/swagger-ui.html";

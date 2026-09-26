@@ -131,6 +131,17 @@
             </exclude>
           </excludes>
         </configuration>
+        <executions>
+          <!-- Genera META-INF/build-info.properties (versión, artifactId, hora
+               de build) que Spring Boot expone automáticamente en
+               /actuator/info. Sin esto el endpoint devuelve {} — no hay forma
+               de verificar qué versión está corriendo en Render sin esto. -->
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
