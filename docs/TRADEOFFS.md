@@ -845,3 +845,21 @@ franja confirmada ya se comunicó al aceptar; completar es el cierre esperado).
 `GlobalModelAttributes.unreadNotifications` (tolerante a sesión stale → null),
 link + badge en navbar (desktop, menú usuario, mobile), `users/notifications.html`,
 i18n es/pt. Tests: 252 no-browser.
+
+## 34. Fail-fast + mensaje claro vs. circuit breaker para fallos de Mongo
+
+Contexto: sin timeouts explícitos el driver de Mongo usa sus defaults
+(`serverSelectionTimeout` 30s) — si Atlas no responde, cada request que toca
+la base queda colgado 30s. La pregunta es cuánta infraestructura de
+resiliencia vale la pena para este backend.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Timeouts cortos + retry a nivel driver + mensaje de servicio no disponible (elegida)** | Con una sola instancia (Render) y un solo backend (Atlas), no hay a dónde hacer failover ni qué aislar con un breaker — el único valor real es fallar rápido (5s en vez de 30s) y no confundir al usuario ("algo está roto" vs. "el servicio no está disponible, reintentá"). `retryWrites`/`retryReads` ya cubren el caso real y frecuente: un failover de primary en Atlas durante mantenimiento programado |
+| Circuit breaker (Resilience4j) | Tiene sentido cuando hay múltiples instancias/réplicas y se quiere evitar que todas golpeen un backend caído a la vez, o cuando hay un fallback real (caché, degradar funcionalidad). Acá no hay ninguna de las dos cosas — agregar el patrón sería complejidad sin beneficio, el tipo de sobre-ingeniería que no compra menos riesgo real |
+| Reintentos con backoff a nivel aplicación (Spring Retry) | Redundante con `retryWrites`/`retryReads` del driver para el caso común (failover transitorio); para una caída real y sostenida de Atlas, reintentar más solo alarga el tiempo hasta el error sin cambiar el resultado |
+
+**Resultado:** `MongoResilienceConfig` (timeouts) + `GlobalExceptionHandler
+.handleMongoUnavailable` (mensaje + log distinguible de un bug de código). El
+health check de Mongo en `/actuator/health` ya lo daba gratis Spring Boot
+Actuator — no hizo falta agregar nada ahí. Ver `docs/MEJORAS.md` #192.

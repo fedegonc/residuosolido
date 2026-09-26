@@ -1,5 +1,6 @@
 package com.residuosolido.app.controller;
 
+import com.mongodb.MongoException;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
@@ -7,6 +8,7 @@ import com.residuosolido.app.exception.StateException;
 import com.residuosolido.app.exception.OwnershipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -94,6 +96,21 @@ public class GlobalExceptionHandler {
         if (referer != null && !referer.isBlank()) {
             return "redirect:" + referer;
         }
+        return redirectOrError(request);
+    }
+
+    /**
+     * Fallo de conexión/timeout con MongoDB Atlas (caído, red, failover de
+     * primary). Sin este handler caía en handleGeneric mezclado con bugs de
+     * código — acá se loggea distinto (es un problema de infraestructura, no
+     * un defecto) y se le muestra al usuario un mensaje que no sugiere que
+     * "algo esté roto en la app", sino que reintente en un momento.
+     */
+    @ExceptionHandler({MongoException.class, DataAccessResourceFailureException.class})
+    public String handleMongoUnavailable(HttpServletRequest request, Exception e,
+                                          RedirectAttributes redirectAttributes) {
+        logger.error("MONGO_UNAVAILABLE en {}: {}", request.getRequestURI(), e.getMessage(), e);
+        redirectAttributes.addFlashAttribute("errorMessage", messages.msg(ServerMessage.FLASH_ERROR_SERVICE_UNAVAILABLE));
         return redirectOrError(request);
     }
 

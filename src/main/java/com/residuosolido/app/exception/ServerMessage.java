@@ -63,6 +63,7 @@ public enum ServerMessage {
     // ── flash.* (mensajes que sobreviven un redirect) ──
     FLASH_ERROR_ACCESS_DENIED("flash.error.access_denied"),
     FLASH_ERROR_GENERIC("flash.error.generic"),
+    FLASH_ERROR_SERVICE_UNAVAILABLE("flash.error.service_unavailable"),
     FLASH_ERROR_NOT_FOUND_AUTH("flash.error.not_found_auth"),
     FLASH_ERROR_NOT_FOUND_GUEST("flash.error.not_found_guest"),
     FLASH_ORG_PROFILE_LOAD_ERROR("flash.org.profile_load_error"),

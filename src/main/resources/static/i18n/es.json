@@ -170,6 +170,7 @@
   "_server_flash_error_not_found_guest": "La página que buscás no existe. Iniciá sesión para continuar.",
   "_server_flash_error_not_found_auth": "La página que buscás no existe.",
   "_server_flash_error_generic": "Algo salió mal. Probá de nuevo en un momento.",
+  "_server_flash_error_service_unavailable": "El servicio no está disponible en este momento. Probá de nuevo en unos minutos.",
   "_server_flash_error_access_denied": "No tenés permisos para acceder a esta página.",
   "_server_flash_profile_updated": "Perfil actualizado con éxito.",
   "_server_flash_profile_update_error": "Ocurrió un error al actualizar el perfil. Intentá nuevamente.",
