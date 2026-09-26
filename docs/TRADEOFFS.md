@@ -991,3 +991,48 @@ compartida.
 
 **Resultado:** `OrganizationProfile` (embebido, no `@Document` propio) +
 `OrganizationProfileMigration`. Ver `docs/MEJORAS.md` #210.
+
+### Trabajo futuro: split completo a 2 colecciones (no implementado, solo planeado)
+
+Si el dominio de organización crece lo suficiente (múltiples sedes, horarios
+de recolección, empleados con acceso propio), el embebido de §38 deja de
+alcanzar y el paso siguiente es partir en dos colecciones reales, no solo
+en un subdocumento:
+
+```
+User (identidad/auth — colección "users")
+  ├── id, username, email, password, phone, firstName
+  ├── role: USER | ORGANIZATION
+  ├── active, createdAt
+  └── organizationProfileId (nullable, referencia)
+
+OrganizationProfile (operación — colección nueva "organization_profiles")
+  ├── id, userId
+  ├── city, acceptedMaterials, profileCompleted
+  └── (futuro: sedes, horarios, empleados)
+```
+
+**Por qué NO es simplemente herencia con `@Document`:** en Mongo/Spring Data,
+una jerarquía con discriminador sobre `@Document(collection = "users")`
+sigue guardando todo en la misma colección — no es un split real, es lo
+mismo con otro nombre. La diferencia real es dos colecciones + una
+referencia (`organizationProfileId` o `@DocumentReference`).
+
+**Alcance si se hace:** repositorio nuevo para el perfil de organización;
+`CityOrgService` consulta esa colección en vez de `UserRepository`
+filtrando por rol/ciudad; `UserRegistrationService` crea ambos documentos
+al registrar una organización; `RequestService` referencia el perfil (o su
+`userId`) en vez del `User` completo; templates cambian `organization.city`/
+`organization.acceptedMaterials` por el equivalente del perfil separado;
+Spring Security no cambia nada (sigue cargando `UserDetails` desde
+`UserRepository`, el rol sigue en `User.role`). Migración: mismo patrón que
+`OrganizationProfileMigration` de §38, pero moviendo el subdocumento
+embebido a un documento independiente con referencia, no al revés.
+
+**Por qué no se hace ahora:** es un cambio de alcance mediano-alto (modelo +
+repositorios + servicios + controllers + templates + migración) para un
+dolor que hoy no existe — la organización sigue siendo "una cuenta con
+ciudad y materiales aceptados". El embebido de §38 ya resuelve la asimetría
+real sin ese costo. **Trigger objetivo para revisitar** (mismo criterio que
+§37): el día que una organización necesite más de un operador, más de una
+sede, o el perfil embebido crezca a 4+ campos exclusivos.

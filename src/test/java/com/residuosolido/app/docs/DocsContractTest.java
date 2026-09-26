@@ -66,7 +66,7 @@ class DocsContractTest {
             "MongoTemplate", "MultipartFile", "NoResourceFoundException", "NoSuchMessageException",
             "OptimisticLockingFailureException", "PasswordEncoder", "RequestMapping",
             "SecurityException", "TemplateEngine", "TemplateProcessingException",
-            "UserDetailsService", "WebMvcConfigurer", "AccessDeniedException",
+            "UserDetailsService", "UserDetails", "WebMvcConfigurer", "AccessDeniedException",
             "AnonymousAuthenticationToken", "BCryptPasswordEncoder", "ControllerAdvice",
             "ExceptionHandler", "GetMapping", "PostMapping", "PutMapping", "SpringBootTest",
             "WithMockUser", "DocumentReference", "ResponseEntity", "ResponseStatusException", "ObjectMapper",
