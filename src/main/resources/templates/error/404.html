@@ -5,11 +5,21 @@
 <body>
   <main layout:fragment="content">
     <div class="page page--narrow center">
-      <div class="text-center">
+      <div class="text-center stack">
         <svg class="icon icon--lg"><use href="/images/icons.svg#compass-drafting"/></svg>
         <h1 class="card__title">404</h1>
         <p class="hint mb" data-i18n="error_404_desc">La página que buscás no existe o se movió de lugar.</p>
-        <a href="/" class="btn btn--primary" data-i18n="error_404_back">Volver al inicio</a>
+        <div class="row" style="justify-content:center">
+          <a href="/solicitar" class="btn btn--primary">
+            <svg class="icon"><use href="/images/icons.svg#paper-plane"/></svg>
+            <span data-i18n="error_404_cta_request">Solicitar recolección</span>
+          </a>
+          <a href="/rastrear" class="btn btn--outline">
+            <svg class="icon"><use href="/images/icons.svg#magnifying-glass"/></svg>
+            <span data-i18n="error_404_cta_track">Rastrear mi solicitud</span>
+          </a>
+        </div>
+        <a href="/" class="hint" data-i18n="error_404_back">Volver al inicio</a>
       </div>
     </div>
   </main>

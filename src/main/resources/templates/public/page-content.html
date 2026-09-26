@@ -36,12 +36,12 @@
       <footer class="page-content__footer">
         <div class="page-content__meta" th:if="${page.date}">
           <span class="page-content__date">
-            <strong>Actualizado:</strong> <span th:text="${page.date}"></span>
+            <strong data-i18n="page_content_updated">Actualizado:</strong> <span th:text="${page.date}"></span>
           </span>
         </div>
 
         <div class="page-content__sources" th:if="${page.sources != null && !page.sources.isEmpty()}">
-          <h3 class="page-content__sources-title">Fuentes</h3>
+          <h3 class="page-content__sources-title" data-i18n="page_content_sources">Fuentes</h3>
           <ul class="page-content__sources-list">
             <li th:each="source : ${page.sources}" class="page-content__source-item">
               <a th:href="${source.url}" th:text="${source.title}" target="_blank" rel="noopener noreferrer"></a>
@@ -49,6 +49,11 @@
           </ul>
         </div>
       </footer>
+
+      <!-- CTA: la mayoría de estas páginas son contenido educativo (impacto,
+           sostenibilidad, etc.) — antes terminaban en un callejón sin salida
+           ("Inicio" y nada más). Ahora empujan a la acción real del sistema. -->
+      <div th:replace="~{fragments/forms :: altCta('page_content_cta_title', 'page_content_cta_desc', '/solicitar', 'paper-plane', 'req_form_submit_new')}"></div>
 
       <!-- Back button -->
       <div class="page-content__back">
