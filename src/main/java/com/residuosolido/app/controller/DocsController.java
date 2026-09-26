@@ -110,10 +110,49 @@ public class DocsController {
         return "docs/diagramas";
     }
 
+    /**
+     * El hub mostraba conteos hardcodeados (tests, filas de MEJORAS) que
+     * quedaban desactualizados apenas se agregaba una mejora — se detectó un
+     * drift real: "308 tests"/"146 implementadas" cuando ya había 453
+     * tests y 141+ filas. docs/MEJORAS.md viaja en el contenedor de
+     * producción (ver Dockerfile: COPY docs ./docs), así que se puede leer
+     * en runtime real, no solo en dev.
+     *
+     * Los tests NO se cuentan acá a propósito: el build de Docker corre con
+     * -Dmaven.test.skip=true (deploys rápidos, sin pegarle a Mongo Atlas
+     * durante el build), así que no hay ningún artefacto de test real
+     * disponible en el contenedor desplegado — cualquier número ahí sería
+     * tan hardcodeado como el que reemplaza. Se prefiere no mostrar un
+     * número falso antes que mostrar uno viejo (mismo criterio que ya usan
+     * las cards de Jacoco/PMD: instrucción para ejecutar, no un valor fijo).
+     */
     @GetMapping(Routes.DOCS_HUB)
     public String viewHub(Model model) {
         model.addAttribute("diagrams", DIAGRAMS);
+        model.addAttribute("mejorasStats", countMejorasByEstado());
         return "docs/hub";
+    }
+
+    private Map<String, Long> countMejorasByEstado() {
+        Map<String, Long> counts = new LinkedHashMap<>();
+        counts.put("implementado", 0L);
+        counts.put("descartado", 0L);
+        counts.put("diferido", 0L);
+        File mejoras = DOCS_DIR.resolve("MEJORAS.md").toFile();
+        if (!mejoras.isFile()) return counts;
+        try {
+            for (String line : Files.readAllLines(mejoras.toPath())) {
+                String[] cols = line.split("\\|");
+                if (cols.length < 4 || !cols[1].trim().matches("\\d+")) continue;
+                String estado = cols[3].trim().replace("*", "").toLowerCase();
+                if (estado.startsWith("implementado")) counts.merge("implementado", 1L, Long::sum);
+                else if (estado.startsWith("descartado") || estado.startsWith("retirado")) counts.merge("descartado", 1L, Long::sum);
+                else if (estado.startsWith("diferido")) counts.merge("diferido", 1L, Long::sum);
+            }
+        } catch (java.io.IOException e) {
+            // Sin datos frescos, el hub muestra 0/0/0 en vez de romper la página.
+        }
+        return counts;
     }
 
     private String toMxgraphAttr(String baseName) {

@@ -34,7 +34,7 @@
                 </a>
                 <a th:href="@{/docs/MEJORAS}" class="hub-card">
                     <h3>Estado de Mejoras</h3>
-                    <p>146 implementadas, 17 descartadas, 21 diferidas</p>
+                    <p th:text="${mejorasStats.implementado} + ' implementadas, ' + ${mejorasStats.descartado} + ' descartadas, ' + ${mejorasStats.diferido} + ' diferidas'">— implementadas</p>
                 </a>
                 <a th:href="@{/docs/ENDPOINTS}" class="hub-card">
                     <h3>Endpoints</h3>
@@ -67,14 +67,11 @@
             <h2>🧪 Testing & Cobertura</h2>
             <div class="hub-stats">
                 <div class="stat-card">
-                    <h3>Unit Tests</h3>
-                    <p class="stat-value">308</p>
-                    <p class="stat-label">No-browser, sin failures</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Fuzz Tests</h3>
-                    <p class="stat-value">27</p>
-                    <p class="stat-label">PhoneNumber validación exhaustiva</p>
+                    <h3>Tests</h3>
+                    <p class="stat-value">
+                        <code>mvn test -DexcludedGroups=browser</code>
+                    </p>
+                    <p class="stat-label">El conteo cambia con cada mejora — ver docs/MEJORAS.md para el histórico</p>
                 </div>
                 <div class="stat-card">
                     <h3>Jacoco Coverage</h3>
@@ -206,7 +203,7 @@
         </section>
 
         <footer class="hub-footer">
-            <p>Centro de recursos actualizado 2026-09-24</p>
+            <p>Conteos de mejoras calculados en vivo desde docs/MEJORAS.md — <span th:text="${#temporals.format(#temporals.createNow(),'yyyy-MM-dd HH:mm')}">fecha</span></p>
             <p class="text-muted">Esta página no está enlazada desde el navbar — acceso solo por URL directa</p>
         </footer>
     </div>
