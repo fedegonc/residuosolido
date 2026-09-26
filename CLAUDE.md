@@ -1,5 +1,37 @@
 # Instrucciones para Claude Code — Eco Solicitud
 
+## Verificar contra el sistema real, no contra el modelo mental (OBLIGATORIO)
+
+**Antes de afirmar "esto funciona así" o "esto debería andar", ejecutarlo contra
+el sistema real** (correr el build, correr el test, leer el `git show`, leer el
+código completo) **en vez de razonarlo desde una asunción sobre cómo se
+comporta la otra capa.**
+
+El patrón de bug que más se repite en este proyecto es la frontera entre dos
+capas que razonan por separado sobre el mismo dato/estado, sin que nadie
+verifique el contrato real entre ambas:
+
+- Un `<select disabled>` "se ve" enviado en el form — el navegador lo excluye
+  del POST. Frontend asumía una cosa, `@RequestParam(required=true)` exigía
+  otra. Nadie corrió el POST real hasta que rompió en producción.
+- Un fragment Thymeleaf con `th:replace` + contenido anidado "debería"
+  insertar las opciones — la semántica real de Thymeleaf reemplaza el
+  elemento completo y descarta el contenido. Se escribió el `EJEMPLO` en un
+  comentario antes de correrlo.
+- Una regla de `.gitignore` vista en un commit viejo se asumió vigente — un
+  merge posterior la había pisado sin que nadie lo notara hasta el próximo
+  `git add`.
+- Código juzgado como "deuda técnica" por conteo de `grep`/`wc -l` sin leer
+  el archivo completo ni el comentario que documentaba por qué estaba así
+  (`catch (Exception)` deliberados, `ServerMessage` como enum a propósito).
+
+**Regla operativa:** cuando la corrección de algo depende de cómo se comporta
+otra capa (navegador, motor de templates, git, Spring), no lo describas —
+córrelo. `mvn clean test`, `git status`/`git show`, levantar la página y mirar
+el POST real, leer el archivo entero antes de opinar sobre su calidad. Un
+`BUILD SUCCESS` o un test verde vale más que una explicación convincente de
+por qué "debería" andar.
+
 ## Console-Driven Development (OBLIGATORIO)
 
 **NUNCA crear Artifacts.** Todo el trabajo de análisis, reportes, diagramas y documentación debe hacerse:
