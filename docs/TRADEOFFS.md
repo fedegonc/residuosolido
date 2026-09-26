@@ -862,4 +862,38 @@ resiliencia vale la pena para este backend.
 **Resultado:** `MongoResilienceConfig` (timeouts) + `GlobalExceptionHandler
 .handleMongoUnavailable` (mensaje + log distinguible de un bug de código). El
 health check de Mongo en `/actuator/health` ya lo daba gratis Spring Boot
-Actuator — no hizo falta agregar nada ahí. Ver `docs/MEJORAS.md` #192.
+Actuator — no hizo falta agregar nada ahí. Ver `docs/MEJORAS.md` #201.
+
+## 35. Sin API REST pública: Spring MVC + Thymeleaf SSR de punta a punta
+
+Contexto: `OrgApiController` (eliminado, ver más abajo) exponía `GET
+/organizaciones?ciudad=&material=` como JSON, con anotaciones OpenAPI
+completas (`@Operation`, `@ApiResponse`, `@Parameter`, `@Schema`) — presentaba
+al sistema como si tuviera una API REST de verdad. Verificado: **cero
+consumidores reales** (ni JS ni templates lo llamaban, solo su propio test
+unitario, también eliminado). El endpoint que el formulario usa de
+verdad ya existía y hacía lo mismo de forma nativa a SSR: `RequestCreateController
+.orgOptionsForCity` (`GET /solicitudes/org-options`) devuelve un fragmento
+Thymeleaf (`fragments/ui :: options`), no JSON — Vanilla JS reemplaza el
+`<select>` con el HTML que llega, sin parsear nada.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Borrar el endpoint JSON, dejar solo el fragment SSR (elegida)** | Es simplemente el mismo dato servido dos veces con dos paradigmas distintos, y el que sobra (JSON) no tiene un solo consumidor. Mantenerlo era deuda de percepción: alguien leyendo el código asumiría que hay una API REST pensada para terceros, cuando nunca la hubo |
+| Renombrar y reusar como endpoint "interno" | Se evaluó (`OrganizationOptionsController` en `/solicitudes/org-options`) pero esa ruta ya estaba tomada por el endpoint SSR real — hubiera chocado el mapping de Spring. Renombrar algo que no se usa no lo vuelve útil, solo lo esconde mejor |
+| Mantener ambos (JSON + HTML) | Dos formas de pedir lo mismo, sin ningún consumidor real para una de ellas. Superficie de mantenimiento (tests, docs, seguridad) por cero beneficio |
+
+**Efecto en cascada:** el ahora eliminado `OrgApiController` era el único
+controller con anotaciones `@Operation`/`@ApiResponse`/`@Schema` de springdoc
+— al borrarlo, Swagger UI (`/swagger-ui.html`) quedaba documentando una API
+vacía. Se removió la dependencia `springdoc-openapi-starter-webmvc-ui`
+completa, el `@OpenAPIDefinition` de `ResiduoSolidoApplication`, las rutas
+`SWAGGER_V3`/`SWAGGER_UI`/`SWAGGER_HTML` de `Routes`/`SecurityConfig`, y el
+link a Swagger del hub (`src/main/resources/templates/docs/hub.html`). También
+se eliminó la ahora innecesaria `OrganizationDto` (solo la usaba el
+controller eliminado) y su test.
+
+**Resultado:** Spring MVC + Thymeleaf SSR sin excepciones — ni un endpoint
+JSON de cara a un consumidor externo, ni una dependencia que sugiera lo
+contrario. `docs/ARQUITECTURA.md` y `docs/ENDPOINTS.md` actualizados. Ver
+`docs/MEJORAS.md` #205.

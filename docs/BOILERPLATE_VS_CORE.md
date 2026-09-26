@@ -32,7 +32,6 @@ las reglas de negocio antes de tocar (core).
 | `RequestCreateController` | **Core** | Creación de solicitud — el punto de entrada al dominio |
 | `RequestController` | **Core** | Vista/edición de solicitud del ciudadano |
 | `OrgRequestController` | **Core** | Panel de acopio + transiciones de estado (aceptar/rechazar/completar) — las reglas de negocio viven acá |
-| `OrgApiController` | **Core** | Organizaciones por ciudad — parte de la lógica de matching |
 | `OrgProfileController` | Zona gris | El CRUD de perfil es genérico, pero el **onboarding forzado** (no podés operar sin perfil completo) es una regla de negocio |
 
 ### Services

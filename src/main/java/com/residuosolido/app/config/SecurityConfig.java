@@ -41,12 +41,10 @@ public class SecurityConfig {
                 // Formulario público de nueva solicitud
                 .requestMatchers(Routes.REQUESTS_NEW).permitAll()
                 .requestMatchers(Routes.TRACK).permitAll()
-                .requestMatchers(HttpMethod.GET, Routes.API_ORGANIZATIONS_BY_CITY).permitAll()
                 .requestMatchers(HttpMethod.GET, Routes.ORG_OPTIONS).permitAll()
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
                 .requestMatchers(Routes.SCRATCH_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH, Routes.ACTUATOR_INFO).permitAll()
-                .requestMatchers(Routes.SWAGGER_V3, Routes.SWAGGER_UI, Routes.SWAGGER_HTML).permitAll()
                 // API endpoints para usuarios autenticados
                 .requestMatchers(Routes.API_ANY).authenticated()
                 // Rutas de usuarios regulares

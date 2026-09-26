@@ -56,7 +56,6 @@ public final class Routes {
     public static final String ORG_REQUEST_COMPLETE = "/acopio/solicitudes/{id}/completar";
 
     // API
-    public static final String API_ORGANIZATIONS_BY_CITY = "/organizaciones";
     public static final String ORG_OPTIONS = "/solicitudes/org-options";
     public static final String API_ANY = "/api/**";
 
@@ -73,12 +72,9 @@ public final class Routes {
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
 
-    // Actuator y OpenAPI
+    // Actuator
     public static final String ACTUATOR_HEALTH = "/actuator/health";
     public static final String ACTUATOR_INFO = "/actuator/info";
-    public static final String SWAGGER_V3 = "/v3/api-docs/**";
-    public static final String SWAGGER_UI = "/swagger-ui/**";
-    public static final String SWAGGER_HTML = "/swagger-ui.html";
 
     /**
      * A qué pantalla "vuelve" cada rol tras login o tras un error — función pura,

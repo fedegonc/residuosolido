@@ -16,7 +16,6 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/solicitar` | `RequestCreateController` | Formulario de nueva solicitud — público (invitado) o con sesión `USER`; prefill `?ciudad=&nombre=&telefono=` |
 | POST | `/solicitar` | `RequestCreateController` | Crea la solicitud (con imagen opcional, rate limit para invitados) |
 | GET | `/rastrear?telefono=&codigo=` | `GuestTrackingController` | Rastreo de solicitudes de invitado por teléfono + código privado |
-| GET | `/organizaciones?ciudad=&material=` | `OrgApiController` | JSON de organizaciones activas en una ciudad, filtro opcional por material (combo del formulario) |
 | GET | `/docs/diagramas` | `DocsController` | Visor de diagramas UML: renderiza cada `docs/diagrams/*.drawio` con viewer-static de draw.io |
 | GET | `/docs/{file}` | `DocsController` | Vista HTML de `docs/{file}.md` renderizada con CommonMark (layout + `.doc-content`); inexistente → 404 |
 | GET | `/docs/{file}.md` | `DocsController` | Sirve el `.md` crudo como `text/markdown` (fuente del doc) |
@@ -61,12 +60,12 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 - `/solicitar` es verbo porque es la acción principal del sistema y la única URL que un ciudadano podría tipear a mano; `/rastrear` por la misma razón (se escribe con el código en el papel al lado). `/solicitudes/{id}` se mantiene plural y sustantivo para editar/borrar — es CRUD puro, sin verbo de dominio.
 - `/acopio/**` es el prefijo del área de organización: un solo segmento identifica la zona y el matcher de seguridad es una línea (`.requestMatchers("/acopio/**").hasRole("ORGANIZATION")`). `/mi-organizacion` queda fuera del prefijo por legibilidad pero tiene el mismo matcher explícito.
 - Los formularios HTML solo emiten GET/POST: `PUT` y `DELETE` llegan vía `_method=put|delete` en el body, traducidos por `HiddenHttpMethodFilter` (`spring.mvc.hiddenmethod.filter.enabled=true`).
-- Rutas en español sin tildes ni `ñ` (`organizaciones`, `solicitar`, `rastrear`, `acopio`) — los nombres de las rutas son los mismos que se usan en la defensa.
+- Rutas en español sin tildes ni `ñ` (`solicitar`, `rastrear`, `acopio`) — los nombres de las rutas son los mismos que se usan en la defensa.
 - No existen rutas `/admin/**` — no hay rol Admin ni panel de administración general.
 - No existen rutas `/acopio/inicio`, `/acopio/completar-perfil` ni `/acopio/kanban` — el dashboard Kanban y el onboarding separado fueron consolidados.
 - No existen rutas `/blog`, `/posts`, `/metricas` — el blog y las métricas públicas fueron descartados del MVP.
 - Las rutas físicas están centralizadas en `com.residuosolido.app.config.Routes` para evitar URLs hardcodeadas en controllers, seguridad y tests.
-- OpenAPI/Swagger UI está disponible en `/swagger-ui.html` y `/v3/api-docs` (público en `SecurityConfig`).
+- **No hay API REST pública ni Swagger/OpenAPI.** Eco Solicitud es Spring MVC + Thymeleaf SSR; `/solicitudes/org-options` es el único endpoint JSON/HTML-fragment y es infraestructura interna del formulario (fetch de Vanilla JS), no una API de consumo externo. Ver `docs/TRADEOFFS.md` §35.
 
 ---
 

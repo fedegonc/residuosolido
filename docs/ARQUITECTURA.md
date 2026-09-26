@@ -41,9 +41,6 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 - `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
 - `DocsController` — Páginas públicas de documentación (`/documentos`, `/diagramas`)
 
-**API:**
-- `OrgApiController` — Listado de organizaciones por ciudad (JSON)
-
 **Soporte:**
 - `Messages` — Mensajes i18n/flash compartidos, inyectado por constructor
 - `@CurrentUser` + `CurrentUserArgumentResolver` — Inyección del usuario
@@ -60,12 +57,11 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 - `LocalImageService` — Subida de imágenes locales
 - `MongoAggregationUtils` — Utilidades estáticas de agregación MongoDB (facets)
 
-### 3. Modelos (3 clases + DTO)
+### 3. Modelos (3 clases)
 
 - `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
 - `Request` — Solicitudes de recolección con ciclo de estados
 - `PhoneNumber` — Utility class de normalización E.164 (Uruguay +558 y Brasil +55)
-- `OrganizationDto` — DTO para API de organizaciones
 
 ### 4. Repositories (2 interfaces)
 
@@ -198,6 +194,7 @@ cambiar un parámetro es un contrato que rompe los templates que lo llaman.
 - **Breadcrumbs inline**: Construidos con `List.of(Map.of(...))` en cada controller.
 - **JavaScript scoped por página**: lo global/reusado por 2+ páginas vive en `app.js`; lo exclusivo de una página (ej. `filterMaterialsByOrg`, el toggle view/edit de perfil) va en su propio archivo (`request-form.js`, `org-profile.js`) cargado vía `layout:fragment="pageScripts"`. Reemplaza al enfoque anterior de scripts embebidos en fragments HTML (`fragments/toggle-view-edit.html`/`request-form-js.html`, eliminados).
 - **Imágenes locales**: `LocalImageService` guarda archivos en disco, no en Cloudinary.
+- **Sin API REST pública**: Spring MVC + Thymeleaf SSR de punta a punta. `/solicitudes/org-options` es el único endpoint JSON/HTML-fragment, y es infraestructura interna del formulario (fetch de `request-form.js`), no una API de consumo externo — sin Swagger/OpenAPI. Ver `docs/TRADEOFFS.md` §35.
 
 ## Pruebas
 
