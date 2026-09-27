@@ -106,8 +106,13 @@ public class RequestCreateController {
             }
             String resolvedGuestPhone = PhoneNumber.resolve(guestCountryCode, guestPhoneNational, guestDdd, guestPhone);
             if (user != null && !user.hasPhone()) {
-                String phone = PhoneNumber.normalize(userCountryCode, userPhoneNational, userDdd);
-                userService.updateProfile(user, null, null, phone, null);
+                try {
+                    String phone = PhoneNumber.normalize(userCountryCode, userPhoneNational, userDdd);
+                    userService.updateProfile(user, null, null, phone, null);
+                } catch (IllegalArgumentException e) {
+                    messages.flashError(redirectAttributes, e);
+                    return "redirect:" + Routes.REQUESTS_NEW;
+                }
             }
             Request created = requestService.createRequestWithImage(user, ciudad, address, addressReference,
                     materials, guestName, resolvedGuestPhone, organizationId, imageFile);

@@ -38,7 +38,7 @@ public class CityOrgService {
         }
         Organization org = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_FOUND));
-        if (org.getCity() == null || org.getCity() != city) {
+        if (org.getCity() == null || !org.getCity().equals(city)) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_IN_CITY);
         }
         if (!isAvailable(org)) {

@@ -172,7 +172,7 @@
   /* Debe tolerar lo mismo que limpia el servidor (PhoneNumber.DECORATIVE_CHARS:
      espacios, guiones, paréntesis) — si no, un numero bien escrito con "(099) 123 456"
      lo bloquea el navegador antes de llegar al server, sin ningún mensaje de error. */
-  var PHONE_PATTERNS = { '+598': '[0-9 \\-()]{8,15}', '+55': '[0-9 \\-()]{8,17}' };
+  var PHONE_PATTERNS = { '+598': '[0-9() -]{8,15}', '+55': '[0-9() -]{8,17}' };
 
   PHONE_PREFIXES.forEach(function (prefix) {
     var countrySel = document.getElementById(prefix + 'CountryCode');
