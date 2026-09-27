@@ -98,6 +98,7 @@ public class RequestCreateController {
                                 Authentication authentication,
                                 HttpServletRequest httpRequest,
                                 RedirectAttributes redirectAttributes) {
+        logger.info("=== POST /solicitar === ciudad={}, organizationId={}", ciudad, organizationId);
         try {
             User user = userService.resolveUser(authentication);
             if (user == null && !guestRateLimiter.isAllowed(httpRequest)) {
@@ -128,16 +129,18 @@ public class RequestCreateController {
             }
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
+            logger.warn("ValidationException: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("warningMessage", messages.msg(e));
             // "/mis-solicitudes" exige ROLE_USER — un invitado ahí rebota a login (Security),
             // no al mensaje de error. Mismo criterio que el resto del método: sin sesión -> REQUESTS_NEW.
             User currentUser = userService.resolveUser(authentication);
             return "redirect:" + (currentUser == null ? Routes.REQUESTS_NEW : Routes.REQUESTS);
         } catch (IllegalArgumentException e) {
+            logger.warn("IllegalArgumentException: {}", e.getMessage());
             messages.flashError(redirectAttributes, e);
             return "redirect:" + Routes.REQUESTS_NEW;
         } catch (Exception e) {
-            logger.error("Error al crear solicitud: {}", e.getMessage());
+            logger.error("Exception: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATE_ERROR);
             return "redirect:" + Routes.REQUESTS_NEW;
         }
