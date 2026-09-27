@@ -275,7 +275,6 @@ class EndToEndFlowsTest {
         authOrg.setUsername("coop");
         authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
         when(organizationService.findByUser(authOrg)).thenReturn(org);

@@ -64,7 +64,6 @@ class OrganizationControllerTest {
         authOrg.setRole(Role.ORGANIZATION);
 
         Organization mockOrg = TestFixtures.organization("org1", City.RIVERA);
-        mockOrg.setUsername("coop");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
         when(organizationService.findByUser(authOrg)).thenReturn(mockOrg);
