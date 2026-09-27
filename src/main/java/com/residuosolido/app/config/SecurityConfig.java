@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
                 .requestMatchers(Routes.SCRATCH_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH, Routes.ACTUATOR_INFO).permitAll()
+                // Admin endpoints (dev only, protected at controller level via @Profile)
+                .requestMatchers(Routes.ADMIN_ANY).permitAll()
                 // Rutas de usuarios regulares
                 .requestMatchers(Routes.REQUESTS, "/solicitudes/**", Routes.NOTIFICATIONS).hasRole("USER")
                 // Rutas de organización
@@ -74,10 +76,10 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
-                    "img-src 'self' data: https: https://tile.openstreetmap.org https://images.pexels.com; " +
-                    "style-src 'self' 'unsafe-inline' https://www.draw.io; " +
+                    "img-src 'self' data: https://tile.openstreetmap.org https://images.pexels.com; " +
+                    "style-src 'self' 'unsafe-inline' https://viewer.diagrams.net; " +
                     "font-src 'self' data: https://viewer.diagrams.net; " +
-                    "script-src 'self' https://www.draw.io https://viewer.diagrams.net; " +
+                    "script-src 'self' https://viewer.diagrams.net; " +
                     "connect-src 'self' https://images.pexels.com https://viewer.diagrams.net; " +
                     "frame-src 'self' https://www.openstreetmap.org https://www.draw.io"
                 ))
@@ -89,7 +91,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation(fixation -> fixation.changeSessionId())
             );
-        
+
         return http.build();
     }
 }

@@ -184,6 +184,29 @@
             <exclude>com/residuosolido/app/controller/GlobalErrorController.class</exclude>
             <exclude>com/residuosolido/app/ResiduoSolidoApplication.class</exclude>
           </excludes>
+          <!-- Gate de cobertura: se invoca con `mvn test jacoco:check` (CI).
+               Medido con la suite de CI (-DexcludedGroups="browser,load"):
+               ~85% instrucciones / ~69% branches. Umbrales con ~4-5pp de
+               margen — piso anti-regresión, no objetivo. Nota: el test
+               `load` aporta ~27pp de branches cuando corre (endpoints reales),
+               pero se excluye de CI por flaky de timing (ver gaps-detalle §C). -->
+          <rules>
+            <rule>
+              <element>BUNDLE</element>
+              <limits>
+                <limit>
+                  <counter>INSTRUCTION</counter>
+                  <value>COVEREDRATIO</value>
+                  <minimum>0.80</minimum>
+                </limit>
+                <limit>
+                  <counter>BRANCH</counter>
+                  <value>COVEREDRATIO</value>
+                  <minimum>0.65</minimum>
+                </limit>
+              </limits>
+            </rule>
+          </rules>
         </configuration>
         <executions>
           <execution>

@@ -1,5 +1,8 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.exception.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +32,17 @@ public class RequestMetricsService {
      * Si el ID no es un ObjectId válido (ej. en tests con mocks), usa el String directamente.
      */
     public Map<String, Long> getUserRequestStats(User user) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         return MongoAggregationUtils.countByStatusFaceted(
                 mongoTemplate, Criteria.where("user").is(toObjectIdOrString(user.getId())), true);
     }
 
-    public Map<String, Long> getOrgRequestStats(User organization) {
+    public Map<String, Long> getOrgRequestStats(Organization organization) {
+        if (organization == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         return MongoAggregationUtils.countByStatusFaceted(
                 mongoTemplate, Criteria.where("organization").is(toObjectIdOrString(organization.getId())), false);
     }

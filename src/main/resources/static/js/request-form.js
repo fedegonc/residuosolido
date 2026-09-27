@@ -48,19 +48,27 @@
   var loading = document.getElementById('materialsLoading');
   if (ciudad && !ciudad.disabled) {
     ciudad.addEventListener('change', function () {
+      console.log('Ciudad cambió a:', ciudad.value);
       if (!ciudad.value) return;
       if (loading) loading.classList.remove('is-hidden');
-      fetch('/solicitudes/org-options?ciudad=' + encodeURIComponent(ciudad.value))
+      var url = '/solicitudes/org-options?ciudad=' + encodeURIComponent(ciudad.value);
+      console.log('Fetching:', url);
+      fetch(url)
         .then(function (r) { return r.ok ? r.text() : Promise.reject(r.status); })
         .then(function (html) {
+          console.log('Response recibida, actualizando select...');
           orgSelect.innerHTML = html;
+          console.log('innerHTML actualizado, opciones:', orgSelect.options.length);
           orgSelect.querySelectorAll('[data-i18n]').forEach(function (el) {
             var t = translations[el.getAttribute('data-i18n')];
             if (t) el.textContent = t;
           });
           filterMaterialsByOrg();
         })
-        .catch(showErrorToast)
+        .catch(function (err) {
+          console.error('Error al cargar organizaciones:', err);
+          showErrorToast();
+        })
         .finally(function () {
           if (loading) loading.classList.add('is-hidden');
         });

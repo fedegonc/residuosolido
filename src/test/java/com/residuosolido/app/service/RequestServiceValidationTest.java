@@ -3,6 +3,7 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,14 +38,14 @@ class RequestServiceValidationTest {
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
         requestService = new RequestService(requestRepository, imageService, cityOrgService,
-                mock(ApplicationEventPublisher.class), new RequestValidator(), new RequestStateMachine());
+                mock(ApplicationEventPublisher.class), new RequestValidator());
     }
 
     private User citizen() {
         return TestFixtures.citizen("u1", "+59899123456");
     }
 
-    private User org() {
+    private Organization org() {
         return TestFixtures.organization("org1", City.RIVERA, MaterialCategory.PLASTICO, MaterialCategory.PAPEL);
     }
 
@@ -216,7 +217,7 @@ class RequestServiceValidationTest {
     @Test
     void rn10_createRequest_validMaterials_doesNotThrowOnValidation() {
         User user = citizen();
-        User org = org();
+        Organization org = org();
 
         when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA))
                 .thenReturn(org);
@@ -230,6 +231,39 @@ class RequestServiceValidationTest {
 
         assertNotNull(result);
         assertEquals(2, result.getMaterials().size());
+    }
+
+    // ─── Reasignación de organización al editar (CU-U6) ───
+    // Regresión crítica para el refactor User/Organization: updateRequest no solo
+    // edita campos, sino que puede cambiar la org asignada. Si Request.organization
+    // pasa a apuntar a otra colección, este flujo es el primero en romperse.
+
+    @Test
+    void rn_updateRequest_reassignsOrganization_whenNewOrgAcceptsMaterials() {
+        User user = citizen();
+        Organization org1 = TestFixtures.organization("org1", City.RIVERA, MaterialCategory.PLASTICO, MaterialCategory.PAPEL);
+        Organization org2 = TestFixtures.organization("org2", City.RIVERA, MaterialCategory.PLASTICO, MaterialCategory.PAPEL);
+
+        com.residuosolido.app.model.Request existing = com.residuosolido.app.model.Request.forCitizen(user);
+        existing.setId("req1");
+        existing.updateDraft(City.RIVERA, "Calle vieja", null, List.of(MaterialCategory.PLASTICO));
+        existing.assignOrganization(org1);
+
+        when(requestRepository.findById("req1"))
+                .thenReturn(java.util.Optional.of(existing));
+        when(cityOrgService.findOrganizationByIdAndCity("org2", City.RIVERA))
+                .thenReturn(org2);
+        when(requestRepository.save(any()))
+                .thenAnswer(inv -> inv.getArgument(0));
+        when(imageService.attachImageToRequest(any(), any()))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        com.residuosolido.app.model.Request result = requestService.updateRequest(
+                "req1", user, City.RIVERA, "Calle nueva", null,
+                List.of(MaterialCategory.PAPEL), "org2", null);
+
+        assertEquals(org2, result.getOrganization(),
+                "Al editar, la solicitud debe reasignarse a la nueva organización elegible");
     }
 
     // ─── RN-11: solo solicitudes PENDING pueden eliminarse ───

@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+    branches: [main, developer]
+  pull_request:
+    branches: [main, developer]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      # Los tests @Tag("integration") usan MongoTemplate real contra
+      # localhost:27017/testdb (default en sus @SpringBootTest properties).
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Test (excluye browser=Playwright host deps, load=timing flaky)
+        run: mvn -B test jacoco:check -DexcludedGroups="browser,load"
+        env:
+          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
+      - name: PMD (informativo — 137 violaciones conocidas, failOnViolation=false)
+        run: mvn -B pmd:pmd
+        continue-on-error: true

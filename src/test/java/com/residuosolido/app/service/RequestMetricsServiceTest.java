@@ -1,6 +1,7 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -31,11 +32,10 @@ class RequestMetricsServiceTest {
         service = new RequestMetricsService(mongoTemplate);
     }
 
-    private User organization(String id) {
-        User u = new User();
-        u.setId(id);
-        u.setRole(Role.ORGANIZATION);
-        return u;
+    private Organization organization(String id) {
+        Organization o = new Organization();
+        o.setId(id);
+        return o;
     }
 
     private User user(String id) {
@@ -54,6 +54,18 @@ class RequestMetricsServiceTest {
     }
 
     // ─── getOrgRequestStats (stats del panel de acopio) ───
+
+    @Test
+    void getUserRequestStats_nullUser_throwsValidation() {
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> service.getUserRequestStats(null));
+    }
+
+    @Test
+    void getOrgRequestStats_nullOrganization_throwsValidation() {
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> service.getOrgRequestStats(null));
+    }
 
     @Test
     void getUserRequestStats_objectIdString_usesObjectIdInCriteria() {

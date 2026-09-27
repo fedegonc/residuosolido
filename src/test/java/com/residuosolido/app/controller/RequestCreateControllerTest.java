@@ -4,6 +4,7 @@ import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.config.RateLimiter;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.enums.City;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
@@ -106,7 +107,7 @@ class RequestCreateControllerTest {
     @Test
     void newRequestForm_withCity_loadsOrganizations() throws Exception {
         when(userService.resolveUser(any())).thenReturn(null);
-        User org = TestFixtures.organization("o1", City.RIVERA);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
         when(cityOrgService.getOrganizationsByCity(City.RIVERA)).thenReturn(List.of(org));
 
         mockMvc.perform(get(Routes.REQUESTS_NEW).param("ciudad", "RIVERA"))

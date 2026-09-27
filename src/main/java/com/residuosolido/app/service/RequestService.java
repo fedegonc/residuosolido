@@ -12,8 +12,10 @@ import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.event.RequestStatusChangedEvent;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.TrackingCode;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.slf4j.Logger;
@@ -46,20 +48,17 @@ public class RequestService {
     private final CityOrgService cityOrgService;
     private final ApplicationEventPublisher eventPublisher;
     private final RequestValidator validator;
-    private final RequestStateMachine stateMachine;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
                           CityOrgService cityOrgService,
                           ApplicationEventPublisher eventPublisher,
-                          RequestValidator validator,
-                          RequestStateMachine stateMachine) {
+                          RequestValidator validator) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.cityOrgService = cityOrgService;
         this.eventPublisher = eventPublisher;
         this.validator = validator;
-        this.stateMachine = stateMachine;
     }
 
     // ========== Crear ==========
@@ -74,7 +73,7 @@ public class RequestService {
                 : Request.forGuest(guestName, guestPhone, generateTrackingCode());
         request.updateDraft(city, address, addressReference, materials);
 
-        User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
+        Organization org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         validator.validateMaterials(org, request.getMaterials());
         request.assignOrganization(org);
 
@@ -104,7 +103,7 @@ public class RequestService {
         Request request = getEditableOwnedRequest(id, user);
         validator.validateUpdate(city, address, materials, organizationId);
 
-        User org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
+        Organization org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
         validator.validateMaterials(org, materials != null ? materials : List.of());
 
         request.updateDraft(city, address, addressReference, materials);
@@ -141,11 +140,14 @@ public class RequestService {
     // diseño del motor), que es exactamente la garantía que estos métodos
     // necesitan. Ver docs/TRADEOFFS.md §36.
 
-    public void acceptRequest(String id, User org, TimeSlot slot) {
+    public void acceptRequest(String id, Organization org, TimeSlot slot) {
+        if (org == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         logger.info("REQUEST_ACCEPT_STARTED: id={}, orgId={}, slot={}", id, org.getId(), slot);
         try {
             Request request = getOwnedOrgRequest(id, org);
-            stateMachine.accept(request, slot);
+            request.accept(slot);
             saveWithOptimisticLock(request);
             logger.info("REQUEST_ACCEPT_SAVED: id={}, newStatus={}", id, request.getStatus());
             eventPublisher.publishEvent(new RequestStatusChangedEvent(request, NotificationType.ACCEPTED));
@@ -156,11 +158,14 @@ public class RequestService {
         }
     }
 
-    public void rejectRequest(String id, User org) {
+    public void rejectRequest(String id, Organization org) {
+        if (org == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         logger.info("REQUEST_REJECT_STARTED: id={}, orgId={}", id, org.getId());
         try {
             Request request = getOwnedOrgRequest(id, org);
-            stateMachine.reject(request);
+            request.reject();
             saveWithOptimisticLock(request);
             logger.info("REQUEST_REJECT_SAVED: id={}, newStatus={}", id, request.getStatus());
             eventPublisher.publishEvent(new RequestStatusChangedEvent(request, NotificationType.REJECTED));
@@ -171,11 +176,14 @@ public class RequestService {
         }
     }
 
-    public void completeRequest(String id, User org) {
+    public void completeRequest(String id, Organization org) {
+        if (org == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         logger.info("REQUEST_COMPLETE_STARTED: id={}, orgId={}", id, org.getId());
         try {
             Request request = getOwnedOrgRequest(id, org);
-            stateMachine.complete(request);
+            request.complete();
             saveWithOptimisticLock(request);
             logger.info("REQUEST_COMPLETE_SUCCESS: id={}, newStatus={}", id, request.getStatus());
         } catch (Exception e) {
@@ -195,10 +203,16 @@ public class RequestService {
     // ========== Consultas: ciudadano ==========
 
     public List<Request> getRequestsByUser(User user, int page, int size) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         return requestRepository.findByUser(user, PageRequest.of(page, size));
     }
 
     public Request getOwnedRequest(String id, User user) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new ValidationException(ServerMessage.FLASH_REQUEST_NOT_FOUND));
         if (request.getUser() == null || !request.getUser().getId().equals(user.getId())) {
@@ -241,12 +255,16 @@ public class RequestService {
             return List.of();
         }
         return requestRepository
-                .findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(canonicalPhone, trackingCode.trim());
+                .findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(
+                        canonicalPhone, TrackingCode.canonical(trackingCode));
     }
 
     // ========== Consultas: organización ==========
 
-    public Request getOwnedOrgRequest(String id, User org) {
+    public Request getOwnedOrgRequest(String id, Organization org) {
+        if (org == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new ValidationException(ServerMessage.FLASH_ORG_REQUEST_NOT_FOUND));
         if (request.getOrganization() == null || !request.getOrganization().getId().equals(org.getId())) {
@@ -255,12 +273,18 @@ public class RequestService {
         return request;
     }
 
-    public List<Request> getRequestsByOrganization(User organization, int page, int size) {
+    public List<Request> getRequestsByOrganization(Organization organization, int page, int size) {
+        if (organization == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         return requestRepository.findByOrganizationOrderByCreatedAtDesc(organization,
                 PageRequest.of(page, size));
     }
 
-    public List<Request> getOrgRequestsByStatusFilter(User organization, String status, int page, int size) {
+    public List<Request> getOrgRequestsByStatusFilter(Organization organization, String status, int page, int size) {
+        if (organization == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         if (status == null || status.trim().isEmpty()) {
             return getRequestsByOrganization(organization, page, size);
         }

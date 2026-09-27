@@ -4,9 +4,12 @@ import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -53,13 +56,22 @@ class OrgProfileControllerTest {
     @MockBean
     private UserService userService;
 
-    private User org;
+    @MockBean
+    private OrganizationService organizationService;
+
+    private User authOrg;
+    private Organization org;
 
     @BeforeEach
     void setUp() {
+        authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+
         org = TestFixtures.organization("org-1", City.RIVERA, MaterialCategory.PLASTICO);
-        org.setUsername("coop");
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
     }
 
     @Test
@@ -82,7 +94,9 @@ class OrgProfileControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Routes.ORG_PROFILE));
 
-        verify(userService).updateProfile(eq(org), isNull(), isNull(), eq("+59899123456"),
+        verify(userService).updateProfile(eq(authOrg), isNull(), isNull(), eq("+59899123456"),
+                eq(City.RIVERA));
+        verify(organizationService).updateProfile(eq(authOrg), isNull(), eq("+59899123456"),
                 eq(City.RIVERA), eq(java.util.List.of(MaterialCategory.PLASTICO, MaterialCategory.VIDRIO)));
     }
 
@@ -94,7 +108,8 @@ class OrgProfileControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Routes.ORG_PROFILE));
 
-        verify(userService, never()).updateProfile(any(), any(), any(), any(), any(), any());
+        verify(userService, never()).updateProfile(any(), any(), any(), any(), any());
+        verify(organizationService, never()).updateProfile(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -105,14 +120,15 @@ class OrgProfileControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Routes.ORG_PROFILE));
 
-        verify(userService, never()).updateProfile(any(), any(), any(), any(), any(), any());
+        verify(userService, never()).updateProfile(any(), any(), any(), any(), any());
+        verify(organizationService, never()).updateProfile(any(), any(), any(), any(), any());
     }
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void updateProfile_serviceKeyedError_redirectsWithFlash() throws Exception {
         doThrow(new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED))
-                .when(userService).updateProfile(any(), any(), any(), anyString(), any(), anyList());
+                .when(organizationService).updateProfile(any(), any(), anyString(), any(), anyList());
 
         mockMvc.perform(put(Routes.ORG_PROFILE).with(csrf())
                         .param("ciudad", "RIVERA")

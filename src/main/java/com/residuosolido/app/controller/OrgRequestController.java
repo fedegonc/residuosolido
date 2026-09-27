@@ -3,11 +3,13 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.util.LandingCardLoader;
@@ -39,15 +41,18 @@ public class OrgRequestController {
 
     private final RequestMetricsService requestMetricsService;
     private final RequestService requestService;
+    private final OrganizationService organizationService;
     private final LocaleResolver localeResolver;
     private final Messages messages;
 
     public OrgRequestController(RequestMetricsService requestMetricsService,
                                 RequestService requestService,
+                                OrganizationService organizationService,
                                 LocaleResolver localeResolver,
                                 Messages messages) {
         this.requestMetricsService = requestMetricsService;
         this.requestService = requestService;
+        this.organizationService = organizationService;
         this.localeResolver = localeResolver;
         this.messages = messages;
     }
@@ -58,11 +63,12 @@ public class OrgRequestController {
             @RequestParam(defaultValue = "20") int size,
             @CurrentUser User currentOrg, Model model,
             HttpServletRequest request) {
-        if (currentOrg.needsProfileCompletion()) {
+        Organization organization = organizationService.findByUser(currentOrg);
+        if (organization.needsProfileCompletion()) {
             return "redirect:" + Routes.ORG_PROFILE;
         }
 
-        Map<String, Long> stats = requestMetricsService.getOrgRequestStats(currentOrg);
+        Map<String, Long> stats = requestMetricsService.getOrgRequestStats(organization);
         long pending = stats.get("pending");
         long inProgress = stats.get("inProgress");
         long completed = stats.get("completed");
@@ -72,7 +78,7 @@ public class OrgRequestController {
         model.addAttribute("completedCount", completed);
         model.addAttribute("rejectedCount", rejected);
 
-        List<Request> requests = requestService.getRequestsByOrganization(currentOrg, page, size);
+        List<Request> requests = requestService.getRequestsByOrganization(organization, page, size);
 
         model.addAttribute("requests", requests);
         model.addAttribute("requestsByStatus", groupByStatus(requests));
@@ -91,8 +97,9 @@ public class OrgRequestController {
 
     /** Carga una solicitud individual con sus datos completos. */
     @GetMapping(Routes.ORG_REQUEST)
-    public String orgRequestDetail(@PathVariable String id, @CurrentUser User org,
+    public String orgRequestDetail(@PathVariable String id, @CurrentUser User currentOrg,
                                     Model model) {
+        Organization org = organizationService.findByUser(currentOrg);
         Request request = requestService.getOwnedOrgRequest(id, org);
         model.addAttribute("request", request);
         model.addAttribute("viewType", RequestViewType.DETAIL);
@@ -104,9 +111,10 @@ public class OrgRequestController {
     @PostMapping(Routes.ORG_REQUEST_ACCEPT)
     public String acceptRequest(@PathVariable String id,
                                 @RequestParam(value = "confirmedSlot", required = false) TimeSlot confirmedSlot,
-                                @CurrentUser User org,
+                                @CurrentUser User currentOrg,
                                 RedirectAttributes redirectAttributes) {
         try {
+            Organization org = organizationService.findByUser(currentOrg);
             requestService.acceptRequest(id, org, confirmedSlot);
             messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_ACCEPTED);
         } catch (IllegalStateException e) {
@@ -118,9 +126,10 @@ public class OrgRequestController {
     /** Rechaza una solicitud pendiente. */
     @PostMapping(Routes.ORG_REQUEST_REJECT)
     public String rejectRequest(@PathVariable String id,
-                                @CurrentUser User org,
+                                @CurrentUser User currentOrg,
                                 RedirectAttributes redirectAttributes) {
         try {
+            Organization org = organizationService.findByUser(currentOrg);
             requestService.rejectRequest(id, org);
             messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_REJECTED);
         } catch (IllegalStateException e) {
@@ -132,9 +141,10 @@ public class OrgRequestController {
     /** Marca una solicitud aceptada como completada. */
     @PostMapping(Routes.ORG_REQUEST_COMPLETE)
     public String completeRequest(@PathVariable String id,
-                                  @CurrentUser User org,
+                                  @CurrentUser User currentOrg,
                                   RedirectAttributes redirectAttributes) {
         try {
+            Organization org = organizationService.findByUser(currentOrg);
             requestService.completeRequest(id, org);
             messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_COMPLETED);
         } catch (IllegalStateException e) {

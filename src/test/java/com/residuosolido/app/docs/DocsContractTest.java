@@ -76,7 +76,8 @@ class DocsContractTest {
             "IndexKeySpecsConflict", "String", "Integer", "Long", "Boolean", "Object",
             "List", "Map", "Set", "Optional", "Stream", "Exception", "RuntimeException",
             "PlatformTransactionManager", "ApplicationEventPublisher", "MongoTransactionManager",
-            "SpelEvaluationException", "ObjectId", "LocalValidatorFactoryBean");
+            "SpelEvaluationException", "ObjectId", "LocalValidatorFactoryBean",
+            "AuthenticationManager", "SecurityContext");
 
     /** Términos de dominio/nombres propios citados en backticks que no son clases Java. */
     private static final Set<String> NON_CLASS_TERMS = Set.of(

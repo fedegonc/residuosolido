@@ -69,13 +69,16 @@ public final class Routes {
     public static final String DOCS_UX_UI = "/docs/ux-ui";
     /** Sandbox de dominio (gitignored): existe en local/dev, 404 en prod porque nunca se sube al repo. */
     public static final String SCRATCH_ANY = "/scratch/**";
-    public static final String SCRATCH_FILE = "/scratch/{file}.java";
+    public static final String SCRATCH_FILE = "/scratch/{file}";
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
 
     // Actuator
     public static final String ACTUATOR_HEALTH = "/actuator/health";
     public static final String ACTUATOR_INFO = "/actuator/info";
+
+    // Admin (dev only)
+    public static final String ADMIN_ANY = "/admin/**";
 
     /**
      * A qué pantalla "vuelve" cada rol tras login o tras un error — función pura,

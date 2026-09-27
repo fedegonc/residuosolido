@@ -4,17 +4,32 @@
 <head><title>Registro</title></head>
 <body>
   <main layout:fragment="content">
-    <div class="page page--center">
+    <div class="page page--center page--form">
       <div class="split">
         <section class="hero">
           <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
           <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
 
-          <form th:action="@{/registrarse}" method="post" class="stack">
-            <div th:replace="~{fragments/forms :: text('username', 'username', 'text', 'auth_name', 'Nombre', 'auth_name_placeholder', 'Ej: Ana García', true, ${user.username})}"></div>
-            <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'auth_phone', 'Número de celular', true, ${user.phoneNational}, ${user.countryCode}, ${user.ddd}, null, null)}"></div>
-            <div th:replace="~{fragments/forms :: pin('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
-            <div th:replace="~{fragments/forms :: check('isOrganization', 'isOrganization', 'auth_is_organization', 'Soy una cooperativa o reciclador', 'auth_is_organization_hint', 'Marcá esta opción si querés recibir solicitudes de recolección.')}"></div>
+          <form th:action="@{/registrarse}" method="post" class="stack" th:object="${user}" novalidate>
+            <div class="field-group" th:classappend="${#fields.hasErrors('username')} ? 'field-group--error'">
+              <div th:replace="~{fragments/forms :: text('username', 'username', 'text', 'auth_name', 'Nombre', 'auth_name_placeholder', 'Ej: Ana García', true, ${user.username})}"></div>
+              <span class="field__error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}" role="alert"></span>
+            </div>
+            <div class="field-group" th:classappend="${#fields.hasErrors('phoneNational')} ? 'field-group--error'">
+              <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'auth_phone', 'Número de celular', true, ${user.phoneNational}, ${user.countryCode}, ${user.ddd}, null, null)}"></div>
+              <span class="field__error" th:if="${#fields.hasErrors('phoneNational')}" th:errors="*{phoneNational}" role="alert"></span>
+            </div>
+            <div class="field-group" th:classappend="${#fields.hasErrors('password')} ? 'field-group--error'">
+              <div th:replace="~{fragments/forms :: pin('password', 'password', 'auth_pin_hint', '4 dígitos, para identificarte rápido')}"></div>
+              <span class="field__error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" role="alert"></span>
+            </div>
+            <div class="field">
+              <label class="row">
+                <input type="checkbox" id="isOrganization" name="isOrganization" value="true" th:checked="${isOrganization}">
+                <span data-i18n="auth_is_organization">Soy una cooperativa o reciclador</span>
+              </label>
+              <span class="hint" data-i18n="auth_is_organization_hint">Marcá esta opción si querés recibir solicitudes de recolección.</span>
+            </div>
             <div th:replace="~{fragments/forms :: submit(null, 'auth_register_button', 'Registrarse', 'btn--primary btn--block')}"></div>
           </form>
 

@@ -35,14 +35,14 @@ aplicaciones, garantizar calidad y elaborar documentación técnica.
 
 | Competencia TADS | Evidencia en el proyecto |
 |---|---|
-| Análisis de requisitos | 8 RF, 14 RN, 3 actores, casos de uso (`docs/DIAGRAMAS.md`) |
+| Análisis de requisitos | 8 RF, 13 RN, 3 actores, casos de uso (`docs/DIAGRAMAS.md`) |
 | Modelado | Entidades, relaciones, estados, multiplicidades (`docs/diagrams/`) |
 | Desarrollo | Flujo completo ciudadano → organización → seguimiento |
-| Testing | 181 tests: unitarios, integración, seguridad, autorización |
-| Calidad | JaCoCo, validación server-side, optimistic locking |
-| Documentación | 11 docs técnicos, 4 diagramas UML, endpoints catalogados |
+| Testing | 490 tests no-browser: unitarios, integración, e2e MockMvc, seguridad, autorización |
+| Calidad | JaCoCo, validación server-side, optimistic locking, inventario auto-generado |
+| Documentación | 17 docs técnicos, 7 diagramas UML, endpoints catalogados |
 | Gestión del proyecto | Iterativo-incremental en 4 fases, tradeoffs documentados |
-| Seguridad y auditoría | CSRF, roles, session fixation, CSP, rate limiting |
+| Seguridad y auditoría | CSRF, roles, session fixation, CSP auditado, rate limiting, guard en `SeedController` |
 | Comunicación técnica | Diagramas y documentación coherentes con el código |
 
 ---
@@ -243,6 +243,16 @@ y por qué", evitar la misma pregunta respondida en dos archivos.)*
   operador de cooperativa.
 - **Para soportarlo** haría falta separar `Cuenta`, `Organización` y su
   relación de pertenencia. No se hace en este MVP.
+
+**Registro y sesión inmediata**
+- Después de crear una cuenta, las credenciales pasan por el mismo
+  `AuthenticationManager` del login; no se construye una identidad confiable
+  solo porque el insert haya funcionado.
+- Si autentican, se rota el ID de sesión y se persiste el `SecurityContext`.
+  El ciudadano entra a `/mis-solicitudes` y la organización a
+  `/acopio/solicitudes`, evitando un segundo login sin reducir controles.
+- Ante validación fallida se conservan únicamente campos no sensibles; el PIN
+  se elimina antes de volver a renderizar el formulario.
 
 **Verificación de legitimidad**
 - El registro público permite autodeclararse organización. No verifica que

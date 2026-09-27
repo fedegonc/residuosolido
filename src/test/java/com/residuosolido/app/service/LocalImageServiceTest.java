@@ -131,12 +131,25 @@ class LocalImageServiceTest {
     }
 
     @Test
-    void attachImageToRequest_uploadFails_throwsStateException() {
+    void attachImageToRequest_invalidFile_throwsValidationException() {
         com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
         MockMultipartFile invalid = new MockMultipartFile(
                 "imageFile", "doc.pdf", "application/pdf", "pdf".getBytes());
 
+        com.residuosolido.app.exception.ValidationException ex =
+                assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                        () -> service.attachImageToRequest(request, invalid));
+        assertTrue(ex.getMessage().contains("error.image.invalid_type"));
+    }
+
+    @Test
+    void attachImageToRequest_saveFails_throwsStateException() {
+        com.residuosolido.app.model.Request request = new com.residuosolido.app.model.Request();
+        MockMultipartFile file = new MockMultipartFile(
+                "imageFile", "foto.png", "image/png", "bytes".getBytes());
+        when(requestRepository.save(request)).thenThrow(new RuntimeException("DB down"));
+
         assertThrows(com.residuosolido.app.exception.StateException.class,
-                () -> service.attachImageToRequest(request, invalid));
+                () -> service.attachImageToRequest(request, file));
     }
 }

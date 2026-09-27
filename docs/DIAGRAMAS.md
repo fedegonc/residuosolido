@@ -164,7 +164,7 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
 - Solo `PENDING` puede editarse o eliminarse (el detalle se puede VER en cualquier estado).
 - `accept` requiere una franja horaria (`TimeSlot`).
 - `REJECTED` y `COMPLETED` son estados finales (sin transiciones salientes).
-- Todas las transiciones son validadas por `RequestStateMachine` antes de ejecutarse.
+- Todas las transiciones son validadas por `RequestStatus.transitionAccept/Complete/Reject()` (vía `Request.accept/complete/reject()`) antes de ejecutarse — el wrapper `RequestStateMachine` que existía acá se eliminó (duplicaba el mismo chequeo sin aportar nada, ver `docs/MEJORAS.md` #221).
 
 **Invitados vs. Registrados:**
 - Solo solicitudes de **invitados** generan `trackingCode` (para consulta anónima vía `/rastrear`).
@@ -193,7 +193,8 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
             │
             ▼
   ┌──────────────────────────────┐
-  │  RequestStateMachine         │ (valida transición)
+  │  Request.accept/reject/      │ (valida transición vía
+  │  complete()                  │  RequestStatus.transitionX())
   └────────────┬─────────────────┘
                │
      ┌─────────┼─────────────────┐
@@ -201,7 +202,7 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
  accept()   reject()         complete()
      │         │                 │
      ▼         ▼                 ▼
-RequestService (con @Transactional + structured logging)
+RequestService (structured logging — sin @Transactional, ver TRADEOFFS §36)
      │         │                 │
      ▼         ▼                 ▼
 [status=IN_PROGRESS] [status=REJECTED] [status=COMPLETED]
@@ -219,8 +220,8 @@ RequestService (con @Transactional + structured logging)
 ```
 
 **Notas:**
-- `RequestStateMachine` valida que la transición sea permitida (ver guardas en §5).
-- `RequestService.acceptRequest()` y `rejectRequest()` están anotadas con `@Transactional` para garantizar atomicidad.
+- `RequestStatus.transitionX()` (vía `Request.accept/reject/complete()`) valida que la transición sea permitida (ver guardas en §5) — reemplaza a `RequestStateMachine`, eliminado por duplicar el mismo chequeo (`docs/MEJORAS.md` #221).
+- `RequestService.acceptRequest()`/`rejectRequest()`/`completeRequest()` NO usan `@Transactional` (no hay `PlatformTransactionManager` configurado — era decorativo, removido, ver `docs/TRADEOFFS.md` §36); cada transición es una sola escritura atómica a un documento Mongo.
 - Si falla el save de `Request`, la notificación no se crea (RN-12).
 - Si falla el save por concurrencia (`OptimisticLockingFailureException`), se reintenta automáticamente con exponential backoff.
 
@@ -283,8 +284,8 @@ Los diagramas fueron auditados comparándolos con el código fuente post-refacto
 
 **Diagramas actualizados en esta revisión:**
 - **Figura 4a (Crear solicitud):** Agregado `RequestValidator` como participante explícito.
-- **Figura 5 (Ciclo de estados):** Agregado `RequestStateMachine`, aclarado que tracking code solo se genera para invitados, corregida descripción de optimistic locking.
-- **Figura 6 (Aceptar/Rechazar/Completar):** Agregado `RequestStateMachine` y `@Transactional`, aclarado flujo de notificaciones.
+- **Figura 5 (Ciclo de estados):** Agregado `RequestStateMachine` (eliminado posteriormente, ver #221 — este punto de la auditoría ya no refleja el código actual), aclarado que tracking code solo se genera para invitados, corregida descripción de optimistic locking.
+- **Figura 6 (Aceptar/Rechazar/Completar):** Agregado `RequestStateMachine` y `@Transactional` (ambos eliminados posteriormente — #221 y TRADEOFFS §36 respectivamente), aclarado flujo de notificaciones.
 
 **Notas:**
 - Los diagramas draw.io (`docs/diagrams/`) contienen las figuras visuales; este documento es complemento textual.

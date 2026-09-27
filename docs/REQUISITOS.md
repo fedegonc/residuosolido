@@ -57,7 +57,9 @@ en cualquier estado (RN-4 solo restringe editar/eliminar).
 | Usuario | Implementado |
 
 Listar historial con estadísticas, editar y eliminar solicitudes propias
-mientras estén `PENDING` (RN-4, RN-11).
+mientras estén `PENDING` (RN-4, RN-11). **No aplica a solicitudes de invitado:**
+el trackingCode es un canal de lectura (RN-3); editar/borrar requeriría un
+flujo de autenticación ad hoc fuera del alcance del MVP.
 
 ### RF-6 — Gestionar solicitudes asignadas
 
@@ -79,6 +81,12 @@ declarado en `docs/DEFENSA.md`, dataset de defensa).
 `/mi-organizacion` absorbe el onboarding: si el perfil de la organización está
 incompleto (sin teléfono o ciudad), el formulario abre en modo edición y
 `updateProfile` marca `profileCompleted` al guardar.
+
+> **Nota sobre `ROLE_USER`:** no existe una pantalla de perfil dedicada para el
+ciudadano en el MVP. Sin embargo, si un usuario autenticado crea una solicitud y
+su `User.phone` está vacío, `RequestCreateController` le completa el teléfono
+automáticamente desde el formulario (`userService.updateProfile(..., phone, ...)`).
+Es un flujo oculto dentro de RF-3, no un endpoint RF-7 separado.
 
 ### RF-8 — Gestionar recolectores informales
 
@@ -119,7 +127,7 @@ diferido. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
 | RN-8 | El teléfono se normaliza a formato E.164 (`+598`/`+55`) | `PhoneNumber` utility, setters de `User` |
 | RN-9 | Una organización con perfil incompleto es redirigida a `/mi-organizacion` antes de gestionar solicitudes | `OrgRequestController` |
 | RN-10 | Materiales, dirección y ciudad son obligatorios al crear/editar | `RequestServiceValidationTest` (13 tests) |
-| RN-11 | Borrado permitido solo si `PENDING` y propiedad del solicitante | `deleteOwnedRequest` + tests de regresión |
+| RN-11 | Borrado permitido solo si `PENDING` y propiedad del **usuario registrado**; las solicitudes de invitado no tienen propietario autenticable en este MVP | `deleteOwnedRequest` + tests de regresión |
 | RN-12 | La notificación se emite solo DESPUÉS de persistir la transición | `RequestService.acceptRequest`/`rejectRequest` → `NotificationService.notifyRequester` |
 
 > **Nota:** el conteo canónico de la especificación declara 14 RN; las 12

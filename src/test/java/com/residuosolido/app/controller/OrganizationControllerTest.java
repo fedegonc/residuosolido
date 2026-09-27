@@ -4,7 +4,10 @@ import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
+import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
@@ -51,14 +54,21 @@ class OrganizationControllerTest {
     @MockBean
     private RequestMetricsService requestMetricsService;
 
+    @MockBean
+    private OrganizationService organizationService;
+
     @BeforeEach
     void setUp() {
-        User mockOrg = TestFixtures.organization("org1", City.RIVERA);
-        mockOrg.setUsername("coop");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(mockOrg);
-        when(requestService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt())).thenReturn(List.of());
-        when(requestMetricsService.getOrgRequestStats(any(User.class)))
+        Organization mockOrg = TestFixtures.organization("org1", City.RIVERA);
+
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(mockOrg);
+        when(requestService.getOrgRequestsByStatusFilter(any(Organization.class), any(), anyInt(), anyInt())).thenReturn(List.of());
+        when(requestMetricsService.getOrgRequestStats(any(Organization.class)))
                 .thenReturn(java.util.Map.of("pending", 0L, "inProgress", 0L, "completed", 0L));
     }
 

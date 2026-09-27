@@ -4,6 +4,7 @@ import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Username;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,13 @@ public class UserRegistrationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final OrganizationService organizationService;
 
-    public UserRegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserRegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                                     OrganizationService organizationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.organizationService = organizationService;
     }
 
     /**
@@ -31,7 +35,8 @@ public class UserRegistrationService {
         if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             return ServerMessage.ERROR_REGISTER_USERNAME_REQUIRED;
         }
-        if (user.getUsername().length() > 64) return ServerMessage.ERROR_REGISTER_USERNAME_TOO_LONG;
+        String canonical = Username.canonical(user.getUsername());
+        if (canonical.length() > 64) return ServerMessage.ERROR_REGISTER_USERNAME_TOO_LONG;
         try {
             validatePin(user.getPassword());
         } catch (ValidationException e) {
@@ -40,7 +45,7 @@ public class UserRegistrationService {
         if (user.getPhone() == null || user.getPhone().isBlank()) {
             return ServerMessage.ERROR_REGISTER_PHONE_REQUIRED;
         }
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(canonical).isPresent()) {
             return ServerMessage.ERROR_REGISTER_USERNAME_EXISTS;
         }
         return null;
@@ -55,13 +60,17 @@ public class UserRegistrationService {
         ServerMessage error = validateUserRegistration(user);
         if (error != null) throw new ValidationException(error);
         User created = new User();
-        created.setUsername(user.getUsername());
+        created.setUsername(Username.canonical(user.getUsername()));
         created.setPhone(user.getPhone());
         created.setPassword(passwordEncoder.encode(user.getPassword()));
         created.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
         created.setActive(true);
         created.setCreatedAt(LocalDateTime.now());
-        return userRepository.insert(created);
+        User saved = userRepository.insert(created);
+        if (isOrganization) {
+            organizationService.createForUser(saved);
+        }
+        return saved;
     }
 
     /** PIN de 4 dígitos — no es una contraseña real, es fricción mínima para pruebas. */

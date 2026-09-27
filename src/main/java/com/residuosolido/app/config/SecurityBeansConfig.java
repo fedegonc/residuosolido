@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.model.Username;
 import com.residuosolido.app.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,8 @@ public class SecurityBeansConfig {
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository, RateLimiter rateLimiter) {
-        return username -> {
+        return rawUsername -> {
+            String username = Username.canonical(rawUsername);
             if (rateLimiter.isBlocked(username)) {
                 throw new LockedException("Cuenta bloqueada temporalmente por múltiples intentos fallidos");
             }

@@ -10,6 +10,7 @@ import com.residuosolido.app.exception.OwnershipException;
 import com.residuosolido.app.exception.StateException;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.event.RequestStatusChangedEvent;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
@@ -47,14 +48,14 @@ class RequestServiceTest {
         imageService = mock(LocalImageService.class);
         cityOrgService = mock(CityOrgService.class);
         eventPublisher = mock(ApplicationEventPublisher.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator(), new RequestStateMachine());
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator());
     }
 
     private User citizen(String id) {
         return TestFixtures.citizen(id, "+59899123456");
     }
 
-    private User org(String id) {
+    private Organization org(String id) {
         return TestFixtures.organization(id, City.RIVERA, MaterialCategory.PLASTICO);
     }
 
@@ -66,7 +67,7 @@ class RequestServiceTest {
         return r;
     }
 
-    private Request orgRequestOf(User org, RequestStatus status) {
+    private Request orgRequestOf(Organization org, RequestStatus status) {
         Request r = new Request();
         r.setId("req1");
         r.assignOrganization(org);
@@ -90,7 +91,7 @@ class RequestServiceTest {
 
     @Test
     void getRequestsByOrganization_delegatesWithPagination() {
-        User o = org("o1");
+        Organization o = org("o1");
         when(requestRepository.findByOrganizationOrderByCreatedAtDesc(o,
                 org.springframework.data.domain.PageRequest.of(1, 5)))
                 .thenReturn(List.of());
@@ -185,8 +186,26 @@ class RequestServiceTest {
     // ───────────────────── transiciones de estado ─────────────────────
 
     @Test
+    void acceptRequest_nullOrg_throwsValidation() {
+        assertThrows(ValidationException.class,
+                () -> requestService.acceptRequest("req1", null, TimeSlot.MANANA));
+    }
+
+    @Test
+    void rejectRequest_nullOrg_throwsValidation() {
+        assertThrows(ValidationException.class,
+                () -> requestService.rejectRequest("req1", null));
+    }
+
+    @Test
+    void completeRequest_nullOrg_throwsValidation() {
+        assertThrows(ValidationException.class,
+                () -> requestService.completeRequest("req1", null));
+    }
+
+    @Test
     void acceptRequest_pending_transitionsToInProgress() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -201,7 +220,7 @@ class RequestServiceTest {
 
     @Test
     void acceptRequest_concurrentConflict_doesNotNotify() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         when(requestRepository.save(any(Request.class)))
@@ -215,7 +234,7 @@ class RequestServiceTest {
 
     @Test
     void acceptRequest_alreadyInProgress_throwsStateException() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.IN_PROGRESS);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
 
@@ -226,7 +245,7 @@ class RequestServiceTest {
 
     @Test
     void acceptRequest_concurrentModification_throwsStateException() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         when(requestRepository.save(any(Request.class)))
@@ -238,7 +257,7 @@ class RequestServiceTest {
 
     @Test
     void rejectRequest_pending_transitionsToRejected() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -251,7 +270,7 @@ class RequestServiceTest {
 
     @Test
     void rejectRequest_alreadyTerminal_throwsStateException() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.COMPLETED);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
 
@@ -261,7 +280,7 @@ class RequestServiceTest {
 
     @Test
     void completeRequest_inProgress_transitionsToCompleted() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.IN_PROGRESS);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -273,7 +292,7 @@ class RequestServiceTest {
 
     @Test
     void completeRequest_stillPending_throwsStateException() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         Request existing = orgRequestOf(organization, RequestStatus.PENDING);
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
 
@@ -330,11 +349,25 @@ class RequestServiceTest {
         verify(requestRepository).findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234");
     }
 
+    @Test
+    void getGuestRequests_lowercaseTrackingCode_canonicalizesBeforeQuerying() {
+        // Bug real: el invitado copia el código a mano y puede escribirlo en
+        // minúsculas; la búsqueda en Mongo es case-sensitive y devolvía [].
+        Request found = new Request();
+        when(requestRepository.findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234"))
+                .thenReturn(List.of(found));
+
+        List<Request> result = requestService.getGuestRequests("+59899123456", "code1234");
+
+        assertEquals(List.of(found), result);
+        verify(requestRepository).findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234");
+    }
+
     // ─────────────────── getOrgRequestsByStatusFilter ───────────────────
 
     @Test
     void getOrgRequestsByStatusFilter_blankStatus_delegatesToUnfiltered() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         requestService.getOrgRequestsByStatusFilter(organization, "  ", 0, 10);
         verify(requestRepository).findByOrganizationOrderByCreatedAtDesc(eq(organization), any());
         verify(requestRepository, never()).findByOrganizationAndStatusOrderByCreatedAtDesc(any(), any(), any());
@@ -342,7 +375,7 @@ class RequestServiceTest {
 
     @Test
     void getOrgRequestsByStatusFilter_validStatus_filtersByStatus() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         requestService.getOrgRequestsByStatusFilter(organization, "pending", 0, 10);
         verify(requestRepository)
                 .findByOrganizationAndStatusOrderByCreatedAtDesc(eq(organization), eq(RequestStatus.PENDING), any());
@@ -350,7 +383,7 @@ class RequestServiceTest {
 
     @Test
     void getOrgRequestsByStatusFilter_invalidStatus_fallsBackToUnfiltered() {
-        User organization = org("org1");
+        Organization organization = org("org1");
         requestService.getOrgRequestsByStatusFilter(organization, "no-existe", 0, 10);
         verify(requestRepository).findByOrganizationOrderByCreatedAtDesc(eq(organization), any());
         verify(requestRepository, never()).findByOrganizationAndStatusOrderByCreatedAtDesc(any(), any(), any());
@@ -379,7 +412,7 @@ class RequestServiceTest {
     @Test
     void createRequest_organizationWithoutAcceptedMaterials_throwsValidationException() {
         User citizen = citizen("u1");
-        User organization = org("org1");
+        Organization organization = org("org1");
         organization.setAcceptedMaterials(null);
         when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(organization);
 
@@ -405,7 +438,7 @@ class RequestServiceTest {
     @Test
     void createRequestWithImage_validFile_attachesImageAfterCreate() {
         User citizen = citizen("u1");
-        User organization = org("org1");
+        Organization organization = org("org1");
         MockMultipartFile file = new MockMultipartFile("imageFile", "photo.jpg", "image/jpeg", new byte[]{1, 2, 3});
         when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(organization);
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -423,7 +456,7 @@ class RequestServiceTest {
     @Test
     void createRequestWithImage_emptyFile_doesNotAttach() {
         User citizen = citizen("u1");
-        User organization = org("org1");
+        Organization organization = org("org1");
         MockMultipartFile emptyFile = new MockMultipartFile("imageFile", "", "image/jpeg", new byte[0]);
         when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(organization);
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -461,7 +494,7 @@ class RequestServiceTest {
     void updateRequest_valid_updatesFieldsAndReassignsOrganization() {
         User owner = citizen("u1");
         Request existing = requestOf(owner, RequestStatus.PENDING);
-        User newOrg = org("org2");
+        Organization newOrg = org("org2");
         when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
         when(cityOrgService.findOrganizationByIdAndCity("org2", City.RIVERA)).thenReturn(newOrg);
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));

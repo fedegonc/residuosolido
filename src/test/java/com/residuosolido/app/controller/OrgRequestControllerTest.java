@@ -4,8 +4,11 @@ import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.RequestViewType;
+import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
@@ -60,13 +63,22 @@ class OrgRequestControllerTest {
     @MockBean
     private RequestMetricsService requestMetricsService;
 
-    private User org;
+    @MockBean
+    private OrganizationService organizationService;
+
+    private User authOrg;
+    private Organization org;
 
     @BeforeEach
     void setUp() {
+        authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+
         org = TestFixtures.organization("org-1", City.RIVERA);
-        org.setUsername("coop");
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
     }
 
     // ===== Lista =====
@@ -74,9 +86,9 @@ class OrgRequestControllerTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequests_completeProfile_returnsKanbanListView() throws Exception {
-        when(requestMetricsService.getOrgRequestStats(any(User.class)))
+        when(requestMetricsService.getOrgRequestStats(any(Organization.class)))
                 .thenReturn(Map.of("pending", 2L, "inProgress", 1L, "completed", 0L, "rejected", 1L));
-        when(requestService.getRequestsByOrganization(any(User.class), anyInt(), anyInt()))
+        when(requestService.getRequestsByOrganization(any(Organization.class), anyInt(), anyInt()))
                 .thenReturn(List.of());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS))
@@ -91,9 +103,9 @@ class OrgRequestControllerTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequests_statusFilterIgnoredForKanbanView() throws Exception {
-        when(requestMetricsService.getOrgRequestStats(any(User.class)))
+        when(requestMetricsService.getOrgRequestStats(any(Organization.class)))
                 .thenReturn(Map.of("pending", 0L, "inProgress", 0L, "completed", 0L, "rejected", 0L));
-        when(requestService.getRequestsByOrganization(any(User.class), anyInt(), anyInt()))
+        when(requestService.getRequestsByOrganization(any(Organization.class), anyInt(), anyInt()))
                 .thenReturn(List.of());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS).param("estado", "PENDING"))
@@ -142,7 +154,7 @@ class OrgRequestControllerTest {
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void acceptRequest_illegalState_redirectsWithError() throws Exception {
         doThrow(new IllegalStateException("error.request.not_pending"))
-                .when(requestService).acceptRequest(anyString(), any(User.class), any());
+                .when(requestService).acceptRequest(anyString(), any(Organization.class), any());
 
         mockMvc.perform(post(Routes.ORG_REQUEST_ACCEPT, "req-1").with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -169,7 +181,7 @@ class OrgRequestControllerTest {
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void transition_notOwned_redirectsWithFlash() throws Exception {
         doThrow(new SecurityException("not owned"))
-                .when(requestService).rejectRequest(anyString(), any(User.class));
+                .when(requestService).rejectRequest(anyString(), any(Organization.class));
 
         mockMvc.perform(post(Routes.ORG_REQUEST_REJECT, "req-ajena").with(csrf()))
                 .andExpect(status().is3xxRedirection())

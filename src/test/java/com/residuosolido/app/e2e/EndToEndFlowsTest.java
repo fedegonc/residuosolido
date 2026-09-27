@@ -3,17 +3,21 @@ package com.residuosolido.app.e2e;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.TestFixtures;
-import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
+import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +66,8 @@ class EndToEndFlowsTest {
     private RequestMetricsService requestMetricsService;
     @MockBean
     private CityOrgService cityOrgService;
+    @MockBean
+    private OrganizationService organizationService;
 
     // ═══════════════════════════════════════════════════════
     // Flujo 6: Tracking de invitado (track.html)
@@ -163,11 +169,14 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo8_orgPanel_loadsWithStats() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
-        org.setFirstName("Cooperativa");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
+        org.setName("Cooperativa");
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
         when(requestMetricsService.getOrgRequestStats(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L, "rejected", 2L));
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
@@ -182,13 +191,16 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo8_orgProfile_loadsAndCanUpdate() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
-        org.setFirstName("Cooperativa");
-        org.setEmail("coop@test.com");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
+        org.setName("Cooperativa");
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(userService.updateProfile(any(), any(), any(), any(), any(), any())).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
+        when(userService.updateProfile(any(), any(), any(), any(), any())).thenReturn(authOrg);
+        when(organizationService.updateProfile(any(), any(), any(), any(), any())).thenReturn(org);
 
         mockMvc.perform(get(Routes.ORG_PROFILE))
                 .andExpect(status().isOk())
@@ -212,10 +224,13 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgRequestsList_loadsSuccessfully() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
         when(requestMetricsService.getOrgRequestStats(org))
                 .thenReturn(Map.of("pending", 0L, "inProgress", 0L, "completed", 0L, "rejected", 0L));
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
@@ -231,8 +246,10 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgRequestDetail_loadsSuccessfully() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
 
         Request req = new Request();
         req.setId("req1");
@@ -241,7 +258,8 @@ class EndToEndFlowsTest {
         req.updateDraft(City.RIVERA, "Calle 1", null, List.of(MaterialCategory.PLASTICO));
         req.setGuestContact("Juan", "+59899123456", null);
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
         when(requestService.getOwnedOrgRequest("req1", org)).thenReturn(req);
 
         mockMvc.perform(get(Routes.ORG_REQUEST, "req1"))
@@ -254,10 +272,13 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgAcceptRequest_redirectsOnSuccess() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
 
         mockMvc.perform(post(Routes.ORG_REQUEST_ACCEPT, "req1").with(csrf())
                         .param("confirmedSlot", "MANANA"))
@@ -286,5 +307,33 @@ class EndToEndFlowsTest {
                         .param("organizationId", "org1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/solicitar"));
+    }
+
+    @Test
+    @WithMockUser(username = "vecino", roles = "USER")
+    @DisplayName("Flujo completo: usuario logueado crea solicitud con organización válida")
+    void flujoCompleto_usuarioLogueadoCreaSolicitud() throws Exception {
+        // Setup: usuario logueado con teléfono
+        User user = TestFixtures.citizen("u1", "+59899123456");
+        user.setUsername("vecino");
+
+        // Setup: organización válida
+        Organization org = TestFixtures.organization("org1", City.RIVERA);
+        org.setName("Cooperativa Test");
+
+        when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
+        when(userService.resolveUser(any())).thenReturn(user);
+        when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(org);
+        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(new Request());
+
+        // POST con todos los parámetros requeridos
+        mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
+                        .param("ciudad", "RIVERA")
+                        .param("address", "Calle Test 123")
+                        .param("organizationId", "org1")
+                        .param("materials", "PLASTICO"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(Routes.REQUESTS));
     }
 }

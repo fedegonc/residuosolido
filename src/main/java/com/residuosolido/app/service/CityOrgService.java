@@ -4,9 +4,10 @@ import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.Role;
-import com.residuosolido.app.model.User;
-import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.model.Organization;
+import com.residuosolido.app.repository.OrganizationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,12 @@ import java.util.List;
 @Service
 public class CityOrgService {
 
-    private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CityOrgService.class);
+    private final OrganizationRepository organizationRepository;
 
     @Autowired
-    public CityOrgService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CityOrgService(OrganizationRepository organizationRepository) {
+        this.organizationRepository = organizationRepository;
     }
 
     /**
@@ -30,22 +32,27 @@ public class CityOrgService {
      * organización disponible": si no se eligió organización, se rechaza desde
      * RequestService.validateCoreFields.
      */
-    public User findOrganizationByIdAndCity(String organizationId, City city) {
+    public Organization findOrganizationByIdAndCity(String organizationId, City city) {
         if (organizationId == null || organizationId.isBlank()) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
         if (city == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
         }
-        User org = userRepository.findById(organizationId)
-                .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_FOUND));
-        if (!org.isOrganization()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_ASSIGN_NOT_ORGANIZATION);
-        }
-        if (org.getCity() == null || org.getCity() != city) {
+        logger.info("findOrganizationByIdAndCity: id={}, city={}", organizationId, city);
+        Organization org = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> {
+                    logger.warn("Organización no encontrada por ID: {}", organizationId);
+                    return new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_FOUND);
+                });
+        logger.info("Organización encontrada: id={}, org.city={}", organizationId, org.getCity());
+        if (org.getCity() == null || !org.getCity().equals(city)) {
+            logger.warn("City mismatch: org.city={}, required={}", org.getCity(), city);
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_NOT_IN_CITY);
         }
         if (!isAvailable(org)) {
+            logger.warn("Organización no disponible: id={}, profile={}, phone={}, materials={}",
+                    organizationId, org.isProfileComplete(), org.getPhone(), org.getAcceptedMaterials());
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_UNAVAILABLE);
         }
         return org;
@@ -54,16 +61,19 @@ public class CityOrgService {
     /**
      * Cacheado: se llama en cada carga del formulario de solicitud (guest y
      * usuario) y cambia solo cuando una organización actualiza su perfil
-     * (evict explícito en UserService.updateUser) — ver docs/TRADEOFFS.md §37.
+     * (evict explícito en OrganizationService.updateProfile).
      */
     @Cacheable(value = "orgsByCity", key = "#city")
-    public List<User> getOrganizationsByCity(City city) {
-        return userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true)
+    public List<Organization> getOrganizationsByCity(City city) {
+        if (city == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
+        }
+        return organizationRepository.findByCity(city)
                 .stream().filter(this::isAvailable).toList();
     }
 
-    private boolean isAvailable(User org) {
-        return org.isActive() && org.isOrganization() && org.isProfileComplete()
+    private boolean isAvailable(Organization org) {
+        return org.isProfileComplete()
                 && com.residuosolido.app.model.PhoneNumber.isValid(org.getPhone())
                 && org.getAcceptedMaterials() != null && !org.getAcceptedMaterials().isEmpty();
     }

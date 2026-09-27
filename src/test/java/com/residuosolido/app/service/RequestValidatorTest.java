@@ -5,6 +5,7 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -129,7 +130,7 @@ class RequestValidatorTest {
     @Test
     @DisplayName("validateMaterials: organización acepta todos")
     void validateMaterialsValid() {
-        User org = new User();
+        Organization org = new Organization();
         org.setAcceptedMaterials(List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.VIDRIO));
 
         assertDoesNotThrow(() -> validator.validateMaterials(
@@ -140,7 +141,7 @@ class RequestValidatorTest {
     @Test
     @DisplayName("validateMaterials: organización no acepta alguno → error")
     void validateMaterialsNotAccepted() {
-        User org = new User();
+        Organization org = new Organization();
         org.setAcceptedMaterials(List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL));
 
         ValidationException ex = assertThrows(ValidationException.class, () -> validator.validateMaterials(

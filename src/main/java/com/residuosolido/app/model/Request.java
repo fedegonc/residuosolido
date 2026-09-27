@@ -43,7 +43,7 @@ public class Request {
 
     @DocumentReference(lazy = true)
     @Indexed
-    private User organization;
+    private Organization organization;
 
     private String guestName;
     private String guestPhone;
@@ -159,9 +159,8 @@ public class Request {
     public String getContactName() { return user != null ? user.getDisplayName() : guestName; }
     public String getContactPhone() { return user != null ? user.getPhone() : guestPhone; }
 
-    public void assignOrganization(User org) {
+    public void assignOrganization(Organization org) {
         if (org == null) throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
-        if (!org.isOrganization()) throw new ValidationException(ServerMessage.ERROR_REQUEST_ASSIGN_NOT_ORGANIZATION);
         this.organization = org;
     }
 

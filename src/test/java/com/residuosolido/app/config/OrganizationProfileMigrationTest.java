@@ -19,11 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * OrganizationProfileMigration corre una sola vez al arrancar el contexto,
  * antes de que cualquier test method se ejecute — no se puede "esperar" a
- * ver su efecto en un @SpringBootTest normal (la suite completa no mostró
- * ninguna línea de log suya: podía ser que no había nada pendiente, o que
- * nunca corrió). Este test la instancia e invoca directamente, con un
- * documento sembrado a mano con la forma VIEJA, para probar la lógica real
- * contra Mongo real (no un mock) sin depender del timing de arranque.
+ * ver su efecto en un @SpringBootTest normal. Este test la instancia e invoca
+ * directamente, con un documento sembrado a mano con la forma VIEJA, para probar
+ * la lógica real contra Mongo real (no un mock).
  *
  * Usa la base real (Atlas en dev) — limpia el documento de prueba después
  * de cada test para no dejar basura.
@@ -49,6 +47,7 @@ class OrganizationProfileMigrationTest {
     @AfterEach
     void cleanUp() {
         mongoTemplate.getCollection("users").deleteOne(eq("_id", testId));
+        mongoTemplate.getCollection("organizations").deleteOne(eq("_id", testId.toString()));
     }
 
     @Test
@@ -56,7 +55,12 @@ class OrganizationProfileMigrationTest {
         MongoCollection<Document> users = mongoTemplate.getCollection("users");
         users.insertOne(new Document("_id", testId)
                 .append("username", "migration-test-" + testId)
+                .append("firstName", "Cooperativa")
+                .append("email", "coop@test.com")
                 .append("role", "ORGANIZATION")
+                .append("active", true)
+                .append("city", "RIVERA")
+                .append("phone", "+59899123456")
                 .append("acceptedMaterials", List.of("PAPEL", "PLASTICO"))
                 .append("profileCompleted", true));
 
@@ -67,10 +71,19 @@ class OrganizationProfileMigrationTest {
         assertNull(migrated.get("acceptedMaterials"), "El campo viejo top-level debe desaparecer");
         assertNull(migrated.get("profileCompleted"), "El campo viejo top-level debe desaparecer");
 
-        Document profile = migrated.get("organizationProfile", Document.class);
-        assertNotNull(profile, "Debe existir el subdocumento organizationProfile");
-        assertEquals(List.of("PAPEL", "PLASTICO"), profile.getList("acceptedMaterials", String.class));
-        assertTrue(profile.getBoolean("profileCompleted"));
+        Document org = mongoTemplate.getCollection("organizations")
+                .find(eq("_id", testId.toString())).first();
+        assertNotNull(org, "Debe crear el documento en la colección organizations");
+        assertEquals(testId.toString(), org.getString("_id"),
+                "El _id del org coincide con el del usuario (enlace implícito)");
+        assertNull(org.get("userId"), "userId/email/username/active no se denormalizan — se leen del User");
+        assertNull(org.get("username"));
+        assertNull(org.get("email"));
+        assertNull(org.get("active"));
+        assertEquals(List.of("PAPEL", "PLASTICO"), org.getList("acceptedMaterials", String.class));
+        assertTrue(org.getBoolean("profileCompleted"));
+        assertEquals("Cooperativa", org.getString("name"));
+        assertEquals("+59899123456", org.getString("phone"));
     }
 
     @Test
@@ -79,15 +92,18 @@ class OrganizationProfileMigrationTest {
         users.insertOne(new Document("_id", testId)
                 .append("username", "migration-test-" + testId)
                 .append("role", "ORGANIZATION")
-                .append("organizationProfile", new Document("acceptedMaterials", List.of("METAL"))
-                        .append("profileCompleted", false)));
+                .append("active", true)
+                .append("city", "RIVERA"));
+        MongoCollection<Document> organizations = mongoTemplate.getCollection("organizations");
+        organizations.insertOne(new Document("_id", testId.toString())
+                .append("userId", testId.toString())
+                .append("acceptedMaterials", List.of("METAL"))
+                .append("profileCompleted", false));
 
-        // No debe tocar este documento — ya tiene organizationProfile, el filtro
-        // de "pendientes" (exists organizationProfile == false) lo excluye.
         assertDoesNotThrow(() -> new OrganizationProfileMigration(mongoTemplate).run());
 
-        Document unchanged = users.find(eq("_id", testId)).first();
-        Document profile = unchanged.get("organizationProfile", Document.class);
-        assertEquals(List.of("METAL"), profile.getList("acceptedMaterials", String.class));
+        Document unchanged = organizations.find(eq("_id", testId.toString())).first();
+        assertNotNull(unchanged);
+        assertEquals(List.of("METAL"), unchanged.getList("acceptedMaterials", String.class));
     }
 }

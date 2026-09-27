@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.NotificationService;
 import com.residuosolido.app.service.UserService;
@@ -61,9 +62,11 @@ class GlobalModelAttributesTest {
     @Test
     void unreadNotifications_orgRole_returnsNull() {
         authenticate("coop");
-        User org = TestFixtures.organization("o1", null);
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
         when(userService.isAnonymous(any())).thenReturn(false);
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
 
         assertNull(attributes.unreadNotifications());
         verifyNoInteractions(notificationService);

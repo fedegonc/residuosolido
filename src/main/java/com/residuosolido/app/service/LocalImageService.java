@@ -94,15 +94,17 @@ public class LocalImageService {
     }
 
     public Request attachImageToRequest(Request request, MultipartFile imageFile) {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                request.setImageUrl(uploadFile(imageFile));
-                return requestRepository.save(request);
-            } catch (Exception e) {
-                logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
-                throw new StateException(ServerMessage.FLASH_REQUEST_IMAGE_UPLOAD_FAILED, e);
-            }
+        if (imageFile == null || imageFile.isEmpty()) {
+            return request;
         }
-        return request;
+        try {
+            request.setImageUrl(uploadFile(imageFile));
+            return requestRepository.save(request);
+        } catch (ValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
+            throw new StateException(ServerMessage.FLASH_REQUEST_IMAGE_UPLOAD_FAILED, e);
+        }
     }
 }

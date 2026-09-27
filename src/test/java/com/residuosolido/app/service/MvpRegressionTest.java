@@ -3,10 +3,11 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +30,7 @@ class MvpRegressionTest {
     @TempDir
     Path images;
 
-    private User organization() {
+    private Organization organization() {
         return TestFixtures.organization("org", City.RIVERA, MaterialCategory.PAPEL);
     }
 
@@ -41,58 +42,66 @@ class MvpRegressionTest {
     }
 
     @Test
-    void registrationDiscardsPersistenceAndOrganizationFields() {
+    void registrationCreatesOrganizationForOrgRole() {
         UserRepository repo = mock(UserRepository.class);
+        OrganizationRepository orgRepo = mock(OrganizationRepository.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
         when(encoder.encode(any())).thenReturn("encoded");
         when(repo.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
         when(repo.insert(any(User.class))).thenAnswer(i -> i.getArgument(0));
+        when(orgRepo.save(any(Organization.class))).thenAnswer(i -> i.getArgument(0));
+
         User input = citizen();
-        input.setProfileCompleted(true);
-        input.setAcceptedMaterials(List.of(MaterialCategory.METAL));
-        User result = new UserRegistrationService(repo, encoder).registerUser(input, false);
+        input.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
+        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo))
+                .registerUser(input, true);
+
         assertNotSame(input, result);
         assertNull(result.getId());
-        assertFalse(result.getProfileCompleted());
-        assertTrue(result.getAcceptedMaterials().isEmpty());
-        verify(repo, never()).save(any(User.class));
+        verify(repo).insert(any(User.class));
+        verify(orgRepo).save(any(Organization.class));
+    }
+
+    @Test
+    void registrationDoesNotCreateOrganizationForCitizen() {
+        UserRepository repo = mock(UserRepository.class);
+        OrganizationRepository orgRepo = mock(OrganizationRepository.class);
+        PasswordEncoder encoder = mock(PasswordEncoder.class);
+        when(encoder.encode(any())).thenReturn("encoded");
+        when(repo.insert(any(User.class))).thenAnswer(i -> i.getArgument(0));
+
+        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo))
+                .registerUser(citizen(), false);
+
+        assertNotSame(citizen(), result);
+        verify(repo).insert(any(User.class));
+        verify(orgRepo, never()).save(any());
     }
 
     @Test
     void registrationRejectsInvalidPin() {
         User input = citizen();
         input.setPassword("12");
-        assertEquals(com.residuosolido.app.exception.ServerMessage.ERROR_REGISTER_PIN_INVALID, new UserRegistrationService(
-                mock(UserRepository.class), mock(PasswordEncoder.class)).validateUserRegistration(input));
-    }
-
-    @Test
-    void inactiveOrganizationCannotReceiveRequests() {
-        User org = organization();
-        org.setActive(false);
-        UserRepository repo = mock(UserRepository.class);
-        when(repo.findById("org")).thenReturn(Optional.of(org));
-        assertThrows(IllegalArgumentException.class,
-                () -> new CityOrgService(repo).findOrganizationByIdAndCity("org", City.RIVERA));
+        assertEquals(com.residuosolido.app.exception.ServerMessage.ERROR_REGISTER_PIN_INVALID,
+                new UserRegistrationService(mock(UserRepository.class), mock(PasswordEncoder.class),
+                        mock(OrganizationService.class)).validateUserRegistration(input));
     }
 
     @Test
     void organizationWithoutCompletedProfileCannotReceiveRequests() {
-        User org = organization();
+        Organization org = organization();
         org.setProfileCompleted(false);
-        UserRepository repo = mock(UserRepository.class);
+        OrganizationRepository repo = mock(OrganizationRepository.class);
         when(repo.findById("org")).thenReturn(Optional.of(org));
         assertThrows(IllegalArgumentException.class,
                 () -> new CityOrgService(repo).findOrganizationByIdAndCity("org", City.RIVERA));
     }
 
     @Test
-    void emptyActiveListMustNotFallBackToInactiveOrganizations() {
-        UserRepository repo = mock(UserRepository.class);
-        when(repo.findByRoleAndCityAndActive(Role.ORGANIZATION, City.RIVERA, true)).thenReturn(List.of());
-        when(repo.findByRoleAndCity(Role.ORGANIZATION, City.RIVERA)).thenReturn(List.of(organization()));
+    void emptyOrgListReturnsEmpty() {
+        OrganizationRepository repo = mock(OrganizationRepository.class);
+        when(repo.findByCity(City.RIVERA)).thenReturn(List.of());
         assertTrue(new CityOrgService(repo).getOrganizationsByCity(City.RIVERA).isEmpty());
-        verify(repo, never()).findByRoleAndCity(any(), any());
     }
 
     @Test
@@ -110,7 +119,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, mock(LocalImageService.class), cities,
-                mock(ApplicationEventPublisher.class), new RequestValidator(), new RequestStateMachine());
+                mock(ApplicationEventPublisher.class), new RequestValidator());
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org"));
         verifyNoInteractions(repo);
@@ -123,7 +132,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, new LocalImageService(images.toString(), repo),
-                cities, mock(ApplicationEventPublisher.class), new RequestValidator(), new RequestStateMachine());
+                cities, mock(ApplicationEventPublisher.class), new RequestValidator());
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", file));
