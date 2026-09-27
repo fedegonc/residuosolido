@@ -109,6 +109,12 @@ class CityOrgServiceTest {
     }
 
     @Test
+    void getOrganizationsByCity_nullCity_throwsValidation() {
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> service.getOrganizationsByCity(null));
+    }
+
+    @Test
     void getOrganizationsByCity_filtersOutOrgWithoutMaterials() {
         User noMaterials = org("org3", City.RIVERA);
         noMaterials.setAcceptedMaterials(List.of());

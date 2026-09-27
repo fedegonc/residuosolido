@@ -58,6 +58,9 @@ public class CityOrgService {
      */
     @Cacheable(value = "orgsByCity", key = "#city")
     public List<User> getOrganizationsByCity(City city) {
+        if (city == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
+        }
         return userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true)
                 .stream().filter(this::isAvailable).toList();
     }
