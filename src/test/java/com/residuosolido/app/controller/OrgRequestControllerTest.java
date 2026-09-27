@@ -73,10 +73,10 @@ class OrgRequestControllerTest {
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
-    void orgRequests_completeProfile_returnsListView() throws Exception {
+    void orgRequests_completeProfile_returnsKanbanListView() throws Exception {
         when(requestMetricsService.getOrgRequestStats(any(User.class)))
                 .thenReturn(Map.of("pending", 2L, "inProgress", 1L, "completed", 0L, "rejected", 1L));
-        when(requestService.getOrgRequestsByStatusFilter(any(User.class), any(), anyInt(), anyInt()))
+        when(requestService.getRequestsByOrganization(any(User.class), anyInt(), anyInt()))
                 .thenReturn(List.of());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS))
@@ -85,21 +85,20 @@ class OrgRequestControllerTest {
                 .andExpect(model().attribute("viewType", RequestViewType.LIST))
                 .andExpect(model().attribute("pendingCount", 2L))
                 .andExpect(model().attribute("rejectedCount", 1L))
-                .andExpect(model().attribute("allCount", 4L))
-                .andExpect(model().attributeExists("requests", "cards", "breadcrumbs"));
+                .andExpect(model().attributeExists("requests", "requestsByStatus", "cards", "breadcrumbs"));
     }
 
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
-    void orgRequests_withStatusFilter_passesEstadoToService() throws Exception {
+    void orgRequests_statusFilterIgnoredForKanbanView() throws Exception {
         when(requestMetricsService.getOrgRequestStats(any(User.class)))
                 .thenReturn(Map.of("pending", 0L, "inProgress", 0L, "completed", 0L, "rejected", 0L));
-        when(requestService.getOrgRequestsByStatusFilter(any(User.class), eq("PENDING"), anyInt(), anyInt()))
+        when(requestService.getRequestsByOrganization(any(User.class), anyInt(), anyInt()))
                 .thenReturn(List.of());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS).param("estado", "PENDING"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("currentStatus", "PENDING"));
+                .andExpect(model().attributeExists("requestsByStatus"));
     }
 
     @Test

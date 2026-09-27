@@ -115,32 +115,48 @@ elimina.
 
 ---
 
-## 7. Panel de acopio: lista filtrada, no Kanban (revisado)
+## 7. Panel de acopio: tablero Kanban por estado
 
-**Decisión original:** el tablero Kanban vivía en `/acopio/inicio`, no
-en una ruta separada — menos navegación, todo en un solo lugar.
+**Decisión actual:** `/acopio/solicitudes` muestra un tablero Kanban con
+cuatro columnas (`PENDING`, `IN_PROGRESS`, `COMPLETED`, `REJECTED`). Cada
+solicitud se representa como una tarjeta dentro de su columna. Las
+estadísticas de estado del encabezado actúan como anclas a cada columna.
+Las acciones (aceptar/rechazar/completar) se hacen desde el detalle de
+la solicitud.
 
-**Decisión actual:** el Kanban fue **eliminado**. El panel de acopio es
-`/acopio/solicitudes`: una lista filtrable por estado con estadísticas en
-el encabezado. Las acciones (aceptar/rechazar/completar) se hacen desde
-el detalle de cada solicitud.
+**Por qué se eligió el Kanban:** en las pruebas de concepto la lista
+filtrable resultaba menos comprensible para usuarios no técnicos: el
+estado quedaba disperso y había que cambiar filtros para ver el flujo
+completo. El Kanban agrupa por estado de un vistazo, reutiliza los
+cards del listado de ciudadano y mantiene un único modelo mental para
+ambos perfiles.
 
-**Por qué cambió:** el Kanban duplicaba funcionalidad — mostraba las
-mismas solicitudes agrupadas por estado que la lista ya podía filtrar,
-y ofrecía las mismas transiciones que el detalle. Dos vistas del mismo
-dato era código doble para mantener y explicar. Además cargaba una
-lista de pendientes que nunca llegaba a renderizarse. Eliminarlo
-suma en credibilidad (menos superficie duplicada) y en
-mantenibilidad (una sola vista de la verdad).
+**Diseño técnico:**
+- Fragmento reusable `fragments/kanban.html` con `kanban-column` y
+  `kanban-card`, usado tanto en `/acopio/solicitudes` como en
+  `/mis-solicitudes`.
+- Controladores agrupan las solicitudes en `requestsByStatus` (mapa
+  `Map<RequestStatus, List<Request>>`) en vez de pasar una sola lista
+  filtrada.
+- CSS propio en `app.css` con flexbox horizontal en desktop y apilado
+  vertical en mobile.
 
-**Lo que se pierde:** la vista de "tablero" con columnas por estado es
-más visual que una lista. Con el volumen esperado del MVP (pocas
-solicitudes simultáneas por organización), el filtro por estado cubre
-la misma necesidad.
+**Lo que se pierde:**
+- Cada columna solo muestra el subconjunto cargado por paginación; si
+  hay más de 20 solicitudes por estado se requiere paginación propia o
+  "cargar más".
+- El listado compacto en tabla era más denso para organizaciones con
+  muchas solicitudes; el Kanban consume más altura por elemento.
 
-**Para producción:** si el volumen crece, paginación de la lista o una
-vista dedicada con drag-and-drop. El tripwire original sigue vigente:
-~20 solicitudes pendientes simultáneas por organización.
+**Alternativas consideradas:**
+| Opción | Por qué sí/no |
+|---|---|
+| **Kanban con cards (elegida)** | Mejor comprensión del flujo de estado; reutiliza componentes; unifica UX de ciudadano y organización |
+| Lista filtrable compacta | Más densa y escalable en volumen, pero obliga a cambiar filtros para ver el estado global |
+| Drag-and-drop para mover tarjetas entre columnas | Alto valor visual, pero requiere endpoints REST y más interacción JS; no aporta al MVP porque las transiciones siguen hechas desde el detalle |
+
+**Para producción:** si una organización supera ~20 solicitudes activas
+simultáneas, agregar paginación por columna o un toggle lista/Kanban.
 
 ---
 

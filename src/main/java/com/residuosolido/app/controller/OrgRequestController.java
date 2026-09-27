@@ -5,6 +5,7 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.exception.ServerMessage;
+import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.RequestMetricsService;
@@ -18,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,10 +52,9 @@ public class OrgRequestController {
         this.messages = messages;
     }
 
-    /** Lista las solicitudes de la organización, con filtro opcional por estado. */
+    /** Lista las solicitudes de la organización como tablero Kanban por estado. */
     @GetMapping(Routes.ORG_REQUESTS)
-    public String orgRequests(@RequestParam(value = "estado", required = false) String estado,
-            @RequestParam(defaultValue = "0") int page,
+    public String orgRequests(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @CurrentUser User currentOrg, Model model,
             HttpServletRequest request) {
@@ -71,12 +73,12 @@ public class OrgRequestController {
         model.addAttribute("rejectedCount", rejected);
         model.addAttribute("allCount", pending + inProgress + completed + rejected);
 
-        List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, estado, page, size);
+        List<Request> requests = requestService.getRequestsByOrganization(currentOrg, page, size);
 
         model.addAttribute("requests", requests);
+        model.addAttribute("requestsByStatus", groupByStatus(requests));
         model.addAttribute("totalRequests", requests.size());
         model.addAttribute("viewType", RequestViewType.LIST);
-        model.addAttribute("currentStatus", estado);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         model.addAttribute("breadcrumbs", List.of(
@@ -147,5 +149,16 @@ public class OrgRequestController {
     public String handleNotOwned(RedirectAttributes redirectAttributes) {
         messages.flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_NOT_OWNED);
         return "redirect:" + Routes.ORG_REQUESTS;
+    }
+
+    private Map<String, List<Request>> groupByStatus(List<Request> requests) {
+        Map<String, List<Request>> grouped = new LinkedHashMap<>();
+        for (RequestStatus status : RequestStatus.values()) {
+            grouped.put(status.name(), new ArrayList<>());
+        }
+        for (Request req : requests) {
+            grouped.get(req.getStatus().name()).add(req);
+        }
+        return grouped;
     }
 }

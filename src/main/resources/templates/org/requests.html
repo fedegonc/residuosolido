@@ -20,44 +20,32 @@
           </button>
         </div>
 
-        <!-- Panel unificado: cada stat ES el filtro (antes eran 3 tiles +
-             5 botones de filtro por separado, "islas" sin relación visual). -->
+        <!-- Stats clickeables: cada stat es un ancla a su columna Kanban. -->
         <div class="org-panel__stats">
-          <a href="/acopio/solicitudes" class="org-panel__stat org-panel__stat--all" th:classappend="${currentStatus == null} ? 'org-panel__stat--active' : ''">
-            <span class="org-panel__stat__value" th:text="${allCount}">0</span>
-            <span class="org-panel__stat__label" data-i18n="dash_stat_total">Todas</span>
-          </a>
-          <a href="/acopio/solicitudes?estado=PENDING" class="org-panel__stat org-panel__stat--pending" th:classappend="${currentStatus == 'PENDING'} ? 'org-panel__stat--active' : ''">
+          <a href="#col-PENDING" class="org-panel__stat org-panel__stat--pending">
             <span class="org-panel__stat__value" th:text="${pendingCount}">0</span>
             <span class="org-panel__stat__label" data-i18n="dash_stat_pending">Pendientes</span>
           </a>
-          <a href="/acopio/solicitudes?estado=IN_PROGRESS" class="org-panel__stat org-panel__stat--progress" th:classappend="${currentStatus == 'IN_PROGRESS'} ? 'org-panel__stat--active' : ''">
+          <a href="#col-IN_PROGRESS" class="org-panel__stat org-panel__stat--progress">
             <span class="org-panel__stat__value" th:text="${inProgressCount}">0</span>
             <span class="org-panel__stat__label" data-i18n="dash_stat_progress">En curso</span>
           </a>
-          <a href="/acopio/solicitudes?estado=COMPLETED" class="org-panel__stat org-panel__stat--completed" th:classappend="${currentStatus == 'COMPLETED'} ? 'org-panel__stat--active' : ''">
+          <a href="#col-COMPLETED" class="org-panel__stat org-panel__stat--completed">
             <span class="org-panel__stat__value" th:text="${completedCount}">0</span>
             <span class="org-panel__stat__label" data-i18n="dash_stat_completed">Completadas</span>
           </a>
-          <a href="/acopio/solicitudes?estado=REJECTED" class="org-panel__stat org-panel__stat--rejected" th:classappend="${currentStatus == 'REJECTED'} ? 'org-panel__stat--active' : ''">
+          <a href="#col-REJECTED" class="org-panel__stat org-panel__stat--rejected">
             <span class="org-panel__stat__value" th:text="${rejectedCount}">0</span>
             <span class="org-panel__stat__label" data-i18n="dash_stat_rejected">Rechazadas</span>
           </a>
         </div>
 
-        <!-- Tabla compacta: una fila por solicitud en vez de una card alta
-             de 6-7 líneas — entra mucho más en una sola pantalla. -->
-        <div th:if="${requests != null and !requests.isEmpty()}" class="org-panel__table">
-          <div class="org-panel__row org-panel__row--header">
-            <span data-i18n="req_detail_date">Fecha</span>
-            <span data-i18n="req_status_title">Estado</span>
-            <span data-i18n="org_req_contact">Contacto</span>
-            <span data-i18n="req_detail_address">Dirección</span>
-            <span></span>
-          </div>
-          <div th:each="req : ${requests}">
-            <th:block th:replace="~{fragments/request-list :: request-item-row(req=${req})}"></th:block>
-          </div>
+        <!-- Tablero Kanban: solicitudes agrupadas por estado. -->
+        <div th:if="${requests != null and !requests.isEmpty()}" class="kanban-board">
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='PENDING', requests=${requestsByStatus.get('PENDING')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_pending', title='Pendientes', count=${pendingCount})}"></th:block>
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='IN_PROGRESS', requests=${requestsByStatus.get('IN_PROGRESS')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_progress', title='En curso', count=${inProgressCount})}"></th:block>
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='COMPLETED', requests=${requestsByStatus.get('COMPLETED')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_completed', title='Completadas', count=${completedCount})}"></th:block>
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='REJECTED', requests=${requestsByStatus.get('REJECTED')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_rejected', title='Rechazadas', count=${rejectedCount})}"></th:block>
         </div>
         <div th:if="${requests == null or requests.isEmpty()}">
           <div th:replace="~{fragments/ui :: state('inbox', 'org_requests_empty', 'No hay solicitudes')}"></div>
