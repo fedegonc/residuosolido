@@ -74,7 +74,12 @@ class OrganizationProfileMigrationTest {
         Document org = mongoTemplate.getCollection("organizations")
                 .find(eq("_id", testId.toString())).first();
         assertNotNull(org, "Debe crear el documento en la colección organizations");
-        assertEquals(testId.toString(), org.getString("userId"));
+        assertEquals(testId.toString(), org.getString("_id"),
+                "El _id del org coincide con el del usuario (enlace implícito)");
+        assertNull(org.get("userId"), "userId/email/username/active no se denormalizan — se leen del User");
+        assertNull(org.get("username"));
+        assertNull(org.get("email"));
+        assertNull(org.get("active"));
         assertEquals(List.of("PAPEL", "PLASTICO"), org.getList("acceptedMaterials", String.class));
         assertTrue(org.getBoolean("profileCompleted"));
         assertEquals("Cooperativa", org.getString("name"));

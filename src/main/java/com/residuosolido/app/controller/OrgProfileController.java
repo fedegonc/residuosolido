@@ -28,8 +28,9 @@ import java.util.List;
  * materiales aceptados. Cuando el perfil está incompleto, el template abre
  * el formulario de edición directamente (funciona como onboarding).
  *
- * El modelo expuesto a la vista es la entidad {@link Organization}, no el
- * User de autenticación, para reflejar la separación entre ambas tablas.
+ * El modelo expone ambas entidades: {@code organization} para los datos de
+ * negocio (ciudad, teléfono, materiales) y {@code user} para la identidad
+ * (username, email) — username/email viven solo en User, no se denormalizan.
  */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
@@ -52,6 +53,7 @@ public class OrgProfileController {
     public String orgProfile(@CurrentUser User currentOrg, Model model) {
         Organization organization = organizationService.findByUser(currentOrg);
         model.addAttribute("organization", organization);
+        model.addAttribute("user", currentOrg);
         model.addAttribute("cities", City.values());
         model.addAttribute("materials", MaterialCategory.values());
         model.addAttribute("breadcrumbs", List.of(

@@ -62,22 +62,24 @@ public class DataLoader {
             logger.info("Seed omitido: la base ya contiene datos");
             return;
         }
-        User u1 = createUser(userRepo, encoder, "juan", "juan@mail.com", "Juan Pérez", Role.USER, "+598 99 123 456", City.RIVERA);
-        User u2 = createUser(userRepo, encoder, "maria", "maria@mail.com", "María García", Role.USER, "+55 55 654 321", City.LIVRAMENTO);
-        User u3 = createUser(userRepo, encoder, "pedro", "pedro@mail.com", "Pedro Martínez", Role.USER, "+598 99 222 333", City.RIVERA);
-        User u4 = createUser(userRepo, encoder, "lucia", "lucia@mail.com", "Lucía Fernández", Role.USER, "+55 55 111 222", City.LIVRAMENTO);
+        // Usuarios normales con PINs variados
+        User u1 = createUser(userRepo, encoder, "juan", "juan@mail.com", "Juan Pérez", Role.USER, "+598 99 123 456", City.RIVERA, "5678");
+        User u2 = createUser(userRepo, encoder, "maria", "maria@mail.com", "María García", Role.USER, "+55 55 987 654", City.LIVRAMENTO, "9012");
+        User u3 = createUser(userRepo, encoder, "pedro", "pedro@mail.com", "Pedro Martínez", Role.USER, "+598 99 222 333", City.RIVERA, "3456");
+        User u4 = createUser(userRepo, encoder, "lucia", "lucia@mail.com", "Lucía Fernández", Role.USER, "+55 55 111 222", City.LIVRAMENTO, "7890");
+        // Organizaciones con PINs variados para testing realista
         Organization o1 = createOrg(userRepo, organizationRepo, encoder, "coopverde", "coopverde@mail.com", "Cooperativa Verde", "+598 99 111 222", City.RIVERA,
-                List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.VIDRIO));
+                List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.VIDRIO), "2468");
         Organization o2 = createOrg(userRepo, organizationRepo, encoder, "reciclarivera", "reciclarivera@mail.com", "ReciclaRivera", "+598 99 333 444", City.RIVERA,
-                List.of(MaterialCategory.METAL, MaterialCategory.PLASTICO));
+                List.of(MaterialCategory.METAL, MaterialCategory.PLASTICO), "3579");
         Organization o3 = createOrg(userRepo, organizationRepo, encoder, "ecofrontera", "ecofrontera@mail.com", "EcoFrontera", "+598 99 555 666", City.RIVERA,
-                List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO, MaterialCategory.METAL));
+                List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO, MaterialCategory.METAL), "1357");
         Organization o4 = createOrg(userRepo, organizationRepo, encoder, "reciclart", "reciclart@mail.com", "ReciclaRT", "+55 55 333 444", City.LIVRAMENTO,
-                List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.METAL));
+                List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.METAL), "8642");
         Organization o5 = createOrg(userRepo, organizationRepo, encoder, "coopesperanca", "coopesperanca@mail.com", "Cooperativa Esperança", "+55 55 777 888", City.LIVRAMENTO,
-                List.of(MaterialCategory.VIDRIO, MaterialCategory.PLASTICO));
+                List.of(MaterialCategory.VIDRIO, MaterialCategory.PLASTICO), "9753");
         Organization o6 = createOrg(userRepo, organizationRepo, encoder, "verdefronteira", "verdefronteira@mail.com", "Verde Fronteira", "+55 55 999 000", City.LIVRAMENTO,
-                List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO, MaterialCategory.METAL, MaterialCategory.PLASTICO));
+                List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO, MaterialCategory.METAL, MaterialCategory.PLASTICO), "4682");
 
         createRequest(requestRepo, u1, o1, "Calle 18 de Julio 123", "Frente al supermercado", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL), RequestStatus.PENDING, null);
@@ -223,11 +225,11 @@ public class DataLoader {
 
     private static User createUser(UserRepository repo, PasswordEncoder encoder,
                                    String username, String email, String firstName,
-                                   Role role, String phone, City city) {
+                                   Role role, String phone, City city, String pin) {
         User u = new User();
         u.setUsername(username);
         u.setEmail(email);
-        u.setPassword(encoder.encode("1234"));
+        u.setPassword(encoder.encode(pin));
         u.setRole(role);
         u.setFirstName(firstName);
         u.setPhone(phone);
@@ -237,12 +239,18 @@ public class DataLoader {
         return repo.save(u);
     }
 
+    private static User createUser(UserRepository repo, PasswordEncoder encoder,
+                                   String username, String email, String firstName,
+                                   Role role, String phone, City city) {
+        return createUser(repo, encoder, username, email, firstName, role, phone, city, "1234");
+    }
+
     private static Organization createOrg(UserRepository userRepo,
                                           OrganizationRepository orgRepo,
                                           PasswordEncoder encoder,
                                           String username, String email, String firstName,
-                                          String phone, City city, List<MaterialCategory> acceptedMaterials) {
-        User u = createUser(userRepo, encoder, username, email, firstName, Role.ORGANIZATION, phone, city);
+                                          String phone, City city, List<MaterialCategory> acceptedMaterials, String pin) {
+        User u = createUser(userRepo, encoder, username, email, firstName, Role.ORGANIZATION, phone, city, pin);
         Organization org = new Organization();
         org.setId(u.getId());
         org.setName(firstName);
@@ -251,6 +259,14 @@ public class DataLoader {
         org.setAcceptedMaterials(acceptedMaterials);
         org.setProfileCompleted(true);
         return orgRepo.save(org);
+    }
+
+    private static Organization createOrg(UserRepository userRepo,
+                                          OrganizationRepository orgRepo,
+                                          PasswordEncoder encoder,
+                                          String username, String email, String firstName,
+                                          String phone, City city, List<MaterialCategory> acceptedMaterials) {
+        return createOrg(userRepo, orgRepo, encoder, username, email, firstName, phone, city, acceptedMaterials, "1234");
     }
 
     private static void createRequest(RequestRepository repo, User user, Organization org,
