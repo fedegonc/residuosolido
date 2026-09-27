@@ -56,6 +56,18 @@ class RequestMetricsServiceTest {
     // ─── getOrgRequestStats (stats del panel de acopio) ───
 
     @Test
+    void getUserRequestStats_nullUser_throwsValidation() {
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> service.getUserRequestStats(null));
+    }
+
+    @Test
+    void getOrgRequestStats_nullOrganization_throwsValidation() {
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> service.getOrgRequestStats(null));
+    }
+
+    @Test
     void getUserRequestStats_objectIdString_usesObjectIdInCriteria() {
         // ID en formato ObjectId válido (24 hex) → el match usa ObjectId, no String.
         mockAggregationResult(null);

@@ -272,6 +272,12 @@ class UserServiceTest {
     // ===== updateUser =====
 
     @Test
+    void updateUser_nullUser_throwsValidationException() {
+        assertThrows(com.residuosolido.app.exception.ValidationException.class,
+                () -> userService.updateUser(null));
+    }
+
+    @Test
     void updateUser_notFound_throwsValidationException() {
         User form = new User();
         form.setId("ghost");

@@ -64,6 +64,9 @@ public class UserService {
      */
     @CacheEvict(value = "orgsByCity", allEntries = true)
     public User updateUser(User user) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         User existing = userRepository.findById(user.getId())
                 .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND));
 

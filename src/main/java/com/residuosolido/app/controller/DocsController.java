@@ -3,6 +3,8 @@ package com.residuosolido.app.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residuosolido.app.config.Routes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +31,8 @@ import java.util.Map;
  */
 @Controller
 public class DocsController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DocsController.class);
 
     private static final Path DOCS_DIR = Paths.get("docs").toAbsolutePath();
     private static final Path SCRATCH_DIR = Paths.get("scratch").toAbsolutePath();
@@ -71,6 +75,7 @@ public class DocsController {
             model.addAttribute("docHtml", HTML_RENDERER.render(document));
             return "docs/markdown";
         } catch (Exception e) {
+            logDocReadFailure("viewMarkdown:" + file, e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doc no encontrado: " + file);
         }
     }
@@ -165,6 +170,18 @@ public class DocsController {
         return counts;
     }
 
+    /**
+     * Las 3 rutas que leen un archivo de docs/scratch del disco (viewMarkdown,
+     * toMxgraphAttr, serveFile) comparten el mismo invariante ante una falla
+     * inesperada (no el "no encontrado" ya cubierto por el chequeo de
+     * exists()/isFile() de arriba, sino I/O, permisos o un bug real de
+     * parseo): sin este log, esas fallas se veían idénticas en el cliente a
+     * un 404 legítimo y no dejaban rastro para diagnosticarlas.
+     */
+    private void logDocReadFailure(String context, Exception e) {
+        logger.warn("DOCS_READ_FAILED: context={}, error={}", context, e.getMessage());
+    }
+
     private String toMxgraphAttr(String baseName) {
         try {
             File file = DOCS_DIR.resolve("diagrams/" + baseName + ".drawio").normalize().toFile();
@@ -178,6 +195,7 @@ public class DocsController {
             payload.put("resize", true);
             return JSON.writeValueAsString(payload);
         } catch (Exception e) {
+            logDocReadFailure("toMxgraphAttr:" + baseName, e);
             return null;
         }
     }
@@ -194,6 +212,7 @@ public class DocsController {
                     .contentLength(file.length())
                     .body(new FileSystemResource(file));
         } catch (Exception e) {
+            logDocReadFailure("serveFile:" + relativePath, e);
             return ResponseEntity.notFound().build();
         }
     }
