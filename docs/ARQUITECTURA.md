@@ -27,18 +27,18 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 <!-- INVENTORY_START -->
 | Capa | Cantidad | Detalle |
 |---|---|---|
-| Controllers | 17 | .java en app/controller |
+| Controllers | 18 | .java en app/controller |
 | Services | 12 | .java en app/service |
 | Models | 8 | .java en app/model |
 | Repositories | 4 | .java en app/repository |
 | Templates (total) | 23 | .html en templates/ |
 | Fragments | 5 | .html en templates/fragments/ |
 | Test classes | 65 | *Test.java en src/test/java |
-| Test methods (@Test) | 459 | anotaciones @Test |
+| Test methods (@Test) | 458 | anotaciones @Test |
 
 > Generado por .config/inventory-check.sh
 
-Última actualización: 2026-09-27T17:57:49-03:00
+Última actualización: 2026-09-27T20:29:55-03:00
 <!-- INVENTORY_END -->
 
 ## Mapeo por Capa
