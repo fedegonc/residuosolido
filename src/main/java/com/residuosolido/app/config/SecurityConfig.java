@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
                 .requestMatchers(Routes.SCRATCH_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH, Routes.ACTUATOR_INFO).permitAll()
+                // Admin endpoints (dev only, protected at controller level via @Profile)
+                .requestMatchers(Routes.ADMIN_ANY).permitAll()
                 // Rutas de usuarios regulares
                 .requestMatchers(Routes.REQUESTS, "/solicitudes/**", Routes.NOTIFICATIONS).hasRole("USER")
                 // Rutas de organización
@@ -89,7 +91,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation(fixation -> fixation.changeSessionId())
             );
-        
+
         return http.build();
     }
 }

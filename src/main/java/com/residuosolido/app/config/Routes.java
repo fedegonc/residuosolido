@@ -77,6 +77,9 @@ public final class Routes {
     public static final String ACTUATOR_HEALTH = "/actuator/health";
     public static final String ACTUATOR_INFO = "/actuator/info";
 
+    // Admin (dev only)
+    public static final String ADMIN_ANY = "/admin/**";
+
     /**
      * A qué pantalla "vuelve" cada rol tras login o tras un error — función pura,
      * sin estado, por eso vive acá como static en vez de ser un @Component inyectado

@@ -29,7 +29,7 @@ import java.util.List;
  * Una sola clase consolida lo que antes eran SeedDataFactory, SeedUserData y SeedRequestData.
  */
 @Configuration
-@Profile("dev & !prod & !test")
+@Profile({"dev"})
 public class DataLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
@@ -41,8 +41,14 @@ public class DataLoader {
                                PasswordEncoder passwordEncoder,
                                @Value("${app.seed:false}") boolean shouldSeed) {
         return args -> {
-            if (!shouldSeed) return;
+            logger.info("=== DataLoader: shouldSeed={} ===", shouldSeed);
+            if (!shouldSeed) {
+                logger.info("DataLoader: app.seed es false, omitiendo");
+                return;
+            }
+            logger.info("DataLoader: iniciando seedAll()");
             seedAll(userRepository, organizationRepository, requestRepository, passwordEncoder);
+            logger.info("DataLoader: seedAll() completado");
         };
     }
 
