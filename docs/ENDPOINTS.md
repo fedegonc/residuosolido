@@ -20,7 +20,7 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | GET | `/docs/{file}` | `DocsController` | Vista HTML de `docs/{file}.md` renderizada con CommonMark (layout + `.doc-content`); inexistente → 404 |
 | GET | `/docs/{file}.md` | `DocsController` | Sirve el `.md` crudo como `text/markdown` (fuente del doc) |
 | GET | `/docs/diagrams/{file}.drawio` | `DocsController` | Sirve el `.drawio` fuente como `application/xml` |
-| GET | `/scratch/{file}.java` | `DocsController` | Sirve `scratch/App.java`/`pseudoapp.java` como texto plano (footer del layout). `scratch/` está gitignoreado a propósito — funciona en local/dev, 404 en Render porque el archivo nunca se sube |
+| GET | `/scratch/{file}` | `DocsController` | Sirve `scratch/App.java`/`pseudoapp.md` como texto plano (footer del layout). `scratch/` está gitignoreado a propósito — funciona en local/dev, 404 en Render porque el archivo nunca se sube |
 | GET | `/pagina/{slug}` | `PageController` | Páginas de contenido genéricas por slug, contenido en `pages-{es,pt}.json` vía `PageContentLoader`. Las 9 landing cards (catadores, impacto, sostenibilidad, comunidad, proceso, compromiso, eventos, recursos, faq) tienen su página. Slug sin entrada en el JSON → 404 real (`ResponseStatusException` + `GlobalExceptionHandler`) |
 
 ## Usuario (rol `USER`)

@@ -3,6 +3,7 @@ package com.residuosolido.app;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 
 import java.util.List;
@@ -25,12 +26,11 @@ public final class TestFixtures {
         return u;
     }
 
-    public static User organization(String id, City city, MaterialCategory... materials) {
-        User o = new User();
+    public static Organization organization(String id, City city, MaterialCategory... materials) {
+        Organization o = new Organization();
         o.setId(id);
-        o.setRole(Role.ORGANIZATION);
+        o.setName(id);
         o.setCity(city);
-        o.setActive(true);
         o.setPhone("+59899123456");
         o.setProfileCompleted(true);
         o.setAcceptedMaterials(materials.length > 0 ? List.of(materials) : List.of());

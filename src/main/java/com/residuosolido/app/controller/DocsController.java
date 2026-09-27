@@ -86,13 +86,15 @@ public class DocsController {
     }
 
     /**
-     * Sirve scratch/{App,pseudoapp}.java como texto plano para leer desde el navegador.
+     * Sirve scratch/{App,pseudoapp} como texto plano para leer desde el navegador.
+     * {@code App} se resuelve a {@code App.java}; {@code pseudoapp} a {@code pseudoapp.md}.
      * scratch/ está gitignoreado a propósito (ver .gitignore) — esto funciona en local/dev
      * porque lee del disco, pero da 404 en Render porque el archivo nunca llega a subirse.
      */
     @GetMapping(Routes.SCRATCH_FILE)
     public ResponseEntity<Resource> serveScratch(@PathVariable String file) {
-        return serveFile(SCRATCH_DIR, file + ".java", MediaType.TEXT_PLAIN);
+        String filename = "pseudoapp".equals(file) ? file + ".md" : file + ".java";
+        return serveFile(SCRATCH_DIR, filename, MediaType.TEXT_PLAIN);
     }
 
     /**

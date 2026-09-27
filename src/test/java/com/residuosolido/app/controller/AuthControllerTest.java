@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,6 +52,9 @@ class AuthControllerTest {
     @MockBean
     private RateLimiter rateLimiter;
 
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
     // ===== Registro =====
 
     @Test
@@ -60,8 +66,13 @@ class AuthControllerTest {
     }
 
     @Test
-    void registerPost_success_redirectsToLogin() throws Exception {
+    void registerPost_success_authenticatesAndRedirectsToRequests() throws Exception {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
+        User created = new User();
+        created.setUsername("nuevo");
+        when(userRegistrationService.registerUser(any(User.class), eq(false))).thenReturn(created);
+        when(authenticationManager.authenticate(any()))
+                .thenReturn(new TestingAuthenticationToken("nuevo", null, "ROLE_USER"));
 
         mockMvc.perform(post(Routes.REGISTER).with(csrf())
                         .param("username", "nuevo")
@@ -69,7 +80,7 @@ class AuthControllerTest {
                         .param("countryCode", "+598")
                         .param("phoneNational", "99123456"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/entrar"));
+                .andExpect(redirectedUrl(Routes.REQUESTS));
 
         verify(userRegistrationService).registerUser(any(User.class), eq(false));
     }
@@ -77,12 +88,20 @@ class AuthControllerTest {
     @Test
     void registerPost_asOrganization_passesFlagToService() throws Exception {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
+        User created = new User();
+        created.setUsername("coop");
+        when(userRegistrationService.registerUser(any(User.class), eq(true))).thenReturn(created);
+        when(authenticationManager.authenticate(any()))
+                .thenReturn(new TestingAuthenticationToken("coop", null, "ROLE_ORGANIZATION"));
 
         mockMvc.perform(post(Routes.REGISTER).with(csrf())
                         .param("username", "coop")
                         .param("password", "1234")
+                        .param("countryCode", "+598")
+                        .param("phoneNational", "99123456")
                         .param("isOrganization", "true"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(Routes.ORG_REQUESTS));
 
         verify(userRegistrationService).registerUser(any(User.class), eq(true));
     }
@@ -142,6 +161,27 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("auth/register"))
                 .andExpect(model().attribute("errorMessage", "El PIN debe tener 4 dígitos."));
+
+        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+    }
+
+    @Test
+    void registerPost_invalidPhone_marksFieldAndPreservesSafeValues() throws Exception {
+        when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
+
+        mockMvc.perform(post(Routes.REGISTER).with(csrf())
+                        .param("username", "Federico Test")
+                        .param("password", "1234")
+                        .param("countryCode", "+598")
+                        .param("phoneNational", "9922249555")
+                        .param("isOrganization", "true"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/register"))
+                .andExpect(model().attributeHasFieldErrors("user", "phoneNational"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"Federico Test\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"9922249555\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("La cantidad de dígitos no coincide")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"isOrganization\" name=\"isOrganization\" value=\"true\" checked")));
 
         verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
     }

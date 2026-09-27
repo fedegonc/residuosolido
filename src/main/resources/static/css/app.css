@@ -50,6 +50,7 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 .page{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
 .page--narrow{max-width:28rem}
 .page--center{flex:1;display:flex;flex-direction:column;justify-content:center}
+.page--form{justify-content:flex-start;padding-top:clamp(1rem,4vh,3rem);padding-bottom:clamp(2rem,6vh,4rem)}
 .app-main{flex:1 0 auto;padding:var(--pad) 0;display:flex;flex-direction:column}
 .stack{display:flex;flex-direction:column;gap:var(--gap)}
 .row{display:flex;gap:.5rem;flex-wrap:wrap}
@@ -94,6 +95,10 @@ fieldset.field{border:0;padding:0;margin:0;min-inline-size:0}
 .select{cursor:pointer}.select:disabled{background:var(--bg);color:var(--muted);cursor:not-allowed;opacity:.7}
 .select--sm{width:auto;min-width:5.5rem;padding:.5rem;font-size:var(--text-sm)}.input--sm{padding:.4rem .5rem;font-size:var(--text-sm)}
 .hint{font-size:var(--text-xs);color:var(--muted)}
+.field-group{display:flex;flex-direction:column;gap:.25rem}
+.field__error{font-size:var(--text-sm);font-weight:600;color:var(--danger)}
+.field-group--error .input,.field-group--error .select,.field-group--error .pin-boxes__digit{border-color:var(--danger);background:var(--danger-bg)}
+.field-group--error .input:focus,.field-group--error .select:focus,.field-group--error .pin-boxes__digit:focus{outline-color:var(--danger);box-shadow:0 0 0 3px var(--danger-border)}
 .req{color:var(--danger);font-weight:700}
 .form-actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}
 

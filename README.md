@@ -136,7 +136,7 @@ En **producción** (Render/otros), las variables se configuran directamente en e
 **Acceso en vivo:**
 - `/docs/DEFENSA` — Vista renderizada (Markdown → HTML)
 - `/docs/diagramas` — Visor interactivo draw.io (7 figuras UML)
-- `/scratch/App.java` — Especificación ejecutable del dominio (86 scenarios)
+- `/scratch/App` — Especificación ejecutable del dominio (86 scenarios)
 
 Ver [`docs/INDICE.md`](docs/INDICE.md) para mapa temático completo (12 canónicos + 8 referencia).
 

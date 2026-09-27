@@ -69,7 +69,7 @@ public final class Routes {
     public static final String DOCS_UX_UI = "/docs/ux-ui";
     /** Sandbox de dominio (gitignored): existe en local/dev, 404 en prod porque nunca se sube al repo. */
     public static final String SCRATCH_ANY = "/scratch/**";
-    public static final String SCRATCH_FILE = "/scratch/{file}.java";
+    public static final String SCRATCH_FILE = "/scratch/{file}";
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
 

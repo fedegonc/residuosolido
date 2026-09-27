@@ -8,7 +8,7 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        PRESENTACIÓN                           │
-│  Controllers (16) → Templates (28) → Fragments JS           │
+│  Controllers  → Templates  → Fragments JS                 │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -18,13 +18,32 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                          DATOS                               │
-│  Repositories (2) → MongoDB (Request, User)                  │
+│  Repositories  → MongoDB                                      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### Inventario (auto-generado)
+
+<!-- INVENTORY_START -->
+| Capa | Cantidad | Detalle |
+|---|---|---|
+| Controllers | 17 | .java en app/controller |
+| Services | 12 | .java en app/service |
+| Models | 8 | .java en app/model |
+| Repositories | 4 | .java en app/repository |
+| Templates (total) | 23 | .html en templates/ |
+| Fragments | 5 | .html en templates/fragments/ |
+| Test classes | 65 | *Test.java en src/test/java |
+| Test methods (@Test) | 459 | anotaciones @Test |
+
+> Generado por .config/inventory-check.sh
+
+Última actualización: 2026-09-27T17:57:49-03:00
+<!-- INVENTORY_END -->
+
 ## Mapeo por Capa
 
-### 1. Controllers (16 archivos)
+### 1. Controllers
 
 **Auth:**
 - `AuthController` — Login, registro, logout
@@ -47,7 +66,7 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
   autenticado en parámetros de handler (reemplazaron a `BaseController`,
   eliminado: los controllers ya no hereden utilidades)
 
-### 2. Services (7 archivos)
+### 2. Services
 
 - `UserService` — Gestión de usuarios y perfiles
 - `UserRegistrationService` — Registro de nuevos usuarios/organizaciones
@@ -55,18 +74,25 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 - `RequestMetricsService` — Métricas de solicitudes (user + org dashboards)
 - `CityOrgService` — Búsqueda de organizaciones por ciudad
 - `LocalImageService` — Subida de imágenes locales
+- `RequestValidator` — Validaciones centralizadas de solicitudes
+- `RequestServiceRetryHelper` — Retries optimistas
+- `NotificationService` — Envío de notificaciones
+- `NotificationEventListener` — Listener de eventos de cambio de estado
 - `MongoAggregationUtils` — Utilidades estáticas de agregación MongoDB (facets)
 
-### 3. Modelos (3 clases)
+### 3. Modelos
 
 - `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
 - `Request` — Solicitudes de recolección con ciclo de estados
-- `PhoneNumber` — Utility class de normalización E.164 (Uruguay +558 y Brasil +55)
+- `PhoneNumber` — Utility class de normalización E.164 (Uruguay +598 y Brasil +55)
+- `OrganizationProfile` — Perfil de organización embebido en `User`
+- `Notification` — Notificaciones generadas por transiciones de estado
 
-### 4. Repositories (2 interfaces)
+### 4. Repositories
 
 - `UserRepository` — Persistencia de usuarios
 - `RequestRepository` — Persistencia de solicitudes
+- `NotificationRepository` — Persistencia de notificaciones
 
 ## Flujos Principales
 
@@ -189,13 +215,25 @@ cambiar un parámetro es un contrato que rompe los templates que lo llaman.
 ## Decisiones de Arquitectura
 
 - **Sin panel Admin**: Gestión distribuida por roles (USER, ORGANIZATION).
-- **Mono-modelo User**: Usuarios y organizaciones comparten la misma entidad, diferenciados por `Role`.
+- **Separación User / Organization (en progreso)**: el sandbox (`scratch/sim/`) ya modela `User` (auth) y `Organization` (perfil de negocio) como entidades separadas. El Spring real aún usa el mono-modelo `User` + `OrganizationProfile` embebido; el port planificado seguirá este blueprint. Ver `docs/MEJORAS.md` #221.
 - **Cobertura binacional**: Enum `City` limitado a RIVERA y LIVRAMENTO.
 - **Breadcrumbs inline**: Construidos con `List.of(Map.of(...))` en cada controller.
 - **JavaScript scoped por página**: lo global/reusado por 2+ páginas vive en `app.js`; lo exclusivo de una página (ej. `filterMaterialsByOrg`, el toggle view/edit de perfil) va en su propio archivo (`request-form.js`, `org-profile.js`) cargado vía `layout:fragment="pageScripts"`. Reemplaza al enfoque anterior de scripts embebidos en fragments HTML (`fragments/toggle-view-edit.html`/`request-form-js.html`, eliminados).
 - **Imágenes locales**: `LocalImageService` guarda archivos en disco, no en Cloudinary.
 - **Sin API REST pública**: Spring MVC + Thymeleaf SSR de punta a punta. `/solicitudes/org-options` es el único endpoint JSON/HTML-fragment, y es infraestructura interna del formulario (fetch de `request-form.js`), no una API de consumo externo — sin Swagger/OpenAPI. Ver `docs/TRADEOFFS.md` §35.
 
+## Limitaciones de escalabilidad (estado actual)
+
+Estas son limitaciones conscientes del MVP, documentadas como tradeoffs en
+`docs/TRADEOFFS.md` y verificables por código:
+
+| Componente | Asunción | Implicación si se escala |
+|---|---|---|
+| `RateLimiter` | **Nodo único**: contadores en `ConcurrentHashMap` locales. | Con réplicas, cada nodo tiene su propio rate limit / lockout. Un atacante distribuido puede sortear el lockout por usuario rotando entre instancias. Migración: Redis + Bucket4j o un gateway con rate limiting centralizado. |
+| `LocalImageService` | **Disco local**: guarda en `uploads/` del filesystem del contenedor. | En PaaS con filesystem efímero (Render) o réplicas, las imágenes se pierden o no son accesibles desde otro nodo. Migración: Cloudinary, S3 o volumen compartido. |
+| `NotificationService` | **Best-effort in-process**: `notifyRequester` se llama después del save de la request, en el mismo hilo y sin transacción. | Si el proceso falla entre el save de la request y el save de la notification, el ciudadano no recibe la notificación in-app aunque el estado sí quedó persistido. Migración: outbox pattern / evento transaccional. |
+| Caches de servicio (ej. `CityOrgService`, `LandingCardLoader`) | Memoria local por nodo (`@Cacheable` → ConcurrentMapCacheManager de Spring). | Con réplicas, cada nodo puede servir contenido cacheado distinto. Migración: Redis / Caffeine compartido o invalidación centralizada. |
+
 ## Pruebas
 
-181 tests unitarios e integrales en 24 clases. Ver `docs/ENDPOINTS.md`.
+Ver el inventario auto-generado arriba para el conteo actual de clases y métodos de test. Ver también `docs/ENDPOINTS.md` y `docs/INDICE.md`.

@@ -9,6 +9,8 @@ import com.residuosolido.app.exception.Keyed;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.model.Organization;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,9 @@ import java.util.List;
  * Perfil de organización: vista y edición de datos de contacto, ciudad y
  * materiales aceptados. Cuando el perfil está incompleto, el template abre
  * el formulario de edición directamente (funciona como onboarding).
+ *
+ * El modelo expuesto a la vista es la entidad {@link Organization}, no el
+ * User de autenticación, para reflejar la separación entre ambas tablas.
  */
 @Controller
 @PreAuthorize("hasRole('ORGANIZATION')")
@@ -33,17 +38,20 @@ public class OrgProfileController {
     private static final Logger logger = LoggerFactory.getLogger(OrgProfileController.class);
 
     private final UserService userService;
+    private final OrganizationService organizationService;
     private final Messages messages;
 
-    public OrgProfileController(UserService userService, Messages messages) {
+    public OrgProfileController(UserService userService, OrganizationService organizationService, Messages messages) {
         this.userService = userService;
+        this.organizationService = organizationService;
         this.messages = messages;
     }
 
     /** Muestra el perfil de la organización (o el formulario si está incompleto). */
     @GetMapping(Routes.ORG_PROFILE)
     public String orgProfile(@CurrentUser User currentOrg, Model model) {
-        model.addAttribute("organization", currentOrg);
+        Organization organization = organizationService.findByUser(currentOrg);
+        model.addAttribute("organization", organization);
         model.addAttribute("cities", City.values());
         model.addAttribute("materials", MaterialCategory.values());
         model.addAttribute("breadcrumbs", List.of(
@@ -69,7 +77,8 @@ public class OrgProfileController {
             jakarta.servlet.http.HttpSession session,
             RedirectAttributes redirectAttributes) {
         try {
-            City oldCity = currentOrg.getCity();
+            Organization organization = organizationService.findByUser(currentOrg);
+            City oldCity = organization.getCity();
             String resolvedPhone = PhoneNumber.resolve(countryCode, phoneNational, ddd, phone);
             // Ciudad y telefono son obligatorios SIEMPRE en este form (no solo mientras el
             // perfil esta incompleto) — antes el <select>/input no tenian required y el
@@ -80,7 +89,9 @@ public class OrgProfileController {
             if (ciudad == null) {
                 throw new ValidationException(ServerMessage.ERROR_PROFILE_CITY_REQUIRED);
             }
-            userService.updateProfile(currentOrg, email, firstName, resolvedPhone, ciudad,
+            // Actualiza User (email, nombre, teléfono, ciudad) y Organization (nombre, teléfono, ciudad, materiales)
+            userService.updateProfile(currentOrg, email, firstName, resolvedPhone, ciudad);
+            organizationService.updateProfile(currentOrg, firstName, resolvedPhone, ciudad,
                     materiales != null ? materiales : List.of());
             if (ciudad != null && !ciudad.equals(oldCity)) {
                 session.removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);

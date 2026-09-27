@@ -74,7 +74,6 @@ class MongoAggregationUtilsIntegrationTest {
         testUser.setFirstName("Test");
         testUser.setCity(City.RIVERA);
         testUser.setActive(true);
-        testUser.setProfileCompleted(true);
         testUser = userRepository.save(testUser);
     }
 

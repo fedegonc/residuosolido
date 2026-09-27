@@ -2,10 +2,8 @@ package com.residuosolido.app.model;
 
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
-import com.residuosolido.app.exception.StateException;
 
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,18 +14,18 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Entidad de usuario. Modela tanto ciudadanos (USER) como organizaciones (ORGANIZATION)
- * en una misma tabla/colección, diferenciados por el campo {@link #role}.
- * Usuarios y organizaciones comparten atributos básicos; acceptedMaterials y city
- * son relevantes principalmente para organizaciones.
+ * Entidad de autenticación. Modela tanto ciudadanos (USER) como organizaciones
+ * (ORGANIZATION) en una misma tabla/colección, diferenciados por el campo
+ * {@link #role}. El perfil de negocio de las organizaciones vive en la
+ * colección separada {@code organizations} (ver {@link Organization}).
  *
- * Los campos de contacto (email, teléfono, nombre) se validan y canonicalizan
- * en sus setters, garantizando que el modelo nunca contenga valores inválidos.
+ * Los campos de contacto (email, teléfono, nombre, ciudad) se validan y
+ * canonicalizan en sus setters, garantizando que el modelo nunca contenga
+ * valores inválidos. Para organizaciones, estos campos son opcionales desde el
+ * punto de vista de User; los datos operativos se mantienen en Organization.
  */
 @Getter
 @Setter
@@ -60,13 +58,6 @@ public class User {
 
     private LocalDateTime createdAt;
     private boolean active = true;
-
-    /**
-     * Solo relevante si role == ORGANIZATION; null para ciudadanos. Ver
-     * {@link OrganizationProfile} para el porqué de la extracción y
-     * OrganizationProfileMigration para la migración de datos existentes.
-     */
-    private OrganizationProfile organizationProfile;
 
     /**
      * Setea el email validándolo y normalizándolo a minúsculas.
@@ -121,71 +112,12 @@ public class User {
         return role == Role.ORGANIZATION;
     }
 
-    public boolean isProfileComplete() {
-        if (role == null) {
-            return false;
-        }
-        if (role == Role.ORGANIZATION) {
-            return hasPhone() && city != null && Boolean.TRUE.equals(getProfileCompleted());
-        }
-        return true;
-    }
-
-    // ── Delegados a OrganizationProfile: mismo nombre/firma que antes tenían
-    //    los campos directos en User, para no tocar ningún caller (services,
-    //    templates Thymeleaf, tests) — solo cambia dónde vive el dato. ──
-
-    public List<MaterialCategory> getAcceptedMaterials() {
-        return organizationProfile != null ? organizationProfile.getAcceptedMaterials() : List.of();
-    }
-
-    public void setAcceptedMaterials(List<MaterialCategory> acceptedMaterials) {
-        ensureOrganizationProfile().setAcceptedMaterials(
-                acceptedMaterials != null ? acceptedMaterials : new ArrayList<>());
-    }
-
-    public Boolean getProfileCompleted() {
-        return organizationProfile != null ? organizationProfile.getProfileCompleted() : Boolean.FALSE;
-    }
-
-    public void setProfileCompleted(Boolean profileCompleted) {
-        ensureOrganizationProfile().setProfileCompleted(profileCompleted);
-    }
-
-    private OrganizationProfile ensureOrganizationProfile() {
-        if (organizationProfile == null) {
-            organizationProfile = new OrganizationProfile();
-        }
-        return organizationProfile;
-    }
-
     public boolean hasPhone() {
         return phone != null && !phone.isBlank();
     }
 
     public boolean hasCity() {
         return city != null;
-    }
-
-    /** Contrato explícito para el filtro de materiales en el frontend (ver app.js filterMaterialsByOrg).
-     * No usar acceptedMaterials.toString() directamente: su formato es un detalle de
-     * implementación de List, no una API — este método es la única fuente de verdad. */
-    public String getAcceptedMaterialsCsv() {
-        return getAcceptedMaterials().stream().map(Enum::name).collect(java.util.stream.Collectors.joining(","));
-    }
-
-    public void completeProfile() {
-        if (!hasPhone()) {
-            throw new StateException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
-        }
-        if (city == null) {
-            throw new StateException(ServerMessage.ERROR_PROFILE_CITY_REQUIRED);
-        }
-        setProfileCompleted(true);
-    }
-
-    public boolean needsProfileCompletion() {
-        return !isProfileComplete();
     }
 
 }

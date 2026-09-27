@@ -55,14 +55,6 @@ public class UserService {
     // NOTE: MongoDB standalone does not support multi-document transactions (requires replica set).
     // These operations are NOT atomic. If a failure occurs mid-operation, data may be left inconsistent.
     // To enable real transactions, configure a single-node replica set in MongoDB.
-    /**
-     * allEntries=true en vez de evict por ciudad puntual: esta clase no sabe
-     * (ni le corresponde saber) la ciudad ANTERIOR de la organización si el
-     * update la cambia — evictar solo la ciudad nueva dejaría la vieja
-     * cacheada con una organización que ya no debería aparecer ahí. El cache
-     * tiene 2 entradas (RIVERA/LIVRAMENTO), evictarlo entero no tiene costo.
-     */
-    @CacheEvict(value = "orgsByCity", allEntries = true)
     public User updateUser(User user) {
         if (user == null) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
@@ -80,10 +72,6 @@ public class UserService {
         existing.setFirstName(user.getFirstName());
         existing.setPhone(user.getPhone());
         existing.setCity(user.getCity());
-        existing.setAcceptedMaterials(user.getAcceptedMaterials());
-        if (user.getProfileCompleted() != null) {
-            existing.setProfileCompleted(user.getProfileCompleted());
-        }
 
         try {
             return userRepository.save(existing);
@@ -94,20 +82,18 @@ public class UserService {
         }
     }
 
+    /**
+     * Actualiza datos de contacto básicos de un usuario (ciudadano). No maneja
+     * materiales ni perfil de organización: esos viven en {@link OrganizationService}.
+     */
     public User updateProfile(User user, String email, String firstName, String phone, City city) {
-        return updateProfile(user, email, firstName, phone, city, null);
-    }
-
-    public User updateProfile(User user, String email, String firstName, String phone, City city,
-                               List<MaterialCategory> acceptedMaterials) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         if (email != null) user.setEmail(email);
         if (firstName != null) user.setFirstName(firstName);
         if (phone != null) user.setPhone(phone);
         if (city != null) user.setCity(city);
-        if (acceptedMaterials != null) user.setAcceptedMaterials(acceptedMaterials);
-        if (user.isOrganization() && user.hasPhone() && user.hasCity()) {
-            user.completeProfile();
-        }
         return updateUser(user);
     }
 }

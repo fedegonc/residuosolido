@@ -3,14 +3,17 @@ package com.residuosolido.app.e2e;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.TestFixtures;
-import com.residuosolido.app.model.User;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
+import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
@@ -62,6 +65,8 @@ class EndToEndFlowsTest {
     private RequestMetricsService requestMetricsService;
     @MockBean
     private CityOrgService cityOrgService;
+    @MockBean
+    private OrganizationService organizationService;
 
     // ═══════════════════════════════════════════════════════
     // Flujo 6: Tracking de invitado (track.html)
@@ -163,11 +168,14 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo8_orgPanel_loadsWithStats() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
-        org.setFirstName("Cooperativa");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
+        org.setName("Cooperativa");
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
         when(requestMetricsService.getOrgRequestStats(org))
                 .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L, "rejected", 2L));
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
@@ -182,13 +190,16 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo8_orgProfile_loadsAndCanUpdate() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
-        org.setFirstName("Cooperativa");
-        org.setEmail("coop@test.com");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
+        org.setName("Cooperativa");
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
-        when(userService.updateProfile(any(), any(), any(), any(), any(), any())).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
+        when(userService.updateProfile(any(), any(), any(), any(), any())).thenReturn(authOrg);
+        when(organizationService.updateProfile(any(), any(), any(), any(), any())).thenReturn(org);
 
         mockMvc.perform(get(Routes.ORG_PROFILE))
                 .andExpect(status().isOk())
@@ -212,10 +223,13 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgRequestsList_loadsSuccessfully() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
         when(requestMetricsService.getOrgRequestStats(org))
                 .thenReturn(Map.of("pending", 0L, "inProgress", 0L, "completed", 0L, "rejected", 0L));
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
@@ -231,8 +245,10 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgRequestDetail_loadsSuccessfully() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
-        org.setUsername("coop");
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
 
         Request req = new Request();
         req.setId("req1");
@@ -241,7 +257,8 @@ class EndToEndFlowsTest {
         req.updateDraft(City.RIVERA, "Calle 1", null, List.of(MaterialCategory.PLASTICO));
         req.setGuestContact("Juan", "+59899123456", null);
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
         when(requestService.getOwnedOrgRequest("req1", org)).thenReturn(req);
 
         mockMvc.perform(get(Routes.ORG_REQUEST, "req1"))
@@ -254,10 +271,14 @@ class EndToEndFlowsTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void flujo5_orgAcceptRequest_redirectsOnSuccess() throws Exception {
-        User org = TestFixtures.organization("o1", City.RIVERA);
+        User authOrg = new User();
+        authOrg.setUsername("coop");
+        authOrg.setRole(Role.ORGANIZATION);
+        Organization org = TestFixtures.organization("o1", City.RIVERA);
         org.setUsername("coop");
 
-        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
+        when(organizationService.findByUser(authOrg)).thenReturn(org);
 
         mockMvc.perform(post(Routes.ORG_REQUEST_ACCEPT, "req1").with(csrf())
                         .param("confirmedSlot", "MANANA"))

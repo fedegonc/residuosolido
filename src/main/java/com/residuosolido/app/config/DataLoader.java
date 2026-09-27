@@ -5,8 +5,11 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.model.Organization;
+import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.slf4j.Logger;
@@ -33,17 +36,20 @@ public class DataLoader {
 
     @Bean
     CommandLineRunner seedData(UserRepository userRepository,
+                               OrganizationRepository organizationRepository,
                                RequestRepository requestRepository,
                                PasswordEncoder passwordEncoder,
                                @Value("${app.seed:false}") boolean shouldSeed) {
         return args -> {
             if (!shouldSeed) return;
-            seedAll(userRepository, requestRepository, passwordEncoder);
+            seedAll(userRepository, organizationRepository, requestRepository, passwordEncoder);
         };
     }
 
     /** Punto de entrada para tests y DataLoader. Carga todo si la base está vacía. */
-    public static void seedAll(UserRepository userRepo, RequestRepository requestRepo,
+    public static void seedAll(UserRepository userRepo,
+                               OrganizationRepository organizationRepo,
+                               RequestRepository requestRepo,
                                PasswordEncoder encoder) {
         logger.info("=== Iniciando carga de datos de prueba ===");
         if (userRepo.count() > 0 || requestRepo.count() > 0) {
@@ -54,17 +60,17 @@ public class DataLoader {
         User u2 = createUser(userRepo, encoder, "maria", "maria@mail.com", "María García", Role.USER, "+55 55 654 321", City.LIVRAMENTO);
         User u3 = createUser(userRepo, encoder, "pedro", "pedro@mail.com", "Pedro Martínez", Role.USER, "+598 99 222 333", City.RIVERA);
         User u4 = createUser(userRepo, encoder, "lucia", "lucia@mail.com", "Lucía Fernández", Role.USER, "+55 55 111 222", City.LIVRAMENTO);
-        User o1 = createOrg(userRepo, encoder, "coopverde", "coopverde@mail.com", "Cooperativa Verde", "+598 99 111 222", City.RIVERA,
+        Organization o1 = createOrg(userRepo, organizationRepo, encoder, "coopverde", "coopverde@mail.com", "Cooperativa Verde", "+598 99 111 222", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.VIDRIO));
-        User o2 = createOrg(userRepo, encoder, "reciclarivera", "reciclarivera@mail.com", "ReciclaRivera", "+598 99 333 444", City.RIVERA,
+        Organization o2 = createOrg(userRepo, organizationRepo, encoder, "reciclarivera", "reciclarivera@mail.com", "ReciclaRivera", "+598 99 333 444", City.RIVERA,
                 List.of(MaterialCategory.METAL, MaterialCategory.PLASTICO));
-        User o3 = createOrg(userRepo, encoder, "ecofrontera", "ecofrontera@mail.com", "EcoFrontera", "+598 99 555 666", City.RIVERA,
+        Organization o3 = createOrg(userRepo, organizationRepo, encoder, "ecofrontera", "ecofrontera@mail.com", "EcoFrontera", "+598 99 555 666", City.RIVERA,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO, MaterialCategory.METAL));
-        User o4 = createOrg(userRepo, encoder, "reciclart", "reciclart@mail.com", "ReciclaRT", "+55 55 333 444", City.LIVRAMENTO,
+        Organization o4 = createOrg(userRepo, organizationRepo, encoder, "reciclart", "reciclart@mail.com", "ReciclaRT", "+55 55 333 444", City.LIVRAMENTO,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.METAL));
-        User o5 = createOrg(userRepo, encoder, "coopesperanca", "coopesperanca@mail.com", "Cooperativa Esperança", "+55 55 777 888", City.LIVRAMENTO,
+        Organization o5 = createOrg(userRepo, organizationRepo, encoder, "coopesperanca", "coopesperanca@mail.com", "Cooperativa Esperança", "+55 55 777 888", City.LIVRAMENTO,
                 List.of(MaterialCategory.VIDRIO, MaterialCategory.PLASTICO));
-        User o6 = createOrg(userRepo, encoder, "verdefronteira", "verdefronteira@mail.com", "Verde Fronteira", "+55 55 999 000", City.LIVRAMENTO,
+        Organization o6 = createOrg(userRepo, organizationRepo, encoder, "verdefronteira", "verdefronteira@mail.com", "Verde Fronteira", "+55 55 999 000", City.LIVRAMENTO,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO, MaterialCategory.METAL, MaterialCategory.PLASTICO));
 
         createRequest(requestRepo, u1, o1, "Calle 18 de Julio 123", "Frente al supermercado", City.RIVERA,
@@ -93,7 +99,7 @@ public class DataLoader {
         createRequest(requestRepo, u2, o6, "Rua dos Imigrantes 120", "Frente ao mercado", City.LIVRAMENTO,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO), RequestStatus.REJECTED, null);
 
-        seedDefenseDemoData(userRepo, requestRepo, encoder, o4);
+        seedDefenseDemoData(userRepo, organizationRepo, requestRepo, encoder, o4);
 
         logger.info("=== Carga de demostración completada ===");
     }
@@ -110,15 +116,19 @@ public class DataLoader {
      *     CityAwareLocaleResolver según la ciudad del usuario logueado, no por preferencia
      *     guardada — un ciudadano con city=LIVRAMENTO ya demuestra el bilingüismo.
      */
-    private static void seedDefenseDemoData(UserRepository userRepo, RequestRepository requestRepo, PasswordEncoder encoder, User orgLivramento) {
-        User renacer = createOrg(userRepo, encoder, "renacer", "renacer@mail.com", "Cooperativa Renacer",
+    private static void seedDefenseDemoData(UserRepository userRepo,
+                                            OrganizationRepository organizationRepo,
+                                            RequestRepository requestRepo,
+                                            PasswordEncoder encoder,
+                                            Organization orgLivramento) {
+        Organization renacer = createOrg(userRepo, organizationRepo, encoder, "renacer", "renacer@mail.com", "Cooperativa Renacer",
                 "+598 99 100 001", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.CARTON, MaterialCategory.VIDRIO, MaterialCategory.METAL));
-        User vidaVerde = createOrg(userRepo, encoder, "vidaverde", "vidaverde@mail.com", "Vida Verde",
+        Organization vidaVerde = createOrg(userRepo, organizationRepo, encoder, "vidaverde", "vidaverde@mail.com", "Vida Verde",
                 "+598 99 100 002", City.RIVERA,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.CARTON, MaterialCategory.VIDRIO));
         // Perfil reducido a propósito: ya no acepta PLASTICO (ver solicitud #8 abajo).
-        User papelAmigo = createOrg(userRepo, encoder, "papelamigo", "papelamigo@mail.com", "Papel Amigo",
+        Organization papelAmigo = createOrg(userRepo, organizationRepo, encoder, "papelamigo", "papelamigo@mail.com", "Papel Amigo",
                 "+598 99 100 003", City.RIVERA,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.CARTON));
 
@@ -191,11 +201,11 @@ public class DataLoader {
                 List.of(MaterialCategory.VIDRIO), List.of(MaterialCategory.METAL),
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.VIDRIO), List.of(MaterialCategory.CARTON));
         User[] citizens = {rosa, mateo, carla, diego};
-        User[] orgs = {renacer, vidaVerde, papelAmigo};
+        Organization[] orgs = {renacer, vidaVerde, papelAmigo};
         java.util.Random rng = new java.util.Random(2026);
         for (int i = 0; i < 22; i++) {
             User citizen = citizens[rng.nextInt(citizens.length)];
-            User org = orgs[rng.nextInt(orgs.length)];
+            Organization org = orgs[rng.nextInt(orgs.length)];
             String barrio = barrios[rng.nextInt(barrios.length)];
             List<MaterialCategory> materials = combos.get(rng.nextInt(combos.size()));
             LocalDateTime createdAt = now.minusDays(1 + rng.nextInt(180));
@@ -218,25 +228,32 @@ public class DataLoader {
         u.setCity(city);
         u.setActive(true);
         u.setCreatedAt(LocalDateTime.now());
-        u.setProfileCompleted(true);
         return repo.save(u);
     }
 
-    private static User createOrg(UserRepository repo, PasswordEncoder encoder,
-                                  String username, String email, String firstName,
-                                  String phone, City city, List<MaterialCategory> acceptedMaterials) {
-        User u = createUser(repo, encoder, username, email, firstName, Role.ORGANIZATION, phone, city);
-        u.setAcceptedMaterials(acceptedMaterials);
-        return repo.save(u);
+    private static Organization createOrg(UserRepository userRepo,
+                                          OrganizationRepository orgRepo,
+                                          PasswordEncoder encoder,
+                                          String username, String email, String firstName,
+                                          String phone, City city, List<MaterialCategory> acceptedMaterials) {
+        User u = createUser(userRepo, encoder, username, email, firstName, Role.ORGANIZATION, phone, city);
+        Organization org = new Organization();
+        org.setId(u.getId());
+        org.setName(firstName);
+        org.setPhone(PhoneNumber.normalize(phone));
+        org.setCity(city);
+        org.setAcceptedMaterials(acceptedMaterials);
+        org.setProfileCompleted(true);
+        return orgRepo.save(org);
     }
 
-    private static void createRequest(RequestRepository repo, User user, User org,
+    private static void createRequest(RequestRepository repo, User user, Organization org,
                                       String address, String ref, City city,
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot) {
         createRequest(repo, user, org, address, ref, city, materials, status, slot, null, null);
     }
 
-    private static void createRequest(RequestRepository repo, User user, User org,
+    private static void createRequest(RequestRepository repo, User user, Organization org,
                                       String address, String ref, City city,
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
                                       String guestName, String guestPhone) {
@@ -245,7 +262,7 @@ public class DataLoader {
 
     /** Overload con trackingCode/createdAt explícitos (dataset de defensa) — los 2 overloads
      * de arriba siguen igual, delegan acá con null y conservan su comportamiento previo. */
-    private static void createRequest(RequestRepository repo, User user, User org,
+    private static void createRequest(RequestRepository repo, User user, Organization org,
                                       String address, String ref, City city,
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
                                       String guestName, String guestPhone, String trackingCode, LocalDateTime createdAt) {

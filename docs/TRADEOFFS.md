@@ -1250,3 +1250,118 @@ estuviera rota, esos tests hubieran mostrado el código crudo y lo habrían
 detectado.
 
 Suite completa: 463/463, 0 failures. Ver `docs/MEJORAS.md` #216.
+
+## 42. Registro: errores por campo y autenticación inmediata
+
+**Decisión:** un registro válido inicia sesión automáticamente y navega al
+área correspondiente al rol. Un registro inválido vuelve al mismo formulario,
+conserva nombre, teléfono, país y tipo de cuenta, limpia solamente el PIN y
+muestra el mensaje junto al campo que debe corregirse.
+
+**Por qué:** obligar a repetir nombre/teléfono o pasar inmediatamente por un
+segundo formulario de login no agrega seguridad: el usuario acaba de demostrar
+que conoce el PIN al crear la cuenta. Sí agrega fricción y hace que un error
+común —por ejemplo, un dígito extra en el celular— parezca un reinicio de la
+aplicación.
+
+| Opción | Decisión |
+|---|---|
+| **Autenticar después de persistir (elegida)** | Reutiliza `AuthenticationManager`, rota el ID de sesión y guarda el `SecurityContext`; mantiene exactamente las reglas del login normal |
+| Redirigir a `/entrar` | Más simple, pero obliga a repetir credenciales sin aportar una verificación nueva |
+| Conservar también el PIN cuando hay error | Reduce una repetición, pero vuelve a renderizar o retener un secreto; se descartó y solo se conservan campos no sensibles |
+| Solo alerta global | Comunica que algo falló, pero no dónde ni cómo corregirlo; se mantiene como resumen y se agrega error contextual por campo |
+
+El teléfono sigue validándose server-side con `PhoneNumber`; el controller
+traduce sus errores tipados a `BindingResult.rejectValue("phoneNational", ...)`.
+La sesión no se crea manualmente como una identidad arbitraria: las mismas
+credenciales pasan por `AuthenticationManager`, y recién el resultado
+autenticado se almacena en sesión. Ver `docs/MEJORAS.md` #220.
+
+---
+
+## 43. Separación User / Organization: auth y perfil de negocio en colecciones distintas
+
+**Decisión:** el modelo mono-`User` (campos de ciudadano + perfil de organización en un solo documento) se separó en `User` (autenticación y contacto básico) y `Organization` (perfil de negocio: ciudad, teléfono, materiales aceptados, onboarding).
+
+**Por qué:** mezclar en una sola colección obligaba a que la mitad de los campos de cada documento fueran semánticamente vacíos, dificultaba reportes limpios de organizaciones y complicaba la integridad de datos (por ejemplo, `acceptedMaterials` solo tiene sentido para ORGANIZATION). La separación resuelve directamente el AMBIGUO del Bloque 3 (`USER.completeProfile()`): el campo `profileCompleted` deja de existir para ciudadanos porque solo es una precondición de negocio para organizaciones.
+
+| Opción | Decisión |
+|---|---|
+| **A — separar solo el perfil de negocio, mantener `User` para auth (elegida)** | `Organization` vive en su propia colección; `User` conserva rol ORGANIZATION y el enlace es por `userId`. Costo acotado y no se duplica autenticación. |
+| B — dos identidades independientes (`User` y `Organization` con login propio) | Modelo conceptualmente más puro, pero duplicaría contacto, lógica de login y roles; costo mucho mayor y sin beneficio real para el MVP. |
+| C — mantener mono-`User` | Menor refactor inmediato, pero perpetúa la ambigüedad y hace más caro cualquier futuro panel de verificación/admin de organizaciones. |
+
+**Costo real:** migración de datos existentes. Para no invalidar referencias, `Organization._id` coincide con `User._id`. La migración (`OrganizationProfileMigration`) es idempotente y opera con BSON crudo, por lo que no depende del mapper actual durante la transición. MongoDB standalone no soporta transacciones multi-documento: crear `Organization` + limpiar `User` se hace en dos `bulkWrite` separadas; si falla entre ambas, una segunda ejecución al arranque se recupera (la org ya existe → solo se limpia el documento residual).
+
+**Implicancias de seguridad:** `SecurityConfig` sigue usando `hasRole("ORGANIZATION")` sobre `User.role`; la existencia de un `Organization` no cambia la autorización. `OrgProfileController` y `OrgRequestController` resuelven primero el `User` autenticado y luego su `Organization` por `userId`; si un usuario ORGANIZATION no tiene registro asociado, se maneja como perfil incompleto.
+
+**Datos cruzados JavaScript:** el selector de organizaciones en `/solicitar` sigue recibiendo materiales aceptados a través de `data-materials` generado por `Organization.getAcceptedMaterialsCsv()` — se mantiene el contrato explícito, sin depender de `toString()`.
+
+Suite completa: 475/475, 0 failures. Ver `docs/MEJORAS.md` #226.
+
+---
+
+## 44. Normalización case-insensitive del username
+
+**Decisión:** los usernames se almacenan y comparan en forma canónica (`trim + lowercase`). El login se resuelve con `Username.canonical(raw)`, por lo que "Juan", "juan" y "  juan  " apuntan a la misma cuenta. El registro rechaza duplicados canónicos.
+
+**Por qué:** evita cuentas duplicadas por diferencia de mayúsculas y hace consistentes el registro y el bloqueo por intentos fallidos (`RateLimiter`), que ya usaba `toLowerCase()` manualmente. Sustituye ese `toLowerCase()` local por una única función de dominio.
+
+| Opción | Decisión |
+|---|---|
+| **Canonicizar al guardar y al buscar (elegida)** | Simple, consistente, no requiere índices con collation. |
+| Mantener display original + índice case-insensitive | Más fiel al nombre que escribe el usuario, pero requiere crear un campo `usernameCanonical` o un índice con collation y complica la unicidad. |
+| Solo canonicizar en login | No resuelve duplicados en registro. |
+
+**Costo real:** la normalización es una sola línea (`trim().toLowerCase(Locale.ROOT)`), pero cambia el contrato de usernames existentes. Se agregó `UsernameNormalizationMigration` para convertir usernames viejos al arranque; si hay duplicados silenciosos preexistentes, la migración loggea el error y los deja intactos en vez de romper el arranque. En un entorno con datos reales, esos conflictos deben resolverse manualmente una sola vez.
+
+Suite completa: 476/476, 0 failures. Ver `docs/MEJORAS.md` #228.
+
+---
+
+## 45. Asunción de nodo único para rate limiting, uploads y notificaciones
+
+**Decisión:** el MVP asume una única instancia corriendo en Render. `RateLimiter` usa `ConcurrentHashMap` en memoria, `LocalImageService` escribe en `uploads/` del filesystem local, y `NotificationService` emite la notificación en el mismo hilo después del save de la request.
+
+**Por qué:** elimina infraestructura externa (Redis, S3, cola de mensajería) para un flujo de pruebas y demo. Los costos de integración y operación superan el valor para una app académica.
+
+| Opción | Decisión |
+|---|---|
+| **In-memory / local (elegida)** | Cero infra extra; sirve para desarrollo y un solo nodo en producción. |
+| Redis + Bucket4j + S3/Cloudinary + outbox | Correcto para multi-node, pero agrega dependencias, configuración y costo que el MVP no necesita. |
+
+**Costo real:** con más de una réplica o filesystem efímero, el rate limit/lockout por usuario se duplica por nodo, las imágenes pueden perderse y las notificaciones pueden no persistirse si el proceso muere entre el save de la request y el save de la notification. Esto está documentado como limitación en `docs/ARQUITECTURA.md` y aceptado para el MVP.
+
+Suite completa: 476/476, 0 failures. Ver `docs/MEJORAS.md` #228.
+
+---
+
+## 46. Eliminar `RequestStateMachine`: verificar la máquina de estados real, no la envoltura
+
+Contexto: auditoría de "máquinas de estados y mecanismos de invariantes ya existentes" (grep de patrones `enum.*Status`/`StateMachine` como texto de búsqueda, no como cita de clase) encontró que la máquina de estados REAL de `Request` vive en `enums/RequestStatus.java` (`transitionAccept/Complete/Reject()`, cada uno lanza `StateException` si la transición es inválida) — no en el `@Component` que se eliminó, agregado originalmente en #194/#195.
+
+**Lo que se verificó, no se asumió:** `RequestStateMachine.accept(request, slot)` chequeaba `request.getStatus() != PENDING` y lanzaba `StateException` ANTES de llamar a `request.accept(slot)` — que internamente vuelve a chequear exactamente lo mismo vía `status.transitionAccept()`. Mismo patrón en `reject`/`complete`. Además, `grep -rn "stateMachine\." src/main/java/` confirmó que los 5 métodos `canEdit/canDelete/canAccept/canComplete/canReject` no tenían NINGÚN caller — todo el código (templates, `RequestService`) siempre usó `request.canBeEdited()`/`canBeDeleted()` directo.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Eliminar `RequestStateMachine`, llamar `request.accept/reject/complete()` directo desde `RequestService` (elegida)** | El invariante ya está enforced en `RequestStatus` — la envoltura no agregaba una segunda línea de defensa real, agregaba una duplicación textual del mismo chequeo y 5 métodos que nadie llamaba. Menos código, mismo comportamiento observable (verificado: 501/501 tests, incluida una matriz exhaustiva nueva) |
+| Mantener el wrapper eliminado como "capa de dominio explícita" | Argumento válido en abstracto (separar la máquina de estados de la entidad), pero en este código concreto la entidad (`Request`) YA delega a `RequestStatus` — el wrapper no era esa capa, era redundante sobre una capa que ya existía |
+| Conectar los 5 métodos muertos a algo real (usarlos desde los templates en vez de `request.canBeEdited()`) | Hubiera sido "arreglar" código muerto dándole un propósito artificial — cambiar los templates para usar un servicio inyectado en vez de un método directo del modelo no aporta nada, es la abstracción prematura que el resto de esta sesión evitó |
+
+**Lo que se agregó para no perder cobertura real:**
+- `RequestStatusTransitionMatrixTest` — matriz exhaustiva 4 estados × 3 transiciones (12 casos), contra `RequestStatus` directo (la fuente de verdad), no contra el wrapper eliminado.
+- `RequestStatusSandboxSyncTest` — hallazgo colateral de la misma auditoría: `scratch/sim/Domain.java` declara en un comentario "portado tal cual de RequestStatus.java" pero nada lo verificaba automáticamente (scratch/ no es source root de Maven, no se puede importar desde `src/test`). El test lee ambos archivos como texto, extrae la tabla de transiciones semántica de cada uno (qué estados de origen habilita cada `transitionX()`, a qué destino) y las compara — tolerante si `scratch/` no existe (gitignoreado). Verificado que detecta divergencia real: se rompió a propósito una condición del sandbox, el test falló mostrando el diff exacto, se restauró la condición, volvió a pasar.
+
+Suite completa: 501/501, 0 failures (más 1 falla preexistente de un doc de Devin sin relación, no tocada). Ver `docs/MEJORAS.md` #221.
+
+## 47. `TrackingCode.canonical`: búsqueda de invitados case-insensitive
+
+Bug real encontrado al auditar "cada concepto con formato propio tiene su clase canonical": los códigos de seguimiento de invitado se generan en mayúsculas, pero `RequestService.getGuestRequests` solo hacía `trackingCode.trim()`. Un invitado que copiaba su código a mano en minúsculas (`abc123` vs `ABC123` almacenado) obtenía lista vacía en silencio en `/rastrear` — mismo patrón que el bug de username resuelto en §44, pero en el canal de lectura anónimo.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Value object `TrackingCode.canonical` (trim + uppercase `Locale.ROOT`) en el punto de lookup (elegida)** | El bug ya se manifestó — criterio de la regla corregida: value object cuando el costo de no tenerlo se materializó, no como política general. Simétrico con `Username.canonical`/`PhoneNumber` |
+| `.trim().toUpperCase()` inline sin clase | Mismo comportamiento, pero pierde el punto único de la regla y la simetría con los otros identificadores canonicalizados |
+| Query Mongo case-insensitive (regex/collation) | Más cara y frágil: el código almacenado ya es uppercase, el problema es solo la entrada del usuario — canonicalizar la entrada es más simple que relajar el índice |
+
+Sin migración: los códigos guardados ya son uppercase; solo la entrada se canonicaliza. Sandbox (`scratch/sim`) sincronizado con el mismo contrato y un check `getGuestRequests.lowercaseCode`. Ver `docs/MEJORAS.md` #229.

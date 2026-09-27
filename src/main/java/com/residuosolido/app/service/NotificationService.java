@@ -1,6 +1,8 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.NotificationType;
+import com.residuosolido.app.exception.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.Notification;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
@@ -33,21 +35,33 @@ public class NotificationService {
      * concurrencia, no se notifica un estado que no quedó persistido.
      */
     public void notifyRequester(Request request, NotificationType type) {
+        if (request == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         if (request.getUser() == null) return; // invitado: sin bandeja, canal externo diferido
         notificationRepository.save(
                 new Notification(request.getUser(), request.getId(), type, request.getConfirmedSlot()));
     }
 
     public List<Notification> listFor(User user) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         return notificationRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     public long unreadCount(User user) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         return notificationRepository.countByUserAndReadFalse(user);
     }
 
     /** Marca como leídas las notificaciones listadas (el usuario ya las vio). */
     public void markRead(List<Notification> notifications) {
+        if (notifications == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
         List<Notification> unread = notifications.stream().filter(n -> !n.isRead()).toList();
         if (!unread.isEmpty()) {
             unread.forEach(Notification::markRead);

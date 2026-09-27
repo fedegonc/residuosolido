@@ -2,7 +2,6 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,19 +22,19 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
     private UserService userService;
     private UserRegistrationService userRegistrationService;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
         userService = new UserService(userRepository);
-        userRegistrationService = new UserRegistrationService(userRepository, passwordEncoder);
+        userRegistrationService = new UserRegistrationService(userRepository, passwordEncoder, mock(OrganizationService.class));
     }
 
-    // ===== PIN de 4 dígitos en registro (fricción mínima para pruebas, ver DEFENSA.md §24) =====
+    // ===== PIN de 4 dígitos en registro =====
 
     @Test
     void validateUserRegistration_invalidPin_returnsError() {
@@ -114,100 +112,53 @@ class UserServiceTest {
 
         when(passwordEncoder.encode("1234")).thenReturn("encoded");
         when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         User result = userRegistrationService.registerUser(user, true);
         assertEquals(Role.ORGANIZATION, result.getRole());
     }
 
-    // ===== updateProfile en orgs: auto-completa el perfil cuando hay phone + city =====
-
-    @Test
-    void updateProfile_orgWithoutPhone_doesNotCompleteProfile() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
-        org.setRole(Role.ORGANIZATION);
-
-        when(userRepository.findById("1")).thenReturn(Optional.of(org));
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        userService.updateProfile(org, null, null, null, City.RIVERA, null);
-
-        assertNotEquals(Boolean.TRUE, org.getProfileCompleted());
-    }
-
-    @Test
-    void updateProfile_orgWithoutCity_doesNotCompleteProfile() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
-        org.setRole(Role.ORGANIZATION);
-
-        when(userRepository.findById("1")).thenReturn(Optional.of(org));
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        userService.updateProfile(org, null, null, "+59899123456", null, null);
-
-        assertNotEquals(Boolean.TRUE, org.getProfileCompleted());
-    }
+    // ===== updateProfile: contacto básico del ciudadano =====
 
     @Test
     void updateProfile_invalidPhoneFormat_throwsPhoneInvalid() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
-        org.setRole(Role.ORGANIZATION);
+        User user = new User();
+        user.setId("1");
+        user.setUsername("citizen");
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> userService.updateProfile(org, null, null, "099123456", City.RIVERA, null));
+                () -> userService.updateProfile(user, null, null, "099123456", City.RIVERA));
         assertEquals("error.phone.invalid", ex.getMessage());
     }
 
     @Test
-    void updateProfile_orgWithPhoneAndCity_completesProfile() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
-        org.setRole(Role.ORGANIZATION);
+    void updateProfile_withPhoneAndCity_updatesContact() {
+        User user = new User();
+        user.setId("1");
+        user.setUsername("citizen");
 
-        when(userRepository.findById("1")).thenReturn(Optional.of(org));
+        when(userRepository.findById("1")).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        userService.updateProfile(org, null, null, "+598 99 123 456", City.RIVERA, null);
+        User result = userService.updateProfile(user, null, null, "+598 99 123 456", City.RIVERA);
 
-        assertTrue(org.getProfileCompleted());
-        assertEquals(City.RIVERA, org.getCity());
-        verify(userRepository).save(any(User.class));
+        assertEquals("+59899123456", result.getPhone());
+        assertEquals(City.RIVERA, result.getCity());
     }
 
     @Test
-    void updateProfile_withMaterials_persistsAcceptedMaterials() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
+    void updateProfile_withEmail_setsEmailOnUser() {
+        User user = new User();
+        user.setId("1");
+        user.setUsername("citizen");
 
-        when(userRepository.findById("1")).thenReturn(Optional.of(org));
+        when(userRepository.findById("1")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailIgnoreCase("nueva@test.com")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        userService.updateProfile(org, null, null, null, null,
-                List.of(MaterialCategory.PLASTICO, MaterialCategory.VIDRIO));
+        User result = userService.updateProfile(user, "nueva@test.com", null, null, null);
 
-        assertEquals(List.of(MaterialCategory.PLASTICO, MaterialCategory.VIDRIO), org.getAcceptedMaterials());
-    }
-
-    @Test
-    void updateProfile_emptyMaterialsList_clearsAcceptedMaterials() {
-        User org = new User();
-        org.setId("1");
-        org.setUsername("coop");
-        org.setAcceptedMaterials(List.of(MaterialCategory.PLASTICO));
-
-        when(userRepository.findById("1")).thenReturn(Optional.of(org));
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        userService.updateProfile(org, null, null, null, null, List.of());
-
-        assertTrue(org.getAcceptedMaterials().isEmpty());
+        assertEquals("nueva@test.com", result.getEmail());
     }
 
     // ===== findAuthenticatedUserByUsername =====
@@ -307,8 +258,6 @@ class UserServiceTest {
 
     @Test
     void updateUser_emailTakenInRace_throwsValidationException() {
-        // check-then-act: el check pasa (email libre en T0) pero otro perfil lo
-        // tomó antes del save -> el índice único sparse tira DuplicateKeyException.
         User existing = new User();
         existing.setId("1");
 
@@ -358,39 +307,5 @@ class UserServiceTest {
         User result = userService.updateUser(form);
         assertEquals("previo@test.com", result.getEmail());
         verify(userRepository, never()).findByEmailIgnoreCase(any());
-    }
-
-    @Test
-    void updateUser_explicitProfileCompletedFalse_overridesExisting() {
-        User existing = new User();
-        existing.setId("1");
-        existing.setProfileCompleted(true);
-
-        User form = new User();
-        form.setId("1");
-        form.setProfileCompleted(false);
-
-        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        User result = userService.updateUser(form);
-        assertFalse(result.getProfileCompleted());
-    }
-
-    // ===== updateProfile: email =====
-
-    @Test
-    void updateProfile_withEmail_setsEmailOnUser() {
-        User user = new User();
-        user.setId("1");
-        user.setUsername("citizen");
-
-        when(userRepository.findById("1")).thenReturn(Optional.of(user));
-        when(userRepository.findByEmailIgnoreCase("nueva@test.com")).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        User result = userService.updateProfile(user, "nueva@test.com", null, null, null);
-
-        assertEquals("nueva@test.com", result.getEmail());
     }
 }

@@ -90,7 +90,7 @@ public class RateLimiter {
     }
 
     private String key(String username) {
-        return username == null ? "" : username.toLowerCase();
+        return username == null ? "" : com.residuosolido.app.model.Username.canonical(username);
     }
 
     // ========== Barrido compartido ==========

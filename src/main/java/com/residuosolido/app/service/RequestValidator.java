@@ -5,6 +5,7 @@ import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.User;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,10 @@ public class RequestValidator {
     /**
      * Valida que los materiales seleccionados sean aceptados por la organización.
      */
-    public void validateMaterials(User organization, List<MaterialCategory> materials) {
+    public void validateMaterials(Organization organization, List<MaterialCategory> materials) {
+        if (organization == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
+        }
         if (organization.getAcceptedMaterials() == null || materials == null || materials.isEmpty()
                 || materials.stream().anyMatch(m -> m == null || !organization.getAcceptedMaterials().contains(m))) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_NOT_ACCEPTED);

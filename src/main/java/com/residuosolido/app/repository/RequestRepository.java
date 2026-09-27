@@ -3,6 +3,7 @@ package com.residuosolido.app.repository;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.model.Organization;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import java.util.List;
 @Repository
 public interface RequestRepository extends MongoRepository<Request, String> {
     List<Request> findByUser(User user, Pageable pageable);
-    List<Request> findByOrganizationOrderByCreatedAtDesc(User organization, Pageable pageable);
+    List<Request> findByOrganizationOrderByCreatedAtDesc(Organization organization, Pageable pageable);
     List<Request> findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(String guestPhone, String trackingCode);
-    List<Request> findByOrganizationAndStatusOrderByCreatedAtDesc(User organization, RequestStatus status, Pageable pageable);
+    List<Request> findByOrganizationAndStatusOrderByCreatedAtDesc(Organization organization, RequestStatus status, Pageable pageable);
 }
