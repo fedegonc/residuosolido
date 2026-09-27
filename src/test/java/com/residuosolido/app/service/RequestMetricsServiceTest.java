@@ -95,13 +95,14 @@ class RequestMetricsServiceTest {
     }
 
     @Test
-    void getOrgRequestStats_returnsOnlyThreeKeys_noTotal() {
+    void getOrgRequestStats_returnsFourKeys_noTotal() {
         mockAggregationResult(null);
         Map<String, Long> data = service.getOrgRequestStats(organization("org1"));
-        assertEquals(3, data.size());
+        assertEquals(4, data.size());
         assertTrue(data.containsKey("pending"));
         assertTrue(data.containsKey("inProgress"));
         assertTrue(data.containsKey("completed"));
+        assertTrue(data.containsKey("rejected"));
         assertFalse(data.containsKey("total"));
     }
 
@@ -134,10 +135,11 @@ class RequestMetricsServiceTest {
     }
 
     @Test
-    void getUserRequestStats_returnsFourKeys_includingTotal() {
+    void getUserRequestStats_returnsFiveKeys_includingTotal() {
         mockAggregationResult(null);
         Map<String, Long> data = service.getUserRequestStats(user("u1"));
-        assertEquals(4, data.size());
+        assertEquals(5, data.size());
         assertTrue(data.containsKey("total"));
+        assertTrue(data.containsKey("rejected"));
     }
 }

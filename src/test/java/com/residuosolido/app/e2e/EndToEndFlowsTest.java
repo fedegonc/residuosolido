@@ -169,14 +169,14 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
         when(requestMetricsService.getOrgRequestStats(org))
-                .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L));
+                .thenReturn(Map.of("pending", 3L, "inProgress", 1L, "completed", 10L, "rejected", 2L));
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS))
                 .andExpect(status().isOk())
                 .andExpect(view().name("org/requests"))
-                .andExpect(model().attributeExists("pendingCount", "inProgressCount", "completedCount", "requests", "breadcrumbs"));
+                .andExpect(model().attributeExists("pendingCount", "inProgressCount", "completedCount", "rejectedCount", "requests", "breadcrumbs"));
     }
 
     @Test
@@ -216,6 +216,8 @@ class EndToEndFlowsTest {
         org.setUsername("coop");
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(org);
+        when(requestMetricsService.getOrgRequestStats(org))
+                .thenReturn(Map.of("pending", 0L, "inProgress", 0L, "completed", 0L, "rejected", 0L));
         when(requestService.getOrgRequestsByStatusFilter(any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
 

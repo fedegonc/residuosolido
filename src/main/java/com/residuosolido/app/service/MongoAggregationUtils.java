@@ -27,10 +27,15 @@ public final class MongoAggregationUtils {
     }
 
     /**
-     * Cuenta solicitudes por estado (PENDING/IN_PROGRESS/COMPLETED) filtradas por un
-     * criterio base (ej. organization.$id o user.$id), usando un único facet aggregation.
-     * Compartido por los dos métodos de RequestMetricsService (organización y usuario)
-     * para evitar duplicar la construcción del pipeline.
+     * Cuenta solicitudes por estado (PENDING/IN_PROGRESS/COMPLETED/REJECTED) filtradas
+     * por un criterio base (ej. organization.$id o user.$id), usando un único facet
+     * aggregation. Compartido por los dos métodos de RequestMetricsService (organización
+     * y usuario) para evitar duplicar la construcción del pipeline.
+     *
+     * REJECTED se agregó el 2026-09-26 (antes solo se sumaba en "total" pero no tenía
+     * su propio facet — gap real encontrado rediseñando el panel de organización, que
+     * mostraba un filtro "Rechazadas" sin ningún tile que mostrara su conteo, porque el
+     * dato ni siquiera se calculaba). Ver docs/MEJORAS.md #213.
      *
      * Nota: todos los facets deben estar en un solo stage $facet. Si se usan múltiples
      * stages $facet separados, cada uno reemplaza el documento anterior y solo el último
@@ -48,7 +53,10 @@ public final class MongoAggregationUtils {
         ).as("inProgress")
          .and(Aggregation.match(Criteria.where("status").is(RequestStatus.COMPLETED)),
                 Aggregation.count().as("count")
-        ).as("completed");
+        ).as("completed")
+         .and(Aggregation.match(Criteria.where("status").is(RequestStatus.REJECTED)),
+                Aggregation.count().as("count")
+        ).as("rejected");
 
         if (includeTotal) {
             facetBuilder = facetBuilder.and(Aggregation.count().as("count")).as("total");
@@ -63,6 +71,7 @@ public final class MongoAggregationUtils {
         stats.put("pending", 0L);
         stats.put("inProgress", 0L);
         stats.put("completed", 0L);
+        stats.put("rejected", 0L);
         if (includeTotal) {
             stats.put("total", 0L);
         }
@@ -71,6 +80,7 @@ public final class MongoAggregationUtils {
             stats.put("pending", extractCount(result, "pending"));
             stats.put("inProgress", extractCount(result, "inProgress"));
             stats.put("completed", extractCount(result, "completed"));
+            stats.put("rejected", extractCount(result, "rejected"));
             if (includeTotal) {
                 stats.put("total", extractCount(result, "total"));
             }

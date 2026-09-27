@@ -1,0 +1,81 @@
+/* ═══ ORG PANEL — panel de control de organización ═══
+   Archivo separado (no app.css) porque es específico de una sola página
+   (org/requests.html) y con densidad visual propia — mismo criterio que
+   ya usa el proyecto para JS por página (ver comentario-manifiesto de
+   app.js). Cargado vía layout:fragment="extraHead" solo en esa página.
+
+   Reemplaza el layout anterior (3 tiles sueltos + fila de botones de
+   filtro + lista de cards altas apiladas — "islas" desconectadas) por
+   un panel unificado: cada stat ES el filtro (clicable, con color por
+   estado) + una tabla compacta en vez de cards de 6-7 líneas cada una. */
+
+/* ── Stats/filtros unificados: 5 tarjetas (Todas + 4 estados) ── */
+.org-panel__stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.625rem;margin-bottom:var(--space-lg)}
+.org-panel__stat{
+  display:flex;flex-direction:column;align-items:center;gap:.125rem;
+  padding:.75rem .5rem;border-radius:var(--radius);border:2px solid var(--border);
+  background:var(--surface);text-decoration:none;color:var(--text);
+  transition:border-color var(--transition-base) var(--ease-base),transform var(--transition-fast) var(--ease-out);
+}
+.org-panel__stat:hover{text-decoration:none;transform:translateY(-2px)}
+.org-panel__stat__value{font-size:var(--text-2xl);font-weight:800;line-height:1}
+.org-panel__stat__label{font-size:var(--text-xs);color:var(--muted);text-align:center}
+
+/* Color por estado — mismos tonos que .badge--* para que el ojo asocie
+   panel↔badge sin tener que aprender una paleta nueva. */
+.org-panel__stat--pending .org-panel__stat__value{color:var(--badge-pending-text)}
+.org-panel__stat--progress .org-panel__stat__value{color:var(--badge-progress-text)}
+.org-panel__stat--completed .org-panel__stat__value{color:var(--badge-completed-text)}
+.org-panel__stat--rejected .org-panel__stat__value{color:var(--danger)}
+
+.org-panel__stat--active{border-color:currentColor;background:var(--bg)}
+.org-panel__stat--pending.org-panel__stat--active{border-color:var(--badge-pending-text)}
+.org-panel__stat--progress.org-panel__stat--active{border-color:var(--badge-progress-text)}
+.org-panel__stat--completed.org-panel__stat--active{border-color:var(--badge-completed-text)}
+.org-panel__stat--rejected.org-panel__stat--active{border-color:var(--danger)}
+.org-panel__stat--all.org-panel__stat--active{border-color:var(--primary)}
+
+/* ── Tabla compacta: una fila por solicitud en vez de una card alta ── */
+.org-panel__table{display:flex;flex-direction:column;gap:.375rem}
+.org-panel__row{
+  display:grid;
+  grid-template-columns:6.5rem 6rem 1fr 1fr 8rem;
+  gap:.75rem;align-items:center;
+  padding:.625rem .875rem;border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);
+  font-size:var(--text-sm);
+}
+.org-panel__row--header{
+  background:transparent;border:none;padding:0 .875rem;
+  font-size:var(--text-xs);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;
+}
+.org-panel__cell--contact{display:flex;flex-direction:column;gap:.125rem;min-width:0}
+.org-panel__cell--contact span:first-child{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.org-panel__cell--contact span:last-child{color:var(--muted);font-size:var(--text-xs)}
+.org-panel__cell--address{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.org-panel__cell--actions{display:flex;justify-content:flex-end}
+
+/* Mobile: colapsa a 2 columnas, sin encabezado (no tiene sentido apilado) */
+@media (max-width:768px){
+  .org-panel__stats{grid-template-columns:repeat(2,1fr)}
+  .org-panel__row--header{display:none}
+  .org-panel__row{grid-template-columns:1fr 1fr;grid-template-areas:"date status" "contact contact" "address address" "materials materials" "actions actions";row-gap:.375rem}
+  .org-panel__row > :nth-child(1){grid-area:date}
+  .org-panel__row > :nth-child(2){grid-area:status}
+  .org-panel__row > :nth-child(3){grid-area:contact}
+  .org-panel__row > :nth-child(4){grid-area:address}
+  .org-panel__row > :nth-child(5){grid-area:actions}
+}
+
+/* ── Informe PDF: usa el diálogo nativo de impresión del navegador
+     ("Guardar como PDF" es uno de los destinos estándar) — cero deps
+     nuevas, cero backend nuevo. @media print oculta todo lo que no
+     aporta a un informe (nav, footer, filtros, botones de acción) y
+     muestra solo título + fecha + la tabla ya filtrada en pantalla. ── */
+@media print{
+  .navbar,.footer,.skip-link,.org-panel__stat,.form-actions,
+  .breadcrumb,.edu-links,.org-panel__pdf-btn{display:none!important}
+  .org-panel__stats{display:none!important}
+  .org-panel__row{border:1px solid #999;break-inside:avoid}
+  body{background:#fff}
+}

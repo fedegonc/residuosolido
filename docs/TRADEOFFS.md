@@ -1073,3 +1073,89 @@ teoría:** se sembraron 25 usuarios + 23 solicitudes, se corrió la suite
 completa (458 tests), y los datos sobrevivieron intactos — antes del fix,
 la misma corrida los borraba a 1 usuario + 0 solicitudes. Ver
 `docs/MEJORAS.md` #212.
+
+## 40. Rediseño del panel de organización: panel de control + informe PDF
+
+Contexto: inspeccionando el panel de organización recién sembrado con datos
+reales (#211), el feedback fue directo — la UX estaba "malísima", sin
+estadísticas reales (sentía "estar en cero"), estructurado como "una fila de
+cosas" en vez de un panel de control, con demasiado scroll e "islas"
+visuales sin relación entre sí. Se pidió además una forma de descargar un
+informe en PDF, calificada como "fácil".
+
+**(a) Stats-como-filtro en vez de stats-y-filtros separados.** El layout
+anterior tenía 3 tiles de conteo (decorativos, no clicables) MÁS una fila
+de 5 botones de filtro debajo (mismo estado, representado dos veces, sin
+vínculo visual). Se unificaron en 5 tarjetas (`org-panel__stats`): cada
+una ES el conteo Y el link de filtro, con color de borde/texto igual al de
+`.badge--*` para que el ojo asocie panel↔badge sin aprender una paleta
+nueva, y estado activo marcado con `border-color`.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **5 tarjetas clicables unificadas (elegida)** | Elimina la duplicación conteo/filtro, reduce la altura total de la página (menos elementos, más densos), reutiliza colores ya existentes — cero tokens de diseño nuevos |
+| Mantener tiles + filtros separados, solo agregar el conteo de rechazadas | Resuelve el gap de datos pero no el problema de UX reportado ("fila de cosas", "islas") — hubiera sido un parche sobre el síntoma equivocado |
+| Gráfico (barras/dona) en vez de números | Más "dashboard" visualmente, pero es una dependencia nueva (librería de charts) o SVG hecho a mano para un dato de 4-5 categorías que un número grande ya comunica sin ambigüedad — desproporcionado para el problema real |
+
+**(b) Gap de datos real encontrado en el camino:** el filtro "Rechazadas"
+existía en la UI pero `MongoAggregationUtils.countByStatusFaceted` nunca
+calculaba ese facet — solo se sumaba (sin desglosar) dentro de `total`.
+Se agregó el facet `rejected` al único `$facet` (agregar un segundo stage
+`$facet` separado pisa el resultado del primero — ver comentario en el
+propio método) y se expuso `rejectedCount`/`allCount` en el controller.
+Esto cambió el contrato de `RequestMetricsService` compartido por
+`getUserRequestStats` (usado en `users/requests.html`, no tocado en esta
+tarea) — de 4 a 5 keys ahí, de 3 a 4 en `getOrgRequestStats`. Corregir esto
+"a ojo" (sin correr la suite) hubiera dejado pasar 4 tests rotos: 2 por
+conteo exacto de keys en `RequestMetricsServiceTest`, y 2 en
+`EndToEndFlowsTest` que mockeaban el mapa viejo sin `rejected` → NPE al
+unboxear un `Long` `null` → 404 real en vez del 200 esperado. Se encontró
+corriendo `mvn clean test` después del cambio, no asumiendo que agregar una
+key a un `Map` es siempre inofensivo.
+
+**(c) Tabla compacta en vez de cards apiladas.** Cada solicitud pasó de una
+card de 6-7 líneas (fecha, estado, contacto, teléfono, dirección, botón,
+padding generoso) a una fila de grid de 5 columnas (`org-panel__row`,
+`6.5rem 6rem 1fr 1fr 8rem`) con header. Mismo dato, una fracción de la
+altura — es la medida principal contra "sin tanto scroll". En mobile
+(`max-width:768px`) colapsa a 2 columnas con `grid-template-areas`, sin
+header (no aporta apilado).
+
+**(d) Informe PDF vía impresión del navegador, no generación server-side.**
+
+| Opción | Por qué sí/no |
+|---|---|
+| **`window.print()` + `@media print` (elegida)** | Cero dependencias nuevas (ni iText, ni OpenPDF, ni wkhtmltopdf), cero endpoint nuevo, cero mantenimiento de un segundo template renderer. "Guardar como PDF" es un destino nativo de todo diálogo de impresión moderno. `@media print` oculta nav/footer/stats/botones y deja título+tabla — el mismo dato ya filtrado en pantalla |
+| Generación server-side (iText/OpenPDF) | Da un archivo `.pdf` real descargable sin pasos manuales del usuario y control total del layout impreso, pero agrega una dependencia nueva, un servicio nuevo, y duplica en Java el layout que ya existe en Thymeleaf+CSS — desproporcionado para "un informe con la tabla que ya se ve en pantalla" |
+| Librería JS de export a PDF en cliente (ej. jsPDF) | Evita el backend pero agrega una dependencia JS nueva (el proyecto es vanilla JS a propósito) solo para re-implementar en el cliente lo que el navegador ya ofrece gratis vía `Ctrl+P` → Guardar como PDF |
+
+Se eligió la opción sin dependencias porque el pedido explícito fue "eso es
+fácil" — la lectura correcta de esa frase es "no hace falta construir un
+generador de PDF", no "hacer un generador de PDF simple". Si en el futuro
+se necesita branding/paginación fija no controlable por CSS de impresión
+(ej. reporte con encabezado corporativo en cada página, exportable sin
+intervención del usuario), ese es el trigger para revisitar con generación
+server-side.
+
+**(e) `org-panel.css` como archivo separado** de `app.css`, por ser la
+primera página del proyecto con densidad visual/CSS propio de esa
+magnitud — mismo criterio ya usado para JS por página (`static/js/{página}.js`
+vs `app.js`, ver manifiesto en `app.js`). Cargado solo en `org/requests.html`.
+
+**(f) Dos bugs de framework reales encontrados verificando contra el
+sistema real (no asumidos):**
+- **Thymeleaf:** `th:each` + `th:replace` parametrizado en el mismo
+  `<th:block>` producía `SpelEvaluationException` y HTML malformado (un
+  `DOCTYPE` de error anidado). Fix: separar en `<div th:each>` contenedor +
+  `<th:block th:replace>` hijo — mismo patrón que ya usaba `request-item-card`
+  sin que nadie lo hubiera documentado como obligatorio.
+- **thymeleaf-layout-dialect:** el CSS se duplicaba en el `<head>` renderizado
+  porque el dialect auto-copia al decorador cualquier elemento del `<head>`
+  del contenido que no esté en un `layout:fragment`, pero si además se
+  envuelve explícitamente en uno, se inserta una segunda vez. Fix: el
+  `<link>` va como hijo directo de `<head>`, sin wrapper — el auto-merge lo
+  inserta una sola vez. Verificado con curl contra el proceso real
+  (`grep -c "org-panel.css"` 2→1), no con lectura de código nada más.
+
+Ver `docs/MEJORAS.md` #213. Suite completa verificada dos veces (una por
+bug) hasta 458/458, 0 failures.

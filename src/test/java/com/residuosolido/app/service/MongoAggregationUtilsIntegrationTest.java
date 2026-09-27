@@ -106,7 +106,10 @@ class MongoAggregationUtilsIntegrationTest {
     }
 
     @Test
-    void countByStatusFaceted_rejectedNotCountedInStatuses_butIncludedInTotal() {
+    void countByStatusFaceted_rejectedHasOwnFacet_andIsIncludedInTotal() {
+        // Antes del 2026-09-26, REJECTED se sumaba en "total" pero no tenía su propio
+        // facet — gap real: el panel de organización mostraba un filtro "Rechazadas"
+        // sin ningún dato detrás. Ver docs/MEJORAS.md #213.
         createRequest(RequestStatus.PENDING);
         createRequest(RequestStatus.REJECTED);
 
@@ -117,6 +120,7 @@ class MongoAggregationUtilsIntegrationTest {
         assertEquals(1L, stats.get("pending"));
         assertEquals(0L, stats.get("inProgress"));
         assertEquals(0L, stats.get("completed"));
+        assertEquals(1L, stats.get("rejected"), "REJECTED ahora tiene su propio facet");
     }
 
     @Test

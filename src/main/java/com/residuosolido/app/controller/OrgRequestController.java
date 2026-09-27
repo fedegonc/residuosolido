@@ -61,9 +61,15 @@ public class OrgRequestController {
         }
 
         Map<String, Long> stats = requestMetricsService.getOrgRequestStats(currentOrg);
-        model.addAttribute("pendingCount", stats.get("pending"));
-        model.addAttribute("inProgressCount", stats.get("inProgress"));
-        model.addAttribute("completedCount", stats.get("completed"));
+        long pending = stats.get("pending");
+        long inProgress = stats.get("inProgress");
+        long completed = stats.get("completed");
+        long rejected = stats.get("rejected");
+        model.addAttribute("pendingCount", pending);
+        model.addAttribute("inProgressCount", inProgress);
+        model.addAttribute("completedCount", completed);
+        model.addAttribute("rejectedCount", rejected);
+        model.addAttribute("allCount", pending + inProgress + completed + rejected);
 
         List<Request> requests = requestService.getOrgRequestsByStatusFilter(currentOrg, estado, page, size);
 

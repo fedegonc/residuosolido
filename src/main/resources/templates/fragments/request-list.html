@@ -39,5 +39,27 @@
     </div>
   </div>
 
+  <!-- Fila compacta para el panel de organización — mismo dato que
+       request-item-card de arriba, en una sola fila en vez de 6-7 líneas
+       apiladas. No reemplaza el fragment de arriba: users/requests.html
+       sigue usando el original, este es exclusivo de org/requests.html. -->
+  <div th:fragment="request-item-row(req)" class="org-panel__row">
+    <div class="info-row" th:if="${req.createdAt != null}" style="padding:0">
+      <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yy HH:mm')}"></span>
+    </div>
+    <div th:unless="${req.createdAt != null}">—</div>
+    <div th:replace="~{fragments/ui :: status(${req.status})}"></div>
+    <div class="org-panel__cell--contact">
+      <span th:text="${req.contactName != null ? req.contactName : '—'}"></span>
+      <span th:text="${req.contactPhone}"></span>
+    </div>
+    <div class="org-panel__cell--address" th:text="${req.address}"></div>
+    <div class="org-panel__cell--actions">
+      <a th:href="@{/acopio/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
+        <svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span>
+      </a>
+    </div>
+  </div>
+
 </body>
 </html>
