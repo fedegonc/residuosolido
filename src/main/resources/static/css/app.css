@@ -48,6 +48,8 @@ img{max-width:100%;display:block}button{cursor:pointer;font-family:inherit}
 [id$="DddGroup"].is-hidden{display:block!important;visibility:hidden;height:3.5rem;margin-top:var(--gap)}
 /* Checkboxes de materiales que se filtran por organización — reserva espacio */
 .check-card.is-hidden{display:inline-flex!important;visibility:hidden;pointer-events:none}
+/* Select de organizaciones que se carga dinámicamente — reserva altura mínima */
+#organizationId{min-height:2.5rem}
 :focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 .skip-link{position:absolute;left:-9999px;top:0;z-index:100;padding:.5rem 1rem;background:var(--surface);color:var(--primary);font-weight:600;border-radius:0 0 var(--radius)}
 .skip-link:focus-visible{left:0}
