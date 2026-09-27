@@ -67,6 +67,7 @@
                             th:attr="data-i18n=${'req_city_' + #strings.toLowerCase(c.name())}"
                             th:text="${c.name()}" th:selected="${selectedCity != null and selectedCity == c}"></option>
                   </select>
+                  <input th:if="${isEdit}" type="hidden" name="ciudad" th:value="${request.city}">
                 </div>
                 <div class="field">
                   <label for="organizationId">
@@ -82,6 +83,7 @@
                               th:selected="${request.organization != null and request.organization.id == org.id}"></option>
                     </th:block>
                   </select>
+                  <input th:if="${isEdit}" type="hidden" name="organizationId" th:value="${request.organization != null ? request.organization.id : ''}">
                 </div>
                 <div th:replace="~{fragments/forms :: text('address', 'address', 'text', 'req_form_address', 'Dirección', 'req_form_address_placeholder', 'Ej: Calle 123', true, ${request.address})}"></div>
                 <div th:if="${isEdit}">

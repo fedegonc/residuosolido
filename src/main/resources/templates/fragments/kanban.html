@@ -1,0 +1,70 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+  <div th:fragment="kanban-column(status, requests, basePath, isUserView, titleKey, title, count)"
+       class="kanban-column"
+       th:attr="data-status=${status},id='col-' + ${status}">
+    <div class="kanban-column__header">
+      <span th:attr="data-i18n=${titleKey}" th:text="${title}">Estado</span>
+      <span class="kanban-column__count" th:text="${count}">0</span>
+    </div>
+    <div class="kanban-column__body">
+      <th:block th:if="${requests != null and !requests.isEmpty()}" th:each="req : ${requests}">
+        <th:block th:replace="~{fragments/kanban :: kanban-card(req=${req}, basePath=${basePath}, isUserView=${isUserView})}"></th:block>
+      </th:block>
+      <div th:if="${requests == null or requests.isEmpty()}" class="kanban-column__empty">
+        <span data-i18n="org_requests_empty">No hay solicitudes</span>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="kanban-card(req, basePath, isUserView)" class="kanban-card">
+    <a th:href="@{${basePath} + '/' + ${req.id}}" class="kanban-card__link">
+      <div class="kanban-card__header">
+        <span class="kanban-card__title">
+          <span data-i18n="track_request_id">Solicitud</span> #<span th:text="${req.id}">ID</span>
+        </span>
+        <div th:replace="~{fragments/ui :: status(${req.status})}"></div>
+      </div>
+      <div class="kanban-card__meta">
+        <div class="kanban-card__meta-row" th:if="${req.createdAt != null}">
+          <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#calendar"/></svg>
+          <span th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy')}">01/01/2024</span>
+        </div>
+        <div class="kanban-card__meta-row" th:if="${req.contactName != null}">
+          <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#user"/></svg>
+          <span th:text="${req.contactName}">Nombre</span>
+        </div>
+        <div class="kanban-card__meta-row" th:if="${req.city != null}">
+          <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#location-dot"/></svg>
+          <span th:text="${req.city} + ' — ' + ${req.address}">Ciudad — Dirección</span>
+        </div>
+      </div>
+      <div th:if="${req.hasMaterials()}" class="kanban-card__materials">
+        <span th:each="mat : ${req.materials}" class="tag" th:text="${mat.name()}">Material</span>
+      </div>
+    </a>
+    <div class="kanban-card__actions">
+      <a th:href="@{${basePath} + '/' + ${req.id}}" class="btn btn--outline btn--sm">
+        <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#eye"/></svg>
+        <span data-i18n="req_list_view">Ver</span>
+      </a>
+      <th:block th:if="${isUserView}">
+        <a th:if="${req.canBeEdited()}" th:href="@{${basePath} + '/' + ${req.id} + '/editar'}" class="btn btn--outline btn--sm">
+          <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#pen"/></svg>
+          <span data-i18n="req_list_edit">Editar</span>
+        </a>
+        <form th:if="${req.canBeDeleted()}" th:action="@{${basePath} + '/' + ${req.id}}" method="post"
+              data-confirm="¿Eliminar esta solicitud?" data-i18n-attr="data-confirm:req_delete_confirm">
+          <input type="hidden" name="_method" value="delete">
+          <button type="submit" class="btn btn--outline btn--sm btn--danger">
+            <svg class="icon" aria-hidden="true"><use href="/images/icons.svg#trash"/></svg>
+            <span data-i18n="req_list_delete">Eliminar</span>
+          </button>
+        </form>
+      </th:block>
+    </div>
+  </div>
+
+</body>
+</html>

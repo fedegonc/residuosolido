@@ -278,7 +278,7 @@ El SRS establece el contrato entre:
 | XSS | PREVENTED | Thymeleaf escaping automático |
 | Rate Limiting | REQUIRED | 5 solicitudes/IP/hora (invitados) |
 | Password storage | NO (MVP) | PIN en texto plano → usar bcrypt en prod |
-| Bloqueo cuenta | 3 intentos | 15 min lockout con `LoginAttemptService` |
+| Bloqueo cuenta | 3 intentos | 15 min lockout con `RateLimiter` |
 
 #### **RN-3: Disponibilidad**
 

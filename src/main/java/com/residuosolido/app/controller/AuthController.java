@@ -13,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 /** Controller de autenticación: registro y login. La landing vive en PageController. */
 @Controller
@@ -42,10 +44,19 @@ public class AuthController {
 
     /** Procesa el registro de un nuevo usuario. */
     @PostMapping(Routes.REGISTER)
-    public String registerUser(@ModelAttribute("user") RegistrationForm form,
+    public String registerUser(@Valid @ModelAttribute("user") RegistrationForm form, BindingResult bindingResult,
                                @RequestParam(defaultValue = "false") boolean isOrganization,
                                Model model, HttpServletRequest request,
                                RedirectAttributes redirectAttributes) {
+        // Bean Validation cubre forma (username/PIN) y falla más rápido que antes de
+        // tocar el repositorio — no reemplaza a UserRegistrationService.validateUserRegistration,
+        // que sigue siendo la fuente de verdad para teléfono (compuesto) y unicidad
+        // de username (necesita el repo). Ver comentario en RegistrationForm.
+        if (bindingResult.hasFieldErrors()) {
+            model.addAttribute("errorMessage", messages.msg(bindingResult.getFieldError().getDefaultMessage()));
+            form.setPassword(null);
+            return "auth/register";
+        }
         try {
             if (!rateLimiter.isAllowed(request, "registration")) {
                 throw new ValidationException(ServerMessage.FLASH_REQUEST_RATE_LIMITED);

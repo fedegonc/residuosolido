@@ -24,22 +24,38 @@
   var translations = window.uiCopies || {};
 
   function applyTranslations() {
+    var updates = []; // Batch DOM updates para evitar reflows múltiples
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
-      if (translations[key]) el.textContent = translations[key];
+      if (translations[key]) updates.push(function() { el.textContent = translations[key]; });
     });
     document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
       var key = el.getAttribute('data-i18n-html');
-      if (translations[key]) el.innerHTML = translations[key];
+      if (translations[key]) updates.push(function() { el.innerHTML = translations[key]; });
     });
     document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
-      el.getAttribute('data-i18n-attr').split(',').forEach(function (pair) {
+      var attrStr = el.getAttribute('data-i18n-attr');
+      attrStr.split(',').forEach(function (pair) {
         var parts = pair.trim().split(':');
-        if (parts[1] && translations[parts[1].trim()]) el.setAttribute(parts[0].trim(), translations[parts[1].trim()]);
+        if (parts[1] && translations[parts[1].trim()]) {
+          var attr = parts[0].trim(), key = parts[1].trim();
+          updates.push(function() { el.setAttribute(attr, translations[key]); });
+        }
       });
     });
+    // Ejecuta todas las updates en un solo frame para evitar Layout Shifts múltiples
+    if (updates.length > 0) {
+      requestAnimationFrame(function() {
+        updates.forEach(function(fn) { fn(); });
+      });
+    }
   }
-  applyTranslations();
+  // Aplica traducciones después de que el navegador haya pintado el layout inicial
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyTranslations);
+  } else {
+    requestAnimationFrame(applyTranslations);
+  }
 
   /* ─── Password visibility toggle (componente) ─── */
   document.querySelectorAll('.password-field__toggle').forEach(function (toggleBtn) {

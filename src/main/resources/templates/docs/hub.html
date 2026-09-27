@@ -34,11 +34,11 @@
                 </a>
                 <a th:href="@{/docs/MEJORAS}" class="hub-card">
                     <h3>Estado de Mejoras</h3>
-                    <p>146 implementadas, 17 descartadas, 21 diferidas</p>
+                    <p th:text="${mejorasStats.implementado} + ' implementadas, ' + ${mejorasStats.descartado} + ' descartadas, ' + ${mejorasStats.diferido} + ' diferidas'">— implementadas</p>
                 </a>
                 <a th:href="@{/docs/ENDPOINTS}" class="hub-card">
                     <h3>Endpoints</h3>
-                    <p>43 rutas HTTP, OpenAPI y testing</p>
+                    <p>Rutas HTTP MVC/SSR y testing — sin API REST pública</p>
                 </a>
                 <a th:href="@{/docs/METODOLOGIA}" class="hub-card">
                     <h3>Metodología</h3>
@@ -47,6 +47,14 @@
                 <a th:href="@{/docs/BOILERPLATE_VS_CORE}" class="hub-card">
                     <h3>Boilerplate vs Core</h3>
                     <p>Clasificación: infraestructura genérica vs núcleo de negocio</p>
+                </a>
+                <a th:href="@{/docs/design-system}" class="hub-card">
+                    <h3>🎨 Design System</h3>
+                    <p>Tokens, componentes en vivo y reglas del frontend</p>
+                </a>
+                <a th:href="@{/docs/ux-ui}" class="hub-card">
+                    <h3>🧭 UX/UI &amp; Calidad</h3>
+                    <p>Principios de experiencia, tests y carga</p>
                 </a>
             </div>
         </section>
@@ -67,14 +75,11 @@
             <h2>🧪 Testing & Cobertura</h2>
             <div class="hub-stats">
                 <div class="stat-card">
-                    <h3>Unit Tests</h3>
-                    <p class="stat-value">308</p>
-                    <p class="stat-label">No-browser, sin failures</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Fuzz Tests</h3>
-                    <p class="stat-value">27</p>
-                    <p class="stat-label">PhoneNumber validación exhaustiva</p>
+                    <h3>Tests</h3>
+                    <p class="stat-value">
+                        <code>mvn test -DexcludedGroups=browser</code>
+                    </p>
+                    <p class="stat-label">El conteo cambia con cada mejora — ver docs/MEJORAS.md para el histórico</p>
                 </div>
                 <div class="stat-card">
                     <h3>Jacoco Coverage</h3>
@@ -188,10 +193,6 @@
         <section class="hub-section">
             <h2>🔗 Enlaces Externos</h2>
             <div class="hub-grid">
-                <a th:href="@{/swagger-ui.html}" class="hub-card external">
-                    <h3>Swagger UI</h3>
-                    <p>Documentación automática de endpoints</p>
-                </a>
                 <a href="https://docs.google.com/document/d/1LNOGjk2HbU49zUnKQ6cMVhqFjj4WriRQsG8U7t2K2Ic/edit?usp=sharing"
                    target="_blank" rel="noopener noreferrer" class="hub-card external">
                     <h3>Tesis (Google Docs)</h3>
@@ -206,7 +207,7 @@
         </section>
 
         <footer class="hub-footer">
-            <p>Centro de recursos actualizado 2026-09-24</p>
+            <p>Conteos de mejoras calculados en vivo desde docs/MEJORAS.md — <span th:text="${#temporals.format(#temporals.createNow(),'yyyy-MM-dd HH:mm')}">fecha</span></p>
             <p class="text-muted">Esta página no está enlazada desde el navbar — acceso solo por URL directa</p>
         </footer>
     </div>

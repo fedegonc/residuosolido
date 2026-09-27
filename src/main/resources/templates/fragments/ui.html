@@ -8,7 +8,13 @@
   <th:block th:fragment="status(status)">
     <span class="badge"
           th:classappend="'badge--' + ${#strings.toLowerCase(status.name())}"
-          th:text="${status}">PENDING</span>
+          th:attr="data-i18n=${'req_status_' + #strings.toLowerCase(status.name())}"
+          th:switch="${status.name()}">
+      <th:block th:case="'PENDING'">Pendiente</th:block>
+      <th:block th:case="'IN_PROGRESS'">En curso</th:block>
+      <th:block th:case="'COMPLETED'">Completada</th:block>
+      <th:block th:case="'REJECTED'">Rechazada</th:block>
+    </span>
   </th:block>
 
   <div th:fragment="row(icon, label, value)" th:if="${value != null}" class="info-row">

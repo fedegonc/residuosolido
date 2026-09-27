@@ -44,6 +44,17 @@ public class Messages {
      */
     public String msg(Throwable e) {
         String code = e instanceof Keyed k ? k.key().code() : e.getMessage();
+        return msg(code);
+    }
+
+    /**
+     * Traduce un código i18n crudo (String) — para casos donde la clave no
+     * llega como {@link ServerMessage} ni {@link Throwable}, ej. el
+     * {@code defaultMessage} de un {@code FieldError} de Bean Validation
+     * (las anotaciones en los DTO usan el código ServerMessage tal cual como
+     * {@code message}, ver RegistrationForm).
+     */
+    public String msg(String code) {
         return messageSource.getMessage(code, null, code, LocaleContextHolder.getLocale());
     }
 

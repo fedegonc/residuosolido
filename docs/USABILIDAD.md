@@ -79,7 +79,7 @@ candidato a `docs/MEJORAS.md`.
 
 | Casos de uso | Endpoints |
 |---|---|
-| Completar formulario (ciudad, dirección, materiales, estimaciones); elegir organización; subir foto opcional; recibir código de seguimiento | GET/POST `/solicitar`, GET `/solicitudes/org-options`, GET `/organizaciones` |
+| Completar formulario (ciudad, dirección, materiales, estimaciones); elegir organización; subir foto opcional; recibir código de seguimiento | GET/POST `/solicitar`, GET `/solicitudes/org-options` |
 
 | # | Afirmación | 1–5 |
 |---|---|---|

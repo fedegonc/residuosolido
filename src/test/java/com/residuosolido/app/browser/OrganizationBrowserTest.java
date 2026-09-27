@@ -20,7 +20,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
         login("coopverde", "1234");
 
         page.locator("[data-i18n='org_req_title']").waitFor();
-        assertTrue(page.locator(".stat-card").count() >= 3,
+        assertTrue(page.locator(".org-panel__stat").count() >= 3,
                 "El panel debe mostrar las tarjetas de estadísticas");
         assertTrue(page.url().contains("/acopio"),
                 "La org debe aterrizar en el área de acopio");
@@ -89,11 +89,11 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
         page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
-        // Filtrar por "en curso" si hay filtro
-        Locator inProgressFilter = page.locator("a[href*='status=IN_PROGRESS']");
-        if (inProgressFilter.count() > 0) {
-            inProgressFilter.first().click();
-            page.waitForTimeout(1000);
+        // En el tablero Kanban todas las columnas se ven a la vez; saltar a la de En curso
+        Locator inProgressColumn = page.locator("#col-IN_PROGRESS");
+        if (inProgressColumn.count() > 0) {
+            inProgressColumn.scrollIntoViewIfNeeded();
+            page.waitForTimeout(500);
         }
 
         Locator viewLinks = page.locator("a[href*='/acopio/solicitudes/']");

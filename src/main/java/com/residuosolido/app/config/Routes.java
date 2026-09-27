@@ -55,10 +55,8 @@ public final class Routes {
     public static final String ORG_REQUEST_REJECT = "/acopio/solicitudes/{id}/rechazar";
     public static final String ORG_REQUEST_COMPLETE = "/acopio/solicitudes/{id}/completar";
 
-    // API
-    public static final String API_ORGANIZATIONS_BY_CITY = "/organizaciones";
+    // Opciones de formulario (fragmentos HTML server-side, no API REST)
     public static final String ORG_OPTIONS = "/solicitudes/org-options";
-    public static final String API_ANY = "/api/**";
 
     // Documentación y estáticos
     public static final String DOCS_ANY = "/docs/**";
@@ -67,17 +65,17 @@ public final class Routes {
     public static final String DOCS_DIAGRAM = "/docs/diagrams/{file}.drawio";
     public static final String DOCS_DIAGRAMS_VIEW = "/docs/diagramas";
     public static final String DOCS_HUB = "/docs/hub";
+    public static final String DOCS_DESIGN_SYSTEM = "/docs/design-system";
+    public static final String DOCS_UX_UI = "/docs/ux-ui";
     /** Sandbox de dominio (gitignored): existe en local/dev, 404 en prod porque nunca se sube al repo. */
     public static final String SCRATCH_ANY = "/scratch/**";
     public static final String SCRATCH_FILE = "/scratch/{file}.java";
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
 
-    // Actuator y OpenAPI
+    // Actuator
     public static final String ACTUATOR_HEALTH = "/actuator/health";
-    public static final String SWAGGER_V3 = "/v3/api-docs/**";
-    public static final String SWAGGER_UI = "/swagger-ui/**";
-    public static final String SWAGGER_HTML = "/swagger-ui.html";
+    public static final String ACTUATOR_INFO = "/actuator/info";
 
     /**
      * A qué pantalla "vuelve" cada rol tras login o tras un error — función pura,

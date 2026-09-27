@@ -1,6 +1,6 @@
 # Eco Solicitud — Plataforma de Gestión de Reciclaje
 
-Sistema de **recolección de residuos reciclables** para la Frontera de la Paz (Rivera, Uruguay — Sant'Ana do Livramento, Brasil). MVP implementado bajo metodología iterativa-incremental con arquitectura en capas, 380 tests no-browser, auditoría de diagramas UML y documentación completa para defensa de tesis de **Tecnólogo en Análisis y Desarrollo de Sistemas** (UTEC/UDELAR).
+Sistema de **recolección de residuos reciclables** para la Frontera de la Paz (Rivera, Uruguay — Sant'Ana do Livramento, Brasil). MVP implementado bajo metodología iterativa-incremental con arquitectura en capas, 463 tests no-browser, auditoría de diagramas UML y documentación completa para defensa de tesis de **Tecnólogo en Análisis y Desarrollo de Sistemas** (UTEC/UDELAR).
 
 ## Características Principales
 
@@ -12,11 +12,11 @@ Sistema de **recolección de residuos reciclables** para la Frontera de la Paz (
 - ✓ Ciudadano ve detalle en cualquier estado
 
 **Características de Calidad**
-- ✓ 380 tests no-browser, 0 failures (27 fuzz tests PhoneNumber)
+- ✓ 463 tests no-browser, 0 failures (27 fuzz tests PhoneNumber)
 - ✓ Cobertura JaCoCo 94% instrucciones en servicios core
 - ✓ P0 Defensa: @Transactional, structured logging, exponential backoff, error handling tipado
 - ✓ Auditoría de diagramas UML (85–90% fidelidad, sincronizados post-refactor)
-- ✓ 191 mejoras documentadas (implementadas/descartadas/diferidas)
+- ✓ 158 mejoras documentadas (implementadas/descartadas/diferidas)
 
 **Autenticación y Seguridad**
 - ✓ Roles: `USER` (ciudadano) + `ORGANIZATION` (acopio)
@@ -80,7 +80,7 @@ mvn spring-boot:run
 ## Comandos Frecuentes
 
 ```bash
-# Tests completos (380 unit tests)
+# Tests completos (463 unit tests)
 mvn clean test
 
 # Cobertura JaCoCo (reporte en target/site/jacoco/index.html)
@@ -123,13 +123,12 @@ En **producción** (Render/otros), las variables se configuran directamente en e
 - [`docs/REQUISITOS.md`](docs/REQUISITOS.md) — Catálogo RF/RN y criterio de alcance
 - [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) — Núcleo: componentes, flujos, patrones
 - [`docs/DIAGRAMAS.md`](docs/DIAGRAMAS.md) — 7 diagramas UML (casos de uso, ER, clases, estados, secuencias)
-- [`docs/TRADEOFFS.md`](docs/TRADEOFFS.md) — 26 decisiones de diseño justificadas
+- [`docs/TRADEOFFS.md`](docs/TRADEOFFS.md) — 41 decisiones de diseño justificadas
 - [`docs/METODOLOGIA.md`](docs/METODOLOGIA.md) — Modelo iterativo-incremental + DSRM
-- [`docs/REQUERIMIENTOS.md`](docs/REQUERIMIENTOS.md) — Trazabilidad RF/RN → código
 
 **Referencia Técnica:**
-- [`docs/ENDPOINTS.md`](docs/ENDPOINTS.md) — 43 rutas HTTP, esquemas OpenAPI, ejemplos
-- [`docs/MEJORAS.md`](docs/MEJORAS.md) — 191 mejoras documentadas (estado + justificación)
+- [`docs/ENDPOINTS.md`](docs/ENDPOINTS.md) — 33 rutas HTTP, esquemas OpenAPI, ejemplos
+- [`docs/MEJORAS.md`](docs/MEJORAS.md) — 158 mejoras documentadas (estado + justificación)
 - [`docs/BOILERPLATE_VS_CORE.md`](docs/BOILERPLATE_VS_CORE.md) — Clasificación: infraestructura vs negocio (156 LOC core)
 - [`docs/USABILIDAD.md`](docs/USABILIDAD.md) — Instrumento Likert para evaluación con usuarios
 - [`docs/COPIES.md`](docs/COPIES.md) — Single source of truth de textos i18n

@@ -115,32 +115,48 @@ elimina.
 
 ---
 
-## 7. Panel de acopio: lista filtrada, no Kanban (revisado)
+## 7. Panel de acopio: tablero Kanban por estado
 
-**Decisión original:** el tablero Kanban vivía en `/acopio/inicio`, no
-en una ruta separada — menos navegación, todo en un solo lugar.
+**Decisión actual:** `/acopio/solicitudes` muestra un tablero Kanban con
+cuatro columnas (`PENDING`, `IN_PROGRESS`, `COMPLETED`, `REJECTED`). Cada
+solicitud se representa como una tarjeta dentro de su columna. Las
+estadísticas de estado del encabezado actúan como anclas a cada columna.
+Las acciones (aceptar/rechazar/completar) se hacen desde el detalle de
+la solicitud.
 
-**Decisión actual:** el Kanban fue **eliminado**. El panel de acopio es
-`/acopio/solicitudes`: una lista filtrable por estado con estadísticas en
-el encabezado. Las acciones (aceptar/rechazar/completar) se hacen desde
-el detalle de cada solicitud.
+**Por qué se eligió el Kanban:** en las pruebas de concepto la lista
+filtrable resultaba menos comprensible para usuarios no técnicos: el
+estado quedaba disperso y había que cambiar filtros para ver el flujo
+completo. El Kanban agrupa por estado de un vistazo, reutiliza los
+cards del listado de ciudadano y mantiene un único modelo mental para
+ambos perfiles.
 
-**Por qué cambió:** el Kanban duplicaba funcionalidad — mostraba las
-mismas solicitudes agrupadas por estado que la lista ya podía filtrar,
-y ofrecía las mismas transiciones que el detalle. Dos vistas del mismo
-dato era código doble para mantener y explicar. Además cargaba una
-lista de pendientes que nunca llegaba a renderizarse. Eliminarlo
-suma en credibilidad (menos superficie duplicada) y en
-mantenibilidad (una sola vista de la verdad).
+**Diseño técnico:**
+- Fragmento reusable `fragments/kanban.html` con `kanban-column` y
+  `kanban-card`, usado tanto en `/acopio/solicitudes` como en
+  `/mis-solicitudes`.
+- Controladores agrupan las solicitudes en `requestsByStatus` (mapa
+  `Map<RequestStatus, List<Request>>`) en vez de pasar una sola lista
+  filtrada.
+- CSS propio en `app.css` con flexbox horizontal en desktop y apilado
+  vertical en mobile.
 
-**Lo que se pierde:** la vista de "tablero" con columnas por estado es
-más visual que una lista. Con el volumen esperado del MVP (pocas
-solicitudes simultáneas por organización), el filtro por estado cubre
-la misma necesidad.
+**Lo que se pierde:**
+- Cada columna solo muestra el subconjunto cargado por paginación; si
+  hay más de 20 solicitudes por estado se requiere paginación propia o
+  "cargar más".
+- El listado compacto en tabla era más denso para organizaciones con
+  muchas solicitudes; el Kanban consume más altura por elemento.
 
-**Para producción:** si el volumen crece, paginación de la lista o una
-vista dedicada con drag-and-drop. El tripwire original sigue vigente:
-~20 solicitudes pendientes simultáneas por organización.
+**Alternativas consideradas:**
+| Opción | Por qué sí/no |
+|---|---|
+| **Kanban con cards (elegida)** | Mejor comprensión del flujo de estado; reutiliza componentes; unifica UX de ciudadano y organización |
+| Lista filtrable compacta | Más densa y escalable en volumen, pero obliga a cambiar filtros para ver el estado global |
+| Drag-and-drop para mover tarjetas entre columnas | Alto valor visual, pero requiere endpoints REST y más interacción JS; no aporta al MVP porque las transiciones siguen hechas desde el detalle |
+
+**Para producción:** si una organización supera ~20 solicitudes activas
+simultáneas, agregar paginación por columna o un toggle lista/Kanban.
 
 ---
 
@@ -845,3 +861,392 @@ franja confirmada ya se comunicó al aceptar; completar es el cierre esperado).
 `GlobalModelAttributes.unreadNotifications` (tolerante a sesión stale → null),
 link + badge en navbar (desktop, menú usuario, mobile), `users/notifications.html`,
 i18n es/pt. Tests: 252 no-browser.
+
+## 34. Fail-fast + mensaje claro vs. circuit breaker para fallos de Mongo
+
+Contexto: sin timeouts explícitos el driver de Mongo usa sus defaults
+(`serverSelectionTimeout` 30s) — si Atlas no responde, cada request que toca
+la base queda colgado 30s. La pregunta es cuánta infraestructura de
+resiliencia vale la pena para este backend.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Timeouts cortos + retry a nivel driver + mensaje de servicio no disponible (elegida)** | Con una sola instancia (Render) y un solo backend (Atlas), no hay a dónde hacer failover ni qué aislar con un breaker — el único valor real es fallar rápido (5s en vez de 30s) y no confundir al usuario ("algo está roto" vs. "el servicio no está disponible, reintentá"). `retryWrites`/`retryReads` ya cubren el caso real y frecuente: un failover de primary en Atlas durante mantenimiento programado |
+| Circuit breaker (Resilience4j) | Tiene sentido cuando hay múltiples instancias/réplicas y se quiere evitar que todas golpeen un backend caído a la vez, o cuando hay un fallback real (caché, degradar funcionalidad). Acá no hay ninguna de las dos cosas — agregar el patrón sería complejidad sin beneficio, el tipo de sobre-ingeniería que no compra menos riesgo real |
+| Reintentos con backoff a nivel aplicación (Spring Retry) | Redundante con `retryWrites`/`retryReads` del driver para el caso común (failover transitorio); para una caída real y sostenida de Atlas, reintentar más solo alarga el tiempo hasta el error sin cambiar el resultado |
+
+**Resultado:** `MongoResilienceConfig` (timeouts) + `GlobalExceptionHandler
+.handleMongoUnavailable` (mensaje + log distinguible de un bug de código). El
+health check de Mongo en `/actuator/health` ya lo daba gratis Spring Boot
+Actuator — no hizo falta agregar nada ahí. Ver `docs/MEJORAS.md` #201.
+
+## 35. Sin API REST pública: Spring MVC + Thymeleaf SSR de punta a punta
+
+Contexto: `OrgApiController` (eliminado, ver más abajo) exponía `GET
+/organizaciones?ciudad=&material=` como JSON, con anotaciones OpenAPI
+completas (`@Operation`, `@ApiResponse`, `@Parameter`, `@Schema`) — presentaba
+al sistema como si tuviera una API REST de verdad. Verificado: **cero
+consumidores reales** (ni JS ni templates lo llamaban, solo su propio test
+unitario, también eliminado). El endpoint que el formulario usa de
+verdad ya existía y hacía lo mismo de forma nativa a SSR: `RequestCreateController
+.orgOptionsForCity` (`GET /solicitudes/org-options`) devuelve un fragmento
+Thymeleaf (`fragments/ui :: options`), no JSON — Vanilla JS reemplaza el
+`<select>` con el HTML que llega, sin parsear nada.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Borrar el endpoint JSON, dejar solo el fragment SSR (elegida)** | Es simplemente el mismo dato servido dos veces con dos paradigmas distintos, y el que sobra (JSON) no tiene un solo consumidor. Mantenerlo era deuda de percepción: alguien leyendo el código asumiría que hay una API REST pensada para terceros, cuando nunca la hubo |
+| Renombrar y reusar como endpoint "interno" | Se evaluó (`OrganizationOptionsController` en `/solicitudes/org-options`) pero esa ruta ya estaba tomada por el endpoint SSR real — hubiera chocado el mapping de Spring. Renombrar algo que no se usa no lo vuelve útil, solo lo esconde mejor |
+| Mantener ambos (JSON + HTML) | Dos formas de pedir lo mismo, sin ningún consumidor real para una de ellas. Superficie de mantenimiento (tests, docs, seguridad) por cero beneficio |
+
+**Efecto en cascada:** el ahora eliminado `OrgApiController` era el único
+controller con anotaciones `@Operation`/`@ApiResponse`/`@Schema` de springdoc
+— al borrarlo, Swagger UI (`/swagger-ui.html`) quedaba documentando una API
+vacía. Se removió la dependencia `springdoc-openapi-starter-webmvc-ui`
+completa, el `@OpenAPIDefinition` de `ResiduoSolidoApplication`, las rutas
+`SWAGGER_V3`/`SWAGGER_UI`/`SWAGGER_HTML` de `Routes`/`SecurityConfig`, y el
+link a Swagger del hub (`src/main/resources/templates/docs/hub.html`). También
+se eliminó la ahora innecesaria `OrganizationDto` (solo la usaba el
+controller eliminado) y su test.
+
+**Resultado:** Spring MVC + Thymeleaf SSR sin excepciones — ni un endpoint
+JSON de cara a un consumidor externo, ni una dependencia que sugiera lo
+contrario. `docs/ARQUITECTURA.md` y `docs/ENDPOINTS.md` actualizados. Ver
+`docs/MEJORAS.md` #205.
+
+## 36. Notificación desacoplada del camino crítico vía evento + `@Async` (sin `@TransactionalEventListener`)
+
+Contexto: `RequestService.acceptRequest`/`rejectRequest` tenían `@Transactional`
+y llamaban directo a `NotificationService.notifyRequester(...)` en el mismo
+hilo HTTP, después del `save()`. La intención original era correcta (no
+notificar un estado que no se persistió), pero la implementación tenía dos
+problemas verificados, no supuestos:
+
+1. **`@Transactional` no hacía nada.** Verificado empíricamente (test de
+   sondeo, ver `docs/MEJORAS.md` #208): 0 beans `PlatformTransactionManager`
+   en todo el contexto, `RequestService` no es un proxy AOP transaccional.
+   La anotación era decorativa desde que se agregó.
+2. **La notificación bloqueaba el hilo HTTP.** Si la escritura de la
+   notificación tardaba (o la base estaba lenta), el usuario que acepta/
+   rechaza una solicitud esperaba por una escritura que no debería afectar
+   la respuesta de su acción principal.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **`ApplicationEventPublisher` + `@EventListener` `@Async` (elegida)** | Publica `RequestStatusChangedEvent` inmediatamente después del `save()` exitoso (nunca antes — la garantía de orden se mantiene). El listener corre en un pool chico y acotado (`AsyncConfig`, 2-4 hilos) — una notificación lenta o que falla no afecta la respuesta al usuario ni el estado ya persistido. Cero dependencias nuevas, usa infraestructura de Spring ya presente |
+| `@TransactionalEventListener(phase = AFTER_COMMIT)` | Era el plan original — **descartado al verificar que no hay transacción real de la cual colgarse.** Sin un `PlatformTransactionManager`, el evento nunca se publicaría (no hay commit que dispare la sincronización). Habría roto las notificaciones en silencio |
+| Configurar un `MongoTransactionManager` real primero | Correcto a mediano plazo (le daría sentido real a `@Transactional` en todo el proyecto, no solo acá), pero es un cambio de mayor alcance — afecta semántica de escritura en todo el codebase, necesita revisión propia. Fuera de alcance de este ítem puntual |
+
+**Efecto colateral honesto:** `@Transactional` se **removió** de `acceptRequest`/
+`rejectRequest`/`completeRequest` en vez de dejarlo como decoración. Cada
+método sigue siendo seguro porque hace una sola escritura a un único
+documento Mongo (atómica por diseño del motor) — la garantía que necesitan
+hoy no requiere una transacción distribuida.
+
+**Resultado:** `RequestStatusChangedEvent` (record) + `NotificationEventListener`
+(`@Async("notificationExecutor")`) + `AsyncConfig` (`@EnableAsync`, pool 2-4
+hilos). `RequestService` ya no depende de `NotificationService` — el punto de
+extensión para email/SMS declarado en §33 ahora es "agregar otro
+`@EventListener`", no "tocar `RequestService`". Ver `docs/MEJORAS.md` #208.
+
+## 37. Deuda técnica diferida: de "documentada" a "con trigger medible"
+
+Contexto: `TRADEOFFS.md` documenta bien el *por qué* de cada decisión
+diferida, pero ninguna tenía una condición objetiva de cuándo deja de ser
+aceptable. "Cache diferido" o "PIN provisorio" sin fecha ni umbral tienden a
+volverse permanentes por inercia, no por decisión.
+
+**Triggers agregados** (a cada ítem correspondiente, no solo acá):
+
+| Decisión diferida | Trigger objetivo | Cómo se mide |
+|---|---|---|
+| ~~Cache en `CityOrgService.getOrganizationsByCity`~~ | **Implementado** (ver §41) — se adelantó sin esperar el trigger, costo casi nulo (`@Cacheable` + `@EnableCaching`, sin dependencia nueva) | — |
+| Autenticación PIN "provisoria" (`fragments/forms::pin`, comentario explícito en el HTML) | Antes de que el primer usuario real complete un registro en producción — no "cuando haya tiempo" | Gate manual: revisar antes de anunciar el sistema a usuarios reales, no una métrica automática |
+| Escalado horizontal / imágenes en disco local (§ imágenes locales, `ARQUITECTURA.md`) | Segunda instancia de Render, o `LocalImageService` supera el disco disponible del tier actual | Alerta de disco vía `/actuator/health` → `diskSpace.status` (ya expuesto) |
+| Redundancia de la instancia (single point of failure, ver §34) | Primer incidente real de downtime reportado por un usuario, o SLA formal comprometido | No medible preventivamente — es un gate de "primera vez que duele de verdad" |
+
+**Resultado:** la deuda técnica documentada pasa de ser una lista de "sabemos
+que esto es una limitación" a una lista con una condición verificable de
+cuándo se vuelve prioridad — usando la instrumentación que ya existe
+(`/actuator/metrics`, `/actuator/health`) en vez de agregar herramienta nueva.
+Ver `docs/MEJORAS.md` #209.
+
+## 38. Extraer `OrganizationProfile` embebido en `User` (con migración de datos reales)
+
+Contexto: `User` modela ciudadano y organización en la misma colección
+(§ mono-modelo, `ARQUITECTURA.md`). De los campos que solo tienen sentido
+para organización, solo 2 son genuinamente exclusivos: `acceptedMaterials`
+y `profileCompleted` — `city` resultó ser compartido (lo usa también
+`CityAwareLocaleResolver` para ciudadanos), corrigiendo una imprecisión del
+análisis de arquitectura original.
+
+El riesgo real no era el código, era el **dato ya persistido en Atlas**:
+mover estos campos a un subdocumento `organizationProfile` en el modelo Java
+sin migrar los documentos existentes los habría dejado leyendo `[]`/`false`
+silenciosamente — cualquier organización real que ya tuviera materiales
+aceptados los habría "perdido" al primer deploy.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Extraer + migrar con `CommandLineRunner` idempotente (elegida)** | Mismo patrón ya probado en `MongoIndexMigration` (que resolvió un problema real de índice roto). Opera con BSON crudo, no con el mapper de `User` — evita el problema de "leer con el modelo nuevo antes de migrar". Corre una vez, después es no-op |
+| Convertirlo en trigger diferido (documentar, no migrar todavía) | Válido si el dolor fuera bajo, pero acá había un ciudadano-cero: no había ningún caso donde "no migrar" fuera más seguro que "migrar" — los datos existentes de organización son pocos (seed de desarrollo) y el patrón de migración ya estaba probado en el proyecto |
+| Partir `User` en 2 colecciones (una nueva para organización) | Cambio de mucho mayor alcance — reescribe queries, relaciones (`Request.organization` referencia un `User`), y tests. Desproporcionado para 2 campos; el embebido resuelve la asimetría real sin ese costo |
+
+**API pública de `User` sin cambios:** `getAcceptedMaterials()`/
+`setAcceptedMaterials()`/`getProfileCompleted()`/`setProfileCompleted()`
+siguen existiendo con la misma firma, ahora delegando a
+`organizationProfile` (lazy-init en el setter). Ningún caller — servicios,
+templates Thymeleaf, 8 archivos de test — necesitó cambiar.
+
+**Verificación real, no solo mocks:** `OrganizationProfileMigrationTest`
+inserta un documento con la forma vieja directo en Mongo real (Atlas),
+corre la migración, confirma el subdocumento nuevo y que los campos viejos
+desaparecieron (`$unset`), y prueba idempotencia (correrla 2 veces no rompe
+nada). Limpia el documento de prueba después — no ensucia la base
+compartida.
+
+**Resultado:** `OrganizationProfile` (embebido, no `@Document` propio) +
+`OrganizationProfileMigration`. Ver `docs/MEJORAS.md` #210.
+
+### Trabajo futuro: split completo a 2 colecciones (no implementado, solo planeado)
+
+Si el dominio de organización crece lo suficiente (múltiples sedes, horarios
+de recolección, empleados con acceso propio), el embebido de §38 deja de
+alcanzar y el paso siguiente es partir en dos colecciones reales, no solo
+en un subdocumento:
+
+```
+User (identidad/auth — colección "users")
+  ├── id, username, email, password, phone, firstName
+  ├── role: USER | ORGANIZATION
+  ├── active, createdAt
+  └── organizationProfileId (nullable, referencia)
+
+OrganizationProfile (operación — colección nueva "organization_profiles")
+  ├── id, userId
+  ├── city, acceptedMaterials, profileCompleted
+  └── (futuro: sedes, horarios, empleados)
+```
+
+**Por qué NO es simplemente herencia con `@Document`:** en Mongo/Spring Data,
+una jerarquía con discriminador sobre `@Document(collection = "users")`
+sigue guardando todo en la misma colección — no es un split real, es lo
+mismo con otro nombre. La diferencia real es dos colecciones + una
+referencia (`organizationProfileId` o `@DocumentReference`).
+
+**Alcance si se hace:** repositorio nuevo para el perfil de organización;
+`CityOrgService` consulta esa colección en vez de `UserRepository`
+filtrando por rol/ciudad; `UserRegistrationService` crea ambos documentos
+al registrar una organización; `RequestService` referencia el perfil (o su
+`userId`) en vez del `User` completo; templates cambian `organization.city`/
+`organization.acceptedMaterials` por el equivalente del perfil separado;
+Spring Security no cambia nada (sigue cargando `UserDetails` desde
+`UserRepository`, el rol sigue en `User.role`). Migración: mismo patrón que
+`OrganizationProfileMigration` de §38, pero moviendo el subdocumento
+embebido a un documento independiente con referencia, no al revés.
+
+**Por qué no se hace ahora:** es un cambio de alcance mediano-alto (modelo +
+repositorios + servicios + controllers + templates + migración) para un
+dolor que hoy no existe — la organización sigue siendo "una cuenta con
+ciudad y materiales aceptados". El embebido de §38 ya resuelve la asimetría
+real sin ese costo. **Trigger objetivo para revisitar** (mismo criterio que
+§37): el día que una organización necesite más de un operador, más de una
+sede, o el perfil embebido crezca a 4+ campos exclusivos.
+
+## 39. Tests de integración aislados de la base real (bug encontrado sembrando datos)
+
+Contexto: al sembrar datos de prueba manualmente en Atlas para pruebas de
+carga (`scratch/mongo/SeedTestData.java`, ver `docs/MEJORAS.md` #211),
+los datos **desaparecieron** después de correr `mvn clean test`. Investigado:
+`MongoAggregationUtilsIntegrationTest` y `PlaywrightBaseTest` (vía
+`BrowserTestSeed`) usaban `@SpringBootTest(properties = {"spring.data
+.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb..."`
+— la intención era "si no hay env var, usar un Mongo local descartable". El
+problema real: `SPRING_DATA_MONGODB_URI` **siempre** está seteada en este
+proyecto (vía `.env`), así que el fallback local nunca se usa — el test
+corría contra la Atlas real compartida (`fedelabs`) y hacía `deleteAll()`
+de `users`/`requests` en cada `@BeforeEach`, borrando en silencio cualquier
+dato real que hubiera.
+
+**Esto probablemente explica** por qué la base estaba casi vacía (1 usuario,
+0 solicitudes) las primeras veces que se inspeccionó con `scratch/mongo
+/MongoDump.java` — no es que nunca hubiera datos reales, es que cada
+corrida de tests los borraba.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **`spring.data.mongodb.database` explícito, distinto al real (elegida)** | Cada test de integración que necesita una colección "limpia" para empezar (agregaciones, seed de browser tests) declara su propia base dedicada (`residuosolido_test_aggregation`, `residuosolido_test_browser`) en el mismo cluster Atlas. Sigue siendo Mongo real (no mock, no embebido) — solo aislado del dato compartido |
+| Mongo embebido (Flapdoodle) o Testcontainers | Más correcto en abstracto (aislamiento total, sin depender de red/Atlas), pero es una dependencia nueva y un cambio de infraestructura de testing más grande — desproporcionado para arreglar 2 archivos con un problema puntual y bien entendido |
+| Dejar el fallback como estaba, documentar el riesgo | Ya estaba "documentado" implícitamente en el propio código (`${VAR:default}` sugiere que el default se usa alguna vez) — pero en la práctica nunca se cumplía, así que era una falsa sensación de seguridad. No corregirlo dejaba el bug activo |
+
+**Resultado:** 2 archivos corregidos (`MongoAggregationUtilsIntegrationTest`,
+`PlaywrightBaseTest`) con `spring.data.mongodb.database` explícito. Barrido
+completo de los 18 archivos de test que referencian `SPRING_DATA_MONGODB_URI`
+confirmó que ningún otro hace escrituras destructivas contra el repositorio
+real sin acotar por `_id` (`OrganizationProfileMigrationTest`, escrito ayer,
+ya lo hacía bien desde el principio). **Verificado con datos reales, no
+teoría:** se sembraron 25 usuarios + 23 solicitudes, se corrió la suite
+completa (458 tests), y los datos sobrevivieron intactos — antes del fix,
+la misma corrida los borraba a 1 usuario + 0 solicitudes. Ver
+`docs/MEJORAS.md` #212.
+
+## 40. Rediseño del panel de organización: panel de control + informe PDF
+
+Contexto: inspeccionando el panel de organización recién sembrado con datos
+reales (#211), el feedback fue directo — la UX estaba "malísima", sin
+estadísticas reales (sentía "estar en cero"), estructurado como "una fila de
+cosas" en vez de un panel de control, con demasiado scroll e "islas"
+visuales sin relación entre sí. Se pidió además una forma de descargar un
+informe en PDF, calificada como "fácil".
+
+**(a) Stats-como-filtro en vez de stats-y-filtros separados.** El layout
+anterior tenía 3 tiles de conteo (decorativos, no clicables) MÁS una fila
+de 5 botones de filtro debajo (mismo estado, representado dos veces, sin
+vínculo visual). Se unificaron en 5 tarjetas (`org-panel__stats`): cada
+una ES el conteo Y el link de filtro, con color de borde/texto igual al de
+`.badge--*` para que el ojo asocie panel↔badge sin aprender una paleta
+nueva, y estado activo marcado con `border-color`.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **5 tarjetas clicables unificadas (elegida)** | Elimina la duplicación conteo/filtro, reduce la altura total de la página (menos elementos, más densos), reutiliza colores ya existentes — cero tokens de diseño nuevos |
+| Mantener tiles + filtros separados, solo agregar el conteo de rechazadas | Resuelve el gap de datos pero no el problema de UX reportado ("fila de cosas", "islas") — hubiera sido un parche sobre el síntoma equivocado |
+| Gráfico (barras/dona) en vez de números | Más "dashboard" visualmente, pero es una dependencia nueva (librería de charts) o SVG hecho a mano para un dato de 4-5 categorías que un número grande ya comunica sin ambigüedad — desproporcionado para el problema real |
+
+**(b) Gap de datos real encontrado en el camino:** el filtro "Rechazadas"
+existía en la UI pero `MongoAggregationUtils.countByStatusFaceted` nunca
+calculaba ese facet — solo se sumaba (sin desglosar) dentro de `total`.
+Se agregó el facet `rejected` al único `$facet` (agregar un segundo stage
+`$facet` separado pisa el resultado del primero — ver comentario en el
+propio método) y se expuso `rejectedCount`/`allCount` en el controller.
+Esto cambió el contrato de `RequestMetricsService` compartido por
+`getUserRequestStats` (usado en `users/requests.html`, no tocado en esta
+tarea) — de 4 a 5 keys ahí, de 3 a 4 en `getOrgRequestStats`. Corregir esto
+"a ojo" (sin correr la suite) hubiera dejado pasar 4 tests rotos: 2 por
+conteo exacto de keys en `RequestMetricsServiceTest`, y 2 en
+`EndToEndFlowsTest` que mockeaban el mapa viejo sin `rejected` → NPE al
+unboxear un `Long` `null` → 404 real en vez del 200 esperado. Se encontró
+corriendo `mvn clean test` después del cambio, no asumiendo que agregar una
+key a un `Map` es siempre inofensivo.
+
+**(c) Tabla compacta en vez de cards apiladas.** Cada solicitud pasó de una
+card de 6-7 líneas (fecha, estado, contacto, teléfono, dirección, botón,
+padding generoso) a una fila de grid de 5 columnas (`org-panel__row`,
+`6.5rem 6rem 1fr 1fr 8rem`) con header. Mismo dato, una fracción de la
+altura — es la medida principal contra "sin tanto scroll". En mobile
+(`max-width:768px`) colapsa a 2 columnas con `grid-template-areas`, sin
+header (no aporta apilado).
+
+**(d) Informe PDF vía impresión del navegador, no generación server-side.**
+
+| Opción | Por qué sí/no |
+|---|---|
+| **`window.print()` + `@media print` (elegida)** | Cero dependencias nuevas (ni iText, ni OpenPDF, ni wkhtmltopdf), cero endpoint nuevo, cero mantenimiento de un segundo template renderer. "Guardar como PDF" es un destino nativo de todo diálogo de impresión moderno. `@media print` oculta nav/footer/stats/botones y deja título+tabla — el mismo dato ya filtrado en pantalla |
+| Generación server-side (iText/OpenPDF) | Da un archivo `.pdf` real descargable sin pasos manuales del usuario y control total del layout impreso, pero agrega una dependencia nueva, un servicio nuevo, y duplica en Java el layout que ya existe en Thymeleaf+CSS — desproporcionado para "un informe con la tabla que ya se ve en pantalla" |
+| Librería JS de export a PDF en cliente (ej. jsPDF) | Evita el backend pero agrega una dependencia JS nueva (el proyecto es vanilla JS a propósito) solo para re-implementar en el cliente lo que el navegador ya ofrece gratis vía `Ctrl+P` → Guardar como PDF |
+
+Se eligió la opción sin dependencias porque el pedido explícito fue "eso es
+fácil" — la lectura correcta de esa frase es "no hace falta construir un
+generador de PDF", no "hacer un generador de PDF simple". Si en el futuro
+se necesita branding/paginación fija no controlable por CSS de impresión
+(ej. reporte con encabezado corporativo en cada página, exportable sin
+intervención del usuario), ese es el trigger para revisitar con generación
+server-side.
+
+**(e) `org-panel.css` como archivo separado** de `app.css`, por ser la
+primera página del proyecto con densidad visual/CSS propio de esa
+magnitud — mismo criterio ya usado para JS por página (`static/js/{página}.js`
+vs `app.js`, ver manifiesto en `app.js`). Cargado solo en `org/requests.html`.
+
+**(f) Dos bugs de framework reales encontrados verificando contra el
+sistema real (no asumidos):**
+- **Thymeleaf:** `th:each` + `th:replace` parametrizado en el mismo
+  `<th:block>` producía `SpelEvaluationException` y HTML malformado (un
+  `DOCTYPE` de error anidado). Fix: separar en `<div th:each>` contenedor +
+  `<th:block th:replace>` hijo — mismo patrón que ya usaba `request-item-card`
+  sin que nadie lo hubiera documentado como obligatorio.
+- **thymeleaf-layout-dialect:** el CSS se duplicaba en el `<head>` renderizado
+  porque el dialect auto-copia al decorador cualquier elemento del `<head>`
+  del contenido que no esté en un `layout:fragment`, pero si además se
+  envuelve explícitamente en uno, se inserta una segunda vez. Fix: el
+  `<link>` va como hijo directo de `<head>`, sin wrapper — el auto-merge lo
+  inserta una sola vez. Verificado con curl contra el proceso real
+  (`grep -c "org-panel.css"` 2→1), no con lectura de código nada más.
+
+Ver `docs/MEJORAS.md` #213. Suite completa verificada dos veces (una por
+bug) hasta 458/458, 0 failures.
+
+## 41. Limpieza post-Kanban + `@Cacheable` + Bean Validation (alcance acotado)
+
+Contexto: tras el tablero Kanban (#213/kanban), auditoría de "qué Spring
+se está desaprovechando" (rutas: no aplica, ya son constantes simples;
+integraciones: no aplica, es un monolito sin sistemas externos) señaló dos
+huecos reales: caché declarativo y Bean Validation, cero uso de ambos en
+todo el proyecto.
+
+**(a) Limpieza de dead code post-Kanban.** El tablero reemplazó tanto la
+tabla (`org-panel__table`/`__row`/`__cell--*`) como el filtro por query param
+(`?estado=`, `currentStatus`) del rediseño anterior (#213), dejando huérfanos:
+`fragments/request-list.html` completo (los dos fragments que tenía,
+`request-item-card` y `request-item-row`, sin una sola referencia en ningún
+template — se borró el archivo entero), el atributo de modelo `allCount` en
+`OrgRequestController`, y ~40 líneas de CSS (`.org-panel__stat--active` y
+toda la sección de tabla) en `org-panel.css`. **Bug real encontrado
+limpiando:** el `@media print` (la función de informe PDF) seguía
+apuntando a `.org-panel__row`, que ya no existe — el botón "Descargar
+informe PDF" no iba a ocultar nada del Kanban ni a adaptar su layout
+horizontal con scroll (pensado para pantalla) a una página impresa. Se
+reescribió el bloque para convertir `.kanban-board` de flex-con-scroll a
+apilado vertical solo en `@media print`.
+
+**(b) `@Cacheable` en `CityOrgService.getOrganizationsByCity`.** Trigger de
+§37 no esperado a propósito — el costo de implementarlo ahora es casi cero
+(`@EnableCaching` + una anotación, sin `spring-boot-starter-cache`: Spring
+Boot cae al `ConcurrentMapCacheManager` por defecto si no hay otro provider
+en el classpath). Invalidación: `@CacheEvict(allEntries=true)` en
+`UserService.updateUser` — único punto donde cambian ciudad/materiales/
+teléfono de una organización ya persistida; `allEntries=true` en vez de
+evictar solo la ciudad nueva porque el método no conoce la ciudad ANTERIOR
+si el update la cambia, y el cache son 2 entradas (RIVERA/LIVRAMENTO) —
+evictarlo entero no tiene costo real. **Verificado con contexto real de
+Spring** (`CacheConfigIntegrationTest`, mismo criterio que `AsyncConfigIntegrationTest`
+para `@Async`/`@Transactional` en #208): un test con `new CityOrgService(mock)`
+plano NUNCA hubiera detectado si `@Cacheable` fuera decorativo, porque el
+cacheo lo aplica el proxy que arma `@EnableCaching`, no el objeto en sí.
+
+**(c) Bean Validation — alcance deliberadamente acotado, no una migración
+completa.** Se evaluó migrar `RequestValidator.validateCoreFields`
+(complejidad ciclomática 12, el caso que motivó la pregunta) pero se
+descartó por ahora:
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Migrar solo `RegistrationForm` (elegida)** | Es el único form del proyecto que YA tiene un DTO de binding (`@ModelAttribute RegistrationForm`, con Lombok) — agregar `@Valid` + anotaciones es un cambio de 3 archivos (DTO, controller, 1 dependencia nueva), cero DTOs nuevos que crear |
+| Migrar `RequestValidator`/`RequestCreateController` completo | Requiere crear un DTO de formulario que hoy no existe (recibe `@RequestParam` sueltos), más el teléfono ahí es compuesto (país+nacional+DDD resuelto recién en el controller) y la validación de "materiales aceptados por la organización" es una regla cruzada que Bean Validation no resuelve con una anotación simple — es un refactor de 9-10 pasos tocando 3+ controllers y toda su cobertura de tests, no una tarde |
+| Migrar `OrgProfileController` | Mismo problema del teléfono compuesto — el campo que hoy se valida como "requerido" (`resolvedPhone`) es un valor derivado, no un `@RequestParam` crudo anotable |
+
+Con `RegistrationForm` se migró lo genuinamente simple: forma de `username`
+(`@NotBlank`, `@Size(max=64)`) y `password`/PIN (`@Pattern(regexp="\\d{4}")`).
+Teléfono (compuesto) y unicidad de `username` (necesita el repositorio)
+siguen validándose en `UserRegistrationService.validateUserRegistration`
+exactamente igual que antes — Bean Validation es una capa adicional que
+falla más rápido para los casos simples, no un reemplazo.
+
+**Mensajes de error sin depender del interpolador de Bean Validation:**
+en vez de confiar en que Spring Boot conecte el `MessageInterpolator` de
+`LocalValidatorFactoryBean` con `JsonMessageSource` (afirmación que no se
+verificó y que este proyecto ya sabe que no debe asumirse, ver
+`CLAUDE.md`), cada anotación usa el código `ServerMessage` tal cual como
+`message` (ej. `message = "error.register.username_required"`), y el
+controller resuelve ese string con `Messages.msg(String)` (helper nuevo,
+misma resolución que ya usa `Messages.msg(ServerMessage)` para todo lo
+demás). Cero mecanismo nuevo que aprender o que pueda romperse en
+silencio — reutiliza el único camino de i18n que ya existe en el proyecto.
+**Verificado con el texto real**, no solo "existe el atributo": los tests
+de `AuthControllerTest` comprueban `errorMessage` == "Necesitamos tu
+nombre." / "El PIN debe tener 4 dígitos." (la traducción real de
+`es.json`), no solo que el campo no sea null — si la resolución del código
+estuviera rota, esos tests hubieran mostrado el código crudo y lo habrían
+detectado.
+
+Suite completa: 463/463, 0 failures. Ver `docs/MEJORAS.md` #216.

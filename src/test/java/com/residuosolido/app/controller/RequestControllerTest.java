@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.TestFixtures;
+import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.exception.OwnershipException;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
@@ -21,10 +22,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,6 +78,24 @@ class RequestControllerTest {
 
         mockMvc.perform(get("/solicitudes/req-1"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "vecino", roles = "USER")
+    void listUserRequests_returnsKanbanBoard() throws Exception {
+        Request pending = Request.forCitizen(citizen);
+        pending.setId("req-1");
+        pending.restoreStatus(RequestStatus.PENDING);
+        when(requestService.getRequestsByUser(any(User.class), anyInt(), anyInt()))
+                .thenReturn(List.of(pending));
+        when(requestMetricsService.getUserRequestStats(any(User.class)))
+                .thenReturn(Map.of("pending", 1L, "inProgress", 0L, "completed", 0L, "rejected", 0L, "total", 1L));
+
+        mockMvc.perform(get(Routes.REQUESTS))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("kanban-board")))
+                .andExpect(content().string(containsString("kanban-column")))
+                .andExpect(content().string(containsString("kanban-card")));
     }
 
     @Test

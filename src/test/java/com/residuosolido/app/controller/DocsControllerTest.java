@@ -113,4 +113,42 @@ class DocsControllerTest {
                 status == 400 || status == 404,
                 "Path traversal debe ser bloqueado (400 o 404), fue: " + status);
     }
+
+    /**
+     * Regresión del drift de #204: el hub mostraba conteos hardcodeados que
+     * quedaban desactualizados. Este test no fija un número exacto (cambiaría
+     * con cada mejora nueva y rompería el test sin motivo) — solo verifica
+     * que el conteo viene de parsear MEJORAS.md de verdad: si hoy hay
+     * "N implementadas", tiene que ser un número positivo real, no "0" (que
+     * es lo que devolvería si el parseo se rompiera o el archivo no se
+     * encontrara).
+     */
+    @Test
+    void hub_mejorasStatsComeFromRealFile() throws Exception {
+        // Antes comparaba el HTML renderizado con containsString("0 implementadas") —
+        // bug latente: "110 implementadas" también contiene esa substring ("11[0
+        // implementadas]"), así que el test hubiera fallado con cualquier conteo
+        // que terminara en cero (10, 20, 100, 110...). Se detectó cuando el conteo
+        // real llegó a 110. Fix: verificar el valor real del modelo, no el texto.
+        var result = mockMvc.perform(get(Routes.DOCS_HUB))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("mejorasStats"))
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        var stats = (java.util.Map<String, Long>) result.getModelAndView().getModel().get("mejorasStats");
+        org.junit.jupiter.api.Assertions.assertTrue(stats.get("implementado") > 0,
+                "mejorasStats.implementado debería ser > 0 si el parseo de MEJORAS.md funcionó");
+    }
+
+    @Test
+    void designSystemPage_rendersOk() throws Exception {
+        mockMvc.perform(get(Routes.DOCS_DESIGN_SYSTEM))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void uxUiPage_rendersOk() throws Exception {
+        mockMvc.perform(get(Routes.DOCS_UX_UI))
+                .andExpect(status().isOk());
+    }
 }

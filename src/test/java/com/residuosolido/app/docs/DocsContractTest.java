@@ -66,7 +66,7 @@ class DocsContractTest {
             "MongoTemplate", "MultipartFile", "NoResourceFoundException", "NoSuchMessageException",
             "OptimisticLockingFailureException", "PasswordEncoder", "RequestMapping",
             "SecurityException", "TemplateEngine", "TemplateProcessingException",
-            "UserDetailsService", "WebMvcConfigurer", "AccessDeniedException",
+            "UserDetailsService", "UserDetails", "WebMvcConfigurer", "AccessDeniedException",
             "AnonymousAuthenticationToken", "BCryptPasswordEncoder", "ControllerAdvice",
             "ExceptionHandler", "GetMapping", "PostMapping", "PutMapping", "SpringBootTest",
             "WithMockUser", "DocumentReference", "ResponseEntity", "ResponseStatusException", "ObjectMapper",
@@ -74,7 +74,9 @@ class DocsContractTest {
             "Scanner", "ConcurrentHashMap", "AtomicLong", "AtomicInteger", "Duration",
             "Instant", "LocalDateTime", "SecureRandom", "UUID", "ServletContext",
             "IndexKeySpecsConflict", "String", "Integer", "Long", "Boolean", "Object",
-            "List", "Map", "Set", "Optional", "Stream", "Exception", "RuntimeException");
+            "List", "Map", "Set", "Optional", "Stream", "Exception", "RuntimeException",
+            "PlatformTransactionManager", "ApplicationEventPublisher", "MongoTransactionManager",
+            "SpelEvaluationException", "ObjectId", "LocalValidatorFactoryBean");
 
     /** Términos de dominio/nombres propios citados en backticks que no son clases Java. */
     private static final Set<String> NON_CLASS_TERMS = Set.of(

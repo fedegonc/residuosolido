@@ -83,9 +83,9 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
 
         // Ir a mis solicitudes
         page.navigate(baseUrl + "/mis-solicitudes");
-        page.locator(".request-item").first().waitFor();
+        page.locator(".kanban-card").first().waitFor();
         // Entrar al detalle de la primera
-        page.locator("a[href*='/solicitudes/']").first().click();
+        page.locator(".kanban-card a[href*='/solicitudes/']").first().click();
         page.locator("[data-i18n='req_detail_title']").waitFor();
 
         // Si hay botón editar, clickearlo
@@ -110,8 +110,8 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
 
         // Ir al detalle
         page.navigate(baseUrl + "/mis-solicitudes");
-        page.locator(".request-item").first().waitFor();
-        page.locator("a[href*='/solicitudes/']").first().click();
+        page.locator(".kanban-card").first().waitFor();
+        page.locator(".kanban-card a[href*='/solicitudes/']").first().click();
         page.locator("[data-i18n='req_detail_title']").waitFor();
 
         // Clickear eliminar (el form tiene un confirm() de JS)

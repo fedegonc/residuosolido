@@ -1,0 +1,53 @@
+/* ═══ ORG PANEL — panel de control de organización ═══
+   Archivo separado (no app.css) porque es específico de una sola página
+   (org/requests.html) y con densidad visual propia — mismo criterio que
+   ya usa el proyecto para JS por página (ver comentario-manifiesto de
+   app.js). Cargado vía layout:fragment="extraHead" solo en esa página.
+
+   Reemplaza el layout anterior (3 tiles sueltos + fila de botones de
+   filtro + lista de cards altas apiladas — "islas" desconectadas) por
+   un panel unificado: cada stat ES el filtro (clicable, con color por
+   estado) + una tabla compacta en vez de cards de 6-7 líneas cada una. */
+
+/* ── Stats/filtros unificados: 5 tarjetas (Todas + 4 estados) ── */
+.org-panel__stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.625rem;margin-bottom:var(--space-lg)}
+.org-panel__stat{
+  display:flex;flex-direction:column;align-items:center;gap:.125rem;
+  padding:.75rem .5rem;border-radius:var(--radius);border:2px solid var(--border);
+  background:var(--surface);text-decoration:none;color:var(--text);
+  transition:border-color var(--transition-base) var(--ease-base),transform var(--transition-fast) var(--ease-out);
+}
+.org-panel__stat:hover{text-decoration:none;transform:translateY(-2px)}
+.org-panel__stat__value{font-size:var(--text-2xl);font-weight:800;line-height:1}
+.org-panel__stat__label{font-size:var(--text-xs);color:var(--muted);text-align:center}
+
+/* Color por estado — mismos tonos que .badge--* para que el ojo asocie
+   panel↔badge sin tener que aprender una paleta nueva. */
+.org-panel__stat--pending .org-panel__stat__value{color:var(--badge-pending-text)}
+.org-panel__stat--progress .org-panel__stat__value{color:var(--badge-progress-text)}
+.org-panel__stat--completed .org-panel__stat__value{color:var(--badge-completed-text)}
+.org-panel__stat--rejected .org-panel__stat__value{color:var(--danger)}
+
+/* Mobile: stats a 2 columnas */
+@media (max-width:768px){
+  .org-panel__stats{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── Informe PDF: usa el diálogo nativo de impresión del navegador
+     ("Guardar como PDF" es uno de los destinos estándar) — cero deps
+     nuevas, cero backend nuevo. @media print oculta todo lo que no
+     aporta a un informe (nav, footer, stats, botón) y convierte el
+     tablero Kanban (flex con scroll horizontal, pensado para pantalla)
+     en un apilado vertical simple — un scroll horizontal no tiene
+     equivalente en una página impresa/PDF, todo tiene que entrar en
+     el ancho de la hoja. ── */
+@media print{
+  .navbar,.footer,.skip-link,.org-panel__stat,.form-actions,
+  .breadcrumb,.edu-links,.org-panel__pdf-btn{display:none!important}
+  .org-panel__stats{display:none!important}
+  .kanban-board{display:block;overflow:visible}
+  .kanban-column{max-width:none;min-width:0;max-height:none;margin-bottom:1rem;break-inside:avoid;border:1px solid #999}
+  .kanban-column__body{overflow:visible}
+  .kanban-card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  body{background:#fff}
+}

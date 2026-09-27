@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-24 — SRS IEEE 830 agregado, estructura limpiada  
-> Tests: 423 no-browser, 7 failures conocidos (`PageContentImagesTest`/`PageContentRenderingTest` sobre `catadores`, pre-existentes #177; browser tests con fallos por selectores desincronizados — ver MEJORAS.md #180)
+> Fecha de sincronizacion: 2026-09-27 — merge developer→main: SRS IEEE 830 (main) + tablero Kanban para listados de solicitudes (developer, #51.1)  
+> Tests: 463 no-browser, 0 failures; browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
@@ -49,6 +49,9 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `docs/AUDITORIA.md` | Auditoria de superficies: copies, estilos, esquemas, endpoints, templates. | Análisis de trabajo, no narrativa de defensa |
 | `docs/COPIES.md` | Índice editorial de textos de UI (la fuente real son `static/i18n/*.json`). | Ya degradado a índice desde `MEJORAS.md` #162 |
 | `docs/SEGURIDAD.md` | Checklist operativo de secretos y `git config`. | Operativo, no defensa |
+| `docs/VISUAL_PERFORMANCE_PATTERNS.md` | Guía de prevención: 4 categorías de bugs visuales, 30+ antipatrones, checklist de auditoría. | Análisis técnico de work — auditoría de patrones para futuro mantenimiento |
+| `docs/PROBABLE_BUGS_ANALYSIS.md` | 3 bugs visuales probables (imágenes, modal scroll, fetch loading) con síntomas, root causes, fixes y verificación manual. | Análisis de work — identifica 4 bugs específicos encontrados automáticamente |
+| `.config/AUTO_DETECTION_SCRIPT.sh` | Script bash que audita automáticamente 6 patrones de bugs visuales, genera reporte, exit code para CI/CD. Uso: `bash .config/AUTO_DETECTION_SCRIPT.sh`. | Herramienta operativa (ejecutable), versionada en `.config/` junto a otras configuraciones |
 | `docs/sincronizacion-codigo-texto.md` | Auditoría código↔tesis (SYNC-XX). | Gitignored, insumo de trabajo |
 | `docs/gaps-detalle.md` | Lógica de negocio extraída para `scratch/pseudoapp.java`. | Gitignored, insumo de trabajo |
 | `docs/CONTEXTO_LLM.md` | Contexto de continuidad entre sesiones de agente. | Es para el agente, no para lectura humana |

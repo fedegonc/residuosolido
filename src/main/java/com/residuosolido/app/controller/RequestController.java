@@ -5,6 +5,7 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.CityOrgService;
@@ -20,8 +21,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Controller unificado de solicitudes del ciudadano:
@@ -59,8 +63,15 @@ public class RequestController {
                                     @CurrentUser User user, Model model,
                                     HttpServletRequest request) {
         model.addAttribute("user", user);
-        model.addAttribute("requests", requestService.getRequestsByUser(user, page, size));
-        model.addAttribute("requestStats", requestMetricsService.getUserRequestStats(user));
+        List<Request> requests = requestService.getRequestsByUser(user, page, size);
+        model.addAttribute("requests", requests);
+        model.addAttribute("requestsByStatus", groupByStatus(requests));
+        Map<String, Long> stats = requestMetricsService.getUserRequestStats(user);
+        model.addAttribute("requestStats", stats);
+        model.addAttribute("pendingCount", stats.getOrDefault("pending", 0L));
+        model.addAttribute("inProgressCount", stats.getOrDefault("inProgress", 0L));
+        model.addAttribute("completedCount", stats.getOrDefault("completed", 0L));
+        model.addAttribute("rejectedCount", stats.getOrDefault("rejected", 0L));
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         Locale locale = localeResolver.resolveLocale(request);
@@ -139,5 +150,16 @@ public class RequestController {
     public String handleNotOwned(RedirectAttributes redirectAttributes) {
         messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_NOT_OWNED);
         return "redirect:" + Routes.REQUESTS;
+    }
+
+    private Map<String, List<Request>> groupByStatus(List<Request> requests) {
+        Map<String, List<Request>> grouped = new LinkedHashMap<>();
+        for (RequestStatus status : RequestStatus.values()) {
+            grouped.put(status.name(), new ArrayList<>());
+        }
+        for (Request req : requests) {
+            grouped.get(req.getStatus().name()).add(req);
+        }
+        return grouped;
     }
 }

@@ -26,25 +26,11 @@
         <div th:replace="~{fragments/ui :: tile('circle-check', ${requestStats.get('completed')}, 'dash_stat_completed', 'Completadas')}"></div>
       </div>
 
-      <div th:if="${requests != null and !requests.isEmpty()}" class="request-list">
-        <div th:each="req : ${requests}" class="request-item">
-          <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
-          <div class="form-actions">
-            <a th:href="@{/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm">
-              <svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span>
-            </a>
-            <a th:if="${req.canBeEdited()}" th:href="@{/solicitudes/{id}/editar(id=${req.id})}" class="btn btn--outline btn--sm">
-              <svg class="icon"><use href="/images/icons.svg#pen"/></svg> <span data-i18n="req_list_edit">Editar</span>
-            </a>
-            <form th:if="${req.canBeDeleted()}" th:action="@{/solicitudes/{id}(id=${req.id})}" method="post"
-                  data-confirm="¿Eliminar esta solicitud?" data-i18n-attr="data-confirm:req_delete_confirm">
-              <input type="hidden" name="_method" value="delete">
-              <button type="submit" class="btn btn--outline btn--sm btn--danger">
-                <svg class="icon"><use href="/images/icons.svg#trash"/></svg> <span data-i18n="req_list_delete">Eliminar</span>
-              </button>
-            </form>
-          </div>
-        </div>
+      <div th:if="${requests != null and !requests.isEmpty()}" class="kanban-board">
+        <th:block th:replace="~{fragments/kanban :: kanban-column(status='PENDING', requests=${requestsByStatus.get('PENDING')}, basePath='/solicitudes', isUserView=true, titleKey='dash_stat_pending', title='Pendientes', count=${pendingCount})}"></th:block>
+        <th:block th:replace="~{fragments/kanban :: kanban-column(status='IN_PROGRESS', requests=${requestsByStatus.get('IN_PROGRESS')}, basePath='/solicitudes', isUserView=true, titleKey='dash_stat_progress', title='En curso', count=${inProgressCount})}"></th:block>
+        <th:block th:replace="~{fragments/kanban :: kanban-column(status='COMPLETED', requests=${requestsByStatus.get('COMPLETED')}, basePath='/solicitudes', isUserView=true, titleKey='dash_stat_completed', title='Completadas', count=${completedCount})}"></th:block>
+        <th:block th:replace="~{fragments/kanban :: kanban-column(status='REJECTED', requests=${requestsByStatus.get('REJECTED')}, basePath='/solicitudes', isUserView=true, titleKey='dash_stat_rejected', title='Rechazadas', count=${rejectedCount})}"></th:block>
       </div>
 
       <div th:if="${requests == null or requests.isEmpty()}">

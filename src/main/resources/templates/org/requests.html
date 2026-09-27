@@ -1,7 +1,10 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head><title>Solicitudes de acopio</title></head>
+<head>
+  <title>Solicitudes de acopio</title>
+  <link rel="stylesheet" th:href="@{/css/org-panel.css}">
+</head>
 <body>
   <main layout:fragment="content">
 
@@ -11,29 +14,38 @@
       <th:block th:if="${viewType == T(com.residuosolido.app.enums.RequestViewType).LIST}">
         <div class="row row--between mb">
           <h1 class="card__title" data-i18n="org_req_title">Solicitudes</h1>
+          <button type="button" class="btn btn--outline btn--sm org-panel__pdf-btn" onclick="window.print()">
+            <svg class="icon"><use href="/images/icons.svg#download"/></svg>
+            <span data-i18n="org_panel_export_pdf">Descargar informe PDF</span>
+          </button>
         </div>
 
-        <div class="grid grid--3 mb-lg">
-          <div th:replace="~{fragments/ui :: tile('clock', ${pendingCount}, 'dash_stat_pending', 'Pendientes')}"></div>
-          <div th:replace="~{fragments/ui :: tile('truck', ${inProgressCount}, 'dash_stat_progress', 'En curso')}"></div>
-          <div th:replace="~{fragments/ui :: tile('circle-check', ${completedCount}, 'dash_stat_completed', 'Completadas')}"></div>
+        <!-- Stats clickeables: cada stat es un ancla a su columna Kanban. -->
+        <div class="org-panel__stats">
+          <a href="#col-PENDING" class="org-panel__stat org-panel__stat--pending">
+            <span class="org-panel__stat__value" th:text="${pendingCount}">0</span>
+            <span class="org-panel__stat__label" data-i18n="dash_stat_pending">Pendientes</span>
+          </a>
+          <a href="#col-IN_PROGRESS" class="org-panel__stat org-panel__stat--progress">
+            <span class="org-panel__stat__value" th:text="${inProgressCount}">0</span>
+            <span class="org-panel__stat__label" data-i18n="dash_stat_progress">En curso</span>
+          </a>
+          <a href="#col-COMPLETED" class="org-panel__stat org-panel__stat--completed">
+            <span class="org-panel__stat__value" th:text="${completedCount}">0</span>
+            <span class="org-panel__stat__label" data-i18n="dash_stat_completed">Completadas</span>
+          </a>
+          <a href="#col-REJECTED" class="org-panel__stat org-panel__stat--rejected">
+            <span class="org-panel__stat__value" th:text="${rejectedCount}">0</span>
+            <span class="org-panel__stat__label" data-i18n="dash_stat_rejected">Rechazadas</span>
+          </a>
         </div>
 
-        <div class="row mb">
-          <a href="/acopio/solicitudes" class="btn btn--outline btn--sm" th:classappend="${currentStatus == null} ? 'btn--primary' : ''"><span data-i18n="org_req_filter_all">Todas</span></a>
-          <a href="/acopio/solicitudes?estado=PENDING" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'PENDING'} ? 'btn--primary' : ''"><span data-i18n="req_status_pending">Pendientes</span></a>
-          <a href="/acopio/solicitudes?estado=IN_PROGRESS" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'IN_PROGRESS'} ? 'btn--primary' : ''"><span data-i18n="req_status_in_progress">En curso</span></a>
-          <a href="/acopio/solicitudes?estado=COMPLETED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'COMPLETED'} ? 'btn--primary' : ''"><span data-i18n="req_status_completed">Completadas</span></a>
-          <a href="/acopio/solicitudes?estado=REJECTED" class="btn btn--outline btn--sm" th:classappend="${currentStatus == 'REJECTED'} ? 'btn--primary' : ''"><span data-i18n="req_status_rejected">Rechazadas</span></a>
-        </div>
-
-        <div th:if="${requests != null and !requests.isEmpty()}" class="request-list">
-          <div th:each="req : ${requests}" class="request-item">
-            <th:block th:replace="~{fragments/request-list :: request-item-card(req=${req})}"></th:block>
-            <div class="form-actions">
-              <a th:href="@{/acopio/solicitudes/{id}(id=${req.id})}" class="btn btn--outline btn--sm"><svg class="icon"><use href="/images/icons.svg#eye"/></svg> <span data-i18n="req_list_view">Ver</span></a>
-            </div>
-          </div>
+        <!-- Tablero Kanban: solicitudes agrupadas por estado. -->
+        <div th:if="${requests != null and !requests.isEmpty()}" class="kanban-board">
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='PENDING', requests=${requestsByStatus.get('PENDING')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_pending', title='Pendientes', count=${pendingCount})}"></th:block>
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='IN_PROGRESS', requests=${requestsByStatus.get('IN_PROGRESS')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_progress', title='En curso', count=${inProgressCount})}"></th:block>
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='COMPLETED', requests=${requestsByStatus.get('COMPLETED')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_completed', title='Completadas', count=${completedCount})}"></th:block>
+          <th:block th:replace="~{fragments/kanban :: kanban-column(status='REJECTED', requests=${requestsByStatus.get('REJECTED')}, basePath='/acopio/solicitudes', isUserView=false, titleKey='dash_stat_rejected', title='Rechazadas', count=${rejectedCount})}"></th:block>
         </div>
         <div th:if="${requests == null or requests.isEmpty()}">
           <div th:replace="~{fragments/ui :: state('inbox', 'org_requests_empty', 'No hay solicitudes')}"></div>

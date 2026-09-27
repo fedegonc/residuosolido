@@ -116,14 +116,50 @@ class AuthControllerTest {
     }
 
     @Test
-    void registerPost_validationError_rendersFormWithError() throws Exception {
+    void registerPost_blankUsername_beanValidationBlocksBeforeService() throws Exception {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
-        doThrow(new IllegalArgumentException("error.register.pin_invalid"))
-                .when(userRegistrationService).registerUser(any(User.class), anyBoolean());
+
+        mockMvc.perform(post(Routes.REGISTER).with(csrf())
+                        .param("username", "")
+                        .param("password", "1234"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/register"))
+                // Texto real resuelto por JsonMessageSource, no solo "existe el atributo" —
+                // si la resolución del código ServerMessage estuviera rota, esto mostraría
+                // literalmente "error.register.username_required" en vez del texto.
+                .andExpect(model().attribute("errorMessage", "Necesitamos tu nombre."));
+
+        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+    }
+
+    @Test
+    void registerPost_invalidPin_beanValidationBlocksBeforeService() throws Exception {
+        when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
 
         mockMvc.perform(post(Routes.REGISTER).with(csrf())
                         .param("username", "nuevo")
                         .param("password", "12"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/register"))
+                .andExpect(model().attribute("errorMessage", "El PIN debe tener 4 dígitos."));
+
+        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+    }
+
+    @Test
+    void registerPost_validationError_rendersFormWithError() throws Exception {
+        // username/password válidos de FORMA (pasan Bean Validation) — el error es del
+        // service (ej. teléfono, que es compuesto y Bean Validation no cubre, ver
+        // RegistrationForm). Antes usaba password="12" para forzar esto, pero eso ahora
+        // lo intercepta el @Pattern del DTO antes de llegar al service (cubierto por
+        // registerPost_invalidPin_beanValidationBlocksBeforeService).
+        when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
+        doThrow(new IllegalArgumentException("error.register.phone_required"))
+                .when(userRegistrationService).registerUser(any(User.class), anyBoolean());
+
+        mockMvc.perform(post(Routes.REGISTER).with(csrf())
+                        .param("username", "nuevo")
+                        .param("password", "1234"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("auth/register"))
                 .andExpect(model().attributeExists("errorMessage"));

@@ -223,7 +223,7 @@ de `data-i18n` + `i18n/common/*.json`.
 | `OrgDashboardController` | — | **Eliminado** (dashboard absorbido en `OrgRequestController`, MEJORAS #130) |
 | `OrgProfileController` | 4 (completar-perfil GET/POST, perfil GET/POST) | Sí |
 | `OrgRequestController` | 4 (lista, detalle, transiciones) | Sí |
-| `OrgApiController` | 1 (by-city JSON) | Sí |
+| `OrgApiController` | — | **Eliminado** (endpoint JSON sin consumidores reales, MEJORAS #205) |
 | `DocsController` | 2 (documentos, diagramas) | Sí |
 | `BaseController` | (eliminado — reemplazado por `Messages` + `@CurrentUser`) | — |
 

@@ -29,6 +29,11 @@ import org.springframework.context.annotation.Import;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
         "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb-browser}",
+        // Base de test AISLADA — mismo bug que MongoAggregationUtilsIntegrationTest
+        // (ver docs/MEJORAS.md #211): sin esto, SPRING_DATA_MONGODB_URI (vía .env)
+        // hace que este BrowserTestSeed.deleteAll() borre la Atlas real compartida
+        // en vez de "testdb-browser". Con database explícito, queda aislado de verdad.
+        "spring.data.mongodb.database=residuosolido_test_browser",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=true"
     }
