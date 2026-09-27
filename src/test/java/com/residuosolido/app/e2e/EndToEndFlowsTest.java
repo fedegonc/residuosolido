@@ -17,6 +17,7 @@ import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.service.UserService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -306,5 +307,33 @@ class EndToEndFlowsTest {
                         .param("organizationId", "org1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/solicitar"));
+    }
+
+    @Test
+    @WithMockUser(username = "vecino", roles = "USER")
+    @DisplayName("Flujo completo: usuario logueado crea solicitud con organización válida")
+    void flujoCompleto_usuarioLogueadoCreaSolicitud() throws Exception {
+        // Setup: usuario logueado con teléfono
+        User user = TestFixtures.citizen("u1", "+59899123456");
+        user.setUsername("vecino");
+
+        // Setup: organización válida
+        Organization org = TestFixtures.organization("org1", City.RIVERA);
+        org.setName("Cooperativa Test");
+
+        when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
+        when(userService.resolveUser(any())).thenReturn(user);
+        when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(org);
+        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(new Request());
+
+        // POST con todos los parámetros requeridos
+        mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
+                        .param("ciudad", "RIVERA")
+                        .param("address", "Calle Test 123")
+                        .param("organizationId", "org1")
+                        .param("materials", "PLASTICO"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(Routes.REQUESTS));
     }
 }
