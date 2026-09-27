@@ -11,6 +11,7 @@ import com.residuosolido.app.repository.UserRepository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,14 @@ public class UserService {
     // NOTE: MongoDB standalone does not support multi-document transactions (requires replica set).
     // These operations are NOT atomic. If a failure occurs mid-operation, data may be left inconsistent.
     // To enable real transactions, configure a single-node replica set in MongoDB.
+    /**
+     * allEntries=true en vez de evict por ciudad puntual: esta clase no sabe
+     * (ni le corresponde saber) la ciudad ANTERIOR de la organización si el
+     * update la cambia — evictar solo la ciudad nueva dejaría la vieja
+     * cacheada con una organización que ya no debería aparecer ahí. El cache
+     * tiene 2 entradas (RIVERA/LIVRAMENTO), evictarlo entero no tiene costo.
+     */
+    @CacheEvict(value = "orgsByCity", allEntries = true)
     public User updateUser(User user) {
         User existing = userRepository.findById(user.getId())
                 .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND));

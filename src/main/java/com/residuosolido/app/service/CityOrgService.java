@@ -8,6 +8,7 @@ import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -50,6 +51,12 @@ public class CityOrgService {
         return org;
     }
 
+    /**
+     * Cacheado: se llama en cada carga del formulario de solicitud (guest y
+     * usuario) y cambia solo cuando una organización actualiza su perfil
+     * (evict explícito en UserService.updateUser) — ver docs/TRADEOFFS.md §37.
+     */
+    @Cacheable(value = "orgsByCity", key = "#city")
     public List<User> getOrganizationsByCity(City city) {
         return userRepository.findByRoleAndCityAndActive(Role.ORGANIZATION, city, true)
                 .stream().filter(this::isAvailable).toList();

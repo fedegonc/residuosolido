@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: 2026-09-26 — tablero Kanban para listados de solicitudes (#51.1)  
-> Tests: 459 no-browser, 0 failures; browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
+> Tests: 463 no-browser, 0 failures; browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  

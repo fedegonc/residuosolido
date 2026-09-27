@@ -71,7 +71,6 @@ public class OrgRequestController {
         model.addAttribute("inProgressCount", inProgress);
         model.addAttribute("completedCount", completed);
         model.addAttribute("rejectedCount", rejected);
-        model.addAttribute("allCount", pending + inProgress + completed + rejected);
 
         List<Request> requests = requestService.getRequestsByOrganization(currentOrg, page, size);
 

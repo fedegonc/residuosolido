@@ -960,7 +960,7 @@ volverse permanentes por inercia, no por decisión.
 
 | Decisión diferida | Trigger objetivo | Cómo se mide |
 |---|---|---|
-| Cache en `CityOrgService.getOrganizationsByCity` (§?) | `http.server.requests` p95 de `/solicitudes/org-options` > 200ms sostenido, o > 1000 requests/día | `/actuator/metrics/http.server.requests` (ya expuesto, hoy sin monitorear) |
+| ~~Cache en `CityOrgService.getOrganizationsByCity`~~ | **Implementado** (ver §41) — se adelantó sin esperar el trigger, costo casi nulo (`@Cacheable` + `@EnableCaching`, sin dependencia nueva) | — |
 | Autenticación PIN "provisoria" (`fragments/forms::pin`, comentario explícito en el HTML) | Antes de que el primer usuario real complete un registro en producción — no "cuando haya tiempo" | Gate manual: revisar antes de anunciar el sistema a usuarios reales, no una métrica automática |
 | Escalado horizontal / imágenes en disco local (§ imágenes locales, `ARQUITECTURA.md`) | Segunda instancia de Render, o `LocalImageService` supera el disco disponible del tier actual | Alerta de disco vía `/actuator/health` → `diskSpace.status` (ya expuesto) |
 | Redundancia de la instancia (single point of failure, ver §34) | Primer incidente real de downtime reportado por un usuario, o SLA formal comprometido | No medible preventivamente — es un gate de "primera vez que duele de verdad" |
@@ -1175,3 +1175,78 @@ sistema real (no asumidos):**
 
 Ver `docs/MEJORAS.md` #213. Suite completa verificada dos veces (una por
 bug) hasta 458/458, 0 failures.
+
+## 41. Limpieza post-Kanban + `@Cacheable` + Bean Validation (alcance acotado)
+
+Contexto: tras el tablero Kanban (#213/kanban), auditoría de "qué Spring
+se está desaprovechando" (rutas: no aplica, ya son constantes simples;
+integraciones: no aplica, es un monolito sin sistemas externos) señaló dos
+huecos reales: caché declarativo y Bean Validation, cero uso de ambos en
+todo el proyecto.
+
+**(a) Limpieza de dead code post-Kanban.** El tablero reemplazó tanto la
+tabla (`org-panel__table`/`__row`/`__cell--*`) como el filtro por query param
+(`?estado=`, `currentStatus`) del rediseño anterior (#213), dejando huérfanos:
+`fragments/request-list.html` completo (los dos fragments que tenía,
+`request-item-card` y `request-item-row`, sin una sola referencia en ningún
+template — se borró el archivo entero), el atributo de modelo `allCount` en
+`OrgRequestController`, y ~40 líneas de CSS (`.org-panel__stat--active` y
+toda la sección de tabla) en `org-panel.css`. **Bug real encontrado
+limpiando:** el `@media print` (la función de informe PDF) seguía
+apuntando a `.org-panel__row`, que ya no existe — el botón "Descargar
+informe PDF" no iba a ocultar nada del Kanban ni a adaptar su layout
+horizontal con scroll (pensado para pantalla) a una página impresa. Se
+reescribió el bloque para convertir `.kanban-board` de flex-con-scroll a
+apilado vertical solo en `@media print`.
+
+**(b) `@Cacheable` en `CityOrgService.getOrganizationsByCity`.** Trigger de
+§37 no esperado a propósito — el costo de implementarlo ahora es casi cero
+(`@EnableCaching` + una anotación, sin `spring-boot-starter-cache`: Spring
+Boot cae al `ConcurrentMapCacheManager` por defecto si no hay otro provider
+en el classpath). Invalidación: `@CacheEvict(allEntries=true)` en
+`UserService.updateUser` — único punto donde cambian ciudad/materiales/
+teléfono de una organización ya persistida; `allEntries=true` en vez de
+evictar solo la ciudad nueva porque el método no conoce la ciudad ANTERIOR
+si el update la cambia, y el cache son 2 entradas (RIVERA/LIVRAMENTO) —
+evictarlo entero no tiene costo real. **Verificado con contexto real de
+Spring** (`CacheConfigIntegrationTest`, mismo criterio que `AsyncConfigIntegrationTest`
+para `@Async`/`@Transactional` en #208): un test con `new CityOrgService(mock)`
+plano NUNCA hubiera detectado si `@Cacheable` fuera decorativo, porque el
+cacheo lo aplica el proxy que arma `@EnableCaching`, no el objeto en sí.
+
+**(c) Bean Validation — alcance deliberadamente acotado, no una migración
+completa.** Se evaluó migrar `RequestValidator.validateCoreFields`
+(complejidad ciclomática 12, el caso que motivó la pregunta) pero se
+descartó por ahora:
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Migrar solo `RegistrationForm` (elegida)** | Es el único form del proyecto que YA tiene un DTO de binding (`@ModelAttribute RegistrationForm`, con Lombok) — agregar `@Valid` + anotaciones es un cambio de 3 archivos (DTO, controller, 1 dependencia nueva), cero DTOs nuevos que crear |
+| Migrar `RequestValidator`/`RequestCreateController` completo | Requiere crear un DTO de formulario que hoy no existe (recibe `@RequestParam` sueltos), más el teléfono ahí es compuesto (país+nacional+DDD resuelto recién en el controller) y la validación de "materiales aceptados por la organización" es una regla cruzada que Bean Validation no resuelve con una anotación simple — es un refactor de 9-10 pasos tocando 3+ controllers y toda su cobertura de tests, no una tarde |
+| Migrar `OrgProfileController` | Mismo problema del teléfono compuesto — el campo que hoy se valida como "requerido" (`resolvedPhone`) es un valor derivado, no un `@RequestParam` crudo anotable |
+
+Con `RegistrationForm` se migró lo genuinamente simple: forma de `username`
+(`@NotBlank`, `@Size(max=64)`) y `password`/PIN (`@Pattern(regexp="\\d{4}")`).
+Teléfono (compuesto) y unicidad de `username` (necesita el repositorio)
+siguen validándose en `UserRegistrationService.validateUserRegistration`
+exactamente igual que antes — Bean Validation es una capa adicional que
+falla más rápido para los casos simples, no un reemplazo.
+
+**Mensajes de error sin depender del interpolador de Bean Validation:**
+en vez de confiar en que Spring Boot conecte el `MessageInterpolator` de
+`LocalValidatorFactoryBean` con `JsonMessageSource` (afirmación que no se
+verificó y que este proyecto ya sabe que no debe asumirse, ver
+`CLAUDE.md`), cada anotación usa el código `ServerMessage` tal cual como
+`message` (ej. `message = "error.register.username_required"`), y el
+controller resuelve ese string con `Messages.msg(String)` (helper nuevo,
+misma resolución que ya usa `Messages.msg(ServerMessage)` para todo lo
+demás). Cero mecanismo nuevo que aprender o que pueda romperse en
+silencio — reutiliza el único camino de i18n que ya existe en el proyecto.
+**Verificado con el texto real**, no solo "existe el atributo": los tests
+de `AuthControllerTest` comprueban `errorMessage` == "Necesitamos tu
+nombre." / "El PIN debe tener 4 dígitos." (la traducción real de
+`es.json`), no solo que el campo no sea null — si la resolución del código
+estuviera rota, esos tests hubieran mostrado el código crudo y lo habrían
+detectado.
+
+Suite completa: 463/463, 0 failures. Ver `docs/MEJORAS.md` #216.
