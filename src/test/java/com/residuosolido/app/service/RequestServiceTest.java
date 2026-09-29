@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 /**
  * Cubre las ramas de RequestService no ejercitadas por RequestServiceValidationTest
  * (que se enfoca en las validaciones RN-10/RN-11): ownership, transiciones de estado,
- * concurrencia optimista y consultas de invitado/organización.
+ * concurrencia optimista y consultas de usuario/organización.
  */
 @Tag("unit")
 class RequestServiceTest {

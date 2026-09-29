@@ -76,7 +76,7 @@ medición de impacto ambiental.
 Mostrar el flujo:
 
 ```
-Ciudadano o invitado
+Ciudadano registrado
   → crea solicitud
   → selecciona organización
   → organización acepta o rechaza
@@ -88,8 +88,8 @@ Explicar tres reglas que demuestran análisis del dominio:
 
 1. Una organización no puede modificar solicitudes ajenas.
 2. Una solicitud no puede completarse directamente desde pendiente.
-3. El seguimiento de invitados requiere teléfono y código, no solo
-   teléfono.
+3. Toda solicitud pertenece a un usuario registrado: no hay
+   solicitudes anónimas ni canal de seguimiento por código.
 
 ### 4.4 Decisiones técnicas (3 min)
 
@@ -108,7 +108,7 @@ no demuestra esas necesidades.
 ### 4.5 Demostración (5 min)
 
 Demo corta con datos sintéticos claramente identificados, usando el dataset
-de defensa (ver más abajo): crear una solicitud como invitado, aceptarla y
+de defensa (ver más abajo): crear una solicitud como ciudadano, aceptarla y
 completarla como organización, mostrar un rechazo, mostrar que una org no ve
 solicitudes ajenas, reasignar una solicitud PENDING de una org a otra.
 
@@ -133,10 +133,10 @@ Contraseña de las 3: `1234`.
 
 **Ciudadanos:** `rosaperez`, `mateosilva`, `carlanunez`, `diegoacosta` (Rivera) y
 `joaosouza` (Livramento, demuestra el bilingüismo — ver nota de modelo abajo).
-Más "Beatriz Invitada" (guest, sin cuenta, teléfono `+59899300001`, código de
-rastreo `DEMO2026`).
 
-**Las 10 solicitudes curadas** (ver comentarios numerados en el código):
+**Las 9 solicitudes curadas** (ver comentarios numerados en el código — la
+numeración salta del 6 al 8 porque la #7 era una solicitud de invitado y ese
+flujo fue eliminado del modelo):
 
 | # | Estado | Qué muestra |
 |---|---|---|
@@ -146,7 +146,6 @@ rastreo `DEMO2026`).
 | 4 | REJECTED | Sin motivo — ver gap de modelo abajo |
 | 5 | PENDING, ESCOMBROS, sin org | Ningún org del dataset acepta escombros |
 | 6 | PENDING, Livramento | Reusa un org del dataset genérico (`reciclart`) |
-| 7 | PENDING, guest | Rastreo con código `DEMO2026` |
 | 8 | PENDING, Plástico → Papel Amigo | Trade-off: `accept()` no revalida materiales (ver §7 arriba) |
 | 9 | PENDING (Vida Verde) | Para reasignar en vivo a otra org |
 | 10 | IN_PROGRESS, Livramento/pt | i18n — loguear como `joaosouza` cambia el idioma a pt |
@@ -198,9 +197,9 @@ Ver sección 7 de este documento.
 | "¿Por qué hay un `sw.js`?" | "Heredado del PWA descartado (#11/#100) y retomado mínimo en #143: en `activate` limpia los caches heredados del SW viejo (que interceptaba *todos* los fetches) y luego es un fetch handler pass-through — lo mínimo que Chrome exige para instalabilidad. No cachea nada: offline la app falla igual que sin SW" |
 | "¿Las notificaciones de WhatsApp son reales?" | "No. No hay notificaciones en el MVP; el teléfono queda registrado en la solicitud" |
 | "¿La contraseña de 8 caracteres es suficiente?" | "Es defendible para un MVP. Una política de producción exigiría complejidad (mayúsculas, números, símbolos) y rotación" |
-| **Familia conectividad — "¿Funciona con poca conectividad / offline?"** | "Con conectividad lenta sí: SSR entrega HTML completo en 1 request y los assets son mínimos (~640 líneas de CSS+JS, sin frameworks) — tolera redes lentas mejor que una SPA que debe descargar el bundle antes de renderizar. Con cero conectividad no funciona: es decisión deliberada, no descuido — la PWA completa se implementó y se descartó tras un incidente real (#11/#23: SW pre-cacheando HTML dinámico → usuarios con contenido stale por horas; SW huérfanos interceptando todos los fetches, `/sw.js` detrás de auth → 302 a login; kill-switch #100; instalabilidad mínima reincorporada en #143). Offline-first real pondría `IndexedDB` como fuente de verdad — pero el código de rastreo, la validación de organizaciones y el rate limiting nacen server-side: es una reescritura del modelo, no una feature" |
+| **Familia conectividad — "¿Funciona con poca conectividad / offline?"** | "Con conectividad lenta sí: SSR entrega HTML completo en 1 request y los assets son mínimos (~640 líneas de CSS+JS, sin frameworks) — tolera redes lentas mejor que una SPA que debe descargar el bundle antes de renderizar. Con cero conectividad no funciona: es decisión deliberada, no descuido — la PWA completa se implementó y se descartó tras un incidente real (#11/#23: SW pre-cacheando HTML dinámico → usuarios con contenido stale por horas; SW huérfanos interceptando todos los fetches, `/sw.js` detrás de auth → 302 a login; kill-switch #100; instalabilidad mínima reincorporada en #143). Offline-first real pondría `IndexedDB` como fuente de verdad — pero la asignación de organización por ciudad+materiales, la validación de solicitudes y el rate limiting nacen server-side: es una reescritura del modelo, no una feature" |
 | **Familia conectividad — "¿Qué pasa si se corta la conexión a mitad de uso?"** | "Falla limpio: la escritura de solicitud es atómica en Mongo (existe completa o no existe — un corte no deja estado corrupto), la sesión sobrevive (cookie local), y no hay estado atado a conexión viva (sin websockets). Huecos conocidos y declarados: (a) el form se pierde si el submit falla — la cola en `IndexedDB` con retry en evento `online` lo cubre; (b) si el POST llegó pero la respuesta se perdió, un reintento duplica la solicitud — se cubre con `clientRequestId` + índice único. Ambos son trabajo aditivo sobre el caso feliz, no correctivo" |
-| "¿Te sabés todos los tests de memoria?" | "No, y no es lo que evalúa una banca. Sé el número agregado (234: 162 unitarios / 43 integración / 29 navegador) y las categorías que cubren (autorización, reglas de negocio, concurrencia, navegador real). Si piden un ejemplo concreto, puedo explicar 2-3 en profundidad — el de regresión del bug de teléfono de invitado, uno de autorización cruzada entre organizaciones, uno de transición de estado prohibida. Si preguntan un detalle puntual que no recuerdo, digo dónde está y qué hace, no invento" |
+| "¿Te sabés todos los tests de memoria?" | "No, y no es lo que evalúa una banca. Sé el número agregado (234: 162 unitarios / 43 integración / 29 navegador) y las categorías que cubren (autorización, reglas de negocio, concurrencia, navegador real). Si piden un ejemplo concreto, puedo explicar 2-3 en profundidad — uno de concurrencia con optimistic locking (`acceptRequest_concurrentConflict_doesNotNotify`), uno de autorización cruzada entre organizaciones, uno de transición de estado prohibida. Si preguntan un detalle puntual que no recuerdo, digo dónde está y qué hace, no invento" |
 | "Reviso tu historial de commits en GitHub — ¿qué pasó con el Blog, Cloudinary, Tailwind, PostgreSQL? Los primeros ~100 commits (jul-ago 2025) implementan otra app" | "Esa es la etapa exploratoria inicial del proyecto: probé un scaffold más amplio (Posts/Blog, categorías, `WasteSection`, upload a Cloudinary, Tailwind CSS, PostgreSQL) antes de fijar el alcance real contra el Oficio 044/2023. Se descartó deliberadamente, no se perdió por accidente: MongoDB reemplazó a PostgreSQL para modelar materiales como array embebido, CSS+BEM reemplazó a Tailwind, y el Blog se sacó del alcance porque no es el problema que este MVP resuelve (`docs/MEJORAS.md` documenta cada descarte). El historial viejo queda como evidencia del proceso iterativo, no como código vigente" |
 
 ---
@@ -217,7 +216,7 @@ Ver sección 7 de este documento.
 - Que **todos** los tests E2E son de navegador real: `EndToEndFlowsTest`
   sigue siendo MockMvc (stack simulado, sin navegador). Sí hay 6 clases
   con Playwright/Chromium real (`browser/*BrowserTest`) que cubren los
-  flujos principales de ciudadano, organización e invitado — sería
+  flujos principales de ciudadano y organización — sería
   incorrecto decir que no hay tests de navegador real, pero también
   incorrecto decir que toda la suite E2E lo es.
 - Que envía notificaciones reales por WhatsApp (no hay notificaciones en el MVP).

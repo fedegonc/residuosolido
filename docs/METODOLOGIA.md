@@ -41,7 +41,7 @@ las reglas de seguridad más críticas.
 - `RegistrationForm` (DTO) para evitar mass-assignment.
 - Onboarding forzado de organización (`profileCompleted`).
 - Validaciones server-side de email, username y contraseña.
-- Rate limiting de invitados (`RateLimiter`).
+- Rate limiting por IP en registro y lockout de login (`RateLimiter`).
 - 11 tests de seguridad crítica (`CriticalSecurityTest`).
 
 **Cierre de fase:** el sistema autentica, autoriza por rol y rechaza
@@ -51,8 +51,8 @@ entradas maliciosas básicas. No hay flujo de solicitudes todavía.
 
 ## Fase 2 — Flujo principal de solicitudes
 
-**Objetivo:** implementar el caso de uso central: un ciudadano (o
-invitado) crea una solicitud y una organización la gestiona.
+**Objetivo:** implementar el caso de uso central: un ciudadano registrado
+crea una solicitud y una organización la gestiona.
 
 **Artefactos producidos:**
 
@@ -63,7 +63,9 @@ invitado) crea una solicitud y una organización la gestiona.
 - `CityOrgService` — resolución de organización por ciudad y materiales.
 - `OrgRequestController` + `RequestService` (aceptar /
   rechazar / completar — transiciones consolidadas en un solo service).
-- Rastreo de invitados por teléfono + código privado de 8 caracteres.
+- ~~Rastreo de invitados por teléfono + código privado~~ — implementado y
+  luego eliminado junto con todo el flujo de invitado (las solicitudes
+  requieren usuario registrado).
 - ~~`InformalCollector` (CRUD interno)~~ — subsistema planificado y luego descartado/eliminado.
 - Tests de servicios (validación, transiciones, queries, métricas).
 

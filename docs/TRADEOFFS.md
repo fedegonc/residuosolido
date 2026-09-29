@@ -601,7 +601,8 @@ nuevo, solo lo adelanta.
 
 **A favor:**
 - Menos campos, menos fricción para probar el flujo completo repetidas veces.
-- El teléfono es dato real del dominio (ya se usa para rastreo de invitados).
+- El teléfono es dato real del dominio (se usa para coordinar la recolección;
+  el rastreo de invitados que lo usaba fue eliminado — ver §48).
 - Consistente con la contraseña mínima de 3-8 caracteres ya aceptada como
   tradeoff de MVP (§4) — este es el mismo tipo de decisión, más explícita.
 
@@ -842,7 +843,7 @@ organización acepta o rechaza su solicitud. El canal define la arquitectura:
 |---|---|
 | **Bandeja in-app persistida en Mongo (elegida)** | Cero infraestructura nueva: reusa SSR + Spring Data. La notificación es un dato del dominio (colección `notifications`: user, requestId, `NotificationType`, `confirmedSlot`, `read`, `createdAt`) — queda historial auditable, badge de no-leídas en navbar vía `@ModelAttribute` global, y la página `/notificaciones` marca todo como leído al listar (las recién vistas se sellan "nueva" en esa carga) |
 | Email | `User.email` es opcional — la mayoría no lo tiene. SMTP agrega credenciales, deliverability y un canal asíncrono sin valor si el usuario ya entra a la app. DIFERIDO |
-| SMS/WhatsApp sobre `guestPhone` | Único canal que alcanzaría al **invitado** (sin cuenta, sin bandeja). Requiere gateway pago (Twilio u otro). El contrato ya quedó modelado en el sandbox (`NotificationPort`, recipient = `user.id` o `guestPhone`) — el adapter externo queda preparado pero DIFERIDO; el invitado sigue consultando estado por teléfono + código de rastreo |
+| SMS/WhatsApp sobre `guestPhone` | Único canal que alcanzaría al **invitado** (sin cuenta, sin bandeja). Requiere gateway pago (Twilio u otro). El contrato ya quedó modelado en el sandbox (`NotificationPort`, recipient = `user.id` o `guestPhone`) — el adapter externo queda preparado pero DIFERIDO. **Nota posterior:** el flujo de invitado fue eliminado por completo (ver §48) — toda solicitud tiene usuario registrado con bandeja, así que este canal perdió su razón de ser |
 
 **Invariante de orden:** `RequestService` notifica DESPUÉS del save de la
 request — si el save falla por locking optimista (dos actores sobre la misma
@@ -856,7 +857,8 @@ franja confirmada ya se comunicó al aceptar; completar es el cierre esperado).
 
 **Resultado:** feature validada primero en `scratch/sim` (`NotificationPort` +
 3 branches nuevos: `notify.accepted.citizen`, `notify.accepted.guest`,
-`notify.rejected.guest` → 89 checks, 36 branches) y portada a Spring: `Notification`,
+`notify.rejected.guest` → 89 checks, 36 branches; los branches guest se
+convirtieron luego a ciudadanos al eliminar el flujo de invitado — §48) y portada a Spring: `Notification`,
 `NotificationRepository`, `NotificationService`, `NotificationController`,
 `GlobalModelAttributes.unreadNotifications` (tolerante a sesión stale → null),
 link + badge en navbar (desktop, menú usuario, mobile), `users/notifications.html`,
@@ -1353,6 +1355,11 @@ Suite completa: 501/501, 0 failures (más 1 falla preexistente de un doc de Devi
 
 ## 47. `TrackingCode.canonical`: búsqueda de invitados case-insensitive
 
+> **SUPERSEDED por §48** — el flujo de invitado (`trackingCode`, `/rastrear`,
+> `getGuestRequests`) fue eliminado por completo. Esta sección queda como
+> registro del fix y del patrón (canonicalizar identificadores en el punto de
+> lookup), que sigue vigente en `Username`/`PhoneNumber`.
+
 Bug real encontrado al auditar "cada concepto con formato propio tiene su clase canonical": los códigos de seguimiento de invitado se generan en mayúsculas, pero `RequestService.getGuestRequests` solo hacía `trackingCode.trim()`. Un invitado que copiaba su código a mano en minúsculas (`abc123` vs `ABC123` almacenado) obtenía lista vacía en silencio en `/rastrear` — mismo patrón que el bug de username resuelto en §44, pero en el canal de lectura anónimo.
 
 | Opción | Por qué sí/no |
@@ -1362,3 +1369,23 @@ Bug real encontrado al auditar "cada concepto con formato propio tiene su clase 
 | Query Mongo case-insensitive (regex/collation) | Más cara y frágil: el código almacenado ya es uppercase, el problema es solo la entrada del usuario — canonicalizar la entrada es más simple que relajar el índice |
 
 Sin migración: los códigos guardados ya son uppercase; solo la entrada se canonicaliza. Sandbox (`scratch/sim`) sincronizado con el mismo contrato y un check `getGuestRequests.lowercaseCode`. Ver `docs/MEJORAS.md` #229.
+
+## 48. Eliminar el flujo de invitado: toda solicitud pertenece a un usuario registrado
+
+Decisión: se eliminó por completo el canal de solicitudes anónimas — campos
+`guestName`/`guestPhone`/`trackingCode` en `Request`, factories `forGuest`,
+`isGuest()`, endpoint `/rastrear`, template `users/track.html`, rate limiting
+de invitados y ~27 claves i18n asociadas. `/solicitar` pasa a requerir sesión;
+el usuario consulta el estado en `/mis-solicitudes` y recibe notificaciones
+in-app en `/notificaciones`.
+
+| Opción | Por qué sí/no |
+|---|---|
+| **Eliminar el canal guest (elegida)** | Dos canales de identidad para el mismo agregado (`Request.user` nullable + trío de campos guest) duplicaba invariantes: validación de contacto, canonicalización, consulta de estado y notificación tenían cada una dos implementaciones. El tracking code además era un bearer token débil (8 caracteres, ruteable por teléfono+código) para leer datos de una recolección |
+| Mantener guest + usuario | Fricción menor al crear la primera solicitud, pero paga el costo permanente de dos invariantes paralelos y deja un endpoint público de lectura de solicitudes |
+| OTP/magic-link en vez de cuenta | Resuelve la fricción sin cuenta permanente, pero agrega un canal de entrega (SMS/email) con costo y deliverability — DIFERIDO si el registro resulta barrera real |
+
+**Lo que quedó del canal viejo:** nada funcional. `docs/CORRECCIONES.md` y §47
+quedan como registro histórico marcado. La regla actual está en
+`docs/REQUISITOS.md` RN-3: "Toda solicitud pertenece a un usuario registrado —
+no existen solicitudes anónimas ni canal de seguimiento por código".

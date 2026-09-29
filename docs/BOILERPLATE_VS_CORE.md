@@ -84,7 +84,7 @@ las reglas de negocio antes de tocar (core).
 | `request-form.html` | **Core** | El formulario central — conoce ciudad, materiales, organización, franjas |
 | `request-list.html` | **Core** | Encapsula el ciclo de estados y el vocabulario de materiales en la UI |
 | `fragments/ui.html :: options` | **Core** | El filtro ciudad→organización vive acá también, no solo en el backend. Nota: técnicamente vive dentro de `ui.html` (fusionado ahí junto con las piezas boilerplate por reducción de archivos, ver `MEJORAS.md` #120), pero esta pieza específica sigue siendo Core, no Boilerplate |
-| `track.html`, `track-modal.html` | **Core** | Rastreo de invitado — específico del dominio |
+| ~~`track.html`~~ | **Core** (retirado) | Rastreo de invitado — eliminado junto con el flujo guest (`TRADEOFFS` §48) |
 | `org/profile.html` | Zona gris | El onboarding forzado (absorbido acá, abre en modo edición si está incompleto) es negocio, la forma (un CRUD simple) es genérica |
 
 ---

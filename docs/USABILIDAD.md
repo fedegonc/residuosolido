@@ -46,7 +46,7 @@ candidato a `docs/MEJORAS.md`.
 
 ## 3. Funcionalidades por actor
 
-### Actor: Invitado (sin cuenta)
+### Actor: Visitante (sin cuenta — se registra antes de pedir)
 
 #### F1 — Registrarse (RF-1)
 
@@ -83,10 +83,10 @@ candidato a `docs/MEJORAS.md`.
 
 | # | Afirmación | 1–5 |
 |---|---|---|
-| 1 | Pude pedir la recolección sin crear una cuenta | |
+| 1 | Me quedó claro que necesitaba una cuenta para pedir | |
 | 2 | Elegir ciudad, materiales y organización fue claro | |
 | 3 | El campo de teléfono aceptó mi número como lo escribí (con espacios, guiones o paréntesis) | |
-| 4 | El código de seguimiento quedó claro y sé dónde guardarlo | |
+| 4 | Supe dónde consultar el estado de mi pedido después | |
 | 5 | **(R)** En algún punto del formulario no supe qué hacer | |
 | 6 | Subir una foto (si la usé) funcionó sin problemas | |
 
@@ -95,11 +95,12 @@ candidato a `docs/MEJORAS.md`.
 > usuario *no debería* notar nada. Una media baja acá indicaría fricción real
 > en la entrada de datos, no en la validación.
 
-#### F4 — Rastrear solicitud (RF-4, invitado)
+#### F4 — Consultar estado de solicitud (RF-4, usuario)
 
 | Casos de uso | Endpoints |
 |---|---|
-| Consultar estado con teléfono + código; interpretar el resultado | GET `/rastrear` |
+| Ver lista de solicitudes propias y su estado | GET `/mis-solicitudes` |
+| Ver detalle de una solicitud | GET `/solicitudes/{id}` |
 
 | # | Afirmación | 1–5 |
 |---|---|---|

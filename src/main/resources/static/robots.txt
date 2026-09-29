@@ -6,7 +6,6 @@ Disallow: /mis-solicitudes
 Disallow: /solicitudes
 Disallow: /entrar
 Disallow: /registrarse
-Disallow: /rastrear
 Disallow: /mi-organizacion
 Disallow: /api/
 Disallow: /solicitudes/org-options

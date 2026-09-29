@@ -32,7 +32,7 @@ import java.util.Map;
  * lista, elimina, edita y muestra el formulario de edición.
  *
  * Antes estaba dividido en RequestController + RequestEditController.
- * La creación de solicitudes (con rate limiting de invitados) vive en RequestCreateController.
+ * La creación de solicitudes vive en RequestCreateController.
  */
 @Controller
 public class RequestController {

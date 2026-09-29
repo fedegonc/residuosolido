@@ -38,9 +38,8 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 ├──────────────────────────────────────────────────────┤
 │ id: String                                            │
 │ version: Long          (optimistic locking, @Version) │
-│ user: User             (null si es invitado)          │
-│ organization: User     (indexado)                     │
-│ guestName / guestPhone: String                        │
+│ user: User             (requerido — solicitante)      │
+│ organization: Organization (indexado)                 │
 │ city: City                                            │
 │ address / addressReference: String                    │
 │ materials: List<MaterialCategory>                     │
@@ -49,11 +48,11 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 │ status: RequestStatus = PENDING (indexado)             │
 │ createdAt: LocalDateTime                               │
 ├──────────────────────────────────────────────────────┤
-│ forCitizen(User) / forGuest(name, phone, code)         │
+│ forCitizen(User)                                       │
 │ updateDraft(city, address, ref, materials)             │
 │ accept(TimeSlot) / reject() / complete()               │
-│ canBeEdited() / isGuest() / hasMaterials()             │
-│ assignOrganization(User)                                │
+│ canBeEdited() / hasMaterials()                         │
+│ assignOrganization(Organization)                       │
 └──────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────┐
@@ -115,9 +114,9 @@ valor, no `@DocumentReference`).
 ```
 
 - 3 colecciones Mongo: `users`, `requests` y `notifications`.
-- `requests.user` → referencia a `users` (opcional, null si es invitado).
-- `requests.organization` → referencia a `users` con `role=ORGANIZATION` (obligatoria tras crear/editar).
-- `notifications.user` → referencia a `users` (solo registrados; el invitado no tiene bandeja).
+- `requests.user` → referencia a `users` (obligatoria: el solicitante).
+- `requests.organization` → referencia a `organizations` (obligatoria tras crear/editar).
+- `notifications.user` → referencia a `users` (toda solicitud tiene usuario registrado).
 - `notifications.requestId` → id de la solicitud **por valor** (String, no `@DocumentReference`): la notificación histórica sobrevive si la solicitud se borra.
 
 ---
@@ -128,7 +127,7 @@ valor, no `@DocumentReference`).
 
 **Participantes:**
 
-- Solicitante (`Invitado` o `Usuario`).
+- Solicitante (`Usuario` autenticado).
 - Formulario Thymeleaf `request-form.html`.
 - `RequestCreateController`.
 - `RateLimiter`.
@@ -142,13 +141,11 @@ valor, no `@DocumentReference`).
 
 1. El solicitante abre `/solicitar` y completa el formulario.
 2. El formulario envía `POST /solicitudes`.
-3. Si es invitado, el controller verifica el rate limit.
-4. `RequestValidator` valida los datos y materiales de la solicitud.
-5. `LocalImageService` valida y guarda la imagen (si existe).
-6. `CityOrgService` valida la organización seleccionada y su ciudad.
-7. `RequestRepository` persiste la solicitud.
-8. Si es invitado y persistencia exitosa, se genera `trackingCode` (8 caracteres).
-9. El controller redirige: invitado → `/rastrear?telefono&codigo`; registrado → `/mis-solicitudes`.
+3. `RequestValidator` valida los datos y materiales de la solicitud.
+4. `LocalImageService` valida y guarda la imagen (si existe).
+5. `CityOrgService` valida la organización seleccionada y su ciudad.
+6. `RequestRepository` persiste la solicitud.
+7. El controller redirige a `/mis-solicitudes`.
 
 ---
 
@@ -166,9 +163,8 @@ PENDING ──accept(slot)──> IN_PROGRESS ──complete()──> COMPLETED
 - `REJECTED` y `COMPLETED` son estados finales (sin transiciones salientes).
 - Todas las transiciones son validadas por `RequestStatus.transitionAccept/Complete/Reject()` (vía `Request.accept/complete/reject()`) antes de ejecutarse — el wrapper `RequestStateMachine` que existía acá se eliminó (duplicaba el mismo chequeo sin aportar nada, ver `docs/MEJORAS.md` #221).
 
-**Invitados vs. Registrados:**
-- Solo solicitudes de **invitados** generan `trackingCode` (para consulta anónima vía `/rastrear`).
-- Solicitudes de usuarios registrados no tienen `trackingCode`.
+**Solicitante:** siempre un usuario registrado — no existen solicitudes
+anónimas ni código de seguimiento (el flujo de invitado fue eliminado).
 
 **Concurrencia:**
 - Las transiciones se protegen con `@Version` y optimistic locking (`OptimisticLockingFailureException`).
@@ -229,13 +225,6 @@ RequestService (structured logging — sin @Transactional, ver TRADEOFFS §36)
 
 ## 7. Diagramas de casos de uso por actor
 
-### Invitado
-```
-Invitado
-  ├─ CU: Crear solicitud de recolección sin cuenta (RF-3)
-  └─ CU: Consultar solicitud por teléfono + código privado (RF-4)
-```
-
 ### Usuario (registrado)
 ```
 Usuario
@@ -284,7 +273,7 @@ Los diagramas fueron auditados comparándolos con el código fuente post-refacto
 
 **Diagramas actualizados en esta revisión:**
 - **Figura 4a (Crear solicitud):** Agregado `RequestValidator` como participante explícito.
-- **Figura 5 (Ciclo de estados):** Agregado `RequestStateMachine` (eliminado posteriormente, ver #221 — este punto de la auditoría ya no refleja el código actual), aclarado que tracking code solo se genera para invitados, corregida descripción de optimistic locking.
+- **Figura 5 (Ciclo de estados):** Agregado `RequestStateMachine` (eliminado posteriormente, ver #221 — este punto de la auditoría ya no refleja el código actual), aclarado que tracking code solo se genera para invitados (flujo eliminado posteriormente), corregida descripción de optimistic locking.
 - **Figura 6 (Aceptar/Rechazar/Completar):** Agregado `RequestStateMachine` y `@Transactional` (ambos eliminados posteriormente — #221 y TRADEOFFS §36 respectivamente), aclarado flujo de notificaciones.
 
 **Notas:**

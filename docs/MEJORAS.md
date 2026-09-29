@@ -15,13 +15,13 @@ Tabla centralizada de todas las mejoras posibles del sistema. Para justificació
 |---|---|---|---|
 | 1 | Auth con roles + onboarding forzado | Implementado | §1 |
 | 2 | Solicitudes de recolección (CRUD) | Implementado | — |
-| 3 | Rastreo por teléfono + código privado | Implementado | — |
+| 3 | Rastreo por teléfono + código privado | Retirado (flujo de invitado eliminado) | §48 |
 | 4 | Selector de código de país (UY/BR) | Implementado | — |
 | 5 | Flujo de estados (PENDING→IN_PROGRESS→COMPLETED/REJECTED) | Implementado | §2 |
 | 6 | Kanban integrado al dashboard de org | Implementado | — |
 | 7 | Blog estático (3 artículos) | Descartado | §5 |
 | 8 | Métricas públicas por ciudad | Implementado | — |
-| 9 | Rate limiting de invitados | Implementado | — |
+| 9 | Rate limiting de invitados | Retirado (flujo de invitado eliminado) | §48 |
 | 10 | Bloqueo por intentos de login | Implementado | — |
 | 11 | PWA instalable | Descartado → Retirado | §6 |
 | 12 | i18n español/portugués | Implementado | §7 |

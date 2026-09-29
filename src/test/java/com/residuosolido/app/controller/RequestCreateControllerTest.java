@@ -43,8 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Tests del flujo de creación de solicitudes (GET/POST /solicitar):
- * invitado con rate limit + redirect a rastreo, usuario registrado a
- * /mis-solicitudes, y las tres ramas de error.
+ * usuario registrado redirige a /mis-solicitudes; ramas de error.
  */
 @Tag("integration")
 @SpringBootTest(properties = {

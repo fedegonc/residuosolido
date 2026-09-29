@@ -61,7 +61,7 @@ public class CityAwareLocaleResolver implements LocaleResolver {
             }
         }
 
-        // 4. Invitado: Accept-Language
+        // 4. No autenticado: Accept-Language
         Locale browserLocale = resolveFromBrowser(request);
         if (browserLocale != null) {
             return browserLocale;

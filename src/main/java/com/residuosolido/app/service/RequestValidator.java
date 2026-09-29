@@ -20,9 +20,8 @@ import java.util.List;
 public class RequestValidator {
 
     /**
-     * Valida los campos obligatorios para crear una solicitud (ciudadano o invitado).
+     * Valida los campos obligatorios para crear una solicitud.
      * Ciudadano: user no nulo, activo, con rol USER y teléfono válido.
-     * Invitado: name y phone válidos.
      */
     public void validateCreate(User user, City city, String address,
                                List<MaterialCategory> materials, String organizationId) {

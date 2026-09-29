@@ -15,10 +15,8 @@ import java.util.List;
  * Bandeja in-app del ciudadano: persiste una {@link Notification} por cada
  * transición de la organización que el usuario debe conocer (aceptada/rechazada).
  *
- * Los invitados NO pasan por acá: no tienen cuenta ni bandeja. Su canal
- * (SMS/WhatsApp sobre guestPhone) es un adapter diferido — el contrato de
- * dominio ya está modelado en el sandbox (NotificationPort, recipient =
- * guestPhone), ver docs/MEJORAS.md #187.
+ * El destinatario es siempre el userId del solicitante (toda solicitud
+ * pertenece a un usuario registrado).
  */
 @Service
 public class NotificationService {
@@ -38,7 +36,7 @@ public class NotificationService {
         if (request == null) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
         }
-        if (request.getUser() == null) return; // invitado: sin bandeja, canal externo diferido
+        if (request.getUser() == null) return; // defensivo: toda request tiene user, pero no explotar si un doc viejo no lo tiene
         notificationRepository.save(
                 new Notification(request.getUser(), request.getId(), type, request.getConfirmedSlot()));
     }

@@ -16,6 +16,13 @@
   -->
   <main layout:fragment="content">
     <div class="page page--center">
+      <nav class="breadcrumb">
+        <a href="/">Inicio</a>
+        <svg class="icon breadcrumb__sep"><use href="/images/icons.svg#chevron-right"/></svg>
+        <a href="/mis-solicitudes" data-i18n="req_list_title">Mis solicitudes</a>
+        <svg class="icon breadcrumb__sep"><use href="/images/icons.svg#chevron-right"/></svg>
+        <span th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</span><span th:unless="${isEdit}" data-i18n="req_form_title_new">Solicitar recolección</span>
+      </nav>
       <div class="split">
         <section class="hero">
           <h1 class="card__title" th:if="${isEdit}" data-i18n="req_form_title_edit">Editar solicitud</h1>

@@ -15,7 +15,6 @@ import com.residuosolido.app.event.RequestStatusChangedEvent;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.Request;
-import com.residuosolido.app.model.TrackingCode;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.slf4j.Logger;
@@ -223,13 +222,6 @@ public class RequestService {
         return request;
     }
 
-    // ========== Consultas: invitado ==========
-
-    /**
-     * Busca solicitudes de invitado por teléfono + código privado de rastreo.
-     * El teléfono solo NO es suficiente: cualquier persona podría conocerlo.
-     * El código se entrega al invitado al crear la solicitud.
-     */
     // ========== Consultas: organización ==========
 
     public Request getOwnedOrgRequest(String id, Organization org) {

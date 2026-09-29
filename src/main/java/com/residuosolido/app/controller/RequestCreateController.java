@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-/** Crea nuevas solicitudes de recolección (ciudadano o invitado con rate limiting). */
+/** Crea nuevas solicitudes de recolección (requiere usuario registrado). */
 @Controller
 public class RequestCreateController {
 

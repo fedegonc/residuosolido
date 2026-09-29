@@ -10,9 +10,8 @@ import java.time.LocalDateTime;
 
 /**
  * Bandeja in-app del ciudadano: una entrada por notificación enviada.
- * Solo usuarios registrados tienen bandeja — el invitado no tiene cuenta;
- * su canal (SMS/WhatsApp sobre guestPhone) es un adapter diferido, ver
- * docs/MEJORAS.md #187.
+ * Toda solicitud pertenece a un usuario registrado — el destinatario es
+ * siempre un userId con bandeja.
  *
  * requestId se guarda como String (no DocumentReference): la solicitud puede
  * borrarse y la notificación histórica debe sobrevivir.

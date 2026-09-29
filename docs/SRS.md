@@ -24,7 +24,7 @@ El SRS establece el contrato entre:
 **Objetivo:** Digitalizar el flujo de solicitud de recolección de reciclables, eliminando gestión manual en ciudades fronterizas con baja conectividad digital.
 
 **Población objetivo:**
-- Ciudadanos (registrados e invitados) que solicitan recolección
+- Ciudadanos registrados que solicitan recolección
 - Organizaciones de acopio (catadores, cooperativas) que responden
 - Oficiales municipales (consulta de estadísticas)
 
@@ -41,10 +41,8 @@ El SRS establece el contrato entre:
 | **RN** | Restricción/Requisito No Funcional |
 | **MVP** | Mínimo Producto Viable |
 | **E.164** | Formato internacional de números telefónicos (+país-número) |
-| **Invitado** | Usuario sin registro que solicita recolección anónima |
 | **Organización** | Entidad (coop, catadores) que recibe solicitudes |
 | **Slot** | Franja horaria (MAÑANA/TARDE/NOCHE) para recolección |
-| **Tracking Code** | Código privado de 8 caracteres para rastreo anónimo |
 
 ---
 
@@ -54,13 +52,12 @@ El SRS establece el contrato entre:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  Ciudadano                                      │
-│  (registrado / invitado)                        │
+│  Ciudadano (registrado)                         │
 │                                                 │
 │  ┌──────────────────────────────────────────┐   │
 │  │ Crear Solicitud de Recolección           │   │
-│  │ • Seleccionar ciudad, materiales, imagen │   │
-│  │ • Si invitado: rastrear por tel + código │   │
+│  │ • Seleccionar ciudad, materiales         │   │
+│  │ • Seguimiento desde /mis-solicitudes     │   │
 │  └──────────────────────────────────────────┘   │
 │         ↓                                        │
 │  ┌──────────────────────────────────────────┐   │
@@ -70,8 +67,7 @@ El SRS establece el contrato entre:
 │  │  • Completar (después de recoger)        │   │
 │  └──────────────────────────────────────────┘   │
 │         ↓                                        │
-│  Ciudadano registrado: notificación in-app      │
-│  Invitado: consulta vía rastreo anónimo         │
+│  Ciudadano: notificación in-app + detalle       │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -127,9 +123,9 @@ El SRS establece el contrato entre:
 
 #### **RF-3: Crear Solicitud de Recolección**
 
-**Actor:** Ciudadano registrado / Invitado
+**Actor:** Ciudadano registrado
 
-**Precondición:** En página `/solicitar`
+**Precondición:** Sesión iniciada; en página `/solicitar`
 
 **Flujo principal:**
 
@@ -147,39 +143,36 @@ El SRS establece el contrato entre:
    - Imagen: tipo MIME + extensión + tamaño
 
 3. **Persistencia:**
-   - Crea `Request` con `RequestStateMachine.create()`
-   - Asigna organización por ciudad (`CityOrgService`)
-   - Si invitado: genera `trackingCode` (8 caracteres random)
-   - Si usuario: se marca `user_id` (no tracking code)
+   - Crea `Request` vía `Request.forCitizen(user)` (estado inicial `PENDING`)
+   - Asigna la organización elegida validando ciudad + materiales (`CityOrgService`)
+   - La solicitud siempre queda ligada al `user_id` del ciudadano
 
 4. **Resultado:**
-   - Invitado → redirige a `/rastrear?telefono=+59899123456&codigo=ABC12345`
    - Registrado → redirige a `/mis-solicitudes`
 
 **Restricciones:**
-- Rate limit invitados: 5 solicitudes/IP por hora
+- Requiere sesión iniciada (`/solicitar` es endpoint autenticado)
+- El usuario debe tener teléfono válido en su perfil (si falta, lo completa en el mismo formulario — CU-U9)
 - Organización requerida en la ciudad (sino: error `NOT_IN_CITY`)
 - Dirección: 10–200 caracteres
 
 ---
 
-#### **RF-4: Rastrear Solicitud (Invitado)**
+#### **RF-4: Consultar Solicitud (Usuario)**
 
-**Actor:** Invitado sin cuenta
+**Actor:** Usuario registrado
 
-**Precondición:** Acceso a `/rastrear?telefono=+598...&codigo=ABC123`
+**Precondición:** Sesión iniciada, solicitud propia existente
 
 **Flujo:**
 
-1. Busca solicitud por `(guestPhone normalized, trackingCode)`
-2. Si no encontrada: muestra estado vacío
-3. Si encontrada: muestra detail (estado, organización, dirección, franja si aceptada)
-4. Si estado REJECTED/COMPLETED: muestra motivo (si existe) + fecha
+1. Lista solicitudes propias en `/mis-solicitudes` (agrupadas por estado, kanban)
+2. Detalle en `GET /solicitudes/{id}` — solo lectura en cualquier estado
+3. Si estado REJECTED/COMPLETED: muestra motivo (si existe) + fecha
+4. Ownership verificado por `user_id` (403 si es de otro)
 
 **Validación:**
-- Teléfono debe ser E.164 válido
-- Código exacto (case-sensitive, 8 chars)
-- Sin persistencia de búsqueda (privacidad)
+- Solo el dueño ve su solicitud (verificación de propiedad en `RequestService`)
 
 ---
 
@@ -199,7 +192,7 @@ El SRS establece el contrato entre:
 | IN_PROGRESS | reject | REJECTED | Sí (usuario) |
 
 **Validación:**
-- `RequestStateMachine.accept/reject/complete()` valida transición
+- `RequestStatus` (enum) valida transiciones; `Request.accept/reject/complete()` las aplica
 - `accept` requiere `TimeSlot` (MANANA/TARDE/NOCHE)
 - Optimistic locking: si falla por `@Version`, reintenta 3x con backoff exponencial
 
@@ -231,7 +224,7 @@ El SRS establece el contrato entre:
 
 #### **RF-9: Notificaciones In-App**
 
-**Actor:** Usuario registrado (no invitado)
+**Actor:** Usuario registrado
 
 **Flujo:**
 
@@ -250,7 +243,6 @@ El SRS establece el contrato entre:
 
 4. **No se notifica:**
    - Si save de Request falla (optimistic lock exhausted)
-   - Si invitado (no tiene cuenta)
    - Si completada (operación interna)
 
 ---
@@ -263,7 +255,7 @@ El SRS establece el contrato entre:
 |---------|----------|--------|
 | Tiempo respuesta GET | <200ms p95 | Spring Boot Actuator, Prometheus |
 | Tiempo respuesta POST crear solicitud | <500ms p95 | Incluye validación + persistencia |
-| Búsqueda invitado (rastrear) | <100ms | Sin joins, índice en `(guestPhone, trackingCode)` |
+| Detalle de solicitud propia | <100ms | Sin joins, índice en `user` + `_id` |
 | Listar solicitudes org | <300ms | 100 registros, índice en status |
 | Concurrencia | 50 usuarios simultáneos | Load test con Apache Bench |
 
@@ -276,7 +268,7 @@ El SRS establece el contrato entre:
 | CSRF | REQUIRED | Spring Security token en formularios |
 | SQL Injection | PREVENTED | Spring Data (parameterized queries) |
 | XSS | PREVENTED | Thymeleaf escaping automático |
-| Rate Limiting | REQUIRED | 5 solicitudes/IP/hora (invitados) |
+| Rate Limiting | REQUIRED | Lockout de login (3 intentos → 15 min) + límite de registro por IP |
 | Password storage | NO (MVP) | PIN en texto plano → usar bcrypt en prod |
 | Bloqueo cuenta | 3 intentos | 15 min lockout con `RateLimiter` |
 
@@ -344,7 +336,6 @@ El SRS establece el contrato entre:
 | `/entrar` | Anónimo | Login |
 | `/registrarse` | Anónimo | Registro |
 | `/solicitar` | Ciudadano | Crear solicitud |
-| `/rastrear` | Invitado | Rastrear por tel+código |
 | `/mis-solicitudes` | Ciudadano | Dashboard + historial |
 | `/notificaciones` | Ciudadano | Bandeja in-app |
 | `/acopio/inicio` | Org | Dashboard org |
@@ -487,7 +478,7 @@ Todos los requisitos deben documentarse en:
 |----|-----------|-------|--------|
 | RF-1 | AuthController, UserService | 9 | ✅ Implementado |
 | RF-3 | RequestCreateController, RequestValidator | 12 | ✅ Implementado |
-| RF-6 | RequestService, RequestStateMachine | 15 | ✅ Implementado |
+| RF-6 | RequestService, RequestStatus | 15 | ✅ Implementado |
 | RF-7 | OrgProfileController, UserService | 7 | ✅ Implementado |
 | RF-9 | NotificationService, NotificationController | 12 | ✅ Implementado |
 

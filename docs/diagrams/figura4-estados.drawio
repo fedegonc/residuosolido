@@ -23,7 +23,7 @@
         <mxCell id="pending" value="PENDING" style="swimlane;startSize=42;horizontal=1;rounded=0;html=0;fontFamily=Helvetica;fontSize=17;fontStyle=1;fillColor=#eaf2ec;swimlaneFillColor=#ffffff;strokeColor=#395e48;strokeWidth=1.5;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="150" y="170" width="300" height="270" />
         </mxCell>
-        <mxCell id="pending_body" value="entry / status = PENDING&#10;entry / trackingCode = generate(8)&#10;do / canBeEdited() = true&#10;do / canBeDeleted() = true&#10;── internal ──&#10;edit() [canBeEdited()] / update fields&#10;delete() [canBeDeleted()] / remove request" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fontColor=#25362b;" parent="pending" vertex="1">
+        <mxCell id="pending_body" value="entry / status = PENDING&#10;do / canBeEdited() = true&#10;do / canBeDeleted() = true&#10;── internal ──&#10;edit() [canBeEdited()] / update fields&#10;delete() [canBeDeleted()] / remove request" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=14;fontFamily=Helvetica;fontSize=14;fontColor=#25362b;" parent="pending" vertex="1">
           <mxGeometry as="geometry" x="0" y="42" width="300" height="228" />
         </mxCell>
 
@@ -67,7 +67,7 @@
         <!-- ====== Transitions ====== -->
 
         <!-- Initial → PENDING -->
-        <mxCell id="t_init" value="create()&#10;[user ∨ guest] / new Request" style="endArrow=open;startArrow=none;html=0;fontFamily=Helvetica;fontSize=13;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.5;entryX=0;entryY=0.3;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="initial" target="pending">
+        <mxCell id="t_init" value="create()&#10;[user registrado] / new Request" style="endArrow=open;startArrow=none;html=0;fontFamily=Helvetica;fontSize=13;labelBackgroundColor=#ffffff;strokeColor=#344239;strokeWidth=1.4;exitX=1;exitY=0.5;entryX=0;entryY=0.3;exitDx=0;exitDy=0;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" edge="1" source="initial" target="pending">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
 
@@ -130,7 +130,7 @@
           <mxGeometry as="geometry" x="530" y="640" width="360" height="110" />
         </mxCell>
 
-        <mxCell id="note_notify" value="Nota — Notificaciones:&#10;accept() y reject() persisten una Notification&#10;in-app para el solicitante registrado DESPUÉS&#10;del save (si el save falla por concurrencia,&#10;no se notifica). complete() no notifica.&#10;El invitado no tiene bandeja: consulta por&#10;teléfono + código de rastreo." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#ffffff;strokeColor=#dce5de;strokeWidth=1;rounded=0;" parent="1" vertex="1">
+        <mxCell id="note_notify" value="Nota — Notificaciones:&#10;accept() y reject() persisten una Notification&#10;in-app para el solicitante registrado DESPUÉS&#10;del save (si el save falla por concurrencia,&#10;no se notifica). complete() no notifica.&#10;Toda solicitud tiene solicitante registrado:&#10;consulta por /mis-solicitudes." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=10;fontFamily=Helvetica;fontSize=13;fontColor=#48564d;fillColor=#ffffff;strokeColor=#dce5de;strokeWidth=1;rounded=0;" parent="1" vertex="1">
           <mxGeometry as="geometry" x="930" y="630" width="280" height="130" />
         </mxCell>
 

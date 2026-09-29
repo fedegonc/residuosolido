@@ -44,9 +44,8 @@ class ServicePreconditionContractTest {
      * validar" — es "ya está validado en otro lado, verificado a mano".
      */
     private static final Set<String> EXEMPT = Set.of(
-            // user == null es un INPUT VÁLIDO acá (invitado sin cuenta) — se maneja
-            // explícitamente en validator.validateCreate (branch guest vs. citizen),
-            // no es un guard faltante.
+            // user == null se valida explícitamente en validator.validateCreate
+            // (ERROR_REQUEST_CITIZEN_REQUIRED) — no es un guard faltante acá.
             "RequestService#createRequest", "RequestService#createRequestWithImage",
             // Delegan a un método ya guardeado (getEditableOwnedRequest -> getOwnedRequest,
             // que sí valida user == null) antes de tocar el user.

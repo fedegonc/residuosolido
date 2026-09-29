@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Limita abuso por dos vías independientes que comparten el mismo esqueleto
  * (mapa concurrente + ventana temporal + barrido periódico de entradas viejas):
- * - Por IP: solicitudes de invitados y registro (ventana deslizante, N por minuto).
+ * - Por IP: registro (ventana deslizante, N por minuto).
  * - Por usuario: intentos de login fallidos (bloqueo temporal tras N intentos).
  * Antes eran GuestRateLimiter + LoginAttemptService por separado.
  */
@@ -33,7 +33,7 @@ public class RateLimiter {
     private final ConcurrentHashMap<String, Long> lastAttemptAt = new ConcurrentHashMap<>();
     private volatile long lastCleanup = System.currentTimeMillis();
 
-    // ========== Por IP (invitados, registro) ==========
+    // ========== Por IP (registro) ==========
 
     public boolean isAllowed(HttpServletRequest request) {
         return isAllowed(request, "requests");

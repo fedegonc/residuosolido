@@ -4,8 +4,9 @@ Catálogo canónico de requisitos funcionales (RF), reglas de negocio (RN) y
 criterio de alcance del MVP. Es la fuente de verdad del repo para la
 especificación de requisitos de la tesis.
 
-**Actores:** invitado (sin cuenta), usuario registrado (`ROLE_USER`),
-organización de acopio (`ROLE_ORGANIZATION`).
+**Actores:** usuario registrado (`ROLE_USER`) y organización de acopio
+(`ROLE_ORGANIZATION`). El visitante no autenticado solo accede a páginas
+públicas, registro y login.
 
 ---
 
@@ -92,11 +93,9 @@ Es un flujo oculto dentro de RF-3, no un endpoint RF-7 separado.
 | Usuario | Implementado |
 
 Cuando la organización acepta o rechaza una solicitud, se persiste una
-`Notification` in-app (solo usuarios registrados). Bandeja en
+`Notification` in-app (toda solicitud tiene usuario registrado). Bandeja en
 `/notificaciones` + badge de no-leídas en el navbar; abrir la bandeja marca
-todo como leído. El invitado no tiene bandeja (sin cuenta): sigue consultando
-por teléfono + código; su canal externo (SMS/WhatsApp) es un adapter
-diferido. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
+todo como leído. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
 (ver `docs/TRADEOFFS.md` §33).
 
 ---
@@ -115,7 +114,7 @@ diferido. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
 | RN-8 | El teléfono se normaliza a formato E.164 (`+598`/`+55`) | `PhoneNumber` utility, setters de `User` |
 | RN-9 | Una organización con perfil incompleto es redirigida a `/mi-organizacion` antes de gestionar solicitudes | `OrgRequestController` |
 | RN-10 | Materiales, dirección y ciudad son obligatorios al crear/editar | `RequestServiceValidationTest` (13 tests) |
-| RN-11 | Borrado permitido solo si `PENDING` y propiedad del **usuario registrado**; las solicitudes de invitado no tienen propietario autenticable en este MVP | `deleteOwnedRequest` + tests de regresión |
+| RN-11 | Borrado permitido solo si `PENDING` y propiedad del **usuario registrado** dueño de la solicitud | `deleteOwnedRequest` + tests de regresión |
 | RN-12 | La notificación se emite solo DESPUÉS de persistir la transición | `RequestService.acceptRequest`/`rejectRequest` → `NotificationService.notifyRequester` |
 
 > **Nota:** el conteo canónico de la especificación declara 14 RN; las 12

@@ -5,6 +5,13 @@
 <body>
   <main layout:fragment="content">
     <div class="page">
+      <nav class="breadcrumb">
+        <a href="/">Inicio</a>
+        <svg class="icon breadcrumb__sep"><use href="/images/icons.svg#chevron-right"/></svg>
+        <a href="/mis-solicitudes" data-i18n="req_list_title">Mis solicitudes</a>
+        <svg class="icon breadcrumb__sep"><use href="/images/icons.svg#chevron-right"/></svg>
+        <span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span>
+      </nav>
 
       <div class="row row--between mb">
         <div>
