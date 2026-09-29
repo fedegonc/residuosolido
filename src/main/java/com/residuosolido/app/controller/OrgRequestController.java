@@ -64,8 +64,13 @@ public class OrgRequestController {
             @CurrentUser User currentOrg, Model model,
             HttpServletRequest request) {
         Organization organization = organizationService.findByUser(currentOrg);
+        model.addAttribute("organization", organization);
+        model.addAttribute("user", currentOrg);
+        model.addAttribute("cities", City.values());
+        model.addAttribute("materials", MaterialCategory.values());
         if (organization.needsProfileCompletion()) {
-            return "redirect:" + Routes.ORG_PROFILE;
+            model.addAttribute("profileIncomplete", true);
+            return "org/requests";
         }
 
         Map<String, Long> stats = requestMetricsService.getOrgRequestStats(organization);
