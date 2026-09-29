@@ -933,7 +933,6 @@ problemas verificados, no supuestos:
 
 | Opción | Por qué sí/no |
 |---|---|
-| **`ApplicationEventPublisher` + `@EventListener` `@Async` (elegida)** | Publica `RequestStatusChangedEvent` inmediatamente después del `save()` exitoso (nunca antes — la garantía de orden se mantiene). El listener corre en un pool chico y acotado (`AsyncConfig`, 2-4 hilos) — una notificación lenta o que falla no afecta la respuesta al usuario ni el estado ya persistido. Cero dependencias nuevas, usa infraestructura de Spring ya presente |
 | `@TransactionalEventListener(phase = AFTER_COMMIT)` | Era el plan original — **descartado al verificar que no hay transacción real de la cual colgarse.** Sin un `PlatformTransactionManager`, el evento nunca se publicaría (no hay commit que dispare la sincronización). Habría roto las notificaciones en silencio |
 | Configurar un `MongoTransactionManager` real primero | Correcto a mediano plazo (le daría sentido real a `@Transactional` en todo el proyecto, no solo acá), pero es un cambio de mayor alcance — afecta semántica de escritura en todo el codebase, necesita revisión propia. Fuera de alcance de este ítem puntual |
 
@@ -944,7 +943,6 @@ documento Mongo (atómica por diseño del motor) — la garantía que necesitan
 hoy no requiere una transacción distribuida.
 
 **Resultado:** `RequestStatusChangedEvent` (record) + `NotificationEventListener`
-(`@Async("notificationExecutor")`) + `AsyncConfig` (`@EnableAsync`, pool 2-4
 hilos). `RequestService` ya no depende de `NotificationService` — el punto de
 extensión para email/SMS declarado en §33 ahora es "agregar otro
 `@EventListener`", no "tocar `RequestService`". Ver `docs/MEJORAS.md` #208.
@@ -1209,7 +1207,6 @@ teléfono de una organización ya persistida; `allEntries=true` en vez de
 evictar solo la ciudad nueva porque el método no conoce la ciudad ANTERIOR
 si el update la cambia, y el cache son 2 entradas (RIVERA/LIVRAMENTO) —
 evictarlo entero no tiene costo real. **Verificado con contexto real de
-Spring** (`CacheConfigIntegrationTest`, mismo criterio que `AsyncConfigIntegrationTest`
 para `@Async`/`@Transactional` en #208): un test con `new CityOrgService(mock)`
 plano NUNCA hubiera detectado si `@Cacheable` fuera decorativo, porque el
 cacheo lo aplica el proxy que arma `@EnableCaching`, no el objeto en sí.

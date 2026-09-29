@@ -53,8 +53,8 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `docs/VISUAL_PERFORMANCE_PATTERNS.md` | Guía de prevención: 4 categorías de bugs visuales, 30+ antipatrones, checklist de auditoría. | Análisis técnico de work — auditoría de patrones para futuro mantenimiento |
 | `docs/PROBABLE_BUGS_ANALYSIS.md` | 3 bugs visuales probables (imágenes, modal scroll, fetch loading) con síntomas, root causes, fixes y verificación manual. | Análisis de work — identifica 4 bugs específicos encontrados automáticamente |
 | `.config/AUTO_DETECTION_SCRIPT.sh` | Script bash que audita automáticamente 6 patrones de bugs visuales, genera reporte, exit code para CI/CD. Uso: `bash .config/AUTO_DETECTION_SCRIPT.sh`. | Herramienta operativa (ejecutable), versionada en `.config/` junto a otras configuraciones |
+| `docs/gaps-detalle.md` | Auditoría de gaps de dominio: identificación de lógica no modelada. | Gitignored, insumo de trabajo — hallazgos se consolidan en `scratch/` |
 | `docs/sincronizacion-codigo-texto.md` | Auditoría código↔tesis (SYNC-XX). | Gitignored, insumo de trabajo |
-| `docs/gaps-detalle.md` | Lógica de negocio extraída para `scratch/pseudoapp.md`. | Gitignored, insumo de trabajo |
 | `docs/CONTEXTO_LLM.md` | Contexto de continuidad entre sesiones de agente. | Es para el agente, no para lectura humana |
 | `docs/REFACTOR_PLAN.md` | Plan de refactorización por fases (dominio, máquina de estados, web). | Plan de trabajo, no narrativa de defensa — lo ejecutado queda asentado en `MEJORAS.md` |
 
