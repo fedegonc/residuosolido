@@ -88,15 +88,6 @@ su `User.phone` está vacío, `RequestCreateController` le completa el teléfono
 automáticamente desde el formulario (`userService.updateProfile(..., phone, ...)`).
 Es un flujo oculto dentro de RF-3, no un endpoint RF-7 separado.
 
-### RF-8 — Gestionar recolectores informales
-
-| Actor | Estado |
-|---|---|
-| Organización | Descartado — CRUD planificado y no implementado |
-
-Decisión consciente: el CRUD de `InformalCollector` no se implementó (no
-existe modelo, controller ni servicio) — ver `docs/TRADEOFFS.md` §6.
-
 ### RF-9 — Notificar al solicitante
 
 | Actor | Estado |
