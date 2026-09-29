@@ -9,7 +9,6 @@ import com.residuosolido.app.repository.OrganizationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -58,12 +57,6 @@ public class CityOrgService {
         return org;
     }
 
-    /**
-     * Cacheado: se llama en cada carga del formulario de solicitud (guest y
-     * usuario) y cambia solo cuando una organización actualiza su perfil
-     * (evict explícito en OrganizationService.updateProfile).
-     */
-    @Cacheable(value = "orgsByCity", key = "#city")
     public List<Organization> getOrganizationsByCity(City city) {
         if (city == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);

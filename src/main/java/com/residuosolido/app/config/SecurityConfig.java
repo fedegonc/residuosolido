@@ -1,6 +1,5 @@
 package com.residuosolido.app.config;
 
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,7 +17,6 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EnableCaching
 @EnableAsync
 public class SecurityConfig {
 
