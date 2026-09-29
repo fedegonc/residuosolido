@@ -48,7 +48,6 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `docs/CORRECCIONES.md` | Historial de hardening y correcciones (2026-09-11 y anteriores). | Superseded — su contenido ya está en `MEJORAS.md` (fixes con entradas propias) o en `DEFENSA.md` §7 (limitaciones); la arquitectura de i18n que aportaba pasó a `ARQUITECTURA.md`. Ver #173 |
 | `docs/GITFLOW.md` | Flujo de ramas, commits y deploy. | Evidencia de proceso, no argumento de defensa — `METODOLOGIA.md` ya cubre el encuadre académico (DSRM) |
 | `docs/AUDITORIA.md` | Auditoria de superficies: copies, estilos, esquemas, endpoints, templates. | Análisis de trabajo, no narrativa de defensa |
-| `docs/COPIES.md` | Índice editorial de textos de UI (la fuente real son `static/i18n/*.json`). | Ya degradado a índice desde `MEJORAS.md` #162 |
 | `docs/SEGURIDAD.md` | Checklist operativo de secretos y `git config`. | Operativo, no defensa |
 | `docs/VISUAL_PERFORMANCE_PATTERNS.md` | Guía de prevención: 4 categorías de bugs visuales, 30+ antipatrones, checklist de auditoría. | Análisis técnico de work — auditoría de patrones para futuro mantenimiento |
 | `docs/PROBABLE_BUGS_ANALYSIS.md` | 3 bugs visuales probables (imágenes, modal scroll, fetch loading) con síntomas, root causes, fixes y verificación manual. | Análisis de work — identifica 4 bugs específicos encontrados automáticamente |
@@ -78,7 +77,6 @@ CLAUDE.md (raíz del repo) queda fuera de esta clasificación — son instruccio
 | Limitaciones y fuera de alcance | `docs/DEFENSA.md` §7 |
 | Evaluación de usabilidad (Likert por funcionalidad) | `docs/USABILIDAD.md` |
 | Historial de hardening (referencia) | `docs/CORRECCIONES.md` |
-| Textos de UI / copys (referencia) | `docs/COPIES.md` |
 | Inventario auditado de superficies (referencia) | `docs/AUDITORIA.md` |
 | Secretos y reglas de git config (referencia) | `docs/SEGURIDAD.md` |
 
