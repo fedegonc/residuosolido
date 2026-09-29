@@ -82,15 +82,10 @@ class RequestCreateControllerTest {
     // ===== GET /solicitar =====
 
     @Test
-    void newRequestForm_anonymous_rendersAsGuest() throws Exception {
-        when(userService.resolveUser(any())).thenReturn(null);
-
+    void newRequestForm_anonymous_redirectsToLogin() throws Exception {
         mockMvc.perform(get(Routes.REQUESTS_NEW))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users/request-form"))
-                .andExpect(model().attribute("isGuest", true))
-                .andExpect(model().attribute("isEdit", false))
-                .andExpect(model().attributeExists("request", "cities", "materials", "timeSlots"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/entrar"));
     }
 
     @Test
@@ -105,8 +100,9 @@ class RequestCreateControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "vecino", roles = "USER")
     void newRequestForm_withCity_loadsOrganizations() throws Exception {
-        when(userService.resolveUser(any())).thenReturn(null);
+        when(userService.resolveUser(any())).thenReturn(citizen);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
         when(cityOrgService.getOrganizationsByCity(City.RIVERA)).thenReturn(List.of(org));
 
@@ -124,18 +120,15 @@ class RequestCreateControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // ===== POST /solicitar — invitado =====
+    // ===== POST /solicitar — autenticación requerida =====
 
     @Test
-    void createRequest_guestRateLimited_redirectsWithError() throws Exception {
-        when(userService.resolveUser(any())).thenReturn(null);
-        when(rateLimiter.isAllowed(any())).thenReturn(false);
-
+    void createRequest_anonymous_redirectsToLogin() throws Exception {
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
                         .param("address", "Calle 1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Routes.REQUESTS_NEW + "?error"));
+                .andExpect(redirectedUrlPattern("**/entrar"));
 
         verify(requestService, never()).createRequestWithImage(any(), any(), anyString(), any(),
                 any(), any(), any(), any(), any());
@@ -181,17 +174,17 @@ class RequestCreateControllerTest {
 
     @Test
     @WithMockUser(username = "vecino", roles = "USER")
-    void createRequest_validationError_redirectsToForm() throws Exception {
+    void createRequest_validationError_redirectsToMyRequests() throws Exception {
         when(userService.resolveUser(any())).thenReturn(citizen);
-        when(requestService.createRequestWithImage(any(), any(), anyString(), any(),
+        when(requestService.createRequestWithImage(any(), any(), any(), any(),
                 any(), any(), any(), any(), any()))
-                .thenThrow(new IllegalArgumentException("error.request.address_required"));
+                .thenThrow(new IllegalStateException("error.request.address_required"));
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
-                        .param("address", ""))
+                        .param("address", "Calle 1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Routes.REQUESTS_NEW));
+                .andExpect(redirectedUrl(Routes.REQUESTS));
     }
 
     @Test
@@ -210,33 +203,17 @@ class RequestCreateControllerTest {
     }
 
     @Test
-    void createRequest_illegalState_guest_redirectsToFormNotLogin() throws Exception {
-        // Un invitado en /mis-solicitudes rebotaría a login por Security: va al form.
-        when(userService.resolveUser(any())).thenReturn(null);
-        when(rateLimiter.isAllowed(any())).thenReturn(true);
-        when(requestService.createRequestWithImage(any(), any(), anyString(), any(),
-                any(), any(), any(), any(), any()))
-                .thenThrow(new IllegalStateException("error.request.invalid"));
+    @WithMockUser(username = "vecino", roles = "USER")
+    void createRequest_successRedirectsToMyRequests() throws Exception {
+        when(userService.resolveUser(any())).thenReturn(citizen);
+        Request created = Request.forCitizen(citizen);
+        when(requestService.createRequestWithImage(any(), any(), any(), any(),
+                any(), any(), any(), any(), any())).thenReturn(created);
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
                         .param("address", "Calle 1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Routes.REQUESTS_NEW));
-    }
-
-    @Test
-    void createRequest_unexpectedError_redirectsToFormWithGenericError() throws Exception {
-        when(userService.resolveUser(any())).thenReturn(null);
-        when(rateLimiter.isAllowed(any())).thenReturn(true);
-        when(requestService.createRequestWithImage(any(), any(), anyString(), any(),
-                any(), any(), any(), any(), any()))
-                .thenThrow(new RuntimeException("boom"));
-
-        mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
-                        .param("ciudad", "RIVERA")
-                        .param("address", "Calle 1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Routes.REQUESTS_NEW));
+                .andExpect(redirectedUrl(Routes.REQUESTS));
     }
 }

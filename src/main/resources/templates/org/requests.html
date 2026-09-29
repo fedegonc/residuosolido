@@ -68,7 +68,6 @@
           <h2 class="card__subtitle" data-i18n="org_req_contact">Contacto</h2>
           <div th:replace="~{fragments/ui :: row('user', 'Nombre', ${request.contactName})}"></div>
           <div th:replace="~{fragments/ui :: row('phone', 'Teléfono', ${request.contactPhone})}"></div>
-          <div th:replace="~{fragments/ui :: row('user-tag', 'Tipo', ${request.isGuest() ? 'Invitado' : 'Registrado'})}"></div>
 
           <div class="divider">
             <h2 class="card__subtitle" data-i18n="req_detail_address">Dirección</h2>

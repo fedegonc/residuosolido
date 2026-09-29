@@ -248,14 +248,14 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(userService.resolveUser(any())).thenReturn(user);
         when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any()))
-                .thenThrow(new IllegalArgumentException("error.request.address_required"));
+                .thenThrow(new IllegalStateException("error.request.address_required"));
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
                         .param("address", "")
                         .param("organizationId", "org1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/solicitar"));
+                .andExpect(redirectedUrl("/mis-solicitudes"));
     }
 
     @Test
