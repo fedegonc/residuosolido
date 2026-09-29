@@ -14,6 +14,5 @@ import java.util.List;
 public interface RequestRepository extends MongoRepository<Request, String> {
     List<Request> findByUser(User user, Pageable pageable);
     List<Request> findByOrganizationOrderByCreatedAtDesc(Organization organization, Pageable pageable);
-    List<Request> findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(String guestPhone, String trackingCode);
     List<Request> findByOrganizationAndStatusOrderByCreatedAtDesc(Organization organization, RequestStatus status, Pageable pageable);
 }
