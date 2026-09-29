@@ -272,26 +272,19 @@ public class DataLoader {
     private static void createRequest(RequestRepository repo, User user, Organization org,
                                       String address, String ref, City city,
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot) {
-        createRequest(repo, user, org, address, ref, city, materials, status, slot, null, null);
+        createRequest(repo, user, org, address, ref, city, materials, status, slot, null);
     }
 
     private static void createRequest(RequestRepository repo, User user, Organization org,
                                       String address, String ref, City city,
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
-                                      String guestName, String guestPhone) {
-        createRequest(repo, user, org, address, ref, city, materials, status, slot, guestName, guestPhone, null, null);
-    }
-
-    /** Overload con trackingCode/createdAt explícitos (dataset de defensa) — los 2 overloads
-     * de arriba siguen igual, delegan acá con null y conservan su comportamiento previo. */
-    private static void createRequest(RequestRepository repo, User user, Organization org,
-                                      String address, String ref, City city,
-                                      List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
-                                      String guestName, String guestPhone, String trackingCode, LocalDateTime createdAt) {
+                                      LocalDateTime createdAt) {
+        if (user == null) {
+            throw new IllegalArgumentException("Solo usuarios registrados pueden crear solicitudes");
+        }
         Request r = new Request();
-        if (user != null) r.setContactUser(user);
+        r.setContactUser(user);
         if (org != null) r.assignOrganization(org);
-        r.setGuestContact(guestName, guestPhone, trackingCode);
         r.updateDraft(city, address, ref, materials);
         r.restoreStatus(status);
         r.setConfirmedSlot(slot);

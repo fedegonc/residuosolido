@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Entidad central: solicitud de recolección de residuos reciclables.
  * Encapsula el ciclo de vida (PENDING → IN_PROGRESS/COMPLETED/REJECTED),
- * datos de contacto (usuario o invitado), materiales, dirección y horario confirmado.
+ * datos de contacto (usuario registrado), materiales, dirección y horario confirmado.
  */
 @Document(collection = "requests")
 @Getter
@@ -45,8 +45,6 @@ public class Request {
     @Indexed
     private Organization organization;
 
-    private String guestName;
-    private String guestPhone;
     private String address;
     private String addressReference;
     private City city;
@@ -56,20 +54,11 @@ public class Request {
     @Indexed
     private RequestStatus status = RequestStatus.PENDING;
     private LocalDateTime createdAt;
-    private String trackingCode;
 
     /** Solicitud de un ciudadano registrado. El estado arranca en PENDING. */
     public static Request forCitizen(User user) {
         Request r = new Request();
         r.setContactUser(user);
-        r.markCreatedNow();
-        return r;
-    }
-
-    /** Solicitud de invitado: requiere contacto y código de seguimiento. */
-    public static Request forGuest(String name, String phone, String trackingCode) {
-        Request r = new Request();
-        r.setGuestContact(name, phone, trackingCode);
         r.markCreatedNow();
         return r;
     }
@@ -97,12 +86,6 @@ public class Request {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_REJECT_INVALID_STATE);
         }
         this.status = status;
-    }
-
-    public void setGuestContact(String name, String phone, String code) {
-        this.guestName = name;
-        this.guestPhone = phone;
-        this.trackingCode = code;
     }
 
     public void setContactUser(User user) {
@@ -151,13 +134,12 @@ public class Request {
 
     public boolean canBeEdited() { return status.canBeEdited(); }
     public boolean canBeDeleted() { return status.canBeDeleted(); }
-    public boolean isGuest() { return user == null; }
     public boolean hasMaterials() { return materials != null && !materials.isEmpty(); }
     public boolean hasImage() { return imageUrl != null && !imageUrl.isBlank(); }
     public boolean isPending() { return status == RequestStatus.PENDING; }
     public boolean isInProgress() { return status == RequestStatus.IN_PROGRESS; }
-    public String getContactName() { return user != null ? user.getDisplayName() : guestName; }
-    public String getContactPhone() { return user != null ? user.getPhone() : guestPhone; }
+    public String getContactName() { return user != null ? user.getDisplayName() : "N/A"; }
+    public String getContactPhone() { return user != null ? user.getPhone() : "N/A"; }
 
     /** Últimos 8 chars del id — para display en cards donde el ObjectId completo no entra. */
     public String getShortId() {

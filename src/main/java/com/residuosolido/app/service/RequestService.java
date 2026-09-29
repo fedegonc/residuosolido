@@ -38,10 +38,6 @@ import java.util.Locale;
 public class RequestService {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestService.class);
-    private static final SecureRandom RNG = new SecureRandom();
-    private static final int TRACKING_CODE_LENGTH = 8;
-    private static final char[] TRACKING_ALPHABET =
-            "ABCDEFGHJKLMNPQRSTUVWXYZ23456789".toCharArray();
 
     private final RequestRepository requestRepository;
     private final LocalImageService imageService;
@@ -64,13 +60,13 @@ public class RequestService {
     // ========== Crear ==========
 
     public Request createRequest(User user, City city, String address, String addressReference,
-                                  List<MaterialCategory> materials, String guestName, String guestPhone,
-                                  String organizationId) {
-        validator.validateCreate(user, city, address, materials, guestName, guestPhone, organizationId);
+                                  List<MaterialCategory> materials, String organizationId) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
+        }
+        validator.validateCreate(user, city, address, materials, organizationId);
 
-        Request request = user != null
-                ? Request.forCitizen(user)
-                : Request.forGuest(guestName, guestPhone, generateTrackingCode());
+        Request request = Request.forCitizen(user);
         request.updateDraft(city, address, addressReference, materials);
 
         Organization org = cityOrgService.findOrganizationByIdAndCity(organizationId, city);
@@ -81,13 +77,11 @@ public class RequestService {
     }
 
     public Request createRequestWithImage(User user, City city, String address, String addressReference,
-                                            List<MaterialCategory> materials, String guestName, String guestPhone,
-                                            String organizationId,
+                                            List<MaterialCategory> materials, String organizationId,
                                             MultipartFile imageFile) {
         imageService.validateImage(imageFile);
 
-        Request request = createRequest(user, city, address, addressReference, materials,
-                guestName, guestPhone, organizationId);
+        Request request = createRequest(user, city, address, addressReference, materials, organizationId);
 
         if (imageFile != null && !imageFile.isEmpty()) {
             return imageService.attachImageToRequest(request, imageFile);
@@ -236,29 +230,6 @@ public class RequestService {
      * El teléfono solo NO es suficiente: cualquier persona podría conocerlo.
      * El código se entrega al invitado al crear la solicitud.
      */
-    public List<Request> getGuestRequests(String phone, String trackingCode) {
-        if (phone == null || phone.trim().isEmpty()) {
-            return List.of();
-        }
-        if (trackingCode == null || trackingCode.isBlank()) {
-            return List.of();
-        }
-        // Formato de telefono invalido -> mismo resultado que "no encontrado", no una
-        // excepcion que se propague. Bug real reportado por el usuario: un invitado
-        // (siempre anonimo) que llegaba aca con un telefono mal formado terminaba
-        // rebotado a /entrar por el manejador generico de errores basado en rol —
-        // no tiene sentido mandar a loguearse a alguien que nunca tuvo cuenta.
-        String canonicalPhone;
-        try {
-            canonicalPhone = PhoneNumber.normalize(phone);
-        } catch (IllegalArgumentException e) {
-            return List.of();
-        }
-        return requestRepository
-                .findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc(
-                        canonicalPhone, TrackingCode.canonical(trackingCode));
-    }
-
     // ========== Consultas: organización ==========
 
     public Request getOwnedOrgRequest(String id, Organization org) {
@@ -297,13 +268,4 @@ public class RequestService {
         }
     }
 
-    // ========== Util ==========
-
-    private String generateTrackingCode() {
-        StringBuilder sb = new StringBuilder(TRACKING_CODE_LENGTH);
-        for (int i = 0; i < TRACKING_CODE_LENGTH; i++) {
-            sb.append(TRACKING_ALPHABET[RNG.nextInt(TRACKING_ALPHABET.length)]);
-        }
-        return sb.toString();
-    }
 }

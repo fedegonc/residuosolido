@@ -43,7 +43,6 @@ public final class Routes {
     public static final String REQUESTS = "/mis-solicitudes";
     public static final String REQUEST_EDIT = "/solicitudes/{id}/editar";
     public static final String REQUEST = "/solicitudes/{id}";
-    public static final String TRACK = "/rastrear";
     /** Bandeja in-app del ciudadano (notificaciones de aceptada/rechazada). */
     public static final String NOTIFICATIONS = "/notificaciones";
 

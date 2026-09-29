@@ -25,18 +25,16 @@ public class RequestValidator {
      * Invitado: name y phone válidos.
      */
     public void validateCreate(User user, City city, String address,
-                               List<MaterialCategory> materials, String guestName, String guestPhone,
-                               String organizationId) {
+                               List<MaterialCategory> materials, String organizationId) {
         validateCoreFields(city, address, materials, organizationId);
         if (user == null) {
-            validateGuest(guestName, guestPhone);
-        } else {
-            if (!user.isActive() || user.getRole() != Role.USER) {
-                throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
-            }
-            if (!PhoneNumber.isValid(user.getPhone())) {
-                throw new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
-            }
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
+        }
+        if (!user.isActive() || user.getRole() != Role.USER) {
+            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
+        }
+        if (!PhoneNumber.isValid(user.getPhone())) {
+            throw new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
         }
     }
 
@@ -75,15 +73,5 @@ public class RequestValidator {
         if (organizationId == null || organizationId.isBlank()) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
-    }
-
-    private void validateGuest(String guestName, String guestPhone) {
-        if (guestName == null || guestName.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_GUEST_NAME_REQUIRED);
-        }
-        if (guestName.trim().length() > 100) {
-            throw new ValidationException(ServerMessage.ERROR_NAME_TOO_LONG);
-        }
-        PhoneNumber.normalize(guestPhone);
     }
 }

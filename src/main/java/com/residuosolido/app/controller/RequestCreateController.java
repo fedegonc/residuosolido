@@ -15,6 +15,7 @@ import com.residuosolido.app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,35 +35,29 @@ public class RequestCreateController {
 
     private final RequestService requestService;
     private final CityOrgService cityOrgService;
-    private final RateLimiter guestRateLimiter;
     private final UserService userService;
     private final Messages messages;
 
     public RequestCreateController(RequestService requestService,
                                    CityOrgService cityOrgService,
-                                   RateLimiter guestRateLimiter,
                                    UserService userService,
                                    Messages messages) {
         this.requestService = requestService;
         this.cityOrgService = cityOrgService;
-        this.guestRateLimiter = guestRateLimiter;
         this.userService = userService;
         this.messages = messages;
     }
 
-    /** Muestra el formulario para crear una solicitud (acepta prefill de nombre/teléfono desde la home). */
+    /** Muestra el formulario para crear una solicitud (solo usuarios registrados). */
     @GetMapping(Routes.REQUESTS_NEW)
+    @PreAuthorize("hasRole('USER')")
     public String newRequestForm(@RequestParam(value = "ciudad", required = false) City ciudad,
-                                  @RequestParam(value = "nombre", required = false) String nombre,
-                                  @RequestParam(value = "telefono", required = false) String telefono,
-                                  Model model, Authentication authentication) {
-        User user = userService.resolveUser(authentication);
+                                  Model model, @CurrentUser User user) {
         Request request = new Request();
-        if (nombre != null || telefono != null) request.setGuestContact(nombre, telefono, null);
         model.addAttribute("request", request);
         model.addAttribute("isEdit", false);
-        model.addAttribute("isGuest", user == null);
-        model.addAttribute("needsPhone", user != null && !user.hasPhone());
+        model.addAttribute("isGuest", false);
+        model.addAttribute("needsPhone", !user.hasPhone());
         model.addAttribute("cities", cityOrgService.getAvailableCities());
         messages.addFormAttributes(model);
         if (ciudad != null) {
@@ -79,34 +74,23 @@ public class RequestCreateController {
         return "fragments/ui :: options";
     }
 
-    /** Procesa la creación de una solicitud (con imagen opcional y rate limit para invitados). */
+    /** Procesa la creación de una solicitud (solo usuarios registrados). */
     @PostMapping(Routes.REQUESTS_NEW)
+    @PreAuthorize("hasRole('USER')")
     public String createRequest(@RequestParam("ciudad") City ciudad,
                                 @RequestParam("address") String address,
                                 @RequestParam(value = "addressReference", required = false) String addressReference,
                                 @RequestParam(value = "materials", required = false) List<MaterialCategory> materials,
                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                                @RequestParam(value = "guestName", required = false) String guestName,
-                                @RequestParam(value = "guestPhone", required = false) String guestPhone,
-                                @RequestParam(value = "guestCountryCode", required = false) String guestCountryCode,
-                                @RequestParam(value = "guestPhoneNational", required = false) String guestPhoneNational,
-                                @RequestParam(value = "guestDdd", required = false) String guestDdd,
                                 @RequestParam(value = "userCountryCode", required = false) String userCountryCode,
                                 @RequestParam(value = "userPhoneNational", required = false) String userPhoneNational,
                                 @RequestParam(value = "userDdd", required = false) String userDdd,
                                 @RequestParam(value = "organizationId", required = false) String organizationId,
-                                Authentication authentication,
-                                HttpServletRequest httpRequest,
+                                @CurrentUser User user,
                                 RedirectAttributes redirectAttributes) {
         logger.info("=== POST /solicitar === ciudad={}, organizationId={}", ciudad, organizationId);
         try {
-            User user = userService.resolveUser(authentication);
-            if (user == null && !guestRateLimiter.isAllowed(httpRequest)) {
-                messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_RATE_LIMITED);
-                return "redirect:" + Routes.REQUESTS_NEW + "?error";
-            }
-            String resolvedGuestPhone = PhoneNumber.resolve(guestCountryCode, guestPhoneNational, guestDdd, guestPhone);
-            if (user != null && !user.hasPhone()) {
+            if (!user.hasPhone()) {
                 try {
                     String phone = PhoneNumber.normalize(userCountryCode, userPhoneNational, userDdd);
                     userService.updateProfile(user, null, null, phone, null);
@@ -115,26 +99,15 @@ public class RequestCreateController {
                     return "redirect:" + Routes.REQUESTS_NEW;
                 }
             }
-            Request created = requestService.createRequestWithImage(user, ciudad, address, addressReference,
-                    materials, guestName, resolvedGuestPhone, organizationId, imageFile);
+            requestService.createRequestWithImage(user, ciudad, address, addressReference,
+                    materials, organizationId, imageFile);
 
             messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATED);
-            if (user == null && resolvedGuestPhone != null && created.getTrackingCode() != null) {
-                // El "+" de un telefono E.164 sin codificar en una query string se lee como
-                // espacio (application/x-www-form-urlencoded) -> PhoneNumber.normalize lo
-                // rechaza en /rastrear. Bug real: rompia el 100% de las redirecciones de
-                // exito de invitado (telefono siempre empieza con "+").
-                String encodedPhone = URLEncoder.encode(resolvedGuestPhone, StandardCharsets.UTF_8);
-                return "redirect:" + Routes.TRACK + "?telefono=" + encodedPhone + "&codigo=" + created.getTrackingCode();
-            }
             return "redirect:" + Routes.REQUESTS;
         } catch (IllegalStateException e) {
             logger.warn("ValidationException: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("warningMessage", messages.msg(e));
-            // "/mis-solicitudes" exige ROLE_USER — un invitado ahí rebota a login (Security),
-            // no al mensaje de error. Mismo criterio que el resto del método: sin sesión -> REQUESTS_NEW.
-            User currentUser = userService.resolveUser(authentication);
-            return "redirect:" + (currentUser == null ? Routes.REQUESTS_NEW : Routes.REQUESTS);
+            return "redirect:" + Routes.REQUESTS;
         } catch (IllegalArgumentException e) {
             logger.warn("IllegalArgumentException: {}", e.getMessage());
             messages.flashError(redirectAttributes, e);
