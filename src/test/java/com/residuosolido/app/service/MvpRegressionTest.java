@@ -110,7 +110,7 @@ class MvpRegressionTest {
         user.setPhone(null);
         RequestValidator validator = new RequestValidator();
         assertThrows(IllegalArgumentException.class, () -> validator.validateCreate(
-                user, City.RIVERA, "Dirección de prueba", List.of(MaterialCategory.PAPEL), null, null, "org"));
+                user, City.RIVERA, "Dirección de prueba", List.of(MaterialCategory.PAPEL), "org"));
     }
 
     @Test
@@ -121,7 +121,7 @@ class MvpRegressionTest {
         RequestService service = new RequestService(repo, mock(LocalImageService.class), cities,
                 mock(ApplicationEventPublisher.class), new RequestValidator());
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
-                "Dirección de prueba", null, List.of(MaterialCategory.METAL), null, null, "org"));
+                "Dirección de prueba", null, List.of(MaterialCategory.METAL), "org"));
         verifyNoInteractions(repo);
     }
 

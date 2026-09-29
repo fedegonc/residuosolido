@@ -128,7 +128,10 @@ class OrgRequestControllerTest {
     @Test
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequestDetail_returnsDetailView() throws Exception {
-        Request request = Request.forGuest("Ana", "+59899123456", "cod");
+        User citizen = new User();
+        citizen.setId("u1");
+        citizen.setPhone("+59899123456");
+        Request request = Request.forCitizen(citizen);
         request.setId("req-1");
         when(requestService.getOwnedOrgRequest("req-1", org)).thenReturn(request);
 

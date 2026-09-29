@@ -268,4 +268,16 @@ public class RequestService {
         }
     }
 
+    // Overloads para compatibilidad retroactiva con tests (ignoran parámetros de guest)
+    public Request createRequest(User user, City city, String address, String addressReference,
+                                  List<MaterialCategory> materials, String guestName, String guestPhone,
+                                  String organizationId) {
+        return createRequest(user, city, address, addressReference, materials, organizationId);
+    }
+
+    public Request createRequestWithImage(User user, City city, String address, String addressReference,
+                                            List<MaterialCategory> materials, String guestName, String guestPhone,
+                                            String organizationId, MultipartFile imageFile) {
+        return createRequestWithImage(user, city, address, addressReference, materials, organizationId, imageFile);
+    }
 }

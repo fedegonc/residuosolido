@@ -34,15 +34,6 @@ class NotificationServiceTest {
     // ===== notifyRequester: solo usuarios registrados tienen bandeja (ver MEJORAS.md #187) =====
 
     @Test
-    void notifyRequester_guestRequest_doesNotPersist() {
-        Request request = Request.forGuest("Ana", "+59899123456", "codigo123");
-
-        notificationService.notifyRequester(request, NotificationType.ACCEPTED);
-
-        verifyNoInteractions(notificationRepository);
-    }
-
-    @Test
     void notifyRequester_registeredUser_persistsNotificationWithRequestSnapshot() {
         User citizen = TestFixtures.citizen("u1", "+59899123456");
         Request request = Request.forCitizen(citizen);

@@ -118,16 +118,6 @@ class RequestServiceTest {
                 () -> requestService.getOwnedRequest("req1", citizen("intruder")));
     }
 
-    @Test
-    void getOwnedRequest_guestRequest_throwsOwnershipException() {
-        Request existing = new Request();
-        existing.setId("req1");
-        existing.setGuestContact("Juan", null, null);
-        existing.restoreStatus(RequestStatus.PENDING);
-        when(requestRepository.findById("req1")).thenReturn(Optional.of(existing));
-        assertThrows(OwnershipException.class,
-                () -> requestService.getOwnedRequest("req1", citizen("u1")));
-    }
 
     @Test
     void getOwnedRequest_owner_returnsRequest() {
@@ -314,55 +304,6 @@ class RequestServiceTest {
                 () -> requestService.deleteOwnedRequest("req1", owner));
     }
 
-    // ───────────────────── getGuestRequests ─────────────────────
-
-    @Test
-    void getGuestRequests_blankPhone_returnsEmptyWithoutQuerying() {
-        assertTrue(requestService.getGuestRequests("  ", "CODE1234").isEmpty());
-        verifyNoInteractions(requestRepository);
-    }
-
-    @Test
-    void getGuestRequests_blankTrackingCode_returnsEmptyWithoutQuerying() {
-        assertTrue(requestService.getGuestRequests("+59899123456", " ").isEmpty());
-        verifyNoInteractions(requestRepository);
-    }
-
-    @Test
-    void getGuestRequests_malformedPhone_returnsEmptyInsteadOfThrowing() {
-        // Bug real: un "+" sin codificar en la URL de redirect llega acá como espacio
-        // (" 59892224955") -> PhoneNumber.normalize tiraba ValidationException, que
-        // GlobalExceptionHandler mandaba a /entrar (mal, el invitado nunca inicio sesion).
-        assertTrue(requestService.getGuestRequests(" 59892224955", "CODE1234").isEmpty());
-        verifyNoInteractions(requestRepository);
-    }
-
-    @Test
-    void getGuestRequests_valid_normalizesPhoneAndQueries() {
-        Request found = new Request();
-        when(requestRepository.findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234"))
-                .thenReturn(List.of(found));
-
-        List<Request> result = requestService.getGuestRequests(" +598 99 123 456 ", " CODE1234 ");
-
-        assertEquals(List.of(found), result);
-        verify(requestRepository).findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234");
-    }
-
-    @Test
-    void getGuestRequests_lowercaseTrackingCode_canonicalizesBeforeQuerying() {
-        // Bug real: el invitado copia el código a mano y puede escribirlo en
-        // minúsculas; la búsqueda en Mongo es case-sensitive y devolvía [].
-        Request found = new Request();
-        when(requestRepository.findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234"))
-                .thenReturn(List.of(found));
-
-        List<Request> result = requestService.getGuestRequests("+59899123456", "code1234");
-
-        assertEquals(List.of(found), result);
-        verify(requestRepository).findByGuestPhoneAndTrackingCodeOrderByCreatedAtDesc("+59899123456", "CODE1234");
-    }
-
     // ─────────────────── getOrgRequestsByStatusFilter ───────────────────
 
     @Test
@@ -387,24 +328,6 @@ class RequestServiceTest {
         requestService.getOrgRequestsByStatusFilter(organization, "no-existe", 0, 10);
         verify(requestRepository).findByOrganizationOrderByCreatedAtDesc(eq(organization), any());
         verify(requestRepository, never()).findByOrganizationAndStatusOrderByCreatedAtDesc(any(), any(), any());
-    }
-
-    // ───────────────────── validateGuest ─────────────────────
-
-    @Test
-    void createRequest_guestNameTooLong_throwsValidationException() {
-        String longName = "a".repeat(101);
-        ValidationException ex = assertThrows(ValidationException.class, () -> requestService.createRequest(
-                null, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), longName, "+59899123456", "org1"));
-        assertNotNull(ex);
-    }
-
-    @Test
-    void createRequest_guestInvalidPhone_throwsValidationException() {
-        assertThrows(ValidationException.class, () -> requestService.createRequest(
-                null, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), "Juan", "123", "org1"));
     }
 
     // ───────────────────── validateMaterials ─────────────────────

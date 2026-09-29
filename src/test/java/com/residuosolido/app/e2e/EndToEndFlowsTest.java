@@ -70,58 +70,6 @@ class EndToEndFlowsTest {
     private OrganizationService organizationService;
 
     // ═══════════════════════════════════════════════════════
-    // Flujo 6: Tracking de invitado (track.html)
-    // ═══════════════════════════════════════════════════════
-
-    @Test
-    void flujo6_guestTracking_pageLoadsAndShowsForm() throws Exception {
-        when(requestService.getGuestRequests(null, null)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get(Routes.TRACK))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users/track"))
-                .andExpect(model().attributeExists("telefono", "codigo", "requests", "searched"));
-    }
-
-    @Test
-    void flujo6_guestTracking_searchByPhoneAndCode_returnsResults() throws Exception {
-        Request req = new Request();
-        req.setId("abc123");
-        req.setGuestContact("Juan", "+59899123456", "AB12CD34");
-        req.restoreStatus(RequestStatus.PENDING);
-        req.setCreatedAt(LocalDateTime.now());
-        req.updateDraft(City.RIVERA, "Calle 1", null, List.of(MaterialCategory.PLASTICO));
-
-        when(requestService.getGuestRequests("+59899123456", "AB12CD34")).thenReturn(List.of(req));
-
-        mockMvc.perform(get(Routes.TRACK)
-                        .param("telefono", "+59899123456")
-                        .param("codigo", "AB12CD34"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users/track"))
-                .andExpect(model().attribute("searched", true))
-                .andExpect(model().attribute("telefono", "+59899123456"))
-                .andExpect(model().attribute("codigo", "AB12CD34"));
-    }
-
-    // ═══════════════════════════════════════════════════════
-    // Flujo 3: Creación de solicitud (request-form.html)
-    // ═══════════════════════════════════════════════════════
-
-    @Test
-    void flujo3_requestForm_guestCanAccess() throws Exception {
-        when(userService.isAnonymous(any())).thenReturn(true);
-        when(cityOrgService.getAvailableCities()).thenReturn(List.of(City.RIVERA));
-        when(cityOrgService.getOrganizationsByCity(any())).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get(Routes.REQUESTS_NEW))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users/request-form"))
-                .andExpect(model().attribute("isGuest", true))
-                .andExpect(model().attributeExists("cities", "materials", "timeSlots"));
-    }
-
-    // ═══════════════════════════════════════════════════════
     // Flujo 7: Dashboard unificado (requests.html con stats)
     // ═══════════════════════════════════════════════════════
 
@@ -251,12 +199,13 @@ class EndToEndFlowsTest {
         authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
 
+        User citizen = TestFixtures.citizen("u1", "+59899123456");
         Request req = new Request();
         req.setId("req1");
+        req.setContactUser(citizen);
         req.restoreStatus(RequestStatus.PENDING);
         req.setCreatedAt(LocalDateTime.now());
         req.updateDraft(City.RIVERA, "Calle 1", null, List.of(MaterialCategory.PLASTICO));
-        req.setGuestContact("Juan", "+59899123456", null);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
         when(organizationService.findByUser(authOrg)).thenReturn(org);

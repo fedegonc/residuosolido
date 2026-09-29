@@ -141,24 +141,6 @@ class RequestCreateControllerTest {
                 any(), any(), any(), any(), any());
     }
 
-    @Test
-    void createRequest_guestSuccess_redirectsToTrackingWithEncodedPhone() throws Exception {
-        when(userService.resolveUser(any())).thenReturn(null);
-        when(rateLimiter.isAllowed(any())).thenReturn(true);
-        Request created = Request.forGuest("Ana", "+59899123456", "cod123");
-        when(requestService.createRequestWithImage(isNull(), eq(City.RIVERA), eq("Calle 1"), any(),
-                any(), eq("Ana"), eq("+59899123456"), any(), any())).thenReturn(created);
-
-        mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
-                        .param("ciudad", "RIVERA")
-                        .param("address", "Calle 1")
-                        .param("guestName", "Ana")
-                        .param("guestPhone", "+59899123456"))
-                .andExpect(status().is3xxRedirection())
-                // el "+" va URL-encoded: sin codificar se lee como espacio y rompe el rastreo
-                .andExpect(redirectedUrlPattern("/rastrear?telefono=%2B59899123456&codigo=*"));
-    }
-
     // ===== POST /solicitar — usuario =====
 
     @Test

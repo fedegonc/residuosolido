@@ -120,14 +120,4 @@ class RequestTest {
         assertNotNull(req.getCreatedAt());
     }
 
-    @Test
-    @DisplayName("Factory forGuest() arranca en PENDING")
-    void factoryForGuestStartsPending() {
-        Request req = Request.forGuest("Juan", "098123456", "ABC123");
-
-        assertEquals(RequestStatus.PENDING, req.getStatus());
-        assertEquals("Juan", req.getGuestName());
-        assertEquals("098123456", req.getGuestPhone());
-        assertEquals("ABC123", req.getTrackingCode());
-    }
 }
