@@ -150,13 +150,11 @@ public class DataLoader {
 
         // 2. IN_PROGRESS — ya aceptada por Renacer. Para completar en vivo.
         createRequest(requestRepo, mateo, renacer, "Calle Uruguay 880", "Barrio Mandubí", City.RIVERA,
-                List.of(MaterialCategory.VIDRIO), RequestStatus.IN_PROGRESS, TimeSlot.TARDE,
-                null, null, now.minusDays(1));
+                List.of(MaterialCategory.VIDRIO), RequestStatus.IN_PROGRESS, TimeSlot.TARDE, now.minusDays(1));
 
         // 3. COMPLETED — fecha pasada, para historial/métricas.
         createRequest(requestRepo, carla, vidaVerde, "Calle Ceballos 320", "Barrio Cerro", City.RIVERA,
-                List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO), RequestStatus.COMPLETED, TimeSlot.MANANA,
-                null, null, now.minusMonths(2));
+                List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO), RequestStatus.COMPLETED, TimeSlot.MANANA, now.minusMonths(2));
 
         // 4. REJECTED — sin motivo (gap de modelo documentado arriba y en docs/DEFENSA.md).
         createRequest(requestRepo, diego, vidaVerde, "Calle Agraciada 610", "Barrio Mandubí", City.RIVERA,
@@ -188,8 +186,7 @@ public class DataLoader {
 
         // 10. En portugués — ciudadano de Livramento pidiendo a un org de Livramento.
         createRequest(requestRepo, joaoBr, orgLivramento, "Rua Uruguai 88", "Bairro Centro", City.LIVRAMENTO,
-                List.of(MaterialCategory.PAPEL), RequestStatus.IN_PROGRESS, TimeSlot.NOCHE,
-                null, null, now.minusDays(3));
+                List.of(MaterialCategory.PAPEL), RequestStatus.IN_PROGRESS, TimeSlot.NOCHE, now.minusDays(3));
 
         // ~22 COMPLETED de volumen (últimos 6 meses, sin criterio) para que el Kanban y
         // RequestMetricsService no se vean vacíos.
@@ -288,6 +285,13 @@ public class DataLoader {
                                       List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
                                       String guestName, String guestPhone) {
         createRequest(repo, user, org, address, ref, city, materials, status, slot, null);
+    }
+
+    private static void createRequest(RequestRepository repo, User user, Organization org,
+                                      String address, String ref, City city,
+                                      List<MaterialCategory> materials, RequestStatus status,
+                                      String guestName, String guestPhone, String trackingCode, LocalDateTime createdAt) {
+        createRequest(repo, user, org, address, ref, city, materials, status, null, createdAt);
     }
 
     private static void createRequest(RequestRepository repo, User user, Organization org,
