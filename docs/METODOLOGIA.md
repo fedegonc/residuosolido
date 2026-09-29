@@ -122,7 +122,6 @@ diagramas, tradeoffs explícitos.
   - `docs/DEFENSA.md` — guía de defensa.
   - `docs/TRADEOFFS.md` — decisiones de diseño y tradeoffs.
   - `docs/MEJORAS.md` — tabla de superficies de mejora.
-  - `docs/COPIES.md` — single source of truth de textos de UI.
   - `docs/METODOLOGIA.md` — este archivo (fases del desarrollo).
 - Diagramas draw.io: casos de uso, modelo lógico, clases y secuencia UML.
 
@@ -179,6 +178,5 @@ metodología, sistemas comparables y contexto territorial.
 
 ## Documentos relacionados
 
-- `docs/COPIES.md` — single source of truth de textos de UI (claves i18n).
 - `docs/REQUISITOS.md` — catálogo RF/RN.
 - `docs/DEFENSA.md` — guía de defensa; `docs/TRADEOFFS.md` — decisiones de diseño.

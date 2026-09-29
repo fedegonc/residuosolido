@@ -94,11 +94,10 @@ En **producción** (Render/otros), las variables se configuran directamente en e
 - [`docs/METODOLOGIA.md`](docs/METODOLOGIA.md) — Modelo iterativo-incremental + DSRM
 
 **Referencia Técnica:**
-- [`docs/ENDPOINTS.md`](docs/ENDPOINTS.md) — 33 rutas HTTP, esquemas OpenAPI, ejemplos
-- [`docs/MEJORAS.md`](docs/MEJORAS.md) — 158 mejoras documentadas (estado + justificación)
-- [`docs/BOILERPLATE_VS_CORE.md`](docs/BOILERPLATE_VS_CORE.md) — Clasificación: infraestructura vs negocio (156 LOC core)
+- [`docs/ENDPOINTS.md`](docs/ENDPOINTS.md) — Rutas HTTP y acceso por rol
+- [`docs/MEJORAS.md`](docs/MEJORAS.md) — 60 mejoras documentadas (estado + justificación)
+- [`docs/BOILERPLATE_VS_CORE.md`](docs/BOILERPLATE_VS_CORE.md) — Clasificación: infraestructura vs negocio
 - [`docs/USABILIDAD.md`](docs/USABILIDAD.md) — Instrumento Likert para evaluación con usuarios
-- [`docs/COPIES.md`](docs/COPIES.md) — Single source of truth de textos i18n
 
 **Acceso en vivo:**
 - `/docs/DEFENSA` — Vista renderizada (Markdown → HTML)

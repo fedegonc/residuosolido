@@ -1,167 +1,59 @@
 # Endpoints — Eco Solicitud
 
-Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/main/java/com/residuosolido/app/controller`. No incluye rutas hipotéticas ni planificadas — solo lo que existe y compila.
+Rutas HTTP disponibles en la aplicación. Para esquemas completos y ejemplos, ver `/swagger-ui.html`.
 
 ---
 
-## Público / Invitado (sin autenticación)
+## Público (sin autenticación)
 
-| Método | Ruta | Controller | Descripción |
-|---|---|---|---|
-| GET | `/`, `/index` | `PageController` | Landing page pública |
-| GET | `/registrarse` | `AuthController` | Formulario de registro |
-| POST | `/registrarse` | `AuthController` | Procesa registro (Usuario u Organización) |
-| GET | `/entrar` | `AuthController` | Formulario de login (POST procesado por Spring Security en la misma URL) |
-| POST | `/salir` | Spring Security | Cierra sesión (procesado por el filter chain, no por un controller) |
-| GET | `/solicitar` | `RequestCreateController` | Formulario de nueva solicitud — público (invitado) o con sesión `USER`; prefill `?ciudad=&nombre=&telefono=` |
-| POST | `/solicitar` | `RequestCreateController` | Crea la solicitud (con imagen opcional, rate limit para invitados) |
-| GET | `/docs/diagramas` | `DocsController` | Visor de diagramas UML: renderiza cada `docs/diagrams/*.drawio` con viewer-static de draw.io |
-| GET | `/docs/{file}` | `DocsController` | Vista HTML de `docs/{file}.md` renderizada con CommonMark (layout + `.doc-content`); inexistente → 404 |
-| GET | `/docs/{file}.md` | `DocsController` | Sirve el `.md` crudo como `text/markdown` (fuente del doc) |
-| GET | `/docs/diagrams/{file}.drawio` | `DocsController` | Sirve el `.drawio` fuente como `application/xml` |
-| GET | `/scratch/{file}` | `DocsController` | Sirve `scratch/App.java`/`pseudoapp.md` como texto plano (footer del layout). `scratch/` está gitignoreado a propósito — funciona en local/dev, 404 en Render porque el archivo nunca se sube |
-| GET | `/pagina/{slug}` | `PageController` | Páginas de contenido genéricas por slug, contenido en `pages-{es,pt}.json` vía `PageContentLoader`. Las 9 landing cards (catadores, impacto, sostenibilidad, comunidad, proceso, compromiso, eventos, recursos, faq) tienen su página. Slug sin entrada en el JSON → 404 real (`ResponseStatusException` + `GlobalExceptionHandler`) |
+| Ruta | Método | Descripción |
+|---|---|---|
+| `/`, `/index` | GET | Landing page pública |
+| `/registrarse` | GET | Formulario de registro |
+| `/registrarse` | POST | Procesa registro (usuario u organización) |
+| `/entrar` | GET | Formulario de login |
+| `/salir` | POST | Cierra sesión |
+| `/solicitar` | GET | Formulario de nueva solicitud |
+| `/solicitar` | POST | Crea solicitud (con imagen opcional) |
+| `/docs/diagramas` | GET | Visor de diagramas UML |
+| `/docs/{file}` | GET | Documento renderizado HTML |
+| `/docs/{file}.md` | GET | Documento sin renderizar (Markdown) |
+| `/docs/diagrams/{file}.drawio` | GET | Diagrama sin renderizar (XML) |
+| `/scratch/{file}` | GET | Especificación ejecutable (App.java) |
+| `/pagina/{slug}` | GET | Página de contenido genérico |
 
-## Usuario (rol `USER`)
+## Usuario autenticado (rol USER)
 
-| Método | Ruta | Controller | Descripción |
-|---|---|---|---|
-| GET | `/mis-solicitudes` | `RequestController` | Lista de solicitudes propias con stats |
-| GET | `/solicitudes/{id}` | `RequestController` | Detalle de una solicitud propia (lectura en cualquier estado) |
-| GET | `/solicitudes/{id}/editar` | `RequestController` | Formulario de edición (solo si `PENDING`) |
-| PUT | `/solicitudes/{id}` | `RequestController` | Actualiza la solicitud (solo si `PENDING`) |
-| DELETE | `/solicitudes/{id}` | `RequestController` | Elimina la solicitud (solo si `PENDING`) |
-| GET | `/notificaciones` | `NotificationController` | Bandeja in-app: lista notificaciones propias (aceptada/rechazada) y marca todas como leídas |
+| Ruta | Método | Descripción |
+|---|---|---|
+| `/mis-solicitudes` | GET | Lista de solicitudes propias |
+| `/solicitudes/{id}` | GET | Detalle de solicitud |
+| `/solicitudes/{id}/editar` | GET | Formulario de edición |
+| `/solicitudes/{id}` | PUT | Actualizar solicitud |
+| `/solicitudes/{id}` | DELETE | Eliminar solicitud |
+| `/notificaciones` | GET | Bandeja de notificaciones |
 
-## Organización (rol `ORGANIZATION`)
+## Organización autenticada (rol ORGANIZATION)
 
-| Método | Ruta | Controller | Descripción |
-|---|---|---|---|
-| GET | `/acopio/solicitudes?estado=` | `OrgRequestController` | Panel de acopio: estadísticas + lista con filtro por estado (redirige a `/mi-organizacion` si el perfil está incompleto) |
-| GET | `/acopio/solicitudes/{id}` | `OrgRequestController` | Detalle de una solicitud asignada |
-| POST | `/acopio/solicitudes/{id}/aceptar` | `OrgRequestController` | Acepta una solicitud pendiente (`confirmedSlot` opcional) |
-| POST | `/acopio/solicitudes/{id}/rechazar` | `OrgRequestController` | Rechaza una solicitud pendiente |
-| POST | `/acopio/solicitudes/{id}/completar` | `OrgRequestController` | Marca una solicitud en curso como completada |
-| GET | `/mi-organizacion` | `OrgProfileController` | Perfil de la organización; abre en modo edición si está incompleto (absorbe el onboarding) |
-| PUT | `/mi-organizacion` | `OrgProfileController` | Actualiza datos de la organización |
+| Ruta | Método | Descripción |
+|---|---|---|
+| `/acopio/solicitudes` | GET | Dashboard de acopio (con filtro `?estado=`) |
+| `/acopio/solicitudes/{id}` | GET | Detalle de solicitud asignada |
+| `/acopio/solicitudes/{id}/aceptar` | POST | Aceptar solicitud |
+| `/acopio/solicitudes/{id}/rechazar` | POST | Rechazar solicitud |
+| `/acopio/solicitudes/{id}/completar` | POST | Marcar como completada |
+| `/mi-organizacion` | GET | Perfil de la organización |
+| `/mi-organizacion` | PUT | Actualizar perfil |
 
-## Endpoints internos (no parte del vocabulario público)
+## Internos (fetch de formularios)
 
-| Método | Ruta | Controller | Descripción |
-|---|---|---|---|
-| GET | `/solicitudes/org-options?ciudad=` | `RequestCreateController` | Opciones `<select>` de organizaciones por ciudad (fetch) |
-
----
-
-## Notas
-
-- **14 acciones sobre 10 recursos distintos** — contando las tres transiciones de organización por separado.
-- `/solicitar` es verbo porque es la acción principal del sistema y la única URL que un ciudadano podría tipear a mano; `/rastrear` por la misma razón (se escribe con el código en el papel al lado). `/solicitudes/{id}` se mantiene plural y sustantivo para editar/borrar — es CRUD puro, sin verbo de dominio.
-- `/acopio/**` es el prefijo del área de organización: un solo segmento identifica la zona y el matcher de seguridad es una línea (`.requestMatchers("/acopio/**").hasRole("ORGANIZATION")`). `/mi-organizacion` queda fuera del prefijo por legibilidad pero tiene el mismo matcher explícito.
-- Los formularios HTML solo emiten GET/POST: `PUT` y `DELETE` llegan vía `_method=put|delete` en el body, traducidos por `HiddenHttpMethodFilter` (`spring.mvc.hiddenmethod.filter.enabled=true`).
-- Rutas en español sin tildes ni `ñ` (`solicitar`, `rastrear`, `acopio`) — los nombres de las rutas son los mismos que se usan en la defensa.
-- No existen rutas `/admin/**` — no hay rol Admin ni panel de administración general.
-- No existen rutas `/acopio/inicio`, `/acopio/completar-perfil` ni `/acopio/kanban` — el dashboard Kanban y el onboarding separado fueron consolidados.
-- No existen rutas `/blog`, `/posts`, `/metricas` — el blog y las métricas públicas fueron descartados del MVP.
-- Las rutas físicas están centralizadas en `com.residuosolido.app.config.Routes` para evitar URLs hardcodeadas en controllers, seguridad y tests.
-- **No hay API REST pública ni Swagger/OpenAPI.** Eco Solicitud es Spring MVC + Thymeleaf SSR; `/solicitudes/org-options` es el único endpoint JSON/HTML-fragment y es infraestructura interna del formulario (fetch de Vanilla JS), no una API de consumo externo. Ver `docs/TRADEOFFS.md` §35.
+| Ruta | Método | Descripción |
+|---|---|---|
+| `/solicitudes/org-options` | GET | Opciones de organizaciones por ciudad |
 
 ---
 
-# Testing (anexo)
-
-
-Describe la suite de tests real del proyecto (185 tests totales — 158 no-browser verdes + 27 `*BrowserTest` con fallas conocidas documentadas en `docs/MEJORAS.md` #159, `mvn test`), no un roadmap especulativo. Stack: JUnit 5 + Mockito + Spring Boot Test + Spring Security Test.
-
----
-
-## 1. Cómo correr los tests
-
-```bash
-# Toda la suite
-mvn test
-
-# Un test específico
-mvn test -Dtest=RequestServiceValidationTest
-
-# Con reporte de cobertura (Jacoco, ya configurado en pom.xml)
-mvn clean test
-# Reporte en: target/site/jacoco/index.html
-```
-
-No requiere base de datos externa para los tests unitarios (repositorios mockeados con Mockito). Los tests de controller/seguridad usan `@SpringBootTest` + `MockMvc`. Los tests de integración de agregación (`MongoAggregationUtilsIntegrationTest`) usan MongoDB real (`mongodb://localhost:27017/testdb`).
-
----
-
-## 2. Estrategia por capa
-
-### Unit tests (servicios) — repositorios mockeados con Mockito
-La mayoría de la suite. Se instancia el servicio real con `new Service(mock(Repository.class), ...)` y se verifica comportamiento sin levantar contexto de Spring — rápidos (segundos, no minutos).
-
-| Clase de test | Qué cubre |
-|---|---|
-| `RequestServiceValidationTest` (13) | Validación server-side de creación/actualización de solicitudes (RN-10: materiales obligatorios, dirección, ciudad; RN-11: borrado solo si `PENDING`) |
-| `CityOrgServiceTest` (9) | Resolución de organización por ciudad (RN-06), validaciones de organización inválida/ciudad incorrecta |
-| `UserServiceTest` (17) | Registro, actualización de perfil, completar perfil de organización |
-| `RequestMetricsServiceTest` (6) | Agregación Mongo faceted para estadísticas de organización y usuario (counts por estado) |
-| `LocalImageServiceTest` (7) | Validación de tipo/tamaño de imagen, guardado local |
-| `RateLimiterTest` | Rate limiting por IP (ventana deslizante), bloqueo tras intentos fallidos de login, expiración, limpieza de memoria — unifica los viejos `GuestRateLimiterTest`/`LoginAttemptServiceTest` |
-| `RoutesTest` (6) | Redirección post-login según rol (RN-05) — reemplaza a `RoleBasedLoginTargetUrlResolverTest`, fusionado en `Routes.resolveHomeForRole()` |
-| `PhoneNumberCountryCodeTest` (23) | Normalización E.164, códigos de país (UY/BR), DDD brasilero, validación de longitud |
-| `MvpRegressionTest` (9) | Regresión de reglas críticas (password corto, org inactiva, etc.) |
-
-### Integration / Security tests — `@SpringBootTest` + `MockMvc`
-
-| Clase de test | Qué cubre |
-|---|---|
- `CriticalSecurityTest` (10) | Control de acceso por rol en rutas protegidas (`/mis-solicitudes`, `/solicitudes/**`, `/acopio/**`, `/mi-organizacion`), CSRF |
- `NewFlowsSecurityTest` (4) | Seguridad de flujos agregados recientemente (invitados, rastreo) |
-| `OrganizationControllerTest` (5) | Flujo completo de organización vía `MockMvc` |
- `EndToEndFlowsTest` (11) | Flujos completos: registro → login → crear solicitud → aceptar/rechazar/completar |
- `I18nMessageResolutionTest` (8) | Resolución de mensajes en español/portugués |
- `DocsControllerTest` (11) | `/docs/{file}.md` y `/docs/diagrams/{file}.drawio`: content-type, `Content-Disposition: inline`, 404 en inexistentes, path traversal bloqueado; vista renderizada `/docs/{file}` (HTML en layout, 404 en inexistente, `/docs/diagramas` literal no cae en `{file}`) |
-| `MongoAggregationUtilsIntegrationTest` (5) | Agregación faceted con MongoDB real — counts por estado, total, sin solicitudes, REJECTED incluido en total |
-
-### Browser tests — Playwright (tag `browser`)
-
-Requieren navegador real (Chromium). Se excluyen con `-DexcludedGroups=browser`.
-
-| Clase de test | Qué cubre |
-|---|---|
-| `HomePageBrowserTest` (6) | Render de landing page, navegación, responsive |
-| `CitizenBrowserTest` (7) | Flujo completo del ciudadano: registro → login → crear solicitud → ver lista |
-| `OrganizationBrowserTest` (5) | Flujo de organización: login → dashboard → aceptar/rechazar solicitud |
-| `TransversalBrowserTest` (6) | Registro ciudadano/organización, cambio de idioma es→pt, tema claro→oscuro, menú hamburguesa mobile, aislamiento cross-role |
-
----
-
-## 3. Patrones usados
-
-- **Arrange-Act-Assert** en todos los tests.
-- **Mocks de repositorio, no de base de datos real** — `mock(RequestRepository.class)`, sin H2 ni testcontainers (el proyecto usa MongoDB en producción, pero los tests unitarios no necesitan una instancia real).
-- **`@WithMockUser`** para simular usuarios autenticados con rol específico en tests de `MockMvc`.
-- **Regresión obligatoria en cada fix de bug**: cuando se corrigió `deleteOwnedRequest` (RN-11), se agregaron los tests `rn11_deleteOwnedRequest_notPending_throwsIllegalStateException` y `rn11_deleteOwnedRequest_pending_deletesSuccessfully` en el mismo commit.
-- **Test de integración para pipelines de MongoDB**: `MongoAggregationUtilsIntegrationTest` usa MongoDB real (no mock) para validar que el pipeline `$facet` produce los counts correctos. Este test detectó el bug donde 4 `$facet` stages separados hacían que `total` siempre fuera 1 (cada stage reemplazaba el documento anterior).
-
----
-
-## 4. Cobertura por área (cualitativa, no hay reporte Jacoco versionado)
-
-| Área | Cobertura |
-|---|---|
-| Reglas de negocio de `Request` (creación, edición, transición, borrado) | Alta — cubierta por `RequestServiceValidationTest` (consolidado) |
-| Seguridad por rol | Alta — 2 clases dedicadas + verificación implícita en `EndToEndFlowsTest` |
-| Rate limiting / login attempts | Alta — ambas clases con tests de limpieza de memoria incluidos |
-| `MongoAggregationUtils` (helper compartido de métricas) | Alta — test de integración propio (`MongoAggregationUtilsIntegrationTest`, 5 tests con MongoDB real) + cubierto indirectamente vía `RequestMetricsServiceTest` |
-
----
-
-## 5. Comandos útiles adicionales
-
-```bash
-# Ver solo el resumen de resultados
-mvn test 2>&1 | grep "Tests run"
-
-# Saltar tests en un build de producción
-mvn clean package -DskipTests
-```
+**Notas:**
+- **Rutas centralizadas** en `com.residuosolido.app.config.Routes` (fuente única de verdad).
+- **Spring MVC + Thymeleaf (SSR):** no hay API REST pública. `/solicitudes/org-options` es infraestructura interna del formulario (fetch vanilla JS).
+- **Para esquemas y ejemplos completos,** consultar `/swagger-ui.html` en desarrollo o el endpoint OpenAPI.
