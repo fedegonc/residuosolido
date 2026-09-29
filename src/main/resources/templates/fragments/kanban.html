@@ -22,7 +22,7 @@
     <a th:href="@{${basePath} + '/' + ${req.id}}" class="kanban-card__link">
       <div class="kanban-card__header">
         <span class="kanban-card__title">
-          <span data-i18n="track_request_id">Solicitud</span> #<span th:text="${req.id}">ID</span>
+          <span data-i18n="track_request_id">Solicitud</span> #<span th:text="${req.shortId}" th:title="${req.id}">ID</span>
         </span>
         <div th:replace="~{fragments/ui :: status(${req.status})}"></div>
       </div>

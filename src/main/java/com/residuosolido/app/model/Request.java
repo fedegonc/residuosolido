@@ -159,6 +159,11 @@ public class Request {
     public String getContactName() { return user != null ? user.getDisplayName() : guestName; }
     public String getContactPhone() { return user != null ? user.getPhone() : guestPhone; }
 
+    /** Últimos 8 chars del id — para display en cards donde el ObjectId completo no entra. */
+    public String getShortId() {
+        return id != null && id.length() > 8 ? id.substring(id.length() - 8) : id;
+    }
+
     public void assignOrganization(Organization org) {
         if (org == null) throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         this.organization = org;
