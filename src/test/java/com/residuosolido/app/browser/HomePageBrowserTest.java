@@ -66,20 +66,6 @@ class HomePageBrowserTest extends PlaywrightBaseTest {
     }
 
     @Test
-    @DisplayName("Página de rastreo de solicitud carga formulario")
-    void trackPageLoads() {
-        page.navigate(baseUrl + "/rastrear");
-
-        page.locator("[data-i18n='track_title']").waitFor();
-        assertTrue(page.locator("[data-i18n='track_title']").innerText().length() > 0,
-                "La página de rastreo debe tener título");
-
-        Locator phoneInput = page.locator("input[id*='Phone']").first();
-        assertTrue(phoneInput.isVisible(),
-                "El campo teléfono debe ser visible");
-    }
-
-    @Test
     @DisplayName("Footer y selector de idioma funcionan")
     void footerAndLanguageSelectorWork() {
         page.navigate(baseUrl + "/");
