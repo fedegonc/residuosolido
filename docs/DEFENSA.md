@@ -317,7 +317,18 @@ sería:
 
 Esta mejora queda registrada como posible evolución, no como deuda técnica.
 
-### 7.3 Trabajo futuro priorizado
+### 7.3 Mejoras evaluadas pero no implementadas
+
+- **Métricas privadas por organización + descarga PDF.** Nueva ruta
+  protegida `/acopio/metricas` con `@PreAuthorize("hasRole('ORGANIZATION')")`
+  y endpoint `GET /acopio/metricas/pdf` (sugerido: OpenPDF o iText community).
+  La ruta pública `/metricas` (totales agregados, sin datos personales) se
+  mantiene como decisión consciente.
+- **Consistencia de nombres en servicios** (baja prioridad): revisar que los
+  nombres de métodos de `RequestService`/`RequestMetricsService`/`CityOrgService`
+  reflejen consistentemente su sub-dominio.
+
+### 7.4 Trabajo futuro priorizado
 
 1. **Piloto con usuarios reales** — ciudadanos y organizaciones de
    Rivera y Sant'Ana. Medir tareas concretas: crear solicitud,

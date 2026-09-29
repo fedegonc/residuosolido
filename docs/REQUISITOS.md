@@ -127,9 +127,9 @@ diferido. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
 
 ---
 
-## 3. Criterio de alcance y backlog pendiente
+## 3. Criterio de alcance
 
-**Nota para la defensa:** estos puntos no son omisiones — son decisiones de
+**Nota para la defensa:** los puntos excluidos no son omisiones — son decisiones de
 alcance conscientes, justificadas porque exceden lo que una herramienta de
 software puede o debe resolver.
 
@@ -144,18 +144,6 @@ software puede o debe resolver.
 
 Si 1 es sí, 2 es "sí es del software" y 3 es "simple" → entra al backlog.
 Si no, se documenta como limitación consciente (ver `docs/DEFENSA.md` §7).
-
-**Backlog pendiente (no implementado):**
-
-- 🟡 **Métricas privadas por organización + descarga PDF.** Nueva ruta
-  protegida `/acopio/metricas` con `@PreAuthorize("hasRole('ORGANIZATION')")`
-  y endpoint `GET /acopio/metricas/pdf` (sugerido: OpenPDF o iText community).
-  La ruta pública `/metricas` (totales agregados, sin datos personales) es una
-  decisión consciente, no un bug — está explícitamente en `permitAll()` en
-  `SecurityConfig`.
-- 🟡 **Consistencia de nombres** (baja prioridad): revisar que los nombres de
-  métodos de `RequestService`/`RequestMetricsService`/`CityOrgService`
-  reflejen consistentemente su sub-dominio.
 
 ---
 

@@ -66,6 +66,7 @@ CLAUDE.md (raíz del repo) queda fuera de esta clasificación — son instruccio
 | Tema | Documento |
 |---|---|
 | Requisitos funcionales y reglas de negocio | `docs/REQUISITOS.md` |
+| Criterio de alcance (qué entra/no entra al MVP) | `docs/REQUISITOS.md` §3 + `docs/DEFENSA.md` §7 |
 | Casos de uso, ER, secuencia, estados | `docs/DIAGRAMAS.md` §1-§7 |
 | Gitflow / forma de trabajo con ramas | `docs/GITFLOW.md` + `docs/diagrams/figura5-gitflow.drawio` |
 | Componentes y flujos internos, arquitectura de i18n | `docs/ARQUITECTURA.md` |
@@ -74,7 +75,7 @@ CLAUDE.md (raíz del repo) queda fuera de esta clasificación — son instruccio
 | Argumento y preguntas de defensa | `docs/DEFENSA.md` |
 | Metodologia de desarrollo | `docs/METODOLOGIA.md` |
 | Estado de mejoras propuestas/aplicadas | `docs/MEJORAS.md` |
-| Limitaciones y fuera de alcance | `docs/DEFENSA.md` §7 |
+| Limitaciones, fuera de alcance y trabajo futuro | `docs/DEFENSA.md` §7 |
 | Evaluación de usabilidad (Likert por funcionalidad) | `docs/USABILIDAD.md` |
 | Historial de hardening (referencia) | `docs/CORRECCIONES.md` |
 | Inventario auditado de superficies (referencia) | `docs/AUDITORIA.md` |
