@@ -57,7 +57,6 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 - `OrgProfileController` — Perfil de organización (edición y onboarding en una sola página)
 
 **Público:**
-- `GuestTrackingController` — Rastreo de solicitudes por teléfono + código
 - `DocsController` — Páginas públicas de documentación (`/documentos`, `/diagramas`)
 
 **Soporte:**

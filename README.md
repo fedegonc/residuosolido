@@ -1,43 +1,10 @@
 # Eco Solicitud — Plataforma de Gestión de Reciclaje
 
-Sistema de **recolección de residuos reciclables** para la Frontera de la Paz (Rivera, Uruguay — Sant'Ana do Livramento, Brasil). MVP implementado bajo metodología iterativa-incremental con arquitectura en capas, 463 tests no-browser, auditoría de diagramas UML y documentación completa para defensa de tesis de **Tecnólogo en Análisis y Desarrollo de Sistemas** (UTEC/UDELAR).
+MVP de recolección de residuos reciclables (Rivera/Livramento) implementado en **Spring Boot 3.2 + MongoDB** con **314 tests**, arquitectura hexagonal y especificación ejecutable del dominio.
 
-## Características Principales
+**Flujo core:** Ciudadano registrado crea solicitud → Organización acepta/rechaza con franja horaria → Notificación in-app.
 
-**Flujo de Usuario (Solicitud → Aceptación → Completado)**
-- ✓ Ciudadano crea solicitud de recolección (registrado o invitado)
-- ✓ Rastreo anónimo por teléfono + código privado (sin login)
-- ✓ Organización recibe, aceptada/rechaza con franja horaria
-- ✓ Notificación in-app cuando la organización responde
-- ✓ Ciudadano ve detalle en cualquier estado
-
-**Características de Calidad**
-- ✓ 463 tests no-browser, 0 failures (27 fuzz tests PhoneNumber)
-- ✓ Cobertura JaCoCo 94% instrucciones en servicios core
-- ✓ P0 Defensa: @Transactional, structured logging, exponential backoff, error handling tipado
-- ✓ Auditoría de diagramas UML (85–90% fidelidad, sincronizados post-refactor)
-- ✓ 158 mejoras documentadas (implementadas/descartadas/diferidas)
-
-**Autenticación y Seguridad**
-- ✓ Roles: `USER` (ciudadano) + `ORGANIZATION` (acopio)
-- ✓ Onboarding forzado de organización (ciudad + materiales + teléfono)
-- ✓ Rate limiting invitados (ventana deslizante por IP)
-- ✓ Bloqueo de cuenta 15min tras 3 intentos fallidos
-- ✓ CSRF token en todos los formularios, CSP estricta
-
-**Internacionalización y Accesibilidad**
-- ✓ Bilingüe: español (Rivera) + portugués (Sant'Ana do Livramento)
-- ✓ Locale automático por ciudad del usuario
-- ✓ Selector manual (dropdown en navbar)
-- ✓ `data-i18n` + client-side JS lazy-loaded, sin FOUC
-- ✓ Semántica HTML5 (`<fieldset>`, `<legend>`, `role` explícitos)
-
-**Infraestructura**
-- ✓ Selector de código de país (UY +598 / BR +55) con normalización E.164
-- ✓ Validación de teléfono exhaustiva (27 tests parametrizados)
-- ✓ Almacenamiento de imágenes local con validación (tipo/extensión/tamaño)
-- ✓ Optimistic locking en transiciones con retry automático
-- ✓ Diseño canónico (variables CSS, BEM, 0 estilos inline)
+**Estado:** Pre-launch (0 usuarios reales, fase de pruebas manuales). Tesis de Tecnólogo en Análisis y Desarrollo de Sistemas.
 
 ## Stack Tecnológico
 

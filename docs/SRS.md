@@ -487,7 +487,6 @@ Todos los requisitos deben documentarse en:
 |----|-----------|-------|--------|
 | RF-1 | AuthController, UserService | 9 | ✅ Implementado |
 | RF-3 | RequestCreateController, RequestValidator | 12 | ✅ Implementado |
-| RF-4 | GuestTrackingController | 4 | ✅ Implementado |
 | RF-6 | RequestService, RequestStateMachine | 15 | ✅ Implementado |
 | RF-7 | OrgProfileController, UserService | 7 | ✅ Implementado |
 | RF-9 | NotificationService, NotificationController | 12 | ✅ Implementado |

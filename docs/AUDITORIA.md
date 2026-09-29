@@ -219,7 +219,6 @@ de `data-i18n` + `i18n/common/*.json`.
 | `AuthController` | 4 (login, register GET/POST) | Sí |
 | `RequestCreateController` | 2 (nueva, crear) | Sí |
 | `RequestController` | 5 (lista, detalle, editar, actualizar, eliminar) | Sí |
-| `GuestTrackingController` | 2 (rastrear GET/POST) | Sí |
 | `OrgDashboardController` | — | **Eliminado** (dashboard absorbido en `OrgRequestController`, MEJORAS #130) |
 | `OrgProfileController` | 4 (completar-perfil GET/POST, perfil GET/POST) | Sí |
 | `OrgRequestController` | 4 (lista, detalle, transiciones) | Sí |

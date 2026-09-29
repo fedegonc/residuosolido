@@ -186,30 +186,17 @@ class RequestServiceValidationTest {
         assertEquals("error.request.city_required", ex.getMessage());
     }
 
-    // ─── guest sin nombre ───
+    // ─── user nulo lanza error (no guests) ───
 
     @Test
-    void rn10_createRequest_guestWithoutName_throwsIllegalArgumentException() {
+    void rn10_createRequest_nullUser_requiresCitizen() {
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         null, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), "", "+59899123456", "org1")
+                        List.of(MaterialCategory.PLASTICO), null, null, "org1")
         );
-        assertEquals("error.request.guest_name_required", ex.getMessage());
-    }
-
-    // ─── guest sin teléfono ───
-
-    @Test
-    void rn10_createRequest_guestWithoutPhone_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> requestService.createRequest(
-                        null, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), "Juan", "", "org1")
-        );
-        assertEquals("error.phone.required", ex.getMessage());
+        assertEquals("error.request.citizen_required", ex.getMessage());
     }
 
     // ─── materials válidos NO lanzan excepción ───

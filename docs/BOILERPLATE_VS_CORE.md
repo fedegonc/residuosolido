@@ -28,7 +28,6 @@ las reglas de negocio antes de tocar (core).
 | `DocsController` | Boilerplate | Sirve archivos estáticos de `docs/`, no toca el dominio |
 | `I18nScriptController` | Boilerplate | Sirve el catálogo JSON de traducciones |
 | `SeedController` | Boilerplate | Carga de datos demo, solo dev |
-| `GuestTrackingController` | **Core** | Rastreo por teléfono+código privado — específico de "invitado sin cuenta" |
 | `RequestCreateController` | **Core** | Creación de solicitud — el punto de entrada al dominio |
 | `RequestController` | **Core** | Vista/edición de solicitud del ciudadano |
 | `OrgRequestController` | **Core** | Panel de acopio + transiciones de estado (aceptar/rechazar/completar) — las reglas de negocio viven acá |

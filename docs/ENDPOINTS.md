@@ -15,7 +15,6 @@ Extraído directamente de las anotaciones `@GetMapping`/`@PostMapping` en `src/m
 | POST | `/salir` | Spring Security | Cierra sesión (procesado por el filter chain, no por un controller) |
 | GET | `/solicitar` | `RequestCreateController` | Formulario de nueva solicitud — público (invitado) o con sesión `USER`; prefill `?ciudad=&nombre=&telefono=` |
 | POST | `/solicitar` | `RequestCreateController` | Crea la solicitud (con imagen opcional, rate limit para invitados) |
-| GET | `/rastrear?telefono=&codigo=` | `GuestTrackingController` | Rastreo de solicitudes de invitado por teléfono + código privado |
 | GET | `/docs/diagramas` | `DocsController` | Visor de diagramas UML: renderiza cada `docs/diagrams/*.drawio` con viewer-static de draw.io |
 | GET | `/docs/{file}` | `DocsController` | Vista HTML de `docs/{file}.md` renderizada con CommonMark (layout + `.doc-content`); inexistente → 404 |
 | GET | `/docs/{file}.md` | `DocsController` | Sirve el `.md` crudo como `text/markdown` (fuente del doc) |
@@ -132,8 +131,6 @@ Requieren navegador real (Chromium). Se excluyen con `-DexcludedGroups=browser`.
 | `HomePageBrowserTest` (6) | Render de landing page, navegación, responsive |
 | `CitizenBrowserTest` (7) | Flujo completo del ciudadano: registro → login → crear solicitud → ver lista |
 | `OrganizationBrowserTest` (5) | Flujo de organización: login → dashboard → aceptar/rechazar solicitud |
-| `GuestBrowserTest` (2) | Solicitud de invitado + rastreo por código |
-| `FullLifecycleBrowserTest` (1) | Ciclo completo: invitado crea → org acepta → org completa |
 | `TransversalBrowserTest` (6) | Registro ciudadano/organización, cambio de idioma es→pt, tema claro→oscuro, menú hamburguesa mobile, aislamiento cross-role |
 
 ---
