@@ -396,5 +396,10 @@ fieldset.field{border:0;padding:0;margin:0;min-inline-size:0}
 /* Mobile: tarjetas más anchas para scroll horizontal cómodo */
 @media (max-width:768px){
   .kanban-board{gap:.75rem}
-  .kanban-column{flex:1 0 85vw;min-width:85vw;max-width:none}
+  .kanban-column{flex:1 0 85vw;min-width:85vw;max-width:none;width:85vw}
+}
+/* En mobile (<640px), es grid, no flex */
+@media (max-width:640px){
+  .kanban-board{display:grid;grid-template-columns:1fr}
+  .kanban-column{flex:unset;min-width:unset;max-width:none;width:100%}
 }

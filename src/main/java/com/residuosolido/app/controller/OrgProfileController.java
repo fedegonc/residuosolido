@@ -51,7 +51,9 @@ public class OrgProfileController {
     /** Muestra el perfil de la organización (o el formulario si está incompleto). */
     @GetMapping(Routes.ORG_PROFILE)
     public String orgProfile(@CurrentUser User currentOrg, Model model) {
+        logger.info("🔍 OrgProfileController.orgProfile() — usuario: {}", currentOrg.getUsername());
         Organization organization = organizationService.findByUser(currentOrg);
+        logger.info("📦 Org: profileCompleted={}, phone={}, city={}", organization.isProfileComplete(), organization.getPhone(), organization.getCity());
         model.addAttribute("organization", organization);
         model.addAttribute("user", currentOrg);
         model.addAttribute("cities", City.values());
@@ -61,6 +63,7 @@ public class OrgProfileController {
                 java.util.Map.of("label", "Panel de acopio", "href", Routes.ORG_REQUESTS),
                 java.util.Map.of("label", "Perfil", "href", "")
         ));
+        logger.info("✅ Renderizando org/profile.html");
         return "org/profile";
     }
 

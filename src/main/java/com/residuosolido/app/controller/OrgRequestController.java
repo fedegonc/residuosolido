@@ -19,6 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.LocaleResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import java.util.Map;
 @PreAuthorize("hasRole('ORGANIZATION')")
 public class OrgRequestController {
 
+    private static final Logger logger = LoggerFactory.getLogger(OrgRequestController.class);
     private final RequestMetricsService requestMetricsService;
     private final RequestService requestService;
     private final OrganizationService organizationService;
@@ -63,9 +66,14 @@ public class OrgRequestController {
             @RequestParam(defaultValue = "20") int size,
             @CurrentUser User currentOrg, Model model,
             HttpServletRequest request) {
+        logger.info("🔍 OrgRequestController.orgRequests() — usuario: {}", currentOrg.getUsername());
         Organization organization = organizationService.findByUser(currentOrg);
+        logger.info("📦 Organización: id={}, name={}, profileCompleted={}, hasPhone={}, hasCity={}",
+                organization.getId(), organization.getName(), organization.isProfileComplete(),
+                organization.hasPhone(), organization.hasCity());
         model.addAttribute("organization", organization);
         if (organization.needsProfileCompletion()) {
+            logger.warn("⚠️  Perfil incompleto — mostrando advertencia");
             model.addAttribute("warningMessage", "Completa tu perfil para recibir solicitudes");
         }
 
@@ -93,6 +101,7 @@ public class OrgRequestController {
         ));
         Locale locale = localeResolver.resolveLocale(request);
         model.addAttribute("cards", LandingCardLoader.loadCards(locale.getLanguage()));
+        logger.info("✅ Renderizando org/requests.html con {} requests", requests.size());
         return "org/requests";
     }
 

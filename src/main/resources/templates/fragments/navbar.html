@@ -58,7 +58,6 @@
         <div class="dropdown">
           <a href="/" class="dropdown__link" data-i18n="nav_home">Inicio</a>
           <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitar" class="dropdown__link" data-i18n="nav_request">Solicitar recolección</a>
-          <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="dropdown__link" data-i18n="nav_org_panel">Panel acopio</a>
           <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="dropdown__link" data-i18n="nav_my_requests">Mis solicitudes</a>
           <a sec:authorize="hasRole('USER')" href="/notificaciones" class="dropdown__link"><span data-i18n="nav_notifications">Notificaciones</span>
             <span th:if="${unreadNotifications != null and unreadNotifications > 0}" class="badge badge--pending" th:text="${unreadNotifications}"></span>
