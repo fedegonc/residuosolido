@@ -5,14 +5,11 @@
    archivo, cargado vía layout:fragment="pageScripts" de esa página:
      - request-form.html → /js/request-form.js
      - org/profile.html  → /js/org-profile.js
-   El modal de rastreo del navbar es markup inline oculto (is-hidden) — se
-   abre con [data-modal-open] y se cierra con .modal__close / overlay / Escape.
 
    Componentes globales activados por markup (usados en más de una página):
      .password-field__toggle (PIN) → auth/login.html, auth/register.html
      #imageFile/#fileName → request-form.html
-     selector de país (#*CountryCode) → index, request-form (guestPhone/userPhone),
-     register, org/profile (phone), track (trackPhone) — markup canónico en fragments/forms.html
+     selector de país (#*CountryCode) → request-form (userPhone), register, org/profile (phone)
      .check-card / .radio-card → estado visual con CSS :has(input:checked), sin JS */
 
 (function () {
@@ -167,7 +164,7 @@
   }
 
   /* ─── Phone country selector (UY/BR) (componente) ─── */
-  var PHONE_PREFIXES = ['guestPhone', 'userPhone', 'phone', 'trackPhone'];
+  var PHONE_PREFIXES = ['userPhone', 'phone'];
   var PHONE_PLACEHOLDERS = { '+598': '9X XXX XXX', '+55': '9XXXX-XXXX' };
   /* Debe tolerar lo mismo que limpia el servidor (PhoneNumber.DECORATIVE_CHARS:
      espacios, guiones, paréntesis) — si no, un numero bien escrito con "(099) 123 456"
@@ -216,29 +213,4 @@
     updateForCountry();
   });
 
-  /* ─── Track (guest): el server espera un solo param `telefono` E.164.
-     El componente renderiza sin names (inputs = solo UI); JS promueve el
-     nacional a `telefono` y al submit lo reescribe como E.164. Sin JS,
-     telefono no se sube y el server simplemente no busca (no rompe). ─── */
-  var trackForm = document.getElementById('trackForm');
-  if (trackForm) {
-    var trackNat = document.getElementById('trackPhoneNational');
-    trackNat.name = 'telefono';
-    trackForm.addEventListener('submit', function () {
-      var code = document.getElementById('trackPhoneCountryCode').value;
-      var nat = trackNat.value.replace(/[\s\-()]/g, '');
-      var full;
-      if (nat.charAt(0) === '+') {
-        full = nat;
-      } else if (code === '+55') {
-        // 11 dígitos = DDD embebido (espejo de distributePrefill)
-        var ddd = nat.length === 11 ? nat.slice(0, 2) : document.getElementById('trackPhoneDdd').value.trim();
-        if (nat.length === 11) nat = nat.slice(2);
-        full = code + ddd + nat;
-      } else {
-        full = code + nat.replace(/^0+/, '');
-      }
-      trackNat.value = full;
-    });
-  }
 })();
