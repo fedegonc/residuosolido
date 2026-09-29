@@ -65,12 +65,8 @@ public class OrgRequestController {
             HttpServletRequest request) {
         Organization organization = organizationService.findByUser(currentOrg);
         model.addAttribute("organization", organization);
-        model.addAttribute("user", currentOrg);
-        model.addAttribute("cities", City.values());
-        model.addAttribute("materials", MaterialCategory.values());
         if (organization.needsProfileCompletion()) {
-            model.addAttribute("profileIncomplete", true);
-            return "org/requests";
+            model.addAttribute("warningMessage", "Completa tu perfil para recibir solicitudes");
         }
 
         Map<String, Long> stats = requestMetricsService.getOrgRequestStats(organization);
