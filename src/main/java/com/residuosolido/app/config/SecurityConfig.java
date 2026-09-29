@@ -1,8 +1,11 @@
 package com.residuosolido.app.config;
 
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,10 +13,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.config.Customizer;
+import java.util.concurrent.Executor;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@EnableCaching
+@EnableAsync
 public class SecurityConfig {
 
     private final AuthenticationEventHandler authHandler;
@@ -91,5 +97,16 @@ public class SecurityConfig {
             );
 
         return http.build();
+    }
+
+    @Bean(name = "notificationExecutor")
+    public Executor notificationExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(4);
+        executor.setQueueCapacity(50);
+        executor.setThreadNamePrefix("notif-");
+        executor.initialize();
+        return executor;
     }
 }
