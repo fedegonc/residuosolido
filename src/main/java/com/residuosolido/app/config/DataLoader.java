@@ -89,9 +89,6 @@ public class DataLoader {
                 List.of(MaterialCategory.METAL, MaterialCategory.PLASTICO), RequestStatus.COMPLETED, TimeSlot.TARDE);
         createRequest(requestRepo, u2, null, "Rua Flores da Cunha 32", null, City.LIVRAMENTO,
                 List.of(MaterialCategory.PAPEL), RequestStatus.PENDING, null);
-        createRequest(requestRepo, null, null, "Calle Misiones 55", "Casa con rejas", City.RIVERA,
-                List.of(MaterialCategory.PLASTICO, MaterialCategory.VIDRIO, MaterialCategory.METAL), RequestStatus.REJECTED, null,
-                "Carlos Guest", "+598 99 888 777");
         createRequest(requestRepo, u3, o2, "Calle Independencia 202", "Al lado de la plaza", City.RIVERA,
                 List.of(MaterialCategory.METAL), RequestStatus.PENDING, null);
         createRequest(requestRepo, u4, o5, "Rua Marechal Deodoro 77", "Portão azul", City.LIVRAMENTO,
@@ -100,8 +97,6 @@ public class DataLoader {
                 List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO), RequestStatus.COMPLETED, TimeSlot.MANANA);
         createRequest(requestRepo, u4, o6, "Rua Bento Gonçalves 890", "Galpão vermelho", City.LIVRAMENTO,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.METAL), RequestStatus.PENDING, null);
-        createRequest(requestRepo, null, o1, "Calle Ituzaingó 30", "Departamento 2B", City.RIVERA,
-                List.of(MaterialCategory.PLASTICO), RequestStatus.PENDING, null, "Ana Guest", "+598 99 444 555");
         createRequest(requestRepo, u1, o2, "Calle Amethyst 15", "Casa esquinera", City.RIVERA,
                 List.of(MaterialCategory.METAL, MaterialCategory.PLASTICO), RequestStatus.COMPLETED, TimeSlot.NOCHE);
         createRequest(requestRepo, u2, o6, "Rua dos Imigrantes 120", "Frente ao mercado", City.LIVRAMENTO,
@@ -151,55 +146,50 @@ public class DataLoader {
         // 1. PENDING — plástico + cartón, barrio de Rivera. Para aceptar en vivo.
         createRequest(requestRepo, rosa, renacer, "Av. Sarandí 1450", "Barrio Centro", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.CARTON), RequestStatus.PENDING, null,
-                null, null, null, now.minusHours(3));
+                null, null, now.minusHours(3));
 
         // 2. IN_PROGRESS — ya aceptada por Renacer. Para completar en vivo.
         createRequest(requestRepo, mateo, renacer, "Calle Uruguay 880", "Barrio Mandubí", City.RIVERA,
                 List.of(MaterialCategory.VIDRIO), RequestStatus.IN_PROGRESS, TimeSlot.TARDE,
-                null, null, null, now.minusDays(1));
+                null, null, now.minusDays(1));
 
         // 3. COMPLETED — fecha pasada, para historial/métricas.
         createRequest(requestRepo, carla, vidaVerde, "Calle Ceballos 320", "Barrio Cerro", City.RIVERA,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.VIDRIO), RequestStatus.COMPLETED, TimeSlot.MANANA,
-                null, null, null, now.minusMonths(2));
+                null, null, now.minusMonths(2));
 
         // 4. REJECTED — sin motivo (gap de modelo documentado arriba y en docs/DEFENSA.md).
         createRequest(requestRepo, diego, vidaVerde, "Calle Agraciada 610", "Barrio Mandubí", City.RIVERA,
                 List.of(MaterialCategory.METAL), RequestStatus.REJECTED, null,
-                null, null, null, now.minusDays(5));
+                null, null, now.minusDays(5));
 
         // 5. Escombros — ningún org de este dataset acepta ESCOMBROS; sin organización a
         // propósito (RequestService.validateMaterials lo bloquearía en la UI real).
         createRequest(requestRepo, rosa, null, "Camino Cuñapirú km 4", "Zona rural", City.RIVERA,
                 List.of(MaterialCategory.ESCOMBROS), RequestStatus.PENDING, null,
-                null, null, null, now.minusHours(6));
+                null, null, now.minusHours(6));
 
         // 6. Livramento — dirección del otro lado. Reusa un org del dataset genérico
         // (este dataset de defensa solo define orgs en Rivera).
         createRequest(requestRepo, joaoBr, orgLivramento, "Rua General Vasco Alves 210", "Frente à praça", City.LIVRAMENTO,
                 List.of(MaterialCategory.VIDRIO, MaterialCategory.PLASTICO), RequestStatus.PENDING, null,
-                null, null, null, now.minusHours(12));
-
-        // 7. Guest — sin cuenta, con código de rastreo real (el helper genérico no lo seteaba).
-        createRequest(requestRepo, null, renacer, "Calle Treinta y Tres 95", "Barrio Roosevelt", City.RIVERA,
-                List.of(MaterialCategory.PAPEL), RequestStatus.PENDING, null,
-                "Beatriz Invitada", "+59899300001", "DEMO2026", now.minusHours(1));
+                null, null, now.minusHours(12));
 
         // 8. PENDING con plástico — asignada a Papel Amigo, que ya no acepta PLASTICO.
         // Trade-off documentado: accept() no revalida materiales (ver docs/DEFENSA.md §7).
         createRequest(requestRepo, mateo, papelAmigo, "Calle Anzani 500", "Barrio Lavalleja", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO), RequestStatus.PENDING, null,
-                null, null, null, now.minusHours(8));
+                null, null, now.minusHours(8));
 
         // 9. Reasignada — PENDING, para editar/reasignar en vivo de un org a otro.
         createRequest(requestRepo, carla, vidaVerde, "Calle Suárez 210", "Barrio Mandubí", City.RIVERA,
                 List.of(MaterialCategory.CARTON), RequestStatus.PENDING, null,
-                null, null, null, now.minusHours(4));
+                null, null, now.minusHours(4));
 
         // 10. En portugués — ciudadano de Livramento pidiendo a un org de Livramento.
         createRequest(requestRepo, joaoBr, orgLivramento, "Rua Uruguai 88", "Bairro Centro", City.LIVRAMENTO,
                 List.of(MaterialCategory.PAPEL), RequestStatus.IN_PROGRESS, TimeSlot.NOCHE,
-                null, null, null, now.minusDays(3));
+                null, null, now.minusDays(3));
 
         // ~22 COMPLETED de volumen (últimos 6 meses, sin criterio) para que el Kanban y
         // RequestMetricsService no se vean vacíos.
@@ -290,5 +280,20 @@ public class DataLoader {
         r.setConfirmedSlot(slot);
         r.setCreatedAt(createdAt != null ? createdAt : LocalDateTime.now().minusDays((long)(Math.random() * 10)));
         repo.save(r);
+    }
+
+    // Overloads para compatibilidad retroactiva (ignoran parámetros de guest)
+    private static void createRequest(RequestRepository repo, User user, Organization org,
+                                      String address, String ref, City city,
+                                      List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
+                                      String guestName, String guestPhone) {
+        createRequest(repo, user, org, address, ref, city, materials, status, slot, null);
+    }
+
+    private static void createRequest(RequestRepository repo, User user, Organization org,
+                                      String address, String ref, City city,
+                                      List<MaterialCategory> materials, RequestStatus status, TimeSlot slot,
+                                      String guestName, String guestPhone, String trackingCode, LocalDateTime createdAt) {
+        createRequest(repo, user, org, address, ref, city, materials, status, slot, createdAt);
     }
 }
