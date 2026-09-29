@@ -4,7 +4,7 @@
 <body>
   <!--
     Campos de formulario canónicos — raíz única de todos los forms del sitio
-    (index, login, register, track, request-form, org/profile). Convenciones:
+    (login, register, request-form, org/profile). Convenciones:
       - labelKey/labelText: clave i18n + texto default ES. labelKey=null → label
         sin data-i18n; ambos null → sin label (inputs placeholder-only, ej. index).
       - El texto i18n va en un <span> interno, no en el <label>: applyTranslations
@@ -12,9 +12,7 @@
       - required: agrega el atributo al input y el span.req al label.
       - phone(prefix, ccName, natName, dddName, ...): ids derivados del prefijo
         (los que engancha app.js → PHONE_PREFIXES); names explícitos porque son
-        el contrato con el backend (guest*/user*/sin prefijo según el controller).
-        name=null → el input no se submitea (track lo usa así: JS asigna
-        name='telefono' al nacional en runtime).
+        el contrato con el backend (user*/sin prefijo según el controller).
           ids: {prefix}CountryCode | {prefix}National | {prefix}DddGroup | {prefix}Ddd
     Casos con attrs únicos (autofocus, autocomplete, hx-*, selects con th:each
     sobre listas del modelo) quedan inline en su template — ver MEJORAS.md #137.
@@ -100,7 +98,7 @@
   </button>
 
   <!-- CTA alternativa: panel oscuro con título + descripción + botón.
-       Usado en register, login, request-form (variantes guest/user).
+       Usado en register, login, request-form, org/profile.
        icon = nombre del ícono sin path (ej. 'arrow-right'), igual que submit. -->
   <section th:fragment="altCta(titleKey, descKey, href, icon, buttonKey)"
            class="hero hero--dark">

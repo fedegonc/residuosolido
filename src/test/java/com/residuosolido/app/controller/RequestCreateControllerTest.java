@@ -95,7 +95,6 @@ class RequestCreateControllerTest {
 
         mockMvc.perform(get(Routes.REQUESTS_NEW))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isGuest", false))
                 .andExpect(model().attribute("needsPhone", false));
     }
 

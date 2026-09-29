@@ -109,21 +109,4 @@ public abstract class PlaywrightBaseTest {
         page.locator("#address").fill(address);
         page.check("input[name='materials'][value='" + material + "']");
     }
-
-    /** Llenar formulario de solicitud como invitado. */
-    protected void fillGuestRequestForm(String guestName, String countryCode,
-                                         String phoneNational, String city,
-                                         String address, String material) {
-        page.locator("#guestName").fill(guestName);
-        page.locator("#guestPhoneCountryCode").selectOption(countryCode);
-        page.locator("#guestPhoneNational").fill(phoneNational);
-        page.locator("#ciudad").selectOption(city);
-        // Esperar a que el JS cargue las organizaciones via fetch
-        page.waitForTimeout(2000);
-        page.locator("#organizationId option:not([value=''])").first().waitFor(
-            new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(10000));
-        page.locator("#organizationId").selectOption(new SelectOption().setIndex(0));
-        page.locator("#address").fill(address);
-        page.check("input[name='materials'][value='" + material + "']");
-    }
 }

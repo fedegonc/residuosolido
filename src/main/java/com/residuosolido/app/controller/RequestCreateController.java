@@ -56,7 +56,6 @@ public class RequestCreateController {
         Request request = new Request();
         model.addAttribute("request", request);
         model.addAttribute("isEdit", false);
-        model.addAttribute("isGuest", false);
         model.addAttribute("needsPhone", !user.hasPhone());
         model.addAttribute("cities", cityOrgService.getAvailableCities());
         messages.addFormAttributes(model);

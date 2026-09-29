@@ -15,23 +15,14 @@
               <svg class="icon"><use href="/images/icons.svg#clipboard-list"/></svg>
               <span data-i18n="cta_request">Pedir recolección</span>
             </a>
-            <a href="/rastrear" class="btn btn--outline">
-              <svg class="icon"><use href="/images/icons.svg#magnifying-glass"/></svg>
-              <span data-i18n="cta_track">Ver mi solicitud</span>
+            <a href="/entrar" class="btn btn--outline">
+              <svg class="icon"><use href="/images/icons.svg#right-to-bracket"/></svg>
+              <span data-i18n="nav_login">Entrar</span>
             </a>
           </div>
         </section>
 
-        <section class="hero hero--dark">
-          <h2 class="hero__title hero__title--sm" data-i18n="split_guest_title">Hacelo con tu nombre y celular</h2>
-          <!-- El teléfono usa el componente canónico (prefix guestPhone) → los params
-               llegan ya estructurados a /solicitar: guestCountryCode/guestPhoneNational/guestDdd -->
-          <form action="/solicitar" method="get" class="stack">
-            <div th:replace="~{fragments/forms :: text('nombre', 'nombre', 'text', null, null, 'split_guest_name', 'Tu nombre', true, null)}"></div>
-            <div th:replace="~{fragments/forms :: phone('guestPhone', 'guestCountryCode', 'guestPhoneNational', 'guestDdd', null, null, true, null, null, null, null, null)}"></div>
-            <div th:replace="~{fragments/forms :: submit('arrow-right', 'cta_request', 'Pedir recolección', 'btn--light')}"></div>
-          </form>
-        </section>
+        <div th:replace="~{fragments/forms :: altCta('auth_register_title', 'auth_register_subtitle', '/registrarse', 'user-tag', 'nav_register')}"></div>
       </div>
 
       <!-- Contenedor escalable de cards educativas (renderizadas server-side). -->

@@ -33,22 +33,21 @@ usuario → `/mis-solicitudes`, organización → `/acopio/solicitudes`.
 
 | Actor | Estado |
 |---|---|
-| Invitado, Usuario | Implementado |
+| Usuario | Implementado |
 
-Formulario en `/solicitar`: ciudad, dirección, materiales, imagen opcional.
-Invitados ingresan nombre + teléfono (los campos se
-pueden precargar desde el index). El sistema asigna la organización elegible
-más cercana y genera un código de seguimiento.
+Formulario en `/solicitar`: ciudad, dirección, materiales (imagen opcional al
+editar). Requiere sesión iniciada — el ciudadano usa los datos de su perfil;
+si no tiene teléfono guardado lo completa en el mismo formulario (CU-U9).
+El sistema asigna la organización elegible elegida por el usuario.
 
-### RF-4 — Consultar / rastrear solicitud
+### RF-4 — Consultar solicitud
 
 | Actor | Estado |
 |---|---|
-| Invitado, Usuario | Implementado |
+| Usuario | Implementado |
 
-Invitado: `/rastrear` con teléfono + código privado (RN-3). Usuario: lista
-en `/mis-solicitudes` y detalle propio en `GET /solicitudes/{id}` — lectura
-en cualquier estado (RN-4 solo restringe editar/eliminar).
+Lista en `/mis-solicitudes` y detalle propio en `GET /solicitudes/{id}` —
+lectura en cualquier estado (RN-4 solo restringe editar/eliminar).
 
 ### RF-5 — Gestionar solicitudes propias
 
@@ -57,9 +56,7 @@ en cualquier estado (RN-4 solo restringe editar/eliminar).
 | Usuario | Implementado |
 
 Listar historial con estadísticas, editar y eliminar solicitudes propias
-mientras estén `PENDING` (RN-4, RN-11). **No aplica a solicitudes de invitado:**
-el trackingCode es un canal de lectura (RN-3); editar/borrar requeriría un
-flujo de autenticación ad hoc fuera del alcance del MVP.
+mientras estén `PENDING` (RN-4, RN-11).
 
 ### RF-6 — Gestionar solicitudes asignadas
 
@@ -110,7 +107,7 @@ diferido. `COMPLETED` no notifica — la franja ya se comunicó al aceptar
 |---|---|---|
 | RN-1 | Una organización no puede modificar solicitudes ajenas | `RequestService`, verificación de propiedad |
 | RN-2 | Una solicitud no puede completarse directamente desde `PENDING` | Ciclo `PENDING → IN_PROGRESS → COMPLETED` (`REJECTED` terminal) |
-| RN-3 | El seguimiento de invitado requiere teléfono **y** código privado; el teléfono solo no devuelve resultados | `RequestService` + `/rastrear` |
+| RN-3 | Toda solicitud pertenece a un usuario registrado — no existen solicitudes anónimas ni canal de seguimiento por código (el flujo de invitado se eliminó; ver MEJORAS.md) | `Request`/`RequestService` |
 | RN-4 | Solo una solicitud `PENDING` puede editarse o eliminarse | `Request.canBeEdited()`, tests RN-11 |
 | RN-5 | Una organización asignable debe estar activa, tener rol `ORGANIZATION`, perfil completo, teléfono válido, ciudad coincidente y materiales aceptados no vacíos | `CityOrgService` (resolución de organizaciones) |
 | RN-6 | Todos los materiales de la solicitud deben estar incluidos entre los aceptados por la organización | Validación en creación/asignación |

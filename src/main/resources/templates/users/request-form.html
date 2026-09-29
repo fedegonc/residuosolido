@@ -4,18 +4,15 @@
 <head><title>Solicitar recolección</title></head>
 <body>
   <!--
-    Truth table de las 3 flags que controlan este formulario (RequestCreateController):
-      isGuest    = true  → sin cuenta (no autenticado). Muestra guestName/guestPhone.
+    Flags que controlan este formulario (RequestCreateController):
       needsPhone = true  → usuario logueado SIN teléfono guardado. Muestra userPhone.
-                   (mutuamente excluyente con isGuest: needsPhone solo aplica a logueados)
       isEdit     = true  → editando una solicitud existente. Habilita addressReference,
                    timeSlot e imageFile (NO disponibles al crear,
                    ver MEJORAS.md #103). Deshabilita city/organizationId.
     Combinaciones reales:
-      isGuest=true,  needsPhone=false, isEdit=false → alta como invitado
-      isGuest=false, needsPhone=true,  isEdit=false → alta logueado sin teléfono
-      isGuest=false, needsPhone=false, isEdit=false → alta logueado con teléfono
-      (cualquier isGuest/needsPhone), isEdit=true    → edición (campos extra arriba)
+      needsPhone=true,  isEdit=false → alta logueado sin teléfono
+      needsPhone=false, isEdit=false → alta logueado con teléfono
+      (cualquier needsPhone), isEdit=true → edición (campos extra arriba)
   -->
   <main layout:fragment="content">
     <div class="page page--center">
@@ -33,20 +30,7 @@
             <!-- Sección: contacto -->
             <div class="form-section">
               <h2 class="card__subtitle" data-i18n="req_form_section_contact">Tu información de contacto</h2>
-              <div class="stack" th:if="${isGuest}">
-                <div th:replace="~{fragments/forms :: text('guestName', 'guestName', 'text', 'req_form_guest_name', 'Tu nombre', 'req_form_guest_name_placeholder', 'Ej: Ana García', true, ${request.guestName})}"></div>
-                <!-- Prefill: el index manda los params ya separados (guestCountryCode/
-                     guestPhoneNational/guestDdd); ?telefono= crudo queda como fallback
-                     vía request.guestPhone (lo reparte distributePrefill en app.js) -->
-                <div th:with="gpn=${param.guestPhoneNational != null ? param.guestPhoneNational[0] : request.guestPhone},
-                              gcc=${param.guestCountryCode != null ? param.guestCountryCode[0] : null},
-                              gdd=${param.guestDdd != null ? param.guestDdd[0] : null}">
-                  <div th:replace="~{fragments/forms :: phone('guestPhone', 'guestCountryCode', 'guestPhoneNational', 'guestDdd', 'req_form_guest_phone', 'Tu teléfono', true, ${gpn}, ${gcc}, ${gdd}, null, null)}"></div>
-                </div>
-                <p class="hint" data-i18n="req_form_guest_hint">Te pedimos estos datos para poder buscar tu solicitud</p>
-                <p class="hint"><a href="/entrar" data-i18n="req_form_have_account">¿Ya tenés cuenta? Iniciá sesión</a></p>
-              </div>
-              <div th:if="${!isGuest}" class="alert alert--info">
+              <div class="alert alert--info">
                 <svg class="icon"><use href="/images/icons.svg#circle-info"/></svg>
                 <span data-i18n="req_form_logged_in_note">Usaremos los datos de tu perfil para esta solicitud</span>
               </div>
@@ -136,9 +120,7 @@
           </form>
         </section>
 
-        <th:block th:if="${isGuest}" th:replace="~{fragments/forms :: altCta('req_form_alt_guest_title', 'req_form_alt_guest_desc', '/rastrear', 'magnifying-glass', 'cta_track')}"></th:block>
-
-        <th:block th:unless="${isGuest}" th:replace="~{fragments/forms :: altCta('req_form_alt_user_title', 'req_form_alt_user_desc', '/mis-solicitudes', 'list', 'nav_my_requests')}"></th:block>
+        <div th:replace="~{fragments/forms :: altCta('req_form_alt_user_title', 'req_form_alt_user_desc', '/mis-solicitudes', 'list', 'nav_my_requests')}"></div>
       </div>
     </div>
   </main>

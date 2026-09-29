@@ -44,7 +44,7 @@
         </div>
       </div>
 
-      <div th:if="${notifications == null or notifications.isEmpty()}">
+      <div th:if="${notifications == null or notifications.isEmpty()}" class="request-list">
         <div th:replace="~{fragments/ui :: state('inbox', 'notif_empty', 'Todavía no tenés notificaciones')}"></div>
       </div>
     </div>
