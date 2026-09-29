@@ -15,10 +15,20 @@
 (function () {
   'use strict';
 
+  console.log('📱 App.js cargado');
+
+  // Capturar errores de red (errores 404, 503, etc)
+  window.addEventListener('error', function(e) {
+    if (e.filename) {
+      console.error('❌ Error de recurso:', e.filename, '—', e.message);
+    }
+  }, true);
+
   /* ─── i18n client-side: el servidor ya resolvió el idioma (?lang= → sesión)
      y sirvió el catálogo correcto en window.uiCopies vía /js/i18n.js?l=<lang>.
      Acá solo se aplica; no hay estado de idioma en el cliente. ─── */
   var translations = window.uiCopies || {};
+  console.log('🌍 Traducciones disponibles:', Object.keys(translations).length);
 
   function applyTranslations() {
     var updates = []; // Batch DOM updates para evitar reflows múltiples
