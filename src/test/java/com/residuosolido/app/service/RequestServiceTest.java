@@ -341,7 +341,7 @@ class RequestServiceTest {
 
         assertThrows(ValidationException.class, () -> requestService.createRequest(
                 citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1"));
+                List.of(MaterialCategory.PLASTICO), "org1"));
     }
 
     // ───────────────────── createRequestWithImage ─────────────────────
@@ -354,7 +354,7 @@ class RequestServiceTest {
 
         assertThrows(ValidationException.class, () -> requestService.createRequestWithImage(
                 citizen("u1"), City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", file));
+                List.of(MaterialCategory.PLASTICO), "org1", file));
         verifyNoInteractions(requestRepository);
     }
 
@@ -370,7 +370,7 @@ class RequestServiceTest {
         when(imageService.attachImageToRequest(any(Request.class), eq(file))).thenReturn(withImage);
 
         Request result = requestService.createRequestWithImage(citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", file);
+                List.of(MaterialCategory.PLASTICO), "org1", file);
 
         assertEquals("uploads/photo.jpg", result.getImageUrl());
         verify(imageService).attachImageToRequest(any(Request.class), eq(file));
@@ -385,7 +385,7 @@ class RequestServiceTest {
         when(requestRepository.save(any(Request.class))).thenAnswer(inv -> inv.getArgument(0));
 
         requestService.createRequestWithImage(citizen, City.RIVERA, "Calle 123", null,
-                List.of(MaterialCategory.PLASTICO), null, null, "org1", emptyFile);
+                List.of(MaterialCategory.PLASTICO), "org1", emptyFile);
 
         verify(imageService, never()).attachImageToRequest(any(), any());
     }

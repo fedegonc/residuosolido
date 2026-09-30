@@ -137,50 +137,40 @@ public class RequestService {
         if (org == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
-        logger.info("REQUEST_ACCEPT_STARTED: id={}, orgId={}, slot={}", id, org.getId(), slot);
-        try {
-            Request request = getOwnedOrgRequest(id, org);
-            request.accept(slot);
-            saveWithOptimisticLock(request);
-            logger.info("REQUEST_ACCEPT_SAVED: id={}, newStatus={}", id, request.getStatus());
-            eventPublisher.publishEvent(new RequestStatusChangedEvent(request, NotificationType.ACCEPTED));
-            logger.info("REQUEST_ACCEPT_SUCCESS: id={}, notification event published", id);
-        } catch (Exception e) {
-            logger.error("REQUEST_ACCEPT_FAILED: id={}, error={}", id, e.getMessage(), e);
-            throw e;
-        }
+        executeTransition(id, org, "ACCEPT", request -> request.accept(slot), NotificationType.ACCEPTED);
     }
 
     public void rejectRequest(String id, Organization org) {
         if (org == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
-        logger.info("REQUEST_REJECT_STARTED: id={}, orgId={}", id, org.getId());
-        try {
-            Request request = getOwnedOrgRequest(id, org);
-            request.reject();
-            saveWithOptimisticLock(request);
-            logger.info("REQUEST_REJECT_SAVED: id={}, newStatus={}", id, request.getStatus());
-            eventPublisher.publishEvent(new RequestStatusChangedEvent(request, NotificationType.REJECTED));
-            logger.info("REQUEST_REJECT_SUCCESS: id={}, notification event published", id);
-        } catch (Exception e) {
-            logger.error("REQUEST_REJECT_FAILED: id={}, error={}", id, e.getMessage(), e);
-            throw e;
-        }
+        executeTransition(id, org, "REJECT", Request::reject, NotificationType.REJECTED);
     }
 
     public void completeRequest(String id, Organization org) {
         if (org == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }
-        logger.info("REQUEST_COMPLETE_STARTED: id={}, orgId={}", id, org.getId());
+        executeTransition(id, org, "COMPLETE", Request::complete, null);
+    }
+
+    private void executeTransition(String id, Organization org, String action,
+                                   java.util.function.Consumer<Request> transition,
+                                   NotificationType eventTypeOrNull) {
+        logger.info("REQUEST_{}_STARTED: id={}, orgId={}", action, id, org.getId());
         try {
             Request request = getOwnedOrgRequest(id, org);
-            request.complete();
+            transition.accept(request);
             saveWithOptimisticLock(request);
-            logger.info("REQUEST_COMPLETE_SUCCESS: id={}, newStatus={}", id, request.getStatus());
+            logger.info("REQUEST_{}_SAVED: id={}, newStatus={}", action, id, request.getStatus());
+            if (eventTypeOrNull != null) {
+                eventPublisher.publishEvent(new RequestStatusChangedEvent(request, eventTypeOrNull));
+                logger.info("REQUEST_{}_SUCCESS: id={}, notification event published", action, id);
+            } else {
+                logger.info("REQUEST_{}_SUCCESS: id={}", action, id);
+            }
         } catch (Exception e) {
-            logger.error("REQUEST_COMPLETE_FAILED: id={}, error={}", id, e.getMessage(), e);
+            logger.error("REQUEST_{}_FAILED: id={}, error={}", action, id, e.getMessage(), e);
             throw e;
         }
     }
@@ -260,16 +250,4 @@ public class RequestService {
         }
     }
 
-    // Overloads para compatibilidad retroactiva con tests (ignoran parámetros de guest)
-    public Request createRequest(User user, City city, String address, String addressReference,
-                                  List<MaterialCategory> materials, String guestName, String guestPhone,
-                                  String organizationId) {
-        return createRequest(user, city, address, addressReference, materials, organizationId);
-    }
-
-    public Request createRequestWithImage(User user, City city, String address, String addressReference,
-                                            List<MaterialCategory> materials, String guestName, String guestPhone,
-                                            String organizationId, MultipartFile imageFile) {
-        return createRequestWithImage(user, city, address, addressReference, materials, organizationId, imageFile);
-    }
 }

@@ -135,7 +135,7 @@ class MvpRegressionTest {
                 cities, mock(ApplicationEventPublisher.class), new RequestValidator());
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
-                "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), null, null, "org", file));
+                "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), "org", file));
         verify(repo, never()).save(any(Request.class));
     }
 

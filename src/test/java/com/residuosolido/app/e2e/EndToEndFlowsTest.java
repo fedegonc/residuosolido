@@ -247,7 +247,7 @@ class EndToEndFlowsTest {
 
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(userService.resolveUser(any())).thenReturn(user);
-        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any()))
+        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any()))
                 .thenThrow(new IllegalStateException("error.request.address_required"));
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
@@ -273,7 +273,7 @@ class EndToEndFlowsTest {
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(user);
         when(userService.resolveUser(any())).thenReturn(user);
         when(cityOrgService.findOrganizationByIdAndCity("org1", City.RIVERA)).thenReturn(org);
-        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any(), any(), any()))
+        when(requestService.createRequestWithImage(any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(new Request());
 
         // POST con todos los parámetros requeridos

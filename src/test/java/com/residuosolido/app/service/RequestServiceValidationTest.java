@@ -58,7 +58,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "Calle 123", null,
-                        null, null, null, "org1")
+                        null, "org1")
         );
         assertEquals("error.request.materials_required", ex.getMessage());
     }
@@ -72,7 +72,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "Calle 123", null,
-                        Collections.emptyList(), null, null, "org1")
+                        Collections.emptyList(), "org1")
         );
         assertEquals("error.request.materials_required", ex.getMessage());
     }
@@ -132,7 +132,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, null)
+                        List.of(MaterialCategory.PLASTICO), null)
         );
         assertEquals("error.request.organization_required", ex.getMessage());
     }
@@ -167,7 +167,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, City.RIVERA, "", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, "org1")
+                        List.of(MaterialCategory.PLASTICO), "org1")
         );
         assertEquals("error.request.address_required", ex.getMessage());
     }
@@ -181,7 +181,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         user, null, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, "org1")
+                        List.of(MaterialCategory.PLASTICO), "org1")
         );
         assertEquals("error.request.city_required", ex.getMessage());
     }
@@ -194,7 +194,7 @@ class RequestServiceValidationTest {
                 IllegalArgumentException.class,
                 () -> requestService.createRequest(
                         null, City.RIVERA, "Calle 123", null,
-                        List.of(MaterialCategory.PLASTICO), null, null, "org1")
+                        List.of(MaterialCategory.PLASTICO), "org1")
         );
         assertEquals("error.request.citizen_required", ex.getMessage());
     }
@@ -214,7 +214,7 @@ class RequestServiceValidationTest {
         com.residuosolido.app.model.Request result = requestService.createRequest(
                 user, City.RIVERA, "Calle 123", null,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL),
-                null, null, "org1");
+                "org1");
 
         assertNotNull(result);
         assertEquals(2, result.getMaterials().size());

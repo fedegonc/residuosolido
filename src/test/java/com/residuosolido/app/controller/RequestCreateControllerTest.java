@@ -129,7 +129,7 @@ class RequestCreateControllerTest {
                 .andExpect(redirectedUrlPattern("**/entrar"));
 
         verify(requestService, never()).createRequestWithImage(any(), any(), anyString(), any(),
-                any(), any(), any(), any(), any());
+                any(), any(), any());
     }
 
     // ===== POST /solicitar — usuario =====
@@ -140,7 +140,7 @@ class RequestCreateControllerTest {
         when(userService.resolveUser(any())).thenReturn(citizen);
         Request created = Request.forCitizen(citizen);
         when(requestService.createRequestWithImage(any(User.class), eq(City.RIVERA), eq("Calle 1"), any(),
-                any(), any(), any(), any(), any())).thenReturn(created);
+                any(), any(), any())).thenReturn(created);
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
@@ -156,7 +156,7 @@ class RequestCreateControllerTest {
         when(userService.resolveUser(any())).thenReturn(citizen);
         Request created = Request.forCitizen(citizen);
         when(requestService.createRequestWithImage(any(), any(), anyString(), any(),
-                any(), any(), any(), any(), any())).thenReturn(created);
+                any(), any(), any())).thenReturn(created);
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
@@ -175,7 +175,7 @@ class RequestCreateControllerTest {
     void createRequest_validationError_redirectsToMyRequests() throws Exception {
         when(userService.resolveUser(any())).thenReturn(citizen);
         when(requestService.createRequestWithImage(any(), any(), any(), any(),
-                any(), any(), any(), any(), any()))
+                any(), any(), any()))
                 .thenThrow(new IllegalStateException("error.request.address_required"));
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
@@ -190,7 +190,7 @@ class RequestCreateControllerTest {
     void createRequest_illegalState_loggedUser_redirectsToMyRequests() throws Exception {
         when(userService.resolveUser(any())).thenReturn(citizen);
         when(requestService.createRequestWithImage(any(), any(), anyString(), any(),
-                any(), any(), any(), any(), any()))
+                any(), any(), any()))
                 .thenThrow(new IllegalStateException("error.request.not_pending"));
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
@@ -206,7 +206,7 @@ class RequestCreateControllerTest {
         when(userService.resolveUser(any())).thenReturn(citizen);
         Request created = Request.forCitizen(citizen);
         when(requestService.createRequestWithImage(any(), any(), any(), any(),
-                any(), any(), any(), any(), any())).thenReturn(created);
+                any(), any(), any())).thenReturn(created);
 
         mockMvc.perform(post(Routes.REQUESTS_NEW).with(csrf())
                         .param("ciudad", "RIVERA")
