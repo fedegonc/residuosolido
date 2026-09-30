@@ -53,7 +53,7 @@ class MvpRegressionTest {
 
         User input = citizen();
         input.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo))
+        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo, repo))
                 .registerUser(input, true);
 
         assertNotSame(input, result);
@@ -70,7 +70,7 @@ class MvpRegressionTest {
         when(encoder.encode(any())).thenReturn("encoded");
         when(repo.insert(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
-        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo))
+        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo, repo))
                 .registerUser(citizen(), false);
 
         assertNotSame(citizen(), result);

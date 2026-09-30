@@ -2,11 +2,15 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.OrganizationRepository;
+import com.residuosolido.app.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +23,13 @@ import java.util.List;
 @Service
 public class OrganizationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
     private final OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
 
-    public OrganizationService(OrganizationRepository organizationRepository) {
+    public OrganizationService(OrganizationRepository organizationRepository, UserRepository userRepository) {
         this.organizationRepository = organizationRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -88,5 +95,20 @@ public class OrganizationService {
             org.completeProfile();
         }
         return organizationRepository.save(org);
+    }
+
+    @CacheEvict(value = "orgsByCity", allEntries = true)
+    public void deleteWithUserSync(String organizationId) {
+        if (organizationId == null || organizationId.isBlank()) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
+        User user = userRepository.findById(organizationId).orElse(null);
+        if (user != null && user.getRole() == Role.ORGANIZATION) {
+            user.setRole(Role.USER);
+            userRepository.save(user);
+            logger.info("🔄 Organization deleted, User.role updated to USER: {}", organizationId);
+        }
+        organizationRepository.deleteById(organizationId);
+        logger.info("✅ Organization deleted: {}", organizationId);
     }
 }

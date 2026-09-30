@@ -3,6 +3,7 @@ package com.residuosolido.app.service;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.OrganizationRepository;
+import com.residuosolido.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,14 @@ import static org.mockito.Mockito.mock;
 class OrganizationServiceTest {
 
     private OrganizationRepository organizationRepository;
+    private UserRepository userRepository;
     private OrganizationService service;
 
     @BeforeEach
     void setUp() {
         organizationRepository = mock(OrganizationRepository.class);
-        service = new OrganizationService(organizationRepository);
+        userRepository = mock(UserRepository.class);
+        service = new OrganizationService(organizationRepository, userRepository);
     }
 
     @Test
