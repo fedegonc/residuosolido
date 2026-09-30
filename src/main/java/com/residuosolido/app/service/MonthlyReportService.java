@@ -28,6 +28,9 @@ public class MonthlyReportService {
     }
 
     public MonthlyReport generateForMonth(Organization org, YearMonth month) {
+        if (org == null) {
+            throw new IllegalArgumentException("Organization cannot be null");
+        }
         List<Request> requests = getRequestsForMonth(org, month);
         Map<RequestStatus, Integer> countByStatus = countByStatus(requests);
         Map<City, Integer> countByCity = countByCity(requests);
