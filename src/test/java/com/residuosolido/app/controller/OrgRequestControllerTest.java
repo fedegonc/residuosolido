@@ -117,10 +117,15 @@ class OrgRequestControllerTest {
     @WithMockUser(username = "coop", roles = "ORGANIZATION")
     void orgRequests_incompleteProfile_redirectsToOrgProfile() throws Exception {
         org.setProfileCompleted(false);
+        when(requestMetricsService.getOrgRequestStats(any(Organization.class)))
+                .thenReturn(Map.of("pending", 0L, "inProgress", 0L, "completed", 0L, "rejected", 0L));
+        when(requestService.getRequestsByOrganization(any(Organization.class), anyInt(), anyInt()))
+                .thenReturn(List.of());
 
         mockMvc.perform(get(Routes.ORG_REQUESTS))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Routes.ORG_PROFILE));
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("warningMessage"))
+                .andExpect(view().name("org/requests"));
     }
 
     // ===== Detalle =====
