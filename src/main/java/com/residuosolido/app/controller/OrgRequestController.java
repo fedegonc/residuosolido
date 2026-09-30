@@ -9,6 +9,7 @@ import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
+import com.residuosolido.app.service.MonthlyReportService;
 import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.OrgRequestPdfService;
 import com.residuosolido.app.service.RequestMetricsService;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,19 +53,22 @@ public class OrgRequestController {
     private final LocaleResolver localeResolver;
     private final Messages messages;
     private final OrgRequestPdfService pdfService;
+    private final MonthlyReportService monthlyReportService;
 
     public OrgRequestController(RequestMetricsService requestMetricsService,
                                 RequestService requestService,
                                 OrganizationService organizationService,
                                 LocaleResolver localeResolver,
                                 Messages messages,
-                                OrgRequestPdfService pdfService) {
+                                OrgRequestPdfService pdfService,
+                                MonthlyReportService monthlyReportService) {
         this.requestMetricsService = requestMetricsService;
         this.requestService = requestService;
         this.organizationService = organizationService;
         this.localeResolver = localeResolver;
         this.messages = messages;
         this.pdfService = pdfService;
+        this.monthlyReportService = monthlyReportService;
     }
 
     /** Lista las solicitudes de la organización como tablero Kanban por estado. */
@@ -194,6 +199,32 @@ public class OrgRequestController {
     public String handleNotOwned(RedirectAttributes redirectAttributes) {
         messages.flashError(redirectAttributes, ServerMessage.FLASH_ORG_REQUEST_NOT_OWNED);
         return "redirect:" + Routes.ORG_REQUESTS;
+    }
+
+    /** Descargar informe mensual en PDF. */
+    @GetMapping("/acopio/reportes/mensual/descargar")
+    public void downloadMonthlyReport(@RequestParam(required = false) String mes,
+                                       @CurrentUser User currentOrg,
+                                       HttpServletResponse response) {
+        try {
+            Organization org = organizationService.findByUser(currentOrg);
+            YearMonth month = mes != null ? YearMonth.parse(mes) : YearMonth.now();
+
+            var report = monthlyReportService.generateForMonth(org, month);
+            byte[] pdfContent = pdfService.generateMonthlyReportPdf(report);
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=\"informe_acopio_" + month + ".pdf\"");
+            response.setContentLength(pdfContent.length);
+            response.getOutputStream().write(pdfContent);
+            response.getOutputStream().flush();
+
+            logger.info("REPORT_DOWNLOADED: org={}, mes={}", org.getId(), month);
+        } catch (IOException e) {
+            logger.error("REPORT_DOWNLOAD_FAILED", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     private Map<String, List<Request>> groupByStatus(List<Request> requests) {
