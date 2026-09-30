@@ -149,7 +149,7 @@ public class OrgRequestPdfService {
 
         document.add(new Paragraph("Informe de Solicitudes de Acopio")
                 .setFont(bold).setFontSize(18));
-        document.add(new Paragraph("Organización: " + organizationName)
+        document.add(new Paragraph("Organización: " + (organizationName != null ? organizationName : "—"))
                 .setFont(regular).setFontSize(11));
         document.add(new Paragraph("\n"));
 
@@ -164,11 +164,11 @@ public class OrgRequestPdfService {
         addHeaderCell(table, "Franja", bold);
 
         for (Request req : requests) {
-            table.addCell(new Cell().add(new Paragraph(req.getId()).setFont(regular).setFontSize(10)));
-            table.addCell(new Cell().add(new Paragraph(req.getContactName()).setFont(regular).setFontSize(10)));
-            table.addCell(new Cell().add(new Paragraph(req.getCity().toString()).setFont(regular).setFontSize(10)));
-            table.addCell(new Cell().add(new Paragraph(req.getStatus().name()).setFont(regular).setFontSize(10)));
-            table.addCell(new Cell().add(new Paragraph(req.getAddress()).setFont(regular).setFontSize(10)));
+            table.addCell(new Cell().add(new Paragraph(req.getId() != null ? req.getId() : "—").setFont(regular).setFontSize(10)));
+            table.addCell(new Cell().add(new Paragraph(req.getContactName() != null ? req.getContactName() : "—").setFont(regular).setFontSize(10)));
+            table.addCell(new Cell().add(new Paragraph(req.getCity() != null ? req.getCity().toString() : "—").setFont(regular).setFontSize(10)));
+            table.addCell(new Cell().add(new Paragraph(req.getStatus() != null ? req.getStatus().name() : "—").setFont(regular).setFontSize(10)));
+            table.addCell(new Cell().add(new Paragraph(req.getAddress() != null ? req.getAddress() : "—").setFont(regular).setFontSize(10)));
             String slot = req.getConfirmedSlot() != null ? req.getConfirmedSlot().name() : "—";
             table.addCell(new Cell().add(new Paragraph(slot).setFont(regular).setFontSize(10)));
         }
