@@ -10,6 +10,7 @@ import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.service.OrganizationService;
+import com.residuosolido.app.service.OrgRequestPdfService;
 import com.residuosolido.app.service.RequestMetricsService;
 import com.residuosolido.app.service.RequestService;
 import com.residuosolido.app.util.LandingCardLoader;
@@ -23,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,17 +50,20 @@ public class OrgRequestController {
     private final OrganizationService organizationService;
     private final LocaleResolver localeResolver;
     private final Messages messages;
+    private final OrgRequestPdfService pdfService;
 
     public OrgRequestController(RequestMetricsService requestMetricsService,
                                 RequestService requestService,
                                 OrganizationService organizationService,
                                 LocaleResolver localeResolver,
-                                Messages messages) {
+                                Messages messages,
+                                OrgRequestPdfService pdfService) {
         this.requestMetricsService = requestMetricsService;
         this.requestService = requestService;
         this.organizationService = organizationService;
         this.localeResolver = localeResolver;
         this.messages = messages;
+        this.pdfService = pdfService;
     }
 
     /** Lista las solicitudes de la organización como tablero Kanban por estado. */
@@ -161,6 +167,26 @@ public class OrgRequestController {
             messages.flashError(redirectAttributes, e);
         }
         return "redirect:" + Routes.ORG_REQUESTS;
+    }
+
+    /** Descarga un PDF con las solicitudes de la organización. */
+    @PostMapping("/acopio/solicitudes/export-pdf")
+    public void exportPdf(@CurrentUser User currentOrg,
+                          HttpServletResponse response) {
+        try {
+            Organization org = organizationService.findByUser(currentOrg);
+            List<Request> requests = requestService.getRequestsByOrganization(org, 0, 1000);
+            byte[] pdfContent = pdfService.generateRequestsPdf(requests, org.getName());
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=\"solicitudes_acopio.pdf\"");
+            response.setContentLength(pdfContent.length);
+            response.getOutputStream().write(pdfContent);
+            response.getOutputStream().flush();
+        } catch (IOException e) {
+            logger.error("Error generando PDF", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /** Toda operación de este controller que falle por no ser dueño de la solicitud cae acá. */
