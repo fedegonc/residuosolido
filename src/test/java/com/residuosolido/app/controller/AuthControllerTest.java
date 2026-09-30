@@ -1,5 +1,6 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.config.RateLimiter;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.model.User;
@@ -37,11 +38,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false"
 })
 @AutoConfigureMockMvc
-class AuthControllerTest {
+class AuthControllerTest extends EmbeddedMongoTest {
 
     @Autowired
     private MockMvc mockMvc;

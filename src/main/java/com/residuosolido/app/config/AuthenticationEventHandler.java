@@ -60,6 +60,6 @@ public class AuthenticationEventHandler implements AuthenticationSuccessHandler,
         }
         logger.warn("Intento de login fallido para usuario '{}' ({})", username, exception.getMessage());
         String param = isLocked || rateLimiter.isBlocked(username) ? "blocked" : "error";
-        redirectStrategy.sendRedirect(request, response, "/entrar?" + param);
+        redirectStrategy.sendRedirect(request, response, Routes.LOGIN + "?" + param);
     }
 }

@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOneModel;
 import com.mongodb.client.model.UpdateOptions;
@@ -62,7 +63,7 @@ public class UsernameNormalizationMigration implements CommandLineRunner {
         try {
             users.bulkWrite(updates);
             logger.info("Migración de usernames: {} documentos normalizados.", updates.size());
-        } catch (Exception e) {
+        } catch (MongoException e) {
             logger.error("Migración de usernames: falló la normalización (posible duplicado). Error: {}", e.getMessage());
         }
     }

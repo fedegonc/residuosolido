@@ -2,6 +2,7 @@ package com.residuosolido.app.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.util.LandingCardLoader;
 import com.residuosolido.app.util.PageContentLoader;
@@ -44,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * detecta mirando el navegador. Correr con: mvn test -Dtest=LandingCardsTest
  */
 @Tag("integration")
-class LandingCardsTest {
+class LandingCardsTest extends EmbeddedMongoTest {
 
     private static final String[] LANGS = {"es", "pt"};
     private static final int EXPECTED_CARD_COUNT = 9;
@@ -242,14 +243,14 @@ class LandingCardsTest {
         @ParameterizedTest
         @ValueSource(strings = {"es", "pt"})
         void pageContentLoader_loadsKnownSlug(String lang) {
-            Map<String, Object> page = PageContentLoader.loadPage("catadores", lang);
-            assertNotNull(page, "[" + lang + "] 'catadores' debe existir en pages-" + lang + ".json");
-            assertEquals("catadores", page.get("slug"));
+            java.util.Optional<Map<String, Object>> page = PageContentLoader.loadPage("catadores", lang);
+            assertTrue(page.isPresent(), "[" + lang + "] 'catadores' debe existir en pages-" + lang + ".json");
+            assertEquals("catadores", page.get().get("slug"));
         }
 
         @Test
-        void pageContentLoader_unknownSlug_returnsNull() {
-            assertNull(PageContentLoader.loadPage("slug-que-no-existe", "es"));
+        void pageContentLoader_unknownSlug_returnsEmpty() {
+            assertTrue(PageContentLoader.loadPage("slug-que-no-existe", "es").isEmpty());
         }
 
         @Test
@@ -270,7 +271,6 @@ class LandingCardsTest {
     // ══════════════════════════════════════════════════════════════════
     @Nested
     @SpringBootTest(properties = {
-            "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
             "spring.data.mongodb.auto-index-creation=false"
     })
     @AutoConfigureMockMvc

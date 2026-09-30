@@ -74,7 +74,7 @@ public class DocsController {
             model.addAttribute("docName", file);
             model.addAttribute("docHtml", HTML_RENDERER.render(document));
             return "docs/markdown";
-        } catch (Exception e) {
+        } catch (java.io.IOException | RuntimeException e) {
             logDocReadFailure("viewMarkdown:" + file, e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doc no encontrado: " + file);
         }
@@ -195,7 +195,7 @@ public class DocsController {
             payload.put("toolbar", "zoom layers lightbox");
             payload.put("resize", true);
             return JSON.writeValueAsString(payload);
-        } catch (Exception e) {
+        } catch (java.io.IOException | RuntimeException e) {
             logDocReadFailure("toMxgraphAttr:" + baseName, e);
             return null;
         }
@@ -212,7 +212,7 @@ public class DocsController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                     .contentLength(file.length())
                     .body(new FileSystemResource(file));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logDocReadFailure("serveFile:" + relativePath, e);
             return ResponseEntity.notFound().build();
         }

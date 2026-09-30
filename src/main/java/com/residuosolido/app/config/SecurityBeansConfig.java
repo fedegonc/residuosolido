@@ -15,6 +15,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Beans de seguridad. Decisión deliberada (fase 2): la entidad {@code User}
+ * NO implementa {@code UserDetails} — el principal es el {@code User} lean de
+ * Spring construido abajo (username + hash + una authority + flag active),
+ * que actúa como el DTO del boundary de autenticación. Implementar UserDetails
+ * en la entidad metería el objeto completo en el SecurityContext/sesión y
+ * reacoplaría el dominio al framework. Los controllers nunca leen el principal
+ * directamente: {@code @CurrentUser} refetchea la entidad fresca por request,
+ * evitando datos stale de la sesión. Guardado por HttpBoundaryContractTest.
+ */
 @Configuration
 public class SecurityBeansConfig {
 

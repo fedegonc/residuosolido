@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -23,16 +24,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * directamente, con un documento sembrado a mano con la forma VIEJA, para probar
  * la lógica real contra Mongo real (no un mock).
  *
- * Usa la base real (Atlas en dev) — limpia el documento de prueba después
- * de cada test para no dejar basura.
+ * Corre contra el mongod embebido de EmbeddedMongoTest (Mongo real, no un
+ * mock) — limpia el documento de prueba después de cada test.
  */
 @Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=false"
 })
-class OrganizationProfileMigrationTest {
+class OrganizationProfileMigrationTest extends EmbeddedMongoTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;

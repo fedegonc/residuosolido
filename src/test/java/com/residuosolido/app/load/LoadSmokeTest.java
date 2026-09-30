@@ -1,5 +1,6 @@
 package com.residuosolido.app.load;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.config.Routes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("load")
-class LoadSmokeTest {
+class LoadSmokeTest extends EmbeddedMongoTest {
 
     private static final Logger logger = LoggerFactory.getLogger(LoadSmokeTest.class);
     private static final int CONCURRENT_USERS = 20;

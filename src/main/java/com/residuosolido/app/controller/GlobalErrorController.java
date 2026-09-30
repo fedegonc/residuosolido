@@ -27,7 +27,7 @@ public class GlobalErrorController implements ErrorController {
         this.messages = messages;
     }
 
-    @RequestMapping("/error")
+    @RequestMapping(Routes.ERROR)
     public String handleError(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Object status = request.getAttribute("jakarta.servlet.error.status_code");
         if (status != null && Integer.valueOf(404).equals(status)) {

@@ -12,6 +12,7 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
+import com.residuosolido.app.service.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -198,7 +199,7 @@ public class DataSeeder {
         u.setPassword(passwordEncoder.encode(pin));
         u.setRole(role);
         u.setFirstName(firstName);
-        u.setPhone(phone);
+        u.setPhone(UserValidator.canonicalPhone(phone));
         u.setCity(city);
         u.setActive(true);
         u.setCreatedAt(LocalDateTime.now());

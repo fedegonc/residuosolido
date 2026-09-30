@@ -43,6 +43,7 @@ public final class Routes {
     public static final String REQUESTS = "/mis-solicitudes";
     public static final String REQUEST_EDIT = "/solicitudes/{id}/editar";
     public static final String REQUEST = "/solicitudes/{id}";
+    public static final String REQUESTS_ANY = "/solicitudes/**";
     /** Bandeja in-app del ciudadano (notificaciones de aceptada/rechazada). */
     public static final String NOTIFICATIONS = "/notificaciones";
 
@@ -53,6 +54,9 @@ public final class Routes {
     public static final String ORG_REQUEST_ACCEPT = "/acopio/solicitudes/{id}/aceptar";
     public static final String ORG_REQUEST_REJECT = "/acopio/solicitudes/{id}/rechazar";
     public static final String ORG_REQUEST_COMPLETE = "/acopio/solicitudes/{id}/completar";
+    public static final String ORG_REQUESTS_EXPORT_PDF = "/acopio/solicitudes/export-pdf";
+    public static final String ORG_REPORT_MONTHLY = "/acopio/reportes/mensual/descargar";
+    public static final String ORG_ANY = "/acopio/**";
 
     // Opciones de formulario (fragmentos HTML server-side, no API REST)
     public static final String ORG_OPTIONS = "/solicitudes/org-options";
@@ -71,6 +75,18 @@ public final class Routes {
     public static final String SCRATCH_FILE = "/scratch/{file}";
     public static final String WELL_KNOWN = "/.well-known/**";
     public static final String ERROR = "/error";
+    public static final String I18N_JS = "/js/i18n.js";
+
+    // Estáticos subidos por usuarios (request imageUrl)
+    public static final String UPLOADS_ANY = "/uploads/**";
+    public static final String UPLOADS_PREFIX = "/uploads/";
+
+    /** Recursos estáticos públicos — la lista vive acá para que SecurityConfig no la duplique. */
+    public static final String[] PUBLIC_STATIC = {
+            "/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**",
+            "/favicon.ico", "/favicon.*", "/webjars/**", UPLOADS_ANY,
+            "/robots.txt", "/sitemap.xml", "/sw.js", "/manifest.webmanifest"
+    };
 
     // Actuator
     public static final String ACTUATOR_HEALTH = "/actuator/health";

@@ -46,30 +46,27 @@ class ContentLoadersTest {
 
     @Test
     void loadPage_knownSlugSpanish_returnsPage() {
-        Map<String, Object> page = PageContentLoader.loadPage("catadores", "es");
+        Map<String, Object> page = PageContentLoader.loadPage("catadores", "es").orElseThrow();
 
-        assertNotNull(page);
         assertEquals("catadores", page.get("slug"));
     }
 
     @Test
     void loadPage_knownSlugPortuguese_returnsPage() {
-        Map<String, Object> page = PageContentLoader.loadPage("catadores", "pt");
+        Map<String, Object> page = PageContentLoader.loadPage("catadores", "pt").orElseThrow();
 
-        assertNotNull(page);
         assertEquals("catadores", page.get("slug"));
     }
 
     @Test
-    void loadPage_unknownSlug_returnsNull() {
-        assertNull(PageContentLoader.loadPage("pagina-inexistente", "es"));
+    void loadPage_unknownSlug_returnsEmpty() {
+        assertTrue(PageContentLoader.loadPage("pagina-inexistente", "es").isEmpty());
     }
 
     @Test
     void loadPage_unknownLang_fallsBackToSpanish() {
-        Map<String, Object> page = PageContentLoader.loadPage("catadores", "de");
+        Map<String, Object> page = PageContentLoader.loadPage("catadores", "de").orElseThrow();
 
-        assertNotNull(page);
         assertEquals("catadores", page.get("slug"));
     }
 }

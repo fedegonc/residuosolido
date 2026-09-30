@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -16,11 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=false"
 })
-class UsernameNormalizationMigrationTest {
+class UsernameNormalizationMigrationTest extends EmbeddedMongoTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;

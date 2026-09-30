@@ -102,7 +102,7 @@ public class OrgProfileController {
                 session.removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
             }
             messages.flashSuccess(redirectAttributes, ServerMessage.FLASH_PROFILE_UPDATED);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Error al actualizar perfil de organización: {}", e.getMessage(), e);
             messages.flashError(redirectAttributes, e instanceof Keyed k ? k.key() : ServerMessage.FLASH_PROFILE_UPDATE_ERROR);
         }

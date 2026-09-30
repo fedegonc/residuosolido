@@ -47,10 +47,8 @@ public class PageController {
     @GetMapping(Routes.PAGE_BY_SLUG)
     public String showPage(@PathVariable String slug, Model model, HttpServletRequest request) {
         Locale locale = localeResolver.resolveLocale(request);
-        Map<String, Object> page = PageContentLoader.loadPage(slug, locale.getLanguage());
-        if (page == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Página no encontrada: " + slug);
-        }
+        Map<String, Object> page = PageContentLoader.loadPage(slug, locale.getLanguage())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Página no encontrada: " + slug));
         model.addAttribute("page", page);
         return "public/page-content";
     }

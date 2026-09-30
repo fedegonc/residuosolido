@@ -1,5 +1,6 @@
 package com.residuosolido.app.controller;
 
+import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.config.UiCopyCatalog;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
@@ -22,7 +23,7 @@ public class I18nScriptController {
         this.uiCopyCatalog = uiCopyCatalog;
     }
 
-    @GetMapping("/js/i18n.js")
+    @GetMapping(Routes.I18N_JS)
     public ResponseEntity<String> i18nScript(HttpServletRequest request) {
         // LocaleContextHolder refleja el LocaleResolver de Spring (sesión/ciudad),
         // no Accept-Language — request.getLocale() ignoraría el ?lang= elegido.

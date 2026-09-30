@@ -14,7 +14,7 @@ public class LandingCardLoader {
             ClassPathResource resource = new ClassPathResource(filename);
             Map<String, Object> data = mapper.readValue(resource.getInputStream(), Map.class);
             return (List<Map<String, Object>>) data.get("cards");
-        } catch (Exception e) {
+        } catch (java.io.IOException | RuntimeException e) {
             return List.of();
         }
     }

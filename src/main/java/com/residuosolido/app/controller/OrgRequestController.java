@@ -89,10 +89,10 @@ public class OrgRequestController {
         }
 
         Map<String, Long> stats = requestMetricsService.getOrgRequestStats(organization);
-        long pending = stats.get("pending");
-        long inProgress = stats.get("inProgress");
-        long completed = stats.get("completed");
-        long rejected = stats.get("rejected");
+        long pending = stats.getOrDefault("pending", 0L);
+        long inProgress = stats.getOrDefault("inProgress", 0L);
+        long completed = stats.getOrDefault("completed", 0L);
+        long rejected = stats.getOrDefault("rejected", 0L);
         model.addAttribute("pendingCount", pending);
         model.addAttribute("inProgressCount", inProgress);
         model.addAttribute("completedCount", completed);
@@ -175,7 +175,7 @@ public class OrgRequestController {
     }
 
     /** Descarga un PDF con las solicitudes de la organización. */
-    @PostMapping("/acopio/solicitudes/export-pdf")
+    @PostMapping(Routes.ORG_REQUESTS_EXPORT_PDF)
     public void exportPdf(@CurrentUser User currentOrg,
                           HttpServletResponse response) {
         logger.info("PDF_EXPORT_START: usuario={}", currentOrg != null ? currentOrg.getUsername() : "null");
@@ -204,7 +204,7 @@ public class OrgRequestController {
         } catch (IOException e) {
             logger.error("PDF_EXPORT_IO_ERROR", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("PDF_EXPORT_ERROR", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -218,7 +218,7 @@ public class OrgRequestController {
     }
 
     /** Descargar informe mensual en PDF. */
-    @GetMapping("/acopio/reportes/mensual/descargar")
+    @GetMapping(Routes.ORG_REPORT_MONTHLY)
     public void downloadMonthlyReport(@RequestParam(required = false) String mes,
                                        @CurrentUser User currentOrg,
                                        HttpServletResponse response) {

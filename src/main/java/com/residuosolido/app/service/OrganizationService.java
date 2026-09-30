@@ -102,12 +102,13 @@ public class OrganizationService {
         if (organizationId == null || organizationId.isBlank()) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
         }
-        User user = userRepository.findById(organizationId).orElse(null);
-        if (user != null && user.getRole() == Role.ORGANIZATION) {
-            user.setRole(Role.USER);
-            userRepository.save(user);
-            logger.info("🔄 Organization deleted, User.role updated to USER: {}", organizationId);
-        }
+        userRepository.findById(organizationId)
+                .filter(u -> u.getRole() == Role.ORGANIZATION)
+                .ifPresent(u -> {
+                    u.setRole(Role.USER);
+                    userRepository.save(u);
+                    logger.info("🔄 Organization deleted, User.role updated to USER: {}", organizationId);
+                });
         organizationRepository.deleteById(organizationId);
         logger.info("✅ Organization deleted: {}", organizationId);
     }

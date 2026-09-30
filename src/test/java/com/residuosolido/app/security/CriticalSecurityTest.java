@@ -1,5 +1,6 @@
 package com.residuosolido.app.security;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.config.Routes;
 
 import org.junit.jupiter.api.Tag;
@@ -25,11 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false"
 })
 @AutoConfigureMockMvc
-class CriticalSecurityTest {
+class CriticalSecurityTest extends EmbeddedMongoTest {
 
     @Autowired
     private MockMvc mockMvc;

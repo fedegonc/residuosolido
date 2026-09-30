@@ -51,6 +51,13 @@ class ServicePreconditionContractTest {
             // que sí valida user == null) antes de tocar el user.
             "RequestService#updateRequest", "RequestService#deleteOwnedRequest",
             "RequestService#getEditableOwnedRequest",
+            // Delegan el guard null a RequestValidator.requireUser /
+            // requireOrganization / requireOwnedBy* (primera línea del método).
+            "RequestService#getRequestsByUser", "RequestService#getOwnedRequest",
+            "RequestService#acceptRequest", "RequestService#rejectRequest",
+            "RequestService#completeRequest", "RequestService#getOwnedOrgRequest",
+            "RequestService#getRequestsByOrganization",
+            "RequestService#getOrgRequestsByStatusFilter",
             // Delega a findByUser(user), que sí valida, como primera línea.
             "OrganizationService#updateProfile",
             // Delegan a validateUserRegistration(user), que sí valida, como primera línea.

@@ -22,6 +22,9 @@
     <java.version>21</java.version>
     <!-- Por defecto no excluye ningún grupo. Usar: -DexcludedGroups=browser -->
     <excludedGroups></excludedGroups>
+    <!-- flapdoodle.embed.process requiere SystemProperties.getUserName(String),
+         agregado en commons-lang3 3.15 — Boot 3.2 gestiona 3.13 -->
+    <commons-lang3.version>3.18.0</commons-lang3.version>
   </properties>
 
   <dependencies>
@@ -126,6 +129,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- MongoDB embebido para tests de integración (mongod real, sin Docker) -->
+    <dependency>
+      <groupId>de.flapdoodle.embed</groupId>
+      <artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
+      <version>4.33.0</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -175,6 +186,12 @@
         <configuration>
           <!-- Permite excluir grupos: mvn test -DexcludedGroups=browser -->
           <excludedGroups>${excludedGroups}</excludedGroups>
+          <!-- El mongod embebido (flapdoodle) escribe su dbpath en java.io.tmpdir;
+               /tmp suele ser una partición chica — target/ está en el FS del
+               proyecto, con espacio suficiente -->
+          <systemPropertyVariables>
+            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+          </systemPropertyVariables>
           <!-- Paralelización a nivel métodos (solo tests no-browser) -->
           <parallel>methods</parallel>
           <threadCount>4</threadCount>

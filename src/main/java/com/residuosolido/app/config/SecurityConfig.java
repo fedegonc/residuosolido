@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .requestMatchers(Routes.WELL_KNOWN).permitAll()
                 // Páginas de error deben ser públicas
                 .requestMatchers(Routes.ERROR).permitAll()
-                .requestMatchers("/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**", "/favicon.ico", "/favicon.*", "/webjars/**", "/uploads/**", "/robots.txt", "/sitemap.xml", "/sw.js", "/manifest.webmanifest").permitAll()
+                .requestMatchers(Routes.PUBLIC_STATIC).permitAll()
                 // Opciones de orga (sin auth)
                 .requestMatchers(HttpMethod.GET, Routes.ORG_OPTIONS).permitAll()
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
@@ -50,9 +50,9 @@ public class SecurityConfig {
                 // Admin endpoints (dev only, protected at controller level via @Profile)
                 .requestMatchers(Routes.ADMIN_ANY).permitAll()
                 // Rutas de usuarios regulares
-                .requestMatchers(Routes.REQUESTS_NEW, Routes.REQUESTS, "/solicitudes/**", Routes.NOTIFICATIONS).hasRole("USER")
+                .requestMatchers(Routes.REQUESTS_NEW, Routes.REQUESTS, Routes.REQUESTS_ANY, Routes.NOTIFICATIONS).hasRole("USER")
                 // Rutas de organización
-                .requestMatchers("/acopio/**", Routes.ORG_PROFILE).hasRole("ORGANIZATION")
+                .requestMatchers(Routes.ORG_ANY, Routes.ORG_PROFILE).hasRole("ORGANIZATION")
                 // Otras rutas requieren autenticación (ÚLTIMO)
                 .anyRequest().authenticated()
             )

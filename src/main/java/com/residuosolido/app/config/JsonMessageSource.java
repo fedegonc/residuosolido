@@ -66,7 +66,7 @@ public class JsonMessageSource implements MessageSource {
         if (args != null && args.length > 0) {
             try {
                 return MessageFormat.format(value, args);
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 return value;
             }
         }

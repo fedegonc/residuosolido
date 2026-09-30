@@ -34,7 +34,7 @@ public class NotificationEventListener {
     public void onRequestStatusChanged(RequestStatusChangedEvent event) {
         try {
             notificationService.notifyRequester(event.request(), event.type());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // Falla de notificación NO debe propagarse: el estado de la solicitud
             // ya se guardó exitosamente antes de publicar este evento. Perder una
             // notificación es recuperable (el usuario ve el estado igual al entrar

@@ -1,5 +1,6 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.TestFixtures;
 import com.residuosolido.app.enums.NotificationType;
 import com.residuosolido.app.event.RequestStatusChangedEvent;
@@ -30,11 +31,10 @@ import static org.mockito.Mockito.doAnswer;
  */
 @Tag("integration")
 @SpringBootTest(properties = {
-        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb}",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=false"
 })
-class AsyncConfigIntegrationTest {
+class AsyncConfigIntegrationTest extends EmbeddedMongoTest {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;

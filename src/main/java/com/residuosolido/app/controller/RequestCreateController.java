@@ -111,7 +111,7 @@ public class RequestCreateController {
             logger.warn("IllegalArgumentException: {}", e.getMessage());
             messages.flashError(redirectAttributes, e);
             return "redirect:" + Routes.REQUESTS_NEW;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Exception: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATE_ERROR);
             return "redirect:" + Routes.REQUESTS_NEW;

@@ -1,5 +1,6 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.exception.StateException;
@@ -69,7 +70,7 @@ public class LocalImageService {
         file.transferTo(filePath.toFile());
 
         logger.info("Imagen guardada localmente: {}", filename);
-        return "/uploads/" + filename;
+        return Routes.UPLOADS_PREFIX + filename;
     }
 
     public void validateImage(MultipartFile file) {
@@ -102,7 +103,7 @@ public class LocalImageService {
             return requestRepository.save(request);
         } catch (ValidationException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             logger.warn("Error al subir imagen de solicitud: {}", e.getMessage());
             throw new StateException(ServerMessage.FLASH_REQUEST_IMAGE_UPLOAD_FAILED, e);
         }

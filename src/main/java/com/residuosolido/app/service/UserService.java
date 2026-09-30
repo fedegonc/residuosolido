@@ -63,14 +63,14 @@ public class UserService {
                 .orElseThrow(() -> new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND));
 
         if (user.getEmail() != null) {
-            String normalized = user.getEmail().trim().toLowerCase(java.util.Locale.ROOT);
+            String normalized = UserValidator.canonicalEmail(user.getEmail());
             if (userRepository.findByEmailIgnoreCase(normalized).filter(other -> !other.getId().equals(existing.getId())).isPresent()) {
                 throw new ValidationException(ServerMessage.ERROR_REGISTER_EMAIL_EXISTS);
             }
             existing.setEmail(normalized);
         }
-        existing.setFirstName(user.getFirstName());
-        existing.setPhone(user.getPhone());
+        existing.setFirstName(UserValidator.canonicalName(user.getFirstName()));
+        existing.setPhone(UserValidator.canonicalPhone(user.getPhone()));
         existing.setCity(user.getCity());
 
         try {
@@ -90,9 +90,9 @@ public class UserService {
         if (user == null) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
         }
-        if (email != null) user.setEmail(email);
-        if (firstName != null) user.setFirstName(firstName);
-        if (phone != null) user.setPhone(phone);
+        if (email != null) user.setEmail(UserValidator.canonicalEmail(email));
+        if (firstName != null) user.setFirstName(UserValidator.canonicalName(firstName));
+        if (phone != null) user.setPhone(UserValidator.canonicalPhone(phone));
         if (city != null) user.setCity(city);
         return updateUser(user);
     }

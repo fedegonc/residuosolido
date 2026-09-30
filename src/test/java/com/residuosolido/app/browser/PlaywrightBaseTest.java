@@ -1,5 +1,6 @@
 package com.residuosolido.app.browser;
 
+import com.residuosolido.app.EmbeddedMongoTest;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -28,11 +29,10 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-        "spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/testdb-browser}",
-        // Base de test AISLADA — mismo bug que MongoAggregationUtilsIntegrationTest
-        // (ver docs/MEJORAS.md #211): sin esto, SPRING_DATA_MONGODB_URI (vía .env)
-        // hace que este BrowserTestSeed.deleteAll() borre la Atlas real compartida
-        // en vez de "testdb-browser". Con database explícito, queda aislado de verdad.
+        // Base de test AISLADA — los browser tests hacen deleteAll() vía
+        // BrowserTestSeed (bug histórico: docs/MEJORAS.md #211). El mongod
+        // embebido de EmbeddedMongoTest ya aísla de Atlas; el database propio
+        // los separa además del resto de la suite dentro del mismo mongod.
         "spring.data.mongodb.database=residuosolido_test_browser",
         "spring.data.mongodb.auto-index-creation=false",
         "app.seed=true"
@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Import;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("browser")
 @Import(BrowserTestSeed.class)
-public abstract class PlaywrightBaseTest {
+public abstract class PlaywrightBaseTest extends EmbeddedMongoTest {
 
     @LocalServerPort
     protected int port;

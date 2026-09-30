@@ -54,10 +54,10 @@ public class CityAwareLocaleResolver implements LocaleResolver {
         // 3. Usuario logueado: idioma de su ciudad
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
-            Locale cityLocale = resolveByUserCity(auth.getName());
-            if (cityLocale != null) {
-                request.getSession().setAttribute(SESSION_LOCALE_KEY, cityLocale);
-                return cityLocale;
+            java.util.Optional<Locale> cityLocale = resolveByUserCity(auth.getName());
+            if (cityLocale.isPresent()) {
+                request.getSession().setAttribute(SESSION_LOCALE_KEY, cityLocale.get());
+                return cityLocale.get();
             }
         }
 
@@ -112,15 +112,14 @@ public class CityAwareLocaleResolver implements LocaleResolver {
         response.addCookie(cookie);
     }
 
-    private Locale resolveByUserCity(String username) {
+    private java.util.Optional<Locale> resolveByUserCity(String username) {
         try {
             return userRepository.findByUsername(username)
                     .map(User::getCity)
-                    .map(this::cityToLocale)
-                    .orElse(null);
-        } catch (Exception e) {
+                    .map(this::cityToLocale);
+        } catch (RuntimeException e) {
             logger.warn("No se pudo resolver la ciudad para el usuario '{}': {}", username, e.getMessage());
-            return null;
+            return java.util.Optional.empty();
         }
     }
 

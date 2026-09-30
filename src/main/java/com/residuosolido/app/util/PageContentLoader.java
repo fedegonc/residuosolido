@@ -7,6 +7,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Carga el contenido de las páginas servidas por PageController desde
@@ -21,7 +22,7 @@ public class PageContentLoader {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> loadPage(String slug, String lang) {
+    public static Optional<Map<String, Object>> loadPage(String slug, String lang) {
         String filename = "static/i18n/pages-" + ("pt".equals(lang) ? "pt" : "es") + ".json";
         try {
             ClassPathResource resource = new ClassPathResource(filename);
@@ -29,11 +30,10 @@ public class PageContentLoader {
             List<Map<String, Object>> pages = (List<Map<String, Object>>) data.get("pages");
             return pages.stream()
                     .filter(p -> slug.equals(p.get("slug")))
-                    .findFirst()
-                    .orElse(null);
-        } catch (Exception e) {
+                    .findFirst();
+        } catch (java.io.IOException | RuntimeException e) {
             logger.error("No se pudo cargar '{}' desde {}: {}", slug, filename, e.getMessage(), e);
-            return null;
+            return Optional.empty();
         }
     }
 }

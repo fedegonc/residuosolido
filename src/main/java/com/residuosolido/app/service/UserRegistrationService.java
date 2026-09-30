@@ -61,7 +61,7 @@ public class UserRegistrationService {
         if (error != null) throw new ValidationException(error);
         User created = new User();
         created.setUsername(Username.canonical(user.getUsername()));
-        created.setPhone(user.getPhone());
+        created.setPhone(UserValidator.canonicalPhone(user.getPhone()));
         created.setPassword(passwordEncoder.encode(user.getPassword()));
         created.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
         created.setActive(true);
