@@ -178,18 +178,34 @@ public class OrgRequestController {
     @PostMapping("/acopio/solicitudes/export-pdf")
     public void exportPdf(@CurrentUser User currentOrg,
                           HttpServletResponse response) {
+        logger.info("PDF_EXPORT_START: usuario={}", currentOrg != null ? currentOrg.getUsername() : "null");
         try {
+            if (currentOrg == null) {
+                logger.warn("PDF_EXPORT_NO_AUTH");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
             Organization org = organizationService.findByUser(currentOrg);
+            logger.info("PDF_EXPORT_ORG_FOUND: org={}", org != null ? org.getId() : "null");
+
             List<Request> requests = requestService.getRequestsByOrganization(org, 0, 1000);
+            logger.info("PDF_EXPORT_REQUESTS_LOADED: count={}", requests.size());
+
             byte[] pdfContent = pdfService.generateRequestsPdf(requests, org.getName());
+            logger.info("PDF_EXPORT_GENERATED: bytes={}", pdfContent.length);
 
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"solicitudes_acopio.pdf\"");
             response.setContentLength(pdfContent.length);
             response.getOutputStream().write(pdfContent);
             response.getOutputStream().flush();
+            logger.info("PDF_EXPORT_SUCCESS");
         } catch (IOException e) {
-            logger.error("Error generando PDF", e);
+            logger.error("PDF_EXPORT_IO_ERROR", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("PDF_EXPORT_ERROR", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

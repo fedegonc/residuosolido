@@ -15,6 +15,7 @@
         <div class="row row--between mb">
           <h1 class="card__title" data-i18n="org_req_title">Solicitudes</h1>
           <form method="post" action="/acopio/solicitudes/export-pdf" style="display:inline;">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
             <button type="submit" class="btn btn--outline btn--sm org-panel__pdf-btn">
               <svg class="icon"><use href="/images/icons.svg#download"/></svg>
               <span data-i18n="org_panel_export_pdf">Descargar informe PDF</span>
