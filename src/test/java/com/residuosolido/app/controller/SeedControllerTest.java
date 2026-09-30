@@ -1,6 +1,6 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.config.DataLoader;
+import com.residuosolido.app.config.DataSeeder;
 import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
@@ -25,7 +25,8 @@ class SeedControllerTest {
         PasswordEncoder encoder = mock(PasswordEncoder.class);
         Environment env = mock(Environment.class);
         when(env.getActiveProfiles()).thenReturn(profiles);
-        return new SeedController(userRepo, orgRepo, requestRepo, encoder, env);
+        return new SeedController(userRepo, orgRepo, requestRepo,
+                new DataSeeder(userRepo, orgRepo, requestRepo, encoder), env);
     }
 
     @Test
@@ -63,7 +64,8 @@ class SeedControllerTest {
         when(orgRepo.save(any(com.residuosolido.app.model.Organization.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
-        SeedController controller = new SeedController(userRepo, orgRepo, requestRepo, encoder, env);
+        SeedController controller = new SeedController(userRepo, orgRepo, requestRepo,
+                new DataSeeder(userRepo, orgRepo, requestRepo, encoder), env);
         controller.seed(true);
 
         verify(requestRepo).deleteAll();

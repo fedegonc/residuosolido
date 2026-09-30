@@ -1,6 +1,6 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.config.DataLoader;
+import com.residuosolido.app.config.DataSeeder;
 import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,17 +22,17 @@ public class SeedController {
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
     private final RequestRepository requestRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final DataSeeder dataSeeder;
 
     public SeedController(UserRepository userRepository,
                           OrganizationRepository organizationRepository,
                           RequestRepository requestRepository,
-                          PasswordEncoder passwordEncoder,
+                          DataSeeder dataSeeder,
                           Environment environment) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.requestRepository = requestRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.dataSeeder = dataSeeder;
 
         Set<String> profiles = Set.of(environment.getActiveProfiles());
         if (!profiles.contains("dev") && !profiles.contains("test")) {
@@ -50,7 +49,7 @@ public class SeedController {
             organizationRepository.deleteAll();
             userRepository.deleteAll();
         }
-        DataLoader.seedAll(userRepository, organizationRepository, requestRepository, passwordEncoder);
+        dataSeeder.seedAllIfNeeded();
         long afterUsers = userRepository.count();
         long afterRequests = requestRepository.count();
         String body = "Seed ejecutado" + (force ? " (force)" : "") + ". Usuarios: " + beforeUsers + " -> " + afterUsers

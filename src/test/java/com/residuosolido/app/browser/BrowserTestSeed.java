@@ -1,6 +1,6 @@
 package com.residuosolido.app.browser;
 
-import com.residuosolido.app.config.DataLoader;
+import com.residuosolido.app.config.DataSeeder;
 import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import com.residuosolido.app.repository.UserRepository;
@@ -31,7 +31,7 @@ public class BrowserTestSeed {
             organizationRepository.deleteAll();
             requestRepository.deleteAll();
             log.info("=== BrowserTestSeed: cargando seed data ===");
-            DataLoader.seedAll(userRepository, organizationRepository, requestRepository, passwordEncoder);
+            new DataSeeder(userRepository, organizationRepository, requestRepository, passwordEncoder).seedAllIfNeeded();
             log.info("=== BrowserTestSeed: seed completado, users={}, requests={} ===",
                     userRepository.count(), requestRepository.count());
         };

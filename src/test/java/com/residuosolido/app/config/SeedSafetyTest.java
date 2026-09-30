@@ -19,7 +19,7 @@ class SeedSafetyTest {
         PasswordEncoder encoder = mock(PasswordEncoder.class);
         when(users.count()).thenReturn(1L);
 
-        DataLoader.seedAll(users, organizations, requests, encoder);
+        new DataSeeder(users, organizations, requests, encoder).seedAllIfNeeded();
 
         verify(users).count();
         verifyNoMoreInteractions(users);
@@ -34,7 +34,7 @@ class SeedSafetyTest {
         PasswordEncoder encoder = mock(PasswordEncoder.class);
         when(requests.count()).thenReturn(1L);
 
-        DataLoader.seedAll(users, organizations, requests, encoder);
+        new DataSeeder(users, organizations, requests, encoder).seedAllIfNeeded();
 
         verify(users).count();
         verify(requests).count();
