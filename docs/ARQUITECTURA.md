@@ -74,7 +74,6 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 - `CityOrgService` — Búsqueda de organizaciones por ciudad
 - `LocalImageService` — Subida de imágenes locales
 - `RequestValidator` — Validaciones centralizadas de solicitudes
-- `RequestServiceRetryHelper` — Retries optimistas
 - `NotificationService` — Envío de notificaciones
 - `NotificationEventListener` — Listener de eventos de cambio de estado
 - `MongoAggregationUtils` — Utilidades estáticas de agregación MongoDB (facets)
@@ -84,7 +83,7 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 - `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
 - `Request` — Solicitudes de recolección con ciclo de estados
 - `PhoneNumber` — Utility class de normalización E.164 (Uruguay +598 y Brasil +55)
-- `OrganizationProfile` — Perfil de organización embebido en `User`
+- `Organization` — Perfil de negocio de una organización de acopio
 - `Notification` — Notificaciones generadas por transiciones de estado
 
 ### 4. Repositories

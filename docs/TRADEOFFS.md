@@ -971,7 +971,7 @@ cuándo se vuelve prioridad — usando la instrumentación que ya existe
 (`/actuator/metrics`, `/actuator/health`) en vez de agregar herramienta nueva.
 Ver `docs/MEJORAS.md` #209.
 
-## 38. Extraer `OrganizationProfile` embebido en `User` (con migración de datos reales)
+## 38. Extraer `Organization` embebido en `User` (✅ IMPLEMENTADO)
 
 Contexto: `User` modela ciudadano y organización en la misma colección
 (§ mono-modelo, `ARQUITECTURA.md`). De los campos que solo tienen sentido
@@ -1005,8 +1005,8 @@ desaparecieron (`$unset`), y prueba idempotencia (correrla 2 veces no rompe
 nada). Limpia el documento de prueba después — no ensucia la base
 compartida.
 
-**Resultado:** `OrganizationProfile` (embebido, no `@Document` propio) +
-`OrganizationProfileMigration`. Ver `docs/MEJORAS.md` #210.
+**Resultado:** `Organization` (clase separada con campos de negocio) +
+`OrganizationProfileMigration` (migración de datos históricos). Ver `docs/MEJORAS.md` #210.
 
 ### Trabajo futuro: split completo a 2 colecciones (no implementado, solo planeado)
 
