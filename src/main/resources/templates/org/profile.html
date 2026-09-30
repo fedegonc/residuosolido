@@ -4,7 +4,7 @@
 <head><title>Perfil de organización</title></head>
 <body>
   <main layout:fragment="content">
-
+    <div class="page">
       <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
       <div class="row row--between mb">
@@ -64,5 +64,7 @@
   <th:block layout:fragment="pageScripts">
     <script th:src="@{/js/org-profile.js}"></script>
   </th:block>
+    </div>
+  </main>
 </body>
 </html>
