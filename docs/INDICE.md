@@ -3,7 +3,7 @@
 > Fecha de sincronizacion: 2026-09-27 — separación User/Organization en sandbox (#221) + regresión CU-U6 (#222)  
 > Tests: 490 no-browser, 0 failures; browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
-> Tags JUnit: `browser` (Playwright, deps de host), `integration` (Mongo real en localhost:27017/testdb), `load` (umbral p95, flaky por timing). CI corre `mvn test jacoco:check -DexcludedGroups="browser,load"` con mongo:7 como service container (`.github/workflows/test.yml`, ver #230)
+> Tags JUnit: `browser` (Playwright, deps de host), `integration` (mongod embebido vía `EmbeddedMongoTest`/flapdoodle — sin Docker ni Atlas), `load` (umbral p95, flaky por timing).
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  
 Los documentos tecnicos estan concentrados en `docs/` y estan actualizados al estado actual del codigo.

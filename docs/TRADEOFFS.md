@@ -1090,6 +1090,13 @@ completa (458 tests), y los datos sobrevivieron intactos — antes del fix,
 la misma corrida los borraba a 1 usuario + 0 solicitudes. Ver
 `docs/MEJORAS.md` #212.
 
+> **Actualización (fase 5):** la opción descartada como "desproporcionada"
+> se implementó después — la suite usa `de.flapdoodle.embed.mongo.spring3x`
+> (mongod real embebido, sin Docker) vía la clase base `EmbeddedMongoTest`,
+> y `spring.data.mongodb.uri` ya no se declara por test. El aislamiento por
+> `spring.data.mongodb.database` propio se conserva para separar tests que
+> comparten la instancia embebida.
+
 ## 40. Rediseño del panel de organización: panel de control + informe PDF
 
 Contexto: inspeccionando el panel de organización recién sembrado con datos
