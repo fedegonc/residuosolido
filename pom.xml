@@ -38,6 +38,13 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
     </dependency>
+    <dependency>
+      <!-- Sesiones HTTP persistidas en Mongo (colección "sessions"): login
+           sobrevive a réplicas y redeploys. El principal User implementa
+           Serializable — el converter default es JDK. -->
+      <groupId>org.springframework.session</groupId>
+      <artifactId>spring-session-data-mongodb</artifactId>
+    </dependency>
 
 
 

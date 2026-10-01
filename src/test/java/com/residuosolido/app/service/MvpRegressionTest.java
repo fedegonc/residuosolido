@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -118,7 +119,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, mock(LocalImageService.class), cities,
-                mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)));
+                mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)), mock(MongoTemplate.class));
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.METAL), "org"));
         verifyNoInteractions(repo);
@@ -131,7 +132,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, new LocalImageService(images.toString(), repo),
-                cities, mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)));
+                cities, mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)), mock(MongoTemplate.class));
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), "org", file));

@@ -73,6 +73,9 @@ Tabla centralizada de todas las mejoras posibles del sistema. Para justificació
 | 58 | Centralización de rutas (Routes.java) | Implementado | — |
 | 59 | Layouts anidados (base-sidebar) | Implementado | — |
 | 60 | Componentes UI reutilizables | Implementado | — |
+| 61 | Hidratación batch del N+1 de `@DocumentReference(lazy)` en listas de requests | Implementado | §49 |
+| 62 | Índice compuesto `notifications(user, createdAt)` — bandeja + badge sin collection scan | Implementado | §49 |
+| 63 | Spring Session en Mongo (sesión compartida entre réplicas) | Implementado | §49 |
 
 **Notas:**
 - Línea 11: PWA fue descartado inicialmente, retomado brevemente (#143), luego eliminado completamente (#182).

@@ -1,7 +1,7 @@
 # Indice de Documentacion — Eco Solicitud
 
 > Fecha de sincronizacion: 2026-09-27 — separación User/Organization en sandbox (#221) + regresión CU-U6 (#222)  
-> Tests: 490 no-browser, 0 failures; browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
+> Tests: 474 no-browser (incluye RequestServiceHydrationTest, MongoIndexInitializerTest, SessionPersistenceTest — §49); browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
 > Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
 > Tags JUnit: `browser` (Playwright, deps de host), `integration` (mongod embebido vía `EmbeddedMongoTest`/flapdoodle — sin Docker ni Atlas), `load` (umbral p95, flaky por timing).
 

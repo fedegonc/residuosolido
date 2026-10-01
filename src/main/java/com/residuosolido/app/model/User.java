@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -27,8 +28,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(exclude = "password")
+/* Serializable: el principal de la sesión es el UserDetails lean de Spring
+   (ver SecurityBeansConfig), no esta entidad — pero Spring Session persiste
+   TODOS los atributos de sesión; Serializable deja a la entidad apta si un
+   flujo futuro la guarda como atributo. */
 @Document(collection = "users")
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     private String id;

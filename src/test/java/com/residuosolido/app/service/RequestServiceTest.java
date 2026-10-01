@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -49,7 +50,7 @@ class RequestServiceTest {
         imageService = mock(LocalImageService.class);
         cityOrgService = mock(CityOrgService.class);
         eventPublisher = mock(ApplicationEventPublisher.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator(mock(OrganizationRepository.class)));
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator(mock(OrganizationRepository.class)), mock(MongoTemplate.class));
     }
 
     private User citizen(String id) {

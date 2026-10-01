@@ -1401,3 +1401,30 @@ in-app en `/notificaciones`.
 quedan como registro histórico marcado. La regla actual está en
 `docs/REQUISITOS.md` RN-3: "Toda solicitud pertenece a un usuario registrado —
 no existen solicitudes anónimas ni canal de seguimiento por código".
+
+## 49. Escalabilidad Nivel 1: índice en notifications, sesiones en Mongo, hidratación batch del N+1
+
+Decisión: cerrar los tres cuellos de botella que muerden primero al pasar de
+demo a uso real (1→10+ usuarios concurrentes o >1 réplica), medidos con
+`CommandListener` sobre el driver de Mongo — no asumidos.
+
+| Problema | Antes | Después |
+|---|---|---|
+| `@DocumentReference(lazy)` en `Request.user` | Cada card del kanban pedía `contactName` → 1 `find` por request (medido: 5 cards = 5 finds en `users`) | `RequestService.withHydratedUsers()`: 2 queries fijas por lista (proyección de ids + `find` batch) + `setContactUser` con el User real. El proxy lazy sigue intacto para detalle/FSM |
+| `notifications.user` sin índice | `findByUserOrderByCreatedAtDesc` (bandeja) y `countByUserAndReadFalse` (badge del navbar — se ejecuta en *todo* request autenticado) hacían collection scan | `@CompoundIndex(user, createdAt desc)` creado por `MongoIndexInitializer` — el sort se resuelve dentro del índice |
+| Sesión HTTP en memoria de Tomcat | Con 2 réplicas detrás de un LB, el login de una no existe en la otra; un redeploy cierra todas las sesiones | `spring-session-data-mongodb`: la sesión vive en la colección `sessions` (mismo Mongo, cero infra nueva). Cookie `JSESSIONID` preservada vía `CookieSerializer` para no cambiar el contrato del logout |
+
+**Por qué hidratación batch y no otras opciones:**
+
+| Opción | Por qué no |
+|---|---|
+| `@DocumentReference(lazy=false)` | No elimina el N+1: eager solo adelanta la resolución, sigue siendo una query por ref, y la paga también el path de detalle que no la necesita |
+| Agregación `$lookup` | Devuelve el user embebido en el doc de request — el converter de `@DocumentReference` no está garantizado mapear un subdocumento a la entidad; además duplica la query de lista en forma de pipeline |
+| Proyección DTO (`RequestCardView` — descartada) | Correcto a mayor escala, pero introduce un segundo modelo de lectura que hay que mantener en sync con el fragment kanban — sobredimensionado para el tamaño actual de la lista (page=20) |
+| **Hidratación batch (elegida)** | Mínimo diffs: los getters y templates no cambian; la lista devuelta queda idéntica en comportamiento, solo sin proxies sin resolver |
+
+**Costo real que queda (documentado, no resuelto):** `RateLimiter` sigue
+in-memory por nodo (§45), uploads en disco local (§45), y el PIN de 4 dígitos
+sigue siendo el techo de seguridad — Spring Session no cambia el threat model,
+solo mueve el store. La colección `sessions` crecerá con el tiempo; el TTL
+index sobre `expireAt` lo gestiona el propio `MongoIndexedSessionRepository`.

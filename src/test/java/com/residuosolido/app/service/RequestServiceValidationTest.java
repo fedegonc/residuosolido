@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ class RequestServiceValidationTest {
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
         requestService = new RequestService(requestRepository, imageService, cityOrgService,
-                mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)));
+                mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)), mock(MongoTemplate.class));
     }
 
     private User citizen() {

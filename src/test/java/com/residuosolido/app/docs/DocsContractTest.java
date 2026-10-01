@@ -77,7 +77,9 @@ class DocsContractTest {
             "List", "Map", "Set", "Optional", "Stream", "Exception", "RuntimeException",
             "PlatformTransactionManager", "ApplicationEventPublisher", "MongoTransactionManager",
             "SpelEvaluationException", "ObjectId", "LocalValidatorFactoryBean",
-            "AuthenticationManager", "SecurityContext");
+            "AuthenticationManager", "SecurityContext", "CommandListener",
+            "MongoIndexedSessionRepository", "CookieSerializer", "DefaultCookieSerializer",
+            "CompoundIndex", "Serializable", "Document");
 
     /** Términos de dominio/nombres propios citados en backticks que no son clases Java. */
     private static final Set<String> NON_CLASS_TERMS = Set.of(

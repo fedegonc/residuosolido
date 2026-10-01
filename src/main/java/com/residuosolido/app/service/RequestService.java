@@ -17,15 +17,26 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.RequestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Servicio unificado de solicitudes: consultas, creación/edición/eliminación y transiciones de estado.
@@ -41,17 +52,20 @@ public class RequestService {
     private final CityOrgService cityOrgService;
     private final ApplicationEventPublisher eventPublisher;
     private final RequestValidator validator;
+    private final MongoTemplate mongoTemplate;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
                           CityOrgService cityOrgService,
                           ApplicationEventPublisher eventPublisher,
-                          RequestValidator validator) {
+                          RequestValidator validator,
+                          MongoTemplate mongoTemplate) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.cityOrgService = cityOrgService;
         this.eventPublisher = eventPublisher;
         this.validator = validator;
+        this.mongoTemplate = mongoTemplate;
     }
 
     // ========== Crear ==========
@@ -176,7 +190,7 @@ public class RequestService {
 
     public List<Request> getRequestsByUser(User user, int page, int size) {
         validator.requireUser(user);
-        return requestRepository.findByUser(user, PageRequest.of(page, size));
+        return withHydratedUsers(requestRepository.findByUser(user, PageRequest.of(page, size)));
     }
 
     public Request getOwnedRequest(String id, User user) {
@@ -207,8 +221,8 @@ public class RequestService {
 
     public List<Request> getRequestsByOrganization(Organization organization, int page, int size) {
         validator.requireOrganization(organization);
-        return requestRepository.findByOrganizationOrderByCreatedAtDesc(organization,
-                PageRequest.of(page, size));
+        return withHydratedUsers(requestRepository.findByOrganizationOrderByCreatedAtDesc(organization,
+                PageRequest.of(page, size)));
     }
 
     public List<Request> getOrgRequestsByStatusFilter(Organization organization, String status, int page, int size) {
@@ -218,11 +232,57 @@ public class RequestService {
         }
         try {
             RequestStatus filterStatus = RequestStatus.valueOf(status.trim().toUpperCase(Locale.ROOT));
-            return requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, filterStatus, PageRequest.of(page, size));
+            return withHydratedUsers(requestRepository.findByOrganizationAndStatusOrderByCreatedAtDesc(organization, filterStatus, PageRequest.of(page, size)));
         } catch (IllegalArgumentException ex) {
             logger.warn("Filtro de status inválido ignorado: {}", status);
             return getRequestsByOrganization(organization, page, size);
         }
+    }
+
+    /**
+     * Reemplaza los proxies lazy de {@link Request#getUser()} por los Users
+     * reales en una sola query batch. Sin esto, cada card del kanban resuelve
+     * su ref con un findById propio al pedir {@code contactName} (N+1 medido:
+     * 5 requests = 5 finds en users — ver RequestServiceHydrationTest).
+     *
+     * Costo fijo: 2 queries extra por lista (proyección de ids + fetch batch),
+     * independiente de N. Los @DocumentReference(lazy) quedan intactos para
+     * los paths que no son listas (detalle, FSM, eventos).
+     */
+    private List<Request> withHydratedUsers(List<Request> requests) {
+        if (requests.isEmpty()) {
+            return requests;
+        }
+        // _id es ObjectId en Mongo; la query cruda (Document.class) no convierte String.
+        List<Object> requestIds = requests.stream()
+                .map(r -> ObjectId.isValid(r.getId()) ? new ObjectId(r.getId()) : (Object) r.getId())
+                .toList();
+        Query refQuery = new Query(Criteria.where("_id").in(requestIds));
+        refQuery.fields().include("user");
+        List<Document> refs = mongoTemplate.find(refQuery, Document.class, "requests");
+
+        Map<String, String> userIdByRequestId = new HashMap<>();
+        Set<ObjectId> userIds = new LinkedHashSet<>();
+        for (Document ref : refs) {
+            Object uid = ref.get("user");
+            if (uid instanceof ObjectId oid) {
+                userIds.add(oid);
+                userIdByRequestId.put(ref.getObjectId("_id").toHexString(), oid.toHexString());
+            }
+        }
+        if (userIds.isEmpty()) {
+            return requests;
+        }
+        Map<String, User> usersById = mongoTemplate
+                .find(new Query(Criteria.where("_id").in(userIds)), User.class).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        for (Request r : requests) {
+            User real = usersById.get(userIdByRequestId.get(r.getId()));
+            if (real != null) {
+                r.setContactUser(real);
+            }
+        }
+        return requests;
     }
 
 }

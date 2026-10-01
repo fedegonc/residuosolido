@@ -45,6 +45,7 @@ public class MongoIndexInitializer implements CommandLineRunner {
         fixEmailIndex();
         ensureUsernameIndex();
         ensureRequestIndexes();
+        ensureNotificationIndexes();
     }
 
     /** El único índice que puede estar en un estado incompatible — el resto son inofensivos de recrear siempre. */
@@ -79,5 +80,18 @@ public class MongoIndexInitializer implements CommandLineRunner {
         MongoCollection<Document> requests = mongoTemplate.getCollection("requests");
         requests.createIndex(Indexes.ascending("organization"), new IndexOptions().name("organization"));
         requests.createIndex(Indexes.ascending("status"), new IndexOptions().name("status"));
+    }
+
+    /**
+     * Índice compuesto de {@code Notification}: las dos queries calientes son
+     * findByUserOrderByCreatedAtDesc (bandeja) y countByUserAndReadFalse
+     * (badge del navbar) — ambas filtran por user; el sort por createdAt se
+     * resuelve dentro del propio índice. Sin él, cada render de navbar hace
+     * collection scan sobre notifications.
+     */
+    private void ensureNotificationIndexes() {
+        mongoTemplate.getCollection("notifications")
+                .createIndex(Indexes.compoundIndex(Indexes.ascending("user"), Indexes.descending("createdAt")),
+                        new IndexOptions().name("user_createdAt"));
     }
 }
