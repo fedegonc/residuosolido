@@ -45,7 +45,6 @@ public class SecurityConfig {
                 // Opciones de orga (sin auth)
                 .requestMatchers(HttpMethod.GET, Routes.ORG_OPTIONS).permitAll()
                 .requestMatchers(Routes.DOCS_ANY).permitAll()
-                .requestMatchers(Routes.SCRATCH_ANY).permitAll()
                 .requestMatchers(Routes.ACTUATOR_HEALTH, Routes.ACTUATOR_INFO).permitAll()
                 // Admin endpoints (dev only, protected at controller level via @Profile)
                 .requestMatchers(Routes.ADMIN_ANY).permitAll()

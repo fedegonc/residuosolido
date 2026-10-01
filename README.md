@@ -61,10 +61,9 @@ mvn clean package -DskipTests
 java -jar target/app-0.0.1-SNAPSHOT.jar --server.port=8080
 
 # Sandbox ejecutable (especificación del dominio)
-# Requiere Maven compilado previamente
-java scratch/App.java              # Modo por defecto (scenarios)
-java scratch/App.java actores      # Matriz de colisiones (concurrencia)
-java scratch/App.java landing-cards # Carga de landing cards
+./scratch/sim/run.sh                # Modo por defecto (scenarios)
+./scratch/sim/run.sh actores        # Matriz de colisiones (concurrencia)
+./scratch/sim/run.sh landing-cards  # Carga de landing cards
 ```
 
 ## Configuración
@@ -102,7 +101,7 @@ En **producción** (Render/otros), las variables se configuran directamente en e
 **Acceso en vivo:**
 - `/docs/DEFENSA` — Vista renderizada (Markdown → HTML)
 - `/docs/diagramas` — Visor interactivo draw.io (7 figuras UML)
-- `/scratch/App` — Especificación ejecutable del dominio (86 scenarios)
+- `scratch/sim` — Especificación ejecutable del dominio (100 scenarios, local)
 
 Ver [`docs/INDICE.md`](docs/INDICE.md) para mapa temático completo (12 canónicos + 8 referencia).
 
@@ -134,14 +133,14 @@ Ver [`docs/INDICE.md`](docs/INDICE.md) para mapa temático completo (12 canónic
 La especificación del **núcleo de dominio** se mantiene viva en `scratch/sim/`:
 
 ```bash
-# 95 scenarios, 42/42 branches, 0 fallos
-java scratch/App.java
+# 100 scenarios, 41/41 branches, 0 fallos
+./scratch/sim/run.sh
 
 # Matriz de colisiones (concurrencia, optimistic locking)
-java scratch/App.java actores
+./scratch/sim/run.sh actores
 
 # Validación de landing cards (contenido estático)
-java scratch/App.java landing-cards
+./scratch/sim/run.sh landing-cards
 ```
 
 **Propósito:** port sin-framework del dominio que compila solo contra `Request`, `User`, `PhoneNumber`, excepciones `Keyed` y `ServerMessage`. Si una regla del dominio agarra una dependencia de Spring, el sandbox deja de compilar — test de pureza de la capa de negocio.

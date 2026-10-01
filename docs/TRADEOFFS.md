@@ -805,7 +805,7 @@ antes de llegar a producción, no después.
 
 ## 32. Sandbox multi-archivo con puertos (`scratch/sim/`) vs. un solo `App.java`
 
-**Contexto:** `scratch/App.java` había crecido a ~1600 líneas y, aunque ya
+**Contexto:** el sandbox (hoy `scratch/sim/`) había crecido a ~1600 líneas en un solo archivo y, aunque ya
 fluía de general a específico, reproducía la estructura antigua
 models→services→tests: las entidades `User`/`Request` estaban declaradas
 después de los servicios que las usaban, no existían puertos (los servicios
@@ -815,7 +815,7 @@ recibían `Map` crudos) y había un modo consola interactivo que nadie usaba.
 
 | Opción | Por qué sí/no |
 |---|---|
-| Un solo archivo reorganizado por niveles | Conserva `java scratch/App.java` en un paso, pero el límite hexagonal queda solo en comentarios — nada impide que un servicio vuelva a tocar un `Map` |
+| Un solo archivo reorganizado por niveles | Conserva `./scratch/sim/run.sh` en un paso, pero el límite hexagonal queda solo en comentarios — nada impide que un servicio vuelva a tocar un `Map` |
 | **Multi-archivo por nivel + interfaces de puerto (elegida)** | `scratch/sim/`: `Domain.java` (enums, `PhoneNumber`, `User`, `Request`), `Ports.java` (`UserRepository`/`RequestRepository`/`CityOrgPort` + impls `InMemory*`), `Services.java` (`Auth`, `Registration`, `Profiles`, `Images`, `RequestService`), `Harness.java` (`Check`+`Fixtures`), `Scenarios.java`, `Collisions.java`, `Landing.java`, `App.java`. Los servicios compilan contra las interfaces — el límite es estructural, no declarativo. Pedagógicamente muestra la dirección de dependencias completa (dominio→puertos←adapters) |
 | Interfaces también en la app real | YAGNI: los repositorios Spring Data ya son interfaces; agregar otra capa para una sola implementación no paga. Las interfaces acá existen porque el sandbox *demuestra* la arquitectura, no porque el diseño las exija en producción |
 

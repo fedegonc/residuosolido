@@ -35,7 +35,6 @@ public class DocsController {
     private static final Logger logger = LoggerFactory.getLogger(DocsController.class);
 
     private static final Path DOCS_DIR = Paths.get("docs").toAbsolutePath();
-    private static final Path SCRATCH_DIR = Paths.get("scratch").toAbsolutePath();
     private static final ObjectMapper JSON = new ObjectMapper();
     private static final org.commonmark.parser.Parser MARKDOWN_PARSER =
             org.commonmark.parser.Parser.builder().build();
@@ -83,17 +82,6 @@ public class DocsController {
     @GetMapping(Routes.DOCS_DIAGRAM)
     public ResponseEntity<Resource> serveDrawio(@PathVariable String file) {
         return serveFile(DOCS_DIR, "diagrams/" + file + ".drawio", MediaType.APPLICATION_XML);
-    }
-
-    /**
-     * Sirve scratch/App.java como texto plano para leer desde el navegador.
-     * scratch/ está gitignoreado a propósito (ver .gitignore) — esto funciona en local/dev
-     * porque lee del disco, pero da 404 en Render porque el archivo nunca llega a subirse.
-     */
-    @GetMapping(Routes.SCRATCH_FILE)
-    public ResponseEntity<Resource> serveScratch(@PathVariable String file) {
-        String filename = file + ".java";
-        return serveFile(SCRATCH_DIR, filename, MediaType.TEXT_PLAIN);
     }
 
     /**

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Fixtures compartidas para tests que necesitan un User "listo para operar"
  * (ciudadano o organización), en vez de repetir new User() + setters sueltos.
- * Mismo criterio que citizen()/org() en scratch/App.java — ver docs/MEJORAS.md.
+ * Mismo criterio que Fixtures en scratch/sim/Harness.java — ver docs/MEJORAS.md.
  */
 public final class TestFixtures {
 
