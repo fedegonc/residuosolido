@@ -25,6 +25,8 @@ public final class Routes {
     public static final String SEED = "/seed";
     /** Página de contenido genérica por slug (ver PageController). Agregar una página nueva = 1 entrada en su registro, sin tocar rutas. */
     public static final String PAGE_BY_SLUG = "/pagina/{slug}";
+    /** QR de la landing — PNG generado server-side con el origin del request (ver PageController). */
+    public static final String QR = "/qr.png";
 
     public static String pageUrl(String slug) {
         return "/pagina/" + slug;

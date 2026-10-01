@@ -295,6 +295,9 @@ fieldset.field{border:0;padding:0;margin:0;min-inline-size:0}
 .hero__title span{color:var(--primary)}
 .hero__subtitle{font-size:clamp(.875rem,2vw,var(--text-md));color:var(--muted);max-width:32rem;margin-bottom:clamp(.75rem,1.5vw,1rem)}
 .hero__cta{display:flex;flex-wrap:wrap;gap:clamp(.25rem,1vw,.5rem);margin-top:auto}
+.qr-card{display:flex;flex-direction:column;align-items:center;gap:clamp(.5rem,1.5vw,.75rem);text-align:center}
+.qr-card img{width:min(160px,40vw);height:auto;display:block}
+.qr-card__hint{font-size:var(--text-sm);color:var(--muted);margin:0}
 .hero--dark{background:var(--navy);justify-content:center}
 .hero--dark .hero__title{color:#fff;margin-bottom:clamp(.75rem,1.5vw,1rem)}
 .hero--dark .hero__subtitle{color:rgba(255,255,255,.72)}

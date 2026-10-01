@@ -4,18 +4,29 @@ import com.residuosolido.app.config.Routes;
 import com.residuosolido.app.util.LandingCardLoader;
 import com.residuosolido.app.util.PageContentLoader;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.LocaleResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Páginas de contenido público genéricas, direccionadas por slug (reemplaza el
@@ -51,5 +62,26 @@ public class PageController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Página no encontrada: " + slug));
         model.addAttribute("page", page);
         return "public/page-content";
+    }
+
+    /**
+     * QR de la landing: PNG con el origin del request, para compartir la página
+     * mostrando el celular. Funciona igual en localhost, LAN y Render (con
+     * forward-headers-strategy el scheme/host ya vienen resueltos del proxy).
+     */
+    @GetMapping(value = Routes.QR, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public ResponseEntity<byte[]> qr(HttpServletRequest request) throws Exception {
+        String origin = request.getScheme() + "://" + request.getServerName()
+                + (request.getServerPort() == 80 || request.getServerPort() == 443
+                   ? "" : ":" + request.getServerPort());
+        BitMatrix matrix = new QRCodeWriter().encode(origin + "/", BarcodeFormat.QR_CODE,
+                320, 320, Map.of(EncodeHintType.MARGIN, 1));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MatrixToImageWriter.writeToStream(matrix, "PNG", out);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
+                .body(out.toByteArray());
     }
 }

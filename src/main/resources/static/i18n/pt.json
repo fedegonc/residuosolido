@@ -212,5 +212,6 @@
   "auth_register_org_link": "Cadastre-se aqui",
   "auth_register_as_citizen": "É cidadão?",
   "auth_register_citizen_link": "Cadastre-se aqui",
-  "_server_error_register_org_type_required": "Escolha o tipo de organização."
+  "_server_error_register_org_type_required": "Escolha o tipo de organização.",
+  "hero_qr_hint": "Escaneie e compartilhe esta página"
 }

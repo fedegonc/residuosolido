@@ -22,7 +22,13 @@
           </div>
         </section>
 
-        <div th:replace="~{fragments/forms :: altCta('auth_register_title', 'auth_register_subtitle', '/registrarse', 'user-tag', 'nav_register')}"></div>
+        <div class="stack">
+          <div th:replace="~{fragments/forms :: altCta('auth_register_title', 'auth_register_subtitle', '/registrarse', 'user-tag', 'nav_register')}"></div>
+          <div class="card qr-card">
+            <img src="/qr.png" width="160" height="160" alt="" loading="lazy">
+            <p class="qr-card__hint" data-i18n="hero_qr_hint">Escaneá y compartí esta página</p>
+          </div>
+        </div>
       </div>
 
       <!-- Contenedor escalable de cards educativas (renderizadas server-side). -->
