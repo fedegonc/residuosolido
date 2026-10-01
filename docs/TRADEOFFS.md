@@ -615,7 +615,7 @@ nuevo, solo lo adelanta.
   aceptable para pruebas, no para escala real.
 - El email dejó de pedirse; el índice único de `email` en Mongo se volvió
   `sparse` para permitir múltiples usuarios sin email (ver
-  `MongoIndexMigration.java`, `docs/MEJORAS.md` #123).
+  `MongoIndexInitializer.java`, `docs/MEJORAS.md` #123).
 
 **Para producción:** volver a exigir contraseña real (8+ caracteres,
 `UserService.validatePassword` ya lo hace para el flujo de edición de
@@ -988,7 +988,7 @@ aceptados los habría "perdido" al primer deploy.
 
 | Opción | Por qué sí/no |
 |---|---|
-| **Extraer + migrar con `CommandLineRunner` idempotente (elegida)** | Mismo patrón ya probado en `MongoIndexMigration` (que resolvió un problema real de índice roto). Opera con BSON crudo, no con el mapper de `User` — evita el problema de "leer con el modelo nuevo antes de migrar". Corre una vez, después es no-op |
+| **Extraer + migrar con `CommandLineRunner` idempotente (elegida)** | Mismo patrón ya probado en `MongoIndexInitializer` (que resolvió un problema real de índice roto). Opera con BSON crudo, no con el mapper de `User` — evita el problema de "leer con el modelo nuevo antes de migrar". Corre una vez, después es no-op |
 | Convertirlo en trigger diferido (documentar, no migrar todavía) | Válido si el dolor fuera bajo, pero acá había un ciudadano-cero: no había ningún caso donde "no migrar" fuera más seguro que "migrar" — los datos existentes de organización son pocos (seed de desarrollo) y el patrón de migración ya estaba probado en el proyecto |
 | Partir `User` en 2 colecciones (una nueva para organización) | Cambio de mucho mayor alcance — reescribe queries, relaciones (`Request.organization` referencia un `User`), y tests. Desproporcionado para 2 campos; el embebido resuelve la asimetría real sin ese costo |
 
@@ -998,7 +998,7 @@ siguen existiendo con la misma firma, ahora delegando a
 `organizationProfile` (lazy-init en el setter). Ningún caller — servicios,
 templates Thymeleaf, 8 archivos de test — necesitó cambiar.
 
-**Verificación real, no solo mocks:** `OrganizationProfileMigrationTest`
+**Verificación real, no solo mocks:** `OrganizationProfileMigrationTest` (test retirado junto con la clase)
 inserta un documento con la forma vieja directo en Mongo real (Atlas),
 corre la migración, confirma el subdocumento nuevo y que los campos viejos
 desaparecieron (`$unset`), y prueba idempotencia (correrla 2 veces no rompe
@@ -1006,7 +1006,13 @@ nada). Limpia el documento de prueba después — no ensucia la base
 compartida.
 
 **Resultado:** `Organization` (clase separada con campos de negocio) +
-`OrganizationProfileMigration` (migración de datos históricos). Ver `docs/MEJORAS.md` #210.
+`OrganizationProfileMigration` (migración de datos históricos, clase retirada tras ejecutarse). Ver `docs/MEJORAS.md` #210.
+
+> Actualización: la migración ya corrió en producción (no-op verificado por
+> `OrganizationIntegrityValidator` en cada arranque) y una base nueva nunca
+> tiene data en formato legacy — la clase se retiró del código, queda en el
+> historial git. El patrón "CommandLineRunner idempotente con BSON crudo"
+> sigue siendo el recomendado si aparece otra migración de datos.
 
 ### Trabajo futuro: split completo a 2 colecciones (no implementado, solo planeado)
 
@@ -1018,9 +1024,8 @@ en un subdocumento:
 ```
 User (identidad/auth — colección "users")
   ├── id, username, email, password, phone, firstName
-  ├── role: USER | ORGANIZATION
   ├── active, createdAt
-  └── organizationProfileId (nullable, referencia)
+  └── (rol derivado: ∃ doc en organizations con el mismo _id)
 
 OrganizationProfile (operación — colección nueva "organization_profiles")
   ├── id, userId
@@ -1041,8 +1046,8 @@ al registrar una organización; `RequestService` referencia el perfil (o su
 `userId`) en vez del `User` completo; templates cambian `organization.city`/
 `organization.acceptedMaterials` por el equivalente del perfil separado;
 Spring Security no cambia nada (sigue cargando `UserDetails` desde
-`UserRepository`, el rol sigue en `User.role`). Migración: mismo patrón que
-`OrganizationProfileMigration` de §38, pero moviendo el subdocumento
+`UserRepository`; el rol se deriva de `organizations` — `User.role` ya no existe). Migración: mismo patrón que
+`OrganizationProfileMigration` (retirada) de §38, pero moviendo el subdocumento
 embebido a un documento independiente con referencia, no al revés.
 
 **Por qué no se hace ahora:** es un cambio de alcance mediano-alto (modelo +
@@ -1083,7 +1088,7 @@ corrida de tests los borraba.
 `PlaywrightBaseTest`) con `spring.data.mongodb.database` explícito. Barrido
 completo de los 18 archivos de test que referencian `SPRING_DATA_MONGODB_URI`
 confirmó que ningún otro hace escrituras destructivas contra el repositorio
-real sin acotar por `_id` (`OrganizationProfileMigrationTest`, escrito ayer,
+real sin acotar por `_id` (`OrganizationProfileMigrationTest`, retirado,
 ya lo hacía bien desde el principio). **Verificado con datos reales, no
 teoría:** se sembraron 25 usuarios + 23 solicitudes, se corrió la suite
 completa (458 tests), y los datos sobrevivieron intactos — antes del fix,
@@ -1297,9 +1302,9 @@ autenticado se almacena en sesión. Ver `docs/MEJORAS.md` #220.
 | B — dos identidades independientes (`User` y `Organization` con login propio) | Modelo conceptualmente más puro, pero duplicaría contacto, lógica de login y roles; costo mucho mayor y sin beneficio real para el MVP. |
 | C — mantener mono-`User` | Menor refactor inmediato, pero perpetúa la ambigüedad y hace más caro cualquier futuro panel de verificación/admin de organizaciones. |
 
-**Costo real:** migración de datos existentes. Para no invalidar referencias, `Organization._id` coincide con `User._id`. La migración (`OrganizationProfileMigration`) es idempotente y opera con BSON crudo, por lo que no depende del mapper actual durante la transición. MongoDB standalone no soporta transacciones multi-documento: crear `Organization` + limpiar `User` se hace en dos `bulkWrite` separadas; si falla entre ambas, una segunda ejecución al arranque se recupera (la org ya existe → solo se limpia el documento residual).
+**Costo real:** migración de datos existentes. Para no invalidar referencias, `Organization._id` coincide con `User._id`. La migración (`OrganizationProfileMigration`, clase ya retirada) es idempotente y opera con BSON crudo, por lo que no depende del mapper actual durante la transición. MongoDB standalone no soporta transacciones multi-documento: crear `Organization` + limpiar `User` se hace en dos `bulkWrite` separadas; si falla entre ambas, una segunda ejecución al arranque se recupera (la org ya existe → solo se limpia el documento residual).
 
-**Implicancias de seguridad:** `SecurityConfig` sigue usando `hasRole("ORGANIZATION")` sobre `User.role`; la existencia de un `Organization` no cambia la autorización. `OrgProfileController` y `OrgRequestController` resuelven primero el `User` autenticado y luego su `Organization` por `userId`; si un usuario ORGANIZATION no tiene registro asociado, se maneja como perfil incompleto.
+**Implicancias de seguridad:** `SecurityConfig` sigue usando `hasRole("ORGANIZATION")`, pero la authority se deriva en login: `organizationRepository.existsById(userId)` → `ROLE_ORGANIZATION`. El doc `Organization` ES el rol — `User.role` se eliminó para tener una sola fuente de verdad (elimina el drift flag-vs-doc y el sync bidireccional). `OrgProfileController` y `OrgRequestController` resuelven primero el `User` autenticado y luego su `Organization` por `userId`; si un usuario ORGANIZATION no tiene registro asociado, se maneja como perfil incompleto.
 
 **Datos cruzados JavaScript:** el selector de organizaciones en `/solicitar` sigue recibiendo materiales aceptados a través de `data-materials` generado por `Organization.getAcceptedMaterialsCsv()` — se mantiene el contrato explícito, sin depender de `toString()`.
 
@@ -1319,7 +1324,7 @@ Suite completa: 475/475, 0 failures. Ver `docs/MEJORAS.md` #226.
 | Mantener display original + índice case-insensitive | Más fiel al nombre que escribe el usuario, pero requiere crear un campo `usernameCanonical` o un índice con collation y complica la unicidad. |
 | Solo canonicizar en login | No resuelve duplicados en registro. |
 
-**Costo real:** la normalización es una sola línea (`trim().toLowerCase(Locale.ROOT)`), pero cambia el contrato de usernames existentes. Se agregó `UsernameNormalizationMigration` para convertir usernames viejos al arranque; si hay duplicados silenciosos preexistentes, la migración loggea el error y los deja intactos en vez de romper el arranque. En un entorno con datos reales, esos conflictos deben resolverse manualmente una sola vez.
+**Costo real:** la normalización es una sola línea (`trim().toLowerCase(Locale.ROOT)`), pero cambia el contrato de usernames existentes. Se agregó `UsernameNormalizationMigration` para convertir usernames viejos al arranque; si hay duplicados silenciosos preexistentes, la migración loggea el error y los deja intactos en vez de romper el arranque. En un entorno con datos reales, esos conflictos deben resolverse manualmente una sola vez. (La migración ya corrió y la clase fue retirada del código — queda en el historial git.)
 
 Suite completa: 476/476, 0 failures. Ver `docs/MEJORAS.md` #228.
 

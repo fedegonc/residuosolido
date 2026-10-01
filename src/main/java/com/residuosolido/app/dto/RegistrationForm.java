@@ -1,5 +1,6 @@
 package com.residuosolido.app.dto;
 
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.model.PhoneNumber;
 import com.residuosolido.app.model.User;
 import jakarta.validation.constraints.NotBlank;
@@ -37,6 +38,8 @@ public class RegistrationForm {
     private String ddd;
     @Pattern(regexp = "\\d{4}", message = "error.register.pin_invalid")
     private String password;
+    /** Solo lo envía el formulario de organización — requerido ahí, nulo en ciudadano. */
+    private OrgType tipo;
 
     public User toUser() {
         User user = new User();

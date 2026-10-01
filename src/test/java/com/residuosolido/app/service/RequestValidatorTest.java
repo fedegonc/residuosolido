@@ -2,11 +2,11 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.OrganizationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,22 +14,26 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @DisplayName("RequestValidator: validaciones de Request")
 class RequestValidatorTest {
 
     private RequestValidator validator;
+    private OrganizationRepository organizationRepository;
 
     @BeforeEach
     void setUp() {
-        validator = new RequestValidator();
+        // existsById=false por defecto → el user de prueba es ciudadano
+        organizationRepository = mock(OrganizationRepository.class);
+        validator = new RequestValidator(organizationRepository);
     }
 
     @Test
     @DisplayName("validateCreate: ciudadano válido + campos obligatorios")
     void validateCreateCitizenValid() {
         User user = new User();
-        user.setRole(Role.USER);
         user.setActive(true);
         user.setPhone("+59899123456");
 
@@ -42,7 +46,6 @@ class RequestValidatorTest {
     @DisplayName("validateCreate: ciudadano sin teléfono válido → error")
     void validateCreateCitizenNoPhone() {
         User user = new User();
-        user.setRole(Role.USER);
         user.setActive(true);
         user.setPhone(null);
 
@@ -53,12 +56,13 @@ class RequestValidatorTest {
     }
 
     @Test
-    @DisplayName("validateCreate: ciudadano con rol ORGANIZATION → error")
+    @DisplayName("validateCreate: usuario con doc Organization → error")
     void validateCreateNotCitizen() {
         User user = new User();
-        user.setRole(Role.ORGANIZATION);
+        user.setId("org-user");
         user.setActive(true);
         user.setPhone("+59899123456");
+        when(organizationRepository.existsById("org-user")).thenReturn(true);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> validator.validateCreate(
             user, City.RIVERA, "Calle 123", List.of(MaterialCategory.PLASTICO), "org123"
@@ -79,7 +83,6 @@ class RequestValidatorTest {
     @DisplayName("validateCreate: sin ciudad → error")
     void validateCreateNoCity() {
         User user = new User();
-        user.setRole(Role.USER);
         user.setActive(true);
         user.setPhone("+59899123456");
 
@@ -93,7 +96,6 @@ class RequestValidatorTest {
     @DisplayName("validateCreate: sin dirección → error")
     void validateCreateNoAddress() {
         User user = new User();
-        user.setRole(Role.USER);
         user.setActive(true);
         user.setPhone("+59899123456");
 
@@ -107,7 +109,6 @@ class RequestValidatorTest {
     @DisplayName("validateCreate: sin materiales → error")
     void validateCreateNoMaterials() {
         User user = new User();
-        user.setRole(Role.USER);
         user.setActive(true);
         user.setPhone("+59899123456");
 
@@ -121,7 +122,6 @@ class RequestValidatorTest {
     @DisplayName("validateCreate: sin organización → error")
     void validateCreateNoOrganization() {
         User user = new User();
-        user.setRole(Role.USER);
         user.setActive(true);
         user.setPhone("+59899123456");
 

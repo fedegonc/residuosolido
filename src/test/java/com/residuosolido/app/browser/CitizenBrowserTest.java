@@ -23,7 +23,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#1 Login + dashboard con stats")
     void loginAndDashboard() {
-        login("juan", "1234");
+        login("juan", "5678");
 
         page.locator("[data-i18n='dash_welcome']").waitFor();
         assertTrue(page.locator(".stat-card").count() >= 3,
@@ -35,10 +35,10 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#2 Crear solicitud como ciudadano")
     void citizenCreatesRequest() {
-        login("juan", "1234");
+        login("juan", "5678");
         page.navigate(baseUrl + "/solicitar");
 
-        page.locator("[data-i18n='req_form_title_new']").waitFor();
+        page.locator("h1[data-i18n='req_form_title_new']").waitFor();
         fillRequestForm("RIVERA", "Calle Test 123", "PLASTICO");
         page.locator("#requestForm button[type='submit']").click();
 
@@ -56,7 +56,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         userRepository.save(user);
 
         try {
-            login("juan", "1234");
+            login("juan", "5678");
             page.navigate(baseUrl + "/solicitar");
             page.locator("#userPhoneNational").fill("99123456");
             fillRequestForm("RIVERA", "Calle Teléfono 321", "PLASTICO");
@@ -74,7 +74,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#3 Editar solicitud pendiente")
     void citizenEditsRequest() {
-        login("juan", "1234");
+        login("juan", "5678");
         // Crear una solicitud primero
         page.navigate(baseUrl + "/solicitar");
         fillRequestForm("RIVERA", "Calle Edit 456", "PAPEL");
@@ -86,14 +86,14 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         page.locator(".kanban-card").first().waitFor();
         // Entrar al detalle de la primera
         page.locator(".kanban-card a[href*='/solicitudes/']").first().click();
-        page.locator("[data-i18n='req_detail_title']").waitFor();
+        page.locator("h1 [data-i18n='req_detail_title'], h1[data-i18n='req_detail_title']").last().waitFor();
 
         // Si hay botón editar, clickearlo
         Locator editBtn = page.locator("a[href*='/editar']");
         if (editBtn.isVisible()) {
             editBtn.click();
-            page.locator("[data-i18n='req_form_title_edit']").waitFor();
-            assertTrue(page.locator("[data-i18n='req_form_title_edit']").isVisible(),
+            page.locator("h1[data-i18n='req_form_title_edit']").waitFor();
+            assertTrue(page.locator("h1[data-i18n='req_form_title_edit']").isVisible(),
                     "Debe mostrar formulario de edición");
         }
     }
@@ -101,7 +101,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#4 Eliminar solicitud pendiente")
     void citizenDeletesRequest() {
-        login("juan", "1234");
+        login("juan", "5678");
         // Crear una solicitud para eliminar
         page.navigate(baseUrl + "/solicitar");
         fillRequestForm("RIVERA", "Calle Delete 789", "VIDRIO");
@@ -112,7 +112,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
         page.navigate(baseUrl + "/mis-solicitudes");
         page.locator(".kanban-card").first().waitFor();
         page.locator(".kanban-card a[href*='/solicitudes/']").first().click();
-        page.locator("[data-i18n='req_detail_title']").waitFor();
+        page.locator("h1 [data-i18n='req_detail_title'], h1[data-i18n='req_detail_title']").last().waitFor();
 
         // Clickear eliminar (el form tiene un confirm() de JS)
         Locator deleteForm = page.locator("form[action*='/eliminar']");
@@ -128,14 +128,14 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
                         || page.url().contains("/mis-solicitudes")
                         || page.url().contains("/usuarios")
                         || page.locator(".alert--success").isVisible()
-                        || page.locator("[data-i18n='req_detail_title']").isVisible(),
+                        || page.locator("h1 [data-i18n='req_detail_title'], h1[data-i18n='req_detail_title']").last().isVisible(),
                 "Después de eliminar debe volver a la lista o mostrar éxito");
     }
 
     @Test
     @DisplayName("#5 Ver mis solicitudes")
     void citizenViewsOwnRequests() {
-        login("juan", "1234");
+        login("juan", "5678");
         page.navigate(baseUrl + "/mis-solicitudes");
 
         page.locator("[data-i18n='req_list_title']").waitFor();
@@ -149,7 +149,7 @@ class CitizenBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#6 Logout vuelve a home")
     void citizenLogout() {
-        login("juan", "1234");
+        login("juan", "5678");
         page.locator("[data-i18n='dash_welcome']").waitFor();
 
         // El botón de logout está en un dropdown de navbar.

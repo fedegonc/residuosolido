@@ -2,6 +2,7 @@ package com.residuosolido.app.model;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.StateException;
 import lombok.EqualsAndHashCode;
@@ -39,6 +40,8 @@ public class Organization {
     private String id;
 
     private String name;
+
+    private OrgType tipo;
 
     private String phone;
 

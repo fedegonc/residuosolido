@@ -1,8 +1,9 @@
 package com.residuosolido.app.service;
 
 import com.residuosolido.app.exception.ServerMessage;
+import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,13 +26,15 @@ class UserServiceTest {
     private UserService userService;
     private UserRegistrationService userRegistrationService;
     private PasswordEncoder passwordEncoder;
+    private OrganizationService organizationService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
         userService = new UserService(userRepository);
-        userRegistrationService = new UserRegistrationService(userRepository, passwordEncoder, mock(OrganizationService.class));
+        organizationService = mock(OrganizationService.class);
+        userRegistrationService = new UserRegistrationService(userRepository, passwordEncoder, organizationService);
     }
 
     // ===== PIN de 4 dígitos en registro =====
@@ -84,10 +87,10 @@ class UserServiceTest {
         assertEquals(ServerMessage.ERROR_REGISTER_PHONE_REQUIRED, error);
     }
 
-    // ===== registerUser =====
+    // ===== registro (ciudadano / organización) =====
 
     @Test
-    void registerUser_encodesPasswordAndSetsDefaults() {
+    void registerCitizen_encodesPasswordAndSetsDefaults() {
         User user = new User();
         user.setUsername("newuser");
         user.setPhone("+59899123456");
@@ -96,15 +99,15 @@ class UserServiceTest {
         when(passwordEncoder.encode("1234")).thenReturn("encoded");
         when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        User result = userRegistrationService.registerUser(user, false);
+        User result = userRegistrationService.registerCitizen(user);
         assertEquals("encoded", result.getPassword());
-        assertEquals(Role.USER, result.getRole());
+        verify(organizationService, never()).createForUser(any(), any());
         assertTrue(result.isActive());
         assertNotNull(result.getCreatedAt());
     }
 
     @Test
-    void registerUser_asOrganization_setsOrganizationRole() {
+    void registerOrganization_createsOrgProfileWithTipo() {
         User user = new User();
         user.setUsername("org1");
         user.setPhone("+59899123456");
@@ -114,8 +117,22 @@ class UserServiceTest {
         when(userRepository.insert(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        User result = userRegistrationService.registerUser(user, true);
-        assertEquals(Role.ORGANIZATION, result.getRole());
+        User result = userRegistrationService.registerOrganization(user, OrgType.COOPERATIVA);
+        verify(organizationService).createForUser(result, OrgType.COOPERATIVA);
+    }
+
+    @Test
+    void registerOrganization_nullTipo_throwsOrgTypeRequired() {
+        User user = new User();
+        user.setUsername("orgx");
+        user.setPhone("+59899123456");
+        user.setPassword("1234");
+
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> userRegistrationService.registerOrganization(user, null));
+        assertEquals(ServerMessage.ERROR_REGISTER_ORG_TYPE_REQUIRED, ex.key());
+        verify(userRepository, never()).insert(any(User.class));
+        verify(organizationService, never()).createForUser(any(), any());
     }
 
     // ===== updateProfile: contacto básico del ciudadano =====

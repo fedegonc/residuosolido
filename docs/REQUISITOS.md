@@ -19,7 +19,7 @@ públicas, registro y login.
 | Usuario, Organización | Implementado |
 
 Registro con nombre, teléfono y PIN de 4 dígitos (ver `docs/TRADEOFFS.md`
-§24). Una sola entidad `User` diferenciada por `Role`.
+§24). Una entidad `User` para auth; el rol se deriva del doc `Organization` asociado (`USER`/`ORGANIZATION`).
 
 ### RF-2 — Iniciar sesión
 

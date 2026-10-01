@@ -3,6 +3,7 @@ package com.residuosolido.app.controller;
 import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.config.RateLimiter;
 import com.residuosolido.app.config.Routes;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.UserRegistrationService;
 import org.junit.jupiter.api.Tag;
@@ -17,7 +18,6 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -70,7 +70,7 @@ class AuthControllerTest extends EmbeddedMongoTest {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
         User created = new User();
         created.setUsername("nuevo");
-        when(userRegistrationService.registerUser(any(User.class), eq(false))).thenReturn(created);
+        when(userRegistrationService.registerCitizen(any(User.class))).thenReturn(created);
         when(authenticationManager.authenticate(any()))
                 .thenReturn(new TestingAuthenticationToken("nuevo", null, "ROLE_USER"));
 
@@ -82,28 +82,52 @@ class AuthControllerTest extends EmbeddedMongoTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Routes.REQUESTS));
 
-        verify(userRegistrationService).registerUser(any(User.class), eq(false));
+        verify(userRegistrationService).registerCitizen(any(User.class));
     }
 
     @Test
-    void registerPost_asOrganization_passesFlagToService() throws Exception {
+    void registerOrgPost_withTipo_passesToService() throws Exception {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
         User created = new User();
         created.setUsername("coop");
-        when(userRegistrationService.registerUser(any(User.class), eq(true))).thenReturn(created);
+        when(userRegistrationService.registerOrganization(any(User.class), eq(OrgType.COOPERATIVA))).thenReturn(created);
         when(authenticationManager.authenticate(any()))
                 .thenReturn(new TestingAuthenticationToken("coop", null, "ROLE_ORGANIZATION"));
 
-        mockMvc.perform(post(Routes.REGISTER).with(csrf())
+        mockMvc.perform(post(Routes.REGISTER_ORG).with(csrf())
                         .param("username", "coop")
                         .param("password", "1234")
                         .param("countryCode", "+598")
                         .param("phoneNational", "99123456")
-                        .param("isOrganization", "true"))
+                        .param("tipo", "COOPERATIVA"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Routes.ORG_REQUESTS));
 
-        verify(userRegistrationService).registerUser(any(User.class), eq(true));
+        verify(userRegistrationService).registerOrganization(any(User.class), eq(OrgType.COOPERATIVA));
+    }
+
+    @Test
+    void registerOrgPost_missingTipo_rendersErrorAndSkipsService() throws Exception {
+        when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
+
+        mockMvc.perform(post(Routes.REGISTER_ORG).with(csrf())
+                        .param("username", "coop")
+                        .param("password", "1234")
+                        .param("countryCode", "+598")
+                        .param("phoneNational", "99123456"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/register-org"))
+                .andExpect(model().attributeExists("errorMessage"));
+
+        verify(userRegistrationService, never()).registerOrganization(any(), any());
+    }
+
+    @Test
+    void registerOrgGet_rendersOrgForm() throws Exception {
+        mockMvc.perform(get(Routes.REGISTER_ORG))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/register-org"))
+                .andExpect(model().attributeExists("user", "orgTypes"));
     }
 
     @Test
@@ -117,14 +141,15 @@ class AuthControllerTest extends EmbeddedMongoTest {
                 .andExpect(view().name("auth/register"))
                 .andExpect(model().attributeExists("errorMessage"));
 
-        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+        verify(userRegistrationService, never()).registerCitizen(any());
+        verify(userRegistrationService, never()).registerOrganization(any(), any());
     }
 
     @Test
     void registerPost_duplicateKey_rendersFormWithError() throws Exception {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
         doThrow(new DuplicateKeyException("username"))
-                .when(userRegistrationService).registerUser(any(User.class), anyBoolean());
+                .when(userRegistrationService).registerCitizen(any(User.class));
 
         mockMvc.perform(post(Routes.REGISTER).with(csrf())
                         .param("username", "existente")
@@ -148,7 +173,8 @@ class AuthControllerTest extends EmbeddedMongoTest {
                 // literalmente "error.register.username_required" en vez del texto.
                 .andExpect(model().attribute("errorMessage", "Necesitamos tu nombre."));
 
-        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+        verify(userRegistrationService, never()).registerCitizen(any());
+        verify(userRegistrationService, never()).registerOrganization(any(), any());
     }
 
     @Test
@@ -162,28 +188,29 @@ class AuthControllerTest extends EmbeddedMongoTest {
                 .andExpect(view().name("auth/register"))
                 .andExpect(model().attribute("errorMessage", "El PIN debe tener 4 dígitos."));
 
-        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+        verify(userRegistrationService, never()).registerCitizen(any());
+        verify(userRegistrationService, never()).registerOrganization(any(), any());
     }
 
     @Test
     void registerPost_invalidPhone_marksFieldAndPreservesSafeValues() throws Exception {
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
 
-        mockMvc.perform(post(Routes.REGISTER).with(csrf())
+        mockMvc.perform(post(Routes.REGISTER_ORG).with(csrf())
                         .param("username", "Federico Test")
                         .param("password", "1234")
                         .param("countryCode", "+598")
                         .param("phoneNational", "9922249555")
-                        .param("isOrganization", "true"))
+                        .param("tipo", "CENTRO_ACOPIO"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("auth/register"))
+                .andExpect(view().name("auth/register-org"))
                 .andExpect(model().attributeHasFieldErrors("user", "phoneNational"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"Federico Test\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"9922249555\"")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("La cantidad de dígitos no coincide")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"isOrganization\" name=\"isOrganization\" value=\"true\" checked")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("La cantidad de dígitos no coincide")));
 
-        verify(userRegistrationService, never()).registerUser(any(), anyBoolean());
+        verify(userRegistrationService, never()).registerCitizen(any());
+        verify(userRegistrationService, never()).registerOrganization(any(), any());
     }
 
     @Test
@@ -195,7 +222,7 @@ class AuthControllerTest extends EmbeddedMongoTest {
         // registerPost_invalidPin_beanValidationBlocksBeforeService).
         when(rateLimiter.isAllowed(any(), eq("registration"))).thenReturn(true);
         doThrow(new IllegalArgumentException("error.register.phone_required"))
-                .when(userRegistrationService).registerUser(any(User.class), anyBoolean());
+                .when(userRegistrationService).registerCitizen(any(User.class));
 
         mockMvc.perform(post(Routes.REGISTER).with(csrf())
                         .param("username", "nuevo")

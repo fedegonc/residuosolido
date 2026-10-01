@@ -4,7 +4,6 @@ import com.residuosolido.app.EmbeddedMongoTest;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
@@ -68,7 +67,6 @@ class MongoAggregationUtilsIntegrationTest extends EmbeddedMongoTest {
         testUser.setUsername("testuser");
         testUser.setEmail("test@test.com");
         testUser.setPassword("dummy");
-        testUser.setRole(Role.USER);
         testUser.setFirstName("Test");
         testUser.setCity(City.RIVERA);
         testUser.setActive(true);

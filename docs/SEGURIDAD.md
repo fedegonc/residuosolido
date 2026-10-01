@@ -40,7 +40,7 @@ ver las referencias cruzadas de cada punto.
 
 ## Índices y config de Mongo
 
-8. Cambios a `@Indexed` van también en `MongoIndexMigration.java` (no
+8. Cambios a `@Indexed` van también en `MongoIndexInitializer.java` (no
    alcanza con la anotación, `auto-index-creation` está deshabilitado a
    propósito) — ver comentario en esa clase y `CLAUDE.md`.
 

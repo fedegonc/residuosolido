@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Migración de índices de Mongo ejecutada al arrancar, en vez de depender de
+ * Inicialización de índices de Mongo ejecutada al arrancar, en vez de depender de
  * spring.data.mongodb.auto-index-creation (deshabilitado a propósito, ver
  * application.properties).
  *
@@ -30,13 +30,13 @@ import org.springframework.stereotype.Component;
  * (fresh install, CI, otra máquina) quede igual de bien indexada.
  */
 @Component
-public class MongoIndexMigration implements CommandLineRunner {
+public class MongoIndexInitializer implements CommandLineRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(MongoIndexMigration.class);
+    private static final Logger logger = LoggerFactory.getLogger(MongoIndexInitializer.class);
 
     private final MongoTemplate mongoTemplate;
 
-    public MongoIndexMigration(MongoTemplate mongoTemplate) {
+    public MongoIndexInitializer(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -60,14 +60,14 @@ public class MongoIndexMigration implements CommandLineRunner {
         if (!hasStaleIndex) {
             return;
         }
-        logger.info("Migración Mongo: el índice 'email' es viejo (sin sparse), recreándolo...");
+        logger.info("Índices Mongo: el índice 'email' es viejo (sin sparse), recreándolo...");
         users.dropIndex("email");
         users.createIndex(Indexes.ascending("email"), new IndexOptions()
                 .name("email")
                 .unique(true)
                 .sparse(true)
                 .collation(Collation.builder().locale("en").collationStrength(CollationStrength.SECONDARY).build()));
-        logger.info("Migración Mongo: índice 'email' recreado con sparse=true.");
+        logger.info("Índices Mongo: índice 'email' recreado con sparse=true.");
     }
 
     private void ensureUsernameIndex() {

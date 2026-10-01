@@ -5,6 +5,7 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -38,7 +39,7 @@ class RequestServiceValidationTest {
         cityOrgService = mock(CityOrgService.class);
         imageService = mock(LocalImageService.class);
         requestService = new RequestService(requestRepository, imageService, cityOrgService,
-                mock(ApplicationEventPublisher.class), new RequestValidator());
+                mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)));
     }
 
     private User citizen() {

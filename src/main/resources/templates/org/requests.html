@@ -11,7 +11,7 @@
       <nav th:replace="~{fragments/ui :: trail(${breadcrumbs})}"></nav>
 
       <!-- ═══ LIST VIEW ═══ -->
-      <th:block th:if="${viewType == T(com.residuosolido.app.enums.RequestViewType).LIST}">
+      <th:block th:if="${viewType?.name() == 'LIST'}">
         <div class="row row--between mb">
           <h1 class="card__title" data-i18n="org_req_title">Solicitudes</h1>
           <form method="post" action="/acopio/solicitudes/export-pdf" style="display:inline;">
@@ -58,7 +58,7 @@
       </th:block>
 
       <!-- ═══ DETAIL VIEW ═══ -->
-      <th:block th:if="${viewType == T(com.residuosolido.app.enums.RequestViewType).DETAIL}">
+      <th:block th:if="${viewType?.name() == 'DETAIL'}">
         <div class="row row--between mb">
           <div>
             <h1 class="card__title"><span data-i18n="req_detail_title">Solicitud</span> #<span th:text="${request.id}"></span></h1>

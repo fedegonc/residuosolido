@@ -38,14 +38,13 @@ de dos categorías (ver `docs/MEJORAS.md` #173 para el criterio completo):
 | `docs/BOILERPLATE_VS_CORE.md` | Clasificación clase por clase: infraestructura genérica vs núcleo de negocio real. | Actualizado |
 | `docs/USABILIDAD.md` | Instrumento de evaluación de usabilidad: Likert por funcionalidad (preparado, no aplicado). | Nuevo |
 | `docs/CONTEXTO_LLM.md` | Contexto de continuidad entre sesiones de agente. | Referencia |
-| `docs/CORRECCIONES.md` | Historial de hardening y correcciones (2026-09-11 y anteriores). | Referencia |
 | `docs/GITFLOW.md` | Flujo de ramas, commits y deploy. | Referencia |
 
 ## Documentos de referencia (fuera de la lectura principal, versionados igual)
 
 | Archivo | Contenido | Por qué no es canónico |
 |---|---|---|
-| `docs/CORRECCIONES.md` | Historial de hardening y correcciones (2026-09-11 y anteriores). | Superseded — su contenido ya está en `MEJORAS.md` (fixes con entradas propias) o en `DEFENSA.md` §7 (limitaciones); la arquitectura de i18n que aportaba pasó a `ARQUITECTURA.md`. Ver #173 |
+| ~~`docs/CORRECCIONES.md`~~ | Historial de hardening y correcciones (2026-09-11 y anteriores). | **Eliminado** — su contenido ya estaba en `MEJORAS.md` (fixes con entradas propias) o en `DEFENSA.md` §7 (limitaciones); la arquitectura de i18n que aportaba pasó a `ARQUITECTURA.md`. Ver #173 |
 | `docs/GITFLOW.md` | Flujo de ramas, commits y deploy. | Evidencia de proceso, no argumento de defensa — `METODOLOGIA.md` ya cubre el encuadre académico (DSRM) |
 | `docs/AUDITORIA.md` | Auditoria de superficies: copies, estilos, esquemas, endpoints, templates. | Análisis de trabajo, no narrativa de defensa |
 | `docs/SEGURIDAD.md` | Checklist operativo de secretos y `git config`. | Operativo, no defensa |
@@ -77,7 +76,7 @@ CLAUDE.md (raíz del repo) queda fuera de esta clasificación — son instruccio
 | Estado de mejoras propuestas/aplicadas | `docs/MEJORAS.md` |
 | Limitaciones, fuera de alcance y trabajo futuro | `docs/DEFENSA.md` §7 |
 | Evaluación de usabilidad (Likert por funcionalidad) | `docs/USABILIDAD.md` |
-| Historial de hardening (referencia) | `docs/CORRECCIONES.md` |
+| Historial de hardening (referencia) | `docs/MEJORAS.md` + `docs/DEFENSA.md` §7 |
 | Inventario auditado de superficies (referencia) | `docs/AUDITORIA.md` |
 | Secretos y reglas de git config (referencia) | `docs/SEGURIDAD.md` |
 

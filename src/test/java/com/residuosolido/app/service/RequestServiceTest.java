@@ -13,6 +13,7 @@ import com.residuosolido.app.event.RequestStatusChangedEvent;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
+import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.RequestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -48,7 +49,7 @@ class RequestServiceTest {
         imageService = mock(LocalImageService.class);
         cityOrgService = mock(CityOrgService.class);
         eventPublisher = mock(ApplicationEventPublisher.class);
-        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator());
+        requestService = new RequestService(requestRepository, imageService, cityOrgService, eventPublisher, new RequestValidator(mock(OrganizationRepository.class)));
     }
 
     private User citizen(String id) {

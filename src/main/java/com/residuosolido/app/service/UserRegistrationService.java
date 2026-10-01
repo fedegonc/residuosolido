@@ -1,6 +1,6 @@
 package com.residuosolido.app.service;
 
-import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.User;
@@ -51,26 +51,33 @@ public class UserRegistrationService {
         return null;
     }
 
-    public User registerUser(User user, String isOrganization) {
-        boolean org = Boolean.parseBoolean(isOrganization);
-        return registerUser(user, org);
-    }
-
-    public User registerUser(User user, boolean isOrganization) {
+    /** Registro ciudadano: solo la cuenta — sin doc Organization ⇒ rol derivado USER. */
+    public User registerCitizen(User user) {
         ServerMessage error = validateUserRegistration(user);
         if (error != null) throw new ValidationException(error);
+        return insertAccount(user);
+    }
+
+    /** Registro organización: cuenta + doc Organization con tipo (esa existencia ES el rol). */
+    public User registerOrganization(User user, OrgType tipo) {
+        if (tipo == null) {
+            throw new ValidationException(ServerMessage.ERROR_REGISTER_ORG_TYPE_REQUIRED);
+        }
+        ServerMessage error = validateUserRegistration(user);
+        if (error != null) throw new ValidationException(error);
+        User saved = insertAccount(user);
+        organizationService.createForUser(saved, tipo);
+        return saved;
+    }
+
+    private User insertAccount(User user) {
         User created = new User();
         created.setUsername(Username.canonical(user.getUsername()));
         created.setPhone(UserValidator.canonicalPhone(user.getPhone()));
         created.setPassword(passwordEncoder.encode(user.getPassword()));
-        created.setRole(isOrganization ? Role.ORGANIZATION : Role.USER);
         created.setActive(true);
         created.setCreatedAt(LocalDateTime.now());
-        User saved = userRepository.insert(created);
-        if (isOrganization) {
-            organizationService.createForUser(saved);
-        }
-        return saved;
+        return userRepository.insert(created);
     }
 
     /** PIN de 4 dígitos — no es una contraseña real, es fricción mínima para pruebas. */

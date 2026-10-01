@@ -27,18 +27,18 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 <!-- INVENTORY_START -->
 | Capa | Cantidad | Detalle |
 |---|---|---|
-| Controllers | 17 | .java en app/controller |
-| Services | 12 | .java en app/service |
-| Models | 8 | .java en app/model |
+| Controllers | 16 | .java en app/controller |
+| Services | 14 | .java en app/service |
+| Models | 7 | .java en app/model |
 | Repositories | 4 | .java en app/repository |
 | Templates (total) | 22 | .html en templates/ |
 | Fragments | 5 | .html en templates/fragments/ |
-| Test classes | 59 | *Test.java en src/test/java |
-| Test methods (@Test) | 426 | anotaciones @Test |
+| Test classes | 60 | *Test.java en src/test/java |
+| Test methods (@Test) | 432 | anotaciones @Test |
 
 > Generado por .config/inventory-check.sh
 
-Última actualización: 2026-09-29T20:13:18-03:00
+Última actualización: 2026-09-30T19:47:36-03:00
 <!-- INVENTORY_END -->
 
 ## Mapeo por Capa
@@ -69,26 +69,32 @@ Inventario canónico de componentes, flujos principales y decisiones de arquitec
 
 - `UserService` — Gestión de usuarios y perfiles
 - `UserRegistrationService` — Registro de nuevos usuarios/organizaciones
+- `OrganizationService` — Perfil de organización y borrado con sync de usuario
 - `RequestService` — Creación, consultas, edición, eliminación y transiciones de estado de solicitudes (incluye validación de propiedad)
 - `RequestMetricsService` — Métricas de solicitudes (user + org dashboards)
 - `CityOrgService` — Búsqueda de organizaciones por ciudad
 - `LocalImageService` — Subida de imágenes locales
-- `RequestValidator` — Validaciones centralizadas de solicitudes
+- `RequestValidator` — Precondiciones centralizadas de solicitudes (require*)
+- `UserValidator` — Canonicalización pura de email/nombre/teléfono (estático)
 - `NotificationService` — Envío de notificaciones
 - `NotificationEventListener` — Listener de eventos de cambio de estado
+- `MonthlyReportService` — Generación de reportes mensuales de organización
+- `OrgRequestPdfService` — Export PDF de solicitudes
 - `MongoAggregationUtils` — Utilidades estáticas de agregación MongoDB (facets)
 
 ### 3. Modelos
 
-- `User` — Usuarios y organizaciones (mismo modelo, diferente rol)
+- `User` — Cuenta de autenticación (ciudadano u organización, por rol)
+- `Organization` — Perfil de negocio de una organización de acopio (colección separada)
 - `Request` — Solicitudes de recolección con ciclo de estados
-- `PhoneNumber` — Utility class de normalización E.164 (Uruguay +598 y Brasil +55)
-- `Organization` — Perfil de negocio de una organización de acopio
 - `Notification` — Notificaciones generadas por transiciones de estado
+- `MonthlyReport` — Reporte mensual persistido por organización
+- `PhoneNumber`, `Username` — Value objects de canonicalización (E.164 UY/BR; trim+lowercase)
 
 ### 4. Repositories
 
 - `UserRepository` — Persistencia de usuarios
+- `OrganizationRepository` — Persistencia de perfiles de organización
 - `RequestRepository` — Persistencia de solicitudes
 - `NotificationRepository` — Persistencia de notificaciones
 
@@ -152,18 +158,17 @@ páginas de org decoran `base.html` directamente (ver `docs/MEJORAS.md` #130).
 
 ## i18n: fuente única de verdad de copies
 
-*(Rescatado de `docs/CORRECCIONES.md` §4 al archivarlo — ver
-`docs/MEJORAS.md` #166 sobre la duplicación de carga entre las 2 clases.)*
+*(Rescatado del historial de correcciones — ver `docs/MEJORAS.md` #166.)*
 
 Dos fuentes de texto, deben coincidir:
 
 1. **`static/i18n/{lang}.json`** (uno por idioma, no por página) — fuente
    única real. `JsonMessageSource` (server-side, claves `_server_*`, usado
-   por `Messages.msg()` y Thymeleaf `#{...}`) y `UiCopyCatalog`
-   (`@ControllerAdvice`, expone el catálogo completo como `window.uiCopies`
-   para JS y como modelo `uiCopies` para templates) parsean cada uno su
-   propia copia del JSON al arrancar. Duplicación conocida y dejada a
-   propósito sin resolver — ver `docs/MEJORAS.md` #166.
+   por `Messages.msg()` y Thymeleaf `#{...}`) parsea el JSON una sola vez
+   al arrancar; `UiCopyCatalog` (`@ControllerAdvice`, expone el catálogo
+   completo como `window.uiCopies` para JS y como modelo `uiCopies` para
+   templates) reusa esa misma carga vía `catalogFor(locale)` — la
+   duplicación anterior (#166) quedó resuelta.
 2. **Fallback en templates** — texto visible si el JS falla (`th:text`
    junto al `data-i18n`). Debe coincidir con el JSON; lo audita
    `TemplateI18nContractTest`/`OrphanI18nKeysTest` (recorren los 15 `.html`
@@ -213,7 +218,7 @@ cambiar un parámetro es un contrato que rompe los templates que lo llaman.
 ## Decisiones de Arquitectura
 
 - **Sin panel Admin**: Gestión distribuida por roles (USER, ORGANIZATION).
-- **Separación User / Organization (en progreso)**: el sandbox (`scratch/sim/`) ya modela `User` (auth) y `Organization` (perfil de negocio) como entidades separadas. El Spring real aún usa el mono-modelo `User` + `OrganizationProfile` embebido; el port planificado seguirá este blueprint. Ver `docs/MEJORAS.md` #221.
+- **Separación User / Organization (hecha)**: `User` (auth, colección `users`) y `Organization` (perfil de negocio, colección `organizations`, mismo `_id`) son entidades separadas. `User` no guarda `role`: "ser organización" se deriva de `∃organizations[userId]` (una sola fuente de verdad — el check bidireccional quedó reducido a org→user en `OrganizationIntegrityValidator` al arranque). La migración de datos legacy ya corrió — la clase fue retirada del código una vez ejecutada en producción.
 - **Cobertura binacional**: Enum `City` limitado a RIVERA y LIVRAMENTO.
 - **Breadcrumbs inline**: Construidos con `List.of(Map.of(...))` en cada controller.
 - **JavaScript scoped por página**: lo global/reusado por 2+ páginas vive en `app.js`; lo exclusivo de una página (ej. `filterMaterialsByOrg`, el toggle view/edit de perfil) va en su propio archivo (`request-form.js`, `org-profile.js`) cargado vía `layout:fragment="pageScripts"`. Reemplaza al enfoque anterior de scripts embebidos en fragments HTML (`fragments/toggle-view-edit.html`/`request-form-js.html`, eliminados).

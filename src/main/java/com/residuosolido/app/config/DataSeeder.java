@@ -2,8 +2,8 @@ package com.residuosolido.app.config;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.enums.RequestStatus;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.PhoneNumber;
@@ -52,10 +52,10 @@ public class DataSeeder {
             return;
         }
         // Usuarios normales con PINs variados
-        User u1 = createUser("juan", "juan@mail.com", "Juan Pérez", Role.USER, "+598 99 123 456", City.RIVERA, "5678");
-        User u2 = createUser("maria", "maria@mail.com", "María García", Role.USER, "+55 55 987 654", City.LIVRAMENTO, "9012");
-        User u3 = createUser("pedro", "pedro@mail.com", "Pedro Martínez", Role.USER, "+598 99 222 333", City.RIVERA, "3456");
-        User u4 = createUser("lucia", "lucia@mail.com", "Lucía Fernández", Role.USER, "+55 55 111 222", City.LIVRAMENTO, "7890");
+        User u1 = createUser("juan", "juan@mail.com", "Juan Pérez", "+598 99 123 456", City.RIVERA, "5678");
+        User u2 = createUser("maria", "maria@mail.com", "María García", "+55 55 987 654", City.LIVRAMENTO, "9012");
+        User u3 = createUser("pedro", "pedro@mail.com", "Pedro Martínez", "+598 99 222 333", City.RIVERA, "3456");
+        User u4 = createUser("lucia", "lucia@mail.com", "Lucía Fernández", "+55 55 111 222", City.LIVRAMENTO, "7890");
         // Organizaciones con PINs variados para testing realista
         Organization o1 = createOrg("coopverde", "coopverde@mail.com", "Cooperativa Verde", "+598 99 111 222", City.RIVERA,
                 List.of(MaterialCategory.PLASTICO, MaterialCategory.PAPEL, MaterialCategory.VIDRIO), "2468");
@@ -120,11 +120,11 @@ public class DataSeeder {
                 "+598 99 100 003", City.RIVERA,
                 List.of(MaterialCategory.PAPEL, MaterialCategory.CARTON));
 
-        User rosa = createUser("rosaperez", "rosaperez@mail.com", "Rosa Pérez", Role.USER, "+598 99 200 001", City.RIVERA);
-        User mateo = createUser("mateosilva", "mateosilva@mail.com", "Mateo Silva", Role.USER, "+598 99 200 002", City.RIVERA);
-        User carla = createUser("carlanunez", "carlanunez@mail.com", "Carla Núñez", Role.USER, "+598 99 200 003", City.RIVERA);
-        User diego = createUser("diegoacosta", "diegoacosta@mail.com", "Diego Acosta", Role.USER, "+598 99 200 004", City.RIVERA);
-        User joaoBr = createUser("joaosouza", "joaosouza@mail.com", "João Souza", Role.USER, "+55 55 200 005", City.LIVRAMENTO);
+        User rosa = createUser("rosaperez", "rosaperez@mail.com", "Rosa Pérez", "+598 99 200 001", City.RIVERA);
+        User mateo = createUser("mateosilva", "mateosilva@mail.com", "Mateo Silva", "+598 99 200 002", City.RIVERA);
+        User carla = createUser("carlanunez", "carlanunez@mail.com", "Carla Núñez", "+598 99 200 003", City.RIVERA);
+        User diego = createUser("diegoacosta", "diegoacosta@mail.com", "Diego Acosta", "+598 99 200 004", City.RIVERA);
+        User joaoBr = createUser("joaosouza", "joaosouza@mail.com", "João Souza", "+55 55 200 005", City.LIVRAMENTO);
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -192,12 +192,11 @@ public class DataSeeder {
     }
 
     private User createUser(String username, String email, String firstName,
-                            Role role, String phone, City city, String pin) {
+                            String phone, City city, String pin) {
         User u = new User();
         u.setUsername(username);
         u.setEmail(email);
         u.setPassword(passwordEncoder.encode(pin));
-        u.setRole(role);
         u.setFirstName(firstName);
         u.setPhone(UserValidator.canonicalPhone(phone));
         u.setCity(city);
@@ -207,15 +206,16 @@ public class DataSeeder {
     }
 
     private User createUser(String username, String email, String firstName,
-                            Role role, String phone, City city) {
-        return createUser(username, email, firstName, role, phone, city, "1234");
+                            String phone, City city) {
+        return createUser(username, email, firstName, phone, city, "1234");
     }
 
     private Organization createOrg(String username, String email, String firstName,
                                    String phone, City city, List<MaterialCategory> acceptedMaterials, String pin) {
-        User u = createUser(username, email, firstName, Role.ORGANIZATION, phone, city, pin);
+        User u = createUser(username, email, firstName, phone, city, pin);
         Organization org = new Organization();
         org.setId(u.getId());
+        org.setTipo(OrgType.CENTRO_ACOPIO);
         org.setName(firstName);
         org.setPhone(PhoneNumber.normalize(phone));
         org.setCity(city);

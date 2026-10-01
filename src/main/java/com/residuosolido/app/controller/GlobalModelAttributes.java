@@ -1,8 +1,8 @@
 package com.residuosolido.app.controller;
 
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.NotificationService;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,10 +24,13 @@ public class GlobalModelAttributes {
 
     private final UserService userService;
     private final NotificationService notificationService;
+    private final OrganizationService organizationService;
 
-    public GlobalModelAttributes(UserService userService, NotificationService notificationService) {
+    public GlobalModelAttributes(UserService userService, NotificationService notificationService,
+                                 OrganizationService organizationService) {
         this.userService = userService;
         this.notificationService = notificationService;
+        this.organizationService = organizationService;
     }
 
     @ModelAttribute("unreadNotifications")
@@ -40,7 +43,8 @@ public class GlobalModelAttributes {
         } catch (RuntimeException e) {
             return null; // sesión válida pero usuario inexistente: sin badge, nunca 500 global
         }
-        if (user == null || user.getRole() != Role.USER) return null;
+        // Badge solo para ciudadanos: cuenta sin doc Organization asociado.
+        if (user == null || organizationService.isOrganization(user)) return null;
         return notificationService.unreadCount(user);
     }
 }

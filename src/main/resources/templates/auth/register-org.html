@@ -1,19 +1,30 @@
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<head><title>Registro</title></head>
+<head><title>Registro de organización</title></head>
 <body>
   <main layout:fragment="content">
     <div class="page page--center page--form">
       <div class="split">
         <section class="hero">
-          <h1 class="card__title" data-i18n="auth_register_title">Crear cuenta</h1>
-          <p class="card__subtitle" data-i18n="auth_register_subtitle">Creá una cuenta para pedir recolección y seguir el estado.</p>
+          <h1 class="card__title" data-i18n="auth_register_org_title">Registrar organización</h1>
+          <p class="card__subtitle" data-i18n="auth_register_org_subtitle">Creá la cuenta de tu organización para recibir solicitudes de recolección.</p>
 
-          <form th:action="@{/registrarse}" method="post" class="stack" th:object="${user}" novalidate>
+          <form th:action="@{/registrarse-organizacion}" method="post" class="stack" th:object="${user}" novalidate>
             <div class="field-group" th:classappend="${#fields.hasErrors('username')} ? 'field-group--error'">
-              <div th:replace="~{fragments/forms :: text('username', 'username', 'text', 'auth_name', 'Nombre', 'auth_name_placeholder', 'Ej: Ana García', true, ${user.username})}"></div>
+              <div th:replace="~{fragments/forms :: text('username', 'username', 'text', 'auth_org_name', 'Nombre de la organización', 'auth_org_name_placeholder', 'Ej: Cooperativa Verde', true, ${user.username})}"></div>
               <span class="field__error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}" role="alert"></span>
+            </div>
+            <div class="field-group" th:classappend="${#fields.hasErrors('tipo')} ? 'field-group--error'">
+              <label class="field__label" for="tipo" data-i18n="auth_org_type">Tipo de organización</label>
+              <select id="tipo" th:field="*{tipo}" class="select" required>
+                <option value="" disabled data-i18n="auth_org_type_placeholder">Elegí una opción</option>
+                <option th:each="t : ${orgTypes}"
+                        th:value="${t.name()}"
+                        th:text="${t.name()}"
+                        th:attr="data-i18n='org_type_' + ${t.name()}"></option>
+              </select>
+              <span class="field__error" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}" role="alert"></span>
             </div>
             <div class="field-group" th:classappend="${#fields.hasErrors('phoneNational')} ? 'field-group--error'">
               <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'auth_phone', 'Número de celular', true, ${user.phoneNational}, ${user.countryCode}, ${user.ddd}, null, null)}"></div>
@@ -25,8 +36,8 @@
             </div>
             <div th:replace="~{fragments/forms :: submit(null, 'auth_register_button', 'Registrarse', 'btn--primary btn--block')}"></div>
             <p class="card__footer">
-              <span data-i18n="auth_register_as_org">¿Sos una organización?</span>
-              <a th:href="@{/registrarse-organizacion}" data-i18n="auth_register_org_link">Registrate acá</a>
+              <span data-i18n="auth_register_as_citizen">¿Sos ciudadano?</span>
+              <a th:href="@{/registrarse}" data-i18n="auth_register_citizen_link">Registrate acá</a>
             </p>
           </form>
 

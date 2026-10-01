@@ -36,6 +36,7 @@ public enum ServerMessage {
     ERROR_REGISTER_EMAIL_EXISTS("error.register.email_exists"),
     ERROR_REGISTER_EMAIL_INVALID("error.register.email_invalid"),
     ERROR_REGISTER_IDENTITY_EXISTS("error.register.identity_exists"),
+    ERROR_REGISTER_ORG_TYPE_REQUIRED("error.register.org_type_required"),
     ERROR_REGISTER_PHONE_REQUIRED("error.register.phone_required"),
     ERROR_REGISTER_PIN_INVALID("error.register.pin_invalid"),
     ERROR_REGISTER_USERNAME_EXISTS("error.register.username_exists"),

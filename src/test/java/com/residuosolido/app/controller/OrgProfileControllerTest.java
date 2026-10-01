@@ -66,7 +66,6 @@ class OrgProfileControllerTest extends EmbeddedMongoTest {
     void setUp() {
         authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
 
         org = TestFixtures.organization("org-1", City.RIVERA, MaterialCategory.PLASTICO);
 

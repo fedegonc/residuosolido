@@ -1,7 +1,6 @@
 package com.residuosolido.app.model;
 
 import com.residuosolido.app.enums.City;
-import com.residuosolido.app.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 /**
- * Entidad de autenticación. Modela tanto ciudadanos (USER) como organizaciones
- * (ORGANIZATION) en una misma tabla/colección, diferenciados por el campo
- * {@link #role}. El perfil de negocio de las organizaciones vive en la
- * colección separada {@code organizations} (ver {@link Organization}).
+ * Entidad de autenticación. Modela tanto ciudadanos como organizaciones en una
+ * misma colección; la distinción NO es un campo — es derivada: una cuenta es
+ * organización si existe un doc en {@code organizations} con su mismo _id
+ * (ver {@link OrganizationService#isOrganization}). Fuente única, sin drift.
  *
  * Los campos de contacto (email, teléfono, nombre) se canonicalizan y validan
  * en el boundary de escritura via {@code UserValidator} (registro, perfil,
@@ -43,8 +42,6 @@ public class User {
     private String email;
     private String password;
 
-    private Role role;
-
     private String firstName;
     private String phone;
 
@@ -55,10 +52,6 @@ public class User {
 
     public String getDisplayName() {
         return firstName != null && !firstName.isBlank() ? firstName : username;
-    }
-
-    public boolean isOrganization() {
-        return role == Role.ORGANIZATION;
     }
 
     public boolean hasPhone() {

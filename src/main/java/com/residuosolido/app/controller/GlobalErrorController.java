@@ -39,6 +39,11 @@ public class GlobalErrorController implements ErrorController {
                 && !(auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken);
         redirectAttributes.addFlashAttribute("warningMessage",
                 messages.msg(authenticated ? ServerMessage.FLASH_ERROR_NOT_FOUND_AUTH : ServerMessage.FLASH_ERROR_NOT_FOUND_GUEST));
-        return Routes.resolveErrorNavigation(auth, request.getRequestURI());
+        // En error-dispatch getRequestURI() devuelve "/error", no la URL que falló —
+        // la guarda anti-loop de resolveErrorNavigation debe comparar contra la URI
+        // original, si no un error en el home del rol produce redirect infinito.
+        Object originalUri = request.getAttribute("jakarta.servlet.error.request_uri");
+        String currentUri = originalUri instanceof String s ? s : request.getRequestURI();
+        return Routes.resolveErrorNavigation(auth, currentUri);
     }
 }

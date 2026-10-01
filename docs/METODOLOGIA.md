@@ -35,7 +35,7 @@ las reglas de seguridad más críticas.
 **Artefactos producidos:**
 
 - Stack: Java 21 + Spring Boot 3.2 + Thymeleaf + MongoDB.
-- `User` con roles `USER` / `ORGANIZATION` (sin rol Admin).
+- `User` con roles `USER` / `ORGANIZATION` derivados de `organizations` (sin rol Admin).
 - `SecurityConfig` con CSRF, login por formulario, bloqueo por intentos
   fallidos (`RateLimiter` + `AuthenticationEventHandler`).
 - `RegistrationForm` (DTO) para evitar mass-assignment.

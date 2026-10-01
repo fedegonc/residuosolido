@@ -1,15 +1,19 @@
 package com.residuosolido.app.service;
 
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.exception.ValidationException;
+import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.OrganizationRepository;
-import com.residuosolido.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests de borde de precondiciones — OrganizationService era un archivo
@@ -22,19 +26,30 @@ import static org.mockito.Mockito.mock;
 class OrganizationServiceTest {
 
     private OrganizationRepository organizationRepository;
-    private UserRepository userRepository;
     private OrganizationService service;
 
     @BeforeEach
     void setUp() {
         organizationRepository = mock(OrganizationRepository.class);
-        userRepository = mock(UserRepository.class);
-        service = new OrganizationService(organizationRepository, userRepository);
+        service = new OrganizationService(organizationRepository);
     }
 
     @Test
     void createForUser_nullUser_throwsValidation() {
-        assertThrows(ValidationException.class, () -> service.createForUser(null));
+        assertThrows(ValidationException.class, () -> service.createForUser(null, OrgType.CENTRO_ACOPIO));
+    }
+
+    @Test
+    void createForUser_persistsTipo() {
+        User user = new User();
+        user.setId("u1");
+        user.setPhone("+59899123456");
+        when(organizationRepository.save(any(Organization.class))).thenAnswer(i -> i.getArgument(0));
+
+        Organization org = service.createForUser(user, OrgType.SELECCION_Y_PRENSADO);
+
+        assertEquals(OrgType.SELECCION_Y_PRENSADO, org.getTipo());
+        assertEquals("u1", org.getId());
     }
 
     @Test

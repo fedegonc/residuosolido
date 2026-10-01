@@ -56,7 +56,7 @@ las reglas de negocio antes de tocar (core).
 | `AuthenticationEventHandler` (fusiona los viejos `LoginSuccessHandler`/`LoginFailureHandler`) | Boilerplate | Redirige por rol vía `Routes.resolveHomeForRole` — mecanismo genérico aunque el destino (`/acopio/solicitudes` vs `/mis-solicitudes`) es negocio |
 | `JsonMessageSource`, `UiCopyCatalog` | Boilerplate | Mecanismo de i18n, agnóstico del contenido |
 | `DataLoader` | Boilerplate | Seed de datos demo |
-| `MongoIndexMigration` | Boilerplate | Infraestructura de datos, agnóstica del dominio |
+| `MongoIndexInitializer` | Boilerplate | Infraestructura de datos, agnóstica del dominio |
 | `CityAwareLocaleResolver` | Zona gris | El *mecanismo* (LocaleResolver de Spring) es genérico, pero la *regla* "RIVERA→es, LIVRAMENTO→pt" es una decisión territorial específica de este proyecto — es la frontera binacional codificada en una clase |
 
 ### Modelo y enums

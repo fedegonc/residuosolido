@@ -1,10 +1,10 @@
 package com.residuosolido.app.controller;
 
 import com.residuosolido.app.TestFixtures;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.service.NotificationService;
+import com.residuosolido.app.service.OrganizationService;
 import com.residuosolido.app.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +21,15 @@ class GlobalModelAttributesTest {
 
     private UserService userService;
     private NotificationService notificationService;
+    private OrganizationService organizationService;
     private GlobalModelAttributes attributes;
 
     @BeforeEach
     void setUp() {
         userService = mock(UserService.class);
         notificationService = mock(NotificationService.class);
-        attributes = new GlobalModelAttributes(userService, notificationService);
+        organizationService = mock(OrganizationService.class);
+        attributes = new GlobalModelAttributes(userService, notificationService, organizationService);
     }
 
     @AfterEach
@@ -64,7 +66,8 @@ class GlobalModelAttributesTest {
         authenticate("coop");
         User authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
+        authOrg.setId("org1");
+        when(organizationService.isOrganization(authOrg)).thenReturn(true);
         when(userService.isAnonymous(any())).thenReturn(false);
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
 
@@ -76,7 +79,6 @@ class GlobalModelAttributesTest {
     void unreadNotifications_citizen_returnsBadgeCount() {
         authenticate("vecino");
         User citizen = TestFixtures.citizen("u1", "+59899123456");
-        assertEquals(Role.USER, citizen.getRole());
         when(userService.isAnonymous(any())).thenReturn(false);
         when(userService.findAuthenticatedUserByUsername("vecino")).thenReturn(citizen);
         when(notificationService.unreadCount(citizen)).thenReturn(2L);

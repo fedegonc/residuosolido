@@ -7,27 +7,22 @@ Basado directamente en el modelo de datos real (`src/main/java/com/residuosolido
 ## 1. Diagrama de clases
 
 ```
-┌─────────────────────────────┐
-│            User             │
-├─────────────────────────────┤
-│ id: String                  │
-│ username: String            │
-│ email: String                │
-│ password: String            │
-│ role: Role                  │
-│ firstName: String           │
-│ phone: String                │
-│ city: City                  │
-│ active: boolean = true      │
-│ profileCompleted: Boolean   │
-│ acceptedMaterials: List<MaterialCategory> │
-│ createdAt: LocalDateTime    │
-├─────────────────────────────┤
-│ isOrganization()             │
-│ isProfileComplete()          │
-│ needsProfileCompletion()     │
-│ completeProfile()            │
-│ getDisplayName()             │
+┌─────────────────────────────┐        ┌──────────────────────────────┐
+│            User             │ 1 ──0..1│        Organization          │
+├─────────────────────────────┤ mismo   ├──────────────────────────────┤
+│ id: String                  │──_id────│ id: String (= User.id)       │
+│                             │         │ tipo: OrgType                │
+│ username: String            │         │ name: String                 │
+│ email: String                │         │ phone: String                │
+│ password: String            │         │ city: City                   │
+│ firstName: String           │         │ acceptedMaterials: List<…>   │
+│ phone: String                │         │ profileCompleted: Boolean    │
+│ city: City                  │         ├──────────────────────────────┤
+│ active: boolean = true      │         │ completeProfile()            │
+│ createdAt: LocalDateTime    │         │ isProfileComplete()          │
+├─────────────────────────────┤         └──────────────────────────────┘
+│ getDisplayName()             │   ∃ Organization(userId) ⇒ la cuenta
+│ (sin campo role — derivado)  │   ES organización; sin doc ⇒ ciudadano
 └──────────────┬──────────────┘
                │ 1
                │ creador (user)         organización asignada
@@ -79,9 +74,9 @@ valor, no `@DocumentReference`).
 
 **Notas del modelo real (MongoDB, no relacional):**
 - `Request.user` y `Request.organization` son `@DocumentReference(lazy = true)` — referencias a documentos `User`, no joins SQL.
-- No existe una entidad `Material` separada: `MaterialCategory` es un **enum fijo** (`PLASTICO`, `PAPEL`, `CARTON`, `VIDRIO`, `METAL`, `MADERA`, `ESCOMBROS`), embebido como lista en `Request` y `User.acceptedMaterials`.
+- No existe una entidad `Material` separada: `MaterialCategory` es un **enum fijo** (`PLASTICO`, `PAPEL`, `CARTON`, `VIDRIO`, `METAL`, `MADERA`, `ESCOMBROS`), embebido como lista en `Request` y `Organization.acceptedMaterials`.
 - No existen las entidades `Post`, `Category` ni `Feedback` — no hay CMS ni sistema de contenido educativo.
-- `Role` tiene solo 2 valores: `USER`, `ORGANIZATION` — no existe rol `ADMIN`.
+- `Role` tiene solo 2 valores: `USER`, `ORGANIZATION` — no existe rol `ADMIN`. Además `Role` **no se persiste en `User`**: es vocabulario de seguridad derivado — `ORGANIZATION` ⟺ existe el doc `Organization` con el mismo `_id`; `USER` es el default.
 
 ---
 
@@ -95,6 +90,7 @@ valor, no `@DocumentReference`).
 | `TimeSlot` | `MANANA`, `TARDE`, `NOCHE` |
 | `MaterialCategory` | `PLASTICO`, `PAPEL`, `CARTON`, `VIDRIO`, `METAL`, `MADERA`, `ESCOMBROS` |
 | `NotificationType` | `ACCEPTED`, `REJECTED` |
+| `OrgType` | `CENTRO_ACOPIO`, `SELECCION_Y_PRENSADO`, `COOPERATIVA`, `RECOLECTOR_INFORMAL` |
 
 ---
 

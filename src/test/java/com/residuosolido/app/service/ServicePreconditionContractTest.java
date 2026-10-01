@@ -60,8 +60,9 @@ class ServicePreconditionContractTest {
             "RequestService#getOrgRequestsByStatusFilter",
             // Delega a findByUser(user), que sí valida, como primera línea.
             "OrganizationService#updateProfile",
-            // Delegan a validateUserRegistration(user), que sí valida, como primera línea.
-            "UserRegistrationService#registerUser",
+            // Delegan a validateUserRegistration(user), que sí valida, como primera línea
+            // (registerOrganization primero exige tipo != null — también guard tipado).
+            "UserRegistrationService#registerCitizen", "UserRegistrationService#registerOrganization",
             // El NPE si request es null queda atrapado por el catch (Exception) genérico
             // y se rewrappea en StateException tipado — no es un NPE crudo sin rastro,
             // solo un mensaje menos preciso ("upload failed" en vez de "request required").

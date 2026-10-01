@@ -103,9 +103,11 @@ public abstract class PlaywrightBaseTest extends EmbeddedMongoTest {
         page.locator("#ciudad").selectOption(city);
         // Esperar a que el JS cargue las organizaciones via fetch
         page.waitForTimeout(2000);
-        page.locator("#organizationId option:not([value=''])").first().waitFor(
+        Locator firstOrg = page.locator("#organizationId option:not([value=''])").first();
+        firstOrg.waitFor(
             new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(10000));
-        page.locator("#organizationId").selectOption(new SelectOption().setIndex(0));
+        // Index 0 es el placeholder value="" — hay que elegir por value, no por índice
+        page.locator("#organizationId").selectOption(firstOrg.getAttribute("value"));
         page.locator("#address").fill(address);
         page.check("input[name='materials'][value='" + material + "']");
     }

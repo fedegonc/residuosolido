@@ -52,9 +52,8 @@ class MvpRegressionTest {
         when(orgRepo.save(any(Organization.class))).thenAnswer(i -> i.getArgument(0));
 
         User input = citizen();
-        input.setRole(com.residuosolido.app.enums.Role.ORGANIZATION);
-        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo, repo))
-                .registerUser(input, true);
+        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo))
+                .registerOrganization(input, com.residuosolido.app.enums.OrgType.CENTRO_ACOPIO);
 
         assertNotSame(input, result);
         assertNull(result.getId());
@@ -70,8 +69,8 @@ class MvpRegressionTest {
         when(encoder.encode(any())).thenReturn("encoded");
         when(repo.insert(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
-        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo, repo))
-                .registerUser(citizen(), false);
+        User result = new UserRegistrationService(repo, encoder, new OrganizationService(orgRepo))
+                .registerCitizen(citizen());
 
         assertNotSame(citizen(), result);
         verify(repo).insert(any(User.class));
@@ -108,7 +107,7 @@ class MvpRegressionTest {
     void authenticatedRequestRequiresContactPhone() {
         User user = citizen();
         user.setPhone(null);
-        RequestValidator validator = new RequestValidator();
+        RequestValidator validator = new RequestValidator(mock(OrganizationRepository.class));
         assertThrows(IllegalArgumentException.class, () -> validator.validateCreate(
                 user, City.RIVERA, "Dirección de prueba", List.of(MaterialCategory.PAPEL), "org"));
     }
@@ -119,7 +118,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, mock(LocalImageService.class), cities,
-                mock(ApplicationEventPublisher.class), new RequestValidator());
+                mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)));
         assertThrows(IllegalArgumentException.class, () -> service.createRequest(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.METAL), "org"));
         verifyNoInteractions(repo);
@@ -132,7 +131,7 @@ class MvpRegressionTest {
         CityOrgService cities = mock(CityOrgService.class);
         when(cities.findOrganizationByIdAndCity("org", City.RIVERA)).thenReturn(organization());
         RequestService service = new RequestService(repo, new LocalImageService(images.toString(), repo),
-                cities, mock(ApplicationEventPublisher.class), new RequestValidator());
+                cities, mock(ApplicationEventPublisher.class), new RequestValidator(mock(OrganizationRepository.class)));
         MockMultipartFile file = new MockMultipartFile("imageFile", "invalid.txt", "text/plain", new byte[]{1});
         assertThrows(IllegalArgumentException.class, () -> service.createRequestWithImage(citizen(), City.RIVERA,
                 "Dirección de prueba", null, List.of(MaterialCategory.PAPEL), "org", file));

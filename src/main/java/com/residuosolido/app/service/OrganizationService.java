@@ -2,13 +2,12 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.enums.Role;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.OrganizationRepository;
-import com.residuosolido.app.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,11 +24,9 @@ public class OrganizationService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
     private final OrganizationRepository organizationRepository;
-    private final UserRepository userRepository;
 
-    public OrganizationService(OrganizationRepository organizationRepository, UserRepository userRepository) {
+    public OrganizationService(OrganizationRepository organizationRepository) {
         this.organizationRepository = organizationRepository;
-        this.userRepository = userRepository;
     }
 
     /**
@@ -37,12 +34,16 @@ public class OrganizationService {
      * organización. El id coincide con el del usuario para simplificar
      * referencias. Email y username se leen del User.
      */
-    public Organization createForUser(User user) {
+    public Organization createForUser(User user, OrgType tipo) {
         if (user == null) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
         }
+        if (tipo == null) {
+            throw new ValidationException(ServerMessage.ERROR_REGISTER_ORG_TYPE_REQUIRED);
+        }
         Organization org = new Organization();
         org.setId(user.getId());
+        org.setTipo(tipo);
         org.setPhone(user.getPhone());
         return organizationRepository.save(org);
     }
@@ -72,6 +73,15 @@ public class OrganizationService {
     }
 
     /**
+     * Si la cuenta es organización: existe doc en {@code organizations} con su
+     * _id. Única fuente de verdad del rol — User no guarda campo role.
+     */
+    public boolean isOrganization(User user) {
+        return user != null && user.getId() != null
+                && organizationRepository.existsById(user.getId());
+    }
+
+    /**
      * Actualiza el perfil de la organización. Email se actualiza en User (no aquí).
      * Evicta el cache de orgs por ciudad porque los materiales/ciudad cambian el resultado.
      */
@@ -98,18 +108,12 @@ public class OrganizationService {
     }
 
     @CacheEvict(value = "orgsByCity", allEntries = true)
-    public void deleteWithUserSync(String organizationId) {
+    public void delete(String organizationId) {
         if (organizationId == null || organizationId.isBlank()) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
         }
-        userRepository.findById(organizationId)
-                .filter(u -> u.getRole() == Role.ORGANIZATION)
-                .ifPresent(u -> {
-                    u.setRole(Role.USER);
-                    userRepository.save(u);
-                    logger.info("🔄 Organization deleted, User.role updated to USER: {}", organizationId);
-                });
         organizationRepository.deleteById(organizationId);
+        // No hay User.role que sincronizar: borrar el doc ES degradar a ciudadano.
         logger.info("✅ Organization deleted: {}", organizationId);
     }
 }

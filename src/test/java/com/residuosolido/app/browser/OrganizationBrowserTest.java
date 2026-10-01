@@ -17,7 +17,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#9 Login org + panel con stats")
     void orgLoginAndPanel() {
-        login("coopverde", "1234");
+        login("coopverde", "2468");
 
         page.locator("[data-i18n='org_req_title']").waitFor();
         assertTrue(page.locator(".org-panel__stat").count() >= 3,
@@ -29,7 +29,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#10 Aceptar solicitud pendiente")
     void orgAcceptsRequest() {
-        login("coopverde", "1234");
+        login("coopverde", "2468");
 
         // Ir a la lista de solicitudes
         page.navigate(baseUrl + "/acopio/solicitudes");
@@ -60,7 +60,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#11 Rechazar solicitud pendiente")
     void orgRejectsRequest() {
-        login("coopverde", "1234");
+        login("coopverde", "2468");
         page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
@@ -85,7 +85,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#12 Completar solicitud en curso")
     void orgCompletesRequest() {
-        login("coopverde", "1234");
+        login("coopverde", "2468");
         page.navigate(baseUrl + "/acopio/solicitudes");
         page.locator("[data-i18n='org_req_title']").waitFor();
 
@@ -115,7 +115,7 @@ class OrganizationBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#13 Editar perfil de organización")
     void orgEditsProfile() {
-        login("coopverde", "1234");
+        login("coopverde", "2468");
         page.navigate(baseUrl + "/mi-organizacion");
 
         page.locator("h1[data-i18n='org_profile_title']").waitFor();

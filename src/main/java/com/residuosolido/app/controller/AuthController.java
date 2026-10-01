@@ -6,6 +6,7 @@ import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.config.Routes;
 
 import com.residuosolido.app.dto.RegistrationForm;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.config.RateLimiter;
 import org.springframework.dao.DuplicateKeyException;
@@ -45,35 +46,64 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
-    /** Muestra el formulario de registro (ciudadano u organización). */
+    /** Formulario de registro de ciudadano. */
     @GetMapping(Routes.REGISTER)
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new RegistrationForm());
         return "auth/register";
     }
 
-    /** Procesa el registro de un nuevo usuario. */
+    /** Formulario de registro de organización — pide el tipo desde el inicio. */
+    @GetMapping(Routes.REGISTER_ORG)
+    public String showOrgRegistrationForm(Model model) {
+        model.addAttribute("user", new RegistrationForm());
+        model.addAttribute("orgTypes", OrgType.values());
+        return "auth/register-org";
+    }
+
+    /** Procesa el registro de un ciudadano. */
     @PostMapping(Routes.REGISTER)
-    public String registerUser(@Valid @ModelAttribute("user") RegistrationForm form, BindingResult bindingResult,
-                               @RequestParam(defaultValue = "false") boolean isOrganization,
-                               Model model, HttpServletRequest request,
-                               RedirectAttributes redirectAttributes) {
+    public String registerCitizen(@Valid @ModelAttribute("user") RegistrationForm form, BindingResult bindingResult,
+                                  Model model, HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes) {
+        return doRegister(form, bindingResult, model, request, redirectAttributes,
+                u -> userRegistrationService.registerCitizen(u), "auth/register");
+    }
+
+    /** Procesa el registro de una organización (tipo obligatorio). */
+    @PostMapping(Routes.REGISTER_ORG)
+    public String registerOrganization(@Valid @ModelAttribute("user") RegistrationForm form, BindingResult bindingResult,
+                                       Model model, HttpServletRequest request,
+                                       RedirectAttributes redirectAttributes) {
+        model.addAttribute("orgTypes", OrgType.values());
+        if (form.getTipo() == null) {
+            model.addAttribute("errorMessage", messages.msg(ServerMessage.ERROR_REGISTER_ORG_TYPE_REQUIRED));
+            form.setPassword(null);
+            return "auth/register-org";
+        }
+        return doRegister(form, bindingResult, model, request, redirectAttributes,
+                u -> userRegistrationService.registerOrganization(u, form.getTipo()), "auth/register-org");
+    }
+
+    private String doRegister(RegistrationForm form, BindingResult bindingResult,
+                              Model model, HttpServletRequest request,
+                              RedirectAttributes redirectAttributes,
+                              java.util.function.Function<User, User> register, String view) {
         // Bean Validation cubre forma (username/PIN) y falla más rápido que antes de
         // tocar el repositorio — no reemplaza a UserRegistrationService.validateUserRegistration,
         // que sigue siendo la fuente de verdad para teléfono (compuesto) y unicidad
         // de username (necesita el repo). Ver comentario en RegistrationForm.
-        model.addAttribute("isOrganization", isOrganization);
         if (bindingResult.hasFieldErrors()) {
             model.addAttribute("errorMessage", messages.msg(bindingResult.getFieldError().getDefaultMessage()));
             form.setPassword(null);
-            return "auth/register";
+            return view;
         }
         String rawPin = form.getPassword();
         try {
             if (!rateLimiter.isAllowed(request, "registration")) {
                 throw new ValidationException(ServerMessage.FLASH_REQUEST_RATE_LIMITED);
             }
-            User created = userRegistrationService.registerUser(form.toUser(), isOrganization);
+            User created = register.apply(form.toUser());
             Authentication authentication = authenticationManager.authenticate(
                     UsernamePasswordAuthenticationToken.unauthenticated(created.getUsername(), rawPin));
             SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -97,7 +127,7 @@ public class AuthController {
             model.addAttribute("errorMessage", messages.msg(e));
         }
         form.setPassword(null);
-        return "auth/register";
+        return view;
     }
 
     private String registrationField(ServerMessage key) {
@@ -108,6 +138,7 @@ public class AuthController {
             case ERROR_REGISTER_PHONE_REQUIRED, ERROR_PHONE_REQUIRED, ERROR_PHONE_INVALID,
                  ERROR_PHONE_INVALID_LENGTH, ERROR_PHONE_INVALID_FIRST_DIGIT,
                  ERROR_PHONE_INVALID_DDD, ERROR_PHONE_UNSUPPORTED_COUNTRY -> "phoneNational";
+            case ERROR_REGISTER_ORG_TYPE_REQUIRED -> "tipo";
             default -> null;
         };
     }

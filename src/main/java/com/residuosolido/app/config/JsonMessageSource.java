@@ -51,9 +51,13 @@ public class JsonMessageSource implements MessageSource {
         return resolvable.getDefaultMessage() != null ? resolvable.getDefaultMessage() : "";
     }
 
+    /** Catálogo completo del idioma del locale — única carga compartida con UiCopyCatalog. */
+    public Map<String, String> catalogFor(Locale locale) {
+        return catalogs.get(lang(locale));
+    }
+
     private String resolve(String code, Object[] args, String fallback, Locale locale) {
-        String lang = "pt".equals(locale.getLanguage()) ? "pt" : "es";
-        Map<String, String> catalog = catalogs.get(lang);
+        Map<String, String> catalog = catalogs.get(lang(locale));
         if (catalog == null) catalog = catalogs.get("es");
 
         // Convertir clave con puntos (login.success) a formato JSON (_server_auth_login_success)
@@ -71,6 +75,10 @@ public class JsonMessageSource implements MessageSource {
             }
         }
         return value;
+    }
+
+    private static String lang(Locale locale) {
+        return "pt".equals(locale.getLanguage()) ? "pt" : "es";
     }
 
     /**

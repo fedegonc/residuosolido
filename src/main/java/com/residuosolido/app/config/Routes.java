@@ -34,9 +34,10 @@ public final class Routes {
     public static final String LOGIN = "/entrar";
     public static final String LOGOUT = "/salir";
     public static final String REGISTER = "/registrarse";
+    public static final String REGISTER_ORG = "/registrarse-organizacion";
 
     /** Rutas donde un usuario ya autenticado no debería estar (login/registro/home) — ver AuthNavigationInterceptor. */
-    public static final java.util.Set<String> GUEST_ONLY_PATHS = java.util.Set.of(HOME, INDEX, LOGIN, REGISTER);
+    public static final java.util.Set<String> GUEST_ONLY_PATHS = java.util.Set.of(HOME, INDEX, LOGIN, REGISTER, REGISTER_ORG);
 
     // Solicitudes
     public static final String REQUESTS_NEW = "/solicitar";
@@ -102,15 +103,34 @@ public final class Routes {
      * GlobalErrorController, GlobalExceptionHandler).
      */
     public static String resolveHomeForRole(Authentication auth) {
+        Role role = roleOf(auth);
+        if (role == null) return HOME;
+        // Switch exhaustivo: agregar un Role sin home es error de compilación.
+        return switch (role) {
+            case ORGANIZATION -> ORG_REQUESTS;
+            case USER -> REQUESTS;
+        };
+    }
+
+    /**
+     * Extrae el rol de las authorities del principal (único lugar que conoce
+     * el formato "ROLE_X"). Devuelve null para anónimos/no autenticados.
+     */
+    public static Role roleOf(Authentication auth) {
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
-            return HOME;
+            return null;
         }
         for (GrantedAuthority authority : auth.getAuthorities()) {
             String name = authority.getAuthority();
-            if (name.equals("ROLE_" + Role.ORGANIZATION.name())) return ORG_REQUESTS;
-            if (name.equals("ROLE_" + Role.USER.name())) return REQUESTS;
+            if (name.startsWith("ROLE_")) {
+                try {
+                    return Role.valueOf(name.substring(5));
+                } catch (IllegalArgumentException e) {
+                    // authority con formato ROLE_* pero que no es un Role del dominio — se ignora
+                }
+            }
         }
-        return HOME;
+        return null;
     }
 
     /**

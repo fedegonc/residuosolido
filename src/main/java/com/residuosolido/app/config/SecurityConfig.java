@@ -34,7 +34,7 @@ public class SecurityConfig {
                 // Rutas públicas (PRIMERO) - Acceso sin autenticación
                 .requestMatchers(Routes.HOME, Routes.INDEX).permitAll()
                 .requestMatchers(Routes.SEED).permitAll()
-                .requestMatchers(Routes.LOGIN, Routes.REGISTER).permitAll()
+                .requestMatchers(Routes.LOGIN, Routes.REGISTER, Routes.REGISTER_ORG).permitAll()
                 .requestMatchers(Routes.LANGUAGE).permitAll()
                 .requestMatchers(Routes.PAGE_BY_SLUG).permitAll()
                 // Recursos especiales de navegador

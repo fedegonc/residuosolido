@@ -178,26 +178,31 @@ de `data-i18n` + `i18n/common/*.json`.
 
 | Modelo | Campos | ¿Usado? |
 |---|---|---|
-| `User` | id, username, password, email, role, firstName, phone, city, acceptedMaterials, version | Sí |
+| `User` | id, username, password, email, firstName, phone, city, active, createdAt | Sí |
+| `Organization` | id (= User.id), tipo, name, phone, city, acceptedMaterials, profileCompleted | Sí |
 | `Request` | id, city, address, materials, status, organization, citizen, guestName, guestPhone, trackingCode, imageId, timeSlot, weight, volume, version, createdAt, updatedAt | Sí |
 | `PhoneNumber` | utility class (static methods) — normalización E.164 | Sí |
 
-### 3.2 Enums (5)
+### 3.2 Enums (7)
 
 | Enum | Valores | ¿Usado? |
 |---|---|---|
-| `Role` | USER, ORGANIZATION | Sí |
+| `Role` | USER, ORGANIZATION — derivado de ∃Organization, no campo persistido | Sí |
 | `City` | RIVERA, LIVRAMENTO | Sí |
 | `RequestStatus` | PENDING, IN_PROGRESS, COMPLETED, REJECTED | Sí |
 | `MaterialCategory` | PLASTICO, PAPEL, CARTON, VIDRIO, METAL, MADERA, ESCOMBROS | Sí |
 | `TimeSlot` | MANANA, TARDE, NOCHE | Sí |
+| `NotificationType` | ACCEPTED, REJECTED | Sí |
+| `OrgType` | CENTRO_ACOPIO, SELECCION_Y_PRENSADO, COOPERATIVA, RECOLECTOR_INFORMAL | Sí |
 
-### 3.3 Repositorios (3)
+### 3.3 Repositorios (4)
 
 | Repo | ¿Usado? |
 |---|---|
 | `UserRepository` | Sí |
+| `OrganizationRepository` | Sí |
 | `RequestRepository` | Sí |
+| `NotificationRepository` | Sí |
 | `InformalCollectorRepository` | **Eliminado** (subsistema removido por completo, ver MEJORAS) |
 
 ---

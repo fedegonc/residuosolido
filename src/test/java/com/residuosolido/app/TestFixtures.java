@@ -2,7 +2,6 @@ package com.residuosolido.app;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 
@@ -20,7 +19,6 @@ public final class TestFixtures {
     public static User citizen(String id, String phone) {
         User u = new User();
         u.setId(id);
-        u.setRole(Role.USER);
         u.setActive(true);
         u.setPhone(phone);
         return u;

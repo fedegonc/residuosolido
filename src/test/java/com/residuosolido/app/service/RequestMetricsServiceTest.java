@@ -1,6 +1,5 @@
 package com.residuosolido.app.service;
 
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +40,6 @@ class RequestMetricsServiceTest {
     private User user(String id) {
         User u = new User();
         u.setId(id);
-        u.setRole(Role.USER);
         return u;
     }
 

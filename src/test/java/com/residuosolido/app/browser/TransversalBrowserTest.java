@@ -21,33 +21,30 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
         page.locator("#username").fill("testuser" + System.currentTimeMillis());
         page.locator("#phoneNational").fill("99123456");
         fillPin("password", "1234");
-        // No marcar "soy organización"
         page.locator("button[type='submit']").click();
 
-        // Debe redirigir a login con mensaje de éxito o a dashboard
+        // El registro auto-loguea y redirige al home del rol (ciudadano → mis solicitudes)
         page.waitForURL(url -> !url.contains("/registrarse"));
-        assertTrue(page.url().contains("/entrar") || page.url().contains("/usuarios"),
-                "Después de registrar debe ir a login o dashboard");
+        assertTrue(page.url().contains("/mis-solicitudes"),
+                "Después de registrar ciudadano debe auto-loguear e ir a /mis-solicitudes");
     }
 
     @Test
     @DisplayName("#15 Registro de organización → onboarding")
     void registerOrganization() {
-        page.navigate(baseUrl + "/registrarse");
-        page.locator("[data-i18n='auth_register_title']").waitFor();
+        page.navigate(baseUrl + "/registrarse-organizacion");
+        page.locator("[data-i18n='auth_register_org_title']").waitFor();
 
         page.locator("#username").fill("testorg" + System.currentTimeMillis());
+        page.locator("#tipo").selectOption("CENTRO_ACOPIO");
         page.locator("#phoneNational").fill("99123457");
         fillPin("password", "1234");
-        // Marcar "soy organización"
-        page.locator("#isOrganization").check();
         page.locator("button[type='submit']").click();
 
-        // Debe redirigir al perfil (onboarding integrado) o login
+        // El registro auto-loguea y redirige al home del rol (org → /acopio)
         page.waitForURL(url -> !url.contains("/registrarse"));
-        assertTrue(page.url().contains("/mi-organizacion")
-                        || page.url().contains("/entrar"),
-                "Después de registrar org debe ir al perfil u onboarding");
+        assertTrue(page.url().contains("/acopio") || page.url().contains("/mi-organizacion"),
+                "Después de registrar org debe auto-loguear e ir a /acopio");
     }
 
     @Test
@@ -106,7 +103,7 @@ class TransversalBrowserTest extends PlaywrightBaseTest {
     @Test
     @DisplayName("#20 Cross-role: ciudadano no accede a /acopio")
     void crossRoleDenied() {
-        login("juan", "1234");
+        login("juan", "5678");
 
         // Intentar acceder a área de organización
         page.navigate(baseUrl + "/acopio/solicitudes");

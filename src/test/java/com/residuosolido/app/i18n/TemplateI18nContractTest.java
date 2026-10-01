@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.TimeSlot;
 
@@ -52,7 +53,8 @@ class TemplateI18nContractTest {
             "city_", City.class,
             "req_city_", City.class,
             "req_form_slot_", TimeSlot.class,
-            "req_status_", RequestStatus.class);
+            "req_status_", RequestStatus.class,
+            "org_type_", OrgType.class);
 
     @Test
     void everyTemplateKey_existsInSpanish() throws Exception {

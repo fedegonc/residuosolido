@@ -8,7 +8,6 @@ import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.RequestViewType;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.enums.TimeSlot;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
@@ -119,7 +118,6 @@ class EndToEndFlowsTest extends EmbeddedMongoTest {
     void flujo8_orgPanel_loadsWithStats() throws Exception {
         User authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
         org.setName("Cooperativa");
 
@@ -141,7 +139,6 @@ class EndToEndFlowsTest extends EmbeddedMongoTest {
     void flujo8_orgProfile_loadsAndCanUpdate() throws Exception {
         User authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
         org.setName("Cooperativa");
 
@@ -174,7 +171,6 @@ class EndToEndFlowsTest extends EmbeddedMongoTest {
     void flujo5_orgRequestsList_loadsSuccessfully() throws Exception {
         User authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);
@@ -196,7 +192,6 @@ class EndToEndFlowsTest extends EmbeddedMongoTest {
     void flujo5_orgRequestDetail_loadsSuccessfully() throws Exception {
         User authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
 
         User citizen = TestFixtures.citizen("u1", "+59899123456");
@@ -223,7 +218,6 @@ class EndToEndFlowsTest extends EmbeddedMongoTest {
     void flujo5_orgAcceptRequest_redirectsOnSuccess() throws Exception {
         User authOrg = new User();
         authOrg.setUsername("coop");
-        authOrg.setRole(Role.ORGANIZATION);
         Organization org = TestFixtures.organization("o1", City.RIVERA);
 
         when(userService.findAuthenticatedUserByUsername("coop")).thenReturn(authOrg);

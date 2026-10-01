@@ -1,6 +1,8 @@
 package com.residuosolido.app.config;
 
+import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.model.Username;
+import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +33,8 @@ public class SecurityBeansConfig {
     private static final Logger log = LoggerFactory.getLogger(SecurityBeansConfig.class);
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository, RateLimiter rateLimiter) {
+    public UserDetailsService userDetailsService(UserRepository userRepository, RateLimiter rateLimiter,
+                                                 OrganizationRepository organizationRepository) {
         return rawUsername -> {
             String username = Username.canonical(rawUsername);
             if (rateLimiter.isBlocked(username)) {
@@ -39,8 +42,12 @@ public class SecurityBeansConfig {
             }
             return userRepository.findByUsername(username)
                 .map(user -> {
+                    // El rol no es un campo de User — se deriva: existe doc en
+                    // organizations con su _id → ORGANIZATION, si no → USER.
+                    Role role = organizationRepository.existsById(user.getId())
+                            ? Role.ORGANIZATION : Role.USER;
                     log.debug("[AUTH][LOAD] username='{}' | role={} | active={}",
-                            user.getUsername(), user.getRole(), user.isActive());
+                            user.getUsername(), role, user.isActive());
                     return new org.springframework.security.core.userdetails.User(
                         user.getUsername(),
                         user.getPassword(),
@@ -48,7 +55,7 @@ public class SecurityBeansConfig {
                         true,
                         true,
                         true,
-                        java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                        java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.name()))
                     );
                 })
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));

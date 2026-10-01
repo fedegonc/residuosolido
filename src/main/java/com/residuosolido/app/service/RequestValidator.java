@@ -2,12 +2,12 @@ package com.residuosolido.app.service;
 
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
-import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.OwnershipException;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.PhoneNumber;
+import com.residuosolido.app.repository.OrganizationRepository;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import org.springframework.stereotype.Component;
@@ -21,9 +21,15 @@ import java.util.List;
 @Component
 public class RequestValidator {
 
+    private final OrganizationRepository organizationRepository;
+
+    public RequestValidator(OrganizationRepository organizationRepository) {
+        this.organizationRepository = organizationRepository;
+    }
+
     /**
      * Valida los campos obligatorios para crear una solicitud.
-     * Ciudadano: user no nulo, activo, con rol USER y teléfono válido.
+     * Ciudadano: user no nulo, activo, sin doc Organization y teléfono válido.
      */
     public void validateCreate(User user, City city, String address,
                                List<MaterialCategory> materials, String organizationId) {
@@ -31,7 +37,8 @@ public class RequestValidator {
         if (user == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
         }
-        if (!user.isActive() || user.getRole() != Role.USER) {
+        // Ciudadano = cuenta sin Organization asociada (rol derivado, no campo).
+        if (!user.isActive() || (user.getId() != null && organizationRepository.existsById(user.getId()))) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_CITIZEN_REQUIRED);
         }
         if (!PhoneNumber.isValid(user.getPhone())) {

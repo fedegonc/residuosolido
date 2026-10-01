@@ -1,6 +1,5 @@
 package com.residuosolido.app.config;
 
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -39,8 +38,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     // ========== INTERNACIONALIZACIÓN ==========
 
+    // Tipo concreto JsonMessageSource (no MessageSource) para que UiCopyCatalog
+    // pueda inyectar el catálogo ya parseado — una sola carga de los JSON.
     @Bean
-    public MessageSource messageSource() throws IOException {
+    public JsonMessageSource messageSource() throws IOException {
         return new JsonMessageSource(new ObjectMapper());
     }
 

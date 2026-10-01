@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
+import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.enums.Role;
 import com.residuosolido.app.exception.ServerMessage;
@@ -116,6 +117,7 @@ class OrphanI18nKeysTest {
         for (TimeSlot s : TimeSlot.values()) allEnumValues.add(s.name().toLowerCase(Locale.ROOT));
         for (RequestStatus s : RequestStatus.values()) allEnumValues.add(s.name().toLowerCase(Locale.ROOT));
         for (Role r : Role.values()) allEnumValues.add(r.name().toLowerCase(Locale.ROOT));
+        for (OrgType t : OrgType.values()) allEnumValues.add(t.name().toLowerCase(Locale.ROOT));
 
         for (String prefix : dynamicPrefixes) {
             for (String value : allEnumValues) used.add(prefix + value);

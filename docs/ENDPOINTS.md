@@ -9,8 +9,8 @@ Rutas HTTP disponibles en la aplicación. Para esquemas completos y ejemplos, ve
 | Ruta | Método | Descripción |
 |---|---|---|
 | `/`, `/index` | GET | Landing page pública |
-| `/registrarse` | GET | Formulario de registro |
-| `/registrarse` | POST | Procesa registro (usuario u organización) |
+| `/registrarse` | GET/POST | Registro de ciudadano |
+| `/registrarse-organizacion` | GET/POST | Registro de organización (exige `tipo`) |
 | `/entrar` | GET | Formulario de login |
 | `/salir` | POST | Cierra sesión |
 | `/solicitar` | GET | Formulario de nueva solicitud |
