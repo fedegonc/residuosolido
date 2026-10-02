@@ -53,19 +53,22 @@ public class RequestService {
     private final ApplicationEventPublisher eventPublisher;
     private final RequestValidator validator;
     private final MongoTemplate mongoTemplate;
+    private final RequestStatusTransitionService transitionService;
 
     public RequestService(RequestRepository requestRepository,
                           LocalImageService imageService,
                           CityOrgService cityOrgService,
                           ApplicationEventPublisher eventPublisher,
                           RequestValidator validator,
-                          MongoTemplate mongoTemplate) {
+                          MongoTemplate mongoTemplate,
+                          RequestStatusTransitionService transitionService) {
         this.requestRepository = requestRepository;
         this.imageService = imageService;
         this.cityOrgService = cityOrgService;
         this.eventPublisher = eventPublisher;
         this.validator = validator;
         this.mongoTemplate = mongoTemplate;
+        this.transitionService = transitionService;
     }
 
     // ========== Crear ==========
@@ -163,8 +166,11 @@ public class RequestService {
         logger.info("REQUEST_{}_STARTED: id={}, orgId={}", action, id, org.getId());
         try {
             Request request = getOwnedOrgRequest(id, org);
+            RequestStatus beforeStatus = request.getStatus();
             transition.accept(request);
+            RequestStatus afterStatus = request.getStatus();
             saveWithOptimisticLock(request);
+            transitionService.recordTransition(request, beforeStatus, afterStatus, org);
             logger.info("REQUEST_{}_SAVED: id={}, newStatus={}", action, id, request.getStatus());
             if (eventTypeOrNull != null) {
                 eventPublisher.publishEvent(new RequestStatusChangedEvent(request, eventTypeOrNull));

@@ -22,9 +22,12 @@ import java.util.stream.Collectors;
 public class MonthlyReportService {
 
     private final RequestRepository requestRepository;
+    private final RequestStatusTransitionService transitionService;
 
-    public MonthlyReportService(RequestRepository requestRepository) {
+    public MonthlyReportService(RequestRepository requestRepository,
+                               RequestStatusTransitionService transitionService) {
         this.requestRepository = requestRepository;
+        this.transitionService = transitionService;
     }
 
     public MonthlyReport generateForMonth(Organization org, YearMonth month) {
@@ -32,16 +35,27 @@ public class MonthlyReportService {
             throw new IllegalArgumentException("Organization cannot be null");
         }
         List<Request> requests = getRequestsForMonth(org, month);
-        Map<RequestStatus, Integer> countByStatus = countByStatus(requests);
+
+        int acceptedCount = transitionService.countAcceptedInMonth(org, month);
+        int rejectedCount = transitionService.countRejectedInMonth(org, month);
+        int completedCount = transitionService.countCompletedInMonth(org, month);
+
+        Map<RequestStatus, Integer> countByStatus = new EnumMap<>(RequestStatus.class);
+        for (RequestStatus status : RequestStatus.values()) {
+            countByStatus.put(status, 0);
+        }
+        countByStatus.put(RequestStatus.IN_PROGRESS, acceptedCount);
+        countByStatus.put(RequestStatus.REJECTED, rejectedCount);
+        countByStatus.put(RequestStatus.COMPLETED, completedCount);
+
         Map<City, Integer> countByCity = countByCity(requests);
         Map<MaterialCategory, Integer> countByMaterial = countByMaterial(requests);
 
-        int totalCompleted = countByStatus.getOrDefault(RequestStatus.COMPLETED, 0);
-        double completionRate = requests.isEmpty() ? 0 : (totalCompleted * 100.0) / requests.size();
+        double completionRate = requests.isEmpty() ? 0 : (completedCount * 100.0) / requests.size();
 
         MonthlyReport.MonthlyStats currentStats = new MonthlyReport.MonthlyStats(
                 requests.size(),
-                totalCompleted,
+                completedCount,
                 completionRate
         );
 
