@@ -8,6 +8,7 @@ import com.residuosolido.app.model.Username;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -58,7 +59,11 @@ public class UserRegistrationService {
         return insertAccount(user);
     }
 
-    /** Registro organización: cuenta + doc Organization con tipo (esa existencia ES el rol). */
+    /**
+     * Registro organización: cuenta + doc Organization con tipo (esa existencia ES el rol).
+     * Transaccional: si falla Organization, rollback de User también (atomicidad).
+     */
+    @Transactional
     public User registerOrganization(User user, OrgType tipo) {
         if (tipo == null) {
             throw new ValidationException(ServerMessage.ERROR_REGISTER_ORG_TYPE_REQUIRED);
