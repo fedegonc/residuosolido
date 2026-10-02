@@ -21,6 +21,11 @@ public interface RequestStatusTransitionRepository extends MongoRepository<Reque
             LocalDateTime startTime,
             LocalDateTime endTime);
 
+    List<RequestStatusTransition> findByOrganizationAndTimestampBetween(
+            Organization organization,
+            LocalDateTime startTime,
+            LocalDateTime endTime);
+
     @Query("{ 'organization._id': ?0, 'toStatus': ?1, 'timestamp': { $gte: ?2, $lt: ?3 } }")
     List<RequestStatusTransition> countTransitionsForMonth(
             String organizationId,

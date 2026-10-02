@@ -6,7 +6,9 @@ import com.residuosolido.app.enums.RequestStatus;
 import com.residuosolido.app.model.MonthlyReport;
 import com.residuosolido.app.model.Organization;
 import com.residuosolido.app.model.Request;
+import com.residuosolido.app.model.RequestStatusTransition;
 import com.residuosolido.app.repository.RequestRepository;
+import com.residuosolido.app.repository.RequestStatusTransitionRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +25,14 @@ public class MonthlyReportService {
 
     private final RequestRepository requestRepository;
     private final RequestStatusTransitionService transitionService;
+    private final RequestStatusTransitionRepository transitionRepository;
 
     public MonthlyReportService(RequestRepository requestRepository,
-                               RequestStatusTransitionService transitionService) {
+                               RequestStatusTransitionService transitionService,
+                               RequestStatusTransitionRepository transitionRepository) {
         this.requestRepository = requestRepository;
         this.transitionService = transitionService;
+        this.transitionRepository = transitionRepository;
     }
 
     public MonthlyReport generateForMonth(Organization org, YearMonth month) {
@@ -76,16 +81,25 @@ public class MonthlyReportService {
     }
 
     private List<Request> getRequestsForMonth(Organization org, YearMonth month) {
+        // Para 50 usuarios: no hacemos scan de 10k, solo obtenemos IDs de transiciones
         // Rango exacto del mes: 1 de mes a último segundo del mes
         LocalDateTime startOfMonth = month.atDay(1).atStartOfDay();
-        LocalDateTime endOfMonth = month.plusMonths(1).atDay(1).atStartOfDay().minusNanos(1);
+        LocalDateTime endOfMonth = month.plusMonths(1).atDay(1).atStartOfDay();
 
-        return requestRepository.findByOrganizationOrderByCreatedAtDesc(org, PageRequest.of(0, 10000))
-                .stream()
-                .filter(r -> r.getCreatedAt() != null &&
-                           r.getCreatedAt().isAfter(startOfMonth) &&              // Exacto: no minusDays
-                           r.getCreatedAt().isBefore(endOfMonth.plusSeconds(1))) // Inclusivo: hasta fin del mes
+        // Carga SOLO requests que tienen transiciones ese mes
+        List<RequestStatusTransition> transitions =
+                transitionRepository.findByOrganizationAndTimestampBetween(org, startOfMonth, endOfMonth);
+
+        if (transitions.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> requestIds = transitions.stream()
+                .map(RequestStatusTransition::getRequestId)
+                .distinct()
                 .collect(Collectors.toList());
+
+        return requestRepository.findAllById(requestIds);
     }
 
     private Map<RequestStatus, Integer> countByStatus(List<Request> requests) {
