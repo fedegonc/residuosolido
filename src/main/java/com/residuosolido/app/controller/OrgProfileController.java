@@ -10,8 +10,8 @@ import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.enums.City;
 import com.residuosolido.app.enums.MaterialCategory;
 import com.residuosolido.app.model.Organization;
+import com.residuosolido.app.service.OrganizationProfileService;
 import com.residuosolido.app.service.OrganizationService;
-import com.residuosolido.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,12 +38,13 @@ public class OrgProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrgProfileController.class);
 
-    private final UserService userService;
+    private final OrganizationProfileService organizationProfileService;
     private final OrganizationService organizationService;
     private final Messages messages;
 
-    public OrgProfileController(UserService userService, OrganizationService organizationService, Messages messages) {
-        this.userService = userService;
+    public OrgProfileController(OrganizationProfileService organizationProfileService,
+                               OrganizationService organizationService, Messages messages) {
+        this.organizationProfileService = organizationProfileService;
         this.organizationService = organizationService;
         this.messages = messages;
     }
@@ -67,7 +68,7 @@ public class OrgProfileController {
         return "org/profile";
     }
 
-    /** Actualiza los datos del perfil de la organización. */
+    /** Actualiza los datos del perfil de la organización (User + Organization atomicamente). */
     @PutMapping(Routes.ORG_PROFILE)
     public String updateOrgProfile(
             @RequestParam(required = false) String email,
@@ -85,19 +86,16 @@ public class OrgProfileController {
             Organization organization = organizationService.findByUser(currentOrg);
             City oldCity = organization.getCity();
             String resolvedPhone = PhoneNumber.resolve(countryCode, phoneNational, ddd, phone);
-            // Ciudad y telefono son obligatorios SIEMPRE en este form (no solo mientras el
-            // perfil esta incompleto) — antes el <select>/input no tenian required y el
-            // guardado pasaba igual sin avisar, dejando el perfil incompleto en silencio.
+            // Ciudad y telefono son obligatorios SIEMPRE
             if (resolvedPhone == null || resolvedPhone.isBlank()) {
                 throw new ValidationException(ServerMessage.ERROR_PROFILE_PHONE_REQUIRED);
             }
             if (ciudad == null) {
                 throw new ValidationException(ServerMessage.ERROR_PROFILE_CITY_REQUIRED);
             }
-            // Actualiza User (email, nombre, teléfono, ciudad) y Organization (nombre, teléfono, ciudad, materiales)
-            userService.updateProfile(currentOrg, email, firstName, resolvedPhone, ciudad);
-            organizationService.updateProfile(currentOrg, firstName, resolvedPhone, ciudad,
-                    materiales != null ? materiales : List.of());
+            // Actualiza User y Organization de forma coordinada (sin escritura parcial)
+            organizationProfileService.updateOrganizationProfile(currentOrg, email, firstName,
+                    resolvedPhone, ciudad, materiales);
             if (ciudad != null && !ciudad.equals(oldCity)) {
                 session.removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
             }
