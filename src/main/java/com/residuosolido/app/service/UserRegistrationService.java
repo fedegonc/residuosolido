@@ -52,7 +52,11 @@ public class UserRegistrationService {
         return null;
     }
 
-    /** Registro ciudadano: solo la cuenta — sin doc Organization ⇒ rol derivado USER. */
+    /**
+     * Registro ciudadano: solo la cuenta en USUARIOS colección.
+     * Las organizaciones se registran independientemente en OrganizationRegistrationService.
+     * Separación limpia: dos entidades autónomas.
+     */
     public User registerCitizen(User user) {
         ServerMessage error = validateUserRegistration(user);
         if (error != null) throw new ValidationException(error);
@@ -60,9 +64,11 @@ public class UserRegistrationService {
     }
 
     /**
-     * Registro organización: cuenta + doc Organization con tipo (esa existencia ES el rol).
-     * Transaccional: si falla Organization, rollback de User también (atomicidad).
+     * DEPRECADO: Las organizaciones ahora se registran en OrganizationRegistrationService.
+     * Este método queda solo para compatibilidad retroactiva con tests.
+     * @deprecated Usar OrganizationRegistrationService.register() en su lugar
      */
+    @Deprecated
     @Transactional
     public User registerOrganization(User user, OrgType tipo) {
         if (tipo == null) {
