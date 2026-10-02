@@ -78,13 +78,15 @@ public final class Routes {
     public static final String I18N_JS = "/js/i18n.js";
 
     // Estáticos subidos por usuarios (request imageUrl)
-    public static final String UPLOADS_ANY = "/uploads/**";
-    public static final String UPLOADS_PREFIX = "/uploads/";
+    // Imágenes: endpoint autenticado que valida propiedad antes de servir
+    public static final String UPLOADS_ANY = "/image/**";
+    public static final String UPLOADS_PREFIX = "/image/";
+    public static final String IMAGE_BY_ID = "/image/{filename}";
 
     /** Recursos estáticos públicos — la lista vive acá para que SecurityConfig no la duplique. */
     public static final String[] PUBLIC_STATIC = {
             "/css/**", "/js/**", "/i18n/**", "/images/**", "/fonts/**", "/static/**",
-            "/favicon.ico", "/favicon.*", "/webjars/**", UPLOADS_ANY,
+            "/favicon.ico", "/favicon.*", "/webjars/**",
             "/robots.txt", "/sitemap.xml", "/sw.js", "/manifest.webmanifest"
     };
 

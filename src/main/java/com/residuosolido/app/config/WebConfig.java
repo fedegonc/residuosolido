@@ -81,8 +81,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(Routes.UPLOADS_ANY)
-                .addResourceLocations("file:" + uploadDir + "/");
+        // Imágenes ahora servidas por ImageController autenticado (removido de aquí)
         registry.addResourceHandler(Routes.DOCS_ANY)
                 .addResourceLocations("classpath:/docs/", "file:docs/");
     }
