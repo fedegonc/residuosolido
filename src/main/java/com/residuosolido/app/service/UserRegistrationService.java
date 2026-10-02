@@ -101,4 +101,15 @@ public class UserRegistrationService extends BaseRegistrationService<User> {
         organizationService.createForUser(saved, tipo);
         return saved;
     }
+
+    /**
+     * Valida un usuario para registro, devolviendo ServerMessage si hay error.
+     * Método público para tests legacy que prueban validación isolada.
+     * @deprecated Usar register(user) en producción; esta es solo para tests.
+     * @return ServerMessage si hay error, null si es válido
+     */
+    @Deprecated
+    public ServerMessage validateUserRegistration(User user) {
+        return validateEntity(user);
+    }
 }

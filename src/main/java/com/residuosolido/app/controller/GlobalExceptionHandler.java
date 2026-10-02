@@ -28,9 +28,11 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private final Messages messages;
+    private final ErrorResponseService errorResponseService;
 
-    public GlobalExceptionHandler(Messages messages) {
+    public GlobalExceptionHandler(Messages messages, ErrorResponseService errorResponseService) {
         this.messages = messages;
+        this.errorResponseService = errorResponseService;
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
@@ -64,11 +66,7 @@ public class GlobalExceptionHandler {
                                            RedirectAttributes redirectAttributes) {
         logger.warn("Validación fallida en {}: {}", request.getRequestURI(), e.key());
         redirectAttributes.addFlashAttribute("errorMessage", messages.msg(e.key()));
-        String referer = request.getHeader("Referer");
-        if (referer != null && !referer.isBlank()) {
-            return "redirect:" + referer;
-        }
-        return redirectOrError(request);
+        return errorResponseService.resolveErrorDestination(request.getHeader("Referer"), request);
     }
 
     @ExceptionHandler(StateException.class)
@@ -92,11 +90,7 @@ public class GlobalExceptionHandler {
                                          RedirectAttributes redirectAttributes) {
         logger.warn("Conflicto de concurrencia en {}", request.getRequestURI());
         redirectAttributes.addFlashAttribute("warningMessage", messages.msg(ServerMessage.FLASH_REQUEST_CONCURRENT_MODIFICATION));
-        String referer = request.getHeader("Referer");
-        if (referer != null && !referer.isBlank()) {
-            return "redirect:" + referer;
-        }
-        return redirectOrError(request);
+        return errorResponseService.resolveErrorDestination(request.getHeader("Referer"), request);
     }
 
     /**
@@ -119,14 +113,7 @@ public class GlobalExceptionHandler {
                                         RedirectAttributes redirectAttributes) {
         logger.warn("Argumento inválido en {}: {}", request.getRequestURI(), e.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", messages.msg(e));
-        // Un error de validación (ej. teléfono mal formado) debe devolver al formulario
-        // donde ocurrió, no a un destino "genérico" por rol — si no, el usuario ve el
-        // error en una pantalla sin el campo que lo causó (ej. termina en /entrar).
-        String referer = request.getHeader("Referer");
-        if (referer != null && !referer.isBlank()) {
-            return "redirect:" + referer;
-        }
-        return redirectOrError(request);
+        return errorResponseService.resolveErrorDestination(request.getHeader("Referer"), request);
     }
 
     @ExceptionHandler(Exception.class)
