@@ -165,10 +165,19 @@ Dos fuentes de texto, deben coincidir:
 1. **`static/i18n/{lang}.json`** (uno por idioma, no por página) — fuente
    única real. `JsonMessageSource` (server-side, claves `_server_*`, usado
    por `Messages.msg()` y Thymeleaf `#{...}`) parsea el JSON una sola vez
-   al arrancar; `UiCopyCatalog` (`@ControllerAdvice`, expone el catálogo
-   completo como `window.uiCopies` para JS y como modelo `uiCopies` para
-   templates) reusa esa misma carga vía `catalogFor(locale)` — la
-   duplicación anterior (#166) quedó resuelta.
+   al arrancar. `I18nScriptController` consulta directamente
+   `catalogFor(locale)` y usa Jackson para emitir `window.uiCopies` como
+   JavaScript externo. `UiCopyCatalog` conserva el atributo de modelo SSR
+   `uiCopies`, pero ya no participa en ese endpoint. Ambos reutilizan la
+   carga única del catálogo; no hay escape manual ni dependencia lazy en
+   el endpoint (ver `docs/TRADEOFFS.md` §50).
+   `I18nDialect`, registrado en `WebConfig`, resuelve los atributos existentes
+   `data-i18n` y `data-i18n-attr` después de los procesadores estándar de
+   Thymeleaf. Así también traduce claves dinámicas de fragments y enums:
+   el HTML llega completo en el idioma elegido, sin esperar al JS ni cambiar
+   alturas después del primer paint. Los valores se escapan como texto y
+   atributos HTML. `app.js` solo modifica valores que realmente difieran,
+   conservando compatibilidad con contenido cliente (TRADEOFFS §51).
 2. **Fallback en templates** — texto visible si el JS falla (`th:text`
    junto al `data-i18n`). Debe coincidir con el JSON; lo audita
    `TemplateI18nContractTest`/`OrphanI18nKeysTest` (recorren los 15 `.html`

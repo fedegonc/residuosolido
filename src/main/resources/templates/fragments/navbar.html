@@ -12,7 +12,7 @@
         <a sec:authorize="!hasRole('ORGANIZATION')" href="/solicitar" class="navbar__link" data-i18n="nav_request">Solicitar recolección</a>
         <a sec:authorize="hasRole('ORGANIZATION')" href="/acopio/solicitudes" class="navbar__link" data-i18n="nav_org_panel">Panel acopio</a>
         <a sec:authorize="hasRole('USER')" href="/mis-solicitudes" class="navbar__link" data-i18n="nav_my_requests">Mis solicitudes</a>
-        <a sec:authorize="hasRole('USER')" href="/notificaciones" class="navbar__link" data-i18n="nav_notifications">Notificaciones
+        <a sec:authorize="hasRole('USER')" href="/notificaciones" class="navbar__link"><span data-i18n="nav_notifications">Notificaciones</span>
           <span th:if="${unreadNotifications != null and unreadNotifications > 0}" class="badge badge--pending" th:text="${unreadNotifications}"></span>
         </a>
       </div>
@@ -33,7 +33,7 @@
         </span>
 
         <details sec:authorize="isAuthenticated()" class="navbar__user">
-          <summary class="navbar__user-info">
+          <summary class="navbar__user-info" th:attr="aria-label=${#authentication.name},title=${#authentication.name}">
             <span class="navbar__user-avatar"><svg class="icon"><use href="/images/icons.svg#user"/></svg></span>
             <span class="navbar__user-name" sec:authentication="name">usuario</span>
           </summary>

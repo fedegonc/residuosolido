@@ -42,7 +42,7 @@
           <div th:replace="~{fragments/forms :: text('email', 'email', 'email', 'profile_email_label', 'Email', null, null, true, ${user.email})}"></div>
           <div th:replace="~{fragments/forms :: phone('phone', 'countryCode', 'phoneNational', 'ddd', 'profile_phone_label', 'Teléfono', true, ${organization.phone}, ${organization.phone != null and organization.phone.startsWith('+55') ? '+55' : null}, null, null, null)}"></div>
           <div class="field">
-            <label for="city" data-i18n="profile_city_label">Ciudad <span class="req">*</span></label>
+            <label for="city"><span data-i18n="profile_city_label">Ciudad</span> <span class="req">*</span></label>
             <select id="city" name="ciudad" class="select" required>
               <option value="" data-i18n="profile_city_select">Seleccioná una ciudad</option>
               <option th:each="c : ${cities}" th:value="${c}" th:attr="data-i18n=${'city_' + #strings.toLowerCase(c.name())}" th:text="${c.name()}" th:selected="${organization.city != null and organization.city == c}"></option>

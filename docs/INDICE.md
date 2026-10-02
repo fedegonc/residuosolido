@@ -1,8 +1,8 @@
 # Indice de Documentacion — Eco Solicitud
 
-> Fecha de sincronizacion: 2026-09-27 — separación User/Organization en sandbox (#221) + regresión CU-U6 (#222)  
-> Tests: 474 no-browser (incluye RequestServiceHydrationTest, MongoIndexInitializerTest, SessionPersistenceTest — §49); browser tests con fallos por entorno Playwright sin dependencias de host (ver MEJORAS.md #180)
-> Build: SUCCESS (con `-DexcludedGroups=browser`; ver MEJORAS.md #180 para el estado de `*BrowserTest`)
+> Fecha de sincronizacion: 2026-10-01 — simplificación con TDD y estabilidad visual ES/PT (TRADEOFFS §50-51, MEJORAS #64-70)
+> Tests: 485 no-browser y 31 browser, 0 failures y 0 errors. Sim: 103 PASS, 0 FAIL (42/42 error-keys, 41/41 branches).
+> Verificación: `mvn test -DexcludedGroups=browser -Dspring.test.context.cache.maxSize=4` y `mvn test -Dgroups=browser` aprobados. El límite de contextos es solo para tests locales (ver TRADEOFFS §51); no cambia Mongo ni timeouts de producción.
 > Tags JUnit: `browser` (Playwright, deps de host), `integration` (mongod embebido vía `EmbeddedMongoTest`/flapdoodle — sin Docker ni Atlas), `load` (umbral p95, flaky por timing).
 
 Este documento es el punto de entrada para toda la documentacion del proyecto.  

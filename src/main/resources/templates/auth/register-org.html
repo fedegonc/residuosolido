@@ -22,7 +22,7 @@
                 <option th:each="t : ${orgTypes}"
                         th:value="${t.name()}"
                         th:text="${t.name()}"
-                        th:attr="data-i18n='org_type_' + ${t.name()}"></option>
+                        th:attr="data-i18n='org_type_' + ${#strings.toLowerCase(t.name())}"></option>
               </select>
               <span class="field__error" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}" role="alert"></span>
             </div>

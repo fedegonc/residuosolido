@@ -34,11 +34,11 @@
     var updates = []; // Batch DOM updates para evitar reflows múltiples
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
-      if (translations[key]) updates.push(function() { el.textContent = translations[key]; });
+      if (translations[key] && el.textContent !== translations[key]) updates.push(function() { el.textContent = translations[key]; });
     });
     document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
       var key = el.getAttribute('data-i18n-html');
-      if (translations[key]) updates.push(function() { el.innerHTML = translations[key]; });
+      if (translations[key] && el.innerHTML !== translations[key]) updates.push(function() { el.innerHTML = translations[key]; });
     });
     document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
       var attrStr = el.getAttribute('data-i18n-attr');
@@ -46,7 +46,7 @@
         var parts = pair.trim().split(':');
         if (parts[1] && translations[parts[1].trim()]) {
           var attr = parts[0].trim(), key = parts[1].trim();
-          updates.push(function() { el.setAttribute(attr, translations[key]); });
+          if (el.getAttribute(attr) !== translations[key]) updates.push(function() { el.setAttribute(attr, translations[key]); });
         }
       });
     });

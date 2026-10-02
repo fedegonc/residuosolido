@@ -38,7 +38,7 @@ aplicaciones, garantizar calidad y elaborar documentación técnica.
 | Análisis de requisitos | 8 RF, 13 RN, 3 actores, casos de uso (`docs/DIAGRAMAS.md`) |
 | Modelado | Entidades, relaciones, estados, multiplicidades (`docs/diagrams/`) |
 | Desarrollo | Flujo completo ciudadano → organización → seguimiento |
-| Testing | 490 tests no-browser: unitarios, integración, e2e MockMvc, seguridad, autorización |
+| Testing | 485 tests no-browser y 31 browser: unitarios, integración, e2e MockMvc, seguridad, autorización y navegador real |
 | Calidad | JaCoCo, validación server-side, optimistic locking, inventario auto-generado |
 | Documentación | 17 docs técnicos, 7 diagramas UML, endpoints catalogados |
 | Gestión del proyecto | Iterativo-incremental en 4 fases, tradeoffs documentados |
@@ -252,6 +252,13 @@ y por qué", evitar la misma pregunta respondida en dos archivos.)*
   `/acopio/solicitudes`, evitando un segundo login sin reducir controles.
 - Ante validación fallida se conservan únicamente campos no sensibles; el PIN
   se elimina antes de volver a renderizar el formulario.
+
+**Traducciones y estabilidad visual**
+- `I18nDialect` entrega los copies del catálogo ES/PT en el HTML inicial,
+  escapando tanto el texto como los atributos; las traducciones no se
+  interpretan como HTML arbitrario. El JS no vuelve a escribir valores
+  idénticos. La regresión comprueba el render con app.js bloqueado y la
+  geometría antes/después de cargarlo (TRADEOFFS §51).
 
 **Verificación de legitimidad**
 - El registro público permite autodeclararse organización. No verifica que

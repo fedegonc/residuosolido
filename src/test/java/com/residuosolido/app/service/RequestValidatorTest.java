@@ -10,6 +10,8 @@ import com.residuosolido.app.repository.OrganizationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
@@ -152,6 +154,26 @@ class RequestValidatorTest {
             org, List.of(MaterialCategory.PLASTICO, MaterialCategory.VIDRIO)
         ));
         assertEquals(ServerMessage.ERROR_REQUEST_MATERIALS_NOT_ACCEPTED, ex.key());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"\u2003", "\u2002", "\u3000"})
+    void draftValidationRejectsUnicodeWhitespaceBeforeOrganization(String address) {
+        User user = new User();
+        user.setActive(true);
+        user.setPhone("+59899123456");
+        List<MaterialCategory> materials = List.of(MaterialCategory.PLASTICO);
+
+        ValidationException create = assertThrows(ValidationException.class,
+                () -> validator.validateCreate(user, City.RIVERA, address, materials, null));
+        ValidationException update = assertThrows(ValidationException.class,
+                () -> validator.validateUpdate(City.RIVERA, address, materials, null));
+        ValidationException entity = assertThrows(ValidationException.class,
+                () -> new com.residuosolido.app.model.Request().updateDraft(City.RIVERA, address, null, materials));
+
+        assertEquals(ServerMessage.ERROR_REQUEST_ADDRESS_REQUIRED, create.key());
+        assertEquals(entity.key(), update.key());
+        assertEquals(entity.key(), create.key());
     }
 
     @Test

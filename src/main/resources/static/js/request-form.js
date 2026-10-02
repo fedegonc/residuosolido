@@ -59,10 +59,6 @@
           console.log('Response recibida, actualizando select...');
           orgSelect.innerHTML = html;
           console.log('innerHTML actualizado, opciones:', orgSelect.options.length);
-          orgSelect.querySelectorAll('[data-i18n]').forEach(function (el) {
-            var t = translations[el.getAttribute('data-i18n')];
-            if (t) el.textContent = t;
-          });
           filterMaterialsByOrg();
         })
         .catch(function (err) {

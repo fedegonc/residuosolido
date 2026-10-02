@@ -44,6 +44,7 @@ class RequestServiceHydrationTest extends EmbeddedMongoTest {
     @TestConfiguration
     static class UserFindCounter {
         static final AtomicInteger USER_FINDS = new AtomicInteger();
+        static final AtomicInteger REQUEST_FINDS = new AtomicInteger();
 
         @Bean
         MongoClientSettingsBuilderCustomizer userFindCounter() {
@@ -53,6 +54,10 @@ class RequestServiceHydrationTest extends EmbeddedMongoTest {
                     if ("find".equals(event.getCommandName())
                             && "users".equals(event.getCommand().getString("find").getValue())) {
                         USER_FINDS.incrementAndGet();
+                    }
+                    if ("find".equals(event.getCommandName())
+                            && "requests".equals(event.getCommand().getString("find").getValue())) {
+                        REQUEST_FINDS.incrementAndGet();
                     }
                 }
             });
@@ -98,6 +103,41 @@ class RequestServiceHydrationTest extends EmbeddedMongoTest {
             requestRepository.save(r);
         }
         UserFindCounter.USER_FINDS.set(0);
+    }
+
+    @Test
+    void citizenListReusesKnownUserWithOnlyOneRequestQuery() {
+        User citizen = userRepository.findByUsername("citizen0").orElseThrow();
+        for (int i = 0; i < 2; i++) {
+            Request request = Request.forCitizen(citizen);
+            request.updateDraft(City.RIVERA, "Otra dir " + i, null, List.of(MaterialCategory.PAPEL));
+            request.assignOrganization(org);
+            requestRepository.save(request);
+        }
+        UserFindCounter.USER_FINDS.set(0);
+        UserFindCounter.REQUEST_FINDS.set(0);
+
+        List<Request> requests = requestService.getRequestsByUser(citizen, 0, 20);
+
+        assertEquals(3, requests.size());
+        for (Request request : requests) {
+            assertEquals(citizen.getDisplayName(), request.getContactName());
+            assertEquals(citizen.getPhone(), request.getContactPhone());
+        }
+        assertEquals(0, UserFindCounter.USER_FINDS.get());
+        assertEquals(1, UserFindCounter.REQUEST_FINDS.get());
+        requests.forEach(request -> assertSame(citizen, request.getUser()));
+    }
+
+    @Test
+    void citizenEmptyPageDoesNotFetchUsers() {
+        User citizen = userRepository.findByUsername("citizen0").orElseThrow();
+        UserFindCounter.USER_FINDS.set(0);
+        UserFindCounter.REQUEST_FINDS.set(0);
+
+        assertTrue(requestService.getRequestsByUser(citizen, 1, 20).isEmpty());
+        assertEquals(0, UserFindCounter.USER_FINDS.get());
+        assertEquals(1, UserFindCounter.REQUEST_FINDS.get());
     }
 
     @Test

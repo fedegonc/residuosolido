@@ -76,6 +76,13 @@ Tabla centralizada de todas las mejoras posibles del sistema. Para justificació
 | 61 | Hidratación batch del N+1 de `@DocumentReference(lazy)` en listas de requests | Implementado | §49 |
 | 62 | Índice compuesto `notifications(user, createdAt)` — bandeja + badge sin collection scan | Implementado | §49 |
 | 63 | Spring Session en Mongo (sesión compartida entre réplicas) | Implementado | §49 |
+| 64 | Endpoint i18n directo al catálogo compartido y serializado con Jackson | Implementado | §50 |
+| 65 | Validación única del borrador en Request, compartida con el preflight y el sim | Implementado | §50 |
+| 66 | Lista del ciudadano reutiliza su usuario sin queries de hidratación adicionales | Implementado | §50 |
+| 67 | i18n SSR: textos y atributos completos antes del primer paint en ES/PT | Implementado | §51 |
+| 68 | Navbar estable ante idiomas, anchos mobile y aparición de instalación PWA | Implementado | §51 |
+| 69 | Fuente tardía sin reemplazo visible ni reflow (font-display optional) | Implementado | §51 |
+| 70 | Dashboard contenido en el viewport sin cortar las columnas del kanban | Implementado | §51 |
 
 **Notas:**
 - Línea 11: PWA fue descartado inicialmente, retomado brevemente (#143), luego eliminado completamente (#182).

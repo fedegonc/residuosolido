@@ -1410,7 +1410,7 @@ demo a uso real (1→10+ usuarios concurrentes o >1 réplica), medidos con
 
 | Problema | Antes | Después |
 |---|---|---|
-| `@DocumentReference(lazy)` en `Request.user` | Cada card del kanban pedía `contactName` → 1 `find` por request (medido: 5 cards = 5 finds en `users`) | `RequestService.withHydratedUsers()`: 2 queries fijas por lista (proyección de ids + `find` batch) + `setContactUser` con el User real. El proxy lazy sigue intacto para detalle/FSM |
+| `@DocumentReference(lazy)` en `Request.user` | Cada card del kanban pedía `contactName` → 1 `find` por request (medido: 5 cards = 5 finds en `users`) | Listas de organización: `RequestService.withHydratedUsers()` agrega 2 queries fijas (proyección de ids + `find` batch). Lista del ciudadano: reutiliza el User recibido sin queries adicionales (§50). El proxy lazy sigue intacto para detalle/FSM |
 | `notifications.user` sin índice | `findByUserOrderByCreatedAtDesc` (bandeja) y `countByUserAndReadFalse` (badge del navbar — se ejecuta en *todo* request autenticado) hacían collection scan | `@CompoundIndex(user, createdAt desc)` creado por `MongoIndexInitializer` — el sort se resuelve dentro del índice |
 | Sesión HTTP en memoria de Tomcat | Con 2 réplicas detrás de un LB, el login de una no existe en la otra; un redeploy cierra todas las sesiones | `spring-session-data-mongodb`: la sesión vive en la colección `sessions` (mismo Mongo, cero infra nueva). Cookie `JSESSIONID` preservada vía `CookieSerializer` para no cambiar el contrato del logout |
 
@@ -1428,3 +1428,87 @@ in-memory por nodo (§45), uploads en disco local (§45), y el PIN de 4 dígitos
 sigue siendo el techo de seguridad — Spring Session no cambia el threat model,
 solo mueve el store. La colección `sessions` crecerá con el tiempo; el TTL
 index sobre `expireAt` lo gestiona el propio `MongoIndexedSessionRepository`.
+
+## 50. Simplificación incremental con regresiones rojas antes del refactor
+
+Decisión: reducir indirección y reglas duplicadas sin nuevos componentes,
+patrones de persistencia ni dependencias. Cada cambio comenzó con una prueba
+que fallaba contra la implementación anterior; las pruebas quedan permanentes.
+
+| Flujo | Rojo observado | Implementación mínima |
+|---|---|---|
+| Catálogo JavaScript i18n | Un tabulador en una clave y otros caracteres de control producían JSON inválido con el escape manual | `I18nScriptController` consulta `JsonMessageSource.catalogFor(locale)` directamente y serializa con el ObjectMapper de Spring. Conserva el locale resuelto, CSP y cache HTTP |
+| Validación del borrador | El preflight aceptaba espacios Unicode que la entidad rechazaba; ante organización ausente devolvía primero otra clave de error | `Request.validateDraft` define ciudad, dirección y materiales. Tanto `updateDraft` como `RequestValidator` la usan, con la misma estructura en el sandbox |
+| Solicitudes del ciudadano | La consulta de lista volvía a buscar al usuario que el servicio ya había recibido | La consulta filtrada por usuario asigna ese mismo User a los resultados. Una regresión con Mongo embebido cuenta desde la consulta hasta leer contactos: 1 find en requests, 0 en users |
+
+**Límites deliberados:** el preflight y la mutación siguen invocando la misma
+validación para preservar el orden de errores y proteger llamadas directas a
+la entidad; se elimina la duplicación de reglas, no ambas fronteras. La
+hidratación batch de organizaciones no cambia. `UiCopyCatalog` conserva su
+atributo de modelo SSR por compatibilidad, aunque ya no se inyecta en el
+endpoint i18n. No se modifican autorización, sesiones ni almacenamiento de
+imágenes.
+
+**Regresiones:** caracteres de control y locale resuelto en i18n; tres casos
+de dirección Unicode en creación, edición y entidad; filtro por propietario,
+reutilización del usuario, presupuesto de queries y página vacía en Mongo.
+El sim incorpora tres checks de preflight Unicode y mantiene su checklist de
+42 error-keys y 41 branches.
+
+## 51. Estabilidad visual: contenido traducido antes del primer paint
+
+**Problema reproducido con Chromium y pruebas rojas:** la tarjeta alternativa
+"Crear cuenta" llegaba con título, descripción y botón vacíos. Al ejecutar
+app.js cambiaba de 128 px a aproximadamente 226 px y empujaba el QR. Otros
+textos llegaban en español aunque se hubiese elegido portugués. A 320 px la
+navbar desbordaba; mostrar el botón de instalación movía sus controles. Una
+fuente retenida 350 ms también movía los botones del hero unos 37 px cuando
+por fin cargaba.
+
+**Decisión:** `I18nDialect` es un adaptador de Thymeleaf, no otro catálogo ni
+un servicio de negocio. Traduce los mismos `data-i18n` y `data-i18n-attr` que
+ya usan las vistas, consultando `JsonMessageSource` después de resolver los
+atributos estándar (`th:attr`, `th:text`, fragments y enums). Los textos y
+atributos se escapan; las claves desconocidas conservan su fallback. No se
+interpreta HTML arbitrario del catálogo. `app.js` evita reescribir valores
+que ya coinciden con el HTML servido.
+
+| Superficie | Cambio |
+|---|---|
+| Landing, login, ambos registros, solicitudes, perfil y páginas educativas | Textos, placeholders, alt, title y confirmaciones traducidos desde SSR; las cards dejan de completarse tarde |
+| Marcadores y badges | El texto traducible se aísla en un span para no borrar el asterisco requerido ni el contador de notificaciones |
+| Navbar | Tres columnas de grid con centro flexible, botones de auth con ancho mínimo y slot reservado para instalación. En mobile los accesos de auth permanecen en el menú y el avatar conserva el nombre accesible |
+| Layout de dos columnas | `minmax(0, ...)` y `min-width: 0` evitan que el mínimo intrínseco del texto expanda las columnas |
+| Contenedor de página y kanban | A 768 px el dashboard se expandía hasta 1024 px. `.page` usa `width: 100%` y `min-width: 0` manteniendo su ancho máximo; el scroll del kanban queda dentro del tablero, con las cuatro columnas accesibles, sin ocultar el overflow de la página |
+| Fuente | `font-display: optional` conserva la fuente de sistema en esa navegación si la web font llega tarde; el preload se mantiene |
+
+**Alternativas descartadas:** ocultar el body hasta que cargue JS, añadir
+un delay o animar alturas solo tapa el síntoma y empeora el primer contenido
+visible. Repetir la clave en un `th:text` junto a cada `data-i18n` duplicaría
+el contrato en todas las vistas; el adaptador interpreta el contrato actual.
+
+**Tradeoff:** con red lenta o cache frío puede mostrarse la fuente de sistema
+durante una navegación, en vez de cambiar a Plus Jakarta Sans a mitad de la
+página. Se prioriza estabilidad sobre ese cambio estético tardío. El texto
+más largo puede ocupar más líneas al cambiar de idioma: no se congela ni se
+recorta el contenido principal; debe llegar completo y no desbordar ni
+solaparse. En mobile el menú conserva todos los accesos.
+
+**Regresiones:** ocho casos de navegador comprueban ES/PT antes de app.js
+(con service workers bloqueados para que no eludan la interceptación), diez
+rutas públicas/protegidas, geometría a 320/375/768/1025/1280 px, aparición de
+instalación, carga del JS y fuente tardía. Cuatro tests unitarios cubren
+claves dinámicas, escape HTML, fallbacks y preservación de badges/asteriscos.
+
+**Verificación completa:** 485 tests no-browser y 31 de navegador aprobados.
+La regresión de 768 px también recorre el tablero hasta la última columna:
+las cuatro siguen accesibles, sin trasladar el scroll horizontal al documento.
+
+**Entorno de tests:** una ejecución no-browser sufrió un timeout al crear
+el índice TTL de sesiones de Mongo embebido: esa operación tardó unos
+12,7 s, por encima del read timeout de 10 s. La suite completa pasó con
+`mvn test -DexcludedGroups=browser -Dspring.test.context.cache.maxSize=4`,
+limitando los contextos retenidos durante esa ejecución local. No se
+modificaron los timeouts de producción ni se excluyeron pruebas adicionales.
+Este ajuste mitiga el fallo de arranque observado en el entorno; no es un
+cambio funcional de persistencia.

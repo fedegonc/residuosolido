@@ -106,15 +106,7 @@ public class RequestValidator {
     // ========== Private ==========
 
     private void validateCoreFields(City city, String address, List<MaterialCategory> materials, String organizationId) {
-        if (city == null) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
-        }
-        if (address == null || address.trim().isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_ADDRESS_REQUIRED);
-        }
-        if (materials == null || materials.isEmpty()) {
-            throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_REQUIRED);
-        }
+        Request.validateDraft(city, address, materials);
         if (organizationId == null || organizationId.isBlank()) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_ORGANIZATION_REQUIRED);
         }

@@ -46,6 +46,11 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public I18nDialect i18nDialect(JsonMessageSource messageSource) {
+        return new I18nDialect(messageSource);
+    }
+
+    @Bean
     public LocaleResolver localeResolver() {
         return new CityAwareLocaleResolver(userRepository);
     }

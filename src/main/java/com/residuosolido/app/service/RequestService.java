@@ -190,7 +190,9 @@ public class RequestService {
 
     public List<Request> getRequestsByUser(User user, int page, int size) {
         validator.requireUser(user);
-        return withHydratedUsers(requestRepository.findByUser(user, PageRequest.of(page, size)));
+        List<Request> requests = requestRepository.findByUser(user, PageRequest.of(page, size));
+        requests.forEach(request -> request.setContactUser(user));
+        return requests;
     }
 
     public Request getOwnedRequest(String id, User user) {

@@ -94,6 +94,14 @@ public class Request {
 
     /** Campos editables del borrador. Valida lo que la entidad es dueña de validar. */
     public void updateDraft(City city, String address, String addressReference, List<MaterialCategory> materials) {
+        validateDraft(city, address, materials);
+        this.city = city;
+        this.address = address;
+        this.addressReference = addressReference;
+        this.materials = materials;
+    }
+
+    public static void validateDraft(City city, String address, List<MaterialCategory> materials) {
         if (city == null) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_CITY_REQUIRED);
         }
@@ -103,10 +111,6 @@ public class Request {
         if (materials == null || materials.isEmpty()) {
             throw new ValidationException(ServerMessage.ERROR_REQUEST_MATERIALS_REQUIRED);
         }
-        this.city = city;
-        this.address = address;
-        this.addressReference = addressReference;
-        this.materials = materials;
     }
 
     public void markCreatedNow() {
