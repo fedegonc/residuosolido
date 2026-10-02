@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface OrganizationRepository extends MongoRepository<Organization, String> {
 
     List<Organization> findByCity(City city);
+    Optional<Organization> findByUsername(String username);
 }

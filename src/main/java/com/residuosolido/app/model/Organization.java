@@ -13,43 +13,54 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Perfil de negocio de una organización de acopio, separado del usuario de
- * autenticación {@link User}. El {@link User} con role=ORGANIZATION es la
- * identidad de login; esta entidad contiene los datos operativos (ciudad,
- * teléfono, materiales aceptados, onboarding completado).
+ * Entidad de negocio autónoma: Organización de acopio/reciclaje.
+ * COMPLETAMENTE SEPARADA de User (ciudadano).
+ * Tiene su propio login: username + PIN (4 dígitos).
  *
- * El id coincide con el id del User dueño para simplificar referencias.
- * Email y username se leen del User asociado, evitando denormalización
- * y riesgos de desincronización.
+ * Separación limpia:
+ * - Organizations tabla: empresas, municipios, acopios
+ * - Users tabla: ciudadanos (crean solicitudes)
+ * - Se comunican por ID en Request (userId + organizationId)
+ *
+ * SIN acoplamiento por ID, SIN role derivado.
  */
 @Document(collection = "organizations")
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = {"acceptedMaterials"})
-public class Organization {
+@ToString(exclude = {"acceptedMaterials", "password"})
+public class Organization implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
+    // ===== AUTENTICACIÓN (propio login) =====
+    @Indexed(unique = true)
+    private String username;
+    private String password;  // PIN hasheado (4 dígitos)
+
+    // ===== DATOS DE NEGOCIO =====
     private String name;
-
     private OrgType tipo;
-
     private String phone;
-
     private City city;
 
     private List<MaterialCategory> acceptedMaterials = new ArrayList<>();
-
     private Boolean profileCompleted = false;
+
+    private LocalDateTime createdAt;
+    private boolean active = true;
 
     public boolean hasPhone() {
         return phone != null && !phone.isBlank();

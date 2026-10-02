@@ -27,8 +27,16 @@ public final class PhoneNumber {
     private PhoneNumber() {}
 
     /**
-     * Valida y normaliza un número E.164 (ej: "+598 99 123 456" → "+59899123456").
-     * Lanza IllegalArgumentException si el formato es inválido.
+     * Normaliza a E.164 y valida formato básico.
+     * Input: "+598 99 123 456" (con espacios/decoración)
+     * Output: "+59899123456" (E.164 limpio)
+     * Lanza ValidationException si:
+     * - null/vacío
+     * - largo > 32 caracteres
+     * - no matchea patrón E.164
+     *
+     * NOTA: No verifica propiedad (¿es tu número?) ni país-específicas.
+     * Para eso, usa normalize(dialCode, national, ddd) o SMS OTP.
      */
     public static String normalize(String raw) {
         if (raw == null || raw.trim().isEmpty()) {
@@ -55,8 +63,16 @@ public final class PhoneNumber {
     }
 
     /**
-     * Factory country-aware: valida el número nacional según las reglas del país.
-     * Devuelve un String en formato E.164 completo.
+     * Normaliza + valida con reglas country-specific.
+     * Input: dialCode ("+598"), national ("99 123 456"), ddd (para Brasil)
+     * Output: "+59899123456" (E.164 completo)
+     * Lanza ValidationException si:
+     * - País no soportado (solo "+598" Uruguay, "+55" Brasil)
+     * - Largo incorrecto para el país
+     * - Primer dígito nacional ≠ 9 (solo celular)
+     *
+     * NOTA: Esto es NORMALIZACIÓN + VALIDACIÓN de formato.
+     * NO es verificación de propiedad (SMS OTP = future work).
      */
     public static String normalize(String dialCode, String national, String ddd) {
         if (dialCode == null || !COUNTRY_RULES.containsKey(dialCode)) {

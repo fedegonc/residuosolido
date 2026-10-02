@@ -4,86 +4,101 @@ import com.residuosolido.app.enums.OrgType;
 import com.residuosolido.app.exception.ServerMessage;
 import com.residuosolido.app.exception.ValidationException;
 import com.residuosolido.app.model.User;
-import com.residuosolido.app.model.Username;
 import com.residuosolido.app.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+/**
+ * Registro de ciudadanos (usuarios).
+ * Implementa BaseRegistrationService<User> — hereda flujo común.
+ */
 @Service
-public class UserRegistrationService {
+public class UserRegistrationService extends BaseRegistrationService<User> {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final OrganizationService organizationService;
 
     public UserRegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder,
                                      OrganizationService organizationService) {
+        super(passwordEncoder);
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.organizationService = organizationService;
     }
 
-    /**
-     * Registro simplificado a propósito para facilitar las pruebas (ver
-     * docs/TRADEOFFS.md §24): nombre en vez de usuario técnico (acepta espacios),
-     * teléfono en vez de email, PIN de 4 dígitos en vez de contraseña.
-     * Devuelve la clave del primer error encontrado, o null si es válido.
-     */
-    public ServerMessage validateUserRegistration(User user) {
+    // ===== Implementación de BaseRegistrationService<User> =====
+
+    @Override
+    protected ServerMessage validateEntity(User user) {
         if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             return ServerMessage.ERROR_REGISTER_USERNAME_REQUIRED;
         }
-        String canonical = Username.canonical(user.getUsername());
-        if (canonical.length() > 64) return ServerMessage.ERROR_REGISTER_USERNAME_TOO_LONG;
-        try {
-            validatePin(user.getPassword());
-        } catch (ValidationException e) {
-            return e.key();
-        }
+        ServerMessage commonError = validateUsernameAndPin(user.getUsername(), user.getPassword());
+        if (commonError != null) return commonError;
+
         if (user.getPhone() == null || user.getPhone().isBlank()) {
             return ServerMessage.ERROR_REGISTER_PHONE_REQUIRED;
-        }
-        if (userRepository.findByUsername(canonical).isPresent()) {
-            return ServerMessage.ERROR_REGISTER_USERNAME_EXISTS;
         }
         return null;
     }
 
-    /** Registro ciudadano: solo la cuenta — sin doc Organization ⇒ rol derivado USER. */
-    public User registerCitizen(User user) {
-        ServerMessage error = validateUserRegistration(user);
-        if (error != null) throw new ValidationException(error);
-        return insertAccount(user);
+    @Override
+    protected String getUsername(User user) {
+        return user.getUsername();
     }
 
-    /** Registro organización: cuenta + doc Organization con tipo (esa existencia ES el rol). */
+    @Override
+    protected String getPassword(User user) {
+        return user.getPassword();
+    }
+
+    @Override
+    protected void setUsername(User user, String username) {
+        user.setUsername(username);
+    }
+
+    @Override
+    protected void setPassword(User user, String hashedPin) {
+        user.setPassword(hashedPin);
+    }
+
+    @Override
+    protected Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    protected User insertEntity(User user) {
+        user.setPhone(UserValidator.canonicalPhone(user.getPhone()));
+        user.setActive(true);
+        user.setCreatedAt(LocalDateTime.now());
+        return userRepository.insert(user);
+    }
+
+    /**
+     * Alias público para flujo de registro ciudadano.
+     * Internamente delega a register() heredado de BaseRegistrationService.
+     */
+    public User registerCitizen(User user) {
+        return register(user);
+    }
+
+    /**
+     * DEPRECADO: Las organizaciones ahora se registran en OrganizationRegistrationService.
+     * Este método queda solo para compatibilidad retroactiva con tests.
+     * @deprecated Usar OrganizationRegistrationService.register() en su lugar
+     */
+    @Deprecated
+    @Transactional
     public User registerOrganization(User user, OrgType tipo) {
         if (tipo == null) {
             throw new ValidationException(ServerMessage.ERROR_REGISTER_ORG_TYPE_REQUIRED);
         }
-        ServerMessage error = validateUserRegistration(user);
-        if (error != null) throw new ValidationException(error);
-        User saved = insertAccount(user);
+        User saved = register(user);
         organizationService.createForUser(saved, tipo);
         return saved;
-    }
-
-    private User insertAccount(User user) {
-        User created = new User();
-        created.setUsername(Username.canonical(user.getUsername()));
-        created.setPhone(UserValidator.canonicalPhone(user.getPhone()));
-        created.setPassword(passwordEncoder.encode(user.getPassword()));
-        created.setActive(true);
-        created.setCreatedAt(LocalDateTime.now());
-        return userRepository.insert(created);
-    }
-
-    /** PIN de 4 dígitos — no es una contraseña real, es fricción mínima para pruebas. */
-    private void validatePin(String value) {
-        if (value == null || !value.matches("\\d{4}")) {
-            throw new ValidationException(ServerMessage.ERROR_REGISTER_PIN_INVALID);
-        }
     }
 }
