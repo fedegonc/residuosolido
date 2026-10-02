@@ -12,11 +12,13 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Limita abuso por dos vías independientes que comparten el mismo esqueleto
- * (mapa concurrente + ventana temporal + barrido periódico de entradas viejas):
- * - Por IP: registro (ventana deslizante, N por minuto).
- * - Por usuario: intentos de login fallidos (bloqueo temporal tras N intentos).
- * Antes eran GuestRateLimiter + LoginAttemptService por separado.
+ * Limita abuso por IP (previene DoS):
+ * - Registro: N requests por minuto por IP (ventana deslizante)
+ * - Login: N intentos fallidos por IP en 15 min
+ *
+ * Cambio de versión anterior: bloqueo por IP, no por username.
+ * Razón: bloqueo por username permite DoS (atacante bloquea "admin" para todos).
+ * Bloqueo por IP es local y defensivo: protege contra ataques de esa IP.
  */
 @Component
 public class RateLimiter {
@@ -28,9 +30,8 @@ public class RateLimiter {
     private static final long CLEANUP_THRESHOLD_MS = 300_000L; // 5 min
 
     private final ConcurrentHashMap<String, Deque<Long>> ipTimestamps = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Integer> loginAttempts = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, AtomicLong> lockedUntil = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Long> lastAttemptAt = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Integer> loginFailures = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, AtomicLong> loginLockedUntil = new ConcurrentHashMap<>();
     private volatile long lastCleanup = System.currentTimeMillis();
 
     // ========== Por IP (registro) ==========
@@ -55,50 +56,41 @@ public class RateLimiter {
         }
     }
 
-    // ========== Por usuario (login) ==========
+    // ========== Por IP (login) ==========
 
-    public void loginFailed(String username) {
+    public void loginFailed(HttpServletRequest request) {
         cleanupStaleEntries();
-        String key = key(username);
-        int count = loginAttempts.merge(key, 1, Integer::sum);
-        lastAttemptAt.put(key, System.currentTimeMillis());
+        String ip = request.getRemoteAddr();
+        int count = loginFailures.merge(ip, 1, Integer::sum);
         if (count >= MAX_LOGIN_ATTEMPTS) {
-            lockedUntil.put(key, new AtomicLong(System.currentTimeMillis() + LOCK_DURATION_MS));
+            loginLockedUntil.put(ip, new AtomicLong(System.currentTimeMillis() + LOCK_DURATION_MS));
         }
     }
 
-    public void loginSucceeded(String username) {
-        String key = key(username);
-        loginAttempts.remove(key);
-        lockedUntil.remove(key);
-        lastAttemptAt.remove(key);
+    public void loginSucceeded(HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        loginFailures.remove(ip);
+        loginLockedUntil.remove(ip);
     }
 
-    public boolean isBlocked(String username) {
-        String key = key(username);
-        AtomicLong until = lockedUntil.get(key);
+    public boolean isBlocked(HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        AtomicLong until = loginLockedUntil.get(ip);
         if (until == null) {
             return false;
         }
         if (System.currentTimeMillis() > until.get()) {
-            loginAttempts.remove(key);
-            lockedUntil.remove(key);
-            lastAttemptAt.remove(key);
+            loginFailures.remove(ip);
+            loginLockedUntil.remove(ip);
             return false;
         }
         return true;
     }
 
-    private String key(String username) {
-        return username == null ? "" : com.residuosolido.app.model.Username.canonical(username);
-    }
-
     // ========== Barrido compartido ==========
 
     /**
-     * Barre ambos mecanismos en el mismo ciclo: entradas de IP vencidas y
-     * entradas de login huérfanas que nunca escalaron a bloqueo (el usuario
-     * no volvió a intentar), evitando crecimiento sin límite de los mapas.
+     * Barre ambos mecanismos: entradas de IP vencidas y bloqueos de login expirados.
      */
     private void cleanupStaleEntries() {
         long now = System.currentTimeMillis();
@@ -107,6 +99,7 @@ public class RateLimiter {
         }
         lastCleanup = now;
 
+        // Limpiar timestamps de requests por IP
         Iterator<Map.Entry<String, Deque<Long>>> ipIt = ipTimestamps.entrySet().iterator();
         while (ipIt.hasNext()) {
             Deque<Long> deque = ipIt.next().getValue();
@@ -118,16 +111,14 @@ public class RateLimiter {
             }
         }
 
-        Iterator<Map.Entry<String, Long>> loginIt = lastAttemptAt.entrySet().iterator();
-        while (loginIt.hasNext()) {
-            Map.Entry<String, Long> entry = loginIt.next();
-            AtomicLong until = lockedUntil.get(entry.getKey());
-            boolean lockExpired = until != null && now > until.get();
-            boolean staleWithoutLock = until == null && now - entry.getValue() > LOCK_DURATION_MS;
-            if (lockExpired || staleWithoutLock) {
-                loginAttempts.remove(entry.getKey());
-                lockedUntil.remove(entry.getKey());
-                loginIt.remove();
+        // Limpiar bloqueos de login expirados
+        Iterator<Map.Entry<String, AtomicLong>> lockIt = loginLockedUntil.entrySet().iterator();
+        while (lockIt.hasNext()) {
+            AtomicLong until = lockIt.next().getValue();
+            if (now > until.get()) {
+                String ip = lockIt.next().getKey();
+                loginFailures.remove(ip);
+                lockIt.remove();
             }
         }
     }
@@ -135,8 +126,7 @@ public class RateLimiter {
     @PreDestroy
     public void shutdown() {
         ipTimestamps.clear();
-        loginAttempts.clear();
-        lockedUntil.clear();
-        lastAttemptAt.clear();
+        loginFailures.clear();
+        loginLockedUntil.clear();
     }
 }

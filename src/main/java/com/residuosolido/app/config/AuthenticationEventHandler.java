@@ -39,7 +39,7 @@ public class AuthenticationEventHandler implements AuthenticationSuccessHandler,
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        rateLimiter.loginSucceeded(authentication.getName());
+        rateLimiter.loginSucceeded(request);
         request.getSession().removeAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
 
         String targetUrl = resolvePrincipalDestination(request, authentication);
@@ -71,10 +71,10 @@ public class AuthenticationEventHandler implements AuthenticationSuccessHandler,
         String username = request.getParameter("username");
         boolean isLocked = exception instanceof LockedException;
         if (username != null && !username.isBlank() && !isLocked) {
-            rateLimiter.loginFailed(username);
+            rateLimiter.loginFailed(request);
         }
-        logger.warn("Intento de login fallido para usuario '{}' ({})", username, exception.getMessage());
-        String param = isLocked || rateLimiter.isBlocked(username) ? "blocked" : "error";
+        logger.warn("Intento de login fallido para usuario '{}' desde {} ({})", username, request.getRemoteAddr(), exception.getMessage());
+        String param = isLocked || rateLimiter.isBlocked(request) ? "blocked" : "error";
         redirectStrategy.sendRedirect(request, response, Routes.LOGIN + "?" + param);
     }
 }

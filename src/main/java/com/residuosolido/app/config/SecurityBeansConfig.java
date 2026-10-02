@@ -12,12 +12,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Beans de seguridad. Decisión deliberada (fase 2): la entidad {@code User}
@@ -39,8 +43,9 @@ public class SecurityBeansConfig {
                                                  OrganizationRepository organizationRepository) {
         return rawUsername -> {
             String username = Username.canonical(rawUsername);
-            if (rateLimiter.isBlocked(username)) {
-                throw new LockedException("Cuenta bloqueada temporalmente por múltiples intentos fallidos");
+            HttpServletRequest request = getRequest();
+            if (request != null && rateLimiter.isBlocked(request)) {
+                throw new LockedException("IP bloqueada temporalmente por múltiples intentos fallidos");
             }
             return userRepository.findByUsername(username)
                 .map(user -> {
@@ -86,5 +91,10 @@ public class SecurityBeansConfig {
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(provider);
+    }
+
+    private HttpServletRequest getRequest() {
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return attrs != null ? attrs.getRequest() : null;
     }
 }
