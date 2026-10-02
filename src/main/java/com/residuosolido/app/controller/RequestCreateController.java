@@ -48,20 +48,40 @@ public class RequestCreateController {
         this.messages = messages;
     }
 
-    /** Muestra el formulario para crear una solicitud (solo usuarios registrados). */
+    /** Muestra el formulario para crear una solicitud (solo usuarios registrados).
+     *  Si hay datos en FlashAttributes (post-error), los pre-llena en el formulario.
+     */
     @GetMapping(Routes.REQUESTS_NEW)
     @PreAuthorize("hasRole('USER')")
     public String newRequestForm(@RequestParam(value = "ciudad", required = false) City ciudad,
                                   Model model, @CurrentUser User user) {
+        // Si hay datos savedFormData (de error anterior), usar esos; si no, crear Request vacío
+        String savedAddress = (String) model.getAttribute("savedAddress");
+        String savedReference = (String) model.getAttribute("savedReference");
+        String savedOrgId = (String) model.getAttribute("savedOrgId");
+
         Request request = new Request();
+        if (savedAddress != null) {
+            // Reconstruir Request desde datos guardados (post-error)
+            request.updateDraft(ciudad, savedAddress, savedReference, null);
+        }
+
         model.addAttribute("request", request);
         model.addAttribute("isEdit", false);
         model.addAttribute("needsPhone", !user.hasPhone());
         model.addAttribute("cities", cityOrgService.getAvailableCities());
         messages.addFormAttributes(model);
-        if (ciudad != null) {
-            model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(ciudad));
-            model.addAttribute("selectedCity", ciudad);
+
+        // Si hay ciudad (de URL o de formulario anterior), cargar organizaciones
+        City targetCity = ciudad != null ? ciudad :
+                (savedAddress != null && model.getAttribute("savedCity") instanceof City ?
+                    (City) model.getAttribute("savedCity") : null);
+        if (targetCity != null) {
+            model.addAttribute("organizations", cityOrgService.getOrganizationsByCity(targetCity));
+            model.addAttribute("selectedCity", targetCity);
+            if (savedOrgId != null) {
+                model.addAttribute("selectedOrgId", savedOrgId);
+            }
         }
         return "users/request-form";
     }
@@ -95,6 +115,7 @@ public class RequestCreateController {
                     userService.updateProfile(user, null, null, phone, null);
                 } catch (IllegalArgumentException e) {
                     messages.flashError(redirectAttributes, e);
+                    saveFormDataForRetry(redirectAttributes, ciudad, address, addressReference, organizationId);
                     return "redirect:" + Routes.REQUESTS_NEW;
                 }
             }
@@ -110,11 +131,23 @@ public class RequestCreateController {
         } catch (IllegalArgumentException e) {
             logger.warn("IllegalArgumentException: {}", e.getMessage());
             messages.flashError(redirectAttributes, e);
+            saveFormDataForRetry(redirectAttributes, ciudad, address, addressReference, organizationId);
             return "redirect:" + Routes.REQUESTS_NEW;
         } catch (RuntimeException e) {
             logger.error("Exception: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             messages.flashError(redirectAttributes, ServerMessage.FLASH_REQUEST_CREATE_ERROR);
+            saveFormDataForRetry(redirectAttributes, ciudad, address, addressReference, organizationId);
             return "redirect:" + Routes.REQUESTS_NEW;
         }
+    }
+
+    private void saveFormDataForRetry(RedirectAttributes redirectAttributes, City ciudad,
+                                      String address, String addressReference, String organizationId) {
+        redirectAttributes.addFlashAttribute("savedCity", ciudad);
+        redirectAttributes.addFlashAttribute("savedAddress", address);
+        redirectAttributes.addFlashAttribute("savedReference", addressReference);
+        redirectAttributes.addFlashAttribute("savedOrgId", organizationId);
+        logger.debug("Datos del formulario guardados para reintentar: ciudad={}, address={}...", ciudad,
+                    address != null && address.length() > 20 ? address.substring(0, 20) : address);
     }
 }
