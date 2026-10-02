@@ -62,14 +62,15 @@ public class MonthlyReportService {
     }
 
     private List<Request> getRequestsForMonth(Organization org, YearMonth month) {
+        // Rango exacto del mes: 1 de mes a último segundo del mes
         LocalDateTime startOfMonth = month.atDay(1).atStartOfDay();
         LocalDateTime endOfMonth = month.plusMonths(1).atDay(1).atStartOfDay().minusNanos(1);
 
         return requestRepository.findByOrganizationOrderByCreatedAtDesc(org, PageRequest.of(0, 10000))
                 .stream()
                 .filter(r -> r.getCreatedAt() != null &&
-                           r.getCreatedAt().isAfter(startOfMonth.minusDays(1)) &&
-                           r.getCreatedAt().isBefore(endOfMonth.plusDays(1)))
+                           r.getCreatedAt().isAfter(startOfMonth) &&              // Exacto: no minusDays
+                           r.getCreatedAt().isBefore(endOfMonth.plusSeconds(1))) // Inclusivo: hasta fin del mes
                 .collect(Collectors.toList());
     }
 
