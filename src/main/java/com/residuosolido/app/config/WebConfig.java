@@ -25,11 +25,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthNavigationInterceptor authNavigationInterceptor;
     private final CurrentUserArgumentResolver currentUserArgumentResolver;
+    private final SavedRequestInterceptor savedRequestInterceptor;
 
     public WebConfig(AuthNavigationInterceptor authNavigationInterceptor,
-                     CurrentUserArgumentResolver currentUserArgumentResolver) {
+                     CurrentUserArgumentResolver currentUserArgumentResolver,
+                     SavedRequestInterceptor savedRequestInterceptor) {
         this.authNavigationInterceptor = authNavigationInterceptor;
         this.currentUserArgumentResolver = currentUserArgumentResolver;
+        this.savedRequestInterceptor = savedRequestInterceptor;
     }
 
     // ========== INTERNACIONALIZACIÓN ==========
@@ -65,6 +68,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        registry.addInterceptor(savedRequestInterceptor);
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(authNavigationInterceptor)
                 .addPathPatterns(Routes.GUEST_ONLY_PATHS.toArray(String[]::new));
