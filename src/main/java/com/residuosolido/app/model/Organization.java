@@ -27,6 +27,11 @@ import java.util.stream.Collectors;
  * El id coincide con el id del User dueño para simplificar referencias.
  * Email y username se leen del User asociado, evitando denormalización
  * y riesgos de desincronización.
+ *
+ * TODO (>50 usuarios): Separar completamente en dos entidades autónomas
+ * (User.role=CITIZEN, Organization.username/pin propios). Hoy, mantener
+ * acoplamiento por ID para elegancia sin overengineering en fase pre-launch.
+ * Ver docs/DESIGN_DECISIONS.md cuando se implemente.
  */
 @Document(collection = "organizations")
 @Getter
