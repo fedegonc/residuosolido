@@ -54,6 +54,7 @@ public class Request {
     @Indexed
     private RequestStatus status = RequestStatus.PENDING;
     private LocalDateTime createdAt;
+    private LocalDateTime finishedAt;
 
     /** Solicitud de un ciudadano registrado. El estado arranca en PENDING. */
     public static Request forCitizen(User user) {
@@ -71,10 +72,12 @@ public class Request {
 
     public void complete() {
         this.status = status.transitionComplete();
+        this.finishedAt = LocalDateTime.now();
     }
 
     public void reject() {
         this.status = status.transitionReject();
+        this.finishedAt = LocalDateTime.now();
     }
 
     /**
@@ -130,6 +133,10 @@ public class Request {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 
     public void setImageUrl(String imageUrl) {
