@@ -7,6 +7,8 @@ import com.residuosolido.app.model.Notification;
 import com.residuosolido.app.model.Request;
 import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.NotificationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,6 +48,13 @@ public class NotificationService {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
         }
         return notificationRepository.findByUserOrderByCreatedAtDesc(user);
+    }
+
+    public Page<Notification> listForPaged(User user, Pageable pageable) {
+        if (user == null) {
+            throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
+        }
+        return notificationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
     }
 
     public long unreadCount(User user) {
