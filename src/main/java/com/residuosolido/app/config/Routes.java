@@ -21,7 +21,6 @@ public final class Routes {
     // Páginas públicas
     public static final String HOME = "/";
     public static final String INDEX = "/index";
-    public static final String LANGUAGE = "/change-language";
     public static final String SEED = "/seed";
     /** Página de contenido genérica por slug (ver PageController). Agregar una página nueva = 1 entrada en su registro, sin tocar rutas. */
     public static final String PAGE_BY_SLUG = "/pagina/{slug}";

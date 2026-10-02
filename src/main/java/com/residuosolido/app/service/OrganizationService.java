@@ -10,7 +10,6 @@ import com.residuosolido.app.model.User;
 import com.residuosolido.app.repository.OrganizationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -81,11 +80,6 @@ public class OrganizationService {
                 && organizationRepository.existsById(user.getId());
     }
 
-    /**
-     * Actualiza el perfil de la organización. Email se actualiza en User (no aquí).
-     * Evicta el cache de orgs por ciudad porque los materiales/ciudad cambian el resultado.
-     */
-    @CacheEvict(value = "orgsByCity", allEntries = true)
     public Organization updateProfile(User user, String name, String phone,
                                        City city, List<MaterialCategory> materials) {
         Organization org = findByUser(user);
@@ -107,7 +101,6 @@ public class OrganizationService {
         return organizationRepository.save(org);
     }
 
-    @CacheEvict(value = "orgsByCity", allEntries = true)
     public void delete(String organizationId) {
         if (organizationId == null || organizationId.isBlank()) {
             throw new ValidationException(ServerMessage.ERROR_USER_NOT_FOUND);
