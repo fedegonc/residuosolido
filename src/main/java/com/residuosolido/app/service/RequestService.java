@@ -186,6 +186,11 @@ public class RequestService {
         }
     }
 
+    private Request loadOrThrow(String id, ServerMessage notFoundMsg) {
+        return requestRepository.findById(id)
+                .orElseThrow(() -> new ValidationException(notFoundMsg));
+    }
+
     // ========== Consultas: ciudadano ==========
 
     public List<Request> getRequestsByUser(User user, int page, int size) {
@@ -197,8 +202,7 @@ public class RequestService {
 
     public Request getOwnedRequest(String id, User user) {
         validator.requireUser(user);
-        Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new ValidationException(ServerMessage.FLASH_REQUEST_NOT_FOUND));
+        Request request = loadOrThrow(id, ServerMessage.FLASH_REQUEST_NOT_FOUND);
         validator.requireOwnedByCitizen(request, user);
         return request;
     }
@@ -215,8 +219,7 @@ public class RequestService {
 
     public Request getOwnedOrgRequest(String id, Organization org) {
         validator.requireOrganization(org);
-        Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new ValidationException(ServerMessage.FLASH_ORG_REQUEST_NOT_FOUND));
+        Request request = loadOrThrow(id, ServerMessage.FLASH_ORG_REQUEST_NOT_FOUND);
         validator.requireOwnedByOrganization(request, org);
         return request;
     }

@@ -1,6 +1,5 @@
 package com.residuosolido.app.config;
 
-import com.residuosolido.app.model.Username;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -80,98 +79,98 @@ class RateLimiterTest {
         assertTrue(limiter.isAllowed(request));
     }
 
-    // ========== Por usuario (antes LoginAttemptServiceTest) ==========
+    // ========== Por IP (login) ==========
 
     @Test
     void isBlocked_belowMaxAttempts_returnsFalse() {
         RateLimiter limiter = new RateLimiter();
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        assertFalse(limiter.isBlocked("user1"));
+        HttpServletRequest request = requestFrom("2.3.4.5");
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        assertFalse(limiter.isBlocked(request));
     }
 
     @Test
     void isBlocked_atMaxAttempts_returnsTrue() {
         RateLimiter limiter = new RateLimiter();
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        assertTrue(limiter.isBlocked("user1"));
+        HttpServletRequest request = requestFrom("2.3.4.6");
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        assertTrue(limiter.isBlocked(request));
     }
 
-    /**
-     * Edge case identificado en la auditoría de máquinas de estados: el
-     * lockout (unlocked -> locked-until-timestamp -> unlocked) no tenía
-     * ningún test de la transición de vuelta a unlocked por expiración —
-     * solo se probaba "llega a locked". LOCK_DURATION_MS real son 15 min,
-     * no practicable esperar en un test; se fuerza el timestamp de
-     * expiración vía reflection sobre el mapa interno en vez de esperar.
-     */
     @Test
     @SuppressWarnings("unchecked")
     void isBlocked_afterLockExpires_returnsFalseAndClearsState() throws Exception {
         RateLimiter limiter = new RateLimiter();
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        assertTrue(limiter.isBlocked("user1"), "Debe estar bloqueado justo después del 3er intento");
+        HttpServletRequest request = requestFrom("2.3.4.7");
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        assertTrue(limiter.isBlocked(request), "Debe estar bloqueado justo después del 3er intento");
 
-        Field lockedUntilField = RateLimiter.class.getDeclaredField("lockedUntil");
+        Field lockedUntilField = RateLimiter.class.getDeclaredField("loginLockedUntil");
         lockedUntilField.setAccessible(true);
         Map<String, AtomicLong> lockedUntil = (Map<String, AtomicLong>) lockedUntilField.get(limiter);
-        lockedUntil.get(Username.canonical("user1")).set(System.currentTimeMillis() - 1);
+        lockedUntil.get("2.3.4.7").set(System.currentTimeMillis() - 1);
 
-        assertFalse(limiter.isBlocked("user1"), "El lock debe expirar una vez pasado su timestamp");
+        assertFalse(limiter.isBlocked(request), "El lock debe expirar una vez pasado su timestamp");
 
-        // isBlocked() debe haber limpiado el estado al detectar la expiración —
-        // un solo intento fallido nuevo NO debe re-bloquear de inmediato.
-        limiter.loginFailed("user1");
-        assertFalse(limiter.isBlocked("user1"), "Tras expirar, el contador de intentos debe haber vuelto a cero");
+        limiter.loginFailed(request);
+        assertFalse(limiter.isBlocked(request), "Tras expirar, el contador de intentos debe haber vuelto a cero");
     }
 
     @Test
     void loginSucceeded_resetsAttempts() {
         RateLimiter limiter = new RateLimiter();
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        assertTrue(limiter.isBlocked("user1"));
+        HttpServletRequest request = requestFrom("2.3.4.8");
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        assertTrue(limiter.isBlocked(request));
 
-        limiter.loginSucceeded("user1");
-        assertFalse(limiter.isBlocked("user1"));
+        limiter.loginSucceeded(request);
+        assertFalse(limiter.isBlocked(request));
     }
 
     @Test
-    void isBlocked_unknownUser_returnsFalse() {
+    void isBlocked_unknownIp_returnsFalse() {
         RateLimiter limiter = new RateLimiter();
-        assertFalse(limiter.isBlocked("nobody"));
+        HttpServletRequest request = requestFrom("9.9.9.9");
+        assertFalse(limiter.isBlocked(request));
     }
 
     @Test
-    void key_isCaseInsensitive() {
+    void isBlocked_differentIps_trackedIndependently() {
         RateLimiter limiter = new RateLimiter();
-        limiter.loginFailed("User1");
-        limiter.loginFailed("user1");
-        limiter.loginFailed("USER1");
-        assertTrue(limiter.isBlocked("uSeR1"));
+        HttpServletRequest requestA = requestFrom("2.3.4.9");
+        HttpServletRequest requestB = requestFrom("2.3.4.10");
+        limiter.loginFailed(requestA);
+        limiter.loginFailed(requestA);
+        limiter.loginFailed(requestA);
+        assertTrue(limiter.isBlocked(requestA));
+        assertFalse(limiter.isBlocked(requestB));
     }
 
     @Test
-    void loginFailed_nullUsername_doesNotThrow() {
+    void loginFailed_nullIp_doesNotThrow() {
         RateLimiter limiter = new RateLimiter();
-        assertDoesNotThrow(() -> limiter.loginFailed(null));
-        assertDoesNotThrow(() -> limiter.isBlocked(null));
+        HttpServletRequest request = requestFrom("2.3.4.12");
+        assertDoesNotThrow(() -> limiter.loginFailed(request));
+        assertDoesNotThrow(() -> limiter.isBlocked(request));
     }
 
     @Test
     void loginLimiter_shutdown_clearsAllState() {
         RateLimiter limiter = new RateLimiter();
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        limiter.loginFailed("user1");
-        assertTrue(limiter.isBlocked("user1"));
+        HttpServletRequest request = requestFrom("2.3.4.11");
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        limiter.loginFailed(request);
+        assertTrue(limiter.isBlocked(request));
 
         limiter.shutdown();
-        assertFalse(limiter.isBlocked("user1"));
+        assertFalse(limiter.isBlocked(request));
     }
 }
