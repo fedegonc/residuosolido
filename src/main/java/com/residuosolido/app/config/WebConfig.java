@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residuosolido.app.controller.CurrentUserArgumentResolver;
-import com.residuosolido.app.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,14 +25,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthNavigationInterceptor authNavigationInterceptor;
     private final CurrentUserArgumentResolver currentUserArgumentResolver;
-    private final UserRepository userRepository;
 
     public WebConfig(AuthNavigationInterceptor authNavigationInterceptor,
-                     CurrentUserArgumentResolver currentUserArgumentResolver,
-                     UserRepository userRepository) {
+                     CurrentUserArgumentResolver currentUserArgumentResolver) {
         this.authNavigationInterceptor = authNavigationInterceptor;
         this.currentUserArgumentResolver = currentUserArgumentResolver;
-        this.userRepository = userRepository;
     }
 
     // ========== INTERNACIONALIZACIÓN ==========
@@ -52,7 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public LocaleResolver localeResolver() {
-        return new CityAwareLocaleResolver(userRepository);
+        return new CityAwareLocaleResolver();
     }
 
     @Bean
